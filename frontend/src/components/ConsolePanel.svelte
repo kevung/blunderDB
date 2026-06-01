@@ -1,6 +1,7 @@
 <script>
     import { tick } from 'svelte';
     import { activeTabStore, logEntriesStore } from '../stores/uiStore';
+    import { t } from '../i18n';
 
     let logContainer;
     let logEntries = $derived($logEntriesStore);
@@ -26,7 +27,7 @@
 <div class="log-panel">
     <div class="log-output" bind:this={logContainer}>
         {#if logEntries.length === 0}
-            <div class="empty-msg">No log entries yet.</div>
+            <div class="empty-msg">{$t('console.empty')}</div>
         {:else}
             {#each logEntries as entry, i (i)}
                 <div class="log-line {entry.type || 'info'}">

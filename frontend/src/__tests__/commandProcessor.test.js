@@ -12,6 +12,12 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import { parseFilters, processCommand, initCommandProcessor } from '../commandProcessor.js';
+import { translate, resolveStatusMessage } from '../i18n';
+
+// The status store now holds a tMsg() descriptor ({ i18nKey, i18nParams }) so
+// the status bar can re-translate live. Resolve it to the English string the
+// way StatusBar does (via the translate function) for these assertions.
+const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
 import { currentPositionIndexStore, statusBarTextStore, logEntriesStore, activeModal, MODAL } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -494,7 +500,7 @@ describe('processCommand', () => {
         databasePathStore.set('');
         processCommand('meta');
         expect(get(activeModal)).toBeNull();
-        expect(get(statusBarTextStore)).toBe('No database loaded.');
+        expect(statusText()).toBe('No database loaded.');
     });
 
     // -- search commands -----------------------------------------------------
@@ -517,7 +523,7 @@ describe('processCommand', () => {
         statusBarModeStore.set('MATCH');
         processCommand('s p>30');
         expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
-        expect(get(statusBarTextStore)).toBe('Search requires NORMAL or EDIT mode.');
+        expect(statusText()).toBe('Search requires NORMAL or EDIT mode.');
     });
 
     test('s in EDIT mode is allowed', () => {
@@ -545,7 +551,7 @@ describe('processCommand', () => {
         statusBarModeStore.set('NORMAL');
         positionsStore.set([]);
         processCommand('ss');
-        expect(get(statusBarTextStore)).toBe('No current results to search in.');
+        expect(statusText()).toBe('No current results to search in.');
     });
 
     test('ss blocked outside NORMAL/EDIT mode', () => {
@@ -553,6 +559,6 @@ describe('processCommand', () => {
         positionsStore.set([{ id: 1 }]);
         processCommand('ss p>30');
         expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
-        expect(get(statusBarTextStore)).toBe('Search in results is not available in current mode.');
+        expect(statusText()).toBe('Search in results is not available in current mode.');
     });
 });

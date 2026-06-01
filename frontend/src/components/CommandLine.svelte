@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { tMsg } from '../i18n';
     import { onMount, onDestroy } from 'svelte';
     import { commentTextStore, currentPositionIndexStore, commandTextStore, statusBarModeStore, statusBarTextStore, activeModal, MODAL, openModal, closeModal } from '../stores/uiStore';
     import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/database/Database.js';
@@ -149,7 +150,7 @@
                     // Search in current results (from NORMAL mode after a prior search)
                     if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'EDIT') {
                         if (positions.length === 0) {
-                            statusBarTextStore.set('No current results to search in.');
+                            statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
                         } else {
                             // Collect IDs of currently displayed positions
                             const currentIDs = positions
@@ -353,7 +354,7 @@
                             }
                         }
                     } else {
-                        statusBarTextStore.set('Search in results is not available in current mode.');
+                        statusBarTextStore.set(tMsg('commands.subSearchModeUnavailable'));
                     }
                 } else if (command.startsWith('s')) {
                     if ($statusBarModeStore === 'EDIT') {
@@ -585,7 +586,7 @@
                             );
                         }
                     } else {
-                        statusBarTextStore.set('Search is only available in edit mode.');
+                        statusBarTextStore.set(tMsg('commands.searchEditModeOnly'));
                     }
                 } else if (command === 'filter' || command === 'fl') {
                     toggleFilterLibraryPanel();
@@ -621,7 +622,7 @@
                     if (databaseLoaded) {
                         openModal(MODAL.METADATA);
                     } else {
-                        statusBarTextStore.set('No database loaded.');
+                        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
                     }
                 } else if (command === 'tp2') {
                     openModal(MODAL.TAKE_POINT_2);
@@ -630,35 +631,35 @@
                 } else if (command === 'migrate_from_1_0_to_1_1') {
                     try {
                         await Migrate_1_0_0_to_1_1_0();
-                        statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+                        statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.1.0' }));
                     } catch (error) {
                         logger.error('Error migrating database:', error);
-                        statusBarTextStore.set('Error migrating database.');
+                        statusBarTextStore.set(tMsg('commands.errorMigrating'));
                     }
                 } else if (command === 'migrate_from_1_1_to_1_2') {
                     try {
                         await Migrate_1_1_0_to_1_2_0();
-                        statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
+                        statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.2.0' }));
                     } catch (error) {
                         logger.error('Error migrating database:', error);
-                        statusBarTextStore.set('Error migrating database.');
+                        statusBarTextStore.set(tMsg('commands.errorMigrating'));
                     }
                 } else if (command === 'migrate_from_1_2_to_1_3') {
                     try {
                         await Migrate_1_2_0_to_1_3_0();
-                        statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
+                        statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.3.0' }));
                     } catch (error) {
                         logger.error('Error migrating database:', error);
-                        statusBarTextStore.set('Error migrating database.');
+                        statusBarTextStore.set(tMsg('commands.errorMigrating'));
                     }
                 } else if (command === 'cl' || command === 'clear') {
                     try {
                         await ClearCommandHistory();
                         commandHistoryStore.set([]);
-                        statusBarTextStore.set('Command history cleared.');
+                        statusBarTextStore.set(tMsg('commands.commandHistoryCleared'));
                     } catch (error) {
                         logger.error('Error clearing command history:', error);
-                        statusBarTextStore.set('Error clearing command history.');
+                        statusBarTextStore.set(tMsg('commands.errorClearingHistory'));
                     }
                 }
                 closeModal(); // Hide the command line after processing the command

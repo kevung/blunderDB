@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { trapFocus } from '../utils/focusTrap.js';
+    import { t } from '../i18n';
     import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { excludePositionHistoryJSON } from '../stores/searchExcludePositionStore';
@@ -176,6 +177,45 @@
         'Match IDs',
         'Tournament IDs'
     ];
+
+    // Canonical filter names above stay in English because they double as logic
+    // keys (used in the `{#if filter === '...'}` branches and the command builder).
+    // This map yields the i18n key slug for the *displayed* label only.
+    const filterKeySlug = {
+        'Include Cube': 'includeCube',
+        'Include Score': 'includeScore',
+        'Include Decision Type': 'includeDecisionType',
+        'Include Dice Roll': 'includeDiceRoll',
+        'No Contact': 'noContact',
+        'Mirror Position': 'mirrorPosition',
+        'Pipcount Difference': 'pipcountDifference',
+        'Player Absolute Pipcount': 'playerAbsolutePipcount',
+        'Equity (millipoints)': 'equity',
+        'Move Error (millipoints, Player 1)': 'moveError',
+        'Win Rate': 'winRate',
+        'Gammon Rate': 'gammonRate',
+        'Backgammon Rate': 'backgammonRate',
+        'Opponent Win Rate': 'opponentWinRate',
+        'Opponent Gammon Rate': 'opponentGammonRate',
+        'Opponent Backgammon Rate': 'opponentBackgammonRate',
+        'Player Checker-Off': 'playerCheckerOff',
+        'Opponent Checker-Off': 'opponentCheckerOff',
+        'Player Back Checker': 'playerBackChecker',
+        'Opponent Back Checker': 'opponentBackChecker',
+        'Player Checker in the Zone': 'playerCheckerInZone',
+        'Opponent Checker in the Zone': 'opponentCheckerInZone',
+        'Player Outfield Blot': 'playerOutfieldBlot',
+        'Opponent Outfield Blot': 'opponentOutfieldBlot',
+        'Player Jan Blot': 'playerJanBlot',
+        'Opponent Jan Blot': 'opponentJanBlot',
+        'Search Text': 'searchText',
+        'Best Move or Cube Decision': 'bestMoveOrCubeDecision',
+        'Creation Date': 'creationDate',
+        'Match IDs': 'matchIDs',
+        'Tournament IDs': 'tournamentIDs'
+    };
+    // Translated display label for a canonical filter name (falls back to the name).
+    const filterLabel = $derived((name) => (filterKeySlug[name] ? $t('search.filters.' + filterKeySlug[name]) : name));
 
     function addFilter() {
         if (selectedFilter && !filters.includes(selectedFilter)) {
@@ -605,13 +645,13 @@
 
 {#if visible}
     <div class="modal-backdrop" onclick={onClose}></div>
-    <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Search positions" use:trapFocus>
+    <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={$t('search.searchPositions')} use:trapFocus>
         <div class="modal-body">
             <div class="form-group">
                 <select bind:value={selectedFilter} class="filter-dropdown">
-                    <option value="" disabled>Select a filter</option>
+                    <option value="" disabled>{$t('search.selectFilter')}</option>
                     {#each availableFilters as filter (filter)}
-                        <option value={filter}>{filter}</option>
+                        <option value={filter}>{filterLabel(filter)}</option>
                     {/each}
                 </select>
                 <button class="add-button" onclick={addFilter}>+</button>
@@ -619,7 +659,7 @@
             {#each filters as filter (filter)}
                 <div class="form-group">
                     <div class="filter-label-container">
-                        <label class="filter-label">{filter}</label>
+                        <label class="filter-label">{filterLabel(filter)}</label>
                     </div>
                     <div class="filter-options-wrapper">
                         {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Include Decision Type'}
@@ -629,10 +669,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={diceRollOption} value="both" /> Both dice
+                                        <input type="radio" bind:group={diceRollOption} value="both" />
+                                        {$t('search.bothDice')}
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={diceRollOption} value="first" /> First die only
+                                        <input type="radio" bind:group={diceRollOption} value="first" />
+                                        {$t('search.firstDieOnly')}
                                     </label>
                                 </div>
                             </div>
@@ -641,17 +683,20 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={pipCountOption} value="min" /> Min
-                                        <input type="number" bind:value={pipCountMin} placeholder="Min" class="filter-input" disabled={pipCountOption !== 'min'} />
+                                        <input type="radio" bind:group={pipCountOption} value="min" />
+                                        {$t('common.min')}
+                                        <input type="number" bind:value={pipCountMin} placeholder={$t('common.min')} class="filter-input" disabled={pipCountOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={pipCountOption} value="max" /> Max
-                                        <input type="number" bind:value={pipCountMax} placeholder="Max" class="filter-input" disabled={pipCountOption !== 'max'} />
+                                        <input type="radio" bind:group={pipCountOption} value="max" />
+                                        {$t('common.max')}
+                                        <input type="number" bind:value={pipCountMax} placeholder={$t('common.max')} class="filter-input" disabled={pipCountOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={pipCountOption} value="range" /> Range
-                                        <input type="number" bind:value={pipCountRangeMin} placeholder="Min" class="filter-input" disabled={pipCountOption !== 'range'} />
-                                        <input type="number" bind:value={pipCountRangeMax} placeholder="Max" class="filter-input" disabled={pipCountOption !== 'range'} />
+                                        <input type="radio" bind:group={pipCountOption} value="range" />
+                                        {$t('common.range')}
+                                        <input type="number" bind:value={pipCountRangeMin} placeholder={$t('common.min')} class="filter-input" disabled={pipCountOption !== 'range'} />
+                                        <input type="number" bind:value={pipCountRangeMax} placeholder={$t('common.max')} class="filter-input" disabled={pipCountOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
@@ -660,11 +705,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1AbsolutePipCountMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="375"
@@ -672,11 +718,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1AbsolutePipCountMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="375"
@@ -684,11 +731,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1AbsolutePipCountOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1AbsolutePipCountRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="375"
@@ -697,7 +745,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1AbsolutePipCountRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="375"
@@ -711,17 +759,20 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={equityOption} value="min" /> Min
-                                        <input type="number" bind:value={equityMin} placeholder="Min" class="filter-input" disabled={equityOption !== 'min'} />
+                                        <input type="radio" bind:group={equityOption} value="min" />
+                                        {$t('common.min')}
+                                        <input type="number" bind:value={equityMin} placeholder={$t('common.min')} class="filter-input" disabled={equityOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={equityOption} value="max" /> Max
-                                        <input type="number" bind:value={equityMax} placeholder="Max" class="filter-input" disabled={equityOption !== 'max'} />
+                                        <input type="radio" bind:group={equityOption} value="max" />
+                                        {$t('common.max')}
+                                        <input type="number" bind:value={equityMax} placeholder={$t('common.max')} class="filter-input" disabled={equityOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={equityOption} value="range" /> Range
-                                        <input type="number" bind:value={equityRangeMin} placeholder="Min" class="filter-input" disabled={equityOption !== 'range'} />
-                                        <input type="number" bind:value={equityRangeMax} placeholder="Max" class="filter-input" disabled={equityOption !== 'range'} />
+                                        <input type="radio" bind:group={equityOption} value="range" />
+                                        {$t('common.range')}
+                                        <input type="number" bind:value={equityRangeMin} placeholder={$t('common.min')} class="filter-input" disabled={equityOption !== 'range'} />
+                                        <input type="number" bind:value={equityRangeMax} placeholder={$t('common.max')} class="filter-input" disabled={equityOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
@@ -730,17 +781,20 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={moveErrorOption} value="min" /> Min
-                                        <input type="number" bind:value={moveErrorMin} placeholder="Min" class="filter-input" min="0" disabled={moveErrorOption !== 'min'} />
+                                        <input type="radio" bind:group={moveErrorOption} value="min" />
+                                        {$t('common.min')}
+                                        <input type="number" bind:value={moveErrorMin} placeholder={$t('common.min')} class="filter-input" min="0" disabled={moveErrorOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={moveErrorOption} value="max" /> Max
-                                        <input type="number" bind:value={moveErrorMax} placeholder="Max" class="filter-input" min="0" disabled={moveErrorOption !== 'max'} />
+                                        <input type="radio" bind:group={moveErrorOption} value="max" />
+                                        {$t('common.max')}
+                                        <input type="number" bind:value={moveErrorMax} placeholder={$t('common.max')} class="filter-input" min="0" disabled={moveErrorOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={moveErrorOption} value="range" /> Range
-                                        <input type="number" bind:value={moveErrorRangeMin} placeholder="Min" class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
-                                        <input type="number" bind:value={moveErrorRangeMax} placeholder="Max" class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
+                                        <input type="radio" bind:group={moveErrorOption} value="range" />
+                                        {$t('common.range')}
+                                        <input type="number" bind:value={moveErrorRangeMin} placeholder={$t('common.min')} class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
+                                        <input type="number" bind:value={moveErrorRangeMax} placeholder={$t('common.max')} class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
@@ -749,11 +803,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={winRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={winRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={winRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -762,11 +817,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={winRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={winRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={winRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -775,11 +831,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={winRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={winRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={winRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -789,7 +846,7 @@
                                         <input
                                             type="number"
                                             bind:value={winRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -804,11 +861,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={gammonRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={gammonRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={gammonRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -817,11 +875,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={gammonRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={gammonRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={gammonRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -830,11 +889,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={gammonRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={gammonRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={gammonRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -844,7 +904,7 @@
                                         <input
                                             type="number"
                                             bind:value={gammonRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -859,11 +919,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={backgammonRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={backgammonRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={backgammonRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -872,11 +933,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={backgammonRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={backgammonRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={backgammonRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -885,11 +947,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={backgammonRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={backgammonRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={backgammonRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -899,7 +962,7 @@
                                         <input
                                             type="number"
                                             bind:value={backgammonRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -914,11 +977,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2WinRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2WinRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2WinRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -927,11 +991,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2WinRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2WinRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2WinRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -940,11 +1005,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2WinRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2WinRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2WinRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -954,7 +1020,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2WinRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -969,11 +1035,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2GammonRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2GammonRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2GammonRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -982,11 +1049,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2GammonRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2GammonRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2GammonRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -995,11 +1063,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2GammonRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2GammonRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2GammonRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1009,7 +1078,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2GammonRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1024,11 +1093,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackgammonRateOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2BackgammonRateOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2BackgammonRateMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1037,11 +1107,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackgammonRateOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2BackgammonRateOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2BackgammonRateMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1050,11 +1121,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackgammonRateOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2BackgammonRateOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2BackgammonRateRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1064,7 +1136,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2BackgammonRateRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="100"
@@ -1079,11 +1151,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerOffOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1CheckerOffOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerOffMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1092,11 +1165,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerOffOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1CheckerOffOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerOffMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1105,11 +1179,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerOffOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1CheckerOffOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerOffRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1119,7 +1194,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1CheckerOffRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1134,11 +1209,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerOffOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2CheckerOffOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerOffMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1147,11 +1223,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerOffOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2CheckerOffOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerOffMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1160,11 +1237,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerOffOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2CheckerOffOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerOffRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1174,7 +1252,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2CheckerOffRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1189,11 +1267,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1BackCheckerOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1BackCheckerOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1BackCheckerMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1202,11 +1281,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1BackCheckerOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1BackCheckerOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1BackCheckerMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1215,11 +1295,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1BackCheckerOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1BackCheckerOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1BackCheckerRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1229,7 +1310,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1BackCheckerRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1244,11 +1325,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackCheckerOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2BackCheckerOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2BackCheckerMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1257,11 +1339,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackCheckerOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2BackCheckerOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2BackCheckerMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1270,11 +1353,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2BackCheckerOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2BackCheckerOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2BackCheckerRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1284,7 +1368,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2BackCheckerRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1299,11 +1383,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerInZoneMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1312,11 +1397,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerInZoneMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1325,11 +1411,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1CheckerInZoneOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1CheckerInZoneRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1339,7 +1426,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1CheckerInZoneRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1354,11 +1441,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerInZoneMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1367,11 +1455,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerInZoneMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1380,11 +1469,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2CheckerInZoneOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2CheckerInZoneRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1394,7 +1484,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2CheckerInZoneRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1409,11 +1499,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1OutfieldBlotMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1422,11 +1513,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1OutfieldBlotMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1435,11 +1527,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1OutfieldBlotRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1449,7 +1542,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1OutfieldBlotRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1464,11 +1557,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2OutfieldBlotMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1477,11 +1571,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2OutfieldBlotMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1490,11 +1585,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2OutfieldBlotRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1504,7 +1600,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2OutfieldBlotRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1520,11 +1616,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1JanBlotOption} value="min" /> Min
+                                        <input type="radio" bind:group={player1JanBlotOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player1JanBlotMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1533,11 +1630,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1JanBlotOption} value="max" /> Max
+                                        <input type="radio" bind:group={player1JanBlotOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player1JanBlotMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1546,11 +1644,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player1JanBlotOption} value="range" /> Range
+                                        <input type="radio" bind:group={player1JanBlotOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player1JanBlotRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1560,7 +1659,7 @@
                                         <input
                                             type="number"
                                             bind:value={player1JanBlotRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1575,11 +1674,12 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2JanBlotOption} value="min" /> Min
+                                        <input type="radio" bind:group={player2JanBlotOption} value="min" />
+                                        {$t('common.min')}
                                         <input
                                             type="number"
                                             bind:value={player2JanBlotMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1588,11 +1688,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2JanBlotOption} value="max" /> Max
+                                        <input type="radio" bind:group={player2JanBlotOption} value="max" />
+                                        {$t('common.max')}
                                         <input
                                             type="number"
                                             bind:value={player2JanBlotMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1601,11 +1702,12 @@
                                         />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={player2JanBlotOption} value="range" /> Range
+                                        <input type="radio" bind:group={player2JanBlotOption} value="range" />
+                                        {$t('common.range')}
                                         <input
                                             type="number"
                                             bind:value={player2JanBlotRangeMin}
-                                            placeholder="Min"
+                                            placeholder={$t('common.min')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1615,7 +1717,7 @@
                                         <input
                                             type="number"
                                             bind:value={player2JanBlotRangeMax}
-                                            placeholder="Max"
+                                            placeholder={$t('common.max')}
                                             class="filter-input"
                                             min="0"
                                             max="15"
@@ -1629,13 +1731,13 @@
 
                         {#if filter === 'Search Text'}
                             <div class="search-text-container">
-                                <label for="searchText">(tag1;tag2;...)</label>
+                                <label for="searchText">{$t('search.searchTextHint')}</label>
                                 <input type="text" id="searchText" bind:value={searchText} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
                         {#if filter === 'Best Move or Cube Decision'}
                             <div class="search-text-container">
-                                <label for="movePattern">(pattern1;pattern2;...)</label>
+                                <label for="movePattern">{$t('search.movePatternHint')}</label>
                                 <input type="text" id="movePattern" bind:value={movePattern} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
@@ -1643,31 +1745,34 @@
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={creationDateOption} value="min" /> Min
-                                        <input type="date" bind:value={creationDateMin} placeholder="Min" class="filter-input" disabled={creationDateOption !== 'min'} />
+                                        <input type="radio" bind:group={creationDateOption} value="min" />
+                                        {$t('common.min')}
+                                        <input type="date" bind:value={creationDateMin} placeholder={$t('common.min')} class="filter-input" disabled={creationDateOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={creationDateOption} value="max" /> Max
-                                        <input type="date" bind:value={creationDateMax} placeholder="Max" class="filter-input" disabled={creationDateOption !== 'max'} />
+                                        <input type="radio" bind:group={creationDateOption} value="max" />
+                                        {$t('common.max')}
+                                        <input type="date" bind:value={creationDateMax} placeholder={$t('common.max')} class="filter-input" disabled={creationDateOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
-                                        <input type="radio" bind:group={creationDateOption} value="range" /> Range
-                                        <input type="date" bind:value={creationDateRangeMin} placeholder="Min" class="filter-input" disabled={creationDateOption !== 'range'} />
-                                        <input type="date" bind:value={creationDateRangeMax} placeholder="Max" class="filter-input" disabled={creationDateOption !== 'range'} />
+                                        <input type="radio" bind:group={creationDateOption} value="range" />
+                                        {$t('common.range')}
+                                        <input type="date" bind:value={creationDateRangeMin} placeholder={$t('common.min')} class="filter-input" disabled={creationDateOption !== 'range'} />
+                                        <input type="date" bind:value={creationDateRangeMax} placeholder={$t('common.max')} class="filter-input" disabled={creationDateOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
                         {/if}
                         {#if filter === 'Match IDs'}
                             <div class="search-text-container">
-                                <label for="matchIDs">(e.g. 3 or 2,5 for range)</label>
-                                <input type="text" id="matchIDs" bind:value={matchIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder="ID or range" />
+                                <label for="matchIDs">{$t('search.matchIdsHint')}</label>
+                                <input type="text" id="matchIDs" bind:value={matchIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder={$t('search.idOrRange')} />
                             </div>
                         {/if}
                         {#if filter === 'Tournament IDs'}
                             <div class="search-text-container">
-                                <label for="tournamentIDs">(e.g. 1 or 1,3 for range)</label>
-                                <input type="text" id="tournamentIDs" bind:value={tournamentIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder="ID or range" />
+                                <label for="tournamentIDs">{$t('search.tournamentIdsHint')}</label>
+                                <input type="text" id="tournamentIDs" bind:value={tournamentIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder={$t('search.idOrRange')} />
                             </div>
                         {/if}
                     </div>
@@ -1677,11 +1782,11 @@
             <div class="modal-buttons">
                 <label class="search-in-results-label">
                     <input type="checkbox" bind:checked={searchInCurrentResults} />
-                    Search in current results
+                    {$t('search.searchInCurrentResults')}
                 </label>
-                <button class="primary-button" onclick={handleSearch}>Search</button>
-                <button class="secondary-button" onclick={onClose}>Cancel</button>
-                <button class="secondary-button" onclick={clearFilters}>Clear Filters</button>
+                <button class="primary-button" onclick={handleSearch}>{$t('common.search')}</button>
+                <button class="secondary-button" onclick={onClose}>{$t('common.cancel')}</button>
+                <button class="secondary-button" onclick={clearFilters}>{$t('search.clearFilters')}</button>
             </div>
         </div>
     </div>

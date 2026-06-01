@@ -27,6 +27,7 @@ type Config struct {
 	WindowHeight     int                  `json:"window_height"`
 	LastDatabasePath string               `json:"last_database_path"`
 	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
+	Language         string               `json:"language,omitempty"`
 }
 
 func NewConfig() *Config {
@@ -34,6 +35,7 @@ func NewConfig() *Config {
 	return &Config{
 		WindowWidth:  initialWidth,
 		WindowHeight: initialHeight,
+		Language:     "en",
 	}
 }
 
@@ -82,6 +84,10 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.WindowHeight = config.WindowHeight
 	c.LastDatabasePath = config.LastDatabasePath
 	c.StatsFilter = config.StatsFilter
+	c.Language = config.Language
+	if c.Language == "" {
+		c.Language = "en"
+	}
 
 	return &config, nil
 }
@@ -113,6 +119,20 @@ func (c *Config) SaveLastDatabasePath(path string) error {
 
 func (c *Config) GetLastDatabasePath() string {
 	return c.LastDatabasePath
+}
+
+// GetLanguage returns the persisted UI language code (defaults to "en").
+func (c *Config) GetLanguage() string {
+	if c.Language == "" {
+		return "en"
+	}
+	return c.Language
+}
+
+// SaveLanguage persists the given UI language code to disk.
+func (c *Config) SaveLanguage(lang string) error {
+	c.Language = lang
+	return c.SaveConfig(c)
 }
 
 // GetStatsFilter returns the persisted stats filter (called from the frontend).

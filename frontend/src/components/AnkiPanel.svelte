@@ -8,6 +8,7 @@
     import { positionsStore, positionStore } from '../stores/positionStore';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { parseFilters } from '../commandProcessor';
+    import { t, tMsg } from '../i18n';
     import {
         CreateAnkiDeck,
         GetAllAnkiDecks,
@@ -123,9 +124,9 @@
             newDeckSourceId = 0;
             showCreateForm = false;
             await loadDecks();
-            statusBarTextStore.set(`Deck created`);
+            statusBarTextStore.set(tMsg('anki.deckCreated'));
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -137,9 +138,9 @@
                 ankiSelectedDeckStore_reset();
             }
             await loadDecks();
-            statusBarTextStore.set(`Deck "${deck.name}" deleted`);
+            statusBarTextStore.set(tMsg('anki.deckDeleted', { name: deck.name }));
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -190,7 +191,7 @@
             positionsStore.set(deckPositions || []);
             const card = await GetNextAnkiCard(selectedDeck.id);
             if (!card) {
-                statusBarTextStore.set('No cards due for review');
+                statusBarTextStore.set(tMsg('anki.noCardsDue'));
                 ankiPausedSessionStore.set(null);
                 return;
             }
@@ -208,7 +209,7 @@
             ankiPausedSessionStore.set(null);
             ankiViewModeStore.set('review');
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -227,7 +228,7 @@
                 ankiReviewCardStore.set(null);
                 ankiPausedSessionStore.set(null);
                 ankiViewModeStore.set('list');
-                statusBarTextStore.set(`Review complete! ${reviewSessionCount} cards reviewed.`);
+                statusBarTextStore.set(tMsg('anki.reviewComplete', { count: reviewSessionCount }));
                 await loadDecks();
                 if (selectedDeck) {
                     const s = await GetAnkiDeckStats(selectedDeck.id);
@@ -235,7 +236,7 @@
                 }
             }
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -256,9 +257,9 @@
             const updated = decks.find((d) => d.id === selectedDeck.id);
             if (updated) selectedAnkiDeckStore.set(updated);
             ankiViewModeStore.set('list');
-            statusBarTextStore.set('Settings saved');
+            statusBarTextStore.set(tMsg('anki.settingsSaved'));
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -276,7 +277,7 @@
             editingDeckId = null;
             await loadDecks();
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -419,9 +420,9 @@
                 await SyncAnkiDeck(deck.id);
             }
             await loadDecks();
-            statusBarTextStore.set(`Deck "${deck.name}" synced`);
+            statusBarTextStore.set(tMsg('anki.deckSynced', { name: deck.name }));
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -434,9 +435,9 @@
                 const s = await GetAnkiDeckStats(deck.id);
                 ankiDeckStatsStore.set(s);
             }
-            statusBarTextStore.set(`Deck "${deck.name}" reset`);
+            statusBarTextStore.set(tMsg('anki.deckReset', { name: deck.name }));
         } catch (e) {
-            statusBarTextStore.set(`Error: ${e}`);
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
         }
     }
 
@@ -533,7 +534,7 @@
     {#if viewMode === 'review' && reviewCard}
         <!-- Review Mode -->
         <div class="review-header">
-            <button class="btn-back" onclick={backToList} title="Back to deck list (Esc)">
+            <button class="btn-back" onclick={backToList} title={$t('anki.backToDeckList') + ' (Esc)'}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
@@ -544,22 +545,22 @@
         </div>
 
         <div class="review-body">
-            <div class="review-position-id">Position #{reviewCard.position.id}</div>
+            <div class="review-position-id">{$t('anki.positionNumber', { id: reviewCard.position.id })}</div>
             <div class="review-buttons">
-                <button class="btn-rating btn-again" onclick={() => submitReview(1)} title="Again (1)">
-                    <span class="rating-label">Again</span>
+                <button class="btn-rating btn-again" onclick={() => submitReview(1)} title={$t('anki.again') + ' (1)'}>
+                    <span class="rating-label">{$t('anki.again')}</span>
                     <span class="rating-key">1</span>
                 </button>
-                <button class="btn-rating btn-hard" onclick={() => submitReview(2)} title="Hard (2)">
-                    <span class="rating-label">Hard</span>
+                <button class="btn-rating btn-hard" onclick={() => submitReview(2)} title={$t('anki.hard') + ' (2)'}>
+                    <span class="rating-label">{$t('anki.hard')}</span>
                     <span class="rating-key">2</span>
                 </button>
-                <button class="btn-rating btn-good" onclick={() => submitReview(3)} title="Good (3)">
-                    <span class="rating-label">Good</span>
+                <button class="btn-rating btn-good" onclick={() => submitReview(3)} title={$t('anki.good') + ' (3)'}>
+                    <span class="rating-label">{$t('anki.good')}</span>
                     <span class="rating-key">3</span>
                 </button>
-                <button class="btn-rating btn-easy" onclick={() => submitReview(4)} title="Easy (4)">
-                    <span class="rating-label">Easy</span>
+                <button class="btn-rating btn-easy" onclick={() => submitReview(4)} title={$t('anki.easy') + ' (4)'}>
+                    <span class="rating-label">{$t('anki.easy')}</span>
                     <span class="rating-key">4</span>
                 </button>
             </div>
@@ -567,32 +568,32 @@
     {:else if viewMode === 'settings' && selectedDeck}
         <!-- Settings Mode -->
         <div class="settings-header">
-            <button class="btn-back" onclick={backToList} title="Back">
+            <button class="btn-back" onclick={backToList} title={$t('common.back')}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
             </button>
-            <span class="settings-title">Settings: {selectedDeck.name}</span>
+            <span class="settings-title">{$t('anki.settingsTitle', { name: selectedDeck.name })}</span>
         </div>
         <div class="settings-body">
             <div class="settings-row">
-                <label>Retention target</label>
+                <label>{$t('anki.retentionTarget')}</label>
                 <input type="number" bind:value={settingsRetention} min="0.7" max="0.99" step="0.01" />
                 <span class="settings-hint">{Math.round(settingsRetention * 100)}%</span>
             </div>
             <div class="settings-row">
-                <label>Max interval (days)</label>
+                <label>{$t('anki.maxInterval')}</label>
                 <input type="number" bind:value={settingsMaxInterval} min="1" max="36500" step="1" />
             </div>
             <div class="settings-row">
                 <label>
                     <input type="checkbox" bind:checked={settingsFuzz} />
-                    Enable fuzz (randomize intervals)
+                    {$t('anki.enableFuzz')}
                 </label>
             </div>
             <div class="settings-actions">
-                <button class="btn-save" onclick={saveSettings}>Save</button>
-                <button class="btn-cancel" onclick={backToList}>Cancel</button>
+                <button class="btn-save" onclick={saveSettings}>{$t('common.save')}</button>
+                <button class="btn-cancel" onclick={backToList}>{$t('common.cancel')}</button>
             </div>
         </div>
     {:else}
@@ -604,19 +605,19 @@
                     onclick={() => {
                         showCreateForm = true;
                     }}
-                    title="Create a new deck"
+                    title={$t('anki.createNewDeckTooltip')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    New Deck
+                    {$t('anki.newDeck')}
                 </button>
             {:else}
                 <div class="create-form">
                     <input
                         type="text"
                         bind:value={newDeckName}
-                        placeholder="Deck name"
+                        placeholder={$t('anki.deckNamePlaceholder')}
                         class="input-name"
                         onkeydown={(e) => {
                             if (e.key === 'Enter') createDeck();
@@ -624,20 +625,20 @@
                         }}
                     />
                     <select bind:value={newDeckSourceType} class="input-source-type">
-                        <option value="collection">Collection</option>
-                        <option value="search">Current search</option>
+                        <option value="collection">{$t('anki.sourceCollection')}</option>
+                        <option value="search">{$t('anki.sourceCurrentSearch')}</option>
                     </select>
                     {#if newDeckSourceType === 'collection'}
                         <select bind:value={newDeckSourceId} class="input-source-id">
-                            <option value={0}>-- Select collection --</option>
+                            <option value={0}>{$t('anki.selectCollection')}</option>
                             {#each collections as coll (coll.id)}
                                 <option value={coll.id}>{coll.name} ({coll.positionCount})</option>
                             {/each}
                         </select>
                     {:else}
-                        <span class="search-hint">{positions.length} positions</span>
+                        <span class="search-hint">{$t('anki.positionsCount', { count: positions.length })}</span>
                     {/if}
-                    <button class="btn-confirm" onclick={createDeck} title="Create">
+                    <button class="btn-confirm" onclick={createDeck} title={$t('common.create')}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                         </svg>
@@ -658,18 +659,18 @@
 
         <div class="deck-list">
             {#if decks.length === 0}
-                <div class="empty-state">No decks yet. Create one from a collection or current search.</div>
+                <div class="empty-state">{$t('anki.empty')}</div>
             {:else}
                 <table class="deck-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Source</th>
-                            <th class="narrow-col">Cards</th>
-                            <th class="narrow-col">New</th>
-                            <th class="narrow-col">Due</th>
-                            <th class="actions-col">Actions</th>
+                            <th>{$t('anki.colName')}</th>
+                            <th>{$t('anki.colDescription')}</th>
+                            <th>{$t('anki.colSource')}</th>
+                            <th class="narrow-col">{$t('anki.colCards')}</th>
+                            <th class="narrow-col">{$t('anki.colNew')}</th>
+                            <th class="narrow-col">{$t('anki.colDue')}</th>
+                            <th class="actions-col">{$t('anki.colActions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -698,13 +699,13 @@
                                                 type="text"
                                                 bind:value={editingDescription}
                                                 class="edit-desc"
-                                                placeholder="Description"
+                                                placeholder={$t('anki.colDescription')}
                                                 onkeydown={(e) => {
                                                     if (e.key === 'Enter') finishEditing(deck);
                                                     if (e.key === 'Escape') cancelEditing();
                                                 }}
                                             />
-                                            <button class="icon-btn" onclick={() => finishEditing(deck)} title="Save">
+                                            <button class="icon-btn" onclick={() => finishEditing(deck)} title={$t('common.save')}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                                 </svg>
@@ -722,7 +723,7 @@
                                     <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
                                     <td class="actions-col">
                                         <span class="item-actions">
-                                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title="Rename">
+                                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -731,7 +732,7 @@
                                                     />
                                                 </svg>
                                             </button>
-                                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title="Sync cards from source">
+                                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title={$t('anki.syncTooltip')}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -740,7 +741,7 @@
                                                     />
                                                 </svg>
                                             </button>
-                                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title="Delete deck">
+                                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title={$t('anki.deleteDeckTooltip')}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -765,19 +766,19 @@
                 <div class="detail-stats">
                     <div class="stat-box stat-box-new">
                         <div class="stat-number">{stats.newCount}</div>
-                        <div class="stat-label">New</div>
+                        <div class="stat-label">{$t('anki.statNew')}</div>
                     </div>
                     <div class="stat-box stat-box-learning">
                         <div class="stat-number">{stats.learningCount}</div>
-                        <div class="stat-label">Learning</div>
+                        <div class="stat-label">{$t('anki.statLearning')}</div>
                     </div>
                     <div class="stat-box stat-box-review">
                         <div class="stat-number">{stats.reviewCount}</div>
-                        <div class="stat-label">Review</div>
+                        <div class="stat-label">{$t('anki.statReview')}</div>
                     </div>
                     <div class="stat-box stat-box-total">
                         <div class="stat-number">{stats.totalCount}</div>
-                        <div class="stat-label">Total</div>
+                        <div class="stat-label">{$t('anki.statTotal')}</div>
                     </div>
                 </div>
                 <div class="detail-actions">
@@ -790,12 +791,12 @@
                             />
                         </svg>
                         {#if pausedSession && pausedSession.deckId === selectedDeck.id}
-                            Resume ({stats.dueCount} due, {pausedSession.sessionCount} reviewed)
+                            {$t('anki.resume', { due: stats.dueCount, reviewed: pausedSession.sessionCount })}
                         {:else}
-                            Study ({stats.dueCount} due)
+                            {$t('anki.study', { due: stats.dueCount })}
                         {/if}
                     </button>
-                    <button class="btn-settings" onclick={openSettings} title="Deck settings">
+                    <button class="btn-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path
                                 stroke-linecap="round"
@@ -805,7 +806,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                         </svg>
                     </button>
-                    <button class="btn-icon btn-reset" onclick={(e) => resetDeck(selectedDeck, e)} title="Reset all cards to new">
+                    <button class="btn-icon btn-reset" onclick={(e) => resetDeck(selectedDeck, e)} title={$t('anki.resetTooltip')}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path
                                 stroke-linecap="round"

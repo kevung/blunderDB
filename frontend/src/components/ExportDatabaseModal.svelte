@@ -3,6 +3,7 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
+    import { t } from '../i18n';
 
     let {
         visible = false,
@@ -93,25 +94,35 @@
     });
     // Computed description of what will be exported
     let exportDescription = $derived.by(() => {
+        const tr = $t;
         let parts = [];
-        if (exportOptions.includeAnalysis) parts.push('analysis');
-        if (exportOptions.includeComments) parts.push('comments');
-        if (exportOptions.includeFilterLibrary) parts.push('filter library');
-        if (exportOptions.includePlayedMoves) parts.push('played moves');
-        if (exportOptions.includeMatches && exportOptions.matchIDs.length > 0) parts.push(`${exportOptions.matchIDs.length} match${exportOptions.matchIDs.length > 1 ? 'es' : ''}`);
+        if (exportOptions.includeAnalysis) parts.push(tr('export.descAnalysis'));
+        if (exportOptions.includeComments) parts.push(tr('export.descComments'));
+        if (exportOptions.includeFilterLibrary) parts.push(tr('export.descFilterLibrary'));
+        if (exportOptions.includePlayedMoves) parts.push(tr('export.descPlayedMoves'));
+        if (exportOptions.includeMatches && exportOptions.matchIDs.length > 0)
+            parts.push(exportOptions.matchIDs.length > 1 ? tr('export.descMatchesPlural', { count: exportOptions.matchIDs.length }) : tr('export.descMatch', { count: exportOptions.matchIDs.length }));
         if (exportOptions.includeTournaments && exportOptions.includeTournamentIDs.length > 0)
-            parts.push(`${exportOptions.includeTournamentIDs.length} tournament${exportOptions.includeTournamentIDs.length > 1 ? 's' : ''}`);
+            parts.push(
+                exportOptions.includeTournamentIDs.length > 1
+                    ? tr('export.descTournamentsPlural', { count: exportOptions.includeTournamentIDs.length })
+                    : tr('export.descTournament', { count: exportOptions.includeTournamentIDs.length })
+            );
         if (exportOptions.includeCollections && exportOptions.collectionIDs.length > 0)
-            parts.push(`${exportOptions.collectionIDs.length} collection${exportOptions.collectionIDs.length > 1 ? 's' : ''}`);
+            parts.push(
+                exportOptions.collectionIDs.length > 1
+                    ? tr('export.descCollectionsPlural', { count: exportOptions.collectionIDs.length })
+                    : tr('export.descCollection', { count: exportOptions.collectionIDs.length })
+            );
 
         if (parts.length === 0) {
-            return 'positions only';
+            return tr('export.descPositionsOnly');
         } else if (parts.length === 1) {
             return `${parts[0]}`;
         } else if (parts.length === 2) {
-            return `${parts[0]} and ${parts[1]}`;
+            return tr('export.descTwo', { a: parts[0], b: parts[1] });
         } else {
-            return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
+            return tr('export.descMany', { list: parts.slice(0, -1).join(', '), last: parts[parts.length - 1] });
         }
     });
 
@@ -188,75 +199,75 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Export database" use:trapFocus>
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'preparing'}
-                <h2>Preparing Export <span class="spinner"></span></h2>
-                <p class="status-text">Counting positions to export...</p>
+                <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
+                <p class="status-text">{$t('export.countingPositions')}</p>
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>{$t('common.cancel')}</button>
                 </div>
             {:else if mode === 'metadata'}
-                <h2>Export Database</h2>
+                <h2>{$t('export.titleExport')}</h2>
 
                 <div class="summary">
-                    <p><strong>{positionCount} position(s)</strong> will be exported with {exportDescription}.</p>
+                    <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
                 </div>
 
                 <div class="form-group">
-                    <label for="export-user">User</label>
-                    <input id="export-user" type="text" bind:value={metadata.user} placeholder="Enter your name (optional)" />
+                    <label for="export-user">{$t('export.user')}</label>
+                    <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
                 </div>
 
                 <div class="form-group">
-                    <label for="export-description">Description</label>
-                    <textarea id="export-description" bind:value={metadata.description} placeholder="Enter a description for this database (optional)"></textarea>
+                    <label for="export-description">{$t('export.description')}</label>
+                    <textarea id="export-description" bind:value={metadata.description} placeholder={$t('export.descriptionPlaceholder')}></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="export-date">Creation Date</label>
+                    <label for="export-date">{$t('export.creationDate')}</label>
                     <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
                 </div>
 
                 <div class="checkbox-group">
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
-                        <label for="export-analysis">Include analysis</label>
+                        <label for="export-analysis">{$t('export.includeAnalysis')}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
-                        <label for="export-comments">Include comments</label>
+                        <label for="export-comments">{$t('export.includeComments')}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
-                        <label for="export-filter-library">Include filter library</label>
+                        <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
-                        <label for="export-played-moves">Include played moves</label>
+                        <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
-                        <label for="export-matches">Include matches ({matches.length})</label>
+                        <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
-                        <label for="export-tournaments">Include tournaments ({tournaments.length})</label>
+                        <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
-                        <label for="export-collections">Include collections ({collections.length})</label>
+                        <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
                     </div>
                 </div>
 
                 {#if exportOptions.includeMatches && matches.length > 0}
                     <div class="collections-section">
                         <div class="collections-header">
-                            <span>Select matches to export</span>
+                            <span>{$t('export.selectMatches')}</span>
                             <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllMatches}>All</button>
-                                <button type="button" class="small-btn" onclick={selectNoMatches}>None</button>
+                                <button type="button" class="small-btn" onclick={selectAllMatches}>{$t('export.all')}</button>
+                                <button type="button" class="small-btn" onclick={selectNoMatches}>{$t('export.none')}</button>
                             </div>
                         </div>
                         <div class="collections-list">
@@ -274,10 +285,10 @@
                 {#if exportOptions.includeTournaments && tournaments.length > 0}
                     <div class="collections-section">
                         <div class="collections-header">
-                            <span>Select tournaments to export</span>
+                            <span>{$t('export.selectTournaments')}</span>
                             <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllTournaments}>All</button>
-                                <button type="button" class="small-btn" onclick={selectNoTournaments}>None</button>
+                                <button type="button" class="small-btn" onclick={selectAllTournaments}>{$t('export.all')}</button>
+                                <button type="button" class="small-btn" onclick={selectNoTournaments}>{$t('export.none')}</button>
                             </div>
                         </div>
                         <div class="collections-list">
@@ -295,10 +306,10 @@
                 {#if exportOptions.includeCollections && collections.length > 0}
                     <div class="collections-section">
                         <div class="collections-header">
-                            <span>Select collections to export</span>
+                            <span>{$t('export.selectCollections')}</span>
                             <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllCollections}>All</button>
-                                <button type="button" class="small-btn" onclick={selectNoCollections}>None</button>
+                                <button type="button" class="small-btn" onclick={selectAllCollections}>{$t('export.all')}</button>
+                                <button type="button" class="small-btn" onclick={selectNoCollections}>{$t('export.none')}</button>
                             </div>
                         </div>
                         <div class="collections-list">
@@ -314,26 +325,26 @@
                 {/if}
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Cancel</button>
-                    <button class="btn-export" onclick={onExport}>Export</button>
+                    <button onclick={onCancel}>{$t('common.cancel')}</button>
+                    <button class="btn-export" onclick={onExport}>{$t('export.exportAction')}</button>
                 </div>
             {:else if mode === 'exporting'}
-                <h2>Exporting Database <span class="spinner"></span></h2>
-                <p class="status-text">Exporting {positionCount} position(s) to the new database...</p>
-                <p class="status-text">This may take a few moments.</p>
+                <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
+                <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
+                <p class="status-text">{$t('export.mayTakeMoments')}</p>
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>{$t('common.cancel')}</button>
                 </div>
             {:else if mode === 'completed'}
-                <h2>Export Completed</h2>
+                <h2>{$t('export.completedTitle')}</h2>
 
                 <div class="summary">
-                    <p><strong>Export successful!</strong> The database has been created with {positionCount} position(s).</p>
+                    <p>{$t('export.exportSuccessDetail', { count: positionCount })}</p>
                 </div>
 
                 <div class="button-group">
-                    <button onclick={onClose}>Close</button>
+                    <button onclick={onClose}>{$t('common.close')}</button>
                 </div>
             {/if}
         </div>

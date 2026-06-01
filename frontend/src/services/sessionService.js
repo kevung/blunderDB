@@ -1,3 +1,4 @@
+import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { SaveSessionState, LoadSessionState, LoadAllPositions } from '../../wailsjs/go/database/Database.js';
 
@@ -49,7 +50,7 @@ export async function restoreSessionState() {
                     lastSearchPosition: sessionState.lastSearchPosition ? JSON.parse(sessionState.lastSearchPosition) : null,
                     hasActiveSearch: sessionState.hasActiveSearch || false
                 });
-                setStatusBarMessage('Session restored with views');
+                setStatusBarMessage(tMsg('status.sessionRestoredViews'));
                 logger.log('Session restored with views');
                 return;
             }
@@ -79,7 +80,7 @@ export async function restoreSessionState() {
                 currentPositionIndexStore.set(-1);
                 currentPositionIndexStore.set(indexToRestore);
 
-                setStatusBarMessage(`Session restored: ${orderedPositions.length} positions, showing #${indexToRestore + 1}`);
+                setStatusBarMessage(tMsg('status.sessionRestored', { count: orderedPositions.length, index: indexToRestore + 1 }));
                 logger.log(`Session restored with ${orderedPositions.length} positions at index ${indexToRestore}`);
                 return;
             }

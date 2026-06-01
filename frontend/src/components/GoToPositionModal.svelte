@@ -5,6 +5,7 @@
     import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
+    import { t } from '../i18n';
 
     let { visible = false, onClose } = $props();
 
@@ -125,14 +126,23 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={onClose} role="dialog" aria-modal="true" aria-label="Go to position" use:trapFocus>
+    <div class="modal-overlay" onclick={onClose} role="dialog" aria-modal="true" aria-label={$t('goToPosition.title')} use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="close-button" onclick={onClose}>×</div>
-            <h2>Go To Position</h2>
-            <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} onkeydown={handleKeyDown} />
+            <h2>{$t('goToPosition.title')}</h2>
+            <input
+                type="number"
+                bind:value={positionNumber}
+                min="1"
+                max={maxPositionNumber}
+                placeholder={$t('goToPosition.placeholder')}
+                class="input-field"
+                bind:this={inputField}
+                onkeydown={handleKeyDown}
+            />
             <div class="modal-buttons">
-                <button class="primary-button" onclick={handleGoToPosition}>Go</button>
-                <button class="secondary-button" onclick={onClose}>Cancel</button>
+                <button class="primary-button" onclick={handleGoToPosition}>{$t('common.go')}</button>
+                <button class="secondary-button" onclick={onClose}>{$t('common.cancel')}</button>
             </div>
         </div>
     </div>

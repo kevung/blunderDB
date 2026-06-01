@@ -1,5 +1,6 @@
 <script>
     import { trapFocus } from '../utils/focusTrap.js';
+    import { t } from '../i18n';
 
     let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
 
@@ -11,11 +12,11 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="File import progress" use:trapFocus>
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'importing'}
-                <h2>Importing Files <span class="spinner"></span></h2>
-                <p class="status-text">Importing file {currentIndex} of {totalFiles}...</p>
+                <h2>{$t('import.importingFiles')} <span class="spinner"></span></h2>
+                <p class="status-text">{$t('import.importingFileN', { current: currentIndex, total: totalFiles })}</p>
                 <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
 
                 <div class="progress-bar-container">
@@ -24,26 +25,26 @@
                 <p class="progress-text">{progressPercent}%</p>
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>{$t('common.cancel')}</button>
                 </div>
             {:else if mode === 'completed'}
-                <h2>Import Completed</h2>
+                <h2>{$t('import.completedTitle')}</h2>
 
                 <div class="summary">
-                    <p><strong>Import finished.</strong> Processed {results.succeeded + results.failed + results.skipped} of {totalFiles} file(s).</p>
+                    <p><strong>{$t('import.finished')}</strong> {$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
                 </div>
 
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-label">Imported</div>
+                        <div class="stat-label">{$t('import.imported')}</div>
                         <div class="stat-value">{results.succeeded}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Skipped</div>
+                        <div class="stat-label">{$t('import.skipped')}</div>
                         <div class="stat-value">{results.skipped}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Failed</div>
+                        <div class="stat-label">{$t('import.failed')}</div>
                         <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
                     </div>
                 </div>
@@ -59,7 +60,7 @@
                 {/if}
 
                 <div class="button-group">
-                    <button onclick={onClose}>Close</button>
+                    <button onclick={onClose}>{$t('common.close')}</button>
                 </div>
             {/if}
         </div>

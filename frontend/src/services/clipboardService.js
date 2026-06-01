@@ -1,3 +1,4 @@
+import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { CopyImageToClipboard } from '../../wailsjs/go/gui/App.js';
 
@@ -12,7 +13,7 @@ import { logger } from '../utils/logger.js';
 
 export function copyPosition() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
     logger.log('copyPosition');
@@ -102,28 +103,28 @@ export function copyPosition() {
         .writeText(clipboardContent)
         .then(() => {
             logger.log('Position, analysis, and comment copied to clipboard');
-            setStatusBarMessage('Position, analysis, and comment copied to clipboard');
+            setStatusBarMessage(tMsg('status.positionCopied'));
         })
         .catch((err) => {
             logger.error('Error copying to clipboard:', err);
-            setStatusBarMessage('Error copying to clipboard');
+            setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
         });
 }
 
 export async function copyBoardImage() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
     try {
         const boardEl = document.getElementById('backgammon-board');
         if (!boardEl) {
-            setStatusBarMessage('Board element not found');
+            setStatusBarMessage(tMsg('status.boardElementNotFound'));
             return;
         }
         const svgEl = boardEl.querySelector('svg');
         if (!svgEl) {
-            setStatusBarMessage('Board SVG not found');
+            setStatusBarMessage(tMsg('status.boardSvgNotFound'));
             return;
         }
         const svgWidth = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
@@ -190,44 +191,44 @@ export async function copyBoardImage() {
             const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
             try {
                 await CopyImageToClipboard(base64Data);
-                setStatusBarMessage('Board image copied to clipboard');
+                setStatusBarMessage(tMsg('status.boardImageCopied'));
             } catch (err) {
                 logger.error('Failed to copy image to clipboard:', err);
-                setStatusBarMessage('Failed to copy image to clipboard: ' + err);
+                setStatusBarMessage(tMsg('status.failedCopyImage', { err }));
             }
         };
         img.onerror = () => {
             URL.revokeObjectURL(url);
-            setStatusBarMessage('Failed to render board image');
+            setStatusBarMessage(tMsg('status.failedRenderBoard'));
         };
         img.src = url;
     } catch (error) {
         logger.error('Error copying board image:', error);
-        setStatusBarMessage('Error copying board image');
+        setStatusBarMessage(tMsg('status.errorCopyingBoardImage'));
     }
 }
 
 export async function copyBoardWithAnalysisImage() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
     try {
         const boardEl = document.getElementById('backgammon-board');
         if (!boardEl) {
-            setStatusBarMessage('Board element not found');
+            setStatusBarMessage(tMsg('status.boardElementNotFound'));
             return;
         }
         const svgEl = boardEl.querySelector('svg');
         if (!svgEl) {
-            setStatusBarMessage('Board SVG not found');
+            setStatusBarMessage(tMsg('status.boardSvgNotFound'));
             return;
         }
 
         const analysis = get(analysisStore);
         const position = get(positionStore);
         if (!analysis || (!analysis.checkerAnalysis?.moves?.length && !analysis.doublingCubeAnalysis)) {
-            setStatusBarMessage('No analysis data to export');
+            setStatusBarMessage(tMsg('status.noAnalysisToExport'));
             return;
         }
 
@@ -324,20 +325,20 @@ export async function copyBoardWithAnalysisImage() {
             const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
             try {
                 await CopyImageToClipboard(base64Data);
-                setStatusBarMessage('Board + analysis image copied to clipboard');
+                setStatusBarMessage(tMsg('status.boardAnalysisCopied'));
             } catch (err) {
                 logger.error('Failed to copy image to clipboard:', err);
-                setStatusBarMessage('Failed to copy image to clipboard: ' + err);
+                setStatusBarMessage(tMsg('status.failedCopyImage', { err }));
             }
         };
         img.onerror = () => {
             URL.revokeObjectURL(url);
-            setStatusBarMessage('Failed to render board image');
+            setStatusBarMessage(tMsg('status.failedRenderBoard'));
         };
         img.src = url;
     } catch (error) {
         logger.error('Error copying board+analysis image:', error);
-        setStatusBarMessage('Error copying board+analysis image');
+        setStatusBarMessage(tMsg('status.errorCopyingBoardAnalysis'));
     }
 }
 

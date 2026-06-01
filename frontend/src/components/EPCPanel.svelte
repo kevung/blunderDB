@@ -1,6 +1,7 @@
 <script>
     import { statusBarModeStore } from '../stores/uiStore';
     import { epcDataStore } from '../stores/epcStore';
+    import { t } from '../i18n';
 
     let isActive = $derived($statusBarModeStore === 'EPC');
     let data = $derived($epcDataStore);
@@ -17,7 +18,7 @@
                         d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"
                     />
                 </svg>
-                <span>EPC calculator is inactive. Edit the board to compute EPC values.</span>
+                <span>{$t('epc.inactive')}</span>
             </div>
         </div>
     {:else if data.error}
@@ -27,7 +28,7 @@
     {:else if !data.bottomEPC && !data.topEPC}
         <div class="epc-inactive">
             <div class="epc-inactive-message">
-                <span>Place checkers on the home board to compute EPC.</span>
+                <span>{$t('epc.placeCheckers')}</span>
             </div>
         </div>
     {:else}
@@ -37,27 +38,27 @@
                 <div class="epc-player-section">
                     <div class="epc-player-header">
                         <span class="player-indicator bottom"></span>
-                        <span class="player-label">Bottom (Black)</span>
+                        <span class="player-label">{$t('epc.bottomBlack')}</span>
                     </div>
                     <div class="epc-grid">
                         <div class="epc-card epc-main">
-                            <div class="epc-card-label">EPC</div>
+                            <div class="epc-card-label">{$t('epc.epc')}</div>
                             <div class="epc-card-value">{data.bottomEPC.epc.toFixed(2)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Pip Count</div>
+                            <div class="epc-card-label">{$t('epc.pipCount')}</div>
                             <div class="epc-card-value">{data.bottomEPC.pipCount}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Wastage</div>
+                            <div class="epc-card-label">{$t('epc.wastage')}</div>
                             <div class="epc-card-value">{data.bottomEPC.wastage.toFixed(2)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Avg Rolls</div>
+                            <div class="epc-card-label">{$t('epc.avgRolls')}</div>
                             <div class="epc-card-value">{data.bottomEPC.meanRolls.toFixed(3)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Std Dev</div>
+                            <div class="epc-card-label">{$t('epc.stdDev')}</div>
                             <div class="epc-card-value">{data.bottomEPC.stdDev.toFixed(3)}</div>
                         </div>
                     </div>
@@ -69,27 +70,27 @@
                 <div class="epc-player-section">
                     <div class="epc-player-header">
                         <span class="player-indicator top"></span>
-                        <span class="player-label">Top (White)</span>
+                        <span class="player-label">{$t('epc.topWhite')}</span>
                     </div>
                     <div class="epc-grid">
                         <div class="epc-card epc-main">
-                            <div class="epc-card-label">EPC</div>
+                            <div class="epc-card-label">{$t('epc.epc')}</div>
                             <div class="epc-card-value">{data.topEPC.epc.toFixed(2)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Pip Count</div>
+                            <div class="epc-card-label">{$t('epc.pipCount')}</div>
                             <div class="epc-card-value">{data.topEPC.pipCount}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Wastage</div>
+                            <div class="epc-card-label">{$t('epc.wastage')}</div>
                             <div class="epc-card-value">{data.topEPC.wastage.toFixed(2)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Avg Rolls</div>
+                            <div class="epc-card-label">{$t('epc.avgRolls')}</div>
                             <div class="epc-card-value">{data.topEPC.meanRolls.toFixed(3)}</div>
                         </div>
                         <div class="epc-card">
-                            <div class="epc-card-label">Std Dev</div>
+                            <div class="epc-card-label">{$t('epc.stdDev')}</div>
                             <div class="epc-card-value">{data.topEPC.stdDev.toFixed(3)}</div>
                         </div>
                     </div>
@@ -99,22 +100,22 @@
             <!-- Comparison section when both players have data -->
             {#if data.bottomEPC && data.topEPC}
                 <div class="epc-comparison">
-                    <div class="epc-comparison-header">Comparison</div>
+                    <div class="epc-comparison-header">{$t('epc.comparison')}</div>
                     <div class="epc-comparison-grid">
                         <div class="epc-comp-item">
-                            <span class="comp-label">EPC Diff</span>
+                            <span class="comp-label">{$t('epc.epcDiff')}</span>
                             <span class="comp-value" class:advantage-bottom={data.bottomEPC.epc < data.topEPC.epc} class:advantage-top={data.topEPC.epc < data.bottomEPC.epc}>
                                 {Math.abs(data.bottomEPC.epc - data.topEPC.epc).toFixed(2)}
                             </span>
                         </div>
                         <div class="epc-comp-item">
-                            <span class="comp-label">Pip Diff</span>
+                            <span class="comp-label">{$t('epc.pipDiff')}</span>
                             <span class="comp-value" class:advantage-bottom={data.bottomEPC.pipCount < data.topEPC.pipCount} class:advantage-top={data.topEPC.pipCount < data.bottomEPC.pipCount}>
                                 {Math.abs(data.bottomEPC.pipCount - data.topEPC.pipCount)}
                             </span>
                         </div>
                         <div class="epc-comp-item">
-                            <span class="comp-label">Wastage Diff</span>
+                            <span class="comp-label">{$t('epc.wastageDiff')}</span>
                             <span class="comp-value">
                                 {Math.abs(data.bottomEPC.wastage - data.topEPC.wastage).toFixed(2)}
                             </span>

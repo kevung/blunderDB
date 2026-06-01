@@ -50,6 +50,18 @@ export default [
         },
     },
     {
-        ignores: ['wailsjs/**', 'dist/**', 'node_modules/**'],
+        // HelpModal renders the in-app help, which is app-owned HTML loaded from
+        // src/i18n/help/*.js (no user input), so {@html} is safe here by design.
+        files: ['**/components/HelpModal.svelte'],
+        rules: {
+            'svelte/no-at-html-tags': 'off',
+        },
+    },
+    {
+        // src/i18n/help/*.js are generated data files: each exports a single
+        // multi-KB HTML template-literal string per help tab. They parse fine at
+        // runtime (node/Vite) but exceed eslint's espree parser limits, so we skip
+        // linting them — they contain no logic to lint.
+        ignores: ['wailsjs/**', 'dist/**', 'node_modules/**', 'src/i18n/help/*.js'],
     },
 ];

@@ -1,5 +1,6 @@
 <script>
     import { trapFocus } from '../utils/focusTrap.js';
+    import { t } from '../i18n';
 
     let { visible = false, onClose, tables = [] } = $props();
 
@@ -25,7 +26,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={() => onClose()} role="dialog" aria-modal="true" aria-label="Data table" use:trapFocus>
+    <div class="modal-overlay" onclick={() => onClose()} role="dialog" aria-modal="true" aria-label={$t('datatable.title')} use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="table-container" class:multi={tables.length > 1}>
                 {#each tables as { title, data, precision, colCount, colOffset, rowOffset } (title)}

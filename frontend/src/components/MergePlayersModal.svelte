@@ -1,8 +1,10 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { SvelteSet } from 'svelte/reactivity';
+    import { get } from 'svelte/store';
     import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/database/Database.js';
     import { statusBarTextStore } from '../stores/uiStore';
+    import { t, tMsg } from '../i18n';
 
     // Props
     let { onClose, onMerged } = $props();
@@ -36,7 +38,7 @@
             allPlayers = result || [];
         } catch (e) {
             logger.error('MergePlayersModal: failed to load players', e);
-            error = 'Failed to load player names.';
+            error = get(t)('merge.errorLoad');
         } finally {
             loading = false;
         }
@@ -66,18 +68,18 @@
         const namesToMerge = [...selectedNames];
         const target = canonicalName.trim();
         if (namesToMerge.length < 2) {
-            error = 'Select at least 2 names to merge.';
+            error = get(t)('merge.errorSelect');
             return;
         }
         if (!target) {
-            error = 'Enter a canonical name.';
+            error = get(t)('merge.errorCanonical');
             return;
         }
         saving = true;
         error = '';
         try {
             await MergePlayers(namesToMerge, target);
-            statusBarTextStore.set(`Merged ${namesToMerge.length} names → "${target}"`);
+            statusBarTextStore.set(tMsg('merge.merged', { n: namesToMerge.length, target }));
             onMerged();
             onClose();
         } catch (e) {
@@ -97,21 +99,21 @@
     }
 </script>
 
-<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Merge players" onkeydown={handleKeyDown}>
+<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={$t('merge.ariaLabel')} onkeydown={handleKeyDown}>
     <div class="modal-box">
         <div class="modal-header">
-            <span class="modal-title">Merge player names</span>
-            <button class="close-btn" onclick={onClose} title="Close">×</button>
+            <span class="modal-title">{$t('merge.title')}</span>
+            <button class="close-btn" onclick={onClose} title={$t('common.close')}>×</button>
         </div>
 
         <div class="modal-body">
-            <p class="hint">Select the names that represent the same person, then choose or type the canonical name to keep. All matches will be updated.</p>
+            <p class="hint">{$t('merge.hint')}</p>
 
             <!-- Filter input -->
             <input
                 class="filter-input"
                 type="text"
-                placeholder="Filter players…"
+                placeholder={$t('merge.filterPlaceholder')}
                 bind:value={filterText}
                 onkeydown={(e) => {
                     if (e.key === 'Escape') {
@@ -127,9 +129,9 @@
 
             <!-- Player list -->
             {#if loading}
-                <div class="state-msg">Loading…</div>
+                <div class="state-msg">{$t('common.loading')}</div>
             {:else if allPlayers.length === 0}
-                <div class="state-msg">No players found.</div>
+                <div class="state-msg">{$t('merge.noPlayers')}</div>
             {:else}
                 <div class="player-list">
                     {#each filteredPlayers as p (p.Name)}
@@ -138,14 +140,14 @@
                         <div class="player-row" class:selected={selectedNames.has(p.Name)} onclick={() => toggleSelect(p.Name)}>
                             <input type="checkbox" checked={selectedNames.has(p.Name)} tabindex="-1" onclick={(e) => e.stopPropagation()} onchange={() => toggleSelect(p.Name)} />
                             <span class="player-name">{p.Name}</span>
-                            <span class="player-count" title="Number of matches">{p.Count}</span>
+                            <span class="player-count" title={$t('merge.matchCountTitle')}>{p.Count}</span>
                             <button
                                 class="use-btn"
-                                title="Use as canonical name"
+                                title={$t('merge.useAsCanonical')}
                                 onclick={(e) => {
                                     e.stopPropagation();
                                     useAsCanonical(p.Name);
-                                }}>✓ use</button
+                                }}>✓ {$t('merge.use')}</button
                             >
                         </div>
                     {/each}
@@ -154,13 +156,13 @@
 
             <!-- Canonical name -->
             <div class="canonical-row">
-                <label class="canonical-label" for="canonical-input">Canonical name:</label>
+                <label class="canonical-label" for="canonical-input">{$t('merge.canonicalName')}</label>
                 <input
                     id="canonical-input"
                     class="canonical-input"
                     type="text"
                     bind:value={canonicalName}
-                    placeholder="Name to keep"
+                    placeholder={$t('merge.nameToKeepPlaceholder')}
                     onkeydown={(e) => {
                         if (e.key === 'Enter') doMerge();
                         if (e.key === 'Escape') {
@@ -178,16 +180,16 @@
             <!-- Summary of selection -->
             {#if selectedNames.size > 0}
                 <div class="selection-summary">
-                    {selectedNames.size} name{selectedNames.size > 1 ? 's' : ''} selected:
+                    {selectedNames.size === 1 ? $t('merge.selectedSummary', { n: selectedNames.size }) : $t('merge.selectedSummaryPlural', { n: selectedNames.size })}
                     {[...selectedNames].join(', ')}
                 </div>
             {/if}
         </div>
 
         <div class="modal-footer">
-            <button class="btn-cancel" onclick={onClose} disabled={saving}>Cancel</button>
+            <button class="btn-cancel" onclick={onClose} disabled={saving}>{$t('common.cancel')}</button>
             <button class="btn-merge" onclick={doMerge} disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}>
-                {saving ? 'Merging…' : `Merge ${selectedNames.size > 0 ? selectedNames.size : ''} names`}
+                {saving ? $t('merge.merging') : $t('merge.mergeButton', { n: selectedNames.size > 0 ? selectedNames.size : '' })}
             </button>
         </div>
     </div>

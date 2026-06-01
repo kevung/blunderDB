@@ -3,6 +3,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
+    import { t } from '../i18n';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -191,13 +192,6 @@
 
     function formatEquity(value) {
         return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
-    }
-
-    function getDecisionLabel(decision) {
-        if (cubeValue >= 1) {
-            return decision.replace('Double', 'Redouble');
-        }
-        return decision;
     }
 
     // Normalize a move string for comparison by sorting individual moves
@@ -443,7 +437,7 @@
     let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);
 </script>
 
-<section class="analysis-panel" role="dialog" aria-modal="true" aria-label="Position analysis" id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
+<section class="analysis-panel" role="dialog" aria-modal="true" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
@@ -452,30 +446,30 @@
                         <tbody>
                             <tr>
                                 <th></th>
-                                <th>P</th>
-                                <th>O</th>
+                                <th>{$t('analysis.player')}</th>
+                                <th>{$t('analysis.opponent')}</th>
                             </tr>
                             <tr>
-                                <td>W</td>
+                                <td>{$t('analysis.win')}</td>
                                 <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
                                 <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
                             </tr>
                             <tr>
-                                <td>G</td>
+                                <td>{$t('analysis.gammon')}</td>
                                 <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
                                 <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
                             </tr>
                             <tr>
-                                <td>B</td>
+                                <td>{$t('analysis.backgammon')}</td>
                                 <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
                                 <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
                             </tr>
                             <tr>
-                                <td>ND Eq</td>
+                                <td>{$t('analysis.noDoubleEquity')}</td>
                                 <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
                             </tr>
                             <tr>
-                                <td>D Eq</td>
+                                <td>{$t('analysis.doubleEquity')}</td>
                                 <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
                             </tr>
                         </tbody>
@@ -483,27 +477,27 @@
                     <table class="right-table">
                         <tbody>
                             <tr>
-                                <th>Decision</th>
-                                <th>Equity</th>
-                                <th>Error</th>
+                                <th>{$t('analysis.decision')}</th>
+                                <th>{$t('analysis.equity')}</th>
+                                <th>{$t('analysis.error')}</th>
                             </tr>
                             <tr class:played={isPlayedCubeAction('No Double')}>
-                                <td>{getDecisionLabel('No Double')}</td>
+                                <td>{$t(cubeValue >= 1 ? 'analysis.noRedouble' : 'analysis.noDouble')}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulNoDoubleError || 0)}</td>
                             </tr>
                             <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
-                                <td>{getDecisionLabel('Double/Take')}</td>
+                                <td>{$t(cubeValue >= 1 ? 'analysis.redoubleTake' : 'analysis.doubleTake')}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeError || 0)}</td>
                             </tr>
                             <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
-                                <td>{getDecisionLabel('Double/Pass')}</td>
+                                <td>{$t(cubeValue >= 1 ? 'analysis.redoublePass' : 'analysis.doublePass')}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulDoublePassEquity || 0)}</td>
                                 <td>{formatEquity(cubeAnalysis.cubefulDoublePassError || 0)}</td>
                             </tr>
                             <tr class="best-action-row {cubeAnalysis.bestCubeAction && cubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
-                                <td>Best Action</td>
+                                <td>{$t('analysis.bestAction')}</td>
                                 <td colspan="2">{cubeAnalysis.bestCubeAction || ''}</td>
                             </tr>
                         </tbody>
@@ -511,11 +505,11 @@
                     <table class="info-table">
                         <tbody>
                             <tr>
-                                <th>Analysis Depth</th>
+                                <th>{$t('analysis.analysisDepth')}</th>
                                 <td>{cubeAnalysis.analysisDepth}</td>
                             </tr>
                             <tr>
-                                <th>Engine</th>
+                                <th>{$t('analysis.engine')}</th>
                                 <td>{cubeAnalysis.analysisEngine || analysisData.analysisEngineVersion}</td>
                             </tr>
                         </tbody>
@@ -534,7 +528,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('move'))();
-                            }}>Move{getSortIndicator('move')}</th
+                            }}>{$t('analysis.move')}{getSortIndicator('move')}</th
                         >
                         <th
                             class="sortable"
@@ -542,7 +536,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('equity'))();
-                            }}>Equity</th
+                            }}>{$t('analysis.equity')}</th
                         >
                         <th
                             class="sortable"
@@ -550,7 +544,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('error'))();
-                            }}>Error{getSortIndicator('error')}</th
+                            }}>{$t('analysis.error')}{getSortIndicator('error')}</th
                         >
                         <th
                             class="sortable"
@@ -558,7 +552,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('pw'))();
-                            }}>P W{getSortIndicator('pw')}</th
+                            }}>{$t('analysis.playerWin')}{getSortIndicator('pw')}</th
                         >
                         <th
                             class="sortable"
@@ -566,7 +560,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('pg'))();
-                            }}>P G{getSortIndicator('pg')}</th
+                            }}>{$t('analysis.playerGammon')}{getSortIndicator('pg')}</th
                         >
                         <th
                             class="sortable"
@@ -574,7 +568,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('pb'))();
-                            }}>P B{getSortIndicator('pb')}</th
+                            }}>{$t('analysis.playerBackgammon')}{getSortIndicator('pb')}</th
                         >
                         <th
                             class="sortable"
@@ -582,7 +576,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('ow'))();
-                            }}>O W{getSortIndicator('ow')}</th
+                            }}>{$t('analysis.opponentWin')}{getSortIndicator('ow')}</th
                         >
                         <th
                             class="sortable"
@@ -590,7 +584,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('og'))();
-                            }}>O G{getSortIndicator('og')}</th
+                            }}>{$t('analysis.opponentGammon')}{getSortIndicator('og')}</th
                         >
                         <th
                             class="sortable"
@@ -598,7 +592,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('ob'))();
-                            }}>O B{getSortIndicator('ob')}</th
+                            }}>{$t('analysis.opponentBackgammon')}{getSortIndicator('ob')}</th
                         >
                         <th
                             class="sortable"
@@ -606,7 +600,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('depth'))();
-                            }}>Depth{getSortIndicator('depth')}</th
+                            }}>{$t('analysis.depth')}{getSortIndicator('depth')}</th
                         >
                         <th
                             class="sortable"
@@ -614,7 +608,7 @@
                             onclick={(e) => {
                                 e.stopPropagation();
                                 (() => handleSort('engine'))();
-                            }}>Engine{getSortIndicator('engine')}</th
+                            }}>{$t('analysis.engine')}{getSortIndicator('engine')}</th
                         >
                     </tr>
                 </thead>

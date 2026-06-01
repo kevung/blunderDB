@@ -17,6 +17,7 @@
         GetMatchDetailStats
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
+    import { t, tMsg } from '../i18n';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import {
         statusBarModeStore,
@@ -193,10 +194,10 @@
             await SetMatchTournamentByName(editingTournamentMatchId, editTournamentValue.trim());
             await loadMatches();
             await loadTournaments();
-            statusBarTextStore.set(editTournamentValue.trim() ? `Tournament set to "${editTournamentValue.trim()}"` : 'Tournament cleared');
+            statusBarTextStore.set(editTournamentValue.trim() ? tMsg('match.tournamentSet', { name: editTournamentValue.trim() }) : tMsg('match.tournamentCleared'));
         } catch (error) {
             logger.error('Error setting tournament:', error);
-            statusBarTextStore.set('Error setting tournament');
+            statusBarTextStore.set(tMsg('match.errorSettingTournament'));
         }
         editingTournamentMatchId = null;
         editTournamentValue = '';
@@ -245,10 +246,10 @@
         try {
             await UpdateMatch(editingMatchId, editPlayer1Value, editPlayer2Value, editDateValue);
             await loadMatches();
-            statusBarTextStore.set('Match updated');
+            statusBarTextStore.set(tMsg('match.matchUpdated'));
         } catch (error) {
             logger.error('Error updating match:', error);
-            statusBarTextStore.set('Error updating match');
+            statusBarTextStore.set(tMsg('match.errorUpdating'));
         }
         editingMatchId = null;
     }
@@ -273,10 +274,10 @@
             const m = matches.find((x) => x.id === detailMatch.id);
             if (m) m.comment = editDetailCommentText;
             matches = matches;
-            statusBarTextStore.set('Comment updated');
+            statusBarTextStore.set(tMsg('match.commentUpdated'));
         } catch (error) {
             logger.error('Error updating comment:', error);
-            statusBarTextStore.set('Error updating comment');
+            statusBarTextStore.set(tMsg('match.errorUpdatingComment'));
         }
         editingDetailComment = false;
     }
@@ -524,7 +525,7 @@
             await loadMatchDetail(match);
         }
         if (!detailMovePositions.length) {
-            statusBarTextStore.set('No moves found in this match');
+            statusBarTextStore.set(tMsg('match.noMovesFound'));
             return;
         }
 
@@ -562,10 +563,10 @@
             dbMutationCounterStore.update((n) => n + 1);
             // Trigger position reload to reflect deleted positions
             positionReloadTriggerStore.update((n) => n + 1);
-            statusBarTextStore.set('Match deleted');
+            statusBarTextStore.set(tMsg('match.matchDeleted'));
         } catch (error) {
             logger.error('Error deleting match:', error);
-            statusBarTextStore.set('Error deleting match');
+            statusBarTextStore.set(tMsg('match.errorDeleting'));
         }
     }
 
@@ -602,10 +603,10 @@
                 await loadMatchDetail(detailMatch);
             }
 
-            statusBarTextStore.set(`Swapped players for match`);
+            statusBarTextStore.set(tMsg('match.swappedPlayers'));
         } catch (error) {
             logger.error('Error swapping match players:', error);
-            statusBarTextStore.set('Error swapping match players');
+            statusBarTextStore.set(tMsg('match.errorSwapping'));
         }
     }
 
@@ -616,13 +617,13 @@
 
     function _formatMoveText(mp) {
         if (mp.move_type === 'cube') {
-            return mp.cube_action || 'Cube action';
+            return mp.cube_action || get(t)('match.cubeAction');
         }
         return mp.checker_move || '—';
     }
 
     function getPlayerName(mp) {
-        return mp.player_on_roll === 0 ? mp.player1_name || 'Player 1' : mp.player2_name || 'Player 2';
+        return mp.player_on_roll === 0 ? mp.player1_name || get(t)('match.player1') : mp.player2_name || get(t)('match.player2');
     }
 
     function formatDate(dateStr) {
@@ -764,12 +765,12 @@
     });
 </script>
 
-<section class="match-panel" role="dialog" aria-modal="true" aria-label="Match navigator" id="matchPanel" tabindex="-1">
+<section class="match-panel" role="dialog" aria-modal="true" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>
             <div class="match-list-toolbar">
-                <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title="Find and merge duplicate player names" disabled={matches.length === 0}>⇢ Merge players</button>
+                <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
             <div class="match-table-container">
                 <table class="match-table">
@@ -777,19 +778,24 @@
                         <tr>
                             <th class="no-select narrow-col">#</th>
                             <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
-                                >Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >{$t('match.date')}
+                                {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select sortable" onclick={() => handleSort('player1')}
-                                >Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >{$t('match.player1')}
+                                {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select sortable" onclick={() => handleSort('player2')}
-                                >Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >{$t('match.player2')}
+                                {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select sortable narrow-col" onclick={() => handleSort('length')}
-                                >Pts {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >{$t('match.pts')}
+                                {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select sortable tournament-col" onclick={() => handleSort('tournament')}
-                                >Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >{$t('match.tournament')}
+                                {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
                                 >PR {#if sortColumn === 'pr'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
@@ -809,10 +815,10 @@
                                         <input type="date" class="match-edit-input" bind:value={editDateValue} onkeydown={handleMatchEditKeyDown} />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} onkeydown={handleMatchEditKeyDown} placeholder="Player 1" />
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} onkeydown={handleMatchEditKeyDown} placeholder={$t('match.player1')} />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} onkeydown={handleMatchEditKeyDown} placeholder="Player 2" />
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} onkeydown={handleMatchEditKeyDown} placeholder={$t('match.player2')} />
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
@@ -826,7 +832,7 @@
                                                     e.stopPropagation();
                                                     saveMatchEdit(e);
                                                 }}
-                                                title="Save">✓</button
+                                                title={$t('common.save')}>✓</button
                                             >
                                             <button
                                                 class="icon-btn"
@@ -834,7 +840,7 @@
                                                     e.stopPropagation();
                                                     cancelMatchEdit(e);
                                                 }}
-                                                title="Cancel">✕</button
+                                                title={$t('common.cancel')}>✕</button
                                             >
                                         </span>
                                     </td>
@@ -862,7 +868,7 @@
                                                     oninput={filterTournaments}
                                                     onkeydown={handleTournamentKeyDown}
                                                     onblur={() => setTimeout(cancelTournamentEdit, 200)}
-                                                    placeholder="Tournament name"
+                                                    placeholder={$t('match.tournamentNamePlaceholder')}
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
@@ -881,7 +887,7 @@
                                                 {/if}
                                             </div>
                                         {:else}
-                                            <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
+                                            <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || ''}</span>
                                         {/if}
                                     </td>
                                     <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
@@ -894,7 +900,7 @@
                                                     e.stopPropagation();
                                                     ((e) => swapMatchPlayers(match, e))(e);
                                                 }}
-                                                title="Swap players">⇄</button
+                                                title={$t('match.swapPlayers')}>⇄</button
                                             >
                                             <button
                                                 class="icon-btn"
@@ -902,7 +908,7 @@
                                                     e.stopPropagation();
                                                     ((e) => startEditMatch(match, e))(e);
                                                 }}
-                                                title="Edit">✎</button
+                                                title={$t('common.edit')}>✎</button
                                             >
                                             <button
                                                 class="icon-btn delete"
@@ -910,7 +916,7 @@
                                                     e.stopPropagation();
                                                     ((e) => deleteMatchEntry(match, e))(e);
                                                 }}
-                                                title="Delete">×</button
+                                                title={$t('common.delete')}>×</button
                                             >
                                         </span>
                                     </td>
@@ -920,7 +926,7 @@
                     </tbody>
                 </table>
                 {#if matches.length === 0}
-                    <div class="empty-state">No matches imported yet</div>
+                    <div class="empty-state">{$t('match.noMatchesImported')}</div>
                 {/if}
             </div>
         </div>
@@ -932,29 +938,29 @@
                 <div class="detail-header">
                     <div class="detail-title">
                         <span class="player-name">{detailMatch.player1_name}</span>
-                        <span class="vs-label">vs</span>
+                        <span class="vs-label">{$t('match.vs')}</span>
                         <span class="player-name">{detailMatch.player2_name}</span>
                         <span class="match-length-badge">{detailMatch.match_length} pt</span>
                     </div>
                     <div class="detail-meta">
                         {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
-                            <span class="meta-item" title="Date">{formatDate(detailMatch.match_date)}</span>
+                            <span class="meta-item" title={$t('match.date')}>{formatDate(detailMatch.match_date)}</span>
                         {/if}
                         {#if detailMatch.tournament_name || detailMatch.event}
-                            <span class="meta-item meta-tournament" title="Tournament">{detailMatch.tournament_name || detailMatch.event}</span>
+                            <span class="meta-item meta-tournament" title={$t('match.tournament')}>{detailMatch.tournament_name || detailMatch.event}</span>
                         {/if}
                         {#if detailMatch.round}
-                            <span class="meta-item" title="Round">R{detailMatch.round}</span>
+                            <span class="meta-item" title={$t('match.round')}>R{detailMatch.round}</span>
                         {/if}
                         {#if detailMatch.location}
-                            <span class="meta-item" title="Location">{detailMatch.location}</span>
+                            <span class="meta-item" title={$t('match.location')}>{detailMatch.location}</span>
                         {/if}
                     </div>
                     <div class="detail-tabs">
-                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>Transcript</button>
-                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>Info</button>
-                        <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>Stats</button>
-                        <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
+                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>{$t('match.transcript')}</button>
+                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
+                        <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
+                        <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
                     </div>
                 </div>
 
@@ -962,22 +968,22 @@
                 {#if detailView === 'transcript'}
                     <div class="transcript-container">
                         {#if loadingDetail}
-                            <div class="loading-state">Loading...</div>
+                            <div class="loading-state">{$t('common.loading')}</div>
                         {:else if transcriptGames.length === 0}
-                            <div class="empty-state">No moves recorded</div>
+                            <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
                             {#each transcriptGames as game (game.gameNumber)}
                                 <div class="game-section">
                                     <div class="game-header">
-                                        <span class="game-title">Game {game.gameNumber}</span>
+                                        <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
                                         {#if game.gameInfo}
-                                            <span class="game-score">Score: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
+                                            <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
                                             {#if game.gameInfo.winner >= 0}
                                                 <span class="game-result"
-                                                    >Won by {game.gameInfo.winner === 0 ? detailMatch.player1_name : detailMatch.player2_name} ({game.gameInfo.points_won} pt{game.gameInfo.points_won >
-                                                    1
-                                                        ? 's'
-                                                        : ''})</span
+                                                    >{$t('match.wonBy', {
+                                                        player: game.gameInfo.winner === 0 ? detailMatch.player1_name : detailMatch.player2_name,
+                                                        points: game.gameInfo.points_won
+                                                    })}</span
                                                 >
                                             {/if}
                                         {/if}
@@ -986,15 +992,15 @@
                                         <thead>
                                             <tr>
                                                 <th class="transcript-num">#</th>
-                                                <th class="transcript-player">Player</th>
-                                                <th class="transcript-dice">Dice</th>
-                                                <th class="transcript-move">Move</th>
+                                                <th class="transcript-player">{$t('match.player')}</th>
+                                                <th class="transcript-dice">{$t('match.dice')}</th>
+                                                <th class="transcript-move">{$t('match.move')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {#each game.moves as mp, mi (mi)}
                                                 {@const globalIdx = detailMovePositions.indexOf(mp)}
-                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title="Click to review this position">
+                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
                                                     <td class="transcript-num">{mi + 1}</td>
                                                     <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
                                                         {getPlayerName(mp)}
@@ -1006,7 +1012,7 @@
                                                     </td>
                                                     <td class="transcript-move">
                                                         {#if mp.move_type === 'cube'}
-                                                            <span class="cube-action">{mp.cube_action || 'Cube'}</span>
+                                                            <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
                                                         {:else}
                                                             {mp.checker_move || '—'}
                                                         {/if}
@@ -1026,27 +1032,31 @@
                     <div class="metadata-container">
                         <table class="metadata-table">
                             <tbody>
-                                <tr><td class="meta-label">Player 1</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
-                                <tr><td class="meta-label">Player 2</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
-                                <tr><td class="meta-label">Match length</td><td class="meta-value">{detailMatch.match_length} point{detailMatch.match_length > 1 ? 's' : ''}</td></tr>
-                                <tr><td class="meta-label">Games</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
-                                <tr><td class="meta-label">Date</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
+                                <tr><td class="meta-label">{$t('match.player1')}</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.player2')}</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
+                                <tr
+                                    ><td class="meta-label">{$t('match.matchLength')}</td><td class="meta-value"
+                                        >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
+                                    ></tr
+                                >
+                                <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
                                 <tr>
-                                    <td class="meta-label">Comment</td>
+                                    <td class="meta-label">{$t('match.comment')}</td>
                                     <td class="meta-value">
                                         {#if editingDetailComment}
                                             <input type="text" class="match-comment-input" bind:value={editDetailCommentText} onkeydown={handleDetailCommentKeyDown} onblur={saveDetailComment} />
                                         {:else}
                                             <!-- svelte-ignore a11y_click_events_have_key_events -->
                                             <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                            <span class="match-comment-display" onclick={startEditDetailComment} title="Click to add comment">
-                                                {detailMatch.comment || 'Add comment…'}
+                                            <span class="match-comment-display" onclick={startEditDetailComment} title={$t('match.clickToAddComment')}>
+                                                {detailMatch.comment || $t('match.addComment')}
                                             </span>
                                         {/if}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="meta-label">Tournament</td>
+                                    <td class="meta-label">{$t('match.tournament')}</td>
                                     <td
                                         class="meta-value tournament-meta-cell"
                                         onclick={(e) => {
@@ -1063,7 +1073,7 @@
                                                     oninput={filterTournaments}
                                                     onkeydown={handleTournamentKeyDown}
                                                     onblur={() => setTimeout(cancelTournamentEdit, 200)}
-                                                    placeholder="Tournament name"
+                                                    placeholder={$t('match.tournamentNamePlaceholder')}
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
@@ -1082,16 +1092,16 @@
                                                 {/if}
                                             </div>
                                         {:else}
-                                            <span class="tournament-display" title="Click to edit">{detailMatch.tournament_name || detailMatch.event || '—'}</span>
+                                            <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
                                         {/if}
                                     </td>
                                 </tr>
-                                <tr><td class="meta-label">Event</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
-                                <tr><td class="meta-label">Location</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
-                                <tr><td class="meta-label">Round</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
-                                <tr><td class="meta-label">Source file</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
-                                <tr><td class="meta-label">Import date</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
-                                <tr><td class="meta-label">Match ID</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
+                                <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
+                                <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
+                                <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1101,14 +1111,14 @@
                 {#if detailView === 'stats'}
                     <div class="stats-container">
                         {#if loadingStats}
-                            <div class="loading-state">Loading stats…</div>
+                            <div class="loading-state">{$t('match.loadingStats')}</div>
                         {:else if !detailStats}
-                            <div class="empty-state">No analysed positions found for this match.</div>
+                            <div class="empty-state">{$t('match.noAnalysedPositions')}</div>
                         {:else}
                             {@const p1 = detailStats.player1}
                             {@const p2 = detailStats.player2}
-                            {@const p1Name = detailMatch.player1_name || 'Player 1'}
-                            {@const p2Name = detailMatch.player2_name || 'Player 2'}
+                            {@const p1Name = detailMatch.player1_name || $t('match.player1')}
+                            {@const p2Name = detailMatch.player2_name || $t('match.player2')}
                             <table class="stats-table">
                                 <thead>
                                     <tr>
@@ -1119,112 +1129,112 @@
                                 </thead>
                                 <tbody>
                                     <tr class="stats-section-header">
-                                        <td colspan="3">Performance Rating</td>
+                                        <td colspan="3">{$t('match.performanceRating')}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Overall PR</td>
+                                        <td class="stats-label">• {$t('match.overallPr')}</td>
                                         <td class="stats-val pr-val">{p1.total_decisions > 0 ? p1.pr.toFixed(2) : '—'}</td>
                                         <td class="stats-val pr-val">{p2.total_decisions > 0 ? p2.pr.toFixed(2) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Checker Play PR</td>
+                                        <td class="stats-label">• {$t('match.checkerPlayPr')}</td>
                                         <td class="stats-val">{p1.checker_decisions > 0 ? p1.pr_checker.toFixed(2) : '—'}</td>
                                         <td class="stats-val">{p2.checker_decisions > 0 ? p2.pr_checker.toFixed(2) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Cube Play PR</td>
+                                        <td class="stats-label">• {$t('match.cubePlayPr')}</td>
                                         <td class="stats-val">{p1.double_decisions + p1.take_decisions > 0 ? p1.pr_cube.toFixed(2) : '—'}</td>
                                         <td class="stats-val">{p2.double_decisions + p2.take_decisions > 0 ? p2.pr_cube.toFixed(2) : '—'}</td>
                                     </tr>
 
                                     <tr class="stats-section-header">
-                                        <td colspan="3">Total Errors</td>
+                                        <td colspan="3">{$t('match.totalErrors')}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Errors (Blunders)</td>
+                                        <td class="stats-label">• {$t('match.errorsBlunders')}</td>
                                         <td class="stats-val">{p1.total_errors} ({p1.total_blunders})</td>
                                         <td class="stats-val">{p2.total_errors} ({p2.total_blunders})</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
                                         <td class="stats-val sub-val">{p1.total_equity_error > 0 ? '-' + p1.total_equity_error.toFixed(3) : '—'}</td>
                                         <td class="stats-val sub-val">{p2.total_equity_error > 0 ? '-' + p2.total_equity_error.toFixed(3) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
                                         <td class="stats-val sub-val">{p1.mwc_loss > 0 ? '-' + (p1.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="stats-val sub-val">{p2.mwc_loss > 0 ? '-' + (p2.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Decisions</td>
+                                        <td class="stats-label sub-label">{$t('match.decisions')}</td>
                                         <td class="stats-val sub-val">{p1.total_decisions}</td>
                                         <td class="stats-val sub-val">{p2.total_decisions}</td>
                                     </tr>
 
                                     <tr class="stats-section-header">
-                                        <td colspan="3">Checker Play</td>
+                                        <td colspan="3">{$t('match.checkerPlay')}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Checker Errors (Blunders)</td>
+                                        <td class="stats-label">• {$t('match.checkerErrorsBlunders')}</td>
                                         <td class="stats-val">{p1.checker_errors} ({p1.checker_blunders})</td>
                                         <td class="stats-val">{p2.checker_errors} ({p2.checker_blunders})</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
                                         <td class="stats-val sub-val">{p1.checker_equity_error > 0 ? '-' + p1.checker_equity_error.toFixed(3) : '—'}</td>
                                         <td class="stats-val sub-val">{p2.checker_equity_error > 0 ? '-' + p2.checker_equity_error.toFixed(3) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
                                         <td class="stats-val sub-val">{p1.checker_mwc_loss > 0 ? '-' + (p1.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="stats-val sub-val">{p2.checker_mwc_loss > 0 ? '-' + (p2.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Unforced Moves</td>
+                                        <td class="stats-label sub-label">{$t('match.unforcedMoves')}</td>
                                         <td class="stats-val sub-val">{p1.checker_decisions}</td>
                                         <td class="stats-val sub-val">{p2.checker_decisions}</td>
                                     </tr>
 
                                     <tr class="stats-section-header">
-                                        <td colspan="3">Cube Play</td>
+                                        <td colspan="3">{$t('match.cubePlay')}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Doubles (Blunders)</td>
+                                        <td class="stats-label">• {$t('match.doublesBlunders')}</td>
                                         <td class="stats-val">{p1.double_errors} ({p1.double_blunders})</td>
                                         <td class="stats-val">{p2.double_errors} ({p2.double_blunders})</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
                                         <td class="stats-val sub-val">{p1.double_equity_error > 0 ? '-' + p1.double_equity_error.toFixed(3) : '—'}</td>
                                         <td class="stats-val sub-val">{p2.double_equity_error > 0 ? '-' + p2.double_equity_error.toFixed(3) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
                                         <td class="stats-val sub-val">{p1.double_mwc_loss > 0 ? '-' + (p1.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="stats-val sub-val">{p2.double_mwc_loss > 0 ? '-' + (p2.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Cube Decisions</td>
+                                        <td class="stats-label sub-label">{$t('match.cubeDecisions')}</td>
                                         <td class="stats-val sub-val">{p1.double_decisions}</td>
                                         <td class="stats-val sub-val">{p2.double_decisions}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label">• Takes (Blunders)</td>
+                                        <td class="stats-label">• {$t('match.takesBlunders')}</td>
                                         <td class="stats-val">{p1.take_errors} ({p1.take_blunders})</td>
                                         <td class="stats-val">{p2.take_errors} ({p2.take_blunders})</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
                                         <td class="stats-val sub-val">{p1.take_equity_error > 0 ? '-' + p1.take_equity_error.toFixed(3) : '—'}</td>
                                         <td class="stats-val sub-val">{p2.take_equity_error > 0 ? '-' + p2.take_equity_error.toFixed(3) : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
                                         <td class="stats-val sub-val">{p1.take_mwc_loss > 0 ? '-' + (p1.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="stats-val sub-val">{p2.take_mwc_loss > 0 ? '-' + (p2.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     </tr>
                                     <tr>
-                                        <td class="stats-label sub-label">Take Decisions</td>
+                                        <td class="stats-label sub-label">{$t('match.takeDecisions')}</td>
                                         <td class="stats-val sub-val">{p1.take_decisions}</td>
                                         <td class="stats-val sub-val">{p2.take_decisions}</td>
                                     </tr>

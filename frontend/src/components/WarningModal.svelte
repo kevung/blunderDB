@@ -1,5 +1,6 @@
 <script>
     import { trapFocus } from '../utils/focusTrap.js';
+    import { t } from '../i18n';
 
     let { message = '', visible = false, onClose = () => {} } = $props();
 
@@ -34,7 +35,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Warning" use:trapFocus>
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('warning.title')} use:trapFocus>
         <div class="modal-content" id="modalContent">
             <div class="close-button" onclick={handleClose}>×</div>
             <div class="tab-content">

@@ -5,7 +5,8 @@
 
     // Wails runtime
     import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
-    import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath } from '../wailsjs/go/main/Config.js';
+    import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
+    import { initLanguage } from './i18n';
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
@@ -20,6 +21,7 @@
         activeModal,
         MODAL,
         closeModal,
+        toggleModal,
         isAnyModalOpen
     } from './stores/uiStore.js';
     import {
@@ -95,6 +97,7 @@
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import HelpModal from './components/HelpModal.svelte';
+    import ConfigModal from './components/ConfigModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import MetModal from './components/MetModal.svelte';
     import DataTableModal from './components/DataTableModal.svelte';
@@ -335,6 +338,15 @@
         window.addEventListener('dragover', handleDragOver);
         window.addEventListener('dragleave', handleDragLeave);
         window.addEventListener('drop', handleDragEnd);
+
+        // Apply the persisted UI language before anything renders; fall back to
+        // English if the config read fails.
+        try {
+            initLanguage(await GetLanguage());
+        } catch (_e) {
+            initLanguage('en');
+        }
+
         try {
             const lastDbPath = await GetLastDatabasePath();
             if (lastDbPath) await openDatabaseByPath(lastDbPath);
@@ -398,6 +410,7 @@
         onCopyBoardImage={copyBoardImage}
         onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
+        onToggleConfig={() => toggleModal(MODAL.CONFIG)}
         onLoadAllPositions={loadAllPositions}
         onToggleEPCMode={toggleEPCMode}
     />
@@ -488,6 +501,7 @@
     />
 
     <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
+    <ConfigModal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>

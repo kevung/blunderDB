@@ -5,6 +5,7 @@
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/database/Database.js';
+    import { t, tMsg } from '../i18n';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
@@ -245,7 +246,7 @@
 
     async function saveToFilterLibrary() {
         if (!filterName || !selectedSearch) {
-            statusBarTextStore.set('Please enter a filter name');
+            statusBarTextStore.set(tMsg('searchHistory.enterFilterName'));
             return;
         }
 
@@ -253,7 +254,7 @@
         if (onAddToFilterLibrary) {
             await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position, selectedSearch.excludePosition);
             await loadFilterLibrary(); // Reload filter library to update icon colors
-            statusBarTextStore.set('Filter saved to library');
+            statusBarTextStore.set(tMsg('searchHistory.filterSaved'));
         }
 
         cancelSaveDialog();
@@ -264,10 +265,10 @@
         try {
             await DeleteSearchHistoryEntry(search.timestamp);
             await loadHistory();
-            statusBarTextStore.set('Search deleted from history');
+            statusBarTextStore.set(tMsg('searchHistory.searchDeleted'));
         } catch (error) {
             logger.error('Error deleting search:', error);
-            statusBarTextStore.set('Error deleting search');
+            statusBarTextStore.set(tMsg('searchHistory.errorDeleting'));
         }
     }
 
@@ -370,18 +371,18 @@
     });
 </script>
 
-<section class="search-history-panel" role="dialog" aria-modal="true" aria-label="Search history" id="searchHistoryPanel" tabindex="-1">
+<section class="search-history-panel" role="dialog" aria-modal="true" aria-label={$t('searchHistory.title')} id="searchHistoryPanel" tabindex="-1">
     <div class="search-history-content">
         {#if searchHistory.length === 0}
-            <p class="empty-message">No search history yet. Position searches starting with 's ' will appear here.</p>
+            <p class="empty-message">{$t('searchHistory.empty')}</p>
         {:else}
             <div class="history-table-container">
                 <table class="history-table">
                     <thead>
                         <tr>
-                            <th class="no-select">Date</th>
-                            <th class="no-select">Command</th>
-                            <th class="no-select">Actions</th>
+                            <th class="no-select">{$t('searchHistory.colDate')}</th>
+                            <th class="no-select">{$t('searchHistory.colCommand')}</th>
+                            <th class="no-select">{$t('searchHistory.colActions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -397,7 +398,7 @@
                                             e.stopPropagation();
                                             (() => showAddToLibraryDialog(search))();
                                         }}
-                                        title="Add to filter library"
+                                        title={$t('searchHistory.addToLibraryTooltip')}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path
@@ -413,7 +414,7 @@
                                             e.stopPropagation();
                                             ((e) => deleteSearch(search, e))(e);
                                         }}
-                                        title="Delete from history"
+                                        title={$t('searchHistory.deleteTooltip')}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path
@@ -444,11 +445,11 @@
         }}
     >
         <div class="save-dialog">
-            <h3>Save to Filter Library</h3>
-            <p class="command-preview">Command: {selectedSearch?.command || ''}</p>
+            <h3>{$t('searchHistory.saveDialogTitle')}</h3>
+            <p class="command-preview">{$t('searchHistory.commandLabel', { command: selectedSearch?.command || '' })}</p>
             <div class="form-group">
-                <label for="filterName">Filter Name:</label>
-                <input type="text" id="filterName" bind:value={filterName} placeholder="Enter filter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
+                <label for="filterName">{$t('searchHistory.filterNameLabel')}</label>
+                <input type="text" id="filterName" bind:value={filterName} placeholder={$t('searchHistory.filterNamePlaceholder')} onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
                 <button
@@ -456,14 +457,14 @@
                     onclick={(e) => {
                         e.stopPropagation();
                         saveToFilterLibrary(e);
-                    }}>Save</button
+                    }}>{$t('common.save')}</button
                 >
                 <button
                     class="btn-secondary"
                     onclick={(e) => {
                         e.stopPropagation();
                         cancelSaveDialog(e);
-                    }}>Cancel</button
+                    }}>{$t('common.cancel')}</button
                 >
             </div>
         </div>

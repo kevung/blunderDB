@@ -1,4 +1,5 @@
 <script>
+    import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { selectedMoveStore } from '../stores/analysisStore'; // Import selectedMoveStore
@@ -70,15 +71,15 @@
 
     let boardDescription = $derived.by(() => {
         const pos = $positionStore;
-        if (!pos || !pos.board || !pos.board.points) return 'Backgammon board';
+        if (!pos || !pos.board || !pos.board.points) return $t('board.label');
         let pip1 = 0;
         let pip2 = 0;
         pos.board.points.forEach((point, index) => {
             if (point.color === 0) pip1 += point.checkers * index;
             else if (point.color === 1) pip2 += point.checkers * (25 - index);
         });
-        const roller = pos.player_on_roll === 0 ? 'Player 1' : 'Player 2';
-        return `Backgammon board. Player 1 pip count ${pip1}, Player 2 pip count ${pip2}. ${roller} to move.`;
+        const roller = pos.player_on_roll === 0 ? $t('board.player1') : $t('board.player2');
+        return $t('board.description', { pip1, pip2, roller });
     });
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection

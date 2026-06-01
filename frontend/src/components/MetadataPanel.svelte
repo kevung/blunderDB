@@ -3,6 +3,7 @@
     import { onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js';
     import { activeTabStore } from '../stores/uiStore';
+    import { t } from '../i18n';
 
     let user = $state('');
     let description = $state('');
@@ -54,20 +55,20 @@
 <div class="metadata-panel">
     <div class="meta-row">
         <div class="form-group">
-            <label for="meta-user">User</label>
+            <label for="meta-user">{$t('metadata.user')}</label>
             <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
         </div>
         <div class="form-group">
-            <label for="meta-date">Created</label>
+            <label for="meta-date">{$t('metadata.created')}</label>
             <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
         </div>
         <div class="form-group">
-            <label for="meta-version">Version</label>
+            <label for="meta-version">{$t('metadata.version')}</label>
             <input id="meta-version" type="text" bind:value={databaseVersion} readonly />
         </div>
     </div>
     <div class="form-group desc-group">
-        <label for="meta-description">Description</label>
+        <label for="meta-description">{$t('metadata.description')}</label>
         <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
     </div>
 </div>

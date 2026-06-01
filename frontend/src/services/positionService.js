@@ -28,6 +28,9 @@ import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, comm
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
+// NOTE: these UI messages are translated at emission time via the non-reactive
+// `translate` helper; already-displayed messages do not retranslate on language change.
+import { tMsg } from '../i18n';
 
 // Module-level state for EPC mode save/restore
 let savedPositionBeforeEPC = null;
@@ -92,35 +95,35 @@ export function isValidPosition(position) {
     const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
 
     if (player1Checkers > 15) {
-        setStatusBarMessage('Invalid position: Player 1 has more than 15 checkers');
+        setStatusBarMessage(tMsg('status.invalidP1Over15'));
         return false;
     }
     if (player2Checkers > 15) {
-        setStatusBarMessage('Invalid position: Player 2 has more than 15 checkers');
+        setStatusBarMessage(tMsg('status.invalidP2Over15'));
         return false;
     }
     if (player1Checkers === 0) {
-        setStatusBarMessage('Invalid position: Player 1 has already borne off all checkers');
+        setStatusBarMessage(tMsg('status.invalidP1BorneOff'));
         return false;
     }
     if (player2Checkers === 0) {
-        setStatusBarMessage('Invalid position: Player 2 has already borne off all checkers');
+        setStatusBarMessage(tMsg('status.invalidP2BorneOff'));
         return false;
     }
 
     if (position.decision_type === 1) {
         if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
-            setStatusBarMessage('Invalid position: Cube is not available for doubling');
+            setStatusBarMessage(tMsg('status.invalidCubeUnavailable'));
             return false;
         }
         if (position.score[position.player_on_roll] === 1) {
-            setStatusBarMessage('Invalid position: Crawford rule prevents doubling');
+            setStatusBarMessage(tMsg('status.invalidCrawford'));
             return false;
         }
     }
 
     if ((position.score[0] === -1 && position.score[1] !== -1) || (position.score[1] === -1 && position.score[0] !== -1)) {
-        setStatusBarMessage('Invalid position: Both players must have unlimited score or neither');
+        setStatusBarMessage(tMsg('status.invalidUnlimitedScore'));
         return false;
     }
 
@@ -268,7 +271,7 @@ export async function loadAnalysisForPosition(position) {
 
 export async function loadAllPositions() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     try {
@@ -307,12 +310,12 @@ export async function loadAllPositions() {
             saveSessionState();
         } else {
             currentPositionIndexStore.set(-1);
-            setStatusBarMessage('No positions found');
+            setStatusBarMessage(tMsg('commands.noPositionsFound'));
             logger.log('No positions found.');
         }
     } catch (error) {
         logger.error('Error loading all positions:', error);
-        setStatusBarMessage('Error loading all positions');
+        setStatusBarMessage(tMsg('status.errorLoadingAllPositions'));
     }
 }
 
@@ -355,7 +358,7 @@ export async function loadPositionsByFilters(
     diceRollMode = 'both'
 ) {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     try {
@@ -467,14 +470,14 @@ export async function loadPositionsByFilters(
             const { saveSessionState } = await import('./sessionService.js');
             saveSessionState();
         } else {
-            setStatusBarMessage('No matching positions found');
+            setStatusBarMessage(tMsg('status.noMatchingPositions'));
             if (get(activeTabStore) === 'search') {
                 statusBarModeStore.set('EDIT');
             }
         }
     } catch (error) {
         logger.error('Error loading positions by filters:', error);
-        setStatusBarMessage('Error loading positions by filters');
+        setStatusBarMessage(tMsg('status.errorLoadingByFilters'));
         if (get(activeTabStore) === 'search') {
             statusBarModeStore.set('EDIT');
         }
@@ -500,11 +503,11 @@ function saveCurrentMatchPosition() {
 
 export async function firstPosition() {
     if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage('Cannot browse positions in edit mode');
+        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
         return;
     }
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -547,11 +550,11 @@ export async function firstPosition() {
 
 export async function previousPosition() {
     if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage('Cannot browse positions in edit mode');
+        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
         return;
     }
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -583,11 +586,11 @@ export async function previousPosition() {
 
 export async function nextPosition() {
     if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage('Cannot browse positions in edit mode');
+        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
         return;
     }
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -619,11 +622,11 @@ export async function nextPosition() {
 
 export async function lastPosition() {
     if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage('Cannot browse positions in edit mode');
+        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
         return;
     }
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -666,11 +669,11 @@ export async function lastPosition() {
 
 export function gotoPosition() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage('Cannot go to position in edit mode');
+        setStatusBarMessage(tMsg('status.cannotGoToEdit'));
         return;
     }
     openModal(MODAL.GO_TO_POSITION);
@@ -679,7 +682,7 @@ export function gotoPosition() {
 export function findPosition() {
     logger.log('findPosition');
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     activeTabStore.set('search');
@@ -687,14 +690,14 @@ export function findPosition() {
 
 export async function deletePosition() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     logger.log('deletePosition');
 
     const positions = get(positionsStore);
     if (!positions || positions.length === 0) {
-        setStatusBarMessage('No positions to delete');
+        setStatusBarMessage(tMsg('status.noPositionsToDelete'));
         return;
     }
 
@@ -704,10 +707,10 @@ export async function deletePosition() {
         logger.log('Position and associated analysis deleted with ID:', positionID);
 
         await loadAllPositions();
-        setStatusBarMessage('Position and associated analysis deleted successfully');
+        setStatusBarMessage(tMsg('status.positionDeleted'));
     } catch (error) {
         logger.error('Error deleting position and associated analysis:', error);
-        setStatusBarMessage('Error deleting position and associated analysis');
+        setStatusBarMessage(tMsg('status.errorDeletingPosition'));
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -715,18 +718,18 @@ export async function deletePosition() {
 
 export async function updatePosition() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     if (get(statusBarModeStore) !== 'EDIT') {
-        setStatusBarMessage('Update is only possible in edit mode');
+        setStatusBarMessage(tMsg('status.updateOnlyEdit'));
         return;
     }
     logger.log('updatePosition');
 
     const positions = get(positionsStore);
     if (positions.length === 0) {
-        setStatusBarMessage('No positions to update');
+        setStatusBarMessage(tMsg('status.noPositionsToUpdate'));
         return;
     }
 
@@ -789,11 +792,11 @@ export async function updatePosition() {
 
         await loadAllPositions();
         currentPositionIndexStore.set(currentIndex);
-        setStatusBarMessage('Position and analysis updated successfully');
+        setStatusBarMessage(tMsg('status.positionUpdated'));
         statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error updating position and analysis:', error);
-        setStatusBarMessage('Error updating position and analysis');
+        setStatusBarMessage(tMsg('status.errorUpdatingPosition'));
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -801,11 +804,11 @@ export async function updatePosition() {
 
 export async function saveCurrentPosition() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     if (get(statusBarModeStore) !== 'EDIT') {
-        setStatusBarMessage('Save is only possible in edit mode');
+        setStatusBarMessage(tMsg('status.saveOnlyEdit'));
         return;
     }
 
@@ -842,7 +845,7 @@ export async function saveCurrentPosition() {
     analysis.analysisEngineVersion = '';
 
     const { savePositionAndAnalysis } = await import('./importService.js');
-    await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
+    await savePositionAndAnalysis(position, analysis, tMsg('status.positionSaved'));
     statusBarModeStore.set('NORMAL');
 }
 
@@ -979,22 +982,22 @@ export async function updateEPC(position) {
                 error: null
             });
             const epc = result.bottomEPC;
-            statusBarTextStore.set(`EPC: ${epc.epc.toFixed(2)} | Pips: ${epc.pipCount} | Wastage: ${epc.wastage.toFixed(2)} | Avg rolls: ${epc.meanRolls.toFixed(3)}`);
+            statusBarTextStore.set(tMsg('commands.epcStatus', { epc: epc.epc.toFixed(2), pips: epc.pipCount, wastage: epc.wastage.toFixed(2), rolls: epc.meanRolls.toFixed(3) }));
         } else {
             epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
-            statusBarTextStore.set('EPC: N/A (checkers not all in home board)');
+            statusBarTextStore.set(tMsg('commands.epcNotAvailable'));
         }
     } catch (error) {
         logger.error('Error computing EPC:', error);
         epcDataStore.set({ bottomEPC: null, topEPC: null, error: 'Error computing EPC' });
-        statusBarTextStore.set('EPC: Error computing');
+        statusBarTextStore.set(tMsg('commands.epcErrorComputing'));
     }
 }
 
 export async function toggleMatchMode() {
     logger.log('toggleMatchMode');
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -1028,13 +1031,13 @@ export async function toggleMatchMode() {
     try {
         const match = await GetLastVisitedMatch();
         if (!match) {
-            setStatusBarMessage('No matches in database');
+            setStatusBarMessage(tMsg('status.noMatchesInDb'));
             return;
         }
 
         const movePositions = await GetMatchMovePositions(match.id);
         if (!movePositions || movePositions.length === 0) {
-            setStatusBarMessage('No moves found in this match');
+            setStatusBarMessage(tMsg('status.noMovesInMatch'));
             return;
         }
 
@@ -1116,16 +1119,16 @@ export async function toggleMatchMode() {
         logger.error('Error entering match mode:', error);
         const errMsg = error?.toString() || '';
         if (errMsg.includes('no matches')) {
-            setStatusBarMessage('No matches in database');
+            setStatusBarMessage(tMsg('status.noMatchesInDb'));
         } else {
-            setStatusBarMessage('Error entering match mode');
+            setStatusBarMessage(tMsg('status.errorEnteringMatchMode'));
         }
     }
 }
 
 export function toggleAnalysisPanel() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     logger.log('toggleAnalysisPanel');
@@ -1134,12 +1137,12 @@ export function toggleAnalysisPanel() {
 
 export function toggleCommentPanel() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     const positions = get(positionsStore);
     if (!positions[get(currentPositionIndexStore)]) {
-        setStatusBarMessage('No current position to comment on');
+        setStatusBarMessage(tMsg('status.noCurrentPositionComment'));
         return;
     }
     logger.log('toggleCommentPanel called');
@@ -1149,7 +1152,7 @@ export function toggleCommentPanel() {
 export function toggleMetadataModal() {
     if (get(databasePathStore)) {
         if (get(statusBarModeStore) === 'EDIT') {
-            setStatusBarMessage('Cannot show metadata in edit mode');
+            setStatusBarMessage(tMsg('status.cannotShowMetadataEdit'));
         } else {
             activeTabStore.set('metadata');
         }
@@ -1159,7 +1162,7 @@ export function toggleMetadataModal() {
 export function toggleFilterLibraryPanel() {
     logger.log('toggleFilterLibraryPanel');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('search');
@@ -1168,7 +1171,7 @@ export function toggleFilterLibraryPanel() {
 export function toggleAnkiPanel() {
     logger.log('toggleAnkiPanel');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('anki');
@@ -1177,7 +1180,7 @@ export function toggleAnkiPanel() {
 export function toggleMatchPanel() {
     logger.log('toggleMatchPanel');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('matches');
@@ -1186,7 +1189,7 @@ export function toggleMatchPanel() {
 export function toggleCollectionPanelAction() {
     logger.log('toggleCollectionPanelAction');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('collections');
@@ -1195,7 +1198,7 @@ export function toggleCollectionPanelAction() {
 export function toggleTournamentPanel() {
     logger.log('toggleTournamentPanel');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('tournaments');
@@ -1204,7 +1207,7 @@ export function toggleTournamentPanel() {
 export function toggleStatsPanel() {
     logger.log('toggleStatsPanel');
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     activeTabStore.set('stats');
@@ -1246,7 +1249,7 @@ export async function exitCollectionMode() {
 
 export function handleOpenCollection(collection, collectionPositions) {
     if (!collectionPositions || collectionPositions.length === 0) {
-        statusBarTextStore.set('Collection is empty');
+        statusBarTextStore.set(tMsg('commands.collectionEmpty'));
         return;
     }
 
@@ -1269,13 +1272,13 @@ export function handleOpenCollection(collection, collectionPositions) {
     positionStore.set(collectionPositions[0]);
     currentPositionIndexStore.set(0);
     loadAnalysisForPosition(collectionPositions[0]);
-    statusBarTextStore.set(`Collection "${collection.name}" — ${collectionPositions.length} position(s)`);
+    statusBarTextStore.set(tMsg('commands.collectionLoaded', { name: collection.name, count: collectionPositions.length }));
 }
 
 export function togglePipcount() {
     logger.log('togglePipcount');
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     showPipcountStore.set(!get(showPipcountStore));
@@ -1292,7 +1295,7 @@ export function togglePipcount() {
 export function loadRandomPosition() {
     logger.log('loadRandomPosition');
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened');
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
     const positions = get(positionsStore);
@@ -1315,9 +1318,9 @@ export async function addSearchToFilterLibrary(filterName, filterCommand, positi
         if (excludePositionJson) {
             await SaveExcludePosition(filterName, excludePositionJson);
         }
-        statusBarTextStore.set('Filter saved successfully');
+        statusBarTextStore.set(tMsg('commands.filterSaved'));
     } catch (error) {
         logger.error('Error saving filter:', error);
-        statusBarTextStore.set('Error saving filter');
+        statusBarTextStore.set(tMsg('commands.errorSavingFilter'));
     }
 }

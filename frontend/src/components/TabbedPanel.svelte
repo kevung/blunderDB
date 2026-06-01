@@ -9,6 +9,7 @@
 -->
 <script>
     import { activeTabStore } from '../stores/uiStore';
+    import { t } from '../i18n';
 
     import ConsolePanel from './ConsolePanel.svelte';
     import AnalysisPanel from './AnalysisPanel.svelte';
@@ -26,17 +27,17 @@
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
     let tabs = $state([
-        { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
-        { id: 'comments', label: 'Comments', icon: 'comments', shortcut: 'Ctrl+P' },
-        { id: 'search', label: 'Search', icon: 'search', shortcut: 'Ctrl+F' },
-        { id: 'collections', label: 'Collections', icon: 'collections', shortcut: 'Ctrl+B' },
-        { id: 'matches', label: 'Matchs', icon: 'matches', shortcut: 'Ctrl+Tab' },
-        { id: 'tournaments', label: 'Tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
-        { id: 'stats', label: 'Stats', icon: 'stats', shortcut: 'Ctrl+D' },
-        { id: 'epc', label: 'EPC', icon: 'epc', shortcut: 'Ctrl+E' },
-        { id: 'anki', label: 'Anki', icon: 'anki', shortcut: 'Ctrl+K' },
-        { id: 'metadata', label: 'Metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
-        { id: 'log', label: 'Log', icon: 'log', shortcut: '' }
+        { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
+        { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
+        { id: 'search', labelKey: 'tabbedPanel.search', icon: 'search', shortcut: 'Ctrl+F' },
+        { id: 'collections', labelKey: 'tabbedPanel.collections', icon: 'collections', shortcut: 'Ctrl+B' },
+        { id: 'matches', labelKey: 'tabbedPanel.matches', icon: 'matches', shortcut: 'Ctrl+Tab' },
+        { id: 'tournaments', labelKey: 'tabbedPanel.tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
+        { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
+        { id: 'epc', labelKey: 'tabbedPanel.epc', icon: 'epc', shortcut: 'Ctrl+E' },
+        { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
+        { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
+        { id: 'log', labelKey: 'tabbedPanel.log', icon: 'log', shortcut: '' }
     ]);
 
     let draggedIndex = $state(null);
@@ -108,7 +109,7 @@
                 class:active={$activeTabStore === tab.id}
                 class:drag-over={dragOverIndex === i && draggedIndex !== i}
                 class:dragging={draggedIndex === i && isDragging}
-                title={tab.shortcut ? `${tab.label} (${tab.shortcut})` : tab.label}
+                title={tab.shortcut ? `${$t(tab.labelKey)} (${tab.shortcut})` : $t(tab.labelKey)}
                 data-testid="tab-{tab.id}"
                 onmousedown={(e) => handleMouseDown(e, i)}
             >
@@ -177,7 +178,7 @@
                         />
                     {/if}
                 </svg>
-                <span class="tab-label">{tab.label}</span>
+                <span class="tab-label">{$t(tab.labelKey)}</span>
             </button>
         {/each}
     </div>

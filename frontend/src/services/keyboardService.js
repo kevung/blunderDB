@@ -1,3 +1,4 @@
+import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, openPanels, PANEL, activeTabStore } from '../stores/uiStore.js';
 import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js';
@@ -52,7 +53,7 @@ export function toggleHelpModal() {
 
 export function toggleSearchHistoryPanel() {
     if (!get(databasePathStore)) {
-        setStatusBarMessage('Search history requires an open database');
+        setStatusBarMessage(tMsg('status.searchHistoryRequiresDb'));
         return;
     }
     activeTabStore.set('search');

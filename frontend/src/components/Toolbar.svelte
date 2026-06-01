@@ -22,10 +22,12 @@
         onCopyBoardImage,
         onToggleCommandMode: _onToggleCommandMode,
         onToggleHelp,
+        onToggleConfig,
         onLoadAllPositions,
         onToggleEPCMode: _onToggleEPCMode
     } = $props();
 
+    import { t } from '../i18n';
     import { activeTabStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
     let databasePath = $derived($databasePathStore);
@@ -39,8 +41,8 @@
             e.stopPropagation();
             onNewDatabase(e);
         }}
-        aria-label="New Database"
-        title="New Database (Ctrl-N)"
+        aria-label={$t('toolbar.newDatabase')}
+        title="{$t('toolbar.newDatabase')} (Ctrl-N)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -56,8 +58,8 @@
             e.stopPropagation();
             onOpenDatabase(e);
         }}
-        aria-label="Open Database"
-        title="Open Database (Ctrl-O)"
+        aria-label={$t('toolbar.openDatabase')}
+        title="{$t('toolbar.openDatabase')} (Ctrl-O)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -73,8 +75,8 @@
             e.stopPropagation();
             onImportDatabase(e);
         }}
-        aria-label="Import Database"
-        title="Import Database (Ctrl-Shift-I)"
+        aria-label={$t('toolbar.importDatabase')}
+        title="{$t('toolbar.importDatabase')} (Ctrl-Shift-I)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -91,8 +93,8 @@
             e.stopPropagation();
             onExportDatabase(e);
         }}
-        aria-label="Export Database"
-        title="Export Database (Ctrl-Shift-S)"
+        aria-label={$t('toolbar.exportDatabase')}
+        title="{$t('toolbar.exportDatabase')} (Ctrl-Shift-S)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -109,8 +111,8 @@
             e.stopPropagation();
             onExit(e);
         }}
-        aria-label="Exit"
-        title="Exit blunderDB (Ctrl-Q)"
+        aria-label={$t('toolbar.exit')}
+        title="{$t('toolbar.exit')} blunderDB (Ctrl-Q)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -128,8 +130,8 @@
             e.stopPropagation();
             onImportPosition(e);
         }}
-        aria-label="Import Position or Match"
-        title="Import Position or Match Files (Ctrl-I)"
+        aria-label={$t('toolbar.importPosition')}
+        title="{$t('toolbar.importPositionTip')} (Ctrl-I)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -146,8 +148,8 @@
             e.stopPropagation();
             onImportFolder(e);
         }}
-        aria-label="Import Folder"
-        title="Import Folder (Ctrl-Shift-F)"
+        aria-label={$t('toolbar.importFolder')}
+        title="{$t('toolbar.importFolder')} (Ctrl-Shift-F)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -164,8 +166,8 @@
             e.stopPropagation();
             onCopyPosition(e);
         }}
-        aria-label="Copy Position"
-        title={isSearchTab ? 'Copy Position to clipboard and board clipboard (Ctrl-C)' : 'Copy Position (Ctrl-C)'}
+        aria-label={$t('toolbar.copyPosition')}
+        title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} (Ctrl-C)` : `${$t('toolbar.copyPositionTip')} (Ctrl-C)`}
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -182,8 +184,8 @@
             e.stopPropagation();
             onPastePosition(e);
         }}
-        aria-label="Paste Position"
-        title={isSearchTab ? 'Paste Position to board (Ctrl-V)' : 'Paste Position (Ctrl-V)'}
+        aria-label={$t('toolbar.pastePosition')}
+        title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} (Ctrl-V)` : `${$t('toolbar.pastePosition')} (Ctrl-V)`}
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -200,8 +202,8 @@
             e.stopPropagation();
             onSavePosition(e);
         }}
-        aria-label="Save Position"
-        title="Save Position (Ctrl-S)"
+        aria-label={$t('toolbar.savePosition')}
+        title="{$t('toolbar.savePosition')} (Ctrl-S)"
         disabled={!isSearchTab || !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -214,8 +216,8 @@
             e.stopPropagation();
             onUpdatePosition(e);
         }}
-        aria-label="Update Position"
-        title="Update Position (Ctrl-U)"
+        aria-label={$t('toolbar.updatePosition')}
+        title="{$t('toolbar.updatePosition')} (Ctrl-U)"
         disabled={!isSearchTab || !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -232,8 +234,8 @@
             e.stopPropagation();
             onDeletePosition(e);
         }}
-        aria-label="Delete Position"
-        title="Delete Position (Del)"
+        aria-label={$t('toolbar.deletePosition')}
+        title="{$t('toolbar.deletePosition')} (Del)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -252,8 +254,8 @@
             e.stopPropagation();
             onLoadAllPositions(e);
         }}
-        aria-label="Reload All Positions"
-        title="Reload All Positions (Ctrl-R)"
+        aria-label={$t('toolbar.loadAllPositions')}
+        title="{$t('toolbar.loadAllPositions')} (Ctrl-R)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -266,8 +268,8 @@
             e.stopPropagation();
             onFirstPosition(e);
         }}
-        aria-label="First Position"
-        title="First Position (PageUp, h)"
+        aria-label={$t('toolbar.firstPosition')}
+        title="{$t('toolbar.firstPosition')} (PageUp, h)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -280,8 +282,8 @@
             e.stopPropagation();
             onPreviousPosition(e);
         }}
-        aria-label="Previous Position"
-        title="Previous Position (Left, k)"
+        aria-label={$t('toolbar.previousPosition')}
+        title="{$t('toolbar.previousPosition')} (Left, k)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -294,8 +296,8 @@
             e.stopPropagation();
             onNextPosition(e);
         }}
-        aria-label="Next Position"
-        title="Next Position (Right, j)"
+        aria-label={$t('toolbar.nextPosition')}
+        title="{$t('toolbar.nextPosition')} (Right, j)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -308,8 +310,8 @@
             e.stopPropagation();
             onLastPosition(e);
         }}
-        aria-label="Last Position"
-        title="Last Position (PageDown, l)"
+        aria-label={$t('toolbar.lastPosition')}
+        title="{$t('toolbar.lastPosition')} (PageDown, l)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -322,8 +324,8 @@
             e.stopPropagation();
             onGoToPosition(e);
         }}
-        aria-label="Go To Position"
-        title="Go To Position"
+        aria-label={$t('toolbar.goToPosition')}
+        title={$t('toolbar.goToPosition')}
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -342,8 +344,8 @@
             e.stopPropagation();
             onTogglePipcount(e);
         }}
-        aria-label="Toggle Pipcount"
-        title="Toggle Pipcount (p)"
+        aria-label={$t('toolbar.togglePipcount')}
+        title="{$t('toolbar.togglePipcount')} (p)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -356,8 +358,8 @@
             e.stopPropagation();
             onRandomPosition(e);
         }}
-        aria-label="Random Position"
-        title="Random Position (r)"
+        aria-label={$t('toolbar.randomPosition')}
+        title="{$t('toolbar.randomPosition')} (r)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" fill="none" class="size-6">
@@ -374,8 +376,8 @@
             e.stopPropagation();
             onCopyBoardImage(e);
         }}
-        aria-label="Copy Board Image"
-        title="Copy Board Image to Clipboard (Ctrl-X), with Analysis (Ctrl-X Ctrl-X)"
+        aria-label={$t('toolbar.copyBoardImage')}
+        title="{$t('toolbar.copyBoardImageTip')} (Ctrl-X), {$t('toolbar.copyBoardImageWithAnalysis')} (Ctrl-X Ctrl-X)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -392,10 +394,28 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
+            onToggleConfig(e);
+        }}
+        aria-label={$t('toolbar.settings')}
+        title={$t('toolbar.settings')}
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z"
+            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+    </button>
+
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
             onToggleHelp(e);
         }}
-        aria-label="Help"
-        title="Help (?)"
+        aria-label={$t('toolbar.help')}
+        title="{$t('toolbar.help')} (?)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path

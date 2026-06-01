@@ -9,6 +9,9 @@ import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wai
 import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
 import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/database/Database.js';
 import { logger } from './utils/logger.js';
+// NOTE: these UI messages are translated at emission time via the non-reactive
+// `translate` helper. Already-displayed messages do not retranslate on language change.
+import { translate, tMsg } from './i18n';
 
 let callbacks = {};
 
@@ -32,11 +35,11 @@ export function processCommand(command) {
             index = positionNumber - 1;
         }
         currentPositionIndexStore.set(index);
-        addLogEntry(`Go to position ${index + 1}`, 'result');
+        addLogEntry(translate('commands.goToPosition', { n: index + 1 }), 'result');
     } else if (command.startsWith('#')) {
         const tags = command.slice(1).trim();
         insertTags(tags);
-        addLogEntry(`Tags added: ${tags}`, 'result');
+        addLogEntry(translate('commands.tagsAdded', { tags }), 'result');
     } else if (command === 'new' || command === 'ne' || command === 'n') {
         callbacks.onNewDatabase?.();
     } else if (command === 'open' || command === 'op' || command === 'o') {
@@ -101,7 +104,7 @@ export function processCommand(command) {
         if (databaseLoaded) {
             openModal(MODAL.METADATA);
         } else {
-            statusBarTextStore.set('No database loaded.');
+            statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         }
     } else if (command === 'tp2') {
         openModal(MODAL.TAKE_POINT_2);
@@ -110,40 +113,40 @@ export function processCommand(command) {
     } else if (command === 'migrate_from_1_0_to_1_1') {
         Migrate_1_0_0_to_1_1_0()
             .then(() => {
-                statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.1.0' }));
             })
             .catch((error) => {
                 logger.error('Error migrating database:', error);
-                statusBarTextStore.set('Error migrating database.');
+                statusBarTextStore.set(tMsg('commands.errorMigrating'));
             });
     } else if (command === 'migrate_from_1_1_to_1_2') {
         Migrate_1_1_0_to_1_2_0()
             .then(() => {
-                statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
+                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.2.0' }));
             })
             .catch((error) => {
                 logger.error('Error migrating database:', error);
-                statusBarTextStore.set('Error migrating database.');
+                statusBarTextStore.set(tMsg('commands.errorMigrating'));
             });
     } else if (command === 'migrate_from_1_2_to_1_3') {
         Migrate_1_2_0_to_1_3_0()
             .then(() => {
-                statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
+                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.3.0' }));
             })
             .catch((error) => {
                 logger.error('Error migrating database:', error);
-                statusBarTextStore.set('Error migrating database.');
+                statusBarTextStore.set(tMsg('commands.errorMigrating'));
             });
     } else if (command === 'cl' || command === 'clear') {
         ClearCommandHistory()
             .then(() => {
                 commandHistoryStore.set([]);
                 logEntriesStore.set([]);
-                statusBarTextStore.set('Command history cleared.');
+                statusBarTextStore.set(tMsg('commands.commandHistoryCleared'));
             })
             .catch((error) => {
                 logger.error('Error clearing command history:', error);
-                statusBarTextStore.set('Error clearing command history.');
+                statusBarTextStore.set(tMsg('commands.errorClearingHistory'));
             });
     }
 }
@@ -152,7 +155,7 @@ function handleSubSearch(command, positions) {
     const mode = get(statusBarModeStore);
     if (mode === 'NORMAL' || mode === 'EDIT') {
         if (positions.length === 0) {
-            statusBarTextStore.set('No current results to search in.');
+            statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
         const currentIDs = positions
@@ -256,7 +259,7 @@ function handleSubSearch(command, positions) {
             );
         }
     } else {
-        statusBarTextStore.set('Search in results is not available in current mode.');
+        statusBarTextStore.set(tMsg('commands.subSearchModeUnavailable'));
     }
 }
 
@@ -359,7 +362,7 @@ function handleSearch(command) {
             );
         }
     } else {
-        statusBarTextStore.set('Search requires NORMAL or EDIT mode.');
+        statusBarTextStore.set(tMsg('commands.searchRequiresMode'));
     }
 }
 
