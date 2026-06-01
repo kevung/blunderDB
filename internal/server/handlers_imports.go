@@ -70,6 +70,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 		return ingest.GnuBGImporter{S: s.opts.Storage}
 	case ingest.FormatBGF:
 		return ingest.BGFImporter{S: s.opts.Storage}
+	case ingest.FormatNativeDB:
+		return ingest.DBImporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -91,6 +93,7 @@ func (s *Server) ingestRoutes() []route {
 		{http.MethodPost, "/v1/imports.xg", s.handleImport(ingest.FormatXG)},
 		{http.MethodPost, "/v1/imports.gnubg", s.handleImport(ingest.FormatGnuBG)},
 		{http.MethodPost, "/v1/imports.bgf", s.handleImport(ingest.FormatBGF)},
+		{http.MethodPost, "/v1/imports.db", s.handleImport(ingest.FormatNativeDB)},
 		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 	}

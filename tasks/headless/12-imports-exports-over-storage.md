@@ -133,7 +133,7 @@ Server bits:
 |----|-------|-------------------|
 | **3a** ✅ | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
 | **3b** ✅ | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xgmap.go`+`ingest/xg.go`; `imports.xg` end-to-end; fixture+parity tests. | yes |
-| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT — MAT *is* the Jellyfish path), **BGF** ✅, native **.db** ⬜, position **text/XGP** ⬜ migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT — MAT *is* the Jellyfish path), **BGF** ✅, native **.db** ✅, position **text/XGP** ⬜ migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
 
 ### PR3c — GnuBG done
 
@@ -167,13 +167,21 @@ Server bits:
 - Tests: `ingest/bgf_test.go` `TestBGFImportParity` + `TestBGFHashParity`;
   server `TestImportBGFEndToEnd`.
 
+### PR3c — native .db done
+
+- `ingest/db.go` — `DBImporter`: opens the source `.db` via `sqlite.Open`,
+  drains its position list (avoiding the nested-iterator pitfall), then writes
+  each position (Zobrist dedup) + analysis + comments into the target tx.
+  Mirrors `database.CommitImportDatabase` (position-library merge only — no
+  match/game/move rows): an imported analysis is written only when the target
+  has none or an empty-typed one; a comment is appended only when not already
+  present. `imports.db` route wired.
+- Tests: `ingest/db_test.go` `TestDBImportParity` (a populated source .db is
+  copied field-for-field into a fresh Storage) + `TestDBImportDedup`; server
+  `TestImportNativeDBEndToEnd`.
+
 ### PR3c — remaining (mechanically distinct from the parser mappers)
 
-- **Native `.db` import** (`database.ImportDatabase`, ~521 L): a DB→DB *merge*,
-  not a parser→MatchGraph map. The backend-agnostic approach: open the source
-  `.db` via `sqlite.Open`, then stream its positions (dedup by Zobrist),
-  analyses, comments and match graphs into the target Storage — reusing
-  `WriteMatch` and the JSON-importer-style position writes. Wire `imports.db`.
 - **Single-position text/XGP** (`ImportBGFPosition` via `bgfparser.ParseTXT`,
   `ImportXGPPosition`): import one position (+ analysis) rather than a match.
   Wire `imports.position`. Build a `createPositionFromBGFText`/XGP pure mapper

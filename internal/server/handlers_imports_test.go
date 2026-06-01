@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -209,10 +210,41 @@ func TestImportBGFEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportNativeDBEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	// Build a populated native .db by importing an XG fixture via the legacy
+	// Database, then upload that .db to imports.db.
+	dbPath := filepath.Join(t.TempDir(), "lib.db")
+	db := database.NewDatabase()
+	if err := db.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := db.ImportXGMatch(filepath.Join("..", "..", "testdata", "match_with_comment.xg")); err != nil {
+		db.Close()
+		t.Fatalf("seed import: %v", err)
+	}
+	db.Close()
+
+	blob, err := os.ReadFile(dbPath)
+	if err != nil {
+		t.Fatalf("read .db: %v", err)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.db", "lib.db", blob)
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["saved_positions"].(float64) == 0 {
+		t.Fatal("saved_positions = 0, want > 0")
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
-	// imports.db is not wired yet → catch-all 404 (unknown route).
-	resp := post(t, ts, "/v1/imports.db", nil)
+	// imports.position is not wired yet → catch-all 404 (unknown route).
+	resp := post(t, ts, "/v1/imports.position", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)
