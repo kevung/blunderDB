@@ -47,6 +47,7 @@ func RunServe(args []string) error {
 		corsOrigin     = fs.String("cors-allow-origin", "", "enable CORS for this origin (off by default)")
 		rateLimitRPS   = fs.Float64("rate-limit-rps", 0, "per-tenant sustained requests/second (0 = disabled)")
 		rateLimitBurst = fs.Int("rate-limit-burst", 0, "per-tenant token-bucket burst (default 2×rps)")
+		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -62,7 +63,7 @@ func RunServe(args []string) error {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	st, err := openStorage(ctx, *backend, *dsn)
+	st, err := openStorage(ctx, *backend, *dsn, *enableRLS)
 	if err != nil {
 		return err
 	}
@@ -70,6 +71,21 @@ func RunServe(args []string) error {
 
 	if err := st.Migrate(ctx); err != nil {
 		return fmt.Errorf("serve: migrate: %w", err)
+	}
+
+	// Install RLS policies after the schema is in place (opt-in). The pool was
+	// already configured to set app.tenant_id per connection by openStorage.
+	if *enableRLS {
+		applier, ok := st.(interface {
+			ApplyRLS(context.Context) error
+		})
+		if !ok {
+			return fmt.Errorf("serve: --rls is only supported by the postgres backend")
+		}
+		if err := applier.ApplyRLS(ctx); err != nil {
+			return fmt.Errorf("serve: apply RLS: %w", err)
+		}
+		logger.Info("Row-Level Security enabled (per-tenant policies installed)")
 	}
 
 	srv, err := New(Options{
@@ -90,19 +106,22 @@ func RunServe(args []string) error {
 	return srv.Run(ctx)
 }
 
-// openStorage opens the requested backend.
-func openStorage(ctx context.Context, backend, dsn string) (storage.Storage, error) {
+// openStorage opens the requested backend. enableRLS turns on PostgreSQL
+// Row-Level Security enforcement (per-connection app.tenant_id); it is ignored
+// by the SQLite backend.
+func openStorage(ctx context.Context, backend, dsn string, enableRLS bool) (storage.Storage, error) {
+	opts := &storage.Options{EnableRLS: enableRLS}
 	switch strings.ToLower(backend) {
 	case "sqlite", "":
 		if dsn == "" {
 			return nil, fmt.Errorf("serve: sqlite backend requires --db or --dsn (path to the .db file)")
 		}
-		return sqlite.Open(ctx, dsn, nil)
+		return sqlite.Open(ctx, dsn, opts)
 	case "postgres", "postgresql", "pg":
 		if dsn == "" {
 			return nil, fmt.Errorf("serve: postgres backend requires --dsn (or BLUNDERDB_DSN)")
 		}
-		return postgres.Open(ctx, dsn, nil)
+		return postgres.Open(ctx, dsn, opts)
 	default:
 		return nil, fmt.Errorf("serve: unknown backend %q (want sqlite|postgres)", backend)
 	}

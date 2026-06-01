@@ -3,6 +3,8 @@ package middleware
 import (
 	"context"
 	"net/http"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TenantHeader is the request header carrying the opaque tenant identifier.
@@ -37,6 +39,9 @@ func Tenant(errFn func(http.ResponseWriter, *http.Request, string)) func(http.Ha
 				return
 			}
 			ctx := context.WithValue(r.Context(), tenantKey{}, tenant)
+			// Also carry the numeric tenant so the PostgreSQL backend can set the
+			// app.tenant_id GUC when RLS is enabled (no-op otherwise).
+			ctx = storage.WithTenant(ctx, storage.ParseTenant(tenant))
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

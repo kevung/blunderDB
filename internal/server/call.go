@@ -77,7 +77,7 @@ func RunCall(args []string) error {
 		effDSN = ":memory:"
 	}
 
-	st, err := openStorage(ctx, *backend, effDSN)
+	st, err := openStorage(ctx, *backend, effDSN, false)
 	if err != nil {
 		return err
 	}

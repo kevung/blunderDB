@@ -79,6 +79,13 @@ type Storage interface {
 type Options struct {
 	// MigrationProgress, if set, is invoked during Migrate to report progress.
 	MigrationProgress func(phase string, done, total int)
+
+	// EnableRLS turns on PostgreSQL Row-Level Security enforcement: the backend
+	// sets the `app.tenant_id` GUC per connection (from WithTenant in the
+	// operation context) so the RLS policies filter rows as defence-in-depth.
+	// Off by default; ignored by the SQLite backend. The policies themselves are
+	// installed by Storage.ApplyRLS (opt-in).
+	EnableRLS bool
 }
 
 // ListOpts bounds and orders a List query. Zero values mean "no limit" /
