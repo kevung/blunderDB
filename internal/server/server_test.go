@@ -122,8 +122,8 @@ func TestTenantHeaderRequiredOnV1(t *testing.T) {
 func TestTenantHeaderReachesCatchAll(t *testing.T) {
 	ts := newTestServer(t)
 	// With a tenant header, the request passes the tenant gate and reaches the
-	// catch-all (no /v1 routes yet in PR1) → 404 not_found envelope.
-	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/positions.list", strings.NewReader("{}"))
+	// catch-all for an unknown /v1 method → 404 not_found envelope.
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/positions.doesNotExist", strings.NewReader("{}"))
 	req.Header.Set(middleware.TenantHeader, "tenant-a")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

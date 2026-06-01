@@ -25,12 +25,22 @@ func (s *Server) routes() []route {
 	return rs
 }
 
-// domainRoutes returns the /v1 domain handlers. PR2 fills this in with the
-// per-family handlers (positions.*, analyses.*, matches.*, …). PR1 ships the
-// skeleton, so the slice is empty and unmatched /v1 paths fall through to the
-// 404 envelope.
+// domainRoutes returns the /v1 domain handlers, one group per storage family.
 func (s *Server) domainRoutes() []route {
-	return nil
+	var rs []route
+	rs = append(rs, s.positionRoutes()...)
+	rs = append(rs, s.analysisRoutes()...)
+	rs = append(rs, s.matchRoutes()...)
+	rs = append(rs, s.commentRoutes()...)
+	rs = append(rs, s.collectionRoutes()...)
+	rs = append(rs, s.tournamentRoutes()...)
+	rs = append(rs, s.ankiRoutes()...)
+	rs = append(rs, s.filterRoutes()...)
+	rs = append(rs, s.sessionRoutes()...)
+	rs = append(rs, s.searchRoutes()...)
+	rs = append(rs, s.metadataRoutes()...)
+	rs = append(rs, s.statsRoutes()...)
+	return rs
 }
 
 // notFound writes the API error envelope for an unmatched route. It is the
