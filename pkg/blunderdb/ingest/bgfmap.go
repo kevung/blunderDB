@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/bgfparser"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -443,6 +444,232 @@ func buildBGFCubeForChecker(equity, cubeDecision map[string]interface{}) *domain
 	cube := buildDoublingCubeAnalysis(bgfCubeParams(equity, cubeDecision))
 	return &domain.PositionAnalysis{
 		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "BGBlitz",
+		DoublingCubeAnalysis:  &cube,
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+}
+
+// --- BGBlitz single-position text (.txt) ---
+
+// convertBGFTextPosition converts a bgfparser.Position (parsed from a BGBlitz
+// text export) into a domain.Position. Lifted from
+// database.convertBGFTextPosition.
+func convertBGFTextPosition(bgfPos *bgfparser.Position) *domain.Position {
+	pos := &domain.Position{
+		PlayerOnRoll: 0,
+		DecisionType: domain.CheckerAction,
+	}
+
+	for i := 0; i < 26; i++ {
+		pos.Board.Points[i] = domain.Point{Checkers: 0, Color: -1}
+	}
+
+	// Points 1-24: positive=X (Green, color 0), negative=O (Red, color 1).
+	for i := 1; i <= 24; i++ {
+		count := bgfPos.Board[i]
+		if count > 0 {
+			pos.Board.Points[i] = domain.Point{Checkers: count, Color: 0}
+		} else if count < 0 {
+			pos.Board.Points[i] = domain.Point{Checkers: -count, Color: 1}
+		}
+	}
+
+	if bgfPos.OnBar != nil {
+		if xBar, ok := bgfPos.OnBar["X"]; ok && xBar > 0 {
+			pos.Board.Points[25] = domain.Point{Checkers: xBar, Color: 0}
+		}
+		if oBar, ok := bgfPos.OnBar["O"]; ok && oBar > 0 {
+			pos.Board.Points[0] = domain.Point{Checkers: oBar, Color: 1}
+		}
+	}
+
+	player1Total := 0
+	player2Total := 0
+	for i := 0; i < 26; i++ {
+		if pos.Board.Points[i].Color == 0 {
+			player1Total += pos.Board.Points[i].Checkers
+		} else if pos.Board.Points[i].Color == 1 {
+			player2Total += pos.Board.Points[i].Checkers
+		}
+	}
+	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
+
+	if bgfPos.OnRoll == "O" {
+		pos.PlayerOnRoll = 1
+	} else {
+		pos.PlayerOnRoll = 0
+	}
+
+	pos.Dice = [2]int{bgfPos.Dice[0], bgfPos.Dice[1]}
+
+	cubeExponent := 0
+	if bgfPos.CubeValue > 0 {
+		for v := bgfPos.CubeValue; v > 1; v >>= 1 {
+			cubeExponent++
+		}
+	}
+	pos.Cube.Value = cubeExponent
+	switch bgfPos.CubeOwner {
+	case "X":
+		pos.Cube.Owner = 0
+	case "O":
+		pos.Cube.Owner = 1
+	default:
+		pos.Cube.Owner = -1
+	}
+
+	if bgfPos.MatchLength > 0 {
+		pos.Score = [2]int{bgfPos.MatchLength - bgfPos.ScoreX, bgfPos.MatchLength - bgfPos.ScoreO}
+	} else {
+		pos.Score = [2]int{-1, -1}
+	}
+
+	if len(bgfPos.CubeDecisions) > 0 && len(bgfPos.Evaluations) == 0 {
+		pos.DecisionType = domain.CubeAction
+		pos.Dice = [2]int{0, 0}
+	}
+
+	return pos
+}
+
+// classifyBGFCubeAction classifies a (possibly multilingual) cube action string
+// into "nodbl", "take", "pass" or "unknown". Lifted from database.
+func classifyBGFCubeAction(action string) string {
+	action = strings.ToLower(strings.TrimSpace(action))
+
+	noDoublePatterns := []string{
+		"no double", "no redouble",
+		"pas de double", "pas de redouble",
+		"kein doppel", "kein redoppel",
+		"ダブルせず",
+	}
+	for _, p := range noDoublePatterns {
+		if strings.Contains(action, p) {
+			return "nodbl"
+		}
+	}
+
+	takePatterns := []string{
+		"take", "accept",
+		"prendre", "accepter",
+		"annehmen",
+		"受ける",
+	}
+	for _, p := range takePatterns {
+		if strings.Contains(action, p) {
+			return "take"
+		}
+	}
+
+	passPatterns := []string{
+		"pass", "reject", "decline",
+		"refuser",
+		"ablehnen",
+		"降りる",
+	}
+	for _, p := range passPatterns {
+		if strings.Contains(action, p) {
+			return "pass"
+		}
+	}
+
+	if !strings.Contains(action, "/") {
+		return "nodbl"
+	}
+	return "unknown"
+}
+
+// buildBGFTextCheckerAnalysis builds a checker PositionAnalysis fragment from a
+// BGBlitz text position's evaluations.
+func buildBGFTextCheckerAnalysis(bgfPos *bgfparser.Position) *domain.PositionAnalysis {
+	if len(bgfPos.Evaluations) == 0 {
+		return nil
+	}
+	posAnalysis := &domain.PositionAnalysis{
+		XGID:                  bgfPos.XGID,
+		Player1:               bgfPos.PlayerX,
+		Player2:               bgfPos.PlayerO,
+		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "BGBlitz",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+	moves := make([]domain.CheckerMove, 0, len(bgfPos.Evaluations))
+	for i, eval := range bgfPos.Evaluations {
+		var equityError *float64
+		if i > 0 {
+			diff := bgfPos.Evaluations[0].Equity - eval.Equity
+			equityError = &diff
+		}
+		moves = append(moves, domain.CheckerMove{
+			Index:                    i,
+			AnalysisDepth:            "2-ply",
+			AnalysisEngine:           "BGBlitz",
+			Move:                     eval.Move,
+			Equity:                   eval.Equity,
+			EquityError:              equityError,
+			PlayerWinChance:          eval.Win * 100.0,
+			PlayerGammonChance:       eval.WinG * 100.0,
+			PlayerBackgammonChance:   eval.WinBG * 100.0,
+			OpponentWinChance:        (1.0 - eval.Win) * 100.0,
+			OpponentGammonChance:     eval.LoseG * 100.0,
+			OpponentBackgammonChance: eval.LoseBG * 100.0,
+		})
+	}
+	posAnalysis.CheckerAnalysis = &domain.CheckerAnalysis{Moves: moves}
+	return posAnalysis
+}
+
+// buildBGFTextCubeAnalysis builds a DoublingCube PositionAnalysis fragment from
+// a BGBlitz text position's cube decisions.
+func buildBGFTextCubeAnalysis(bgfPos *bgfparser.Position) *domain.PositionAnalysis {
+	if len(bgfPos.CubeDecisions) == 0 {
+		return nil
+	}
+
+	var noDouble, doubleTake, doublePass *bgfparser.CubeDecision
+	for i := range bgfPos.CubeDecisions {
+		cd := &bgfPos.CubeDecisions[i]
+		switch classifyBGFCubeAction(cd.Action) {
+		case "nodbl":
+			noDouble = cd
+		case "take":
+			doubleTake = cd
+		case "pass":
+			doublePass = cd
+		}
+	}
+
+	cubefulNoDouble := 0.0
+	cubefulDoubleTake := 0.0
+	cubefulDoublePass := 1.0
+	if noDouble != nil {
+		cubefulNoDouble = noDouble.EMG
+	}
+	if doubleTake != nil {
+		cubefulDoubleTake = doubleTake.EMG
+	}
+	if doublePass != nil {
+		cubefulDoublePass = doublePass.EMG
+	}
+
+	cube := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                   "2-ply",
+		Engine:                  "BGBlitz",
+		CubelessNoDoubleEquity:  bgfPos.CubelessEquity,
+		CubelessDoubleEquity:    bgfPos.CubelessEquity,
+		CubefulNoDoubleEquity:   cubefulNoDouble,
+		CubefulDoubleTakeEquity: cubefulDoubleTake,
+		CubefulDoublePassEquity: cubefulDoublePass,
+	})
+
+	return &domain.PositionAnalysis{
+		XGID:                  bgfPos.XGID,
+		Player1:               bgfPos.PlayerX,
+		Player2:               bgfPos.PlayerO,
+		AnalysisType:          "DoublingCube",
 		AnalysisEngineVersion: "BGBlitz",
 		DoublingCubeAnalysis:  &cube,
 		CreationDate:          time.Now(),

@@ -259,6 +259,24 @@ func TestImportXGPPositionEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportBGFTextPositionEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "bgf_positions", "01_checkerPosition_FR.txt"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.position", "pos.txt", fixture)
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["saved_positions"].(float64) == 0 {
+		t.Fatal("saved_positions = 0, want > 0")
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
 	// An unknown imports.* verb hits the catch-all 404 (unknown route).

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/kevung/bgfparser"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/xgparser/xgparser"
@@ -99,9 +100,30 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 	return out, nil
 }
 
+// MapBGFTextPosition parses a BGBlitz text single-position export (.txt) into a
+// PositionGraph, re-implementing the mapping half of database.ImportBGFPosition.
+// A BGBlitz text position carries either move evaluations (checker) or cube
+// decisions, never both, so it yields a single analysis fragment.
+func MapBGFTextPosition(path string) ([]PositionGraph, error) {
+	bgfPos, err := bgfparser.ParseTXT(path)
+	if err != nil {
+		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
+	}
+	pos := convertBGFTextPosition(bgfPos)
+
+	var an []*domain.PositionAnalysis
+	if a := buildBGFTextCheckerAnalysis(bgfPos); a != nil {
+		an = append(an, a)
+	}
+	if a := buildBGFTextCubeAnalysis(bgfPos); a != nil {
+		an = append(an, a)
+	}
+	return []PositionGraph{{Position: pos, Analyses: an}}, nil
+}
+
 // PositionImporter implements Importer for single-position files. It dispatches
-// on the upload's extension: .xgp uses the XG parser. (BGBlitz .txt position
-// import is deferred until a fixture exists to gate it.)
+// on the upload's extension: .xgp uses the XG parser, .txt the BGBlitz text
+// parser.
 type PositionImporter struct{ S storage.Storage }
 
 func (im PositionImporter) Import(ctx context.Context, scope string, src Source, prog func(Progress)) (Summary, error) {
@@ -114,6 +136,8 @@ func (im PositionImporter) Import(ctx context.Context, scope string, src Source,
 	switch strings.ToLower(filepath.Ext(src.Path)) {
 	case ".xgp":
 		graphs, err = MapXGPPosition(src.Path)
+	case ".txt":
+		graphs, err = MapBGFTextPosition(src.Path)
 	default:
 		return Summary{}, fmt.Errorf("ingest: unsupported position file format: %s", filepath.Ext(src.Path))
 	}
