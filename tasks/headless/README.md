@@ -70,7 +70,7 @@ Optional side phases:
 | P3 | Postgres backend | [03-postgres-backend.md](03-postgres-backend.md) | 10-15 d | high | PR1 done (skeleton: pgx/pgxpool, `001_initial_v2_7_0.sql`, bootstrap, 14 family stubs, testcontainers migration test); PR2 done (positions + analyses + search, `TestContract_Postgres` green); PR3 done (matches + games + moves, cascade delete); PR4 done (tournaments + collections, contract `Tournament/*` enabled); PR5 done (comments + anki, contract `Anki/*` enabled); PRs 6-8 pending |
 | P4 | Session scope | [04-session-scope.md](04-session-scope.md) | 3-4 d | medium | pending |
 | P5 | Remove global mutex | [05-remove-global-mutex.md](05-remove-global-mutex.md) | 4-6 d | high | pending |
-| P6 | `serve` HTTP+JSON | [06-serve-http.md](06-serve-http.md) | 5-7 d | medium | pending |
+| P6 | `serve` HTTP+JSON | [06-serve-http.md](06-serve-http.md) | 5-7 d | medium | PR1 done (skeleton: `internal/server` + `metrics`, middlewares tenant/logging/metrics/recover/cors, `/healthz` `/readyz` `/metrics`, frozen error envelope + `storage.Err*` mapping, NDJSON helper, route table with `domainRoutes()` insertion point, `serve` subcommand on sqlite/postgres, httptest tests); PR2 (domain handlers) + PR3 (imports/exports) pending |
 | P7 | CLI 100 % coverage | [07-cli-full-coverage.md](07-cli-full-coverage.md) | 3-4 d | low | pending |
 | P8 | Streaming + ctx | [08-streaming-imports-ctx.md](08-streaming-imports-ctx.md) | 3-5 d | medium | pending |
 | P9 | Benchmarks | [09-benchmarks.md](09-benchmarks.md) | 3-4 d | low | pending |

@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/cli"
 	"github.com/kevung/blunderdb/internal/gui"
+	"github.com/kevung/blunderdb/internal/server"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
@@ -20,6 +21,11 @@ var assets embed.FS
 func main() {
 	// Check if running in CLI mode
 	if len(os.Args) > 1 {
+		// `serve` runs the HTTP + JSON daemon (its own arg parsing).
+		if strings.ToLower(os.Args[1]) == "serve" {
+			runServe()
+			return
+		}
 		// Check if first argument is a CLI command
 		cliCommands := []string{"create", "import", "export", "list", "match", "verify", "delete", "help", "version", "info", "edit", "search"}
 		for _, cmd := range cliCommands {
@@ -40,6 +46,14 @@ func runCLI() {
 	args := os.Args[1:]
 
 	if err := c.Run(args); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runServe() {
+	initLogging("serve")
+	if err := server.RunServe(os.Args[2:]); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
