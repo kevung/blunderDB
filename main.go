@@ -26,6 +26,11 @@ func main() {
 			runServe()
 			return
 		}
+		// `call` invokes a Storage method via the same handlers, in-process.
+		if strings.ToLower(os.Args[1]) == "call" {
+			runCall()
+			return
+		}
 		// Check if first argument is a CLI command
 		cliCommands := []string{"create", "import", "export", "list", "match", "verify", "delete", "help", "version", "info", "edit", "search"}
 		for _, cmd := range cliCommands {
@@ -54,6 +59,14 @@ func runCLI() {
 func runServe() {
 	initLogging("serve")
 	if err := server.RunServe(os.Args[2:]); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runCall() {
+	initLogging("cli")
+	if err := server.RunCall(os.Args[2:]); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

@@ -1,6 +1,10 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+	"sort"
+	"strings"
+)
 
 // route is one entry in the server's routing table: an HTTP method, a
 // net/http pattern (Go 1.22+ method-aware patterns), and its handler.
@@ -42,6 +46,20 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.statsRoutes()...)
 	rs = append(rs, s.ingestRoutes()...)
 	return rs
+}
+
+// Paths returns the sorted list of registered /v1 domain route patterns
+// (e.g. "/v1/positions.save"). It backs the `call --list` dispatcher and lets
+// callers enumerate the full Storage surface exposed over HTTP.
+func (s *Server) Paths() []string {
+	var out []string
+	for _, rt := range s.domainRoutes() {
+		if strings.HasPrefix(rt.pattern, "/v1/") {
+			out = append(out, rt.pattern)
+		}
+	}
+	sort.Strings(out)
+	return out
 }
 
 // notFound writes the API error envelope for an unmatched route. It is the

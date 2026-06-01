@@ -152,3 +152,29 @@ This avoids forking logic (per CLAUDE.md "parité CLI/GUI").
 ## PR layout
 
 Single PR: `feat(cli): generic call dispatcher matching Storage surface`.
+
+## Done — implementation note (deviation from the design above)
+
+Rather than extract a reflective `api.Routes` table out of the closure-based P6
+handlers (a 100-handler big-bang refactor that would churn the frozen HTTP
+surface), `blunderdb call` dispatches **in-process** through the already-wired
+server handler:
+
+- `server.RunCall(args)` (in `internal/server/call.go`, dispatched from
+  `main.go` like `serve`) opens the backend via the shared `openStorage`,
+  builds the `Server`, constructs an httptest `POST /v1/<family>.<method>`
+  request with the `--json` body and `X-Tenant-ID: <scope>`, and runs it through
+  `srv.Handler().ServeHTTP`. The response body (JSON or NDJSON) is streamed to
+  stdout; a ≥400 status maps to a non-zero exit (the error envelope still prints).
+- `Server.Paths()` enumerates the registered `/v1` domain routes; `call --list`
+  prints them (108 methods).
+
+This achieves the phase's actual goals — every Storage method callable from the
+CLI, and **exact** behavioural parity with the HTTP API (literally the same
+handlers) — without a separate route table. Legacy subcommands are untouched.
+
+Tests (`internal/server/call_test.go`): `TestCallRouteCoverage` (every
+`Paths()` route is registered, not the catch-all), `TestRunCallList`,
+`TestRunCallEndToEnd` (save → counts round-trip on a temp .db), and
+`TestRunCallErrorExit`. Docs: "Generic `call` dispatcher" section in
+`CLI_USAGE.md`.

@@ -723,6 +723,43 @@ else
 fi
 ```
 
+## Generic `call` dispatcher
+
+In addition to the historical subcommands above, `blunderdb call` exposes
+**every** storage operation directly. It dispatches in-process through the exact
+same handlers the `serve` daemon serves, so the behaviour is identical to
+`POST /v1/<family>.<method>` — useful for scripting and integration testing.
+
+```bash
+# List every available method (108+)
+blunderdb call --list
+
+# Read-only queries
+blunderdb call metadata.counts --db mydb.db
+blunderdb call positions.list   --db mydb.db --json '{"limit":10}'
+blunderdb call matches.get      --db mydb.db --json '{"id":1}'
+
+# Mutations
+blunderdb call positions.save   --db mydb.db --json '{"position":{...}}'
+blunderdb call matches.delete   --db mydb.db --json '{"id":42}'
+```
+
+Flags:
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `--db <path>` | – | SQLite database file (shorthand for `--backend sqlite --dsn <path>`) |
+| `--backend <kind>` | `sqlite` | `sqlite` or `postgres` (or `$BLUNDERDB_BACKEND`) |
+| `--dsn <string>` | `$BLUNDERDB_DSN` | backend connection string |
+| `--scope <string>` | `default` | tenant scope (sent as `X-Tenant-ID`; SQLite ignores it for most families) |
+| `--json <string>` | `{}` | request body as JSON |
+| `--json-file <path>` | – | read the request body from a file |
+| `--list` | – | print every `<family>.<method>` and exit |
+
+The JSON response (or NDJSON stream for `*.list` endpoints) is written to
+stdout. On an error the process exits non-zero and the `{"error":{…}}` envelope
+is printed to stdout so it stays parseable (e.g. with `jq`).
+
 ## See Also
 
 - Main blunderDB documentation
