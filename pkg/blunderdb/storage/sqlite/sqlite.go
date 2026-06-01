@@ -166,8 +166,10 @@ func (s *Storage) Version(ctx context.Context) (string, error) {
 }
 
 // Migrate brings the database up to the current schema version. A fresh
-// database is bootstrapped to the v2.7.0 schema; the 1.0→2.7 migration chain
-// for pre-existing databases lands in P2 PR6.
+// database is bootstrapped to the current schema; a pre-existing database is
+// upgraded in place through the registered legacy migration chain (P2 PR6).
+// When no migrator is registered (pure-library consumer importing only this
+// package) a non-fresh database is left untouched — assumed already current.
 func (s *Storage) Migrate(ctx context.Context) error {
 	fresh, err := isFreshDB(ctx, s.sqlDB)
 	if err != nil {
@@ -175,6 +177,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	}
 	if fresh {
 		return Bootstrap(ctx, s.sqlDB)
+	}
+	if registeredMigrator != nil {
+		return registeredMigrator(ctx, s.sqlDB)
 	}
 	return nil
 }
