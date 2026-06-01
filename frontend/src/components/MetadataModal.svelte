@@ -3,6 +3,7 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js'; // Import functions
+    import { t } from '../i18n';
 
     let { visible = false, onClose } = $props();
 
@@ -63,23 +64,23 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={handleClickOutside} role="dialog" aria-modal="true" aria-label="Match metadata" use:trapFocus>
+    <div class="modal-overlay" onclick={handleClickOutside} role="dialog" aria-modal="true" aria-label={$t('metadata.modalLabel')} use:trapFocus>
         <div class="modal-content">
             <!-- Metadata title removed -->
             <div class="form-group">
-                <label for="user">User:</label>
+                <label for="user">{$t('metadata.user')}:</label>
                 <input id="user" type="text" bind:value={user} />
             </div>
             <div class="form-group">
-                <label for="description">Description:</label>
+                <label for="description">{$t('metadata.description')}:</label>
                 <textarea id="description" bind:value={description} style="height: 150px;"></textarea>
             </div>
             <div class="form-group">
-                <label for="dateOfCreation">Date of Creation:</label>
+                <label for="dateOfCreation">{$t('metadata.dateOfCreation')}:</label>
                 <input id="dateOfCreation" type="date" bind:value={dateOfCreation} />
             </div>
             <div class="form-group">
-                <label for="databaseVersion">Database Version:</label>
+                <label for="databaseVersion">{$t('metadata.databaseVersion')}:</label>
                 <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly />
                 <!-- Display database version -->
             </div>

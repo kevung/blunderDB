@@ -7,6 +7,7 @@
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
     import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
+    import { t, tMsg } from '../i18n';
 
     let { onLoadPositionsByFilters } = $props();
 
@@ -67,7 +68,7 @@
             filters = loadedFilters || []; // Ensure filters are set correctly
         } catch (error) {
             logger.error('Error loading filters:', error);
-            statusBarTextStore.set('Error loading filters');
+            statusBarTextStore.set(tMsg('filterLibrary.errorLoading'));
         }
     }
 
@@ -75,7 +76,7 @@
         if (filterName && (filterCommand.startsWith('s ') || filterCommand === 's')) {
             const existingFilter = filters.find((filter) => filter.name === filterName);
             if (existingFilter) {
-                statusBarTextStore.set('Filter name already exists');
+                statusBarTextStore.set(tMsg('filterLibrary.nameExists'));
                 return;
             }
             editPosition = JSON.stringify($positionStore); // Save positionStore as JSON string
@@ -90,7 +91,7 @@
             resetForm();
             statusBarTextStore.set('');
         } else {
-            statusBarTextStore.set('Filter command must start with "s "');
+            statusBarTextStore.set(tMsg('filterLibrary.mustStartWithS'));
         }
     }
 
@@ -103,7 +104,7 @@
             resetForm();
             statusBarTextStore.set('');
         } else {
-            statusBarTextStore.set('Filter command must start with "s "');
+            statusBarTextStore.set(tMsg('filterLibrary.mustStartWithS'));
         }
     }
 
@@ -124,7 +125,7 @@
 
     async function saveLastSearch() {
         if (searchHistory.length === 0) {
-            statusBarTextStore.set('No search history available');
+            statusBarTextStore.set(tMsg('filterLibrary.noHistoryStatus'));
             return;
         }
 
@@ -136,7 +137,7 @@
             positionStore.set(JSON.parse(editPosition)); // Restore positionStore from JSON string
         }
 
-        statusBarTextStore.set('Last search loaded. Enter a name and click Add to save.');
+        statusBarTextStore.set(tMsg('filterLibrary.lastSearchLoaded'));
     }
 
     async function selectFilter(filter) {
@@ -409,28 +410,35 @@
     });
 </script>
 
-<section class="filter-library-panel" role="dialog" aria-modal="true" aria-label="Filter library" id="filterLibraryPanel" tabindex="-1">
+<section class="filter-library-panel" role="dialog" aria-modal="true" aria-label={$t('filterLibrary.title')} id="filterLibraryPanel" tabindex="-1">
     <div class="filter-library-content">
         <div class="form-row">
             <div class="form-group name-group">
-                <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$activeTabStore !== 'search'} />
+                <input type="text" id="filterName" bind:value={filterName} placeholder={$t('filterLibrary.namePlaceholder')} disabled={$activeTabStore !== 'search'} />
             </div>
             <div class="form-group command-group">
-                <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} onkeydown={handleCommandKeyDown} />
+                <input
+                    type="text"
+                    id="filterCommand"
+                    bind:value={filterCommand}
+                    placeholder={$t('filterLibrary.commandPlaceholder')}
+                    disabled={$activeTabStore !== 'search'}
+                    onkeydown={handleCommandKeyDown}
+                />
             </div>
             <div class="form-actions">
-                <button onclick={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
-                <button onclick={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
-                <button onclick={deleteFilter} disabled={!selectedFilter}>Delete</button>
-                <button onclick={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
+                <button onclick={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>{$t('filterLibrary.add')}</button>
+                <button onclick={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>{$t('filterLibrary.update')}</button>
+                <button onclick={deleteFilter} disabled={!selectedFilter}>{$t('common.delete')}</button>
+                <button onclick={saveLastSearch} disabled={$activeTabStore !== 'search'} title={$t('filterLibrary.lastSearchTooltip')}>{$t('filterLibrary.lastSearch')}</button>
             </div>
         </div>
         <div class="filter-table-container">
             <table class="filter-table">
                 <thead>
                     <tr>
-                        <th class="no-select">Name</th>
-                        <th class="no-select">Filter</th>
+                        <th class="no-select">{$t('filterLibrary.colName')}</th>
+                        <th class="no-select">{$t('filterLibrary.colFilter')}</th>
                     </tr>
                 </thead>
                 <tbody>

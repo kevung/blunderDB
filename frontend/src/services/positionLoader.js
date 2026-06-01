@@ -13,6 +13,9 @@
  */
 
 import { get } from 'svelte/store';
+// NOTE: these UI messages are translated at emission time via the non-reactive
+// `translate` helper; already-displayed messages do not retranslate on language change.
+import { tMsg } from '../i18n';
 import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
 import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -28,11 +31,11 @@ import { databasePathStore } from '../stores/databaseStore.js';
  */
 export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
     if (!get(databasePathStore)) {
-        statusBarTextStore.set('No database loaded');
+        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         return;
     }
     if (!ids || ids.length === 0) {
-        statusBarTextStore.set('No positions found');
+        statusBarTextStore.set(tMsg('commands.noPositionsFound'));
         return;
     }
 
@@ -40,7 +43,7 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
     const positions = await LoadPositionsByFilters({ filter: {}, restrictToPositionIDs });
 
     if (!positions || positions.length === 0) {
-        statusBarTextStore.set('No positions found');
+        statusBarTextStore.set(tMsg('commands.noPositionsFound'));
         return;
     }
 

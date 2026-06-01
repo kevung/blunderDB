@@ -14,6 +14,7 @@
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
     import { get } from 'svelte/store';
+    import { t, tMsg, resolveStatusMessage } from '../i18n';
 
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
@@ -22,6 +23,11 @@
     let showInput = $derived($showCommandInputStore);
     let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
+
+    // The status store may hold a plain string or a tMsg() descriptor
+    // ({ i18nKey, i18nParams }). Resolving through $t here makes the displayed
+    // message re-translate live whenever the language changes.
+    let statusMessage = $derived(resolveStatusMessage($statusBarTextStore, $t));
 
     $effect(() => {
         if ($showCommandInputStore) {
@@ -99,8 +105,10 @@
         const positions = get(positionsStore);
         const currentIndex = get(currentPositionIndexStore);
 
+        const tr = get(t);
+
         if (!analysis || !analysis.creationDate || !analysis.lastModifiedDate) {
-            statusBarTextStore.set('No database opened');
+            statusBarTextStore.set(tMsg('statusBar.noDatabaseOpened'));
             return;
         }
 
@@ -112,10 +120,10 @@
         };
         const creationDate = formatDate(new Date(analysis.creationDate));
         const lastModifiedDate = formatDate(new Date(analysis.lastModifiedDate));
-        let statusText = `Created: ${creationDate} | Modified: ${lastModifiedDate}`;
+        let statusText = tr('statusBar.createdModified', { created: creationDate, modified: lastModifiedDate });
 
         if (positions.length === 0 || currentIndex < 0 || currentIndex >= positions.length) {
-            statusText += ' | No position data available';
+            statusText += ` | ${tr('statusBar.noPositionData')}`;
         } else {
             const position = positions[currentIndex];
             const cubeValue = position.cube.value;
@@ -185,17 +193,18 @@
     {#if showInput}
         <div class="command-input-row">
             <span class="prompt-char">&gt;</span>
-            <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder="Type command..." onkeydown={handleKeyDown} onblur={hideInput} />
+            <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder={$t('statusBar.typeCommand')} onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
-        <span class="info-message" data-testid="status-bar-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
+        <span class="info-message" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
         {@const checkerMoves = $matchContextStore.movePositions.filter((p) => p.move_type === 'checker')}
         {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter((p) => p.move_type === 'checker').length}
-        <span class="position-info">move {currentCheckerIndex}/{checkerMoves.length}</span>
+        <span class="position-info">{$t('statusBar.move')} {currentCheckerIndex}/{checkerMoves.length}</span>
         <span class="position-info"
-            >game {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{Math.max(...$matchContextStore.movePositions.map((p) => p.game_number))}</span
+            >{$t('statusBar.game')}
+            {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{Math.max(...$matchContextStore.movePositions.map((p) => p.game_number))}</span
         >
     {:else}
         <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>

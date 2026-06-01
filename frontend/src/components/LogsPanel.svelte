@@ -1,6 +1,7 @@
 <script>
     import { logEntriesStore } from '../stores/uiStore';
     import { tick } from 'svelte';
+    import { t } from '../i18n';
 
     let logContainer;
     let entries = $derived($logEntriesStore);
@@ -16,7 +17,7 @@
 <div class="logs-panel">
     <div class="logs-output" bind:this={logContainer}>
         {#if entries.length === 0}
-            <div class="empty-msg">No operations logged yet.</div>
+            <div class="empty-msg">{$t('logs.empty')}</div>
         {:else}
             {#each entries as entry, i (i)}
                 <div class="log-line">

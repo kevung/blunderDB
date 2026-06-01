@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { t, tMsg } from '../i18n';
     import { onMount, onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -176,6 +177,64 @@
         'Match IDs',
         'Tournament IDs'
     ];
+
+    // Canonical filter/group names stay in English because they double as logic
+    // keys (object keys for filterEnabled/params and `{#if filter === '...'}`
+    // branches). These maps yield the i18n key slug for the *displayed* label
+    // only. Keep the filter slugs in sync with SearchModal.svelte.
+    const filterKeySlug = {
+        'Include Cube': 'includeCube',
+        'Include Score': 'includeScore',
+        'Include Decision Type': 'includeDecisionType',
+        'Include Dice Roll': 'includeDiceRoll',
+        'No Contact': 'noContact',
+        'Mirror Position': 'mirrorPosition',
+        'Pipcount Difference': 'pipcountDifference',
+        'Player Absolute Pipcount': 'playerAbsolutePipcount',
+        'Equity (millipoints)': 'equity',
+        'Move Error (millipoints, Player 1)': 'moveError',
+        'Win Rate': 'winRate',
+        'Gammon Rate': 'gammonRate',
+        'Backgammon Rate': 'backgammonRate',
+        'Opponent Win Rate': 'opponentWinRate',
+        'Opponent Gammon Rate': 'opponentGammonRate',
+        'Opponent Backgammon Rate': 'opponentBackgammonRate',
+        'Player Checker-Off': 'playerCheckerOff',
+        'Opponent Checker-Off': 'opponentCheckerOff',
+        'Player Back Checker': 'playerBackChecker',
+        'Opponent Back Checker': 'opponentBackChecker',
+        'Player Checker in the Zone': 'playerCheckerInZone',
+        'Opponent Checker in the Zone': 'opponentCheckerInZone',
+        'Player Outfield Blot': 'playerOutfieldBlot',
+        'Opponent Outfield Blot': 'opponentOutfieldBlot',
+        'Player Jan Blot': 'playerJanBlot',
+        'Opponent Jan Blot': 'opponentJanBlot',
+        'Search Text': 'searchText',
+        'Best Move or Cube Decision': 'bestMoveOrCubeDecision',
+        'Creation Date': 'creationDate',
+        'Match IDs': 'matchIDs',
+        'Tournament IDs': 'tournamentIDs'
+    };
+    const groupKeySlug = {
+        Display: 'display',
+        Position: 'position',
+        Pipcount: 'pipcount',
+        'Equity / Error': 'equityError',
+        'Player Rates': 'playerRates',
+        'Opponent Rates': 'opponentRates',
+        Checkers: 'checkers',
+        Blots: 'blots',
+        'Text / Pattern': 'textPattern',
+        Other: 'other'
+    };
+    function filterLabel(filter) {
+        const name = typeof filter === 'string' ? filter : (filter?.name ?? '');
+        return filterKeySlug[name] ? $t('search.filters.' + filterKeySlug[name]) : name;
+    }
+    function groupLabel(group) {
+        const name = String(group ?? '');
+        return groupKeySlug[name] ? $t('search.filterGroups.' + groupKeySlug[name]) : name;
+    }
 
     let filterGroups = [
         { name: 'Display', filters: ['Include Cube', 'Include Score', 'Include Decision Type', 'Include Dice Roll'] },
@@ -779,13 +838,13 @@
 
     async function saveToFilterLibrary() {
         if (!filterName || !selectedSearch) {
-            statusBarTextStore.set('Please enter a filter name');
+            statusBarTextStore.set(tMsg('searchHistory.enterFilterName'));
             return;
         }
         if (onAddToFilterLibrary) {
             await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position, selectedSearch.excludePosition);
             await loadSavedFilters();
-            statusBarTextStore.set('Filter saved to library');
+            statusBarTextStore.set(tMsg('searchHistory.filterSaved'));
         }
         cancelSaveDialog();
     }
@@ -795,9 +854,9 @@
         try {
             await DeleteSearchHistoryEntry(search.timestamp);
             await loadHistory();
-            statusBarTextStore.set('Search deleted from history');
+            statusBarTextStore.set(tMsg('searchHistory.searchDeleted'));
         } catch (_error) {
-            statusBarTextStore.set('Error deleting search');
+            statusBarTextStore.set(tMsg('searchHistory.errorDeleting'));
         }
     }
 
@@ -1144,9 +1203,9 @@
 <div class="search-panel">
     <!-- Left sub-tab sidebar -->
     <div class="sub-tab-sidebar">
-        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>Search</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>History</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>Saved</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>{$t('common.search')}</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>{$t('search.historyTab')}</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>{$t('search.savedTab')}</button>
     </div>
 
     <!-- Content area -->
@@ -1155,66 +1214,61 @@
             <!-- Filter Builder with checkboxes -->
             <div class="filter-section">
                 <div class="structure-toggle" class:exclude-active={structureMode === 'exclude'}>
-                    <button
-                        class="structure-btn"
-                        class:active={structureMode === 'include'}
-                        onclick={() => switchStructureMode('include')}
-                        title="Search positions that contain at least this checker structure">At least</button
+                    <button class="structure-btn" class:active={structureMode === 'include'} onclick={() => switchStructureMode('include')} title={$t('search.atLeastTooltip')}
+                        >{$t('search.atLeast')}</button
                     >
-                    <button
-                        class="structure-btn exclude"
-                        class:active={structureMode === 'exclude'}
-                        onclick={() => switchStructureMode('exclude')}
-                        title="Exclude positions containing any checker of this structure">Except</button
+                    <button class="structure-btn exclude" class:active={structureMode === 'exclude'} onclick={() => switchStructureMode('exclude')} title={$t('search.exceptTooltip')}
+                        >{$t('search.except')}</button
                     >
                     {#if boardHasCheckers($searchExcludePositionStore) || structureMode === 'exclude'}
-                        <span class="structure-hint">{structureMode === 'exclude' ? 'Editing the EXCLUDED structure' : 'An exclusion structure is set'}</span>
+                        <span class="structure-hint">{structureMode === 'exclude' ? $t('search.editingExcluded') : $t('search.exclusionSet')}</span>
                     {/if}
                 </div>
                 <div class="action-bar top-action-bar">
-                    <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> In results</label>
-                    <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> New tab</label>
-                    <span class="active-count">{activeFilterCount} active</span>
-                    <button class="btn-search" onclick={handleSearch}>Search</button>
-                    <button class="btn-clear" onclick={clearFilters}>Clear</button>
+                    <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResults')}</label>
+                    <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTab')}</label>
+                    <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
+                    <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
+                    <button class="btn-clear" onclick={clearFilters}>{$t('common.clear')}</button>
                 </div>
                 <div class="filter-groups">
                     {#each filterGroups as group (group.name)}
                         <div class="filter-group">
-                            <div class="group-header">{group.name}</div>
+                            <div class="group-header">{groupLabel(group.name)}</div>
                             {#each group.filters as filter (filter)}
                                 <div class="filter-item" class:active={filterEnabled[filter]}>
                                     <label class="filter-checkbox">
                                         <input type="checkbox" bind:checked={filterEnabled[filter]} />
-                                        <span class="filter-label">{filter}</span>
+                                        <span class="filter-label">{filterLabel(filter)}</span>
                                     </label>
                                     {#if filterEnabled[filter]}
                                         <div class="filter-params">
                                             {#if filter === 'Include Dice Roll'}
                                                 <div class="minmax-controls">
-                                                    <label><input type="radio" bind:group={diceRollOption} value="both" /> Both dice</label>
-                                                    <label><input type="radio" bind:group={diceRollOption} value="first" /> First die only</label>
+                                                    <label><input type="radio" bind:group={diceRollOption} value="both" /> {$t('search.bothDice')}</label>
+                                                    <label><input type="radio" bind:group={diceRollOption} value="first" /> {$t('search.firstDieOnly')}</label>
                                                 </div>
                                             {:else if filter === 'Pipcount Difference'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={pipCountOption} value="min" /> Min
-                                                        <input type="number" bind:value={pipCountMin} class="num-input" disabled={pipCountOption !== 'min'} /></label
+                                                        ><input type="radio" bind:group={pipCountOption} value="min" />
+                                                        {$t('common.min')} <input type="number" bind:value={pipCountMin} class="num-input" disabled={pipCountOption !== 'min'} /></label
                                                     >
                                                     <label
-                                                        ><input type="radio" bind:group={pipCountOption} value="max" /> Max
-                                                        <input type="number" bind:value={pipCountMax} class="num-input" disabled={pipCountOption !== 'max'} /></label
+                                                        ><input type="radio" bind:group={pipCountOption} value="max" />
+                                                        {$t('common.max')} <input type="number" bind:value={pipCountMax} class="num-input" disabled={pipCountOption !== 'max'} /></label
                                                     >
                                                     <label
-                                                        ><input type="radio" bind:group={pipCountOption} value="range" /> Range
-                                                        <input type="number" bind:value={pipCountRangeMin} class="num-input" disabled={pipCountOption !== 'range'} />
+                                                        ><input type="radio" bind:group={pipCountOption} value="range" />
+                                                        {$t('common.range')} <input type="number" bind:value={pipCountRangeMin} class="num-input" disabled={pipCountOption !== 'range'} />
                                                         <input type="number" bind:value={pipCountRangeMax} class="num-input" disabled={pipCountOption !== 'range'} /></label
                                                     >
                                                 </div>
                                             {:else if filter === 'Player Absolute Pipcount'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1AbsolutePipCountMin}
@@ -1224,7 +1278,8 @@
                                                             disabled={player1AbsolutePipCountOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1AbsolutePipCountMax}
@@ -1234,7 +1289,8 @@
                                                             disabled={player1AbsolutePipCountOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1AbsolutePipCountOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1AbsolutePipCountRangeMin}
@@ -1256,41 +1312,42 @@
                                             {:else if filter === 'Equity (millipoints)'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={equityOption} value="min" /> Min
-                                                        <input type="number" bind:value={equityMin} class="num-input" disabled={equityOption !== 'min'} /></label
+                                                        ><input type="radio" bind:group={equityOption} value="min" />
+                                                        {$t('common.min')} <input type="number" bind:value={equityMin} class="num-input" disabled={equityOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={equityOption} value="max" /> Max
-                                                        <input type="number" bind:value={equityMax} class="num-input" disabled={equityOption !== 'max'} /></label
+                                                        ><input type="radio" bind:group={equityOption} value="max" />
+                                                        {$t('common.max')} <input type="number" bind:value={equityMax} class="num-input" disabled={equityOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={equityOption} value="range" /> Range
-                                                        <input type="number" bind:value={equityRangeMin} class="num-input" disabled={equityOption !== 'range'} />
+                                                        ><input type="radio" bind:group={equityOption} value="range" />
+                                                        {$t('common.range')} <input type="number" bind:value={equityRangeMin} class="num-input" disabled={equityOption !== 'range'} />
                                                         <input type="number" bind:value={equityRangeMax} class="num-input" disabled={equityOption !== 'range'} /></label
                                                     >
                                                 </div>
                                             {:else if filter === 'Move Error (millipoints, Player 1)'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={moveErrorOption} value="min" /> Min
-                                                        <input type="number" bind:value={moveErrorMin} class="num-input" min="0" disabled={moveErrorOption !== 'min'} /></label
+                                                        ><input type="radio" bind:group={moveErrorOption} value="min" />
+                                                        {$t('common.min')} <input type="number" bind:value={moveErrorMin} class="num-input" min="0" disabled={moveErrorOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={moveErrorOption} value="max" /> Max
-                                                        <input type="number" bind:value={moveErrorMax} class="num-input" min="0" disabled={moveErrorOption !== 'max'} /></label
+                                                        ><input type="radio" bind:group={moveErrorOption} value="max" />
+                                                        {$t('common.max')} <input type="number" bind:value={moveErrorMax} class="num-input" min="0" disabled={moveErrorOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={moveErrorOption} value="range" /> Range
-                                                        <input type="number" bind:value={moveErrorRangeMin} class="num-input" min="0" disabled={moveErrorOption !== 'range'} />
+                                                        ><input type="radio" bind:group={moveErrorOption} value="range" />
+                                                        {$t('common.range')} <input type="number" bind:value={moveErrorRangeMin} class="num-input" min="0" disabled={moveErrorOption !== 'range'} />
                                                         <input type="number" bind:value={moveErrorRangeMax} class="num-input" min="0" disabled={moveErrorOption !== 'range'} /></label
                                                     >
                                                 </div>
                                             {:else if filter === 'Win Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={winRateOption} value="min" /> Min
-                                                        <input type="number" bind:value={winRateMin} class="num-input" min="0" max="100" disabled={winRateOption !== 'min'} /></label
+                                                        ><input type="radio" bind:group={winRateOption} value="min" />
+                                                        {$t('common.min')} <input type="number" bind:value={winRateMin} class="num-input" min="0" max="100" disabled={winRateOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={winRateOption} value="max" /> Max
-                                                        <input type="number" bind:value={winRateMax} class="num-input" min="0" max="100" disabled={winRateOption !== 'max'} /></label
+                                                        ><input type="radio" bind:group={winRateOption} value="max" />
+                                                        {$t('common.max')} <input type="number" bind:value={winRateMax} class="num-input" min="0" max="100" disabled={winRateOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={winRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={winRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={winRateRangeMin} class="num-input" min="0" max="100" disabled={winRateOption !== 'range'} />
                                                         <input type="number" bind:value={winRateRangeMax} class="num-input" min="0" max="100" disabled={winRateOption !== 'range'} /></label
                                                     >
@@ -1298,13 +1355,16 @@
                                             {:else if filter === 'Gammon Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={gammonRateOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={gammonRateOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={gammonRateMin} class="num-input" min="0" max="100" disabled={gammonRateOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={gammonRateOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={gammonRateOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={gammonRateMax} class="num-input" min="0" max="100" disabled={gammonRateOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={gammonRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={gammonRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={gammonRateRangeMin} class="num-input" min="0" max="100" disabled={gammonRateOption !== 'range'} />
                                                         <input type="number" bind:value={gammonRateRangeMax} class="num-input" min="0" max="100" disabled={gammonRateOption !== 'range'} /></label
                                                     >
@@ -1312,13 +1372,16 @@
                                             {:else if filter === 'Backgammon Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={backgammonRateOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={backgammonRateOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={backgammonRateMin} class="num-input" min="0" max="100" disabled={backgammonRateOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={backgammonRateOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={backgammonRateOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={backgammonRateMax} class="num-input" min="0" max="100" disabled={backgammonRateOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={backgammonRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={backgammonRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={backgammonRateRangeMin} class="num-input" min="0" max="100" disabled={backgammonRateOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1333,13 +1396,16 @@
                                             {:else if filter === 'Opponent Win Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2WinRateOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2WinRateOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={player2WinRateMin} class="num-input" min="0" max="100" disabled={player2WinRateOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2WinRateOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2WinRateOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={player2WinRateMax} class="num-input" min="0" max="100" disabled={player2WinRateOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2WinRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2WinRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={player2WinRateRangeMin} class="num-input" min="0" max="100" disabled={player2WinRateOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1354,7 +1420,8 @@
                                             {:else if filter === 'Opponent Gammon Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2GammonRateOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2GammonRateOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2GammonRateMin}
@@ -1364,7 +1431,8 @@
                                                             disabled={player2GammonRateOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2GammonRateOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2GammonRateOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2GammonRateMax}
@@ -1374,7 +1442,8 @@
                                                             disabled={player2GammonRateOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2GammonRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2GammonRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2GammonRateRangeMin}
@@ -1396,7 +1465,8 @@
                                             {:else if filter === 'Opponent Backgammon Rate'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackgammonRateMin}
@@ -1406,7 +1476,8 @@
                                                             disabled={player2BackgammonRateOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackgammonRateMax}
@@ -1416,7 +1487,8 @@
                                                             disabled={player2BackgammonRateOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2BackgammonRateOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackgammonRateRangeMin}
@@ -1438,13 +1510,16 @@
                                             {:else if filter === 'Player Checker-Off'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={player1CheckerOffMin} class="num-input" min="0" max="15" disabled={player1CheckerOffOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={player1CheckerOffMax} class="num-input" min="0" max="15" disabled={player1CheckerOffOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1CheckerOffOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={player1CheckerOffRangeMin} class="num-input" min="0" max="15" disabled={player1CheckerOffOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1459,13 +1534,16 @@
                                             {:else if filter === 'Opponent Checker-Off'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={player2CheckerOffMin} class="num-input" min="0" max="15" disabled={player2CheckerOffOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={player2CheckerOffMax} class="num-input" min="0" max="15" disabled={player2CheckerOffOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2CheckerOffOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={player2CheckerOffRangeMin} class="num-input" min="0" max="15" disabled={player2CheckerOffOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1480,7 +1558,8 @@
                                             {:else if filter === 'Player Back Checker'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1BackCheckerMin}
@@ -1490,7 +1569,8 @@
                                                             disabled={player1BackCheckerOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1BackCheckerMax}
@@ -1500,7 +1580,8 @@
                                                             disabled={player1BackCheckerOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1BackCheckerOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1BackCheckerRangeMin}
@@ -1522,7 +1603,8 @@
                                             {:else if filter === 'Opponent Back Checker'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackCheckerMin}
@@ -1532,7 +1614,8 @@
                                                             disabled={player2BackCheckerOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackCheckerMax}
@@ -1542,7 +1625,8 @@
                                                             disabled={player2BackCheckerOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2BackCheckerOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2BackCheckerRangeMin}
@@ -1564,7 +1648,8 @@
                                             {:else if filter === 'Player Checker in the Zone'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1CheckerInZoneMin}
@@ -1574,7 +1659,8 @@
                                                             disabled={player1CheckerInZoneOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1CheckerInZoneMax}
@@ -1584,7 +1670,8 @@
                                                             disabled={player1CheckerInZoneOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1CheckerInZoneOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1CheckerInZoneRangeMin}
@@ -1606,7 +1693,8 @@
                                             {:else if filter === 'Opponent Checker in the Zone'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2CheckerInZoneMin}
@@ -1616,7 +1704,8 @@
                                                             disabled={player2CheckerInZoneOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2CheckerInZoneMax}
@@ -1626,7 +1715,8 @@
                                                             disabled={player2CheckerInZoneOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2CheckerInZoneOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2CheckerInZoneRangeMin}
@@ -1648,7 +1738,8 @@
                                             {:else if filter === 'Player Outfield Blot'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1OutfieldBlotMin}
@@ -1658,7 +1749,8 @@
                                                             disabled={player1OutfieldBlotOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1OutfieldBlotMax}
@@ -1668,7 +1760,8 @@
                                                             disabled={player1OutfieldBlotOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1OutfieldBlotOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player1OutfieldBlotRangeMin}
@@ -1690,7 +1783,8 @@
                                             {:else if filter === 'Opponent Outfield Blot'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2OutfieldBlotMin}
@@ -1700,7 +1794,8 @@
                                                             disabled={player2OutfieldBlotOption !== 'min'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2OutfieldBlotMax}
@@ -1710,7 +1805,8 @@
                                                             disabled={player2OutfieldBlotOption !== 'max'}
                                                         /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2OutfieldBlotOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input
                                                             type="number"
                                                             bind:value={player2OutfieldBlotRangeMin}
@@ -1732,13 +1828,16 @@
                                             {:else if filter === 'Player Jan Blot'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player1JanBlotOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player1JanBlotOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={player1JanBlotMin} class="num-input" min="0" max="15" disabled={player1JanBlotOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1JanBlotOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player1JanBlotOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={player1JanBlotMax} class="num-input" min="0" max="15" disabled={player1JanBlotOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player1JanBlotOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player1JanBlotOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={player1JanBlotRangeMin} class="num-input" min="0" max="15" disabled={player1JanBlotOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1753,13 +1852,16 @@
                                             {:else if filter === 'Opponent Jan Blot'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={player2JanBlotOption} value="min" /> Min
+                                                        ><input type="radio" bind:group={player2JanBlotOption} value="min" />
+                                                        {$t('common.min')}
                                                         <input type="number" bind:value={player2JanBlotMin} class="num-input" min="0" max="15" disabled={player2JanBlotOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2JanBlotOption} value="max" /> Max
+                                                        ><input type="radio" bind:group={player2JanBlotOption} value="max" />
+                                                        {$t('common.max')}
                                                         <input type="number" bind:value={player2JanBlotMax} class="num-input" min="0" max="15" disabled={player2JanBlotOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={player2JanBlotOption} value="range" /> Range
+                                                        ><input type="radio" bind:group={player2JanBlotOption} value="range" />
+                                                        {$t('common.range')}
                                                         <input type="number" bind:value={player2JanBlotRangeMin} class="num-input" min="0" max="15" disabled={player2JanBlotOption !== 'range'} />
                                                         <input
                                                             type="number"
@@ -1772,34 +1874,41 @@
                                                     >
                                                 </div>
                                             {:else if filter === 'Search Text'}
-                                                <div class="text-control"><span class="hint">(tag1;tag2;...)</span><input type="text" bind:value={searchText} class="text-input" /></div>
+                                                <div class="text-control"><span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" /></div>
                                             {:else if filter === 'Best Move or Cube Decision'}
-                                                <div class="text-control"><span class="hint">(pattern1;pattern2;...)</span><input type="text" bind:value={movePattern} class="text-input" /></div>
+                                                <div class="text-control">
+                                                    <span class="hint">{$t('search.movePatternHint')}</span><input type="text" bind:value={movePattern} class="text-input" />
+                                                </div>
                                             {:else if filter === 'Creation Date'}
                                                 <div class="minmax-controls">
                                                     <label
-                                                        ><input type="radio" bind:group={creationDateOption} value="min" /> Min
-                                                        <input type="date" bind:value={creationDateMin} class="date-input" disabled={creationDateOption !== 'min'} /></label
+                                                        ><input type="radio" bind:group={creationDateOption} value="min" />
+                                                        {$t('common.min')} <input type="date" bind:value={creationDateMin} class="date-input" disabled={creationDateOption !== 'min'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={creationDateOption} value="max" /> Max
-                                                        <input type="date" bind:value={creationDateMax} class="date-input" disabled={creationDateOption !== 'max'} /></label
+                                                        ><input type="radio" bind:group={creationDateOption} value="max" />
+                                                        {$t('common.max')} <input type="date" bind:value={creationDateMax} class="date-input" disabled={creationDateOption !== 'max'} /></label
                                                     ><label
-                                                        ><input type="radio" bind:group={creationDateOption} value="range" /> Range
-                                                        <input type="date" bind:value={creationDateRangeMin} class="date-input" disabled={creationDateOption !== 'range'} />
+                                                        ><input type="radio" bind:group={creationDateOption} value="range" />
+                                                        {$t('common.range')} <input type="date" bind:value={creationDateRangeMin} class="date-input" disabled={creationDateOption !== 'range'} />
                                                         <input type="date" bind:value={creationDateRangeMax} class="date-input" disabled={creationDateOption !== 'range'} /></label
                                                     >
                                                 </div>
                                             {:else if filter === 'Match IDs'}
                                                 <div class="text-control">
-                                                    <span class="hint">(e.g. 3 or 2,5 for range)</span><input type="text" bind:value={matchIDsInput} class="text-input" placeholder="ID or range" />
+                                                    <span class="hint">{$t('search.matchIdsHint')}</span><input
+                                                        type="text"
+                                                        bind:value={matchIDsInput}
+                                                        class="text-input"
+                                                        placeholder={$t('search.idOrRange')}
+                                                    />
                                                 </div>
                                             {:else if filter === 'Tournament IDs'}
                                                 <div class="text-control">
-                                                    <span class="hint">(e.g. 1 or 1,3 for range)</span><input
+                                                    <span class="hint">{$t('search.tournamentIdsHint')}</span><input
                                                         type="text"
                                                         bind:value={tournamentIDsInput}
                                                         class="text-input"
-                                                        placeholder="ID or range"
+                                                        placeholder={$t('search.idOrRange')}
                                                     />
                                                 </div>
                                             {/if}
@@ -1814,11 +1923,11 @@
         {:else if activeSubTab === 'history'}
             <div class="history-section">
                 {#if searchHistory.length === 0}
-                    <p class="empty-message">No search history yet.</p>
+                    <p class="empty-message">{$t('search.noHistory')}</p>
                 {:else}
                     <div class="history-table-container">
                         <table class="history-table">
-                            <thead><tr><th>Date</th><th>Command</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>{$t('search.date')}</th><th>{$t('search.command')}</th><th>{$t('search.actions')}</th></tr></thead>
                             <tbody>
                                 {#each searchHistory as search (search.timestamp)}
                                     <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
@@ -1832,7 +1941,7 @@
                                                     e.stopPropagation();
                                                     (() => showAddToLibraryDialog(search))();
                                                 }}
-                                                title="Save to bookmarks"
+                                                title={$t('search.saveToBookmarks')}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
                                                     ><path
@@ -1848,7 +1957,7 @@
                                                     e.stopPropagation();
                                                     ((e) => deleteSearch(search, e))(e);
                                                 }}
-                                                title="Delete"
+                                                title={$t('common.delete')}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
                                                     ><path
@@ -1869,7 +1978,7 @@
         {:else if activeSubTab === 'saved'}
             <div class="saved-section">
                 {#if savedFilters.length === 0}
-                    <p class="empty-message">No saved searches. Bookmark searches from History.</p>
+                    <p class="empty-message">{$t('search.noSaved')}</p>
                 {:else}
                     <div class="saved-list">
                         {#each savedFilters as sf (sf.id)}
@@ -1888,7 +1997,7 @@
                                         selectedSavedFilter = sf;
                                         deleteSavedFilter();
                                     }}
-                                    title="Remove"
+                                    title={$t('search.remove')}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
                                         ><path
@@ -1915,11 +2024,11 @@
         }}
     >
         <div class="save-dialog">
-            <h3>Save Search</h3>
+            <h3>{$t('search.saveSearch')}</h3>
             <p class="command-preview">{selectedSearch?.command || ''}</p>
             <div class="dialog-form">
-                <label for="filterNameInput">Name:</label>
-                <input type="text" id="filterNameInput" bind:value={filterName} placeholder="Enter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
+                <label for="filterNameInput">{$t('search.name')}</label>
+                <input type="text" id="filterNameInput" bind:value={filterName} placeholder={$t('search.enterName')} onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
                 <button
@@ -1927,14 +2036,14 @@
                     onclick={(e) => {
                         e.stopPropagation();
                         saveToFilterLibrary(e);
-                    }}>Save</button
+                    }}>{$t('common.save')}</button
                 >
                 <button
                     class="btn-clear"
                     onclick={(e) => {
                         e.stopPropagation();
                         cancelSaveDialog(e);
-                    }}>Cancel</button
+                    }}>{$t('common.cancel')}</button
                 >
             </div>
         </div>

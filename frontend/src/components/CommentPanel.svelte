@@ -7,6 +7,7 @@
     import { positionStore } from '../stores/positionStore';
     import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/database/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
+    import { t } from '../i18n';
 
     let allComments = $state([]);
     let searchQuery = $state('');
@@ -155,7 +156,8 @@
         }
     }
 
-    function formatDate(dateStr) {
+    // Reactive formatter: depends on $t so labels re-render on language change.
+    let formatDate = $derived((dateStr) => {
         if (!dateStr) return '';
         try {
             // SQLite CURRENT_TIMESTAMP returns "YYYY-MM-DD HH:MM:SS" which some
@@ -165,15 +167,15 @@
             const now = new Date();
             const diffMs = now.getTime() - d.getTime();
             const diffMin = Math.floor(diffMs / 60000);
-            if (diffMin < 1) return 'just now';
-            if (diffMin < 60) return `${diffMin}m ago`;
+            if (diffMin < 1) return $t('comment.justNow');
+            if (diffMin < 60) return $t('comment.minutesAgo', { n: diffMin });
             const diffHr = Math.floor(diffMin / 60);
-            if (diffHr < 24) return `${diffHr}h ago`;
+            if (diffHr < 24) return $t('comment.hoursAgo', { n: diffHr });
             return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         } catch {
             return '';
         }
-    }
+    });
 
     function handleSearchKeyDown(event) {
         if (event.key === 'Escape') {
@@ -187,7 +189,7 @@
     <!-- Search bar -->
     <div class="search-strip">
         <span class="search-icon">⌕</span>
-        <input type="text" bind:value={searchQuery} placeholder="Search comments…" onkeydown={handleSearchKeyDown} class="search-input" />
+        <input type="text" bind:value={searchQuery} placeholder={$t('comment.searchPlaceholder')} onkeydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
             <button
                 class="clear-btn"
@@ -201,7 +203,7 @@
     <!-- Message feed -->
     <div class="feed" bind:this={feedEl}>
         {#if displayedComments.length === 0}
-            <div class="empty-msg">{searchQuery.trim() ? 'No matches' : 'No comments yet'}</div>
+            <div class="empty-msg">{searchQuery.trim() ? $t('comment.noMatches') : $t('comment.noComments')}</div>
         {:else}
             {#each displayedComments as comment (comment.id)}
                 {#if editingCommentId === comment.id}
@@ -211,7 +213,10 @@
                 {:else}
                     <div class="msg" role="button" tabindex="-1" onclick={() => navigateToComment(comment)} onkeydown={() => {}}>
                         <div class="msg-header">
-                            <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span
+                            <span class="msg-date"
+                                >{comment.modifiedAt && comment.modifiedAt !== comment.createdAt
+                                    ? formatDate(comment.modifiedAt) + ' ' + $t('comment.editedSuffix')
+                                    : formatDate(comment.createdAt)}</span
                             >
                         </div>
                         <div class="msg-text">{comment.text}</div>
@@ -222,7 +227,7 @@
                                     e.stopPropagation();
                                     (() => startEditComment(comment))();
                                 }}
-                                title="Edit">✎</button
+                                title={$t('common.edit')}>✎</button
                             >
                             <button
                                 class="msg-action msg-delete"
@@ -230,7 +235,7 @@
                                     e.stopPropagation();
                                     ((e) => deleteComment(comment, e))(e);
                                 }}
-                                title="Delete">×</button
+                                title={$t('common.delete')}>×</button
                             >
                         </div>
                     </div>
@@ -241,7 +246,7 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea id="commentTextArea" bind:this={promptEl} bind:value={promptText} placeholder="Comment on current position…" onkeydown={handlePromptKeyDown} rows="2"></textarea>
+        <textarea id="commentTextArea" bind:this={promptEl} bind:value={promptText} placeholder={$t('comment.promptPlaceholder')} onkeydown={handlePromptKeyDown} rows="2"></textarea>
     </div>
 </div>
 

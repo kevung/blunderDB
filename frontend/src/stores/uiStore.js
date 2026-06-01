@@ -46,7 +46,8 @@ export const MODAL = {
     TAKE_POINT_2: 'takePoint2',
     TAKE_POINT_4: 'takePoint4',
     HELP: 'help',
-    COMMAND: 'command'
+    COMMAND: 'command',
+    CONFIG: 'config'
 };
 
 // ── Panel identifiers (can be open simultaneously) ──

@@ -9,6 +9,9 @@ import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
 import { logger } from '../utils/logger.js';
+// NOTE: these UI messages are translated at emission time via the non-reactive
+// `translate` helper; already-displayed messages do not retranslate on language change.
+import { translate, tMsg } from '../i18n';
 
 export const warningMessageStore = writable('');
 
@@ -91,7 +94,7 @@ export async function newDatabase() {
             databasePathStore.set(filePath);
             logger.log('databasePathStore:', filePath);
             await SetupDatabase(filePath);
-            setStatusBarMessage('New database created successfully');
+            setStatusBarMessage(tMsg('commands.dbCreated'));
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
             logger.log(`New database created at ${filePath}`);
@@ -102,7 +105,7 @@ export async function newDatabase() {
         }
     } catch (error) {
         logger.error('Error opening file dialog:', error);
-        setStatusBarMessage('Error creating new database');
+        setStatusBarMessage(tMsg('commands.errorCreatingDb'));
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -120,7 +123,7 @@ export async function openDatabase() {
         await openDatabaseByPath(filePath);
     } catch (error) {
         logger.error('Error opening file dialog:', error);
-        setStatusBarMessage('Error opening database');
+        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
     }
 }
 
@@ -144,16 +147,14 @@ export async function openDatabaseByPath(filePath) {
         const modelVersion = await GetDatabaseVersion();
         logger.log(`Database version: ${dbVersion}`);
         logger.log(`Model version: ${modelVersion}`);
-        setStatusBarMessage(`Database version: ${dbVersion}`);
+        setStatusBarMessage(tMsg('commands.dbVersion', { version: dbVersion }));
 
         if (getMajorVersion(dbVersion) !== getMajorVersion(modelVersion)) {
-            warningMessageStore.set(
-                `Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: ${dbVersion}\nExpected version: ${modelVersion}`
-            );
+            warningMessageStore.set(translate('commands.dbVersionMismatch', { dbVersion, modelVersion }));
             openModal(MODAL.WARNING);
         }
 
-        setStatusBarMessage('Database opened successfully');
+        setStatusBarMessage(tMsg('commands.dbOpened'));
         const filename = getFilenameFromPath(filePath);
         WindowSetTitle(`blunderDB - ${filename}`);
 
@@ -161,7 +162,7 @@ export async function openDatabaseByPath(filePath) {
         await restoreSessionState();
     } catch (error) {
         logger.error('Error opening database:', error);
-        setStatusBarMessage('Error opening database');
+        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
     }
 }

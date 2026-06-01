@@ -1,5 +1,6 @@
 <script>
     import { trapFocus } from '../utils/focusTrap.js';
+    import { t } from '../i18n';
 
     let {
         visible = false,
@@ -24,89 +25,89 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Import progress" use:trapFocus>
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('import.progressTitle')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'analyzing'}
-                <h2>Analyzing Import <span class="spinner"></span></h2>
-                <p class="status-text">Please wait while we analyze the database to import...</p>
+                <h2>{$t('import.analyzing')} <span class="spinner"></span></h2>
+                <p class="status-text">{$t('import.analyzingWait')}</p>
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>{$t('common.cancel')}</button>
                 </div>
             {:else if mode === 'preview'}
-                <h2>Import Preview</h2>
+                <h2>{$t('import.previewTitle')}</h2>
 
                 <div class="summary">
-                    <p><strong>Database to import:</strong> {analysis.total} position(s)</p>
-                    <p>The import operation will make the following changes:</p>
+                    <p><strong>{$t('import.databaseToImport')}</strong> {$t('import.positionCount', { count: analysis.total })}</p>
+                    <p>{$t('import.willMakeChanges')}</p>
                 </div>
 
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-label">Will Add</div>
+                        <div class="stat-label">{$t('import.willAdd')}</div>
                         <div class="stat-value">{analysis.toAdd}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Will Merge</div>
+                        <div class="stat-label">{$t('import.willMerge')}</div>
                         <div class="stat-value">{analysis.toMerge}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Will Skip</div>
+                        <div class="stat-label">{$t('import.willSkip')}</div>
                         <div class="stat-value">{analysis.toSkip}</div>
                     </div>
                 </div>
 
                 {#if analysis.toMerge > 0}
                     <div class="summary warning">
-                        <p><strong>Note:</strong> {analysis.toMerge} position(s) already exist and will be merged with their analysis and comments.</p>
+                        <p><strong>{$t('import.note')}</strong> {$t('import.mergeNote', { count: analysis.toMerge })}</p>
                     </div>
                 {/if}
 
                 {#if analysis.toAdd === 0 && analysis.toMerge === 0}
                     <div class="summary warning">
-                        <p><strong>Nothing to import:</strong> All positions already exist in the database with identical data.</p>
+                        <p><strong>{$t('import.nothingToImport')}</strong> {$t('import.nothingToImportDetail')}</p>
                     </div>
                     <div class="button-group">
-                        <button onclick={onClose}>Close</button>
+                        <button onclick={onClose}>{$t('common.close')}</button>
                     </div>
                 {:else}
                     <div class="button-group">
-                        <button onclick={onCancel}>Cancel</button>
-                        <button class="btn-commit" onclick={onCommit}>Commit Import</button>
+                        <button onclick={onCancel}>{$t('common.cancel')}</button>
+                        <button class="btn-commit" onclick={onCommit}>{$t('import.commitImport')}</button>
                     </div>
                 {/if}
             {:else if mode === 'committing'}
-                <h2>Committing Import <span class="spinner"></span></h2>
-                <p class="status-text">Please wait while the database is being imported...</p>
-                <p class="status-text">This operation is atomic and will not modify your database until completion.</p>
+                <h2>{$t('import.committing')} <span class="spinner"></span></h2>
+                <p class="status-text">{$t('import.committingWait')}</p>
+                <p class="status-text">{$t('import.committingAtomic')}</p>
 
                 <div class="button-group">
-                    <button onclick={onCancel}>Abort Import</button>
+                    <button onclick={onCancel}>{$t('import.abortImport')}</button>
                 </div>
             {:else if mode === 'completed'}
-                <h2>Import Completed</h2>
+                <h2>{$t('import.completedTitle')}</h2>
 
                 <div class="summary">
-                    <p><strong>Import successful!</strong> The database has been updated.</p>
+                    <p><strong>{$t('import.successful')}</strong> {$t('import.databaseUpdated')}</p>
                 </div>
 
                 <div class="stats">
                     <div class="stat-item">
-                        <div class="stat-label">Added</div>
+                        <div class="stat-label">{$t('import.added')}</div>
                         <div class="stat-value">{result.added}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Merged</div>
+                        <div class="stat-label">{$t('import.merged')}</div>
                         <div class="stat-value">{result.merged}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Skipped</div>
+                        <div class="stat-label">{$t('import.skipped')}</div>
                         <div class="stat-value">{result.skipped}</div>
                     </div>
                 </div>
 
                 <div class="button-group">
-                    <button onclick={onClose}>Close</button>
+                    <button onclick={onClose}>{$t('common.close')}</button>
                 </div>
             {/if}
         </div>

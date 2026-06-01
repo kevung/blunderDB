@@ -24,6 +24,8 @@
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
+    import { t, tMsg } from '../i18n';
+    import { get } from 'svelte/store';
 
     // Read-only mirrors of stores
     let tournaments = $derived($tournamentsStore || []);
@@ -174,19 +176,19 @@
         try {
             await CreateTournament(newTournamentName.trim(), newTournamentDate, newTournamentLocation.trim());
             await loadTournaments();
-            statusBarTextStore.set(`Tournament "${newTournamentName.trim()}" created`);
+            statusBarTextStore.set(tMsg('tournament.created', { name: newTournamentName.trim() }));
             newTournamentName = '';
             newTournamentDate = '';
             newTournamentLocation = '';
         } catch (error) {
             logger.error('Error creating tournament:', error);
-            statusBarTextStore.set('Error creating tournament');
+            statusBarTextStore.set(tMsg('tournament.errorCreating'));
         }
     }
 
     async function deleteTournamentEntry(tournament, event) {
         event.stopPropagation();
-        if (!confirm(`Delete tournament "${tournament.name}"?`)) return;
+        if (!confirm(get(t)('tournament.confirmDelete', { name: tournament.name }))) return;
         try {
             await DeleteTournament(tournament.id);
             await loadTournaments();
@@ -194,7 +196,7 @@
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
             }
-            statusBarTextStore.set('Tournament deleted');
+            statusBarTextStore.set(tMsg('tournament.deleted'));
         } catch (error) {
             logger.error('Error deleting tournament:', error);
         }
@@ -391,10 +393,10 @@
                 }
             }
 
-            statusBarTextStore.set('Swapped players for match');
+            statusBarTextStore.set(tMsg('tournament.swappedPlayers'));
         } catch (error) {
             logger.error('Error swapping match players:', error);
-            statusBarTextStore.set('Error swapping match players');
+            statusBarTextStore.set(tMsg('tournament.errorSwapping'));
         }
     }
 
@@ -402,7 +404,7 @@
         try {
             const movePositions = await GetMatchMovePositions(match.id);
             if (!movePositions || movePositions.length === 0) {
-                statusBarTextStore.set('No moves found in this match');
+                statusBarTextStore.set(tMsg('tournament.noMovesFound'));
                 return;
             }
 
@@ -493,7 +495,7 @@
             closeTournamentPanel();
         } catch (error) {
             logger.error('Error opening match:', error);
-            statusBarTextStore.set('Error opening match');
+            statusBarTextStore.set(tMsg('tournament.errorOpening'));
         }
     }
 
@@ -576,7 +578,7 @@
     });
 </script>
 
-<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Tournaments">
+<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label={$t('tournament.title')}>
     <div class="panel-content">
         {#if !selectedTournament}
             <!-- Tournaments list -->
@@ -586,16 +588,20 @@
                         <thead>
                             <tr>
                                 <th class="no-select sortable" onclick={() => handleSort('name')}
-                                    >Name {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                    >{$t('tournament.name')}
+                                    {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
                                 <th class="no-select sortable narrow-col" onclick={() => handleSort('matches')}
-                                    >Matches {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                    >{$t('tournament.matches')}
+                                    {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
                                 <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
-                                    >Date {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                    >{$t('tournament.date')}
+                                    {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
                                 <th class="no-select sortable" onclick={() => handleSort('location')}
-                                    >Location {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                    >{$t('tournament.location')}
+                                    {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
                                 <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
                                     >PR {#if sortBy === 'pr'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
@@ -647,7 +653,7 @@
                                                 class="edit-input"
                                                 type="text"
                                                 bind:value={editLocation}
-                                                placeholder="Location"
+                                                placeholder={$t('tournament.location')}
                                                 onkeydown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         e.stopPropagation();
@@ -664,8 +670,8 @@
                                         <td class="narrow-col no-select"></td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions editing-actions">
-                                                <button class="icon-btn" onclick={saveEdit} title="Save">✓</button>
-                                                <button class="icon-btn" onclick={cancelEdit} title="Cancel">✕</button>
+                                                <button class="icon-btn" onclick={saveEdit} title={$t('common.save')}>✓</button>
+                                                <button class="icon-btn" onclick={cancelEdit} title={$t('common.cancel')}>✕</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -685,7 +691,7 @@
                                                         e.stopPropagation();
                                                         ((e) => startEdit(tournament, e))(e);
                                                     }}
-                                                    title="Edit">✎</button
+                                                    title={$t('common.edit')}>✎</button
                                                 >
                                                 <button
                                                     class="icon-btn delete"
@@ -693,7 +699,7 @@
                                                         e.stopPropagation();
                                                         ((e) => deleteTournamentEntry(tournament, e))(e);
                                                     }}
-                                                    title="Delete">×</button
+                                                    title={$t('common.delete')}>×</button
                                                 >
                                             </span>
                                         </td>
@@ -703,7 +709,7 @@
                         </tbody>
                     </table>
                     {#if tournaments.length === 0}
-                        <div class="empty-state">No tournaments</div>
+                        <div class="empty-state">{$t('tournament.noTournaments')}</div>
                     {/if}
                 </div>
                 <div class="add-area">
@@ -711,7 +717,7 @@
                         class="add-input name"
                         type="text"
                         bind:value={newTournamentName}
-                        placeholder="New tournament…"
+                        placeholder={$t('tournament.newTournamentPlaceholder')}
                         onkeydown={(e) => {
                             if (e.key === 'Enter') {
                                 e.stopPropagation();
@@ -738,7 +744,7 @@
                         class="add-input loc"
                         type="text"
                         bind:value={newTournamentLocation}
-                        placeholder="Location"
+                        placeholder={$t('tournament.location')}
                         onkeydown={(e) => {
                             if (e.key === 'Enter') {
                                 e.stopPropagation();
@@ -764,7 +770,7 @@
                             addMatchSearch = '';
                             editingTournamentComment = false;
                         }}
-                        title="Back to tournaments">←</button
+                        title={$t('tournament.backToTournaments')}>←</button
                     >
                     <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
                     {#if selectedTournament.date || selectedTournament.location}
@@ -782,7 +788,7 @@
                             e.stopPropagation();
                             ((e) => startEdit(selectedTournament, e))(e);
                         }}
-                        title="Edit">✎</button
+                        title={$t('common.edit')}>✎</button
                     >
                     <span class="header-spacer"></span>
                     {#if editingTournamentComment}
@@ -801,7 +807,7 @@
                                 }
                             }}
                             onblur={saveTournamentComment}
-                            placeholder="Notes…"
+                            placeholder={$t('tournament.notesPlaceholder')}
                             autofocus
                         />
                     {:else}
@@ -812,9 +818,9 @@
                                 e.stopPropagation();
                                 startEditTournamentComment(e);
                             }}
-                            title={selectedTournament.comment || 'Click to add notes'}
+                            title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
                         >
-                            {selectedTournament.comment || 'Notes…'}
+                            {selectedTournament.comment || $t('tournament.notesPlaceholder')}
                         </span>
                     {/if}
                 </div>
@@ -823,12 +829,12 @@
                         <thead>
                             <tr>
                                 <th class="no-select narrow-col">#</th>
-                                <th class="no-select">Player 1</th>
-                                <th class="no-select">Player 2</th>
-                                <th class="no-select narrow-col">Pts</th>
+                                <th class="no-select">{$t('tournament.player1')}</th>
+                                <th class="no-select">{$t('tournament.player2')}</th>
+                                <th class="no-select narrow-col">{$t('tournament.pts')}</th>
                                 <th class="no-select narrow-col">PR</th>
                                 <th class="no-select narrow-col">MWC</th>
-                                <th class="no-select comment-col">Comment</th>
+                                <th class="no-select comment-col">{$t('tournament.comment')}</th>
                                 <th class="no-select actions-col"></th>
                             </tr>
                         </thead>
@@ -868,7 +874,7 @@
                                                     e.stopPropagation();
                                                     ((e) => startEditMatchComment(match, e))(e);
                                                 }}
-                                                title={match.comment || 'Click to add comment'}
+                                                title={match.comment || $t('tournament.clickToAddComment')}
                                             >
                                                 {match.comment || ''}
                                             </span>
@@ -883,7 +889,7 @@
                                                     (() => moveMatchUp(index))();
                                                 }}
                                                 disabled={index === 0}
-                                                title="Move up">▲</button
+                                                title={$t('tournament.moveUp')}>▲</button
                                             >
                                             <button
                                                 class="icon-btn"
@@ -892,7 +898,7 @@
                                                     (() => moveMatchDown(index))();
                                                 }}
                                                 disabled={index === tournamentMatches.length - 1}
-                                                title="Move down">▼</button
+                                                title={$t('tournament.moveDown')}>▼</button
                                             >
                                             <button
                                                 class="icon-btn"
@@ -900,7 +906,7 @@
                                                     e.stopPropagation();
                                                     (() => swapMatchPlayersInTournament(match))();
                                                 }}
-                                                title="Swap">⇄</button
+                                                title={$t('tournament.swap')}>⇄</button
                                             >
                                             <button
                                                 class="icon-btn delete"
@@ -908,7 +914,7 @@
                                                     e.stopPropagation();
                                                     (() => removeMatch(match.id))();
                                                 }}
-                                                title="Remove">×</button
+                                                title={$t('tournament.remove')}>×</button
                                             >
                                         </span>
                                     </td>
@@ -917,7 +923,7 @@
                         </tbody>
                     </table>
                     {#if tournamentMatches.length === 0}
-                        <div class="empty-state">No matches</div>
+                        <div class="empty-state">{$t('tournament.noMatches')}</div>
                     {/if}
                 </div>
                 <div class="add-area">
@@ -941,7 +947,7 @@
                                     e.currentTarget.blur();
                                 }
                             }}
-                            placeholder="Add match…"
+                            placeholder={$t('tournament.addMatchPlaceholder')}
                             class="add-match-input"
                         />
                         {#if addMatchFocused && filteredMatches.length > 0}
@@ -954,7 +960,9 @@
                                             (() => addMatchToTournament(match.id))();
                                         }}
                                     >
-                                        {match.player1_name} vs {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
+                                        {match.player1_name}
+                                        {$t('tournament.vs')}
+                                        {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
                                     </div>
                                 {/each}
                             </div>

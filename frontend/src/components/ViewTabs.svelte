@@ -1,5 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
+    import { t } from '../i18n';
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
 
@@ -65,11 +66,11 @@
                 <span class="tab-name">{view.name}</span>
             {/if}
             {#if $views.length > 1}
-                <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title="Close view">&times;</button>
+                <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
             {/if}
         </div>
     {/each}
-    <button class="add-btn" onclick={addView} title="New view">+</button>
+    <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}>+</button>
 </div>
 
 <style>

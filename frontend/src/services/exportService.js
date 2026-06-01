@@ -1,3 +1,4 @@
+import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { OpenExportDatabaseDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
 import { ExportDatabase, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
@@ -17,13 +18,13 @@ export async function exportDatabase() {
     logger.log('exportDatabase');
 
     if (!get(databasePathStore)) {
-        setStatusBarMessage('No database opened. Please open a database first.');
+        setStatusBarMessage(tMsg('status.noDbOpenedFirst'));
         return;
     }
 
     const positions = get(positionsStore);
     if (positions.length === 0) {
-        setStatusBarMessage('No positions to export.');
+        setStatusBarMessage(tMsg('status.noPositionsToExport'));
         await ShowAlert('No positions to export. Please load positions first.');
         return;
     }
@@ -65,7 +66,7 @@ export async function exportDatabase() {
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
         logger.error('Error during export preparation:', error);
-        setStatusBarMessage(`Error preparing export: ${error}`);
+        setStatusBarMessage(tMsg('status.errorPreparingExport', { error }));
         await ShowAlert(`Error preparing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
@@ -108,11 +109,11 @@ export async function handleExportCommit() {
         exportModalModeStore.set('completed');
 
         const posCount = get(exportPositionCountStore);
-        setStatusBarMessage(`Export completed: ${posCount} position(s) exported`);
+        setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
     } catch (error) {
         logger.error('Error committing export:', error);
         closeModal();
-        setStatusBarMessage(`Error committing export: ${error}`);
+        setStatusBarMessage(tMsg('status.errorCommittingExport', { error }));
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     } finally {
@@ -128,7 +129,7 @@ export function handleExportCancel() {
     pendingExportPath = null;
     resetExportState();
     exportMatchesStore.set([]);
-    setStatusBarMessage('Export cancelled');
+    setStatusBarMessage(tMsg('status.exportCancelled'));
     statusBarModeStore.set('NORMAL');
 }
 
