@@ -68,8 +68,19 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 
 const matchInsertSQL = `INSERT INTO match (
 	player1_name, player2_name, event, location, round,
-	match_length, match_date, file_path, game_count, tournament_id, comment
-) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+	match_length, match_date, file_path, game_count, tournament_id, comment,
+	match_hash, canonical_hash
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+// nullableString returns nil for an empty string so it is stored as SQL NULL.
+// This matters for canonical_hash, whose UNIQUE index would otherwise reject a
+// second match with an empty (non-NULL) hash.
+func nullableString(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
+}
 
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
@@ -77,7 +88,8 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	res, err := s.db.ExecContext(ctx, matchInsertSQL,
 		m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
-		m.TournamentID, m.Comment)
+		m.TournamentID, m.Comment,
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash))
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save match: %w", err)
 	}
@@ -92,6 +104,32 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	}
 	m.ID = id
 	return id, nil
+}
+
+// FindByHash returns the id of a match matching hash (preferred) or
+// canonicalHash, for duplicate detection.
+func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (int64, bool, error) {
+	for _, q := range []struct {
+		col string
+		val string
+	}{
+		{"match_hash", hash},
+		{"canonical_hash", canonicalHash},
+	} {
+		if q.val == "" {
+			continue
+		}
+		var id int64
+		err := s.db.QueryRowContext(ctx,
+			`SELECT id FROM match WHERE `+q.col+` = ? LIMIT 1`, q.val).Scan(&id)
+		if err == nil {
+			return id, true, nil
+		}
+		if !errors.Is(err, sql.ErrNoRows) {
+			return 0, false, fmt.Errorf("sqlite: find match by %s: %w", q.col, err)
+		}
+	}
+	return 0, false, nil
 }
 
 // matchOrderClause sorts matches by play date, falling back to import date

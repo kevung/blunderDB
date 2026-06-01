@@ -42,6 +42,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
+		{"Match/FindByHash", testMatchFindByHash},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
@@ -202,6 +203,37 @@ func testAnalysisSaveAndCompress(t *testing.T, s storage.Storage) {
 	}
 	if got.CheckerAnalysis.Moves[0].Move != "13/11 24/23" {
 		t.Errorf("move: got %q, want %q", got.CheckerAnalysis.Moves[0].Move, "13/11 24/23")
+	}
+}
+
+func testMatchFindByHash(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ms := s.Matches()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7,
+		MatchHash: "h1", CanonicalHash: "c1"}
+	id, err := ms.Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+
+	if got, found, err := ms.FindByHash(ctx, "", "h1", ""); err != nil || !found || got != id {
+		t.Fatalf("FindByHash(match_hash): got=%d found=%v err=%v, want id=%d found", got, found, err, id)
+	}
+	if got, found, err := ms.FindByHash(ctx, "", "", "c1"); err != nil || !found || got != id {
+		t.Fatalf("FindByHash(canonical): got=%d found=%v err=%v, want id=%d found", got, found, err, id)
+	}
+	if _, found, err := ms.FindByHash(ctx, "", "nope", "nope"); err != nil || found {
+		t.Fatalf("FindByHash(absent): found=%v err=%v, want not found", found, err)
+	}
+
+	// Two hash-less matches must both store (NULL canonical_hash, not '',
+	// so the UNIQUE index does not reject the second).
+	for i := range 2 {
+		hm := domain.Match{Player1Name: "X", Player2Name: "Y", MatchLength: 3}
+		if _, err := ms.Save(ctx, "", &hm); err != nil {
+			t.Fatalf("Save hash-less match %d: %v", i, err)
+		}
 	}
 }
 
