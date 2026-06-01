@@ -1205,6 +1205,47 @@ func (d *Database) migrate_2_7_0_to_2_8_0() error {
 	return nil
 }
 
+// migrate_2_8_0_to_2_9_0 adds a scope column to command_history, search_history
+// and filter_library. SQLite previously ignored the scope argument on these
+// stores (the GUI/CLI always uses the empty scope); the column lets a
+// multi-tenant SQLite-server isolate each tenant's command/search history and
+// saved filters, mirroring the tenant_id scoping the PostgreSQL backend already
+// has. Existing rows default to the empty scope so GUI/CLI data is unchanged.
+func (d *Database) migrate_2_8_0_to_2_9_0() error {
+	for _, table := range []string{"command_history", "search_history", "filter_library"} {
+		if _, err := d.db.Exec(fmt.Sprintf(
+			`ALTER TABLE %s ADD COLUMN scope TEXT NOT NULL DEFAULT ''`, table)); err != nil {
+			// Tolerate an idempotent retry (duplicate column) and a missing table
+			// (ensureAllTablesExist recreates it with the scope column present).
+			msg := err.Error()
+			if !strings.Contains(msg, `duplicate column name: scope`) && !strings.Contains(msg, `no such table: `+table) {
+				return fmt.Errorf("migrate 2.9.0 add scope to %s: %w", table, err)
+			}
+		}
+	}
+	for _, idx := range []string{
+		`CREATE INDEX IF NOT EXISTS idx_command_history_scope ON command_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_search_history_scope  ON search_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
+	} {
+		if _, err := d.db.Exec(idx); err != nil {
+			// A missing table is recreated (with the scope column) by
+			// ensureAllTablesExist after migrations; the index is a perf-only
+			// optimisation, so a missing table here is not fatal.
+			if !strings.Contains(err.Error(), `no such table`) {
+				return fmt.Errorf("migrate 2.9.0 create index: %w", err)
+			}
+		}
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.9.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.9.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.8.0", "to", "2.9.0")
+	return nil
+}
+
 // runMigrationChain reads the recorded schema version and applies the
 // sequential upgrade steps up to the current DatabaseVersion, then verifies
 // the expected tables and metadata keys exist. It is shared by the GUI/CLI
@@ -1649,6 +1690,16 @@ func (d *Database) runMigrationChain() error {
 			return fmt.Errorf("migration 2.7.0→2.8.0 failed: %w", err)
 		}
 		dbVersion = "2.8.0"
+	}
+
+	// Auto-migrate from 2.8.0 to 2.9.0
+	// Adds a scope column to command_history, search_history and filter_library
+	// so a multi-tenant SQLite-server isolates per-tenant history/filters.
+	if dbVersion == "2.8.0" {
+		if err := d.migrate_2_8_0_to_2_9_0(); err != nil {
+			return fmt.Errorf("migration 2.8.0→2.9.0 failed: %w", err)
+		}
+		dbVersion = "2.9.0"
 	}
 
 	// Ensure all required tables and columns exist.

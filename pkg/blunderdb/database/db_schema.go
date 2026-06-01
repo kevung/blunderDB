@@ -14,7 +14,8 @@ func (d *Database) ensureAllTablesExist() error {
 		CREATE TABLE IF NOT EXISTS command_history (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
-			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
@@ -28,7 +29,8 @@ func (d *Database) ensureAllTablesExist() error {
 			name TEXT,
 			command TEXT,
 			edit_position TEXT,
-			exclude_position TEXT
+			exclude_position TEXT,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
@@ -42,7 +44,8 @@ func (d *Database) ensureAllTablesExist() error {
 			command TEXT,
 			position TEXT,
 			exclude_position TEXT,
-			timestamp INTEGER
+			timestamp INTEGER,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {

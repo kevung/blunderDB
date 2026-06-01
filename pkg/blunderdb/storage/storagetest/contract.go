@@ -49,6 +49,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Filter/SaveAndList", testFilterSaveAndList},
 		{"History/SaveLoadClear", testCommandHistory},
 		{"SearchHistory/SaveListDelete", testSearchHistory},
+		{"Scope/HistoryAndFilterIsolation", testScopeIsolation},
 		{"Metadata/Counts", testMetadataCounts},
 		{"Session/SaveLoadEmpty", testSessionSaveLoad},
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
@@ -877,6 +878,80 @@ func testTxCommitPersists(t *testing.T, s storage.Storage) {
 	if got.ID != id {
 		t.Errorf("loaded id: got %d, want %d", got.ID, id)
 	}
+}
+
+// testScopeIsolation checks that command history, search history and saved
+// filters are isolated per scope. PostgreSQL scopes them by tenant_id; SQLite
+// scopes them by a `scope` column (added in schema 2.9.0). The same filter name
+// may coexist in distinct scopes.
+func testScopeIsolation(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	// Command history.
+	if err := s.History().Save(ctx, "1", "cmd-a"); err != nil {
+		t.Fatalf("History.Save scope 1: %v", err)
+	}
+	if err := s.History().Save(ctx, "2", "cmd-b"); err != nil {
+		t.Fatalf("History.Save scope 2: %v", err)
+	}
+	if got, _ := s.History().Load(ctx, "1"); len(got) != 1 || got[0] != "cmd-a" {
+		t.Errorf("History scope 1: got %v, want [cmd-a]", got)
+	}
+	if got, _ := s.History().Load(ctx, "2"); len(got) != 1 || got[0] != "cmd-b" {
+		t.Errorf("History scope 2: got %v, want [cmd-b]", got)
+	}
+
+	// Search history.
+	if err := s.SearchHistory().Save(ctx, "1", "search-a", "pos-a"); err != nil {
+		t.Fatalf("SearchHistory.Save scope 1: %v", err)
+	}
+	if err := s.SearchHistory().Save(ctx, "2", "search-b", "pos-b"); err != nil {
+		t.Fatalf("SearchHistory.Save scope 2: %v", err)
+	}
+	if got := drainSearch(t, s, "1"); len(got) != 1 || got[0] != "search-a" {
+		t.Errorf("SearchHistory scope 1: got %v, want [search-a]", got)
+	}
+	if got := drainSearch(t, s, "2"); len(got) != 1 || got[0] != "search-b" {
+		t.Errorf("SearchHistory scope 2: got %v, want [search-b]", got)
+	}
+
+	// Filters: scope-isolated, and the same name may live in two scopes.
+	if _, err := s.Filters().Save(ctx, "1", "f", "cmd1"); err != nil {
+		t.Fatalf("Filters.Save scope 1: %v", err)
+	}
+	if _, err := s.Filters().Save(ctx, "2", "f", "cmd2"); err != nil {
+		t.Errorf("same filter name in a different scope should be allowed: %v", err)
+	}
+	if got := drainFilters(t, s, "1"); len(got) != 1 || got[0] != "cmd1" {
+		t.Errorf("Filters scope 1: got %v, want [cmd1]", got)
+	}
+	if got := drainFilters(t, s, "2"); len(got) != 1 || got[0] != "cmd2" {
+		t.Errorf("Filters scope 2: got %v, want [cmd2]", got)
+	}
+}
+
+func drainSearch(t *testing.T, s storage.Storage, scope string) []string {
+	t.Helper()
+	var out []string
+	for e, err := range s.SearchHistory().List(context.Background(), scope) {
+		if err != nil {
+			t.Fatalf("SearchHistory.List: %v", err)
+		}
+		out = append(out, e.Command)
+	}
+	return out
+}
+
+func drainFilters(t *testing.T, s storage.Storage, scope string) []string {
+	t.Helper()
+	var out []string
+	for f, err := range s.Filters().List(context.Background(), scope) {
+		if err != nil {
+			t.Fatalf("Filters.List: %v", err)
+		}
+		out = append(out, f.Command)
+	}
+	return out
 }
 
 // testStatsAggregateCounts checks the StatsStore wiring and its behaviour on an

@@ -170,7 +170,8 @@ func (d *Database) SetupDatabase(path string) error {
         CREATE TABLE IF NOT EXISTS command_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             command TEXT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            scope TEXT NOT NULL DEFAULT ''
         )
     `)
 	if err != nil {
@@ -182,7 +183,8 @@ func (d *Database) SetupDatabase(path string) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT,
 			command TEXT,
-			edit_position TEXT
+			edit_position TEXT,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
@@ -194,7 +196,8 @@ func (d *Database) SetupDatabase(path string) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
 			position TEXT,
-			timestamp INTEGER
+			timestamp INTEGER,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {

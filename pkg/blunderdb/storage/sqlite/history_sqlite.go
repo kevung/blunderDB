@@ -18,13 +18,13 @@ const commandHistoryLimit = 1000
 // commandHistoryLimit entries.
 func (s *commandHistoryStore) Save(ctx context.Context, scope string, command string) error {
 	if _, err := s.db.ExecContext(ctx,
-		`INSERT INTO command_history (command) VALUES (?)`, command); err != nil {
+		`INSERT INTO command_history (command, scope) VALUES (?,?)`, command, scope); err != nil {
 		return fmt.Errorf("sqlite: save command: %w", err)
 	}
 	if _, err := s.db.ExecContext(ctx,
-		`DELETE FROM command_history WHERE id NOT IN (
-			SELECT id FROM command_history ORDER BY timestamp DESC LIMIT ?
-		)`, commandHistoryLimit); err != nil {
+		`DELETE FROM command_history WHERE scope = ? AND id NOT IN (
+			SELECT id FROM command_history WHERE scope = ? ORDER BY timestamp DESC, id DESC LIMIT ?
+		)`, scope, scope, commandHistoryLimit); err != nil {
 		return fmt.Errorf("sqlite: trim command history: %w", err)
 	}
 	return nil
@@ -35,7 +35,7 @@ func (s *commandHistoryStore) Load(ctx context.Context, scope string) ([]string,
 	// id ASC breaks ties when several commands share a timestamp, keeping the
 	// oldest-first order deterministic.
 	rows, err := s.db.QueryContext(ctx,
-		`SELECT command FROM command_history ORDER BY timestamp ASC, id ASC`)
+		`SELECT command FROM command_history WHERE scope = ? ORDER BY timestamp ASC, id ASC`, scope)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: load command history: %w", err)
 	}
@@ -56,7 +56,7 @@ func (s *commandHistoryStore) Load(ctx context.Context, scope string) ([]string,
 
 // Clear empties the command history.
 func (s *commandHistoryStore) Clear(ctx context.Context, scope string) error {
-	if _, err := s.db.ExecContext(ctx, `DELETE FROM command_history`); err != nil {
+	if _, err := s.db.ExecContext(ctx, `DELETE FROM command_history WHERE scope = ?`, scope); err != nil {
 		return fmt.Errorf("sqlite: clear command history: %w", err)
 	}
 	return nil
