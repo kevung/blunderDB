@@ -8,6 +8,8 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
@@ -105,10 +107,55 @@ func TestImportExportJSONRoundtrip(t *testing.T) {
 	}
 }
 
+func TestImportXGEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "match_with_comment.xg"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+
+	events := uploadImport(t, ts, "/v1/imports.xg", fixture)
+	if len(events) < 2 {
+		t.Fatalf("expected >=2 events, got %d: %v", len(events), events)
+	}
+	if events[0]["event"] != "started" {
+		t.Fatalf("first event = %v, want started", events[0]["event"])
+	}
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["matches"].(float64) != 1 {
+		t.Fatalf("matches = %v, want 1", done["matches"])
+	}
+	savedFirst := done["saved_positions"].(float64)
+	if savedFirst == 0 {
+		t.Fatalf("saved_positions = 0, want > 0")
+	}
+	matchID := done["match_id"].(float64)
+	if matchID == 0 {
+		t.Fatal("match_id = 0, want > 0")
+	}
+
+	// A second identical upload must dedup: skipped, same match id, no new positions.
+	events2 := uploadImport(t, ts, "/v1/imports.xg", fixture)
+	done2 := events2[len(events2)-1]
+	if done2["skipped_duplicates"].(float64) != 1 {
+		t.Fatalf("skipped_duplicates = %v, want 1", done2["skipped_duplicates"])
+	}
+	if done2["saved_positions"].(float64) != 0 {
+		t.Fatalf("saved_positions on dup = %v, want 0", done2["saved_positions"])
+	}
+	if done2["match_id"].(float64) != matchID {
+		t.Fatalf("dup match_id = %v, want %v", done2["match_id"], matchID)
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
-	// imports.xg is not wired in PR3a → catch-all 404 (unknown route).
-	resp := post(t, ts, "/v1/imports.xg", nil)
+	// imports.gnubg is not wired until PR3c → catch-all 404 (unknown route).
+	resp := post(t, ts, "/v1/imports.gnubg", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)

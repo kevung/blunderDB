@@ -63,6 +63,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 	switch f {
 	case ingest.FormatJSON:
 		return ingest.JSONImporter{S: s.opts.Storage}
+	case ingest.FormatXG:
+		return ingest.XGImporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -81,6 +83,7 @@ func (s *Server) exporterFor(f ingest.Format) ingest.Exporter {
 func (s *Server) ingestRoutes() []route {
 	return []route{
 		{http.MethodPost, "/v1/imports.json", s.handleImport(ingest.FormatJSON)},
+		{http.MethodPost, "/v1/imports.xg", s.handleImport(ingest.FormatXG)},
 		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 	}

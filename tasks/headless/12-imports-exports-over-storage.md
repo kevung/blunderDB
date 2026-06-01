@@ -131,9 +131,38 @@ Server bits:
 
 | PR | Scope | Backend-agnostic? |
 |----|-------|-------------------|
-| **3a** | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
-| **3b** | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xg.go`; `imports.xg` end-to-end; fixture tests. | yes |
+| **3a** ✅ | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
+| **3b** ✅ | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xgmap.go`+`ingest/xg.go`; `imports.xg` end-to-end; fixture+parity tests. | yes |
 | **3c** | **GnuBG**, **BGF**, native **.db**, Jellyfish **.mat**, position **text/XGP** mappings migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+
+### PR3b — done (what landed)
+
+- `ingest/xgmap.go` — pure XG→domain mappers lifted from `db_import_xg.go`
+  (`createPositionFromXG`, move-string/hit + slide-merge, `inferMoveMultipliers`,
+  `translateAnalysisDepth`, the checker/cube analysis builders, `parseMatchDate`),
+  no `*Database` receiver.
+- `ingest/xg.go` — `MapXG(path) (*MatchGraph, error)` reproducing
+  `importXGGamesAndMoves`/`importMoveWithCacheAndRawCube` (checker, Double/Take,
+  Double/Pass, counted No-Double, cube-on-checker, comment carry-forward), the
+  copied match/canonical hashes, and `XGImporter` (Importer iface).
+- `ingest/merge.go` — `mergeAnalysis` ports `saveAnalysisInTx`'s load-merge-
+  normalise. `WriteMatch` now applies each `MoveGraph.Analyses` fragment via
+  load-merge-save (and writes `MoveGraph.Comments`). The **fragment list** is
+  what reproduces legacy's round-then-recompute of equity errors across
+  successive saves to one position — a single combined save diverged by 0.001.
+- `imports.xg` route wired in `internal/server/handlers_imports.go`
+  (transport already spools to a temp file, which the parser needs).
+- Tests: `ingest/xg_test.go` `TestXGImportParity` diffs positions + analyses
+  (field-by-field, timestamps ignored) **and** comments against
+  `database.ImportXGMatch` over all four `testdata/*.xg` fixtures — empty diff;
+  `TestXGHashParity` locks the copied hashes to the `database` originals;
+  `internal/server` `TestImportXGEndToEnd` covers upload→progress→done + dedup.
+
+**Known PR3b gap (deferred):** `MapXG` always emits the full graph; `WriteMatch`
+skips a whole match on a hash hit. The legacy *canonical-duplicate enrichment*
+(importing an XG match's analysis onto positions already stored from a
+GnuBG/MAT import of the same match) is not reproduced — fine for a fresh import
+(what the parity gate covers); revisit alongside PR3c cross-format dedup.
 
 The GUI/CLI keep using the `Database` wrapper unchanged (its `db_import_*.go`
 stay) until a later cleanup migrates them onto `ingest` too — out of scope
