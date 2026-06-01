@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"iter"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -41,11 +40,6 @@ func (b binder) Stats() storage.StatsStore                 { return &statsStore{
 func (b binder) History() storage.CommandHistoryStore      { return &commandHistoryStore{b.db} }
 func (b binder) Metadata() storage.MetadataStore           { return &metadataStore{b.db} }
 
-// notImpl reports a family/method that a later P3 PR will implement.
-func notImpl(family, method string) error {
-	return fmt.Errorf("postgres: %s.%s not implemented: %w", family, method, storage.ErrInternal)
-}
-
 // withTx runs fn inside a transaction started from db. The pgx.Tx is passed to
 // fn as an execer; when db is already a transaction the pgx.Tx is a
 // savepoint-backed nested transaction, so fn is atomic in either binding.
@@ -66,9 +60,4 @@ func withTx(ctx context.Context, db execer, fn func(execer) error) error {
 		return fmt.Errorf("postgres: commit: %w", err)
 	}
 	return nil
-}
-
-// errSeq2 returns an iterator that yields a single (nil, err) pair.
-func errSeq2[T any](err error) iter.Seq2[*T, error] {
-	return func(yield func(*T, error) bool) { yield(nil, err) }
 }
