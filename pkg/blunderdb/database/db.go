@@ -49,28 +49,11 @@ func (d *Database) Close() error {
 	return err
 }
 
-// WAL journal mode is skipped for in-memory databases (":memory:")
-// because WAL requires a real filesystem.
+// applyPragmas applies the exact same PRAGMA set as the standalone SQLite
+// Storage backend (D9). WAL journal mode is skipped for in-memory databases
+// (":memory:") because WAL requires a real filesystem.
 func (d *Database) applyPragmas(path string) error {
-	if path != ":memory:" {
-		var mode string
-		if err := d.db.QueryRow(`PRAGMA journal_mode = WAL`).Scan(&mode); err != nil {
-			return fmt.Errorf("PRAGMA journal_mode=WAL: %w", err)
-		}
-	}
-	pragmas := []string{
-		`PRAGMA synchronous  = NORMAL`,
-		`PRAGMA cache_size   = -65536`,
-		`PRAGMA temp_store   = MEMORY`,
-		`PRAGMA mmap_size    = 268435456`,
-		`PRAGMA foreign_keys = ON`,
-	}
-	for _, p := range pragmas {
-		if _, err := d.db.Exec(p); err != nil {
-			return fmt.Errorf("%s: %w", p, err)
-		}
-	}
-	return nil
+	return sqlite.ApplyPragmas(d.db, path)
 }
 
 func (d *Database) SetupDatabase(path string) error {
