@@ -40,7 +40,8 @@ type MoveGraph struct {
 // WriteResult summarises a WriteMatch call.
 type WriteResult struct {
 	MatchID        int64
-	Skipped        bool // true when the match was a duplicate (not written)
+	Skipped        bool // true when an exact same-format duplicate was found (nothing written)
+	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	SavedPositions int
 }
 
@@ -49,15 +50,24 @@ type WriteResult struct {
 // caller-provided transaction, so an import of several matches is atomic and
 // cancellable as a unit.
 //
-// Duplicate detection: if the match's MatchHash/CanonicalHash already exists,
-// the match is not re-written and WriteResult.Skipped is true (with the
-// existing match id). Positions dedup independently by Zobrist hash inside
-// PositionStore.Save.
+// Duplicate detection has two levels, mirroring the legacy importers:
+//   - Exact same-format duplicate (MatchHash already present): nothing is
+//     written, WriteResult.Skipped is true.
+//   - Cross-format duplicate (CanonicalHash present from another format, e.g.
+//     the same match imported from XG and then GnuBG): the match/game/move rows
+//     are NOT recreated, but the graph's positions and analyses are still
+//     written — deduplicating by Zobrist they land on the existing positions,
+//     and mergeAnalysis combines this format's analysis with what is already
+//     stored (cross-engine cube analyses, extra checker moves). Enriched is
+//     true.
+//
+// Positions dedup independently by Zobrist hash inside PositionStore.Save.
 func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, prog func(Progress)) (WriteResult, error) {
 	var res WriteResult
 
-	if g.Match.MatchHash != "" || g.Match.CanonicalHash != "" {
-		id, found, err := tx.Matches().FindByHash(ctx, scope, g.Match.MatchHash, g.Match.CanonicalHash)
+	// Exact same-format duplicate → skip entirely.
+	if g.Match.MatchHash != "" {
+		id, found, err := tx.Matches().FindByHash(ctx, scope, g.Match.MatchHash, "")
 		if err != nil {
 			return res, err
 		}
@@ -66,19 +76,41 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
-	matchID, err := tx.Matches().Save(ctx, scope, &g.Match)
-	if err != nil {
-		return res, err
+	// Cross-format (canonical) duplicate → enrich the existing match's positions.
+	enrich := false
+	var matchID int64
+	if g.Match.CanonicalHash != "" {
+		id, found, err := tx.Matches().FindByHash(ctx, scope, "", g.Match.CanonicalHash)
+		if err != nil {
+			return res, err
+		}
+		if found {
+			enrich = true
+			matchID = id
+		}
+	}
+
+	if !enrich {
+		id, err := tx.Matches().Save(ctx, scope, &g.Match)
+		if err != nil {
+			return res, err
+		}
+		matchID = id
 	}
 	res.MatchID = matchID
+	res.Enriched = enrich
 
 	counter := Progress{Matches: 1}
 	for gi := range g.Games {
 		gg := &g.Games[gi]
-		gg.Game.MatchID = matchID
-		gameID, err := tx.Matches().CreateGame(ctx, scope, &gg.Game)
-		if err != nil {
-			return res, err
+		var gameID int64
+		if !enrich {
+			gg.Game.MatchID = matchID
+			id, err := tx.Matches().CreateGame(ctx, scope, &gg.Game)
+			if err != nil {
+				return res, err
+			}
+			gameID = id
 		}
 		counter.Games++
 
@@ -93,9 +125,11 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 				res.SavedPositions++
 				counter.Positions++
 			}
-			mg.Move.GameID = gameID
-			if _, err := tx.Matches().CreateMove(ctx, scope, &mg.Move); err != nil {
-				return res, err
+			if !enrich {
+				mg.Move.GameID = gameID
+				if _, err := tx.Matches().CreateMove(ctx, scope, &mg.Move); err != nil {
+					return res, err
+				}
 			}
 			if prog != nil {
 				prog(counter)

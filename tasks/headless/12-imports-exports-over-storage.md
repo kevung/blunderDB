@@ -205,11 +205,25 @@ Server bits:
 - Tests: `ingest/position_bgf_test.go` `TestBGFTextImportParity` (4 fixtures) vs
   `database.ImportBGFPosition`; server `TestImportBGFTextPositionEndToEnd`.
 
-### PR3c — deferred
+### PR3c — canonical-duplicate enrichment done
 
-- **Canonical-duplicate enrichment** for all match mappers (MapXG/GnuBG/BGF emit
-  the full graph; `WriteMatch` skips a whole match on a hash hit instead of
-  importing analysis onto positions already stored from another format).
+`WriteMatch` now has two levels of duplicate handling (mirroring the legacy
+importers): an **exact** same-format hit (`MatchHash`) skips entirely; a
+**canonical** cross-format hit (`CanonicalHash` present from another format)
+*enriches* — it does not recreate the match/game/move rows, but still writes the
+graph's positions and analyses, which dedup by Zobrist onto the existing
+positions and let `mergeAnalysis` combine engines (cross-engine
+`AllCubeAnalyses`, unioned checker moves). `WriteResult.Enriched` reports it.
+
+- The two checks are two `FindByHash(hash,"")` / `FindByHash("",canonical)`
+  calls — no new Storage method needed.
+- Test: `ingest/enrich_test.go` `TestCrossFormatEnrichment` imports the same
+  match from `.xg` then `.sgf` (canonical hashes verified equal) and asserts:
+  Enriched, the match id is reused, match/game/move counts don't grow, and ≥1
+  position carries both XG and GnuBG cube analyses. (Verification drains the
+  position list before loading analyses — the `:memory:` nested-iterator pitfall.)
+
+**PR3c is complete.** Nothing deferred.
 
 ### PR3b — done (what landed)
 
