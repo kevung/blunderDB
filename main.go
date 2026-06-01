@@ -10,6 +10,7 @@ import (
 	"github.com/kevung/blunderdb/internal/gui"
 	"github.com/kevung/blunderdb/internal/server"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/migrate"
 )
 
 //go:embed build/appicon.png
@@ -29,6 +30,11 @@ func main() {
 		// `call` invokes a Storage method via the same handlers, in-process.
 		if strings.ToLower(os.Args[1]) == "call" {
 			runCall()
+			return
+		}
+		// `migrate` copies a SQLite database into PostgreSQL under a tenant.
+		if strings.ToLower(os.Args[1]) == "migrate" {
+			runMigrate()
 			return
 		}
 		// Check if first argument is a CLI command
@@ -67,6 +73,14 @@ func runServe() {
 func runCall() {
 	initLogging("cli")
 	if err := server.RunCall(os.Args[2:]); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runMigrate() {
+	initLogging("cli")
+	if err := migrate.RunCLI(os.Args[2:]); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}

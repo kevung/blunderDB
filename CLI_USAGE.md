@@ -760,6 +760,41 @@ The JSON response (or NDJSON stream for `*.list` endpoints) is written to
 stdout. On an error the process exits non-zero and the `{"error":{…}}` envelope
 is printed to stdout so it stays parseable (e.g. with `jq`).
 
+## Migrating a SQLite database into PostgreSQL
+
+`blunderdb migrate` copies a single-user SQLite database into a PostgreSQL
+backend under a chosen tenant scope — the path for a desktop user to "upload"
+their library into a server deployment.
+
+```bash
+blunderdb migrate \
+    --from sqlite:///path/to/user.db \
+    --to   "postgres://user:pass@host:5432/db?sslmode=disable" \
+    --tenant-id my-tenant
+
+# Preview without writing
+blunderdb migrate --from sqlite:///path/to/user.db --tenant-id my-tenant --dry-run
+```
+
+It copies **positions, their analyses and comments, matches (games + moves),
+tournaments (with match links) and collections (with membership)** under the
+tenant scope, remapping primary/foreign keys, inside a single destination
+transaction (atomic — a failed run leaves the destination untouched, just
+re-run). Progress and the final tally are emitted as NDJSON to stdout.
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `--from <uri>` | – | source SQLite DB (`sqlite:///path` or a bare path) |
+| `--to <dsn>` | – | destination PostgreSQL DSN (`postgres://…`) |
+| `--tenant-id <scope>` | – | destination tenant scope (required unless `--dry-run`) |
+| `--dry-run` | – | count what would be copied without writing |
+| `--on-conflict <policy>` | `""` | `""` aborts if the tenant already has data; `skip` merges (positions dedup by Zobrist) |
+
+Not migrated (yet): app-state families — anki decks/cards, the filter library,
+search/command history, and session metadata. Their per-tenant scoping is
+formalised by the session-scope phase; data migration of the core position
+library and match history is the priority.
+
 ## See Also
 
 - Main blunderDB documentation
