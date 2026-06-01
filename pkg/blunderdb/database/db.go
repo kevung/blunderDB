@@ -184,6 +184,7 @@ func (d *Database) SetupDatabase(path string) error {
 			name TEXT,
 			command TEXT,
 			edit_position TEXT,
+			exclude_position TEXT,
 			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
@@ -196,6 +197,7 @@ func (d *Database) SetupDatabase(path string) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
 			position TEXT,
+			exclude_position TEXT,
 			timestamp INTEGER,
 			scope TEXT NOT NULL DEFAULT ''
 		)

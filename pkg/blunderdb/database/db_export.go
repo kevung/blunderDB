@@ -87,7 +87,8 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		CREATE TABLE IF NOT EXISTS command_history (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
-			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
@@ -99,7 +100,9 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT,
 			command TEXT,
-			edit_position TEXT
+			edit_position TEXT,
+			exclude_position TEXT,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
@@ -112,7 +115,9 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
 			position TEXT,
-			timestamp INTEGER
+			exclude_position TEXT,
+			timestamp INTEGER,
+			scope TEXT NOT NULL DEFAULT ''
 		)
 	`)
 	if err != nil {
