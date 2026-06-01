@@ -152,6 +152,36 @@ desktop app in this chantier.
 - Per-format: reuse the existing `testdata/` fixtures; assert the same row
   counts as the `Database`-wrapper import produces (parity).
 
+## XG mapper extraction — concrete plan (PR3b remaining)
+
+The foundation (dedup `FindByHash`, `WriteMatch`/`MatchGraph`) is in. The
+remaining work is the XG parser → `MatchGraph` mapper. Key finding from
+`db_import_xg.go`:
+
+- `createPositionFromXG(...) *Position` is already a near-pure mapper — lift
+  it into `ingest/xg.go` (drop the `*Database` receiver).
+- The analysis builders `saveCheckerAnalysisToPositionInTx` /
+  `saveCubeAnalysisToPositionInTx` / `saveCubeAnalysisForCheckerPositionInTx`
+  (~700 L) **build *and* write** the `PositionAnalysis` in one pass. Split
+  each into a pure `buildCheckerAnalysis(...) *domain.PositionAnalysis` (plus
+  the move-string/hit/multiplier helpers `inferMoveMultipliers`,
+  `convertXGMoveToStringWithHits`, `mergeSlides*`, `translateAnalysisDepth`,
+  which are already pure) and let `WriteMatch` do the persisting.
+- `importMoveWithCacheAndRawCube` orchestration becomes "append a `MoveGraph`
+  to the current `GameGraph`".
+- Reuse `ComputeMatchHash` / `ComputeCanonicalMatchHashFromXG` verbatim for
+  `MatchGraph.Match.{MatchHash,CanonicalHash}`.
+
+**Parity gate (do not skip).** A count-only test is insufficient: a wrong
+mapper yields right row counts but corrupt equities. Add a parity test that
+imports `testdata/*.xg` via the new mapper into a Storage AND via the legacy
+`Database.ImportXGMatch`, then diffs positions+analyses field-by-field
+(equities, errors, move strings). Only ship when the diff is empty.
+
+The GUI/CLI keep `Database.ImportXGMatch`; once the pure builders exist, a
+later cleanup can re-point the legacy writer at them to delete the
+duplicated analysis-building code.
+
 ## Gotchas
 
 1. **Parsers need a file path / seeking.** Spool multipart to a temp file;
