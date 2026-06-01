@@ -7,16 +7,17 @@
 \contentsline {subsection}{\numberline {2.2.1}Introduction}{6}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Main Interactions}{6}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}Description of the interface}{6}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Browsing positions}{7}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}Editing positions}{8}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}The command line}{8}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Analysis Panel}{8}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}Comments Panel}{8}{subsection.2.2.8}%
-\contentsline {subsection}{\numberline {2.2.9}Search Panel}{8}{subsection.2.2.9}%
-\contentsline {subsection}{\numberline {2.2.10}Collections Panel}{9}{subsection.2.2.10}%
-\contentsline {subsection}{\numberline {2.2.11}Matches Panel}{9}{subsection.2.2.11}%
-\contentsline {subsection}{\numberline {2.2.12}Tournaments Panel}{9}{subsection.2.2.12}%
-\contentsline {subsection}{\numberline {2.2.13}Stats Panel}{9}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.4}Configuration}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Browsing positions}{7}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Editing positions}{8}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}The command line}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}Analysis Panel}{8}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.9}Comments Panel}{8}{subsection.2.2.9}%
+\contentsline {subsection}{\numberline {2.2.10}Search Panel}{8}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.11}Collections Panel}{9}{subsection.2.2.11}%
+\contentsline {subsection}{\numberline {2.2.12}Matches Panel}{9}{subsection.2.2.12}%
+\contentsline {subsection}{\numberline {2.2.13}Tournaments Panel}{9}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.14}Stats Panel}{9}{subsection.2.2.14}%
 \contentsline {subsubsection}{Introduction}{9}{subsubsection*.3}%
 \contentsline {subsubsection}{Opening the panel}{10}{subsubsection*.4}%
 \contentsline {subsubsection}{Filter bar}{10}{subsubsection*.5}%
@@ -36,10 +37,10 @@
 \contentsline {paragraph}{Error magnitude histogram}{12}{paragraph*.19}%
 \contentsline {subsubsection}{Aggregation rule}{12}{subsubsection*.20}%
 \contentsline {subsubsection}{MWC: limitations}{13}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.14}EPC Panel}{13}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Anki Panel}{13}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Metadata Panel}{14}{subsection.2.2.16}%
-\contentsline {subsection}{\numberline {2.2.17}Log Panel}{14}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.15}EPC Panel}{13}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.16}Anki Panel}{13}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.17}Metadata Panel}{14}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.18}Log Panel}{14}{subsection.2.2.18}%
 \contentsline {section}{\numberline {2.3}User Guide}{14}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Create a new database}{14}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Open an existing database}{14}{subsection.2.3.2}%

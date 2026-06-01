@@ -85,7 +85,10 @@ Des fenêtres modales peuvent s'afficher pour:
 
 * afficher l'aide de blunderDB,
 
-* paramétrer l'export de la base de données.
+* paramétrer l'export de la base de données,
+
+* configurer blunderDB, notamment la langue de l'interface (voir
+  :ref:`configuration`).
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
@@ -115,6 +118,21 @@ suivantes:
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
    positions filtrées.
+
+.. _configuration:
+
+Configuration
+-------------
+
+Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
+blunderDB.
+
+Celle-ci permet de choisir la langue de l'interface parmi l'anglais, le
+français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
+et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
+aide) est traduit dans la langue sélectionnée. Le choix de la langue est
+enregistré et conservé d'une session à l'autre.
 
 .. _mode_normal:
 

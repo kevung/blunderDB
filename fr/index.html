@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.20.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.21.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3da08d6f"></script>
+      <script src="_static/documentation_options.js?v=4c75c736"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -253,6 +253,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <td><p>31/05/2026</p></td>
 <td><p>Ajout de la structure d’exclusion <em>Except</em> au panneau de recherche : exclut les positions contenant l’un des pions dessinés, avec marqueur « doit être vide » (double-clic) et nombre de pions par point non limité (commande x). Ajout de l’option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI –dice). Panneau Commentaires : focus automatique du champ de saisie à l’ouverture et boutons éditer / supprimer toujours visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>01/06/2026</p></td>
+<td><p>Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue. Le choix de la langue est conservé d’une session à l’autre. Voir :ref:`configuration`.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -265,20 +269,21 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Interactions principales</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description de l’interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.4. Navigation dans les positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.5. Édition de positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.6. La ligne de commande</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.7. Panneau Analyse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.8. Panneau Commentaires</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.9. Panneau Recherche</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.10. Panneau Collections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.11. Panneau Matchs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.12. Panneau Tournois</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.13. Panneau Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.14. Panneau EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.15. Panneau Anki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.16. Panneau Métadonnées</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.17. Panneau Journal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Navigation dans les positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Édition de positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. La ligne de commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Panneau Analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Panneau Commentaires</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Panneau Recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Panneau Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Panneau Matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Panneau Tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Panneau Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Panneau EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Panneau Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Panneau Métadonnées</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Panneau Journal</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a><ul>

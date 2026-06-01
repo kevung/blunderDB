@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{01 juin 2026}
-\release{0.20.0}
+\release{0.21.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -614,6 +614,22 @@ Ajout de la structure d’exclusion \sphinxstyleemphasis{Except} au panneau de r
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.21.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+01/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue. Le choix de la langue est conservé d’une session à l’autre. Voir :ref:`configuration`.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -635,15 +651,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.20.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.20.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.20.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip}
 
 \end{itemize}
 
@@ -668,7 +684,7 @@ téléchargement, exécuter dans un terminal la commande \sphinxcode{\sphinxupqu
 Sous Linux, si vous obtenez l’erreur \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37:
 cannot open shared object file}}, votre distribution utilise
 webkit2gtk\sphinxhyphen{}4.1 au lieu de webkit2gtk\sphinxhyphen{}4.0. Téléchargez la version
-dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.20.0}
+dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avertissement:}
@@ -835,7 +851,12 @@ afficher l’aide de blunderDB,
 
 \item {} 
 \sphinxAtStartPar
-paramétrer l’export de la base de données.
+paramétrer l’export de la base de données,
+
+\item {} 
+\sphinxAtStartPar
+configurer blunderDB, notamment la langue de l’interface (voir
+{\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}).
 
 \end{itemize}
 
@@ -892,6 +913,21 @@ Dans le cas de positions issues d’une recherche par l’utilisateur, le
 nombre de positions indiqué dans la barre d’état correspond au nombre de
 positions filtrées.
 \end{sphinxadmonition}
+
+
+\subsection{Configuration}
+\label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
+\sphinxAtStartPar
+Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB.
+
+\sphinxAtStartPar
+Celle\sphinxhyphen{}ci permet de choisir la langue de l’interface parmi l’anglais, le
+français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
+et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
+aide) est traduit dans la langue sélectionnée. Le choix de la langue est
+enregistré et conservé d’une session à l’autre.
 
 
 \subsection{Navigation dans les positions}
@@ -965,7 +1001,7 @@ disponible en ligne de commande.
 
 
 \subsection{Panneau Analyse}
-\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id2}}
+\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id3}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Analyse} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}L}) affiche les données d’analyse de la position
 courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
@@ -978,7 +1014,7 @@ afficher ou masquer le panneau.
 
 
 \subsection{Panneau Commentaires}
-\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id3}}
+\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id4}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Commentaires} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}P}) affiche, ajoute et modifie les
 commentaires associés à la position courante. Les commentaires importés depuis
@@ -988,7 +1024,7 @@ masquer le panneau.
 
 
 \subsection{Panneau Recherche}
-\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id4}}
+\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id5}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Recherche} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}) permet de filtrer les positions
 selon des critères combinables librement : structure de pions, type de décision
@@ -1065,7 +1101,7 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 
 
 \subsection{Panneau Tournois}
-\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id5}}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Tournois} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) permet de regrouper des matchs en tournois
 pour un suivi organisé et une analyse statistique par événement. Les tournois
@@ -1078,7 +1114,7 @@ Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} pour afficher ou masquer 
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Introduction}
-\label{\detokenize{manuel:id6}}
+\label{\detokenize{manuel:id7}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
 progression dans le temps à partir des positions importées dans la base de

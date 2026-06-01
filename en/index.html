@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.20.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.21.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b52c616d"></script>
+      <script src="_static/documentation_options.js?v=c4f92b34"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -243,6 +243,10 @@
 <td><p>May 31, 2026</p></td>
 <td><p>Added the <em>Except</em> exclusion structure to the search panel: excludes positions that contain any of the drawn checkers, with a « must be empty » marker (double-click) and no limit on the number of checkers per point (command x). Added a « first die only » option to the dice roll filter (D1 variant, –dice CLI option). Comments panel: the input field is focused automatically on open and the edit / delete buttons are always visible. Fixed the « Search Text » filter that failed to match all comment tags.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>June 1, 2026</p></td>
+<td><p>Interface internationalisation: the whole of blunderDB (toolbar, panels, messages, help) can now be displayed in English, French, German, Italian, Spanish, Finnish, Japanese, Greek or Russian, as you choose. Added a configuration window, accessible through a gear-shaped button in the toolbar, to select the language. The language choice is kept across sessions. See :ref:`configuration`.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -255,20 +259,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Main Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description of the interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.4. Browsing positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.5. Editing positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.6. The command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.7. Analysis Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.8. Comments Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.9. Search Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.10. Collections Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.11. Matches Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.12. Tournaments Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.13. Stats Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.14. EPC Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.15. Anki Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.16. Metadata Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.17. Log Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Analysis Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Comments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Search Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Collections Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Matches Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Tournaments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Metadata Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Log Panel</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a><ul>

@@ -80,7 +80,7 @@
 
 \title{blunderDB}
 \date{Jun 01, 2026}
-\release{0.20.0}
+\release{0.21.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -599,6 +599,22 @@ Added the \sphinxstyleemphasis{Except} exclusion structure to the search panel: 
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.21.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+June 1, 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Interface internationalisation: the whole of blunderDB (toolbar, panels, messages, help) can now be displayed in English, French, German, Italian, Spanish, Finnish, Japanese, Greek or Russian, as you choose. Added a configuration window, accessible through a gear\sphinxhyphen{}shaped button in the toolbar, to select the language. The language choice is kept across sessions. See :ref:`configuration`.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -620,15 +636,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.20.0.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.20.0}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.20.0.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip}
 
 \end{itemize}
 
@@ -644,7 +660,7 @@ On Linux, if blunderDB is not executable after downloading, run the command \sph
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-On Linux, if you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1 instead of webkit2gtk\sphinxhyphen{}4.0. Download the dedicated build: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.20.0}
+On Linux, if you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1 instead of webkit2gtk\sphinxhyphen{}4.0. Download the dedicated build: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warning:}
@@ -796,7 +812,11 @@ display the blunderDB help,
 
 \item {} 
 \sphinxAtStartPar
-configure database export settings.
+configure database export settings,
+
+\item {} 
+\sphinxAtStartPar
+configure blunderDB, in particular the interface language (see {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}).
 
 \end{itemize}
 
@@ -846,6 +866,15 @@ the index of the current position, followed by the number of positions in the cu
 \sphinxAtStartPar
 In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.
 \end{sphinxadmonition}
+
+
+\subsection{Configuration}
+\label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
+\sphinxAtStartPar
+The configuration button (gear\sphinxhyphen{}shaped icon) located in the toolbar, to the left of the help button, opens the blunderDB configuration window.
+
+\sphinxAtStartPar
+It lets you choose the interface language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.
 
 
 \subsection{Browsing positions}
@@ -902,19 +931,19 @@ Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_
 
 
 \subsection{Analysis Panel}
-\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id2}}
+\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id3}}
 \sphinxAtStartPar
 The \sphinxstylestrong{Analysis} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}L}) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The \sphinxstyleemphasis{d} key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}L} or run the \sphinxcode{\sphinxupquote{list}} command to show or hide the panel.
 
 
 \subsection{Comments Panel}
-\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id3}}
+\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id4}}
 \sphinxAtStartPar
 The \sphinxstylestrong{Comments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}P}) displays, adds, and edits comments associated with the current position. Comments imported from XG files are automatically associated with the corresponding positions. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}P} or run the \sphinxcode{\sphinxupquote{comment}} command to show or hide the panel.
 
 
 \subsection{Search Panel}
-\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id4}}
+\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id5}}
 \sphinxAtStartPar
 The \sphinxstylestrong{Search} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} or \sphinxstyleemphasis{TAB}) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The \sphinxstyleemphasis{TAB} key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.
 
@@ -973,7 +1002,7 @@ Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{
 
 
 \subsection{Tournaments Panel}
-\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id5}}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 The \sphinxstylestrong{Tournaments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) groups matches into tournaments for organised tracking and per\sphinxhyphen{}event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} to show or hide the panel.
 
@@ -982,7 +1011,7 @@ The \sphinxstylestrong{Tournaments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphe
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Introduction}
-\label{\detokenize{manuel:id6}}
+\label{\detokenize{manuel:id7}}
 \sphinxAtStartPar
 The \sphinxstylestrong{Stats} panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays \sphinxstylestrong{PR} (Performance Rate) and \sphinxstylestrong{MWC cost} (Match Winning Chance cost) for all positions or a filtered subset.
 
