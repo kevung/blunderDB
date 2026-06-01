@@ -50,7 +50,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"History/SaveLoadClear", testCommandHistory},
 		{"SearchHistory/SaveListDelete", testSearchHistory},
 		{"Metadata/Counts", testMetadataCounts},
-		{"Session/SaveLoadEmpty", nil},
+		{"Session/SaveLoadEmpty", testSessionSaveLoad},
+		{"Session/MultiScopeIsolation", testSessionMultiScope},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Stats/AggregateCounts", nil},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
@@ -721,6 +722,77 @@ func testSearchHistory(t *testing.T, s storage.Storage) {
 	}
 	if n != 0 {
 		t.Fatalf("search history after delete: got %d, want 0", n)
+	}
+}
+
+func testSessionSaveLoad(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ss := s.Session()
+
+	// A scope that never stored a session loads an empty (non-nil) state.
+	empty, err := ss.Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Load empty: %v", err)
+	}
+	if empty == nil || empty.LastSearchCommand != "" || empty.HasActiveSearch || len(empty.LastPositionIDs) != 0 {
+		t.Fatalf("fresh session not empty: %+v", empty)
+	}
+
+	want := storage.SessionState{
+		LastSearchCommand:  "decision_type checker",
+		LastSearchPosition: "xgid",
+		LastPositionIndex:  5,
+		LastPositionIDs:    []int64{1, 2, 3},
+		HasActiveSearch:    true,
+		ViewsJSON:          `{"a":1}`,
+	}
+	if err := ss.Save(ctx, "", want); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	got, err := ss.Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if got.LastSearchCommand != want.LastSearchCommand || got.LastSearchPosition != want.LastSearchPosition ||
+		got.LastPositionIndex != want.LastPositionIndex || got.HasActiveSearch != want.HasActiveSearch ||
+		got.ViewsJSON != want.ViewsJSON || len(got.LastPositionIDs) != 3 {
+		t.Fatalf("Load round-trip:\n got %+v\nwant %+v", got, want)
+	}
+}
+
+func testSessionMultiScope(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ss := s.Session()
+
+	if err := ss.Save(ctx, "1", storage.SessionState{LastSearchCommand: "alpha", LastPositionIndex: 1}); err != nil {
+		t.Fatalf("Save scope 1: %v", err)
+	}
+	if err := ss.Save(ctx, "2", storage.SessionState{LastSearchCommand: "beta", LastPositionIndex: 2}); err != nil {
+		t.Fatalf("Save scope 2: %v", err)
+	}
+
+	s1, _ := ss.Load(ctx, "1")
+	s2, _ := ss.Load(ctx, "2")
+	if s1.LastSearchCommand != "alpha" || s1.LastPositionIndex != 1 {
+		t.Fatalf("scope 1 leaked: %+v", s1)
+	}
+	if s2.LastSearchCommand != "beta" || s2.LastPositionIndex != 2 {
+		t.Fatalf("scope 2 leaked: %+v", s2)
+	}
+	// The empty scope is independent of both.
+	if e, _ := ss.Load(ctx, ""); e.LastSearchCommand != "" {
+		t.Fatalf("empty scope sees other tenants: %+v", e)
+	}
+
+	// Clearing one scope leaves the other intact.
+	if err := ss.Clear(ctx, "1"); err != nil {
+		t.Fatalf("Clear scope 1: %v", err)
+	}
+	if e, _ := ss.Load(ctx, "1"); e.LastSearchCommand != "" {
+		t.Fatalf("scope 1 not cleared: %+v", e)
+	}
+	if s2, _ := ss.Load(ctx, "2"); s2.LastSearchCommand != "beta" {
+		t.Fatalf("scope 2 affected by clearing scope 1: %+v", s2)
 	}
 }
 

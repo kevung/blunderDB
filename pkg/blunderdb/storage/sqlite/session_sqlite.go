@@ -30,6 +30,16 @@ var sessionKeys = []string{
 	sessionKeyPositionIDs, sessionKeyActiveSearch, sessionKeyViews,
 }
 
+// sessionScopedKey namespaces a session metadata key by scope so several
+// tenants can co-exist in one database. The empty scope (single-user GUI/CLI)
+// is left unprefixed, so existing databases keep working with no migration.
+func sessionScopedKey(scope, key string) string {
+	if scope == "" {
+		return key
+	}
+	return scope + ":" + key
+}
+
 // Save persists the UI session state across the six metadata rows.
 func (s *sessionStore) Save(ctx context.Context, scope string, state storage.SessionState) error {
 	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
@@ -52,7 +62,7 @@ func (s *sessionStore) Save(ctx context.Context, scope string, state storage.Ses
 		for _, kv := range pairs {
 			if _, err := tx.ExecContext(ctx,
 				`INSERT OR REPLACE INTO metadata (key, value) VALUES (?,?)`,
-				kv[0], kv[1]); err != nil {
+				sessionScopedKey(scope, kv[0]), kv[1]); err != nil {
 				return err
 			}
 		}
@@ -67,10 +77,16 @@ func (s *sessionStore) Save(ctx context.Context, scope string, state storage.Ses
 // Load returns the persisted session state. Missing keys yield zero values, so
 // a database that never stored a session loads an empty SessionState.
 func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.SessionState, error) {
+	// Query the scope-namespaced keys and map each back to its base key.
+	baseByScoped := make(map[string]string, len(sessionKeys))
+	args := make([]any, len(sessionKeys))
+	for i, k := range sessionKeys {
+		sk := sessionScopedKey(scope, k)
+		baseByScoped[sk] = k
+		args[i] = sk
+	}
 	rows, err := s.db.QueryContext(ctx,
-		`SELECT key, value FROM metadata WHERE key IN (?,?,?,?,?,?)`,
-		sessionKeySearchCommand, sessionKeySearchPosition, sessionKeyPositionIndex,
-		sessionKeyPositionIDs, sessionKeyActiveSearch, sessionKeyViews)
+		`SELECT key, value FROM metadata WHERE key IN (?,?,?,?,?,?)`, args...)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: load session: %w", err)
 	}
@@ -86,7 +102,7 @@ func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.Session
 		if !value.Valid {
 			continue
 		}
-		switch key {
+		switch baseByScoped[key] {
 		case sessionKeySearchCommand:
 			state.LastSearchCommand = value.String
 		case sessionKeySearchPosition:
@@ -118,7 +134,7 @@ func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.Session
 func (s *sessionStore) Clear(ctx context.Context, scope string) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
 		for _, key := range sessionKeys {
-			if _, err := tx.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, key); err != nil {
+			if _, err := tx.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, sessionScopedKey(scope, key)); err != nil {
 				return err
 			}
 		}

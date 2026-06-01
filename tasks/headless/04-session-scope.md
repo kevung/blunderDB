@@ -155,3 +155,36 @@ change signature — they always pass `scope = ""` to the underlying
 ## PR layout
 
 Single PR: `feat(storage): introduce scope on session-like tables (v2.8.0)`.
+
+## Done — implementation note (reconciled with the realised architecture)
+
+This sheet predates the **`tenant_id BIGINT`** decision (README decision #5,
+realised in P3/P5). The four families split into two groups, so the original
+"add a `scope TEXT` column to all four + migration + version bump" plan is no
+longer the right shape:
+
+- **`filter_library`, `command_history`, `search_history`** — already
+  tenant-scoped on **Postgres** via `tenant_id` (P3 PR6). On **SQLite** they
+  remain single-user (`scope` ignored); the multi-tenant path is Postgres, and
+  SQLite-as-server (≤100 users) sharing these is an accepted limitation.
+- **`session` / `metadata`** — the real cross-backend gap. Session state is a
+  set of `session_*` rows in the **global** `metadata` table on *both*
+  backends, so without scoping two tenants overwrite each other's last
+  position/search.
+
+**What landed (the session gap, both backends, no migration):** the session
+store namespaces its metadata keys by scope — `sessionScopedKey(scope, key)`
+returns the bare key for `scope == ""` and `"<scope>:<key>"` otherwise. So:
+- the empty scope (GUI/CLI, and the `Database` wrapper's raw-SQL session path
+  which writes the bare keys) is byte-for-byte unchanged — **no schema change,
+  no `DatabaseVersion` bump, no migration, no GUI regression**;
+- the `blunderdb serve` daemon, which passes the `X-Tenant-ID` scope, gets
+  fully isolated per-tenant session state.
+
+Implemented in `sqlite/session_sqlite.go` and `postgres/session_postgres.go`
+(the latter replacing its stub). Contract cases `Session/SaveLoadEmpty` and
+`Session/MultiScopeIsolation` are enabled — green on both backends.
+
+**Deferred:** adding `scope`/`tenant_id` columns to SQLite's
+`filter_library`/`command_history`/`search_history` (a real schema migration +
+version bump) — only needed for multi-tenant SQLite-as-server, low priority.
