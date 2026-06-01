@@ -75,7 +75,7 @@ Optional side phases:
 | P8 | Streaming + ctx | [08-streaming-imports-ctx.md](08-streaming-imports-ctx.md) | 3-5 d | medium | pending |
 | P9 | Benchmarks | [09-benchmarks.md](09-benchmarks.md) | 3-4 d | low | pending |
 | B | SQLite→Postgres tool | [10-sqlite-to-postgres-tool.md](10-sqlite-to-postgres-tool.md) | 2-3 d | medium | pending |
-| C | Per-tenant rate-limit | [11-tenant-rate-limit.md](11-tenant-rate-limit.md) | 1-2 d | low | pending |
+| C | Per-tenant rate-limit | [11-tenant-rate-limit.md](11-tenant-rate-limit.md) | 1-2 d | low | **done** — dependency-free per-tenant token bucket (`middleware.RateLimit`/`RateLimiter`, injectable clock, idle-bucket sweeper); opt-in via `serve --rate-limit-rps/--rate-limit-burst`; `rate_limited` (429) envelope; `blunderdb_ratelimit_{rejected_total,buckets}` metrics |
 | P6.3/P8 | Imports/exports over Storage | [12-imports-exports-over-storage.md](12-imports-exports-over-storage.md) | 6-9 d | high | **done** — PR3a (ingest interfaces + HTTP transport + JSON interchange); PR3b (XG mapper + parity gate); PR3c (GnuBG SGF/MAT, BGF, native .db, XGP + BGF-text positions) + cross-format canonical-duplicate enrichment. All routes wired & parity-gated: imports.{json,xg,gnubg,bgf,db,position} |
 
 Conventions and shared vocabulary: see [glossary.md](glossary.md).

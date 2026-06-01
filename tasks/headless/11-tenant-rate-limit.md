@@ -137,3 +137,24 @@ and bump the API minor version if you tag releases.
 ## PR layout
 
 Single PR: `feat(server): per-tenant rate limiting middleware (opt-in)`.
+
+## Done — implementation notes
+
+- **No new dependency.** Instead of `golang.org/x/time/rate`, a ~20-line
+  dependency-free token bucket lives in `internal/server/middleware/ratelimit.go`
+  (`RateLimiter` with an injectable `now` clock for deterministic tests).
+- **Wiring.** `Options.RateLimitRPS`/`RateLimitBurst` (burst defaults to 2×rps).
+  When rps>0, `New` builds the limiter and `chain` mounts `RateLimit` just
+  *inside* `Tenant` (so the tenant is in context); zero overhead when disabled.
+  `Server.Run` starts a sweeper goroutine (evicts buckets idle >30 min every
+  5 min, publishing the live count to metrics).
+- **Error code.** Added `CodeRateLimited = "rate_limited"` → HTTP 429 with a
+  `Retry-After: 1` header. The error-code comment notes this is an additive
+  change to the otherwise-frozen set.
+- **Metrics.** `blunderdb_ratelimit_rejected_total` (counter) and
+  `blunderdb_ratelimit_buckets` (gauge) added to the dependency-free registry.
+- **Flags.** `serve --rate-limit-rps <float>` / `--rate-limit-burst <int>`.
+- **Tests.** `middleware/ratelimit_test.go` (burst+refill, per-tenant
+  independence, sweeper eviction, burst floor) and
+  `internal/server/ratelimit_server_test.go` (throttle→429 envelope +
+  Retry-After + metric, second tenant unaffected, disabled-by-default).

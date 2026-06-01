@@ -47,6 +47,15 @@ type Options struct {
 	// defaultShutdownTimeout.
 	ShutdownTimeout time.Duration
 
+	// RateLimitRPS is the per-tenant sustained request rate. Zero (the
+	// default) disables rate limiting entirely (the middleware is not mounted,
+	// so there is no overhead).
+	RateLimitRPS float64
+
+	// RateLimitBurst is the per-tenant token-bucket size. Defaults to
+	// 2×RateLimitRPS (min 1) when zero and rate limiting is enabled.
+	RateLimitBurst int
+
 	// now is an injectable clock for deterministic tests. Defaults to
 	// time.Now.
 	now func() time.Time
@@ -84,5 +93,11 @@ func (o *Options) applyDefaults() {
 	}
 	if o.now == nil {
 		o.now = time.Now
+	}
+	if o.RateLimitRPS > 0 && o.RateLimitBurst == 0 {
+		o.RateLimitBurst = int(2 * o.RateLimitRPS)
+		if o.RateLimitBurst < 1 {
+			o.RateLimitBurst = 1
+		}
 	}
 }

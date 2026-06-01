@@ -38,13 +38,15 @@ func RunServe(args []string) error {
 	}
 
 	var (
-		backend     = fs.String("backend", envOr("BLUNDERDB_BACKEND", "sqlite"), "storage backend: sqlite|postgres")
-		dsn         = fs.String("dsn", os.Getenv("BLUNDERDB_DSN"), "backend connection string (sqlite path or postgres DSN)")
-		dbPath      = fs.String("db", "", "sqlite database file (shorthand for --backend sqlite --dsn <path>)")
-		addr        = fs.String("addr", envOr("BLUNDERDB_ADDR", ":8080"), "listen address host:port")
-		logLevel    = fs.String("log-level", envOr("BLUNDERDB_LOG_LEVEL", "info"), "log level: debug|info|warn|error")
-		enableMetrics = fs.Bool("metrics", true, "expose /metrics (Prometheus)")
-		corsOrigin  = fs.String("cors-allow-origin", "", "enable CORS for this origin (off by default)")
+		backend        = fs.String("backend", envOr("BLUNDERDB_BACKEND", "sqlite"), "storage backend: sqlite|postgres")
+		dsn            = fs.String("dsn", os.Getenv("BLUNDERDB_DSN"), "backend connection string (sqlite path or postgres DSN)")
+		dbPath         = fs.String("db", "", "sqlite database file (shorthand for --backend sqlite --dsn <path>)")
+		addr           = fs.String("addr", envOr("BLUNDERDB_ADDR", ":8080"), "listen address host:port")
+		logLevel       = fs.String("log-level", envOr("BLUNDERDB_LOG_LEVEL", "info"), "log level: debug|info|warn|error")
+		enableMetrics  = fs.Bool("metrics", true, "expose /metrics (Prometheus)")
+		corsOrigin     = fs.String("cors-allow-origin", "", "enable CORS for this origin (off by default)")
+		rateLimitRPS   = fs.Float64("rate-limit-rps", 0, "per-tenant sustained requests/second (0 = disabled)")
+		rateLimitBurst = fs.Int("rate-limit-burst", 0, "per-tenant token-bucket burst (default 2×rps)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -77,6 +79,8 @@ func RunServe(args []string) error {
 		Metrics:         metrics.New(),
 		EnableMetrics:   *enableMetrics,
 		CORSAllowOrigin: *corsOrigin,
+		RateLimitRPS:    *rateLimitRPS,
+		RateLimitBurst:  *rateLimitBurst,
 	})
 	if err != nil {
 		return err

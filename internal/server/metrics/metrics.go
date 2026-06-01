@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -30,6 +31,26 @@ type Registry struct {
 	mu       sync.Mutex
 	counters map[counterKey]uint64
 	hists    map[histKey]*histogram
+
+	// Rate-limit metrics (atomics: updated outside the request-metrics lock).
+	rlRejected uint64 // cumulative requests rejected by the rate limiter
+	rlBuckets  uint64 // current number of live per-tenant token buckets
+}
+
+// IncRateLimitRejected records one request rejected by the rate limiter.
+func (r *Registry) IncRateLimitRejected() {
+	if r == nil {
+		return
+	}
+	atomic.AddUint64(&r.rlRejected, 1)
+}
+
+// SetRateLimitBuckets records the current number of live per-tenant buckets.
+func (r *Registry) SetRateLimitBuckets(n int) {
+	if r == nil {
+		return
+	}
+	atomic.StoreUint64(&r.rlBuckets, uint64(n))
 }
 
 type counterKey struct {
@@ -145,4 +166,12 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 		fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_count{method=%q,path=%q} %d\n",
 			k.method, k.path, h.count)
 	}
+
+	fmt.Fprintln(w, "# HELP blunderdb_ratelimit_rejected_total Requests rejected by the per-tenant rate limiter.")
+	fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_rejected_total counter")
+	fmt.Fprintf(w, "blunderdb_ratelimit_rejected_total %d\n", atomic.LoadUint64(&r.rlRejected))
+
+	fmt.Fprintln(w, "# HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.")
+	fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_buckets gauge")
+	fmt.Fprintf(w, "blunderdb_ratelimit_buckets %d\n", atomic.LoadUint64(&r.rlBuckets))
 }

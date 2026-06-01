@@ -8,14 +8,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Error codes. This is a CLOSED set — external clients depend on it. Adding a
-// code is a breaking API change requiring a major version bump. See
-// tasks/headless/06-serve-http.md ("Error envelope (frozen)").
+// Error codes. This is a near-closed set — external clients depend on it.
+// Adding a code is an additive API change (bump the API minor version). See
+// tasks/headless/06-serve-http.md ("Error envelope (frozen)") and
+// tasks/headless/11-tenant-rate-limit.md (which added rate_limited).
 const (
-	CodeNotFound = "not_found"
-	CodeConflict = "conflict"
-	CodeInvalid  = "invalid"
-	CodeInternal = "internal"
+	CodeNotFound    = "not_found"
+	CodeConflict    = "conflict"
+	CodeInvalid     = "invalid"
+	CodeInternal    = "internal"
+	CodeRateLimited = "rate_limited"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -40,6 +42,8 @@ func statusForCode(code string) int {
 		return http.StatusConflict
 	case CodeInvalid:
 		return http.StatusBadRequest
+	case CodeRateLimited:
+		return http.StatusTooManyRequests
 	default:
 		return http.StatusInternalServerError
 	}
