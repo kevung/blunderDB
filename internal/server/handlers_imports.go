@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -65,6 +66,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 		return ingest.JSONImporter{S: s.opts.Storage}
 	case ingest.FormatXG:
 		return ingest.XGImporter{S: s.opts.Storage}
+	case ingest.FormatGnuBG:
+		return ingest.GnuBGImporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -84,6 +87,7 @@ func (s *Server) ingestRoutes() []route {
 	return []route{
 		{http.MethodPost, "/v1/imports.json", s.handleImport(ingest.FormatJSON)},
 		{http.MethodPost, "/v1/imports.xg", s.handleImport(ingest.FormatXG)},
+		{http.MethodPost, "/v1/imports.gnubg", s.handleImport(ingest.FormatGnuBG)},
 		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 	}
@@ -101,14 +105,20 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
-		file, _, err := r.FormFile("file")
+		file, header, err := r.FormFile("file")
 		if err != nil {
 			writeErrorCode(w, CodeInvalid, "missing multipart 'file' field: "+err.Error())
 			return
 		}
 		defer file.Close()
 
-		tmpPath, cleanup, err := spoolToTemp(file)
+		// Preserve the upload's extension on the spool file: parser-backed
+		// formats dispatch on it (e.g. GnuBG .sgf vs .mat).
+		ext := ""
+		if header != nil {
+			ext = filepath.Ext(header.Filename)
+		}
+		tmpPath, cleanup, err := spoolToTemp(file, ext)
 		if err != nil {
 			writeStorageError(w, err)
 			return
@@ -205,8 +215,8 @@ func (s *Server) handleExport(format ingest.Format) http.HandlerFunc {
 
 // spoolToTemp copies r to a temporary file and returns its path plus a cleanup
 // func that removes it.
-func spoolToTemp(r io.Reader) (string, func(), error) {
-	f, err := os.CreateTemp("", "blunderdb-import-*")
+func spoolToTemp(r io.Reader, ext string) (string, func(), error) {
+	f, err := os.CreateTemp("", "blunderdb-import-*"+ext)
 	if err != nil {
 		return "", func() {}, fmt.Errorf("server: temp file: %w", err)
 	}

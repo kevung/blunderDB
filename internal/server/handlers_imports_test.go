@@ -28,13 +28,19 @@ func exportJSON(t *testing.T, ts *httptest.Server) []byte {
 	return b
 }
 
-// uploadImport posts a multipart file to an import endpoint and returns the
-// NDJSON event lines.
+// uploadImport posts a multipart file (named data.ndjson) to an import endpoint
+// and returns the NDJSON event lines.
 func uploadImport(t *testing.T, ts *httptest.Server, path string, file []byte) []map[string]any {
+	return uploadImportNamed(t, ts, path, "data.ndjson", file)
+}
+
+// uploadImportNamed is uploadImport with an explicit upload filename, so
+// extension-dispatched formats (GnuBG .sgf vs .mat) reach the right parser.
+func uploadImportNamed(t *testing.T, ts *httptest.Server, path, filename string, file []byte) []map[string]any {
 	t.Helper()
 	var body bytes.Buffer
 	mw := multipart.NewWriter(&body)
-	fw, err := mw.CreateFormFile("file", "data.ndjson")
+	fw, err := mw.CreateFormFile("file", filename)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,10 +158,40 @@ func TestImportXGEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportGnuBGEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "test.sgf"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.gnubg", "test.sgf", fixture)
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["matches"].(float64) != 1 {
+		t.Fatalf("matches = %v, want 1", done["matches"])
+	}
+	if done["saved_positions"].(float64) == 0 {
+		t.Fatal("saved_positions = 0, want > 0")
+	}
+
+	// Second identical upload dedups.
+	done2 := func() map[string]any {
+		evs := uploadImportNamed(t, ts, "/v1/imports.gnubg", "test.sgf", fixture)
+		return evs[len(evs)-1]
+	}()
+	if done2["skipped_duplicates"].(float64) != 1 {
+		t.Fatalf("skipped_duplicates = %v, want 1", done2["skipped_duplicates"])
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
-	// imports.gnubg is not wired until PR3c → catch-all 404 (unknown route).
-	resp := post(t, ts, "/v1/imports.gnubg", nil)
+	// imports.bgf is not wired yet → catch-all 404 (unknown route).
+	resp := post(t, ts, "/v1/imports.bgf", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)

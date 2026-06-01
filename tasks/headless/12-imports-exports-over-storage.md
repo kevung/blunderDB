@@ -133,7 +133,24 @@ Server bits:
 |----|-------|-------------------|
 | **3a** ✅ | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
 | **3b** ✅ | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xgmap.go`+`ingest/xg.go`; `imports.xg` end-to-end; fixture+parity tests. | yes |
-| **3c** | **GnuBG**, **BGF**, native **.db**, Jellyfish **.mat**, position **text/XGP** mappings migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT), **BGF**, native **.db**, Jellyfish **.mat**, position **text/XGP** mappings migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+
+### PR3c — GnuBG done
+
+- `ingest/gnubgmap.go` — pure GnuBG mappers lifted from `db_import_gnubg.go`
+  (board replay `initStandardGnuBGPosition`/`applyGnuBGCheckerMove`,
+  `createPositionFromGnuBG`, SGF-absolute vs MAT-relative move-string helpers,
+  checker/cube analysis builders, `translateGnuBGAnalysisDepth`, and
+  `convertGnuBGCubeMWCToEMG` — the MWC→EMG cube conversion via
+  `engine.GnuBGGetME`).
+- `ingest/gnubg.go` — `MapGnuBG(path)` (dispatches `.sgf`/`.mat`/`.txt`) replays
+  each game's records (setboard/setcube/setcubepos/setdice + moves), emits a
+  MoveGraph per checker/double, reads the take/drop response for the cube
+  action, copies the two GnuBG hashes, and `GnuBGImporter`.
+- Transport: `spoolToTemp` now preserves the upload's extension so `MapGnuBG`
+  can pick the SGF vs MAT parser; `imports.gnubg` route wired.
+- Tests: `ingest/gnubg_test.go` `TestGnuBGImportParity` (SGF + MAT fixtures) +
+  `TestGnuBGHashParity`; server `TestImportGnuBGEndToEnd`.
 
 ### PR3b — done (what landed)
 
