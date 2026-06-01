@@ -53,7 +53,7 @@ func TestPositionsRoundtrip(t *testing.T) {
 	}
 
 	// Load it back.
-	resp2 := post(t, ts, "/v1/positions.load", idReq{ID: saved.ID})
+	resp2 := post(t, ts, "/v1/positions.load", idReq(saved))
 	defer resp2.Body.Close()
 	if resp2.StatusCode != http.StatusOK {
 		t.Fatalf("load status = %d, want 200", resp2.StatusCode)
