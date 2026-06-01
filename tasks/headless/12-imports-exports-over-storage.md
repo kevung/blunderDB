@@ -133,7 +133,7 @@ Server bits:
 |----|-------|-------------------|
 | **3a** ✅ | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
 | **3b** ✅ | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xgmap.go`+`ingest/xg.go`; `imports.xg` end-to-end; fixture+parity tests. | yes |
-| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT), **BGF**, native **.db**, Jellyfish **.mat**, position **text/XGP** mappings migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT), **BGF** ✅, native **.db**, position **text/XGP** mappings migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
 
 ### PR3c — GnuBG done
 
@@ -151,6 +151,21 @@ Server bits:
   can pick the SGF vs MAT parser; `imports.gnubg` route wired.
 - Tests: `ingest/gnubg_test.go` `TestGnuBGImportParity` (SGF + MAT fixtures) +
   `TestGnuBGHashParity`; server `TestImportGnuBGEndToEnd`.
+
+### PR3c — BGF done
+
+- `ingest/bgfmap.go` — pure BGBlitz mappers lifted from `db_import_bgf.go`. BGF
+  data is untyped `map[string]interface{}`, so the `bgfGet*` accessors,
+  `bgfInitBoardFromGame`/`bgfApplyCheckerMove` (28-int board), the from/to
+  notation formatter, the checker/cube analysis builders (incl. the
+  stateOnMove/stateOther best-action override), and `translateBGFAnalysisDepth`
+  are copied verbatim.
+- `ingest/bgf.go` — `MapBGF(path)` replays each game's move list, handles the
+  two cube-double encodings (synthetic `amove` with from[0]==-1, and explicit
+  `adouble`) with their take/pass look-ahead, infers dice for `green=7` markers,
+  copies the two BGF hashes, and `BGFImporter`. `imports.bgf` route wired.
+- Tests: `ingest/bgf_test.go` `TestBGFImportParity` + `TestBGFHashParity`;
+  server `TestImportBGFEndToEnd`.
 
 ### PR3b — done (what landed)
 

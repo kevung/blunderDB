@@ -188,10 +188,31 @@ func TestImportGnuBGEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportBGFEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "TachiAI_V_player_Nov_2__2025__16_55.bgf"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.bgf", "match.bgf", fixture)
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["matches"].(float64) != 1 {
+		t.Fatalf("matches = %v, want 1", done["matches"])
+	}
+	if done["saved_positions"].(float64) == 0 {
+		t.Fatal("saved_positions = 0, want > 0")
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
-	// imports.bgf is not wired yet → catch-all 404 (unknown route).
-	resp := post(t, ts, "/v1/imports.bgf", nil)
+	// imports.db is not wired yet → catch-all 404 (unknown route).
+	resp := post(t, ts, "/v1/imports.db", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)
