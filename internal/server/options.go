@@ -35,6 +35,10 @@ type Options struct {
 	// Defaults to defaultMaxBodyBytes when zero.
 	MaxBodyBytes int64
 
+	// ImportMaxBodyBytes caps an uploaded import file. Defaults to
+	// defaultImportMaxBodyBytes when zero.
+	ImportMaxBodyBytes int64
+
 	// ReadHeaderTimeout bounds the time to read request headers. Defaults to
 	// defaultReadHeaderTimeout.
 	ReadHeaderTimeout time.Duration
@@ -49,10 +53,11 @@ type Options struct {
 }
 
 const (
-	defaultAddr              = ":8080"
-	defaultMaxBodyBytes      = 32 << 20 // 32 MiB; import endpoints raise this.
-	defaultReadHeaderTimeout = 10 * time.Second
-	defaultShutdownTimeout   = 15 * time.Second
+	defaultAddr               = ":8080"
+	defaultMaxBodyBytes       = 32 << 20  // 32 MiB; import endpoints raise this.
+	defaultImportMaxBodyBytes = 512 << 20 // 512 MiB for uploaded match files.
+	defaultReadHeaderTimeout  = 10 * time.Second
+	defaultShutdownTimeout    = 15 * time.Second
 )
 
 func (o *Options) applyDefaults() {
@@ -67,6 +72,9 @@ func (o *Options) applyDefaults() {
 	}
 	if o.MaxBodyBytes == 0 {
 		o.MaxBodyBytes = defaultMaxBodyBytes
+	}
+	if o.ImportMaxBodyBytes == 0 {
+		o.ImportMaxBodyBytes = defaultImportMaxBodyBytes
 	}
 	if o.ReadHeaderTimeout == 0 {
 		o.ReadHeaderTimeout = defaultReadHeaderTimeout

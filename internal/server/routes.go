@@ -40,6 +40,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.searchRoutes()...)
 	rs = append(rs, s.metadataRoutes()...)
 	rs = append(rs, s.statsRoutes()...)
+	rs = append(rs, s.ingestRoutes()...)
 	return rs
 }
 

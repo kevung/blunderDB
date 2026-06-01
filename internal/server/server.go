@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
@@ -25,6 +26,8 @@ type Server struct {
 	health     *handlers.Health
 	http       *http.Server
 	knownPaths map[string]bool
+
+	imports *importRegistry
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -41,6 +44,7 @@ func New(opts Options) (*Server, error) {
 			Metrics:         opts.Metrics,
 			ExpectedVersion: domain.DatabaseVersion,
 		},
+		imports: newImportRegistry(),
 	}
 
 	mux := http.NewServeMux()
@@ -82,9 +86,11 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 }
 
 // limitBody caps request bodies to guard against OOM from a malicious client.
+// Import endpoints are exempt from the small default cap: they carry uploaded
+// match files and apply their own (larger) limit while spooling.
 func (s *Server) limitBody(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Body != nil {
+		if r.Body != nil && !strings.HasPrefix(r.URL.Path, "/v1/imports.") {
 			r.Body = http.MaxBytesReader(w, r.Body, s.opts.MaxBodyBytes)
 		}
 		next.ServeHTTP(w, r)

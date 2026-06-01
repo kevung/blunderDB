@@ -76,6 +76,7 @@ Optional side phases:
 | P9 | Benchmarks | [09-benchmarks.md](09-benchmarks.md) | 3-4 d | low | pending |
 | B | SQLite→Postgres tool | [10-sqlite-to-postgres-tool.md](10-sqlite-to-postgres-tool.md) | 2-3 d | medium | pending |
 | C | Per-tenant rate-limit | [11-tenant-rate-limit.md](11-tenant-rate-limit.md) | 1-2 d | low | pending |
+| P6.3/P8 | Imports/exports over Storage | [12-imports-exports-over-storage.md](12-imports-exports-over-storage.md) | 6-9 d | high | PR3a in progress (ingest interfaces + HTTP transport + JSON interchange); PR3b (dedup + XG) + PR3c (other formats) pending |
 
 Conventions and shared vocabulary: see [glossary.md](glossary.md).
 
