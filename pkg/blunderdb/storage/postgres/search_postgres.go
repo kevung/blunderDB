@@ -8,6 +8,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -467,12 +468,61 @@ type searchHistoryStore struct{ db execer }
 
 var _ storage.SearchHistoryStore = (*searchHistoryStore)(nil)
 
-func (*searchHistoryStore) Save(context.Context, string, string, string) error {
-	return notImpl("SearchHistory", "Save")
+// searchHistoryLimit caps the per-tenant search history.
+const searchHistoryLimit = 100
+
+// Save appends an executed search to the tenant's history and trims it to the
+// most recent searchHistoryLimit entries.
+func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position string) error {
+	tenant := tenantID(scope)
+	if _, err := s.db.Exec(ctx,
+		`INSERT INTO search_history (tenant_id, command, position, timestamp) VALUES ($1, $2, $3, $4)`,
+		tenant, command, position, time.Now().UnixMilli()); err != nil {
+		return fmt.Errorf("postgres: save search history: %w", err)
+	}
+	if _, err := s.db.Exec(ctx,
+		`DELETE FROM search_history WHERE tenant_id = $1 AND id NOT IN (
+			SELECT id FROM search_history WHERE tenant_id = $1 ORDER BY timestamp DESC, id DESC LIMIT $2
+		)`, tenant, searchHistoryLimit); err != nil {
+		return fmt.Errorf("postgres: trim search history: %w", err)
+	}
+	return nil
 }
-func (*searchHistoryStore) List(context.Context, string) iter.Seq2[*storage.SearchHistory, error] {
-	return errSeq2[storage.SearchHistory](notImpl("SearchHistory", "List"))
+
+// List streams the tenant's search history, most recent first.
+func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*storage.SearchHistory, error] {
+	return func(yield func(*storage.SearchHistory, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(timestamp,0)
+			 FROM search_history WHERE tenant_id = $1 ORDER BY timestamp DESC, id DESC LIMIT $2`,
+			tenantID(scope), searchHistoryLimit)
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list search history: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var e storage.SearchHistory
+			if err := rows.Scan(&e.ID, &e.Command, &e.Position, &e.Timestamp); err != nil {
+				yield(nil, fmt.Errorf("postgres: list search history: %w", err))
+				return
+			}
+			if !yield(&e, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list search history: %w", err))
+		}
+	}
 }
-func (*searchHistoryStore) DeleteEntry(context.Context, string, int64) error {
-	return notImpl("SearchHistory", "DeleteEntry")
+
+// DeleteEntry removes the tenant's search history entry with the given timestamp.
+func (s *searchHistoryStore) DeleteEntry(ctx context.Context, scope string, timestamp int64) error {
+	if _, err := s.db.Exec(ctx,
+		`DELETE FROM search_history WHERE tenant_id = $1 AND timestamp = $2`,
+		tenantID(scope), timestamp); err != nil {
+		return fmt.Errorf("postgres: delete search history entry: %w", err)
+	}
+	return nil
 }

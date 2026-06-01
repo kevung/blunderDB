@@ -1,5 +1,30 @@
 # P5 — Remove the global `Database.mu` mutex
 
+> **Status (PR1 done).** Re-scoped after P2 introduced the `storage` layer.
+> The server already runs on the mutex-free `storage.Storage` (sqlite/postgres),
+> so P5's scaling goal is met there. The 240 `d.mu.*` callsites now live *only*
+> in the GUI-only `Database` wrapper (single-user desktop, accepted debt). PR1
+> (config + concurrency tests on the storage layer) is **done**; PR2/PR3
+> (stripping the wrapper's mutex) are **deferred** — low value (single-user GUI),
+> non-trivial regression risk, no scaling benefit. Re-open only if the GUI moves
+> to HTTP or SQLite-as-multi-tenant-server is pursued.
+>
+> **PR1 delivered:**
+> - `busy_timeout=5000` + the full PRAGMA set + pool sizing now applied
+>   **per connection** via a `_pragma`-encoded DSN (`sqlite.DSN`), not a
+>   one-shot post-Open `PRAGMA` (which only configured a single pooled
+>   connection → other connections kept `busy_timeout=0` → SQLITE_BUSY under
+>   concurrency). Single source of truth: `perConnPragmas` in `sqlite.go`.
+> - `sqlite.ConfigurePool`: `MaxOpenConns=1` for `:memory:` (each connection is
+>   a *separate* in-memory DB — >1 would lose writes), `10/5/1h` for file-backed.
+> - Wrapper pool behaviour left untouched (its global mutex already pins it to
+>   one connection; changing it risks turning latent nested-iterator bugs into
+>   deadlocks). Wrapper still delegates `applyPragmas` → `sqlite.ApplyPragmas`.
+> - New `pkg/blunderdb/storage/sqlite/concurrent_test.go`:
+>   `TestConcurrentWrites` (100×100 distinct inserts → 10 000 rows),
+>   `TestConcurrentReads`, `TestMixedWorkload`. Green under `-race`.
+> - Isolation/concurrency documented in `pkg/blunderdb/storage/storage.go`.
+
 **Goal.** Replace the broad `sync.RWMutex` that serialises virtually every
 DB operation with finer-grained, scoped synchronisation: rely on the
 thread-safe `*sql.DB` connection pool, configure `busy_timeout`, and use

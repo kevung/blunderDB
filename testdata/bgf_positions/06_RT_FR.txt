@@ -1,0 +1,31 @@
+ +13-14-15-16-17-18------19-20-21-22-23-24-+   O: Vert  147
+ | X     X          |   | O     X  O  X  O |
+ | X     X          |   | O     X  O     O |
+ |                  |   | O        O       |
+ |                  |   |                  |
+ |                  |   |                  |
+v|                  |BAR|                  |
+ |                  |   |                  |
+ | O                |   |                  | +--+
+ | O              X |   | X        O       | | 2|
+ | O           X  X |   | X        O       | +--+
+ | O           X  X |   | X        O       |
+ +12-11-10--9--8--7-------6--5--4--3--2--1-+   X: Rouge  176
+
+ Position-ID: cxzwAA7gbjADEw    Match-ID: UQngABAAAAAE
+ XGID=---c--CCB---dB-B---c-BcAb-:1:1:1:00:0:1:0:7:10
+
+ Vert - 1 Rouge - 0 in a 7 point match.
+ Rouge to move.
+
+              Gagne  G+BG  BG
+ Vert         34.1  9.3   0.2 
+ Rouge        65.9  15.3  0.2 
+ Equité Rouge (sans videau): 0.377  Dév. St.: 0.114
+ Équité (avec videau)     :  0.535
+
+ Videau:               :  Double / Prendre     EMG
+ Double / Prendre      :  0.535   ( 0.000)      0.760   ( 0.000)
+ Pas de double         :  0.526   (-0.010)      0.685   (-0.075)
+ Double / Refuser      :  0.567   ( 0.031)      1.000   ( 0.240)
+

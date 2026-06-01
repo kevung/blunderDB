@@ -20,14 +20,14 @@ const searchHistoryLimit = 100
 // recent searchHistoryLimit entries.
 func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position string) error {
 	if _, err := s.db.ExecContext(ctx,
-		`INSERT INTO search_history (command, position, timestamp) VALUES (?,?,?)`,
-		command, position, time.Now().UnixMilli()); err != nil {
+		`INSERT INTO search_history (command, position, timestamp, scope) VALUES (?,?,?,?)`,
+		command, position, time.Now().UnixMilli(), scope); err != nil {
 		return fmt.Errorf("sqlite: save search history: %w", err)
 	}
 	if _, err := s.db.ExecContext(ctx,
-		`DELETE FROM search_history WHERE id NOT IN (
-			SELECT id FROM search_history ORDER BY timestamp DESC LIMIT ?
-		)`, searchHistoryLimit); err != nil {
+		`DELETE FROM search_history WHERE scope = ? AND id NOT IN (
+			SELECT id FROM search_history WHERE scope = ? ORDER BY timestamp DESC, id DESC LIMIT ?
+		)`, scope, scope, searchHistoryLimit); err != nil {
 		return fmt.Errorf("sqlite: trim search history: %w", err)
 	}
 	return nil
@@ -40,7 +40,7 @@ func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*
 		// timestamp, keeping the most-recent-first order deterministic.
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(timestamp,0)
-			 FROM search_history ORDER BY timestamp DESC, id DESC LIMIT ?`, searchHistoryLimit)
+			 FROM search_history WHERE scope = ? ORDER BY timestamp DESC, id DESC LIMIT ?`, scope, searchHistoryLimit)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list search history: %w", err))
 			return
@@ -65,7 +65,7 @@ func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*
 // DeleteEntry removes the search history entry with the given timestamp.
 func (s *searchHistoryStore) DeleteEntry(ctx context.Context, scope string, timestamp int64) error {
 	if _, err := s.db.ExecContext(ctx,
-		`DELETE FROM search_history WHERE timestamp = ?`, timestamp); err != nil {
+		`DELETE FROM search_history WHERE timestamp = ? AND scope = ?`, timestamp, scope); err != nil {
 		return fmt.Errorf("sqlite: delete search history entry: %w", err)
 	}
 	return nil

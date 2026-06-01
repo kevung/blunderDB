@@ -72,9 +72,20 @@ func scanMatch(sc scanner) (domain.Match, error) {
 
 const matchInsertSQL = `INSERT INTO match (
 	tenant_id, player1_name, player2_name, event, location, round,
-	match_length, match_date, file_path, game_count, tournament_id, comment
-) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	match_length, match_date, file_path, game_count, tournament_id, comment,
+	match_hash, canonical_hash
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
 RETURNING id, import_date`
+
+// nullableString returns nil for an empty string so it is stored as SQL NULL,
+// keeping the UNIQUE(tenant_id, canonical_hash) index from rejecting a second
+// hash-less match.
+func nullableString(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
+}
 
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
@@ -84,13 +95,41 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	err := s.db.QueryRow(ctx, matchInsertSQL,
 		tenantID(scope), m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
-		m.TournamentID, m.Comment).Scan(&id, &importDate)
+		m.TournamentID, m.Comment,
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash)).Scan(&id, &importDate)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: save match: %w", err)
 	}
 	m.ID = id
 	m.ImportDate = importDate
 	return id, nil
+}
+
+// FindByHash returns the id of a match matching hash (preferred) or
+// canonicalHash, scoped to the tenant, for duplicate detection.
+func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (int64, bool, error) {
+	for _, q := range []struct {
+		col string
+		val string
+	}{
+		{"match_hash", hash},
+		{"canonical_hash", canonicalHash},
+	} {
+		if q.val == "" {
+			continue
+		}
+		var id int64
+		err := s.db.QueryRow(ctx,
+			`SELECT id FROM match WHERE tenant_id = $1 AND `+q.col+` = $2 LIMIT 1`,
+			tenantID(scope), q.val).Scan(&id)
+		if err == nil {
+			return id, true, nil
+		}
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return 0, false, fmt.Errorf("postgres: find match by %s: %w", q.col, err)
+		}
+	}
+	return 0, false, nil
 }
 
 // matchOrderClause sorts matches by play date, falling back to import date

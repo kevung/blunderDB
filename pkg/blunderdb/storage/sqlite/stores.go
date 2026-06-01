@@ -3,7 +3,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -37,11 +36,6 @@ func (b binder) SearchHistory() storage.SearchHistoryStore { return &searchHisto
 func (b binder) Stats() storage.StatsStore                 { return &statsStore{b.db} }
 func (b binder) History() storage.CommandHistoryStore      { return &commandHistoryStore{b.db} }
 func (b binder) Metadata() storage.MetadataStore           { return &metadataStore{b.db} }
-
-// notImpl reports a family/method that a later P2 PR will implement.
-func notImpl(family, method string) error {
-	return fmt.Errorf("sqlite: %s.%s not implemented: %w", family, method, storage.ErrInternal)
-}
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a

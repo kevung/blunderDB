@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.8.0"
+	DatabaseVersion = "2.9.0"
 )
 
 // Anki deck source types
@@ -377,6 +377,11 @@ type Match struct {
 	MWCLoss             float64   `json:"mwc_loss"`
 	PR2                 float64   `json:"pr2"`
 	MWCLoss2            float64   `json:"mwc_loss2"`
+	// MatchHash is the format-specific content hash; CanonicalHash is the
+	// format-independent hash used for cross-format duplicate detection. Both
+	// are set at import time and used by MatchStore dedup. Empty when unknown.
+	MatchHash     string `json:"match_hash,omitempty"`
+	CanonicalHash string `json:"canonical_hash,omitempty"`
 }
 
 type Game struct {

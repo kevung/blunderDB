@@ -20,6 +20,21 @@
 // alongside the sub-interfaces are the storage-layer vocabulary; reconciling
 // them with the equivalents currently in package database happens in the
 // implementation PRs.
+//
+// # Concurrency and isolation
+//
+// A Storage value is safe for concurrent use by multiple goroutines: the
+// backends rely on the connection pool (SQLite: *sql.DB with busy_timeout and
+// per-DSN PRAGMAs; PostgreSQL: pgxpool), not a process-wide lock (P5). There
+// is no global serialization — only the per-operation atomicity each backend's
+// statements/transactions provide.
+//
+// Reads observe committed data with READ COMMITTED semantics: a long-running
+// scan (e.g. stats or a full search) no longer blocks writers and may not see
+// writes committed after it began. Operations that must be atomic across
+// several statements run inside BeginTx. SQLite remains a single writer at a
+// time; concurrent writers wait up to busy_timeout for the write lock rather
+// than failing with SQLITE_BUSY.
 package storage
 
 import "context"
@@ -64,6 +79,13 @@ type Storage interface {
 type Options struct {
 	// MigrationProgress, if set, is invoked during Migrate to report progress.
 	MigrationProgress func(phase string, done, total int)
+
+	// EnableRLS turns on PostgreSQL Row-Level Security enforcement: the backend
+	// sets the `app.tenant_id` GUC per connection (from WithTenant in the
+	// operation context) so the RLS policies filter rows as defence-in-depth.
+	// Off by default; ignored by the SQLite backend. The policies themselves are
+	// installed by Storage.ApplyRLS (opt-in).
+	EnableRLS bool
 }
 
 // ListOpts bounds and orders a List query. Zero values mean "no limit" /

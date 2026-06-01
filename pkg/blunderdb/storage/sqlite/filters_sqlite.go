@@ -19,7 +19,7 @@ var _ storage.FilterStore = (*filterStore)(nil)
 func (s *filterStore) Save(ctx context.Context, scope string, name, command string) (int64, error) {
 	var existing int64
 	err := s.db.QueryRowContext(ctx,
-		`SELECT id FROM filter_library WHERE name = ?`, name).Scan(&existing)
+		`SELECT id FROM filter_library WHERE name = ? AND scope = ?`, name, scope).Scan(&existing)
 	if err == nil {
 		return 0, fmt.Errorf("sqlite: save filter %q: %w", name, storage.ErrConflict)
 	}
@@ -27,7 +27,7 @@ func (s *filterStore) Save(ctx context.Context, scope string, name, command stri
 		return 0, fmt.Errorf("sqlite: save filter %q: %w", name, err)
 	}
 	res, err := s.db.ExecContext(ctx,
-		`INSERT INTO filter_library (name, command) VALUES (?,?)`, name, command)
+		`INSERT INTO filter_library (name, command, scope) VALUES (?,?,?)`, name, command, scope)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save filter %q: %w", name, err)
 	}
@@ -41,7 +41,7 @@ func (s *filterStore) Save(ctx context.Context, scope string, name, command stri
 // Update changes a filter's name and command, or reports ErrNotFound.
 func (s *filterStore) Update(ctx context.Context, scope string, id int64, name, command string) error {
 	res, err := s.db.ExecContext(ctx,
-		`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
+		`UPDATE filter_library SET name = ?, command = ? WHERE id = ? AND scope = ?`, name, command, id, scope)
 	if err != nil {
 		return fmt.Errorf("sqlite: update filter %d: %w", id, err)
 	}
@@ -53,7 +53,7 @@ func (s *filterStore) Update(ctx context.Context, scope string, id int64, name, 
 
 // Delete removes a filter, or reports ErrNotFound.
 func (s *filterStore) Delete(ctx context.Context, scope string, id int64) error {
-	res, err := s.db.ExecContext(ctx, `DELETE FROM filter_library WHERE id = ?`, id)
+	res, err := s.db.ExecContext(ctx, `DELETE FROM filter_library WHERE id = ? AND scope = ?`, id, scope)
 	if err != nil {
 		return fmt.Errorf("sqlite: delete filter %d: %w", id, err)
 	}
@@ -67,7 +67,7 @@ func (s *filterStore) Delete(ctx context.Context, scope string, id int64) error 
 func (s *filterStore) List(ctx context.Context, scope string) iter.Seq2[*storage.Filter, error] {
 	return func(yield func(*storage.Filter, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT id, COALESCE(name,''), COALESCE(command,'') FROM filter_library ORDER BY id ASC`)
+			`SELECT id, COALESCE(name,''), COALESCE(command,'') FROM filter_library WHERE scope = ? ORDER BY id ASC`, scope)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list filters: %w", err))
 			return
@@ -93,7 +93,7 @@ func (s *filterStore) List(ctx context.Context, scope string) iter.Seq2[*storage
 // or reports ErrNotFound when no filter carries that name.
 func (s *filterStore) SaveEditPosition(ctx context.Context, scope string, filterName, editPosition string) error {
 	res, err := s.db.ExecContext(ctx,
-		`UPDATE filter_library SET edit_position = ? WHERE name = ?`, editPosition, filterName)
+		`UPDATE filter_library SET edit_position = ? WHERE name = ? AND scope = ?`, editPosition, filterName, scope)
 	if err != nil {
 		return fmt.Errorf("sqlite: save edit position for %q: %w", filterName, err)
 	}
@@ -108,7 +108,7 @@ func (s *filterStore) SaveEditPosition(ctx context.Context, scope string, filter
 func (s *filterStore) LoadEditPosition(ctx context.Context, scope string, filterName string) (string, error) {
 	var editPosition sql.NullString
 	err := s.db.QueryRowContext(ctx,
-		`SELECT edit_position FROM filter_library WHERE name = ?`, filterName).Scan(&editPosition)
+		`SELECT edit_position FROM filter_library WHERE name = ? AND scope = ?`, filterName, scope).Scan(&editPosition)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", nil
 	}

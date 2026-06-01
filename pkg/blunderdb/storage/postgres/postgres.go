@@ -47,6 +47,10 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	cfg.MaxConnLifetime = defaultMaxConnLifetime
 	cfg.HealthCheckPeriod = defaultHealthCheck
 
+	if opts != nil && opts.EnableRLS {
+		configureRLSPool(cfg)
+	}
+
 	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: open pool: %w", err)

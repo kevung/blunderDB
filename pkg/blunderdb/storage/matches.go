@@ -9,8 +9,16 @@ import (
 
 // MatchStore persists matches and their games, moves and move analyses.
 type MatchStore interface {
-	// Save stores a new match and returns its id.
+	// Save stores a new match and returns its id. m.MatchHash and
+	// m.CanonicalHash, when non-empty, are persisted for duplicate detection.
 	Save(ctx context.Context, scope string, m *domain.Match) (int64, error)
+
+	// FindByHash looks up an existing match for duplicate detection. It returns
+	// the id of a match whose match_hash equals hash (same-format duplicate) or
+	// whose canonical_hash equals canonicalHash (cross-format duplicate),
+	// preferring an exact match_hash match. found is false when neither is
+	// present. Empty arguments are ignored.
+	FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (id int64, found bool, err error)
 
 	// Get returns the match with the given id, or ErrNotFound.
 	Get(ctx context.Context, scope string, id int64) (*domain.Match, error)

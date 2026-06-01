@@ -121,8 +121,44 @@ the migration:
 
 Single PR: `feat(cli): blunderdb migrate sqlite → postgres tool`.
 
+## Done — implementation notes (core)
+
+- `pkg/blunderdb/migrate`: backend-agnostic `Run(ctx, src, dst storage.Storage,
+  scope string, opts) (Report, error)` reads every covered family from `src`
+  and writes it to `dst` through the Storage interface, remapping
+  position/match/game/tournament ids (and the FKs that reference them) via
+  in-memory `oldID→newID` maps. All destination writes happen in one
+  `dst.BeginTx` transaction — atomic; a failed run commits nothing.
+- **Covered:** positions, analyses, comments, matches (games + moves),
+  tournaments (+ match links), collections (+ membership).
+- **Conflict guard:** with no `--on-conflict`, aborts if the destination scope
+  already has positions; `--on-conflict skip` proceeds (positions dedup by
+  Zobrist inside `PositionStore.Save`). `--dry-run` counts the source only.
+- `pkg/blunderdb/migrate/cli.go` `RunCLI` parses
+  `--from/--to/--tenant-id/--dry-run/--on-conflict/--batch-size` (batch-size
+  reserved), opens SQLite + PostgreSQL, runs both `Migrate()` (upgrades a
+  v2.7.0 source first), and streams NDJSON `{"event":…,"report":…}`. Dispatched
+  from `main.go` like `serve`/`call`.
+- Tests: `migrate_postgres_test.go` (`//go:build postgres`, testcontainers) —
+  seed a SQLite DB (real XG match + a collection), migrate into PG under
+  tenant "1", assert the report + iterated dest counts match the source, the
+  conflict guard fires on re-run, and a second tenant is isolated; plus a
+  default-tag dry-run check.
+
+**Conflict-detection note.** The strict per-position "error on duplicate
+Zobrist" of the original design is approximated by the empty-scope guard:
+detecting per-row conflicts would need an `Exists` probe per position, and the
+common case (fresh tenant) has none. `--on-conflict overwrite` remains
+unimplemented by design.
+
+**Deferred (needs P4 session-scope or low migration value):** anki decks/cards,
+filter library, search/command history, session/metadata. The Postgres
+`MetadataStore.Counts` is also still a stub (P3 PR6-8), so the tool and its test
+avoid it.
+
 ## Future work (not in this phase)
 
 - Postgres → SQLite (tenant export).
 - Selective migration (only matches matching a filter).
 - Parallel migration of multiple tenants from a directory of SQLite files.
+- The deferred app-state families, once P4 lands.

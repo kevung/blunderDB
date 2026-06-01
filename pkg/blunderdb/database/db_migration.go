@@ -1204,3 +1204,554 @@ func (d *Database) migrate_2_7_0_to_2_8_0() error {
 	slog.Info("database upgraded", "from", "2.7.0", "to", "2.8.0")
 	return nil
 }
+
+// migrate_2_8_0_to_2_9_0 adds a scope column to command_history, search_history
+// and filter_library. SQLite previously ignored the scope argument on these
+// stores (the GUI/CLI always uses the empty scope); the column lets a
+// multi-tenant SQLite-server isolate each tenant's command/search history and
+// saved filters, mirroring the tenant_id scoping the PostgreSQL backend already
+// has. Existing rows default to the empty scope so GUI/CLI data is unchanged.
+func (d *Database) migrate_2_8_0_to_2_9_0() error {
+	for _, table := range []string{"command_history", "search_history", "filter_library"} {
+		if _, err := d.db.Exec(fmt.Sprintf(
+			`ALTER TABLE %s ADD COLUMN scope TEXT NOT NULL DEFAULT ''`, table)); err != nil {
+			// Tolerate an idempotent retry (duplicate column) and a missing table
+			// (ensureAllTablesExist recreates it with the scope column present).
+			msg := err.Error()
+			if !strings.Contains(msg, `duplicate column name: scope`) && !strings.Contains(msg, `no such table: `+table) {
+				return fmt.Errorf("migrate 2.9.0 add scope to %s: %w", table, err)
+			}
+		}
+	}
+	for _, idx := range []string{
+		`CREATE INDEX IF NOT EXISTS idx_command_history_scope ON command_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_search_history_scope  ON search_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
+	} {
+		if _, err := d.db.Exec(idx); err != nil {
+			// A missing table is recreated (with the scope column) by
+			// ensureAllTablesExist after migrations; the index is a perf-only
+			// optimisation, so a missing table here is not fatal.
+			if !strings.Contains(err.Error(), `no such table`) {
+				return fmt.Errorf("migrate 2.9.0 create index: %w", err)
+			}
+		}
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.9.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.9.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.8.0", "to", "2.9.0")
+	return nil
+}
+
+// runMigrationChain reads the recorded schema version and applies the
+// sequential upgrade steps up to the current DatabaseVersion, then verifies
+// the expected tables and metadata keys exist. It is shared by the GUI/CLI
+// Database wrapper (OpenDatabase) and, via the registered storage migrator
+// (migrate_hook.go), by the headless storage backend opening a pre-existing
+// database. The caller must hold d.mu when d is a shared instance; the
+// storage path uses a transient Database, so no lock is needed there.
+func (d *Database) runMigrationChain() error {
+	var err error
+	// Check the database version
+	var dbVersion string
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		return err
+	}
+
+	// Auto-migrate from 1.0.0 to 1.1.0
+	if dbVersion == "1.0.0" {
+		var cmdHistExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='command_history'`).Scan(&cmdHistExists)
+		if err == sql.ErrNoRows {
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS command_history (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					command TEXT,
+					timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				return err
+			}
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.1.0"
+			slog.Info("database upgraded", "from", "1.0.0", "to", "1.1.0")
+		}
+	}
+
+	// Auto-migrate from 1.1.0 to 1.2.0
+	if dbVersion == "1.1.0" {
+		var filterLibExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='filter_library'`).Scan(&filterLibExists)
+		if err == sql.ErrNoRows {
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS filter_library (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT,
+					command TEXT,
+					edit_position TEXT
+				)
+			`)
+			if err != nil {
+				return err
+			}
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.2.0"
+			slog.Info("database upgraded", "from", "1.1.0", "to", "1.2.0")
+		}
+	}
+
+	// Auto-migrate from 1.2.0 to 1.3.0
+	if dbVersion == "1.2.0" {
+		var searchHistoryExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='search_history'`).Scan(&searchHistoryExists)
+		if err == sql.ErrNoRows {
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS search_history (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					command TEXT,
+					position TEXT,
+					timestamp INTEGER
+				)
+			`)
+			if err != nil {
+				return err
+			}
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.3.0"
+			slog.Info("database upgraded", "from", "1.2.0", "to", "1.3.0")
+		}
+	}
+
+	// Auto-migrate from 1.3.0 to 1.4.0
+	if dbVersion == "1.3.0" {
+		var matchExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&matchExists)
+		if err == sql.ErrNoRows {
+			// Create match-related tables
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS match (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					player1_name TEXT,
+					player2_name TEXT,
+					event TEXT,
+					location TEXT,
+					round TEXT,
+					match_length INTEGER,
+					match_date DATETIME,
+					import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+					file_path TEXT,
+					game_count INTEGER DEFAULT 0,
+					match_hash TEXT
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS game (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					match_id INTEGER,
+					game_number INTEGER,
+					initial_score_1 INTEGER,
+					initial_score_2 INTEGER,
+					winner INTEGER,
+					points_won INTEGER,
+					move_count INTEGER DEFAULT 0,
+					FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS move (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					game_id INTEGER,
+					move_number INTEGER,
+					move_type TEXT,
+					position_id INTEGER,
+					player INTEGER,
+					dice_1 INTEGER,
+					dice_2 INTEGER,
+					checker_move TEXT,
+					cube_action TEXT,
+					FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+					FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS move_analysis (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					move_id INTEGER,
+					analysis_type TEXT,
+					depth TEXT,
+					equity REAL,
+					equity_error REAL,
+					win_rate REAL,
+					gammon_rate REAL,
+					backgammon_rate REAL,
+					opponent_win_rate REAL,
+					opponent_gammon_rate REAL,
+					opponent_backgammon_rate REAL,
+					FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			// Create index on match_hash for fast duplicate detection
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.4.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.4.0"
+			slog.Info("database upgraded", "from", "1.3.0", "to", "1.4.0")
+		}
+	}
+
+	// Add match_hash column to existing v1.4.0 databases if it doesn't exist
+	if dbVersion == "1.4.0" {
+		// Check if match_hash column exists
+		var colInfo string
+		err = d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
+		if err == nil && !strings.Contains(colInfo, "match_hash") {
+			// Add match_hash column
+			_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN match_hash TEXT`)
+			if err != nil {
+				return err
+			}
+
+			// Create index on match_hash
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+			if err != nil {
+				return err
+			}
+
+			// Populate match_hash for existing matches using stored data
+			// This uses a fallback hash based on stored moves since we don't have the original file
+			matchRows, err := d.db.Query(`SELECT id, player1_name, player2_name, match_length FROM match`)
+			if err == nil {
+				defer matchRows.Close()
+				for matchRows.Next() {
+					var matchID int64
+					var p1Name, p2Name string
+					var matchLength int32
+					if err := matchRows.Scan(&matchID, &p1Name, &p2Name, &matchLength); err != nil {
+						continue
+					}
+					hash := computeMatchHashFromStoredData(d.db, matchID, p1Name, p2Name, matchLength)
+					_, _ = d.db.Exec(`UPDATE match SET match_hash = ? WHERE id = ?`, hash, matchID)
+				}
+				if err := matchRows.Err(); err != nil {
+					return err
+				}
+			}
+
+			slog.Info("added match_hash column and populated existing matches")
+		}
+	}
+
+	// Auto-migrate from 1.4.0 to 1.5.0
+	if dbVersion == "1.4.0" {
+		var collectionExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='collection'`).Scan(&collectionExists)
+		if err == sql.ErrNoRows {
+			// Create collection-related tables
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS collection (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT NOT NULL,
+					description TEXT,
+					sort_order INTEGER DEFAULT 0,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS collection_position (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					collection_id INTEGER NOT NULL,
+					position_id INTEGER NOT NULL,
+					sort_order INTEGER DEFAULT 0,
+					added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+					FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+					UNIQUE(collection_id, position_id)
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			// Create index for faster collection lookups
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
+			if err != nil {
+				return err
+			}
+
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.5.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.5.0"
+			slog.Info("database upgraded", "from", "1.4.0", "to", "1.5.0")
+		}
+	}
+
+	// Auto-migrate from 1.5.0 to 1.6.0
+	if dbVersion == "1.5.0" {
+		var tournamentExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='tournament'`).Scan(&tournamentExists)
+		if err == sql.ErrNoRows {
+			// Create tournament table
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS tournament (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT NOT NULL,
+					date TEXT,
+					location TEXT,
+					sort_order INTEGER DEFAULT 0,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				return err
+			}
+
+			// Add tournament_id column to match table
+			_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.6.0")
+			if err != nil {
+				return err
+			}
+			dbVersion = "1.6.0"
+			slog.Info("database upgraded", "from", "1.5.0", "to", "1.6.0")
+		}
+	}
+
+	// Auto-migrate from 1.6.0 to 1.7.0
+	if dbVersion == "1.6.0" {
+		// Add last_visited_position column to match table
+		_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.7.0")
+		if err != nil {
+			return err
+		}
+		dbVersion = "1.7.0"
+		slog.Info("database upgraded", "from", "1.6.0", "to", "1.7.0")
+	}
+
+	// Auto-migrate from 1.7.0 to 1.8.0
+	if dbVersion == "1.7.0" {
+		// Add created_at column to comment table
+		_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
+		// Backfill existing rows that have NULL created_at
+		_, _ = d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.8.0")
+		if err != nil {
+			return err
+		}
+		dbVersion = "1.8.0"
+		slog.Info("database upgraded", "from", "1.7.0", "to", "1.8.0")
+	}
+
+	// Auto-migrate from 1.8.0 to 1.9.0
+	if dbVersion == "1.8.0" {
+		// Add modified_at column to comment table
+		_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.9.0")
+		if err != nil {
+			return err
+		}
+		dbVersion = "1.9.0"
+		slog.Info("database upgraded", "from", "1.8.0", "to", "1.9.0")
+	}
+
+	// Auto-migrate from 1.9.0 to 2.0.0
+	// Backfills new scalar columns, deduplicates positions, and creates indexes.
+	if dbVersion == "1.9.0" {
+		if err := d.migrate_1_9_0_to_2_0_0(); err != nil {
+			return fmt.Errorf("migration 1.9.0→2.0.0 failed: %w", err)
+		}
+		dbVersion = "2.0.0"
+	}
+
+	// Auto-migrate from 2.0.0 to 2.1.0
+	// Converts analysis/move_analysis REAL columns to integer-scaled INTEGER values
+	// and re-rounds all JSON blobs for compact storage.
+	if dbVersion == "2.0.0" {
+		if err := d.migrate_2_0_0_to_2_1_0(); err != nil {
+			return fmt.Errorf("migration 2.0.0→2.1.0 failed: %w", err)
+		}
+		dbVersion = "2.1.0"
+	}
+
+	// Auto-migrate from 2.1.0 to 2.2.0
+	// Compacts position.state from full Position JSON to board-only array,
+	// reducing storage by ~85-90% on the state column. Also prunes command history.
+	if dbVersion == "2.1.0" {
+		if err := d.migrate_2_1_0_to_2_2_0(); err != nil {
+			return fmt.Errorf("migration 2.1.0→2.2.0 failed: %w", err)
+		}
+		dbVersion = "2.2.0"
+	}
+
+	// Auto-migrate from 2.2.0 to 2.3.0
+	// Compresses analysis.data JSON blobs with zlib, reducing analysis storage
+	// by ~60-80%. Scalar filter columns are unchanged.
+	if dbVersion == "2.2.0" {
+		if err := d.migrate_2_2_0_to_2_3_0(); err != nil {
+			return fmt.Errorf("migration 2.2.0→2.3.0 failed: %w", err)
+		}
+		dbVersion = "2.3.0"
+	}
+
+	// Auto-migrate from 2.3.0 to 2.4.0
+	// Repairs best_move_equity_error for positions where PlayedMoves was missing
+	// from the analysis JSON blob in earlier migrations, by looking up move.checker_move.
+	if dbVersion == "2.3.0" {
+		if err := d.migrate_2_3_0_to_2_4_0(); err != nil {
+			return fmt.Errorf("migration 2.3.0→2.4.0 failed: %w", err)
+		}
+		dbVersion = "2.4.0"
+	}
+
+	// Auto-migrate from 2.4.0 to 2.5.0
+	// Adds is_forced column to analysis; backfills checker positions with exactly
+	// one legal move (len(CheckerAnalysis.Moves) == 1).
+	if dbVersion == "2.4.0" {
+		if err := d.migrate_2_4_0_to_2_5_0(); err != nil {
+			return fmt.Errorf("migration 2.4.0→2.5.0 failed: %w", err)
+		}
+		dbVersion = "2.5.0"
+	}
+
+	// Auto-migrate from 2.5.0 to 2.6.0
+	// Adds is_close_cube column to analysis; backfills cube positions using the
+	// gnuBG isCloseCubedecision predicate (threshold 0.16 equity, eval.c:5088).
+	if dbVersion == "2.5.0" {
+		if err := d.migrate_2_5_0_to_2_6_0(); err != nil {
+			return fmt.Errorf("migration 2.5.0→2.6.0 failed: %w", err)
+		}
+		dbVersion = "2.6.0"
+	}
+
+	// Auto-migrate from 2.6.0 to 2.7.0
+	// Recomputes zobrist_hash for positions with cube_value >= 1 to fix a bug
+	// where cubeValueIndex() was called with an exponent instead of actual cube
+	// value, causing cube=0 (initial) and cube=1 (2-cube) to hash identically.
+	if dbVersion == "2.6.0" {
+		if err := d.migrate_2_6_0_to_2_7_0(); err != nil {
+			return fmt.Errorf("migration 2.6.0→2.7.0 failed: %w", err)
+		}
+		dbVersion = "2.7.0"
+	}
+
+	// Auto-migrate from 2.7.0 to 2.8.0
+	// Adds exclude_position column to search_history and filter_library to persist
+	// the "Sauf" (exclusion structure) of a search.
+	if dbVersion == "2.7.0" {
+		if err := d.migrate_2_7_0_to_2_8_0(); err != nil {
+			return fmt.Errorf("migration 2.7.0→2.8.0 failed: %w", err)
+		}
+		dbVersion = "2.8.0"
+	}
+
+	// Auto-migrate from 2.8.0 to 2.9.0
+	// Adds a scope column to command_history, search_history and filter_library
+	// so a multi-tenant SQLite-server isolates per-tenant history/filters.
+	if dbVersion == "2.8.0" {
+		if err := d.migrate_2_8_0_to_2_9_0(); err != nil {
+			return fmt.Errorf("migration 2.8.0→2.9.0 failed: %w", err)
+		}
+		dbVersion = "2.9.0"
+	}
+
+	// Ensure all required tables and columns exist.
+	// This repairs databases that were migrated through versions that skipped
+	// creating some tables (e.g. filter_library was missing from some migration paths).
+	if err := d.ensureAllTablesExist(); err != nil {
+		return err
+	}
+
+	// Build required tables list based on the FINAL dbVersion (after all migrations)
+	requiredTables := []string{"position", "analysis", "comment", "metadata"}
+	if dbVersion >= "1.1.0" {
+		requiredTables = append(requiredTables, "command_history")
+	}
+	if dbVersion >= "1.2.0" {
+		requiredTables = append(requiredTables, "filter_library")
+	}
+	if dbVersion >= "1.3.0" {
+		requiredTables = append(requiredTables, "search_history")
+	}
+	if dbVersion >= "1.4.0" {
+		requiredTables = append(requiredTables, "match", "game", "move", "move_analysis")
+	}
+	if dbVersion >= "1.5.0" {
+		requiredTables = append(requiredTables, "collection", "collection_position")
+	}
+	if dbVersion >= "1.6.0" {
+		requiredTables = append(requiredTables, "tournament")
+	}
+
+	for _, table := range requiredTables {
+		var tableName string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
+		if err != nil {
+			return err
+		}
+		if tableName != table {
+			return fmt.Errorf("required table %s does not exist", table)
+		}
+	}
+
+	// Check if the required metadata keys exist
+	requiredKeys := []string{"database_version"}
+	for _, key := range requiredKeys {
+		var value string
+		err = d.db.QueryRow(`SELECT value FROM metadata WHERE key=?`, key).Scan(&value)
+		if err != nil {
+			return err
+		}
+		if value == "" {
+			return fmt.Errorf("required metadata key %s does not exist", key)
+		}
+	}
+	return nil
+}

@@ -72,21 +72,24 @@ var schemaStatements = []string{
 	`CREATE TABLE IF NOT EXISTS command_history (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		command TEXT,
-		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+		scope TEXT NOT NULL DEFAULT ''
 	)`,
 	`CREATE TABLE IF NOT EXISTS filter_library (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT,
 		command TEXT,
 		edit_position TEXT,
-		exclude_position TEXT
+		exclude_position TEXT,
+		scope TEXT NOT NULL DEFAULT ''
 	)`,
 	`CREATE TABLE IF NOT EXISTS search_history (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		command TEXT,
 		position TEXT,
 		exclude_position TEXT,
-		timestamp INTEGER
+		timestamp INTEGER,
+		scope TEXT NOT NULL DEFAULT ''
 	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -228,6 +231,9 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_command_history_scope   ON command_history(scope, timestamp)`,
+	`CREATE        INDEX IF NOT EXISTS idx_search_history_scope    ON search_history(scope, timestamp)`,
+	`CREATE        INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
 }
 
 // Bootstrap creates the full v2.7.0 schema on a fresh database and records the
