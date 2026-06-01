@@ -7,6 +7,7 @@
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
     import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { t, tMsg } from '../i18n';
 
     let { onLoadPositionsByFilters } = $props();
@@ -29,7 +30,7 @@
         const v = $openPanels.has(PANEL.FILTER_LIBRARY);
         if (v !== _prevVisible) {
             if (v) {
-                loadFilters();
+                if ($databaseLoadedStore) loadFilters();
             } else {
                 if (selectedFilter) {
                     if ($positionBeforeFilterLibraryStore) {

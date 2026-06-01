@@ -3,6 +3,7 @@
     import { onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js';
     import { activeTabStore } from '../stores/uiStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { t } from '../i18n';
 
     let user = $state('');
@@ -37,7 +38,7 @@
     let wasActive = false;
     $effect(() => {
         const value = $activeTabStore;
-        if (value === 'metadata') {
+        if (value === 'metadata' && $databaseLoadedStore) {
             loadMetadata().then(() => {
                 wasActive = true;
             });

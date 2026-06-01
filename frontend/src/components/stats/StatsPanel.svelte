@@ -2,6 +2,7 @@
     import { logger } from '../../utils/logger.js';
     import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, statsInvalidationKeyStore, refreshStats } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
+    import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
     import StatsDashboardTab from './StatsDashboardTab.svelte';
     import StatsProgressionTab from './StatsProgressionTab.svelte';
@@ -13,6 +14,7 @@
     $effect(() => {
         const filter = $statsFilterStore;
         const key = $statsInvalidationKeyStore;
+        if (!$databaseLoadedStore) return;
         logger.perf('StatsPanel:refreshStats', () => refreshStats(filter, key));
     });
 

@@ -4,6 +4,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
 
@@ -24,8 +25,10 @@
         const v = $openPanels.has(PANEL.SEARCH_HISTORY);
         if (v !== _prevVisible) {
             if (v) {
-                loadHistory();
-                loadFilterLibrary();
+                if ($databaseLoadedStore) {
+                    loadHistory();
+                    loadFilterLibrary();
+                }
             } else {
                 if (selectedSearch) {
                     if ($positionBeforeFilterLibraryStore) {

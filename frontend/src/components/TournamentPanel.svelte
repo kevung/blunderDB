@@ -24,6 +24,7 @@
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
 
@@ -68,7 +69,7 @@
         const v = $openPanels.has(PANEL.TOURNAMENT);
         if (v !== _prevVisible) {
             if (v) {
-                loadTournaments();
+                if ($databaseLoadedStore) loadTournaments();
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
             } else {

@@ -8,6 +8,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
@@ -309,7 +310,7 @@
         }
     }
     $effect(() => {
-        if ($activeTabStore === 'search') {
+        if ($activeTabStore === 'search' && $databaseLoadedStore) {
             loadHistory();
             loadSavedFilters();
         }

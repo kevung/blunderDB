@@ -33,10 +33,12 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
 
     let matches = $state([]);
     let selectedMatch = $state(null);
     const visible = $derived($openPanels.has(PANEL.MATCH));
+    const databaseLoaded = $derived($databaseLoadedStore);
     let lastVisitedMatch = $derived($lastVisitedMatchStore);
     let tournaments = $derived($tournamentsStore || []);
 
@@ -77,7 +79,7 @@
     $effect(() => {
         const trigger = $matchPanelRefreshTriggerStore;
         if (trigger === 0) return; // skip initial run
-        if (untrack(() => !visible)) return;
+        if (untrack(() => !visible || !databaseLoaded)) return;
         loadMatches().then(() => {
             const lvm = lastVisitedMatch;
             if (lvm && lvm.matchID) {
@@ -96,7 +98,7 @@
         const opened = visible; // $derived — tracked
         const wasVisible = _prevVisible;
         _prevVisible = opened;
-        if (opened && !wasVisible) {
+        if (opened && !wasVisible && databaseLoaded) {
             loadMatches().then(() => {
                 const lvm = lastVisitedMatch;
                 if (lvm && lvm.matchID) {

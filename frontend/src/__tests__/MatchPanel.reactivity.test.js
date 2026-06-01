@@ -34,6 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import { openPanels, PANEL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 
 // ── DB mock ref (pour vérifier les appels) ────────────────────────────────────
 import { GetAllMatches } from '../../wailsjs/go/database/Database.js';
@@ -43,6 +44,9 @@ import MatchPanel from '../components/MatchPanel.svelte';
 
 // ── Reset stores ─────────────────────────────────────────────────────────────
 function resetStores() {
+    // A database must appear open: MatchPanel only loads when databaseLoadedStore
+    // (derived from a non-empty databasePathStore) is true.
+    databasePathStore.set('/tmp/test.db');
     openPanels.set(new Set());
     matchPanelRefreshTriggerStore.set(0);
     tournamentsStore.set([]);
