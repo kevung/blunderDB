@@ -53,7 +53,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Session/SaveLoadEmpty", testSessionSaveLoad},
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
-		{"Stats/AggregateCounts", nil},
+		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}
@@ -876,5 +876,58 @@ func testTxCommitPersists(t *testing.T, s storage.Storage) {
 	}
 	if got.ID != id {
 		t.Errorf("loaded id: got %d, want %d", got.ID, id)
+	}
+}
+
+// testStatsAggregateCounts checks the StatsStore wiring and its behaviour on an
+// empty database. Rich correctness (PR/MWC/Snowie aggregation against real
+// matches) is covered by the SQLite parity test against the legacy Database
+// implementation. Backends that have not implemented Stats yet return
+// ErrInternal ("not implemented"); the case skips for them so it lights up
+// automatically once the family lands.
+func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ss := s.Stats()
+
+	dr, err := ss.DateRange(ctx, "")
+	if errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+	if err != nil {
+		t.Fatalf("DateRange: %v", err)
+	}
+	if dr.DateFrom != "" || dr.DateTo != "" {
+		t.Errorf("empty DateRange: got %+v, want both empty", dr)
+	}
+
+	res, err := ss.Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("Compute: %v", err)
+	}
+	if res == nil {
+		t.Fatal("Compute returned nil result")
+	}
+	if res.Totals != (storage.StatsTotals{}) {
+		t.Errorf("empty totals: got %+v, want zero", res.Totals)
+	}
+	if res.PRGlobal != 0 || res.MWCAvailable {
+		t.Errorf("empty result: PRGlobal=%v MWCAvailable=%v, want 0/false", res.PRGlobal, res.MWCAvailable)
+	}
+
+	players, err := ss.PlayerNames(ctx, "")
+	if err != nil {
+		t.Fatalf("PlayerNames: %v", err)
+	}
+	if len(players) != 0 {
+		t.Errorf("empty PlayerNames: got %v, want none", players)
+	}
+
+	ids, err := ss.PositionIDsBySelection(ctx, "",
+		storage.StatsFilter{DecisionType: -1}, storage.SelectionSpec{Kind: "all"})
+	if err != nil {
+		t.Fatalf("PositionIDsBySelection: %v", err)
+	}
+	if len(ids) != 0 {
+		t.Errorf("empty selection: got %v, want none", ids)
 	}
 }
