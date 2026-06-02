@@ -3,6 +3,7 @@
     import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
+    import { t } from '../../i18n/index.js';
     import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
@@ -126,10 +127,10 @@
     /** Label for the tournament dropdown button. */
     let tourLabel = $derived(
         localFilter.tournamentIDs.length === 0
-            ? 'Tous'
+            ? $t('stats.allTournaments')
             : localFilter.tournamentIDs.length === 1
-              ? (tournamentList.find((t) => t.id === localFilter.tournamentIDs[0])?.name ?? '1 tournoi')
-              : `${localFilter.tournamentIDs.length} tournois`
+              ? (tournamentList.find((tour) => tour.id === localFilter.tournamentIDs[0])?.name ?? $t('stats.tournament'))
+              : $t('stats.nTournaments', { n: localFilter.tournamentIDs.length })
     );
 
     onMount(async () => {
@@ -173,12 +174,12 @@
     });
 </script>
 
-<div class="filter-bar" aria-label="Stats filter bar">
+<div class="filter-bar" aria-label={$t('stats.title')}>
     {#if dbEmpty}
-        <span class="empty-hint">Importez des matchs pour activer les filtres.</span>
+        <span class="empty-hint">{$t('stats.importMatchesHint')}</span>
     {:else}
         <!-- Player -->
-        <label class="fb-label" for="fb-player">Joueur</label>
+        <label class="fb-label" for="fb-player">{$t('stats.playerLabel')}</label>
         <select
             id="fb-player"
             class="fb-select"
@@ -189,7 +190,7 @@
                 applyFilter();
             }}
         >
-            <option value="">Toutes perspectives</option>
+            <option value="">{$t('stats.allPerspectives')}</option>
             {#each playerList as p (p.Name)}
                 <option value={p.Name}>{p.Name} ({p.Count})</option>
             {/each}
@@ -197,7 +198,7 @@
 
         <!-- Tournaments -->
         {#if tournamentList.length > 0}
-            <span class="fb-label">Tournois</span>
+            <span class="fb-label">{$t('stats.tournamentsLabel')}</span>
             <div class="fb-tour-wrap" class:open={tourOpen}>
                 <button class="fb-tour-btn" class:filtered={localFilter.tournamentIDs.length > 0} onclick={() => (tourOpen = !tourOpen)} aria-expanded={tourOpen} aria-haspopup="listbox"
                     >{tourLabel} ▾</button
@@ -213,7 +214,7 @@
                                     applyFilter();
                                 }}
                             />
-                            Tous
+                            {$t('stats.allTournaments')}
                         </label>
                         <hr class="fb-tour-sep" />
                         {#each tournamentList as t (t.id)}
@@ -228,7 +229,7 @@
         {/if}
 
         <!-- Date range -->
-        <label class="fb-label" for="fb-date-from">De</label>
+        <label class="fb-label" for="fb-date-from">{$t('stats.dateFromLabel')}</label>
         <input
             id="fb-date-from"
             type="date"
@@ -238,13 +239,13 @@
             min={dateRangeMin}
             max={dateRangeMax}
             placeholder={dateRangeMin}
-            title={dateRangeMin ? `Premiers matchs le ${dateRangeMin}` : ''}
+            title={dateRangeMin ? $t('stats.firstMatchDate', { date: dateRangeMin }) : ''}
             onchange={(e) => {
                 localFilter = { ...localFilter, dateFrom: e.target.value };
                 applyFilter();
             }}
         />
-        <label class="fb-label" for="fb-date-to">À</label>
+        <label class="fb-label" for="fb-date-to">{$t('stats.dateToLabel')}</label>
         <input
             id="fb-date-to"
             type="date"
@@ -254,7 +255,7 @@
             min={dateRangeMin}
             max={dateRangeMax}
             placeholder={dateRangeMax}
-            title={dateRangeMax ? `Derniers matchs le ${dateRangeMax}` : ''}
+            title={dateRangeMax ? $t('stats.lastMatchDate', { date: dateRangeMax }) : ''}
             onchange={(e) => {
                 localFilter = { ...localFilter, dateTo: e.target.value };
                 applyFilter();
@@ -262,9 +263,9 @@
         />
 
         <!-- Decision type -->
-        <fieldset class="fb-radio-group" aria-label="Type de décision">
-            <legend class="fb-label-inline">Décision</legend>
-            {#each [[-1, 'Tout'], [0, 'Coup'], [1, 'Cube']] as [val, lbl] (val)}
+        <fieldset class="fb-radio-group" aria-label={$t('stats.decisionTypeLabel')}>
+            <legend class="fb-label-inline">{$t('stats.decisionLegend')}</legend>
+            {#each [[-1, $t('stats.decisionAll')], [0, $t('stats.decisionChecker')], [1, $t('stats.decisionCube')]] as [val, lbl] (val)}
                 <label class="fb-radio-label">
                     <input
                         type="radio"
@@ -282,15 +283,15 @@
         </fieldset>
 
         <!-- Match length: empty array = all; every button appears active -->
-        <span class="fb-label">Longueur</span>
-        <div class="fb-ml-group" role="group" aria-label="Longueur de match">
+        <span class="fb-label">{$t('stats.lengthLabel')}</span>
+        <div class="fb-ml-group" role="group" aria-label={$t('stats.matchLengthLabel')}>
             {#each MATCH_LENGTHS as ml (ml)}
                 <button
                     class="fb-ml-btn"
                     class:active={mlActive(ml)}
                     onclick={() => toggleMatchLength(ml)}
                     aria-pressed={mlActive(ml)}
-                    title={localFilter.matchLength.length === 0 ? 'Cliquer pour filtrer sur cette longueur uniquement' : ''}>{ml}</button
+                    title={localFilter.matchLength.length === 0 ? $t('stats.filterLengthHint') : ''}>{ml}</button
                 >
             {/each}
             {#if localFilter.matchLength.length > 0}
@@ -300,13 +301,13 @@
                         localFilter = { ...localFilter, matchLength: [] };
                         applyFilter();
                     }}
-                    title="Sélectionner toutes les longueurs">Tout</button
+                    title={$t('stats.selectAllLengths')}>{$t('stats.all')}</button
                 >
             {/if}
         </div>
 
         <!-- Reset -->
-        <button class="fb-reset" onclick={resetFilters} title="Réinitialiser les filtres">↺ Reset</button>
+        <button class="fb-reset" onclick={resetFilters} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
     {/if}
 </div>
 

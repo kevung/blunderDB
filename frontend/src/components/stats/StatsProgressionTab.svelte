@@ -1,5 +1,6 @@
 <script>
     import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel, openMatchInPanel } from '../../services/positionLoader.js';
+    import { t, translate } from '../../i18n/index.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from './ContextMenu.svelte';
@@ -27,12 +28,12 @@
     let matches = $derived(result?.PerMatch ?? []);
 
     // ── Tournament line chart ─────────────────────────────────────────────────
-    let tourLabels = $derived(tournaments.map((t) => truncateLabel(t.Name)));
+    let tourLabels = $derived(tournaments.map((tour) => truncateLabel(tour.Name)));
 
     let tourDatasets = $derived([
         {
             label: metric === 'pr' ? 'PR' : 'MWC loss',
-            data: tournaments.map((t) => (metric === 'pr' ? t.PR : t.MWC)),
+            data: tournaments.map((tour) => (metric === 'pr' ? tour.PR : tour.MWC)),
             borderColor: PRIMARY,
             backgroundColor: PRIMARY_ALPHA,
             tension: 0.3,
@@ -50,11 +51,11 @@
     };
 
     function handleTourClick(dataIndex, _dsIdx, nativeEvent) {
-        const t = tournaments[dataIndex];
-        if (!t) return;
+        const tour = tournaments[dataIndex];
+        if (!tour) return;
         showMenu(nativeEvent, [
-            { label: 'Open tournament', onClick: () => openTournamentInPanel(t.ID) },
-            { label: 'Open positions', onClick: () => loadPositionsFromTournament(t.ID) }
+            { label: translate('stats.openTournament'), onClick: () => openTournamentInPanel(tour.ID) },
+            { label: translate('stats.openPositions'), onClick: () => loadPositionsFromTournament(tour.ID) }
         ]);
     }
 
@@ -90,8 +91,8 @@
         const m = matches[dataIndex];
         if (!m) return;
         showMenu(nativeEvent, [
-            { label: 'Open match', onClick: () => openMatchInPanel(m.ID) },
-            { label: 'Open positions', onClick: () => loadPositionsFromMatch(m.ID) }
+            { label: translate('stats.openMatch'), onClick: () => openMatchInPanel(m.ID) },
+            { label: translate('stats.openPositions'), onClick: () => loadPositionsFromMatch(m.ID) }
         ]);
     }
 
@@ -132,26 +133,26 @@
 
 {#if !result || (tournaments.length === 0 && matches.length === 0)}
     <!-- ── Empty state ──────────────────────────────────────────────────────── -->
-    <p class="empty-state">Aucune donnée sur la période filtrée. Importez des matchs analysés pour voir votre progression.</p>
+    <p class="empty-state">{$t('stats.noProgressionData')}</p>
 {:else}
     <!-- ── Tournament line chart ────────────────────────────────────────────── -->
     {#if tournaments.length > 0}
         <section class="chart-section">
-            <h3 class="section-title">PR par tournoi ({yAxisLabel()})</h3>
+            <h3 class="section-title">{$t('stats.prPerTournament', { metric: yAxisLabel() })}</h3>
 
             {#if tournaments.length === 1}
                 <!-- Single-tournament: show a card instead of a 1-point curve -->
-                {@const t = tournaments[0]}
+                {@const tourn = tournaments[0]}
                 <div class="single-card">
-                    <span class="single-value">{fmtVal(metric === 'pr' ? t.PR : t.MWC)}</span>
-                    <span class="single-label">{t.Name || 'Tournoi'}</span>
-                    <span class="single-meta">{fmtDate(t.Date)} · {t.NumDecisions} décisions</span>
+                    <span class="single-value">{fmtVal(metric === 'pr' ? tourn.PR : tourn.MWC)}</span>
+                    <span class="single-label">{tourn.Name || $t('stats.tournament')}</span>
+                    <span class="single-meta">{fmtDate(tourn.Date)} · {tourn.NumDecisions} {$t('stats.decisions')}</span>
                     {#if metric === 'pr'}
-                        <span class="single-grade">{gradeForPR(t.PR)}</span>
+                        <span class="single-grade">{gradeForPR(tourn.PR)}</span>
                     {/if}
                     <div class="single-actions">
-                        <button onclick={() => openTournamentInPanel(t.ID)}>Open tournament</button>
-                        <button onclick={() => loadPositionsFromTournament(t.ID)}>Open positions</button>
+                        <button onclick={() => openTournamentInPanel(tourn.ID)}>{$t('stats.openTournament')}</button>
+                        <button onclick={() => loadPositionsFromTournament(tourn.ID)}>{$t('stats.openPositions')}</button>
                     </div>
                 </div>
             {:else}
@@ -165,11 +166,11 @@
     <!-- ── Match scatter chart ───────────────────────────────────────────────── -->
     {#if matches.length > 0}
         <section class="chart-section">
-            <h3 class="section-title">PR par match ({yAxisLabel()})</h3>
+            <h3 class="section-title">{$t('stats.prPerMatch', { metric: yAxisLabel() })}</h3>
             <div class="chart-wrap">
                 <ScatterChart datasets={matchDatasets} options={scatterChartOptions} plugins={[gradeBandPlugin]} onPointClick={handleMatchClick} />
             </div>
-            <p class="chart-hint">La taille du point est proportionnelle au nombre de décisions.</p>
+            <p class="chart-hint">{$t('stats.pointSizeHint')}</p>
         </section>
     {/if}
 

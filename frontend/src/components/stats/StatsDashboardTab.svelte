@@ -2,6 +2,7 @@
     import { get } from 'svelte/store';
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromStatsSelection, openMatchInPanel } from '../../services/positionLoader.js';
+    import { t } from '../../i18n/index.js';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -101,11 +102,11 @@
 </script>
 
 {#if !result || result.Totals.NumDecisions === 0}
-    <p class="empty-state">Aucune décision sur la période filtrée. Élargissez les filtres.</p>
+    <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
 {:else}
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
-        {#each [{ kind: 'all', label: 'PR Global', unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'checker', label: 'PR Checker', unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'cube', label: 'PR Cube', unit: metric === 'pr' ? 'PR' : 'MWC loss' }] as card (card.kind)}
+        {#each [{ kind: 'all', label: $t('stats.cardLabelAll'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'checker', label: $t('stats.cardLabelChecker'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'cube', label: $t('stats.cardLabelCube'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }] as card (card.kind)}
             <button class="stat-card" onclick={() => openCard(card.kind)} aria-label="Open {numDecisions()} positions — {card.label}" title="{numDecisions()} decisions · click to open positions">
                 <span class="card-value">{cardValue(card.kind)}</span>
                 <span class="card-label">{card.label}</span>
@@ -116,14 +117,14 @@
 
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
-        {result.Totals.NumTournaments} tournois ·
-        {result.Totals.NumMatches} matchs ·
-        {result.Totals.NumDecisions} décisions
+        {result.Totals.NumTournaments} {$t('stats.tournaments')} ·
+        {result.Totals.NumMatches} {$t('stats.matches')} ·
+        {result.Totals.NumDecisions} {$t('stats.decisions')}
     </p>
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
     <section class="rolling-section">
-        <h3 class="section-title">Rolling ({metric === 'pr' ? 'PR' : 'MWC loss'})</h3>
+        <h3 class="section-title">{$t('stats.rolling', { metric: metric === 'pr' ? 'PR' : 'MWC loss' })}</h3>
         <div class="rolling-row">
             {#each ROLLING_NS as n (n)}
                 {@const avail = rollingDecisions(n) >= n}
@@ -138,13 +139,13 @@
     <!-- ── Top blunders ─────────────────────────────────────────── -->
     {#if result.TopBlunders && result.TopBlunders.length > 0}
         <section class="blunders-section">
-            <h3 class="section-title">Top blunders</h3>
+            <h3 class="section-title">{$t('stats.topBlunders')}</h3>
             <ol class="blunders-list">
                 {#each result.TopBlunders as entry, i (entry.PositionID)}
                     <li class="blunder-item">
-                        <button class="blunder-main" onclick={() => openBlunder(entry.PositionID)} title="{decisionLabel(entry)} — cliquer pour ouvrir la position">
+                        <button class="blunder-main" onclick={() => openBlunder(entry.PositionID)} title="{entry.DecisionType === 1 ? $t('stats.decisionTypeCube') : $t('stats.decisionTypeChecker')} — {$t('stats.clickToOpenPosition')}">
                             <span class="blunder-rank">#{i + 1}</span>
-                            <span class="blunder-type">{decisionLabel(entry)}</span>
+                            <span class="blunder-type">{entry.DecisionType === 1 ? $t('stats.decisionTypeCube') : $t('stats.decisionTypeChecker')}</span>
                             <span class="blunder-error">{fmtBlunderError(entry)}</span>
                             <span class="blunder-match">
                                 {entry.PlayerNames || 'Match #' + entry.MatchID}
@@ -153,7 +154,7 @@
                                 {/if}
                             </span>
                         </button>
-                        <button class="blunder-open-match" onclick={() => openMatch(entry.MatchID)} title="Ouvrir le match" aria-label="Open match #{entry.MatchID}">↗</button>
+                        <button class="blunder-open-match" onclick={() => openMatch(entry.MatchID)} title={$t('stats.openMatch')} aria-label="{$t('stats.openMatch')} #{entry.MatchID}">↗</button>
                     </li>
                 {/each}
             </ol>

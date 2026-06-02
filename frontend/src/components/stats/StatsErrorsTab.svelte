@@ -2,6 +2,7 @@
     import { get } from 'svelte/store';
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromStatsSelection } from '../../services/positionLoader.js';
+    import { t, translate } from '../../i18n/index.js';
     import BarChart from './charts/BarChart.svelte';
     import Histogram from './charts/Histogram.svelte';
     import { PRIMARY } from './charts/palette.js';
@@ -39,7 +40,7 @@
                         const c = cubeBreakdown[idx];
                         if (!c) return [];
                         const rate = blunderRate(c);
-                        return [`Décisions : ${c.NumDecisions}`, `Blunders  : ${c.BlunderCount} (${rate}%)`];
+                        return [translate('stats.tooltipDecisions', { n: c.NumDecisions }), translate('stats.tooltipBlunders', { n: c.BlunderCount, rate })];
                     }
                 }
             }
@@ -134,13 +135,13 @@
 </script>
 
 {#if !result || numDecisions === 0}
-    <p class="empty-state">Aucune décision sur la période filtrée. Élargissez les filtres.</p>
+    <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
 {:else}
     <!-- ── 1. Cube action breakdown ────────────────────────────────────────── -->
     <section class="chart-section">
-        <h3 class="section-title">Breakdown par action cube ({yAxisLabel()})</h3>
+        <h3 class="section-title">{$t('stats.breakdownCubeAction', { metric: yAxisLabel() })}</h3>
         {#if !hasCubeData}
-            <p class="empty-subsection">Aucune décision cube sur la période.</p>
+            <p class="empty-subsection">{$t('stats.noCubeDecisions')}</p>
         {:else}
             <div class="chart-wrapper">
                 <BarChart labels={cubeLabels} datasets={cubeDatasets} options={cubeChartOptions} onBarClick={handleCubeBarClick} />
@@ -150,7 +151,7 @@
 
     <!-- ── 2. Checker vs Cube ─────────────────────────────────────────────── -->
     <section class="chart-section">
-        <h3 class="section-title">Checker vs Cube ({yAxisLabel()})</h3>
+        <h3 class="section-title">{$t('stats.checkerVsCube', { metric: yAxisLabel() })}</h3>
         <div class="chart-wrapper chart-wrapper--small">
             <BarChart labels={['Checker', 'Cube']} datasets={compDatasets} options={compChartOptions} onBarClick={handleCompBarClick} />
         </div>
@@ -158,9 +159,9 @@
 
     <!-- ── 3. Error magnitude histogram ──────────────────────────────────── -->
     <section class="chart-section">
-        <h3 class="section-title">Répartition des magnitudes d'erreur (nb positions)</h3>
+        <h3 class="section-title">{$t('stats.errorMagnitudeHistogram')}</h3>
         {#if !hasHistData}
-            <p class="empty-subsection">Aucune erreur dans cette période.</p>
+            <p class="empty-subsection">{$t('stats.noErrors')}</p>
         {:else}
             <div class="chart-wrapper">
                 <Histogram labels={histLabels} datasets={histDatasets} options={histChartOptions} onBarClick={handleHistBarClick} />
