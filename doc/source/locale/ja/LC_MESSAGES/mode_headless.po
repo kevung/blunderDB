@@ -32,7 +32,7 @@ msgid ""
 "ce mode : vous pouvez ignorer ce chapitre sans rien perdre des "
 "fonctionnalités d'analyse."
 msgstr ""
-"このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの**高度かつ任意のモード**について説明します。**blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**のままです。自分のコンピューター上でblunderDBを単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。"
+"このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの\\ **高度かつ任意のモード**\\ について説明します。\\ **blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**\\ のままです。自分のコンピューター上でblunderDBを単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。"
 
 #: ../../source/mode_headless.rst:18
 msgid "Vue d'ensemble"
@@ -76,7 +76,7 @@ msgid ""
 "habituel de l'application de bureau) et **PostgreSQL** (pour les "
 "déploiements serveur multi-utilisateurs)."
 msgstr ""
-"これら3つの用途は、2つのバックエンドと対話できる共通の**ストレージレイヤー**に依存しています：**SQLite**（デスクトップアプリケーションの通常の ``.db`` ファイル形式）と **PostgreSQL**（マルチユーザーのサーバーデプロイ向け）です。"
+"これら3つの用途は、2つのバックエンドと対話できる共通の\\ **ストレージレイヤー**\\ に依存しています：\\ **SQLite**\\ （デスクトップアプリケーションの通常の ``.db`` ファイル形式）と **PostgreSQL**\\ （マルチユーザーのサーバーデプロイ向け）です。"
 
 #: ../../source/mode_headless.rst:41
 msgid "Le démon ``serve``"
