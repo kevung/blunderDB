@@ -64,7 +64,7 @@
 
 \title{blunderDB}
 \date{02 Ιουνίου 2026}
-\release{0.21.0}
+\release{0.22.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -599,6 +599,22 @@
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.22.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+2 Ιουνίου 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Προσθήκη μιας λειτουργίας χωρίς γραφικό περιβάλλον (διακομιστής), προηγμένης και προαιρετικής, που συμπληρώνει την εφαρμογή γραφείου: ένας δαίμονας \sphinxcode{\sphinxupquote{serve}} που εκθέτει τη μηχανή σε HTTP + JSON, ένα backend PostgreSQL πολλαπλών χρηστών με διαχωρισμό ανά tenant (και Row\sphinxhyphen{}Level Security προαιρετικά), μια εντολή \sphinxcode{\sphinxupquote{migrate}} για τη μεταφορά μιας βάσης SQLite προς PostgreSQL, και ένας γενικός dispatcher \sphinxcode{\sphinxupquote{call}} που παρέχει πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης. Εισαγωγή μεμονωμένων θέσεων από νέες μορφές (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, κείμενο BGBlitz, εγγενής βιβλιοθήκη \sphinxcode{\sphinxupquote{.db}}) με εμπλουτισμό των διπλότυπων μεταξύ μορφών. Διορθώσεις: οι πίνακες δεν προκαλούν πλέον σφάλμα όταν δεν είναι ανοιχτή καμία βάση και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο κατά το άνοιγμα. Δείτε :ref:`headless`.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -620,15 +636,15 @@
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
 
 \end{itemize}
 
@@ -644,7 +660,7 @@
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Στο Linux, εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί το webkit2gtk\sphinxhyphen{}4.1 αντί του webkit2gtk\sphinxhyphen{}4.0. Κατεβάστε την ειδική έκδοση: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0}
+Στο Linux, εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί το webkit2gtk\sphinxhyphen{}4.1 αντί του webkit2gtk\sphinxhyphen{}4.0. Κατεβάστε την ειδική έκδοση: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Προειδοποίηση:}
@@ -5580,6 +5596,585 @@ blunders από διαδικτυακό παιχνίδι.
 \label{\detokenize{faq:d-ou-vient-l-icone-de-blunderdb}}
 \sphinxAtStartPar
 Το εικονίδιο του blunderDB είναι το emoticon «goggling» από τη σειρά \sphinxhref{https://commons.wikimedia.org/wiki/SMirC}{SMirC}.
+
+\sphinxstepscope
+
+
+\section{Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}
+\label{\detokenize{mode_headless:mode-headless-serveur}}\label{\detokenize{mode_headless:headless}}\label{\detokenize{mode_headless::doc}}
+\begin{sphinxadmonition}{note}{Σημείωση:}
+\sphinxAtStartPar
+Αυτή η ενότητα περιγράφει μια \sphinxstylestrong{προηγμένη και προαιρετική λειτουργία} του blunderDB, που προορίζεται για αναπτύξεις σε διακομιστή, για πολλαπλούς χρήστες και για αυτοματοποίηση. \sphinxstylestrong{Η συνήθης και συνιστώμενη χρήση του blunderDB παραμένει η εφαρμογή γραφείου} που περιγράφεται στα προηγούμενα κεφάλαια. Αν χρησιμοποιείτε το blunderDB μόνοι σας, στον υπολογιστή σας, δεν χρειάζεστε αυτή τη λειτουργία: μπορείτε να αγνοήσετε αυτό το κεφάλαιο χωρίς να χάσετε καμία από τις λειτουργίες ανάλυσης.
+\end{sphinxadmonition}
+
+
+\subsection{Επισκόπηση}
+\label{\detokenize{mode_headless:vue-d-ensemble}}
+\sphinxAtStartPar
+Το ίδιο εκτελέσιμο \sphinxcode{\sphinxupquote{blunderdb}} μπορεί, εκτός από την εφαρμογή γραφείου και τις εντολές γραμμής εντολών (δείτε {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διεπαφή γραμμής εντολών (CLI)}}}}}), να λειτουργήσει σε \sphinxstylestrong{λειτουργία χωρίς γραφικό περιβάλλον}: χωρίς γραφική διεπαφή, ελεγχόμενο εξ ολοκλήρου μέσω της γραμμής εντολών ή μέσω δικτύου. Αυτή η λειτουργία συγκεντρώνει τρεις χρήσεις:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{ο δαίμονας} \sphinxcode{\sphinxupquote{serve}} — εκθέτει τη μηχανή του blunderDB ως υπηρεσία HTTP + JSON, για να τρέχει μια κοινόχρηστη βάση σε διακομιστή και να την προσπελάζουν πολλοί χρήστες·
+
+\item {} 
+\sphinxAtStartPar
+ο γενικός dispatcher \sphinxcode{\sphinxupquote{call}} — καλεί οποιαδήποτε λειτουργία αποθήκευσης απευθείας, τοπικά, για scripting και δοκιμές·
+
+\item {} 
+\sphinxAtStartPar
+η εντολή \sphinxcode{\sphinxupquote{migrate}} — μεταφέρει μια βάση SQLite ενός χρήστη προς ένα backend PostgreSQL πολλαπλών χρηστών.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Αυτές οι τρεις χρήσεις βασίζονται σε ένα κοινό \sphinxstylestrong{επίπεδο αποθήκευσης} που γνωρίζει να επικοινωνεί με δύο backend: το \sphinxstylestrong{SQLite} (η συνήθης μορφή αρχείου \sphinxcode{\sphinxupquote{.db}} της εφαρμογής γραφείου) και το \sphinxstylestrong{PostgreSQL} (για αναπτύξεις διακομιστή πολλαπλών χρηστών).
+
+
+\subsection{Ο δαίμονας \sphinxstyleliteralintitle{\sphinxupquote{serve}}}
+\label{\detokenize{mode_headless:le-demon-serve}}\label{\detokenize{mode_headless:headless-serve}}
+\sphinxAtStartPar
+Το \sphinxcode{\sphinxupquote{blunderdb serve}} εκκινεί τη μηχανή ως υπηρεσία HTTP που απαντά σε JSON. Επιτρέπει τη φιλοξενία μιας βάσης θέσεων σε ένα μηχάνημα και την προσπέλασή της από πολλούς πελάτες.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Servir une base SQLite locale sur le port 8080}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+
+\PYG{c+c1}{\PYGZsh{} Servir un backend PostgreSQL}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}backend\PYG{+w}{ }postgres\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}dsn\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/blunderdb?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+\end{sphinxVerbatim}
+
+\begin{sphinxadmonition}{warning}{Προειδοποίηση:}
+\sphinxAtStartPar
+\sphinxstylestrong{Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας.} Εμπιστεύεται την κεφαλίδα αιτήματος \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}} και \sphinxstylestrong{πρέπει} να τρέχει πίσω από έναν reverse\sphinxhyphen{}proxy (nginx, Caddy…) υπεύθυνο για την πιστοποίηση ταυτότητας. \sphinxstylestrong{Μην τον εκθέτετε ποτέ απευθείας στο δημόσιο Διαδίκτυο.}
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Επιλογές:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{74}\X{12}{74}\X{40}{74}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Επιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Προεπιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Σημασία
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <chemin>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+αρχείο SQLite (συντόμευση για \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <chemin>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <type>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+backend αποθήκευσης: \sphinxcode{\sphinxupquote{sqlite}} ή \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <chaîne>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+συμβολοσειρά σύνδεσης του backend
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}addr <hôte:port>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{:8080}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+διεύθυνση ακρόασης
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}log\sphinxhyphen{}level <niveau>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{info}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+επίπεδο καταγραφής: \sphinxcode{\sphinxupquote{debug|info|warn|error}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{true}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+εκθέτει το \sphinxcode{\sphinxupquote{/metrics}} (μορφή Prometheus)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}cors\sphinxhyphen{}allow\sphinxhyphen{}origin <origine>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+ενεργοποιεί CORS για αυτή την προέλευση (απενεργοποιημένο εξ ορισμού)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}rps <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{0}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+όριο αιτημάτων ανά δευτερόλεπτο και ανά tenant (0 = απενεργοποιημένο)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}burst <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{2×rps}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+μέγεθος του κάδου διακριτικών (token bucket) για τις αιχμές αιτημάτων
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{false}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά tenant (άμυνα σε βάθος, προαιρετική)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθούν μέσω μεταβλητής περιβάλλοντος (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+
+
+\subsubsection{Σημεία πρόσβασης}
+\label{\detokenize{mode_headless:points-d-acces}}
+\sphinxAtStartPar
+Η υπηρεσία εκθέτει σημεία πρόσβασης λειτουργίας, πάντα διαθέσιμα:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /healthz}} — ζωτικότητα (η διεργασία τρέχει)·
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /readyz}} — διαθεσιμότητα (η αποθήκευση απαντά)·
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /metrics}} — μετρικές Prometheus (αν το \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}} είναι ενεργό).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Η επιφάνεια λειτουργιών ακολουθεί το σχήμα \sphinxcode{\sphinxupquote{POST /v1/<famille>.<méthode>}} (για παράδειγμα \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Οι οικογένειες καλύπτουν τις θέσεις, τις αναλύσεις, τους αγώνες, τα σχόλια, τις συλλογές, τα τουρνουά, τις κάρτες Anki, τα φίλτρα, τις συνεδρίες, την αναζήτηση, τα μεταδεδομένα, τα στατιστικά και την εισαγωγή. Τα σημεία πρόσβασης καταχώρισης επιστρέφουν μια ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζεται καθαρά με \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
+
+
+\subsection{Backend PostgreSQL και πολλαπλοί χρήστες}
+\label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
+\sphinxAtStartPar
+Για μια κοινόχρηστη ανάπτυξη, το blunderDB μπορεί να αποθηκεύει τα δεδομένα στο \sphinxstylestrong{PostgreSQL} αντί σε ένα αρχείο SQLite. Το backend επιλέγεται μέσω του \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend postgres}} και της συμβολοσειράς σύνδεσης \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn}}. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την εκκίνηση.
+
+\sphinxAtStartPar
+Τα δεδομένα είναι \sphinxstylestrong{διαχωρισμένα ανά tenant} (μισθωτή): κάθε αίτημα φέρει ένα αναγνωριστικό scope (κεφαλίδα \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, εξ ορισμού \sphinxcode{\sphinxupquote{default}}), πράγμα που επιτρέπει σε πολλούς χρήστες να μοιράζονται το ίδιο instance χωρίς να βλέπουν τα δεδομένα των άλλων. Η επιλογή \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} ενεργοποιεί επιπλέον το \sphinxstylestrong{Row\sphinxhyphen{}Level Security} του PostgreSQL: εγκαθίστανται πολιτικές απομόνωσης ανά tenant και το \sphinxcode{\sphinxupquote{app.tenant\_id}} ορίζεται ανά σύνδεση. Πρόκειται για μια προαιρετική άμυνα σε βάθος, απενεργοποιημένη εξ ορισμού.
+
+
+\subsection{Μετανάστευση μιας βάσης SQLite προς PostgreSQL}
+\label{\detokenize{mode_headless:migrer-une-base-sqlite-vers-postgresql}}\label{\detokenize{mode_headless:headless-migrate}}
+\sphinxAtStartPar
+Το \sphinxcode{\sphinxupquote{blunderdb migrate}} αντιγράφει μια βάση SQLite ενός χρήστη προς ένα backend PostgreSQL, υπό ένα επιλεγμένο scope tenant — είναι ο τρόπος για να « μεταφορτώσετε » μια βιβλιοθήκη γραφείου προς μια ανάπτυξη διακομιστή.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}to\PYG{+w}{   }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/db?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant
+
+\PYG{c+c1}{\PYGZsh{} Prévisualiser sans rien écrire}
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dry\PYGZhy{}run
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Η μετανάστευση αντιγράφει τις \sphinxstylestrong{θέσεις, τις αναλύσεις και τα σχόλιά τους, τους αγώνες (παρτίδες + κινήσεις), τα τουρνουά (με τους συνδέσμους αγώνων τους) και τις συλλογές (με τη σύνθεσή τους)}, επανεκχωρώντας τα πρωτεύοντα και ξένα κλειδιά, όλα μέσα σε μια \sphinxstylestrong{μοναδική συναλλαγή} στην πλευρά προορισμού: η λειτουργία είναι ατομική (μια αποτυχία αφήνει τον προορισμό ανέπαφο, αρκεί να την ξεκινήσετε ξανά). Η πρόοδος και ο τελικός απολογισμός εκπέμπονται σε NDJSON στην τυπική έξοδο.
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{24}{76}\X{12}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Επιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Προεπιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Σημασία
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from <uri>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+βάση SQLite πηγής (\sphinxcode{\sphinxupquote{sqlite:///chemin}} ή μια απλή διαδρομή)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to <dsn>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+DSN PostgreSQL προορισμού (\sphinxcode{\sphinxupquote{postgres://…}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tenant\sphinxhyphen{}id <scope>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+scope tenant προορισμού (υποχρεωτικό εκτός από \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+μετρά τι θα αντιγραφόταν χωρίς να γράψει τίποτα
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}on\sphinxhyphen{}conflict <politique>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}} διακόπτει αν ο tenant έχει ήδη δεδομένα· το \sphinxcode{\sphinxupquote{skip}} συγχωνεύει (αφαίρεση διπλότυπων θέσεων μέσω hash Zobrist)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Σημείωση:}
+\sphinxAtStartPar
+Δεν μεταναστεύονται (ακόμη) οι καταστάσεις της εφαρμογής: decks/κάρτες Anki, βιβλιοθήκη φίλτρων, ιστορικό αναζήτησης και εντολών, και μεταδεδομένα συνεδρίας. Η προτεραιότητα είναι η μετανάστευση της βιβλιοθήκης θέσεων και του ιστορικού αγώνων.
+\end{sphinxadmonition}
+
+
+\subsection{Ο γενικός dispatcher \sphinxstyleliteralintitle{\sphinxupquote{call}}}
+\label{\detokenize{mode_headless:le-dispatcher-generique-call}}\label{\detokenize{mode_headless:headless-call}}
+\sphinxAtStartPar
+Συμπληρωματικά προς τις ιστορικές υποεντολές ({\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διεπαφή γραμμής εντολών (CLI)}}}}}), το \sphinxcode{\sphinxupquote{blunderdb call}} εκθέτει \sphinxstylestrong{όλες} τις λειτουργίες αποθήκευσης απευθείας, τοπικά. Περνά από τους ίδιους χειριστές με τον δαίμονα \sphinxcode{\sphinxupquote{serve}}: η συμπεριφορά είναι επομένως πανομοιότυπη με το \sphinxcode{\sphinxupquote{POST /v1/<famille>.<méthode>}}. Είναι χρήσιμο για το scripting και τις δοκιμές ολοκλήρωσης.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Lister toutes les méthodes disponibles}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }\PYGZhy{}\PYGZhy{}list
+
+\PYG{c+c1}{\PYGZsh{} Lectures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }metadata.counts\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.list\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}limit\PYGZdq{}:10\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.get\PYG{+w}{     }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:1\PYGZcb{}\PYGZsq{}}
+
+\PYG{c+c1}{\PYGZsh{} Écritures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.save\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}position\PYGZdq{}:\PYGZob{}...\PYGZcb{}\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.delete\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:42\PYGZcb{}\PYGZsq{}}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Επιλογές:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{76}\X{14}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Επιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Προεπιλογή
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Σημασία
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <chemin>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+αρχείο SQLite (συντόμευση για \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <chemin>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <type>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}} ή \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <chaîne>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+συμβολοσειρά σύνδεσης του backend
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}scope <chaîne>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{default}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+scope tenant (αποστέλλεται ως \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json <chaîne>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\{\}}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+σώμα του αιτήματος σε μορφή JSON
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json\sphinxhyphen{}file <chemin>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+διαβάζει το σώμα του αιτήματος από ένα αρχείο
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}list}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+εμφανίζει όλες τις μεθόδους \sphinxcode{\sphinxupquote{<famille>.<méthode>}} και τερματίζει
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Η απάντηση JSON (ή η ροή NDJSON για τα σημεία πρόσβασης \sphinxcode{\sphinxupquote{*.list}}) γράφεται στην τυπική έξοδο. Σε περίπτωση σφάλματος, η διεργασία τερματίζεται με μη μηδενικό κωδικό και ο φάκελος \sphinxcode{\sphinxupquote{\{"error":\{…\}\}}} εκτυπώνεται στην τυπική έξοδο ώστε να παραμένει αναλύσιμος (για παράδειγμα με το \sphinxcode{\sphinxupquote{jq}}).
 
 \sphinxstepscope
 

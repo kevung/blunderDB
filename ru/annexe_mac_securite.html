@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>10. Приложение Mac: возможная блокировка blunderDB &mdash; документация blunderDB 0.21.0</title>
+  <title>11. Приложение Mac: возможная блокировка blunderDB &mdash; документация blunderDB 0.22.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/documentation_options.js?v=3880d710"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Алфавитный указатель" href="genindex.html" />
     <link rel="search" title="Поиск" href="search.html" />
-    <link rel="next" title="11. Приложение: Схема базы данных" href="annexe_db_scheme.html" />
-    <link rel="prev" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" href="annexe_windows_securite.html" /> 
+    <link rel="next" title="12. Приложение: Схема базы данных" href="annexe_db_scheme.html" />
+    <link rel="prev" title="10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" href="annexe_windows_securite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,15 +55,16 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Приложение Mac: возможная блокировка blunderDB</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation-de-blunderdb">10.1. Установка blunderDB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#autorisation-de-l-execution-de-blunderdb">10.2. Разрешение на запуск blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Приложение Mac: возможная блокировка blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-de-blunderdb">11.1. Установка blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autorisation-de-l-execution-de-blunderdb">11.2. Разрешение на запуск blunderDB</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -80,7 +81,7 @@
           <div role="navigation" aria-label="Навигация по страницам">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">10. </span>Приложение Mac: возможная блокировка blunderDB</li>
+      <li class="breadcrumb-item active"><span class="section-number">11. </span>Приложение Mac: возможная блокировка blunderDB</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="annexe-mac-blocage-eventuel-de-blunderdb">
-<span id="annexe-mac-malware"></span><h1><span class="section-number">10. </span>Приложение Mac: возможная блокировка blunderDB<a class="headerlink" href="#annexe-mac-blocage-eventuel-de-blunderdb" title="Ссылка на этот заголовок"></a></h1>
+<span id="annexe-mac-malware"></span><h1><span class="section-number">11. </span>Приложение Mac: возможная блокировка blunderDB<a class="headerlink" href="#annexe-mac-blocage-eventuel-de-blunderdb" title="Ссылка на этот заголовок"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
 <p>Следующее относится к операционной системе macOS.</p>
@@ -98,11 +99,11 @@
 <p>Mac требует от компаний-разработчиков программного обеспечения или независимых разработчиков цифровой сертификации своих приложений. Разработчик должен подписаться на Apple Developer Program, уплачивая ежегодный взнос (<a class="reference external" href="https://developer.apple.com/support/compare-memberships/">https://developer.apple.com/support/compare-memberships/</a>).</p>
 <p>Поскольку я распространяю blunderDB бесплатно, я не хочу прибегать к этим дорогостоящим возможностям. Поэтому весьма вероятно, что Mac предупредит вас о потенциальной опасности или даже полностью заблокирует запуск blunderDB. В следующих разделах описаны действия, необходимые для обхода ограничений Mac.</p>
 <section id="installation-de-blunderdb">
-<h2><span class="section-number">10.1. </span>Установка blunderDB<a class="headerlink" href="#installation-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">11.1. </span>Установка blunderDB<a class="headerlink" href="#installation-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
 <p>После загрузки blunderDB перетащите загруженный файл в раздел «Программы» вашего Finder. Если вы уже пробовали запустить blunderDB и Mac предупредил вас о потенциальной опасности, выполните следующие шаги.</p>
 </section>
 <section id="autorisation-de-l-execution-de-blunderdb">
-<h2><span class="section-number">10.2. </span>Разрешение на запуск blunderDB<a class="headerlink" href="#autorisation-de-l-execution-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">11.2. </span>Разрешение на запуск blunderDB<a class="headerlink" href="#autorisation-de-l-execution-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
 <ol class="arabic simple">
 <li><p>Откройте Finder и перейдите в раздел «Программы».</p></li>
 <li><p>Найдите blunderDB и щёлкните правой кнопкой мыши.</p></li>
@@ -121,8 +122,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
-        <a href="annexe_windows_securite.html" class="btn btn-neutral float-left" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
-        <a href="annexe_db_scheme.html" class="btn btn-neutral float-right" title="11. Приложение: Схема базы данных" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-left" title="10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-right" title="12. Приложение: Схема базы данных" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

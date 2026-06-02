@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. ヘッドレスモード（サーバー） &mdash; blunderDB 0.22.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="9. 付録: フィルターの高度な使い方" href="annexe_filtres.html" />
+    <link rel="prev" title="7. よくある質問（FAQ）" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. ヘッドレスモード（サーバー）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. エンドポイント</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQLバックエンドとマルチユーザー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">8.4. SQLiteデータベースをPostgreSQLへ移行する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">8.5. 汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>ヘッドレスモード（サーバー）</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">8. </span>ヘッドレスモード（サーバー）<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの**高度かつ任意のモード**について説明します。<a href="#id1"><span class="problematic" id="id2">**</span></a>blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**のままです。自分のコンピューター上でblunderDBを単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">8.1. </span>概要<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>同じバイナリ <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> は、デスクトップアプリケーションやコマンドライン（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）に加えて、<strong>ヘッドレスモード</strong> で動作することができます：グラフィカルインターフェースなしで、コマンドラインまたはネットワークから完全に操作されます。このモードは3つの用途をまとめています：</p>
+<ul class="simple">
+<li><p><strong>デーモン</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — blunderDBのエンジンをHTTP + JSONサービスとして公開し、共有データベースをサーバー上で稼働させ、複数人でアクセスできるようにします；</p></li>
+<li><p>汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code> — スクリプティングやテストのために、任意のストレージ操作をローカルで直接呼び出します；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド — シングルユーザーのSQLiteデータベースをマルチユーザーのPostgreSQLバックエンドに転送します。</p></li>
+</ul>
+<p>これら3つの用途は、2つのバックエンドと対話できる共通の**ストレージレイヤー**に依存しています：<a href="#id1"><span class="problematic" id="id2">**</span></a>SQLite**（デスクトップアプリケーションの通常の <code class="docutils literal notranslate"><span class="pre">.db</span></code> ファイル形式）と <a href="#id3"><span class="problematic" id="id4">**</span></a>PostgreSQL**（マルチユーザーのサーバーデプロイ向け）です。</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">8.2. </span>デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> は、JSONで応答するHTTPサービスとしてエンジンを起動します。これにより、ポジションのデータベースを1台のマシン上でホストし、複数のクライアントからアクセスできるようになります。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">&quot;postgres://user:pass@host:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p><strong>デーモンは認証を一切行いません。</strong> リクエストヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> を信頼しており、認証を担うリバースプロキシ（nginx、Caddy…）の背後で動作させる**必要があります**。<strong>決して公開インターネット上に直接公開しないでください。</strong></p>
+</div>
+<p><strong>オプション：</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLiteファイル（<code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code> のショートカット）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>ストレージバックエンド：<code class="docutils literal notranslate"><span class="pre">sqlite</span></code> または <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>バックエンドの接続文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;hôte:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>待ち受けアドレス</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;niveau&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>ログレベル：<code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/metrics</span></code> を公開する（Prometheus形式）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origine&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>このオリジンに対してCORSを有効にする（デフォルトでは無効）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>テナントごとの秒間リクエスト数の制限（0 = 無効）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2×rps</span></code></p></td>
+<td><p>リクエストのピークに対応するトークンバケットのサイズ</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL：テナントごとのRow-Level Securityを有効にする（多層防御、オプション）</p></td>
+</tr>
+</tbody>
+</table>
+<p>ほとんどのオプションは環境変数（<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>）でも指定できます。</p>
+<section id="points-d-acces">
+<h3><span class="section-number">8.2.1. </span>エンドポイント<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>サービスは、常に利用可能な運用用のエンドポイントを公開しています：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — 生存確認（プロセスが稼働中）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — 準備状態（ストレージが応答している）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheusメトリクス（<code class="docutils literal notranslate"><span class="pre">--metrics</span></code> が有効な場合）。</p></li>
+</ul>
+<p>ビジネスロジックのインターフェースは <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> のスキーマに従います（例：<code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>、<code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> で正常に停止します。</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQLバックエンドとマルチユーザー<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>共有デプロイの場合、blunderDBはSQLiteファイルではなく <strong>PostgreSQL</strong> にデータを保存できます。バックエンドは <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> と接続文字列 <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。</p>
+<p>データは**テナント（利用者）ごとに分離**されています：各リクエストにはスコープ識別子（ヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>、デフォルトは <code class="docutils literal notranslate"><span class="pre">default</span></code>）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。<code class="docutils literal notranslate"><span class="pre">--rls</span></code> オプションは、補完的にPostgreSQLの <strong>Row-Level Security</strong> を有効にします：テナントごとの分離ポリシーがインストールされ、<code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>SQLiteデータベースをPostgreSQLへ移行する<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> は、シングルユーザーのSQLiteデータベースを、選択したテナントスコープのもとでPostgreSQLバックエンドにコピーします — これは、デスクトップのライブラリをサーバーデプロイへ「アップロード」するための手段です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">&quot;postgres://user:pass@host:5432/db?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>このマイグレーションは、<strong>ポジション、その分析とコメント、マッチ（ゲーム + 手）、トーナメント（そのマッチリンクを含む）、コレクション（その構成を含む）</strong> をコピーし、主キーと外部キーを再割り当てします。これらはすべて、宛先側の**単一のトランザクション**内で行われます：操作はアトミックです（失敗しても宛先はそのまま残るため、再実行するだけで済みます）。進捗と最終的な集計は、標準出力にNDJSONで出力されます。</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ソースのSQLiteデータベース（<code class="docutils literal notranslate"><span class="pre">sqlite:///chemin</span></code> または単なるパス）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>宛先のPostgreSQL DSN（<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;scope&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>宛先のテナントスコープ（<code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> 以外では必須）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>何も書き込まずに、コピーされる内容を数える</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;politique&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> はテナントにすでにデータがある場合に中断します；<code class="docutils literal notranslate"><span class="pre">skip</span></code> はマージします（Zobristハッシュによるポジションの重複排除）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>アプリケーションの状態は（まだ）移行されません：Ankiのデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">8.5. </span>汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>従来のサブコマンド（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>）を補完するものとして、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> は**すべての**ストレージ操作をローカルで直接公開します。デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code> と同じハンドラを経由するため、動作は <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> と同一です。スクリプティングや統合テストに便利です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;limit&quot;:10}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:1}&#39;</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;position&quot;:{...}}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:42}&#39;</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLiteファイル（<code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code> のショートカット）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> または <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>バックエンドの接続文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>テナントスコープ（<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> として送信される）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>JSON形式のリクエストボディ</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ファイルからリクエストボディを読み込む</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>すべての <code class="docutils literal notranslate"><span class="pre">&lt;famille&gt;.&lt;méthode&gt;</span></code> メソッドを表示して終了する</p></td>
+</tr>
+</tbody>
+</table>
+<p>JSONレスポンス（または <code class="docutils literal notranslate"><span class="pre">*.list</span></code> エンドポイントの場合はNDJSONストリーム）は標準出力に書き込まれます。エラーが発生した場合、プロセスは非ゼロのコードで終了し、解析可能な状態を保つために（例えば <code class="docutils literal notranslate"><span class="pre">jq</span></code> で）、<code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> というエンベロープが標準出力に出力されます。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. よくある質問（FAQ）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="9. 付録: フィルターの高度な使い方" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

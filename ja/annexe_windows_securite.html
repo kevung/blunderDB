@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9. Windows 付録：blunderDB のマルウェアとしての誤検知 &mdash; blunderDB 0.21.0 ドキュメント</title>
+  <title>10. Windows 付録：blunderDB のマルウェアとしての誤検知 &mdash; blunderDB 0.22.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="検索" href="search.html" />
-    <link rel="next" title="10. Mac 付録：blunderDB の起動ブロックについて" href="annexe_mac_securite.html" />
-    <link rel="prev" title="8. 付録: フィルターの高度な使い方" href="annexe_filtres.html" /> 
+    <link rel="next" title="11. Mac 付録：blunderDB の起動ブロックについて" href="annexe_mac_securite.html" />
+    <link rel="prev" title="9. 付録: フィルターの高度な使い方" href="annexe_filtres.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,15 +55,16 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Windows SmartScreen の警告</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Windows Defender によるブロック</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">10.1. Windows SmartScreen の警告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">10.2. Windows Defender によるブロック</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
 </ul>
 
         </div>
@@ -80,7 +81,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">9. </span>Windows 付録：blunderDB のマルウェアとしての誤検知</li>
+      <li class="breadcrumb-item active"><span class="section-number">10. </span>Windows 付録：blunderDB のマルウェアとしての誤検知</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
-<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Windows 付録：blunderDB のマルウェアとしての誤検知<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<span id="annexe-windows-malware"></span><h1><span class="section-number">10. </span>Windows 付録：blunderDB のマルウェアとしての誤検知<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
 <p>以下は Windows 10 および 11 オペレーティングシステムに関するものです。</p>
@@ -98,7 +99,7 @@
 <p>Windows は現在、ソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証すること、または Windows Store 経由で配布することを要求しています。そのため、外部企業を通じてデジタル証明書を取得することが推奨されており、その費用は数百ユーロにのぼります（例：<a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> を参照）。</p>
 <p>blunderDB を無料で提供しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Windows が潜在的な脅威について警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Windows の警告を回避するために行う操作を説明します。</p>
 <section id="avertissement-windows-smartscreen">
-<h2><span class="section-number">9.1. </span>Windows SmartScreen の警告<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.1. </span>Windows SmartScreen の警告<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
 <p>blunderDB をダウンロードして実行すると、Windows が次のような警告を表示する場合があります</p>
 <figure class="align-default">
 <img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
@@ -123,7 +124,7 @@
 </ol>
 </section>
 <section id="blocage-windows-defender">
-<h2><span class="section-number">9.2. </span>Windows Defender によるブロック<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.2. </span>Windows Defender によるブロック<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
 <p>Windows の一部のセキュリティ設定では、SmartScreen のブロックを解除しても（前のセクションを参照）、Windows Defender が次のようなメッセージで blunderDB の実行を妨げる場合があります</p>
 <figure class="align-center">
 <img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
@@ -198,8 +199,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. 付録: フィルターの高度な使い方" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Mac 付録：blunderDB の起動ブロックについて" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="9. 付録: フィルターの高度な使い方" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="11. Mac 付録：blunderDB の起動ブロックについて" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

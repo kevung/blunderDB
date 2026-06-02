@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{02.06.2026}
-\release{0.21.0}
+\release{0.22.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -617,6 +617,22 @@ Internationalisierung der Oberfläche: das gesamte blunderDB (Symbolleiste, Pane
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.22.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+02/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Hinzufügen eines Headless\sphinxhyphen{}Modus (Server), fortgeschritten und optional, der die Desktop\sphinxhyphen{}Anwendung ergänzt: ein Daemon \sphinxcode{\sphinxupquote{serve}}, der die Engine über HTTP + JSON bereitstellt, ein mehrbenutzerfähiges PostgreSQL\sphinxhyphen{}Backend mit Abschottung pro Tenant (und optionaler Row\sphinxhyphen{}Level Security), ein Befehl \sphinxcode{\sphinxupquote{migrate}} zum Übertragen einer SQLite\sphinxhyphen{}Datenbank nach PostgreSQL sowie ein generischer Dispatcher \sphinxcode{\sphinxupquote{call}}, der über die Kommandozeile Zugriff auf alle Speicheroperationen gibt. Import einzelner Stellungen aus neuen Formaten (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz\sphinxhyphen{}Text, native \sphinxcode{\sphinxupquote{.db}}\sphinxhyphen{}Bibliothek) mit Anreicherung der Duplikate zwischen den Formaten. Korrekturen: Die Panels verursachen keinen Fehler mehr, wenn keine Datenbank geöffnet ist, und das Kommentar\sphinxhyphen{}Panel läuft beim Öffnen nicht mehr in eine Schleife. Siehe :ref:`headless`.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -638,15 +654,15 @@ Die neueste Version von blunderDB ist unter der MIT\sphinxhyphen{}Lizenz verfüg
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe}
+für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0}
+für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
 
 \item {} 
 \sphinxAtStartPar
-für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip}
+für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
 
 \end{itemize}
 
@@ -662,7 +678,7 @@ Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, führe
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0}
+Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warnung:}
@@ -5598,6 +5614,585 @@ blunderDB läuft unter Windows, Linux und Mac.
 \label{\detokenize{faq:d-ou-vient-l-icone-de-blunderdb}}
 \sphinxAtStartPar
 Das Symbol von blunderDB ist das „goggling“\sphinxhyphen{}Emoticon aus der \sphinxhref{https://commons.wikimedia.org/wiki/SMirC}{SMirC\sphinxhyphen{}Serie}.
+
+\sphinxstepscope
+
+
+\section{Headless\sphinxhyphen{}Modus (Server)}
+\label{\detokenize{mode_headless:mode-headless-serveur}}\label{\detokenize{mode_headless:headless}}\label{\detokenize{mode_headless::doc}}
+\begin{sphinxadmonition}{note}{Bemerkung:}
+\sphinxAtStartPar
+Dieser Abschnitt beschreibt einen \sphinxstylestrong{fortgeschrittenen und optionalen Modus} von blunderDB, der für Server\sphinxhyphen{}Bereitstellungen, den Mehrbenutzerbetrieb und die Automatisierung gedacht ist. \sphinxstylestrong{Die normale und empfohlene Nutzung von blunderDB bleibt die Desktop\sphinxhyphen{}Anwendung}, die in den vorherigen Kapiteln beschrieben wird. Wenn Sie blunderDB allein auf Ihrem Computer verwenden, benötigen Sie diesen Modus nicht: Sie können dieses Kapitel überspringen, ohne dabei Analysefunktionen zu verpassen.
+\end{sphinxadmonition}
+
+
+\subsection{Überblick}
+\label{\detokenize{mode_headless:vue-d-ensemble}}
+\sphinxAtStartPar
+Dasselbe Binärprogramm \sphinxcode{\sphinxupquote{blunderdb}} kann zusätzlich zur Desktop\sphinxhyphen{}Anwendung und den Kommandozeilenbefehlen (siehe {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Befehlszeilenschnittstelle (CLI)}}}}}) im \sphinxstylestrong{Headless\sphinxhyphen{}Modus} laufen: ohne grafische Oberfläche, vollständig über die Kommandozeile oder über das Netzwerk gesteuert. Dieser Modus umfasst drei Anwendungsfälle:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{der Daemon} \sphinxcode{\sphinxupquote{serve}} — stellt die Engine von blunderDB als HTTP\sphinxhyphen{}+\sphinxhyphen{}JSON\sphinxhyphen{}Dienst bereit, um eine gemeinsame Datenbank auf einem Server zu betreiben und mehrbenutzerfähig darauf zuzugreifen;
+
+\item {} 
+\sphinxAtStartPar
+der generische Dispatcher \sphinxcode{\sphinxupquote{call}} — ruft jede beliebige Speicheroperation direkt und lokal auf, für Skripting und Tests;
+
+\item {} 
+\sphinxAtStartPar
+der Befehl \sphinxcode{\sphinxupquote{migrate}} — überträgt eine SQLite\sphinxhyphen{}Einzelbenutzerdatenbank in ein mehrbenutzerfähiges PostgreSQL\sphinxhyphen{}Backend.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Diese drei Anwendungsfälle stützen sich auf eine gemeinsame \sphinxstylestrong{Speicherschicht}, die mit zwei Backends umgehen kann: \sphinxstylestrong{SQLite} (das übliche \sphinxcode{\sphinxupquote{.db}}\sphinxhyphen{}Dateiformat der Desktop\sphinxhyphen{}Anwendung) und \sphinxstylestrong{PostgreSQL} (für mehrbenutzerfähige Server\sphinxhyphen{}Bereitstellungen).
+
+
+\subsection{Der Daemon \sphinxstyleliteralintitle{\sphinxupquote{serve}}}
+\label{\detokenize{mode_headless:le-demon-serve}}\label{\detokenize{mode_headless:headless-serve}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{blunderdb serve}} startet die Engine als HTTP\sphinxhyphen{}Dienst, der mit JSON antwortet. Damit lässt sich eine Stellungsdatenbank auf einer Maschine hosten und von mehreren Clients aus darauf zugreifen.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Servir une base SQLite locale sur le port 8080}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+
+\PYG{c+c1}{\PYGZsh{} Servir un backend PostgreSQL}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}backend\PYG{+w}{ }postgres\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}dsn\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/blunderdb?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+\end{sphinxVerbatim}
+
+\begin{sphinxadmonition}{warning}{Warnung:}
+\sphinxAtStartPar
+\sphinxstylestrong{Der Daemon führt keinerlei Authentifizierung durch.} Er vertraut dem Anfrage\sphinxhyphen{}Header \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}} und \sphinxstylestrong{muss} hinter einem Reverse\sphinxhyphen{}Proxy (nginx, Caddy …) laufen, der für die Authentifizierung zuständig ist. \sphinxstylestrong{Setzen Sie ihn niemals direkt dem öffentlichen Internet aus.}
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Optionen:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{74}\X{12}{74}\X{40}{74}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Option
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Standard
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Bedeutung
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <Pfad>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+SQLite\sphinxhyphen{}Datei (Kurzform für \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <chemin>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <type>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Speicher\sphinxhyphen{}Backend: \sphinxcode{\sphinxupquote{sqlite}} oder \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <Zeichenkette>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Verbindungszeichenkette des Backends
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}addr <Host:Port>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{:8080}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Lausch\sphinxhyphen{}Adresse
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}log\sphinxhyphen{}level <Stufe>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{info}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Protokollierungsstufe: \sphinxcode{\sphinxupquote{debug|info|warn|error}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{true}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+stellt \sphinxcode{\sphinxupquote{/metrics}} bereit (Prometheus\sphinxhyphen{}Format)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}cors\sphinxhyphen{}allow\sphinxhyphen{}origin <Ursprung>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+aktiviert CORS für diesen Ursprung (standardmäßig deaktiviert)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}rps <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{0}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Anfragenlimit pro Sekunde und pro Tenant (0 = deaktiviert)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}burst <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{2×rps}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Größe des Token\sphinxhyphen{}Buckets für Anfragenspitzen
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{false}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+PostgreSQL: aktiviert Row\sphinxhyphen{}Level Security pro Tenant (Verteidigung in der Tiefe, optional)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Die meisten Optionen können auch über Umgebungsvariablen bereitgestellt werden (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+
+
+\subsubsection{Endpunkte}
+\label{\detokenize{mode_headless:points-d-acces}}
+\sphinxAtStartPar
+Der Dienst stellt stets vorhandene Betriebs\sphinxhyphen{}Endpunkte bereit:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /healthz}} — Lebendigkeit (der Prozess läuft);
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /readyz}} — Bereitschaft (der Speicher antwortet);
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /metrics}} — Prometheus\sphinxhyphen{}Metriken (falls \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}} aktiv ist).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Die fachliche Oberfläche folgt dem Schema \sphinxcode{\sphinxupquote{POST /v1/<Familie>.<Methode>}} (zum Beispiel \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Die Familien umfassen Stellungen, Analysen, Matches, Kommentare, Sammlungen, Turniere, Anki\sphinxhyphen{}Karten, Filter, Sitzungen, Suche, Metadaten, Statistiken und Import. Die Listing\sphinxhyphen{}Endpunkte liefern einen NDJSON\sphinxhyphen{}Strom (ein JSON\sphinxhyphen{}Objekt pro Zeile). Der Server wird bei \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}} sauber beendet.
+
+
+\subsection{PostgreSQL\sphinxhyphen{}Backend und Mehrbenutzerbetrieb}
+\label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
+\sphinxAtStartPar
+Für eine gemeinsame Bereitstellung kann blunderDB die Daten in \sphinxstylestrong{PostgreSQL} statt in einer SQLite\sphinxhyphen{}Datei speichern. Das Backend wird über \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend postgres}} und die Verbindungszeichenkette \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn}} ausgewählt. Das Schema wird beim Start automatisch erstellt und migriert.
+
+\sphinxAtStartPar
+Die Daten sind \sphinxstylestrong{nach Tenant (Mandant) abgeschottet}: jede Anfrage trägt eine Scope\sphinxhyphen{}Kennung (Header \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, standardmäßig \sphinxcode{\sphinxupquote{default}}), was es mehreren Benutzern ermöglicht, dieselbe Instanz zu teilen, ohne die Daten der anderen zu sehen. Die Option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} aktiviert zusätzlich die \sphinxstylestrong{Row\sphinxhyphen{}Level Security} von PostgreSQL: Es werden Isolationsrichtlinien pro Tenant installiert und \sphinxcode{\sphinxupquote{app.tenant\_id}} wird pro Verbindung gesetzt. Dies ist eine optionale Verteidigung in der Tiefe, die standardmäßig deaktiviert ist.
+
+
+\subsection{Eine SQLite\sphinxhyphen{}Datenbank nach PostgreSQL migrieren}
+\label{\detokenize{mode_headless:migrer-une-base-sqlite-vers-postgresql}}\label{\detokenize{mode_headless:headless-migrate}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{blunderdb migrate}} kopiert eine SQLite\sphinxhyphen{}Einzelbenutzerdatenbank in ein PostgreSQL\sphinxhyphen{}Backend, unter einem gewählten Tenant\sphinxhyphen{}Scope — das ist der Weg, um eine Desktop\sphinxhyphen{}Bibliothek in eine Server\sphinxhyphen{}Bereitstellung „hochzuladen“.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}to\PYG{+w}{   }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/db?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant
+
+\PYG{c+c1}{\PYGZsh{} Prévisualiser sans rien écrire}
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dry\PYGZhy{}run
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Die Migration kopiert die \sphinxstylestrong{Stellungen, ihre Analysen und Kommentare, die Matches (Partien + Züge), die Turniere (mit ihren Match\sphinxhyphen{}Verknüpfungen) und die Sammlungen (mit ihrer Zusammensetzung)}, wobei die Primär\sphinxhyphen{} und Fremdschlüssel neu zugewiesen werden, das Ganze in einer \sphinxstylestrong{einzigen Transaktion} auf der Zielseite: Der Vorgang ist atomar (ein Fehlschlag lässt das Ziel unverändert, es genügt, ihn erneut zu starten). Der Fortschritt und die abschließende Bilanz werden als NDJSON auf der Standardausgabe ausgegeben.
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{24}{76}\X{12}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Option
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Standard
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Bedeutung
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from <uri>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+SQLite\sphinxhyphen{}Quelldatenbank (\sphinxcode{\sphinxupquote{sqlite:///chemin}} oder ein einfacher Pfad)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to <dsn>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ziel\sphinxhyphen{}PostgreSQL\sphinxhyphen{}DSN (\sphinxcode{\sphinxupquote{postgres://…}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tenant\sphinxhyphen{}id <scope>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ziel\sphinxhyphen{}Tenant\sphinxhyphen{}Scope (erforderlich außer bei \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+zählt, was kopiert würde, ohne etwas zu schreiben
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}on\sphinxhyphen{}conflict <Richtlinie>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}} bricht ab, wenn der Tenant bereits Daten hat; \sphinxcode{\sphinxupquote{skip}} führt zusammen (Deduplizierung der Stellungen über den Zobrist\sphinxhyphen{}Hash)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Bemerkung:}
+\sphinxAtStartPar
+Noch nicht migriert werden die Anwendungszustände: Anki\sphinxhyphen{}Decks/\sphinxhyphen{}Karten, Filterbibliothek, Such\sphinxhyphen{} und Befehlsverlauf sowie Sitzungsmetadaten. Vorrang hat die Migration der Stellungsbibliothek und des Match\sphinxhyphen{}Verlaufs.
+\end{sphinxadmonition}
+
+
+\subsection{Der generische Dispatcher \sphinxstyleliteralintitle{\sphinxupquote{call}}}
+\label{\detokenize{mode_headless:le-dispatcher-generique-call}}\label{\detokenize{mode_headless:headless-call}}
+\sphinxAtStartPar
+Ergänzend zu den herkömmlichen Unterbefehlen ({\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Befehlszeilenschnittstelle (CLI)}}}}}) stellt \sphinxcode{\sphinxupquote{blunderdb call}} \sphinxstylestrong{alle} Speicheroperationen direkt und lokal bereit. Es verwendet dieselben Handler wie der Daemon \sphinxcode{\sphinxupquote{serve}}: das Verhalten ist also identisch zu \sphinxcode{\sphinxupquote{POST /v1/<famille>.<méthode>}}. Das ist nützlich für Skripting und Integrationstests.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Lister toutes les méthodes disponibles}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }\PYGZhy{}\PYGZhy{}list
+
+\PYG{c+c1}{\PYGZsh{} Lectures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }metadata.counts\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.list\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}limit\PYGZdq{}:10\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.get\PYG{+w}{     }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:1\PYGZcb{}\PYGZsq{}}
+
+\PYG{c+c1}{\PYGZsh{} Écritures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.save\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}position\PYGZdq{}:\PYGZob{}...\PYGZcb{}\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.delete\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:42\PYGZcb{}\PYGZsq{}}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Optionen:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{76}\X{14}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Option
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Standard
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Bedeutung
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <Pfad>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+SQLite\sphinxhyphen{}Datei (Kurzform für \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <chemin>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <type>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}} oder \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <Zeichenkette>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Verbindungszeichenkette des Backends
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}scope <Zeichenkette>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{default}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Tenant\sphinxhyphen{}Scope (gesendet als \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json <Zeichenkette>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\{\}}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Anfragerumpf im JSON\sphinxhyphen{}Format
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json\sphinxhyphen{}file <Pfad>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+liest den Anfragerumpf aus einer Datei
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}list}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+zeigt alle Methoden \sphinxcode{\sphinxupquote{<famille>.<méthode>}} an und beendet sich
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Die JSON\sphinxhyphen{}Antwort (oder der NDJSON\sphinxhyphen{}Strom bei den \sphinxcode{\sphinxupquote{*.list}}\sphinxhyphen{}Endpunkten) wird auf die Standardausgabe geschrieben. Im Fehlerfall endet der Prozess mit einem von null verschiedenen Code, und der Umschlag \sphinxcode{\sphinxupquote{\{"error":\{…\}\}}} wird auf die Standardausgabe geschrieben, damit er analysierbar bleibt (zum Beispiel mit \sphinxcode{\sphinxupquote{jq}}).
 
 \sphinxstepscope
 

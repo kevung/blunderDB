@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Безголовый режим (сервер) &mdash; документация blunderDB 0.22.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3880d710"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="9. Приложение: Расширенное использование фильтров" href="annexe_filtres.html" />
+    <link rel="prev" title="7. Часто задаваемые вопросы" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Безголовый режим (сервер)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Обзор</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. Демон <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Точки доступа</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. Бэкенд PostgreSQL и многопользовательский режим</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">8.4. Миграция базы SQLite в PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">8.5. Универсальный диспетчер <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Безголовый режим (сервер)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">8. </span>Безголовый режим (сервер)<a class="headerlink" href="#mode-headless-serveur" title="Ссылка на этот заголовок"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Этот раздел описывает <strong>продвинутый и необязательный режим</strong> blunderDB, предназначенный для серверных развёртываний, многопользовательской работы и автоматизации. <strong>Обычным и рекомендуемым способом использования blunderDB остаётся настольное приложение</strong>, описанное в предыдущих главах. Если вы используете blunderDB в одиночку, на своём компьютере, этот режим вам не нужен: вы можете пропустить эту главу, не теряя ни одной функции анализа.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">8.1. </span>Обзор<a class="headerlink" href="#vue-d-ensemble" title="Ссылка на этот заголовок"></a></h2>
+<p>Тот же исполняемый файл <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> может, помимо настольного приложения и команд командной строки (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>), работать в <strong>безголовом режиме</strong>: без графического интерфейса, полностью управляемый из командной строки или по сети. Этот режим объединяет три варианта использования:</p>
+<ul class="simple">
+<li><p><strong>демон</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — предоставляет движок blunderDB как сервис HTTP + JSON, чтобы держать общую базу на сервере и обращаться к ней с нескольких клиентов;</p></li>
+<li><p>универсальный диспетчер <code class="docutils literal notranslate"><span class="pre">call</span></code> — вызывает любую операцию хранения напрямую, локально, для написания скриптов и тестов;</p></li>
+<li><p>команда <code class="docutils literal notranslate"><span class="pre">migrate</span></code> — переносит однопользовательскую базу SQLite в многопользовательский бэкенд PostgreSQL.</p></li>
+</ul>
+<p>Эти три варианта использования опираются на общий <strong>слой хранения</strong>, который умеет работать с двумя бэкендами: <strong>SQLite</strong> (привычный формат файла <code class="docutils literal notranslate"><span class="pre">.db</span></code> настольного приложения) и <strong>PostgreSQL</strong> (для многопользовательских серверных развёртываний).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">8.2. </span>Демон <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="Ссылка на этот заголовок"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> запускает движок как сервис HTTP, отвечающий в формате JSON. Он позволяет разместить базу позиций на одной машине и обращаться к ней с нескольких клиентов.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">&quot;postgres://user:pass@host:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p><strong>Демон не выполняет никакой аутентификации.</strong> Он доверяет заголовку запроса <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> и <strong>должен</strong> работать за обратным прокси (nginx, Caddy…), отвечающим за аутентификацию. <strong>Никогда не выставляйте его напрямую в публичный Интернет.</strong></p>
+</div>
+<p><strong>Опции:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Опция</p></th>
+<th class="head"><p>По умолчанию</p></th>
+<th class="head"><p>Значение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;путь&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>файл SQLite (сокращение для <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>бэкенд хранения: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> или <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;строка&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>строка подключения к бэкенду</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;хост:порт&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>адрес прослушивания</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;уровень&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>уровень журналирования: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>предоставляет <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (формат Prometheus)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;источник&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>включает CORS для этого источника (по умолчанию отключено)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>лимит запросов в секунду на одного арендатора (0 = отключено)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2×rps</span></code></p></td>
+<td><p>размер корзины токенов для пиков запросов</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: включает Row-Level Security по арендаторам (глубокая защита, по выбору)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Большинство опций можно также задать через переменные окружения (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<section id="points-d-acces">
+<h3><span class="section-number">8.2.1. </span>Точки доступа<a class="headerlink" href="#points-d-acces" title="Ссылка на этот заголовок"></a></h3>
+<p>Сервис предоставляет эксплуатационные точки доступа, всегда присутствующие:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — живучесть (процесс работает);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — готовность (хранилище отвечает);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — метрики Prometheus (если активна опция <code class="docutils literal notranslate"><span class="pre">--metrics</span></code>).</p></li>
+</ul>
+<p>Прикладная поверхность следует схеме <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;семейство&gt;.&lt;метод&gt;</span></code> (например, <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Семейства охватывают позиции, анализы, матчи, комментарии, коллекции, турниры, карточки Anki, фильтры, сессии, поиск, метаданные, статистику и импорт. Эндпоинты списков возвращают поток NDJSON (по одному объекту JSON на строку). Сервер корректно останавливается по <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Бэкенд PostgreSQL и многопользовательский режим<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Ссылка на этот заголовок"></a></h2>
+<p>Для общего развёртывания blunderDB может хранить данные в <strong>PostgreSQL</strong>, а не в файле SQLite. Бэкенд выбирается опцией <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> и строкой подключения <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Схема создаётся и мигрируется автоматически при запуске.</p>
+<p>Данные <strong>разделены по арендаторам</strong> (tenant): каждый запрос несёт идентификатор области (заголовок <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, по умолчанию <code class="docutils literal notranslate"><span class="pre">default</span></code>), что позволяет нескольким пользователям совместно использовать один экземпляр, не видя данных друг друга. Опция <code class="docutils literal notranslate"><span class="pre">--rls</span></code> дополнительно включает <strong>Row-Level Security</strong> PostgreSQL: устанавливаются политики изоляции по арендаторам, а <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> задаётся для каждого соединения. Это необязательная глубокая защита, отключённая по умолчанию.</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Миграция базы SQLite в PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Ссылка на этот заголовок"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> копирует однопользовательскую базу SQLite в бэкенд PostgreSQL под выбранной областью арендатора — это путь для «загрузки» настольной библиотеки в серверное развёртывание.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">&quot;postgres://user:pass@host:5432/db?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>Миграция копирует <strong>позиции, их анализы и комментарии, матчи (партии + ходы), турниры (с их связями матчей) и коллекции (с их составом)</strong>, переназначая первичные и внешние ключи, всё в <strong>одной транзакции</strong> на стороне назначения: операция атомарна (сбой оставляет назначение нетронутым, достаточно повторить запуск). Прогресс и итоговый отчёт выводятся в NDJSON на стандартный вывод.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Опция</p></th>
+<th class="head"><p>По умолчанию</p></th>
+<th class="head"><p>Значение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>исходная база SQLite (<code class="docutils literal notranslate"><span class="pre">sqlite:///chemin</span></code> или просто путь)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>DSN PostgreSQL назначения (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;scope&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>область арендатора назначения (обязательна, кроме режима <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>подсчитывает, что было бы скопировано, ничего не записывая</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;политика&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> прерывает, если у арендатора уже есть данные; <code class="docutils literal notranslate"><span class="pre">skip</span></code> объединяет (дедупликация позиций по хешу Zobrist)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Пока (ещё) не мигрируются прикладные состояния: колоды/карточки Anki, библиотека фильтров, история поиска и команд, а также метаданные сессии. Приоритет — миграция библиотеки позиций и истории матчей.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">8.5. </span>Универсальный диспетчер <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="Ссылка на этот заголовок"></a></h2>
+<p>В дополнение к историческим подкомандам (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>), <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> предоставляет <strong>все</strong> операции хранения напрямую, локально. Он проходит через те же обработчики, что и демон <code class="docutils literal notranslate"><span class="pre">serve</span></code>: поэтому поведение идентично <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;семейство&gt;.&lt;метод&gt;</span></code>. Это полезно для написания скриптов и интеграционного тестирования.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;limit&quot;:10}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:1}&#39;</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;position&quot;:{...}}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:42}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Опции:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Опция</p></th>
+<th class="head"><p>По умолчанию</p></th>
+<th class="head"><p>Значение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;путь&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>файл SQLite (сокращение для <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> или <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;строка&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>строка подключения к бэкенду</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;строка&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>область арендатора (отправляется как <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;строка&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>тело запроса в формате JSON</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;путь&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>читает тело запроса из файла</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>выводит все методы <code class="docutils literal notranslate"><span class="pre">&lt;семейство&gt;.&lt;метод&gt;</span></code> и завершает работу</p></td>
+</tr>
+</tbody>
+</table>
+<p>Ответ JSON (или поток NDJSON для эндпоинтов <code class="docutils literal notranslate"><span class="pre">*.list</span></code>) записывается на стандартный вывод. В случае ошибки процесс завершается с ненулевым кодом, а оболочка <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> выводится на стандартный вывод, чтобы оставаться разбираемой (например, с помощью <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. Часто задаваемые вопросы" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="9. Приложение: Расширенное использование фильтров" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

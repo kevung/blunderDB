@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Appendice: Utilizzo avanzato dei filtri &mdash; Documentazione blunderDB 0.21.0 </title>
+  <title>9. Appendice: Utilizzo avanzato dei filtri &mdash; Documentazione blunderDB 0.22.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/documentation_options.js?v=30782b8f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Indice" href="genindex.html" />
     <link rel="search" title="Cerca" href="search.html" />
-    <link rel="next" title="9. Appendice Windows: rilevamento errato di blunderDB come malware" href="annexe_windows_securite.html" />
-    <link rel="prev" title="7. Domande frequenti (FAQ)" href="faq.html" /> 
+    <link rel="next" title="10. Appendice Windows: rilevamento errato di blunderDB come malware" href="annexe_windows_securite.html" />
+    <link rel="prev" title="8. Modalità headless (server)" href="mode_headless.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,17 +55,18 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Scorciatoie da tastiera</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Appendice: Utilizzo avanzato dei filtri</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">8.1. Ricerca di posizioni da riga di comando</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">8.2. Ricerca nei risultati correnti</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">8.3. Libreria dei filtri</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exemples">8.4. Esempi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Modalità headless (server)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Appendice: Utilizzo avanzato dei filtri</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">9.1. Ricerca di posizioni da riga di comando</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">9.2. Ricerca nei risultati correnti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">9.3. Libreria dei filtri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">9.4. Esempi</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -82,7 +83,7 @@
           <div role="navigation" aria-label="Naviga tra le pagine">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">8. </span>Appendice: Utilizzo avanzato dei filtri</li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Appendice: Utilizzo avanzato dei filtri</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -92,14 +93,14 @@
            <div itemprop="articleBody">
              
   <section id="annexe-utilisation-avancee-des-filtres">
-<span id="annexe-filtres"></span><h1><span class="section-number">8. </span>Appendice: Utilizzo avanzato dei filtri<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
+<span id="annexe-filtres"></span><h1><span class="section-number">9. </span>Appendice: Utilizzo avanzato dei filtri<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Avvertimento</p>
 <p>Questa sezione è rivolta agli utenti avanzati di blunderDB che desiderano sfruttare appieno le funzionalità di ricerca delle posizioni.</p>
 </div>
 <p>I filtri sono al centro dell’analisi delle posizioni in blunderDB. Il loro utilizzo consente di cercare posizioni specifiche con discreta precisione. In questa sezione viene illustrato in dettaglio l’utilizzo dei filtri tramite la riga di comando. La riga di comando è accessibile premendo il tasto <code class="docutils literal notranslate"><span class="pre">SPAZIO</span></code>. Con un po” di pratica consente di combinare molto rapidamente i filtri e di utilizzare la libreria dei filtri.</p>
 <section id="recherche-de-positions-en-ligne-de-commande">
-<h2><span class="section-number">8.1. </span>Ricerca di posizioni da riga di comando<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<h2><span class="section-number">9.1. </span>Ricerca di posizioni da riga di comando<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>Per effettuare una ricerca tramite filtri,</p>
 <ol class="arabic simple">
 <li><p>Premere il tasto <code class="docutils literal notranslate"><span class="pre">TAB</span></code> per aprire il pannello di ricerca.</p></li>
@@ -118,13 +119,13 @@
 </div>
 </section>
 <section id="recherche-dans-les-resultats-courants">
-<h2><span class="section-number">8.2. </span>Ricerca nei risultati correnti<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Link to this heading"></a></h2>
+<h2><span class="section-number">9.2. </span>Ricerca nei risultati correnti<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Link to this heading"></a></h2>
 <p>È possibile affinare una ricerca cercando tra le posizioni attualmente filtrate. Ciò consente di restringere progressivamente i risultati.</p>
 <p>Da riga di comando, utilizzare il comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguito da filtri (es.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Il comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> funziona dopo una ricerca preliminare.</p>
 <p>La finestra di ricerca (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) offre anche una casella di spunta «Search in current results» per la stessa funzionalità.</p>
 </section>
 <section id="bibliotheque-de-filtres">
-<h2><span class="section-number">8.3. </span>Libreria dei filtri<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
+<h2><span class="section-number">9.3. </span>Libreria dei filtri<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
 <p>La libreria dei filtri consente all’utente di salvare i comandi di ricerca per facilitare i suoi studi tematici.</p>
 <p>Per aggiungere un filtro alla libreria,</p>
 <ol class="arabic simple">
@@ -147,7 +148,7 @@
 </ol>
 </section>
 <section id="exemples">
-<h2><span class="section-number">8.4. </span>Esempi<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
+<h2><span class="section-number">9.4. </span>Esempi<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
 <p>Ecco alcuni esempi di utilizzo dei filtri da riga di comando:</p>
 <table class="docutils align-center">
 <colgroup>
@@ -270,8 +271,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
-        <a href="faq.html" class="btn btn-neutral float-left" title="7. Domande frequenti (FAQ)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
-        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="9. Appendice Windows: rilevamento errato di blunderDB come malware" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mode_headless.html" class="btn btn-neutral float-left" title="8. Modalità headless (server)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="10. Appendice Windows: rilevamento errato di blunderDB come malware" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

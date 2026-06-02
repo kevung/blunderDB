@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Headless mode (server) &mdash; blunderDB 0.22.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5686f5df"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="9. Annex: Advanced Filter Usage" href="annexe_filtres.html" />
+    <link rel="prev" title="7. Frequently Asked Questions (FAQ)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Headless mode (server)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. The <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQL backend and multi-user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">8.4. Migrating a SQLite database to PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">8.5. The generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Headless mode (server)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">8. </span>Headless mode (server)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This section describes an <strong>advanced, optional mode</strong> of blunderDB, intended for server deployments, multi-user setups and automation. <strong>The normal and recommended use of blunderDB remains the desktop application</strong> described in the previous chapters. If you use blunderDB on your own, on your computer, you do not need this mode: you can skip this chapter without losing any of the analysis features.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">8.1. </span>Overview<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>In addition to the desktop application and the command-line commands (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>), the same <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> binary can run in <strong>headless mode</strong>: without a graphical interface, driven entirely from the command line or over the network. This mode covers three use cases:</p>
+<ul class="simple">
+<li><p><strong>the</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> <strong>daemon</strong> — exposes the blunderDB engine as an HTTP + JSON service, to run a shared database on a server and access it from several clients;</p></li>
+<li><p>the generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher — calls any storage operation directly, locally, for scripting and testing;</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command — transfers a single-user SQLite database to a multi-user PostgreSQL backend.</p></li>
+</ul>
+<p>These three use cases rely on a shared <strong>storage layer</strong> that can talk to two backends: <strong>SQLite</strong> (the usual <code class="docutils literal notranslate"><span class="pre">.db</span></code> file format of the desktop application) and <strong>PostgreSQL</strong> (for multi-user server deployments).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">8.2. </span>The <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon<a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> runs the engine as an HTTP service that responds in JSON. It lets you host a position database on one machine and access it from several clients.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">&quot;postgres://user:pass@host:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>The daemon performs no authentication.</strong> It trusts the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> request header and <strong>must</strong> run behind a reverse proxy (nginx, Caddy…) responsible for authentication. <strong>Never expose it directly to the public Internet.</strong></p>
+</div>
+<p><strong>Options:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite file (shorthand for <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;path&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>storage backend: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>backend connection string</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;host:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>listen address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;level&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>log level: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>exposes <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (Prometheus format)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>enables CORS for this origin (disabled by default)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>requests per second per tenant limit (0 = disabled)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2×rps</span></code></p></td>
+<td><p>token-bucket size for request bursts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: enables per-tenant Row-Level Security (defence in depth, opt-in)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Most options can also be provided through environment variables (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<section id="points-d-acces">
+<h3><span class="section-number">8.2.1. </span>Endpoints<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>The service exposes operational endpoints, always present:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — liveness (the process is running);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — readiness (storage responds);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus metrics (if <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> is enabled).</p></li>
+</ul>
+<p>The business surface follows the <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;family&gt;.&lt;method&gt;</span></code> scheme (for example <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). The families cover positions, analyses, matches, comments, collections, tournaments, Anki cards, filters, sessions, search, metadata, statistics and import. Listing endpoints return an NDJSON stream (one JSON object per line). The server shuts down cleanly on <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQL backend and multi-user<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>For a shared deployment, blunderDB can store data in <strong>PostgreSQL</strong> rather than in a SQLite file. The backend is selected with <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> and the <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> connection string. The schema is created and migrated automatically at startup.</p>
+<p>Data is <strong>partitioned per tenant</strong>: each request carries a scope identifier (the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> header, <code class="docutils literal notranslate"><span class="pre">default</span></code> by default), which lets several users share the same instance without seeing each other’s data. The <code class="docutils literal notranslate"><span class="pre">--rls</span></code> option additionally enables PostgreSQL’s <strong>Row-Level Security</strong>: per-tenant isolation policies are installed and <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> is set per connection. This is an optional defence in depth, disabled by default.</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Migrating a SQLite database to PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> copies a single-user SQLite database to a PostgreSQL backend, under a chosen tenant scope — this is the path to “upload” a desktop library to a server deployment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">&quot;postgres://user:pass@host:5432/db?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>The migration copies the <strong>positions, their analyses and comments, the matches (games + moves), the tournaments (with their match links) and the collections (with their composition)</strong>, reassigning primary and foreign keys, all within a <strong>single transaction</strong> on the destination side: the operation is atomic (a failure leaves the destination intact, just run it again). Progress and the final summary are emitted as NDJSON on standard output.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>source SQLite database (<code class="docutils literal notranslate"><span class="pre">sqlite:///path</span></code> or a plain path)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>destination PostgreSQL DSN (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;scope&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>destination tenant scope (required except in <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>counts what would be copied without writing anything</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;policy&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> aborts if the tenant already has data; <code class="docutils literal notranslate"><span class="pre">skip</span></code> merges (deduplication of positions by Zobrist hash)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Application state is not (yet) migrated: Anki decks/cards, the filter library, search and command history, and session metadata. The priority is migrating the position library and the match history.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">8.5. </span>The generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher<a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>In addition to the historical subcommands (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>), <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> exposes <strong>all</strong> storage operations directly, locally. It goes through the same handlers as the <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon: the behaviour is therefore identical to <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;family&gt;.&lt;method&gt;</span></code>. This is useful for scripting and integration testing.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;limit&quot;:10}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:1}&#39;</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;position&quot;:{...}}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:42}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite file (shorthand for <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;path&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>backend connection string</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>tenant scope (sent as <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>request body in JSON format</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>reads the request body from a file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lists all <code class="docutils literal notranslate"><span class="pre">&lt;family&gt;.&lt;method&gt;</span></code> methods and exits</p></td>
+</tr>
+</tbody>
+</table>
+<p>The JSON response (or the NDJSON stream for <code class="docutils literal notranslate"><span class="pre">*.list</span></code> endpoints) is written to standard output. On error, the process exits with a non-zero code and the <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> envelope is printed to standard output so it stays parseable (for example with <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. Frequently Asked Questions (FAQ)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="9. Annex: Advanced Filter Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

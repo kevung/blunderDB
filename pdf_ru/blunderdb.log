@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:04
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1042,7 +1042,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 ]
 (./blunderdb.toc
-Underfull \hbox (badness 6608) in paragraph at lines 128--128
+Underfull \hbox (badness 6608) in paragraph at lines 135--135
  [][] [][][]\TU/FreeSerif(1)/m/n/10 Приложение Windows: ложное обнаружение blun
 derDB как вредоносного программного 
  []
@@ -1170,12 +1170,6 @@ Underfull \hbox (badness 7468) detected at line 600
 rDB
  []
 
-[3]
-Overfull \vbox (1127.11995pt too high) has occurred while \output is active []
-
-
-[4]
-Глава 2.
 
 Package fontspec Info: Font family 'FreeMono(1)' created for font 'FreeMono'
 (fontspec)             with options [Script=Cyrillic].
@@ -1198,39 +1192,178 @@ Package fontspec Info: Font family 'FreeMono(1)' created for font 'FreeMono'
 (fontspec)             <->"FreeMono/BI/OT:script=cyrl;language=dflt;"
 (fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 613--615
+[]\TU/FreeSerif(1)/m/n/10 Добавлен безголовый (серверный) режим, продвинутый
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 613--615
+\TU/FreeSerif(1)/m/n/10 и необязательный, дополняющий настольное приложение:
+ []
+
+
+Underfull \hbox (badness 5245) in paragraph at lines 613--615
+\TU/FreeSerif(1)/m/n/10 демон \TU/FreeMono(1)/m/n/10 serve\TU/FreeSerif(1)/m/n/
+10 , предоставляющий движок по HTTP + JSON,
+ []
+
+
+Underfull \hbox (badness 7981) in paragraph at lines 613--615
+\TU/FreeSerif(1)/m/n/10 многопользовательский бэкенд PostgreSQL с разделением п
+о
+ []
+
+
+Underfull \hbox (badness 5711) in paragraph at lines 613--615
+\TU/FreeSerif(1)/m/n/10 Gammon \TU/FreeMono(1)/m/n/10 .xgp\TU/FreeSerif(1)/m/n/
+10 , текст BGBlitz, нативная библиотека \TU/FreeMono(1)/m/n/10 .db\TU/FreeSerif
+(1)/m/n/10 ) с
+ []
+
+
+Underfull \hbox (badness 5711) detected at line 616
+\TU/FreeSerif(1)/m/n/10 Gammon \TU/FreeMono(1)/m/n/10 .xgp\TU/FreeSerif(1)/m/n/
+10 , текст BGBlitz, нативная библиотека \TU/FreeMono(1)/m/n/10 .db\TU/FreeSerif
+(1)/m/n/10 ) с
+ []
+
+
+Underfull \hbox (badness 7981) detected at line 616
+\TU/FreeSerif(1)/m/n/10 многопользовательский бэкенд PostgreSQL с разделением п
+о
+ []
+
+
+Underfull \hbox (badness 5245) detected at line 616
+\TU/FreeSerif(1)/m/n/10 демон \TU/FreeMono(1)/m/n/10 serve\TU/FreeSerif(1)/m/n/
+10 , предоставляющий движок по HTTP + JSON,
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 616
+\TU/FreeSerif(1)/m/n/10 и необязательный, дополняющий настольное приложение:
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 616
+[]\TU/FreeSerif(1)/m/n/10 Добавлен безголовый (серверный) режим, продвинутый
+ []
+
+[3]
+Overfull \vbox (1283.11995pt too high) has occurred while \output is active []
+
+
+[4]
+Глава 2.
 [5
 
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16]
-Underfull \hbox (badness 10000) in paragraph at lines 1663--1665
+Underfull \hbox (badness 10000) in paragraph at lines 1679--1681
 []\TU/FreeSerif(1)/m/n/10 blunderDB автоматически определяет дубликаты и предот
 вращает повторный импорт матча, уже
  []
 
 [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
-[32] [33] [34] [35] [36] [37] [38]
-Underfull \hbox (badness 10000) in paragraph at lines 5857--5859
-[]\TU/FreeSerif(1)/m/n/10 Позиция турнира
+[32] [33] [34] [35] [36] [37]
+Underfull \hbox (badness 8056) in paragraph at lines 5630--5632
+[]\TU/FreeSerif(1)/m/n/10 Эти три варианта использования опираются на общий \TU
+/FreeSerif(1)/b/n/10 слой хранения\TU/FreeSerif(1)/m/n/10 , который умеет работ
+ать с
+ []
+
+[38]
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 5718--5720
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (19.82352pt too wide) detected at line 5721
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5777--5779
+[][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5809--5811
+[][][]\TU/FreeMono(1)/m/n/10 rate[]limit[]burst
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5845--5847
+[]\TU/FreeSerif(1)/m/n/10 Большинство опций можно также задать через переменные
+ окружения (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(1)/m/n/10 ,
  []
 
 [39]
-Underfull \hbox (badness 10000) in paragraph at lines 6092--6094
+Underfull \hbox (badness 10000) in paragraph at lines 5912--5914
+[]\TU/FreeSans(1)/m/n/10 По
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 5915
+[]\TU/FreeSans(1)/m/n/10 По
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5934--5936
+[]\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
+//chemin \TU/FreeSerif(1)/m/n/10 или
+ []
+
+
+Underfull \hbox (badness 6412) in paragraph at lines 5966--5968
+[]\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5988--5990
+[][][]\TU/FreeMono(1)/m/n/10 on[]conflict
+ []
+
+[40]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6097--6099
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (9.46619pt too wide) detected at line 6100
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6166--6168
+[]\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
+.<метод> \TU/FreeSerif(1)/m/n/10 и
+ []
+
+[41] [42]
+Underfull \hbox (badness 10000) in paragraph at lines 6452--6454
+[]\TU/FreeSerif(1)/m/n/10 Позиция турнира
+ []
+
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
-[40]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+[44]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [41]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
+ [45] [46] [47]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1241,34 +1374,33 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [42] [43] [44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54]
-[55] [56
-
-]
+ [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58]
 Глава 3.
-[57] [58
+[59
+
+] [60
 
 ]
 Глава 4.
-[59] [60
+[61] [62
 
 ]
 Глава 5.
-(./blunderdb.ind) [61] (./blunderdb.aux)
+(./blunderdb.ind) [63] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 8CA5484C054CD527196F99F1C8FAD0FE;37051.
+(rerunfilecheck)             Checksum: 27DEAB099BC3D6F65A33C6C3A2A7DDB7;38687.
  ) 
 Here is how much of TeX's memory you used:
- 19634 strings out of 476443
- 401003 string characters out of 5793963
- 1993627 words of memory out of 5000000
- 41128 multiletter control sequences out of 15000+600000
- 567569 words of font info for 159 fonts, out of 8000000 for 9000
+ 19657 strings out of 476443
+ 401707 string characters out of 5793963
+ 1994627 words of memory out of 5000000
+ 41146 multiletter control sequences out of 15000+600000
+ 567780 words of font info for 164 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,596s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (65 pages).
+Output written on blunderdb.pdf (67 pages).

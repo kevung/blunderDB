@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.21.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.22.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/documentation_options.js?v=47b383d9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -54,11 +54,12 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
 </ul>
 
         </div>
@@ -248,6 +249,10 @@
 <td><p>1.6.2026</p></td>
 <td><p>Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi, ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, kreikaksi tai venäjäksi. Lisätty asetusikkuna, joka avataan työkalupalkin hammasrataspainikkeesta ja josta voi valita kielen. Kielivalinta säilytetään istunnosta toiseen. Katso :ref:`configuration`.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.22.0</p></td>
+<td><p>2.6.2026</p></td>
+<td><p>Lisätty headless-tila (palvelin), edistynyt ja valinnainen, joka täydentää työpöytäsovellusta: <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni, joka tarjoaa moottorin HTTP + JSON -rajapinnan kautta, monikäyttäjäinen PostgreSQL-taustajärjestelmä, jossa tiedot on eristetty vuokralaisittain (sekä valinnainen Row-Level Security), <code class="docutils literal notranslate"><span class="pre">migrate</span></code>-komento SQLite-tietokannan siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä, joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin. Yksittäisten asemien tuonti uusista muodoista (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz-teksti, natiivi <code class="docutils literal notranslate"><span class="pre">.db</span></code> -kirjasto) sekä duplikaattien rikastaminen muotojen välillä. Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa ei ole avattu, eikä Comments-paneeli enää jää silmukkaan avattaessa. Katso :ref:`headless`.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -360,40 +365,48 @@
 <li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Mistä blunderDB:n kuvake on peräisin?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Asemien haku komentorivillä</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Haku nykyisistä tuloksista</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Suodatinkirjasto</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Esimerkkejä</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Headless-tila (palvelin)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#vue-d-ensemble">8.1. Yleiskatsaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-demon-serve">8.2. <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#migrer-une-base-sqlite-vers-postgresql">8.4. SQLite-tietokannan siirtäminen PostgreSQL:ään</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-dispatcher-generique-call">8.5. Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows SmartScreen -varoitus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Windows Defenderin esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Liite: Suodattimien edistynyt käyttö</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">9.1. Asemien haku komentorivillä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">9.2. Haku nykyisistä tuloksista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">9.3. Suodatinkirjasto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">9.4. Esimerkkejä</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. blunderDB:n asennus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Luvan antaminen blunderDB:n suorittamiseen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">10.1. Windows SmartScreen -varoitus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">10.2. Windows Defenderin esto</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Versio 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Versio 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Versio 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Versio 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Versio 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Versio 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Versio 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Versio 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-liite: blunderDB:n mahdollinen esto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">11.1. blunderDB:n asennus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">11.2. Luvan antaminen blunderDB:n suorittamiseen</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. Muodolliset määritelmät</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. PR:n nimittäjässä lasketut päätökset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. Vastaavuus blunderDB ↔ XG ↔ gnuBG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. Omien lukujen tarkistaminen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. gnuBG-viite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Liite: Tietokannan skeema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. Versio 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. Versio 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. Versio 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. Versio 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. Versio 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. Versio 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. Versio 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. Versio 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">13.1. Muodolliset määritelmät</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">13.2. PR:n nimittäjässä lasketut päätökset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">13.3. Vastaavuus blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">13.4. Omien lukujen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">13.5. gnuBG-viite</a></li>
 </ul>
 </li>
 </ul>

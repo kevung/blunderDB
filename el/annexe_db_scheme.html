@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>11. Παράρτημα: Σχήμα της βάσης δεδομένων &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+  <title>12. Παράρτημα: Σχήμα της βάσης δεδομένων &mdash; Τεκμηρίωση του blunderDB - 0.22.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/documentation_options.js?v=489ff7e7"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Ευρετήριο" href="genindex.html" />
     <link rel="search" title="Αναζήτηση" href="search.html" />
-    <link rel="next" title="12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" href="stats_parity.html" />
-    <link rel="prev" title="10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" href="annexe_mac_securite.html" /> 
+    <link rel="next" title="13. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" href="stats_parity.html" />
+    <link rel="prev" title="11. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" href="annexe_mac_securite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,21 +55,22 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">11.1. Έκδοση 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">11.2. Έκδοση 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">11.3. Έκδοση 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">11.4. Έκδοση 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">11.5. Έκδοση 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">11.6. Έκδοση 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">11.7. Έκδοση 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">11.8. Έκδοση 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Παράρτημα: Σχήμα της βάσης δεδομένων</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Έκδοση 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Έκδοση 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Έκδοση 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Έκδοση 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Έκδοση 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Έκδοση 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Έκδοση 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Έκδοση 1.7.0</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -86,7 +87,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">11. </span>Παράρτημα: Σχήμα της βάσης δεδομένων</li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Παράρτημα: Σχήμα της βάσης δεδομένων</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,13 +97,13 @@
            <div itemprop="articleBody">
              
   <section id="annexe-schema-de-la-base-de-donnees">
-<span id="annexe-db-migration"></span><h1><span class="section-number">11. </span>Παράρτημα: Σχήμα της βάσης δεδομένων<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Παράρτημα: Σχήμα της βάσης δεδομένων<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
 <div class="admonition important">
 <p class="admonition-title">Σημαντικό</p>
 <p>Δημιουργείτε πάντα αντίγραφο ασφαλείας του αρχείου .db σας πριν εκτελέσετε μεταναστεύσεις της βάσης δεδομένων.</p>
 </div>
 <section id="version-1-0-0">
-<h2><span class="section-number">11.1. </span>Έκδοση 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.1. </span>Έκδοση 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.0.0 της βάσης δεδομένων περιέχει τους ακόλουθους πίνακες:</p>
 <ul class="simple">
 <li><p><strong>position</strong>: Αποθηκεύει τις θέσεις με τις στήλες <cite>id</cite> (πρωτεύον κλειδί) και <cite>state</cite> (κατάσταση της θέσης σε μορφή JSON).</p></li>
@@ -112,7 +113,7 @@
 </ul>
 </section>
 <section id="version-1-1-0">
-<h2><span class="section-number">11.2. </span>Έκδοση 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.2. </span>Έκδοση 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.1.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:</p>
 <ul class="simple">
 <li><p><strong>command_history</strong>: Αποθηκεύει το ιστορικό των εντολών με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>command</cite> (κείμενο της εντολής), και <cite>timestamp</cite> (ημερομηνία και ώρα εκτέλεσης της εντολής).</p></li>
@@ -121,7 +122,7 @@
 <p>Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.0.0 στην έκδοση 1.1.0, εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> στο blunderDB.</p>
 </section>
 <section id="version-1-2-0">
-<h2><span class="section-number">11.3. </span>Έκδοση 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.3. </span>Έκδοση 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.2.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:</p>
 <ul class="simple">
 <li><p><strong>filter_library</strong>: Αποθηκεύει τα φίλτρα αναζήτησης με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>name</cite> (όνομα του φίλτρου), <cite>command</cite> (εντολή που σχετίζεται με το φίλτρο), και <cite>edit_position</cite> (θέση που επεξεργάστηκε κατά την αποθήκευση του φίλτρου).</p></li>
@@ -130,7 +131,7 @@
 <p>Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.1.0 στην έκδοση 1.2.0, εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> στο blunderDB.</p>
 </section>
 <section id="version-1-3-0">
-<h2><span class="section-number">11.4. </span>Έκδοση 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.4. </span>Έκδοση 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.3.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:</p>
 <ul class="simple">
 <li><p><strong>search_history</strong>: Αποθηκεύει το ιστορικό των αναζητήσεων θέσεων με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>command</cite> (κείμενο της εντολής αναζήτησης), <cite>position</cite> (κατάσταση της θέσης κατά τη στιγμή της αναζήτησης), και <cite>timestamp</cite> (ημερομηνία και ώρα της αναζήτησης).</p></li>
@@ -139,7 +140,7 @@
 <p>Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.2.0 στην έκδοση 1.3.0, εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> στο blunderDB.</p>
 </section>
 <section id="version-1-4-0">
-<h2><span class="section-number">11.5. </span>Έκδοση 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.5. </span>Έκδοση 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.4.0 της βάσης δεδομένων προσθέτει τους ακόλουθους πίνακες για τη διαχείριση των αγώνων:</p>
 <ul class="simple">
 <li><p><strong>match</strong>: Αποθηκεύει τους εισαγόμενους αγώνες με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite>, και <cite>match_hash</cite> (hash για την ανίχνευση διπλότυπων).</p></li>
@@ -150,7 +151,7 @@
 <p>Η μετάβαση από την 1.3.0 στην 1.4.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.</p>
 </section>
 <section id="version-1-5-0">
-<h2><span class="section-number">11.6. </span>Έκδοση 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.6. </span>Έκδοση 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.5.0 της βάσης δεδομένων προσθέτει τους ακόλουθους πίνακες για τη διαχείριση των συλλογών:</p>
 <ul class="simple">
 <li><p><strong>collection</strong>: Αποθηκεύει τις συλλογές θέσεων με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, και <cite>updated_at</cite>.</p></li>
@@ -159,7 +160,7 @@
 <p>Η μετάβαση από την 1.4.0 στην 1.5.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.</p>
 </section>
 <section id="version-1-6-0">
-<h2><span class="section-number">11.7. </span>Έκδοση 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.7. </span>Έκδοση 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.6.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα για τη διαχείριση των τουρνουά:</p>
 <ul class="simple">
 <li><p><strong>tournament</strong>: Αποθηκεύει τα τουρνουά με τις στήλες <cite>id</cite> (πρωτεύον κλειδί), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, και <cite>updated_at</cite>.</p></li>
@@ -168,7 +169,7 @@
 <p>Η μετάβαση από την 1.5.0 στην 1.6.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.</p>
 </section>
 <section id="version-1-7-0">
-<h2><span class="section-number">11.8. </span>Έκδοση 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.8. </span>Έκδοση 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
 <p>Η έκδοση 1.7.0 της βάσης δεδομένων προσθέτει την ακόλουθη στήλη:</p>
 <ul class="simple">
 <li><p>Προσθήκη της στήλης <cite>last_visited_position</cite> στον πίνακα <cite>match</cite> για την απομνημόνευση της τελευταίας θέσης που επισκέφθηκε σε κάθε αγώνα.</p></li>
@@ -185,8 +186,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="stats_parity.html" class="btn btn-neutral float-right" title="12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="11. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="13. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

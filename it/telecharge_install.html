@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Download e installazione &mdash; Documentazione blunderDB 0.21.0 </title>
+  <title>1. Download e installazione &mdash; Documentazione blunderDB 0.22.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/documentation_options.js?v=30782b8f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -55,11 +55,12 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Scorciatoie da tastiera</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Appendice: Utilizzo avanzato dei filtri</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -90,11 +91,11 @@
 <p>blunderDB si presenta come un unico eseguibile che non richiede alcuna installazione.</p>
 <p>L’ultima versione di blunderDB è disponibile con licenza MIT:</p>
 <ul class="simple">
-<li><p>per Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe</a></p></li>
-<li><p>per Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0</a></p></li>
-<li><p>per Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip</a></p></li>
+<li><p>per Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe</a></p></li>
+<li><p>per Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0</a></p></li>
+<li><p>per Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip</a></p></li>
 </ul>
-<p>Per una consultazione offline, è possibile scaricare anche questa documentazione in formato PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.21.0-it.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.21.0-it.pdf</a></p>
+<p>Per una consultazione offline, è possibile scaricare anche questa documentazione in formato PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-it.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-it.pdf</a></p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
 <p>blunderDB utilizza Webview2 per il rendering dell’interfaccia grafica. È molto probabile che Webview2 sia già presente nativamente nel vostro sistema operativo. In caso contrario, la prima esecuzione di blunderDB proporrà di scaricarlo e installarlo. Non è richiesta alcuna azione da parte dell’utente.</p>
@@ -105,15 +106,15 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Su Linux, se si ottiene l’errore <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, la vostra distribuzione utilizza webkit2gtk-4.1 invece di webkit2gtk-4.0. Scaricate la versione dedicata: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0</a></p>
+<p>Su Linux, se si ottiene l’errore <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, la vostra distribuzione utilizza webkit2gtk-4.1 invece di webkit2gtk-4.0. Scaricate la versione dedicata: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0</a></p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Avvertimento</p>
-<p>Su Windows, è possibile che quest’ultimo sia restio a eseguire blunderDB. Vedere <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Sezione 9</span></a> per capire il motivo e aggirare gli eventuali blocchi.</p>
+<p>Su Windows, è possibile che quest’ultimo sia restio a eseguire blunderDB. Vedere <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Sezione 10</span></a> per capire il motivo e aggirare gli eventuali blocchi.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Avvertimento</p>
-<p>Su Mac, è possibile che quest’ultimo sia restio a eseguire blunderDB. Vedere <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Sezione 10</span></a> per capire il motivo e aggirare gli eventuali blocchi.</p>
+<p>Su Mac, è possibile che quest’ultimo sia restio a eseguire blunderDB. Vedere <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Sezione 11</span></a> per capire il motivo e aggirare gli eventuali blocchi.</p>
 </div>
 </section>
 

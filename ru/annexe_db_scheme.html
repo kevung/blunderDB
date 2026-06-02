@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>11. Приложение: Схема базы данных &mdash; документация blunderDB 0.21.0</title>
+  <title>12. Приложение: Схема базы данных &mdash; документация blunderDB 0.22.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/documentation_options.js?v=3880d710"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Алфавитный указатель" href="genindex.html" />
     <link rel="search" title="Поиск" href="search.html" />
-    <link rel="next" title="12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" href="stats_parity.html" />
-    <link rel="prev" title="10. Приложение Mac: возможная блокировка blunderDB" href="annexe_mac_securite.html" /> 
+    <link rel="next" title="13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" href="stats_parity.html" />
+    <link rel="prev" title="11. Приложение Mac: возможная блокировка blunderDB" href="annexe_mac_securite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,21 +55,22 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Приложение: Схема базы данных</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">11.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">11.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">11.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">11.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">11.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">11.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">11.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">11.8. Version 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Приложение: Схема базы данных</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Version 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Version 1.7.0</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -86,7 +87,7 @@
           <div role="navigation" aria-label="Навигация по страницам">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">11. </span>Приложение: Схема базы данных</li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Приложение: Схема базы данных</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,13 +97,13 @@
            <div itemprop="articleBody">
              
   <section id="annexe-schema-de-la-base-de-donnees">
-<span id="annexe-db-migration"></span><h1><span class="section-number">11. </span>Приложение: Схема базы данных<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h1>
+<span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Приложение: Схема базы данных<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h1>
 <div class="admonition important">
 <p class="admonition-title">Важно</p>
 <p>Всегда создавайте резервную копию файла .db перед выполнением миграций базы данных.</p>
 </div>
 <section id="version-1-0-0">
-<h2><span class="section-number">11.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.0.0 базы данных содержит следующие таблицы:</p>
 <ul class="simple">
 <li><p><strong>position</strong>: хранит позиции со столбцами <cite>id</cite> (первичный ключ) и <cite>state</cite> (состояние позиции в формате JSON).</p></li>
@@ -112,7 +113,7 @@
 </ul>
 </section>
 <section id="version-1-1-0">
-<h2><span class="section-number">11.2. </span>Version 1.1.0<a class="headerlink" href="#version-1-1-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.2. </span>Version 1.1.0<a class="headerlink" href="#version-1-1-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.1.0 базы данных добавляет следующую таблицу:</p>
 <ul class="simple">
 <li><p><strong>command_history</strong>: хранит историю команд со столбцами <cite>id</cite> (первичный ключ), <cite>command</cite> (текст команды) и <cite>timestamp</cite> (дата и время выполнения команды).</p></li>
@@ -121,7 +122,7 @@
 <p>Для миграции базы данных с версии 1.0.0 до версии 1.1.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> в blunderDB.</p>
 </section>
 <section id="version-1-2-0">
-<h2><span class="section-number">11.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.2.0 базы данных добавляет следующую таблицу:</p>
 <ul class="simple">
 <li><p><strong>filter_library</strong>: хранит поисковые фильтры со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite> (название фильтра), <cite>command</cite> (команда, связанная с фильтром) и <cite>edit_position</cite> (редактируемая позиция при сохранении фильтра).</p></li>
@@ -130,7 +131,7 @@
 <p>Для миграции базы данных с версии 1.1.0 до версии 1.2.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> в blunderDB.</p>
 </section>
 <section id="version-1-3-0">
-<h2><span class="section-number">11.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.3.0 базы данных добавляет следующую таблицу:</p>
 <ul class="simple">
 <li><p><strong>search_history</strong>: хранит историю поиска позиций со столбцами <cite>id</cite> (первичный ключ), <cite>command</cite> (текст поисковой команды), <cite>position</cite> (состояние позиции в момент поиска) и <cite>timestamp</cite> (дата и время поиска).</p></li>
@@ -139,7 +140,7 @@
 <p>Для миграции базы данных с версии 1.2.0 до версии 1.3.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> в blunderDB.</p>
 </section>
 <section id="version-1-4-0">
-<h2><span class="section-number">11.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.4.0 базы данных добавляет следующие таблицы для управления матчами:</p>
 <ul class="simple">
 <li><p><strong>match</strong>: хранит импортированные матчи со столбцами <cite>id</cite> (первичный ключ), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite> и <cite>match_hash</cite> (хеш для обнаружения дубликатов).</p></li>
@@ -150,7 +151,7 @@
 <p>Миграция с 1.3.0 до 1.4.0 выполняется автоматически при открытии базы данных.</p>
 </section>
 <section id="version-1-5-0">
-<h2><span class="section-number">11.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.5.0 базы данных добавляет следующие таблицы для управления коллекциями:</p>
 <ul class="simple">
 <li><p><strong>collection</strong>: хранит коллекции позиций со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite> и <cite>updated_at</cite>.</p></li>
@@ -159,7 +160,7 @@
 <p>Миграция с 1.4.0 до 1.5.0 выполняется автоматически при открытии базы данных.</p>
 </section>
 <section id="version-1-6-0">
-<h2><span class="section-number">11.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.6.0 базы данных добавляет следующую таблицу для управления турнирами:</p>
 <ul class="simple">
 <li><p><strong>tournament</strong>: хранит турниры со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite> и <cite>updated_at</cite>.</p></li>
@@ -168,7 +169,7 @@
 <p>Миграция с 1.5.0 до 1.6.0 выполняется автоматически при открытии базы данных.</p>
 </section>
 <section id="version-1-7-0">
-<h2><span class="section-number">11.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">12.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Ссылка на этот заголовок"></a></h2>
 <p>Версия 1.7.0 базы данных добавляет следующий столбец:</p>
 <ul class="simple">
 <li><p>Добавление столбца <cite>last_visited_position</cite> в таблицу <cite>match</cite> для запоминания последней посещённой позиции в каждом матче.</p></li>
@@ -185,8 +186,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="10. Приложение Mac: возможная блокировка blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
-        <a href="stats_parity.html" class="btn btn-neutral float-right" title="12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="11. Приложение Mac: возможная блокировка blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

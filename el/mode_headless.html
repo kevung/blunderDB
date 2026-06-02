@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.22.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=489ff7e7"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="9. Παράρτημα: Προχωρημένη χρήση των φίλτρων" href="annexe_filtres.html" />
+    <link rel="prev" title="7. Συχνές ερωτήσεις (FAQ)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Επισκόπηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. Ο δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Σημεία πρόσβασης</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. Backend PostgreSQL και πολλαπλοί χρήστες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">8.4. Μετανάστευση μιας βάσης SQLite προς PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">8.5. Ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">8. </span>Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Αυτή η ενότητα περιγράφει μια <strong>προηγμένη και προαιρετική λειτουργία</strong> του blunderDB, που προορίζεται για αναπτύξεις σε διακομιστή, για πολλαπλούς χρήστες και για αυτοματοποίηση. <strong>Η συνήθης και συνιστώμενη χρήση του blunderDB παραμένει η εφαρμογή γραφείου</strong> που περιγράφεται στα προηγούμενα κεφάλαια. Αν χρησιμοποιείτε το blunderDB μόνοι σας, στον υπολογιστή σας, δεν χρειάζεστε αυτή τη λειτουργία: μπορείτε να αγνοήσετε αυτό το κεφάλαιο χωρίς να χάσετε καμία από τις λειτουργίες ανάλυσης.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">8.1. </span>Επισκόπηση<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Το ίδιο εκτελέσιμο <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> μπορεί, εκτός από την εφαρμογή γραφείου και τις εντολές γραμμής εντολών (δείτε <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>), να λειτουργήσει σε <strong>λειτουργία χωρίς γραφικό περιβάλλον</strong>: χωρίς γραφική διεπαφή, ελεγχόμενο εξ ολοκλήρου μέσω της γραμμής εντολών ή μέσω δικτύου. Αυτή η λειτουργία συγκεντρώνει τρεις χρήσεις:</p>
+<ul class="simple">
+<li><p><strong>ο δαίμονας</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — εκθέτει τη μηχανή του blunderDB ως υπηρεσία HTTP + JSON, για να τρέχει μια κοινόχρηστη βάση σε διακομιστή και να την προσπελάζουν πολλοί χρήστες·</p></li>
+<li><p>ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code> — καλεί οποιαδήποτε λειτουργία αποθήκευσης απευθείας, τοπικά, για scripting και δοκιμές·</p></li>
+<li><p>η εντολή <code class="docutils literal notranslate"><span class="pre">migrate</span></code> — μεταφέρει μια βάση SQLite ενός χρήστη προς ένα backend PostgreSQL πολλαπλών χρηστών.</p></li>
+</ul>
+<p>Αυτές οι τρεις χρήσεις βασίζονται σε ένα κοινό <strong>επίπεδο αποθήκευσης</strong> που γνωρίζει να επικοινωνεί με δύο backend: το <strong>SQLite</strong> (η συνήθης μορφή αρχείου <code class="docutils literal notranslate"><span class="pre">.db</span></code> της εφαρμογής γραφείου) και το <strong>PostgreSQL</strong> (για αναπτύξεις διακομιστή πολλαπλών χρηστών).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">8.2. </span>Ο δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> εκκινεί τη μηχανή ως υπηρεσία HTTP που απαντά σε JSON. Επιτρέπει τη φιλοξενία μιας βάσης θέσεων σε ένα μηχάνημα και την προσπέλασή της από πολλούς πελάτες.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">&quot;postgres://user:pass@host:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p><strong>Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας.</strong> Εμπιστεύεται την κεφαλίδα αιτήματος <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> και <strong>πρέπει</strong> να τρέχει πίσω από έναν reverse-proxy (nginx, Caddy…) υπεύθυνο για την πιστοποίηση ταυτότητας. <strong>Μην τον εκθέτετε ποτέ απευθείας στο δημόσιο Διαδίκτυο.</strong></p>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>αρχείο SQLite (συντόμευση για <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>backend αποθήκευσης: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> ή <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>συμβολοσειρά σύνδεσης του backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;hôte:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>διεύθυνση ακρόασης</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;niveau&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>επίπεδο καταγραφής: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>εκθέτει το <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (μορφή Prometheus)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origine&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ενεργοποιεί CORS για αυτή την προέλευση (απενεργοποιημένο εξ ορισμού)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>όριο αιτημάτων ανά δευτερόλεπτο και ανά tenant (0 = απενεργοποιημένο)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2×rps</span></code></p></td>
+<td><p>μέγεθος του κάδου διακριτικών (token bucket) για τις αιχμές αιτημάτων</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: ενεργοποιεί το Row-Level Security ανά tenant (άμυνα σε βάθος, προαιρετική)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθούν μέσω μεταβλητής περιβάλλοντος (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<section id="points-d-acces">
+<h3><span class="section-number">8.2.1. </span>Σημεία πρόσβασης<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>Η υπηρεσία εκθέτει σημεία πρόσβασης λειτουργίας, πάντα διαθέσιμα:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — ζωτικότητα (η διεργασία τρέχει)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — διαθεσιμότητα (η αποθήκευση απαντά)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — μετρικές Prometheus (αν το <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> είναι ενεργό).</p></li>
+</ul>
+<p>Η επιφάνεια λειτουργιών ακολουθεί το σχήμα <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> (για παράδειγμα <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Οι οικογένειες καλύπτουν τις θέσεις, τις αναλύσεις, τους αγώνες, τα σχόλια, τις συλλογές, τα τουρνουά, τις κάρτες Anki, τα φίλτρα, τις συνεδρίες, την αναζήτηση, τα μεταδεδομένα, τα στατιστικά και την εισαγωγή. Τα σημεία πρόσβασης καταχώρισης επιστρέφουν μια ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζεται καθαρά με <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Backend PostgreSQL και πολλαπλοί χρήστες<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>Για μια κοινόχρηστη ανάπτυξη, το blunderDB μπορεί να αποθηκεύει τα δεδομένα στο <strong>PostgreSQL</strong> αντί σε ένα αρχείο SQLite. Το backend επιλέγεται μέσω του <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> και της συμβολοσειράς σύνδεσης <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την εκκίνηση.</p>
+<p>Τα δεδομένα είναι <strong>διαχωρισμένα ανά tenant</strong> (μισθωτή): κάθε αίτημα φέρει ένα αναγνωριστικό scope (κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, εξ ορισμού <code class="docutils literal notranslate"><span class="pre">default</span></code>), πράγμα που επιτρέπει σε πολλούς χρήστες να μοιράζονται το ίδιο instance χωρίς να βλέπουν τα δεδομένα των άλλων. Η επιλογή <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ενεργοποιεί επιπλέον το <strong>Row-Level Security</strong> του PostgreSQL: εγκαθίστανται πολιτικές απομόνωσης ανά tenant και το <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> ορίζεται ανά σύνδεση. Πρόκειται για μια προαιρετική άμυνα σε βάθος, απενεργοποιημένη εξ ορισμού.</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Μετανάστευση μιας βάσης SQLite προς PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> αντιγράφει μια βάση SQLite ενός χρήστη προς ένα backend PostgreSQL, υπό ένα επιλεγμένο scope tenant — είναι ο τρόπος για να « μεταφορτώσετε » μια βιβλιοθήκη γραφείου προς μια ανάπτυξη διακομιστή.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">&quot;postgres://user:pass@host:5432/db?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>Η μετανάστευση αντιγράφει τις <strong>θέσεις, τις αναλύσεις και τα σχόλιά τους, τους αγώνες (παρτίδες + κινήσεις), τα τουρνουά (με τους συνδέσμους αγώνων τους) και τις συλλογές (με τη σύνθεσή τους)</strong>, επανεκχωρώντας τα πρωτεύοντα και ξένα κλειδιά, όλα μέσα σε μια <strong>μοναδική συναλλαγή</strong> στην πλευρά προορισμού: η λειτουργία είναι ατομική (μια αποτυχία αφήνει τον προορισμό ανέπαφο, αρκεί να την ξεκινήσετε ξανά). Η πρόοδος και ο τελικός απολογισμός εκπέμπονται σε NDJSON στην τυπική έξοδο.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>βάση SQLite πηγής (<code class="docutils literal notranslate"><span class="pre">sqlite:///chemin</span></code> ή μια απλή διαδρομή)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>DSN PostgreSQL προορισμού (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;scope&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>scope tenant προορισμού (υποχρεωτικό εκτός από <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>μετρά τι θα αντιγραφόταν χωρίς να γράψει τίποτα</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;politique&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> διακόπτει αν ο tenant έχει ήδη δεδομένα· το <code class="docutils literal notranslate"><span class="pre">skip</span></code> συγχωνεύει (αφαίρεση διπλότυπων θέσεων μέσω hash Zobrist)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Δεν μεταναστεύονται (ακόμη) οι καταστάσεις της εφαρμογής: decks/κάρτες Anki, βιβλιοθήκη φίλτρων, ιστορικό αναζήτησης και εντολών, και μεταδεδομένα συνεδρίας. Η προτεραιότητα είναι η μετανάστευση της βιβλιοθήκης θέσεων και του ιστορικού αγώνων.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">8.5. </span>Ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>Συμπληρωματικά προς τις ιστορικές υποεντολές (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>), το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> εκθέτει <strong>όλες</strong> τις λειτουργίες αποθήκευσης απευθείας, τοπικά. Περνά από τους ίδιους χειριστές με τον δαίμονα <code class="docutils literal notranslate"><span class="pre">serve</span></code>: η συμπεριφορά είναι επομένως πανομοιότυπη με το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code>. Είναι χρήσιμο για το scripting και τις δοκιμές ολοκλήρωσης.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;limit&quot;:10}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:1}&#39;</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;position&quot;:{...}}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:42}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>αρχείο SQLite (συντόμευση για <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> ή <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>συμβολοσειρά σύνδεσης του backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>scope tenant (αποστέλλεται ως <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>σώμα του αιτήματος σε μορφή JSON</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>διαβάζει το σώμα του αιτήματος από ένα αρχείο</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>εμφανίζει όλες τις μεθόδους <code class="docutils literal notranslate"><span class="pre">&lt;famille&gt;.&lt;méthode&gt;</span></code> και τερματίζει</p></td>
+</tr>
+</tbody>
+</table>
+<p>Η απάντηση JSON (ή η ροή NDJSON για τα σημεία πρόσβασης <code class="docutils literal notranslate"><span class="pre">*.list</span></code>) γράφεται στην τυπική έξοδο. Σε περίπτωση σφάλματος, η διεργασία τερματίζεται με μη μηδενικό κωδικό και ο φάκελος <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> εκτυπώνεται στην τυπική έξοδο ώστε να παραμένει αναλύσιμος (για παράδειγμα με το <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. Συχνές ερωτήσεις (FAQ)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="9. Παράρτημα: Προχωρημένη χρήση των φίλτρων" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

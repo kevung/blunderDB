@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:03
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1096,14 +1096,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 331--333
 []\TU/FreeSerif(1)/m/n/10 2 de noviembre de
  []
 
-[3]
-Overfull \vbox (1103.11995pt too high) has occurred while \output is active []
-
-
-[4]
-Capítulo 2.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 8.99994pt on input line 660.
+(Font)              scaled to size 8.99994pt on input line 632.
 
 Package fontspec Info: Font family 'FreeMono(1)' created for font 'FreeMono'
 (fontspec)             with options [Scale=0.9,Extension = .otf,UprightFont =
@@ -1138,60 +1132,96 @@ uage=ESP;"
 uage=ESP;+smcp;"
 
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/n' will be
-(Font)              scaled to size 8.99994pt on input line 660.
+(Font)              scaled to size 8.99994pt on input line 632.
+[3]
+Overfull \vbox (1247.11995pt too high) has occurred while \output is active []
+
+
+[4]
+Capítulo 2.
 [5
 
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
 [21] [22] [23]
-Underfull \vbox (badness 7379) detected at line 3464
+Underfull \vbox (badness 7379) detected at line 3480
  []
 
 [24] [25] [26] [27] [28]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4635.
+(Font)              scaled to size 4.49997pt on input line 4651.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4636.
+(Font)              scaled to size 8.99994pt on input line 4652.
  [29] [30] [31] [32] [33] [34]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5382.
- [35] [36] [37] [38]
-Underfull \hbox (badness 10000) in paragraph at lines 5829--5831
+(Font)              scaled to size 8.99994pt on input line 5398.
+ [35] [36] [37]
+LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
+(Font)              scaled to size 10.79993pt on input line 5652.
+LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
+(Font)              scaled to size 10.79993pt on input line 5652.
+ [38]
+Overfull \hbox (11.423pt too wide) in paragraph at lines 5736--5738
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (11.423pt too wide) detected at line 5739
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5795--5797
+[][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
+ []
+
+[39] [40]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6115--6117
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (1.06567pt too wide) detected at line 6118
+[]\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+[41] [42]
+Underfull \hbox (badness 10000) in paragraph at lines 6424--6426
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5875--5877
+Underfull \hbox (badness 10000) in paragraph at lines 6470--6472
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 5889--5891
+Underfull \hbox (badness 6876) in paragraph at lines 6484--6486
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5940--5942
+Underfull \hbox (badness 10000) in paragraph at lines 6535--6537
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
-[39]
-Underfull \hbox (badness 7221) in paragraph at lines 6110--6112
+[43]
+Underfull \hbox (badness 7221) in paragraph at lines 6705--6707
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
 
-[40]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
+[44] [45]
 File: win1.png Graphic file (type bmp)
 <win1.png>
- [41] [42] [43]
 File: win2.png Graphic file (type bmp)
 <win2.png>
+ [46] [47]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1202,34 +1232,33 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54]
-[55] [56
-
-]
+ [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58]
 Capítulo 3.
-[57] [58
+[59
+
+] [60
 
 ]
 Capítulo 4.
-[59] [60
+[61] [62
 
 ]
 Capítulo 5.
-(./blunderdb.ind) [61] (./blunderdb.aux)
+(./blunderdb.ind) [63] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: D19F274E58BCBA522CC5C83006875052;31839.
+(rerunfilecheck)             Checksum: 6A9CFBD577DE3AB34E39CE22B841FCFD;33180.
  ) 
 Here is how much of TeX's memory you used:
- 19392 strings out of 476443
- 397583 string characters out of 5793963
+ 19415 strings out of 476443
+ 398313 string characters out of 5793963
  1998627 words of memory out of 5000000
- 40922 multiletter control sequences out of 15000+600000
- 566612 words of font info for 132 fonts, out of 8000000 for 9000
+ 40940 multiletter control sequences out of 15000+600000
+ 566823 words of font info for 137 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,610s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,625s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (65 pages).
+Output written on blunderdb.pdf (67 pages).

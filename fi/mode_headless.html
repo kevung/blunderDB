@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Headless-tila (palvelin) &mdash; blunderDB 0.22.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=47b383d9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="9. Liite: Suodattimien edistynyt käyttö" href="annexe_filtres.html" />
+    <link rel="prev" title="7. Usein kysytyt kysymykset (UKK)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Headless-tila (palvelin)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Yleiskatsaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Päätepisteet</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">8.4. SQLite-tietokannan siirtäminen PostgreSQL:ään</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">8.5. Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Headless-tila (palvelin)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">8. </span>Headless-tila (palvelin)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tässä osiossa kuvataan blunderDB:n <strong>edistynyt ja valinnainen tila</strong>, joka on tarkoitettu palvelinkäyttöön, monikäyttäjäympäristöihin ja automaatioon. <strong>blunderDB:n tavanomainen ja suositeltu käyttötapa on edelleen työpöytäsovellus</strong>, joka kuvataan edellisissä luvuissa. Jos käytät blunderDB:tä yksin omalla tietokoneellasi, et tarvitse tätä tilaa: voit ohittaa tämän luvun menettämättä mitään analyysiominaisuuksista.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">8.1. </span>Yleiskatsaus<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Sama <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>-binääri voi työpöytäsovelluksen ja komentorivikomentojen (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) lisäksi toimia <strong>headless-tilassa</strong>: ilman graafista käyttöliittymää, ohjattuna kokonaan komentoriviltä tai verkon kautta. Tämä tila kattaa kolme käyttötapaa:</p>
+<ul class="simple">
+<li><p><strong>demoni</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — tarjoaa blunderDB:n moottorin HTTP + JSON -palveluna, jotta jaettua tietokantaa voidaan pyörittää palvelimella ja käyttää usean käyttäjän kesken;</p></li>
+<li><p>yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä — kutsuu mitä tahansa tallennustoimintoa suoraan paikallisesti, skriptausta ja testausta varten;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">migrate</span></code>-komento — siirtää yhden käyttäjän SQLite-tietokannan monikäyttäjäiseen PostgreSQL-taustajärjestelmään.</p></li>
+</ul>
+<p>Nämä kolme käyttötapaa nojaavat yhteiseen <strong>tallennuskerrokseen</strong>, joka osaa puhua kahdelle taustajärjestelmälle: <strong>SQLite</strong> (työpöytäsovelluksen tavanomainen <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedostomuoto) ja <strong>PostgreSQL</strong> (monikäyttäjäisiin palvelinkäyttöönottoihin).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">8.2. </span><code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni<a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> käynnistää moottorin HTTP-palveluna, joka vastaa JSON-muodossa. Sen avulla voi isännöidä asematietokantaa yhdellä koneella ja käyttää sitä useasta asiakkaasta.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">&quot;postgres://user:pass@host:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p><strong>Demoni ei suorita minkäänlaista todennusta.</strong> Se luottaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-pyyntöotsakkeeseen ja <strong>on</strong> ajettava todennuksesta huolehtivan käänteisvälityspalvelimen (nginx, Caddy…) takana. <strong>Älä koskaan altista sitä suoraan julkiseen internetiin.</strong></p>
+</div>
+<p><strong>Valinnat:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite-tiedosto (oikotie komennolle <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;polku&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;tyyppi&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>tallennustaustajärjestelmä: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> tai <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>taustajärjestelmän yhteysmerkkijono</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>kuunteluosoite</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;taso&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>lokitustaso: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>tarjoaa <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (Prometheus-muoto)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;alkuperä&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ottaa CORS:n käyttöön tälle alkuperälle (oletuksena pois käytöstä)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>pyyntöraja sekunnissa vuokralaista kohti (0 = pois käytöstä)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2×rps</span></code></p></td>
+<td><p>token-ämpärin koko pyyntöpiikkejä varten</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: ottaa käyttöön vuokralaiskohtaisen Row-Level Securityn (syvyyspuolustus, valinnainen)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Useimmat valinnat voidaan antaa myös ympäristömuuttujalla (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<section id="points-d-acces">
+<h3><span class="section-number">8.2.1. </span>Päätepisteet<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>Palvelu tarjoaa hallinnolliset päätepisteet, jotka ovat aina läsnä:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — elossaolo (prosessi on käynnissä);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — valmius (tallennus vastaa);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus-metriikat (jos <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> on käytössä).</p></li>
+</ul>
+<p>Toiminnallinen rajapinta noudattaa kaavaa <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> (esimerkiksi <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki-kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä kohti). Palvelin pysähtyy siististi signaaleilla <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot <strong>PostgreSQL</strong>:ään SQLite-tiedoston sijaan. Taustajärjestelmä valitaan valinnalla <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> ja yhteysmerkkijonolla <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä.</p>
+<p>Tiedot on <strong>eristetty vuokralaisittain</strong>: jokainen pyyntö sisältää scope-tunnisteen (otsake <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, oletuksena <code class="docutils literal notranslate"><span class="pre">default</span></code>), mikä sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. Valinta <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ottaa lisäksi käyttöön PostgreSQL:n <strong>Row-Level Securityn</strong>: vuokralaiskohtaiset eristyskäytännöt asennetaan ja <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> asetetaan yhteyskohtaisesti. Tämä on valinnainen syvyyspuolustus, joka on oletuksena pois käytöstä.</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>SQLite-tietokannan siirtäminen PostgreSQL:ään<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> kopioi yhden käyttäjän SQLite-tietokannan PostgreSQL-taustajärjestelmään valitun vuokralais-scopen alle — tämä on tapa « ladata » työpöytäkirjasto palvelinkäyttöönottoon.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">&quot;postgres://user:pass@host:5432/db?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>Migraatio kopioi <strong>asemat, niiden analyysit ja kommentit, ottelut (pelit + siirrot), turnaukset (ottelulinkkeineen) ja kokoelmat (koostumuksineen)</strong>, kohdistaen pää- ja viiteavaimet uudelleen, kaiken kohdepuolen <strong>yhdessä transaktiossa</strong>: toiminto on atominen (epäonnistuminen jättää kohteen koskemattomaksi, riittää että käynnistää uudelleen). Edistyminen ja lopullinen yhteenveto tulostetaan NDJSON-muodossa vakiotulosteeseen.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lähde-SQLite-tietokanta (<code class="docutils literal notranslate"><span class="pre">sqlite:///polku</span></code> tai pelkkä polku)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>kohde-PostgreSQL:n DSN (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;scope&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>kohteen vuokralais-scope (pakollinen paitsi <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>-tilassa)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>laskee, mitä kopioitaisiin, kirjoittamatta mitään</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;käytäntö&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> keskeyttää, jos vuokralaisella on jo tietoja; <code class="docutils literal notranslate"><span class="pre">skip</span></code> yhdistää (asemien deduplikointi Zobrist-hashin perusteella)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Vielä migroimatta jäävät sovellustilat: Anki-pakat/-kortit, suodatinkirjasto, haku- ja komentohistoria sekä istunnon metatiedot. Etusijalla on asemakirjaston ja otteluhistorian migraatio.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">8.5. </span>Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä<a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>Aiempien alikomentojen (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) lisäksi <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> tarjoaa <strong>kaikki</strong> tallennustoiminnot suoraan paikallisesti. Se kulkee samojen käsittelijöiden kautta kuin <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni: toiminta on siis identtinen komennon <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> kanssa. Tämä on hyödyllistä skriptauksessa ja integraatiotesteissä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;limit&quot;:10}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:1}&#39;</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;position&quot;:{...}}&#39;</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">&#39;{&quot;id&quot;:42}&#39;</span>
+</pre></div>
+</div>
+<p><strong>Valinnat:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite-tiedosto (oikotie komennolle <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;polku&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;tyyppi&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> tai <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>taustajärjestelmän yhteysmerkkijono</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>vuokralais-scope (lähetetään otsakkeena <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>pyynnön runko JSON-muodossa</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lukee pyynnön rungon tiedostosta</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>näyttää kaikki metodit <code class="docutils literal notranslate"><span class="pre">&lt;perhe&gt;.&lt;metodi&gt;</span></code> ja lopettaa</p></td>
+</tr>
+</tbody>
+</table>
+<p>JSON-vastaus (tai NDJSON-virta <code class="docutils literal notranslate"><span class="pre">*.list</span></code>-päätepisteille) kirjoitetaan vakiotulosteeseen. Virhetilanteessa prosessi päättyy nollasta poikkeavalla koodilla ja kuori <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> tulostetaan vakiotulosteeseen, jotta se pysyy jäsenneltävänä (esimerkiksi <code class="docutils literal notranslate"><span class="pre">jq</span></code>:lla).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. Usein kysytyt kysymykset (UKK)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="9. Liite: Suodattimien edistynyt käyttö" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

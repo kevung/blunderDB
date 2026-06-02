@@ -120,41 +120,48 @@
 \contentsline {subsection}{\numberline {2.7.13}What is the software architecture of blunderDB?}{36}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}On which platforms does blunderDB run?}{37}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Where does the blunderDB icon come from?}{37}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Annex: Advanced Filter Usage}{37}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Command\sphinxhyphen {}line search for positions}{37}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Search in Current Results}{37}{subsection.2.8.2}%
-\contentsline {subsection}{\numberline {2.8.3}Filter Library}{38}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Examples}{38}{subsection.2.8.4}%
-\contentsline {section}{\numberline {2.9}Windows Annex: False Detection of blunderDB as Malware}{39}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Windows SmartScreen Warning}{40}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Windows Defender Blocking}{40}{subsection.2.9.2}%
-\contentsline {section}{\numberline {2.10}Mac Annex: Possible Blocking of blunderDB}{41}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Installation of blunderDB}{49}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Authorization to Run blunderDB}{49}{subsection.2.10.2}%
-\contentsline {section}{\numberline {2.11}Annex: Database Schema}{49}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Version 1.0.0}{49}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Version 1.1.0}{49}{subsection.2.11.2}%
-\contentsline {subsection}{\numberline {2.11.3}Version 1.2.0}{50}{subsection.2.11.3}%
-\contentsline {subsection}{\numberline {2.11.4}Version 1.3.0}{50}{subsection.2.11.4}%
-\contentsline {subsection}{\numberline {2.11.5}Version 1.4.0}{50}{subsection.2.11.5}%
-\contentsline {subsection}{\numberline {2.11.6}Version 1.5.0}{50}{subsection.2.11.6}%
-\contentsline {subsection}{\numberline {2.11.7}Version 1.6.0}{51}{subsection.2.11.7}%
-\contentsline {subsection}{\numberline {2.11.8}Version 1.7.0}{51}{subsection.2.11.8}%
-\contentsline {section}{\numberline {2.12}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{51}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Formal definitions}{52}{subsection.2.12.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{52}{subsubsection*.42}%
-\contentsline {subsubsection}{Snowie Error Rate}{52}{subsubsection*.43}%
-\contentsline {subsubsection}{MWC loss (Match Winning Chance)}{52}{subsubsection*.44}%
-\contentsline {subsection}{\numberline {2.12.2}Decisions counted in the PR denominator}{52}{subsection.2.12.2}%
-\contentsline {subsubsection}{Checker plays — counted decisions}{52}{subsubsection*.45}%
-\contentsline {subsubsection}{Cube decisions — counted decisions}{53}{subsubsection*.46}%
-\contentsline {subsubsection}{Filter summary}{53}{subsubsection*.47}%
-\contentsline {subsection}{\numberline {2.12.3}blunderDB ↔ XG ↔ gnuBG correspondence}{53}{subsection.2.12.3}%
-\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{53}{subsubsection*.48}%
-\contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{53}{subsubsection*.49}%
-\contentsline {subsection}{\numberline {2.12.4}Validating your own figures}{54}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}gnuBG reference}{54}{subsection.2.12.5}%
-\contentsline {chapter}{\numberline {3}Contact}{55}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Donate}{57}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Acknowledgments}{59}{chapter.5}%
+\contentsline {section}{\numberline {2.8}Headless mode (server)}{37}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Overview}{37}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}The \sphinxstyleliteralintitle {\sphinxupquote {serve}} daemon}{37}{subsection.2.8.2}%
+\contentsline {subsubsection}{Endpoints}{38}{subsubsection*.29}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQL backend and multi\sphinxhyphen {}user}{38}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Migrating a SQLite database to PostgreSQL}{38}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}The generic \sphinxstyleliteralintitle {\sphinxupquote {call}} dispatcher}{39}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}Annex: Advanced Filter Usage}{40}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Command\sphinxhyphen {}line search for positions}{40}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Search in Current Results}{41}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Filter Library}{41}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Examples}{41}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Windows Annex: False Detection of blunderDB as Malware}{42}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen Warning}{43}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Windows Defender Blocking}{43}{subsection.2.10.2}%
+\contentsline {section}{\numberline {2.11}Mac Annex: Possible Blocking of blunderDB}{44}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Installation of blunderDB}{52}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Authorization to Run blunderDB}{52}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Annex: Database Schema}{52}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Version 1.0.0}{52}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Version 1.1.0}{52}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Version 1.2.0}{53}{subsection.2.12.3}%
+\contentsline {subsection}{\numberline {2.12.4}Version 1.3.0}{53}{subsection.2.12.4}%
+\contentsline {subsection}{\numberline {2.12.5}Version 1.4.0}{53}{subsection.2.12.5}%
+\contentsline {subsection}{\numberline {2.12.6}Version 1.5.0}{53}{subsection.2.12.6}%
+\contentsline {subsection}{\numberline {2.12.7}Version 1.6.0}{54}{subsection.2.12.7}%
+\contentsline {subsection}{\numberline {2.12.8}Version 1.7.0}{54}{subsection.2.12.8}%
+\contentsline {section}{\numberline {2.13}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{54}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Formal definitions}{55}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{55}{subsubsection*.43}%
+\contentsline {subsubsection}{Snowie Error Rate}{55}{subsubsection*.44}%
+\contentsline {subsubsection}{MWC loss (Match Winning Chance)}{55}{subsubsection*.45}%
+\contentsline {subsection}{\numberline {2.13.2}Decisions counted in the PR denominator}{55}{subsection.2.13.2}%
+\contentsline {subsubsection}{Checker plays — counted decisions}{55}{subsubsection*.46}%
+\contentsline {subsubsection}{Cube decisions — counted decisions}{56}{subsubsection*.47}%
+\contentsline {subsubsection}{Filter summary}{56}{subsubsection*.48}%
+\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG correspondence}{56}{subsection.2.13.3}%
+\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{56}{subsubsection*.49}%
+\contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{56}{subsubsection*.50}%
+\contentsline {subsection}{\numberline {2.13.4}Validating your own figures}{57}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG reference}{57}{subsection.2.13.5}%
+\contentsline {chapter}{\numberline {3}Contact}{59}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Donate}{61}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Acknowledgments}{63}{chapter.5}%
 \xpginauxfilefalse 

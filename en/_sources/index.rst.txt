@@ -142,6 +142,7 @@ Historique des versions
    0.19.0, 07/05/2026, "Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d'équité pour les cubes proches). Correction du calcul de cube_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:\`stats_parity\`). Voir :ref:\`stats\`."
    0.20.0, 31/05/2026, "Ajout de la structure d'exclusion *Except* au panneau de recherche : exclut les positions contenant l'un des pions dessinés, avec marqueur « doit être vide » (double-clic) et nombre de pions par point non limité (commande x). Ajout de l'option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI --dice). Panneau Commentaires : focus automatique du champ de saisie à l'ouverture et boutons éditer / supprimer toujours visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires."
    0.21.0, 01/06/2026, "Internationalisation de l'interface : l'intégralité de blunderDB (barre d'outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d'une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d'outils, permettant de sélectionner la langue. Le choix de la langue est conservé d'une session à l'autre. Voir :ref:\`configuration\`."
+   0.22.0, 02/06/2026, "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète l'application de bureau : un démon ``serve`` exposant le moteur en HTTP + JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par tenant (et Row-Level Security en option), une commande ``migrate`` pour transférer une base SQLite vers PostgreSQL, et un dispatcher générique ``call`` donnant accès en ligne de commande à toutes les opérations de stockage. Import de positions uniques depuis de nouveaux formats (eXtreme Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement des doublons entre formats. Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture. Voir :ref:\`headless\`."
 
 Sommaire
 ========
@@ -157,6 +158,7 @@ Sommaire
    raccourcis
    cli
    faq
+   mode_headless
    annexe_filtres
    annexe_windows_securite
    annexe_mac_securite

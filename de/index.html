@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.21.0 Dokumentation</title>
+  <title>blunderDB &mdash; blunderDB 0.22.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b986f03e"></script>
+      <script src="_static/documentation_options.js?v=2bf92ed5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -54,11 +54,12 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Tastenkürzel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Befehlszeilenschnittstelle (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Häufig gestellte Fragen (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Anhang: Fortgeschrittene Nutzung der Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Anhang: Datenbankschema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -248,6 +249,10 @@
 <td><p>01/06/2026</p></td>
 <td><p>Internationalisierung der Oberfläche: das gesamte blunderDB (Symbolleiste, Panels, Meldungen, Hilfe) kann nun wahlweise auf Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch oder Russisch angezeigt werden. Hinzufügen eines Konfigurationsfensters, das über eine zahnradförmige Schaltfläche in der Symbolleiste erreichbar ist und die Auswahl der Sprache ermöglicht. Die Sprachauswahl bleibt über Sitzungen hinweg erhalten. Siehe :ref:`configuration`.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.22.0</p></td>
+<td><p>02/06/2026</p></td>
+<td><p>Hinzufügen eines Headless-Modus (Server), fortgeschritten und optional, der die Desktop-Anwendung ergänzt: ein Daemon <code class="docutils literal notranslate"><span class="pre">serve</span></code>, der die Engine über HTTP + JSON bereitstellt, ein mehrbenutzerfähiges PostgreSQL-Backend mit Abschottung pro Tenant (und optionaler Row-Level Security), ein Befehl <code class="docutils literal notranslate"><span class="pre">migrate</span></code> zum Übertragen einer SQLite-Datenbank nach PostgreSQL sowie ein generischer Dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code>, der über die Kommandozeile Zugriff auf alle Speicheroperationen gibt. Import einzelner Stellungen aus neuen Formaten (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz-Text, native <code class="docutils literal notranslate"><span class="pre">.db</span></code>-Bibliothek) mit Anreicherung der Duplikate zwischen den Formaten. Korrekturen: Die Panels verursachen keinen Fehler mehr, wenn keine Datenbank geöffnet ist, und das Kommentar-Panel läuft beim Öffnen nicht mehr in eine Schleife. Siehe :ref:`headless`.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -360,40 +365,48 @@
 <li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Woher stammt das Symbol von blunderDB?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Anhang: Fortgeschrittene Nutzung der Filter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Positionssuche über die Befehlszeile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Suche in den aktuellen Ergebnissen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Filterbibliothek</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Beispiele</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Headless-Modus (Server)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#vue-d-ensemble">8.1. Überblick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-demon-serve">8.2. Der Daemon <code class="docutils literal notranslate"><span class="pre">serve</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQL-Backend und Mehrbenutzerbetrieb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#migrer-une-base-sqlite-vers-postgresql">8.4. Eine SQLite-Datenbank nach PostgreSQL migrieren</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-dispatcher-generique-call">8.5. Der generische Dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows-SmartScreen-Warnung</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Blockierung durch Windows Defender</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Anhang: Fortgeschrittene Nutzung der Filter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">9.1. Positionssuche über die Befehlszeile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">9.2. Suche in den aktuellen Ergebnissen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">9.3. Filterbibliothek</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">9.4. Beispiele</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-Anhang: Mögliche Blockierung von blunderDB</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. Installation von blunderDB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Erlauben der Ausführung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">10.1. Windows-SmartScreen-Warnung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">10.2. Blockierung durch Windows Defender</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Anhang: Datenbankschema</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Version 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-Anhang: Mögliche Blockierung von blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">11.1. Installation von blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">11.2. Erlauben der Ausführung von blunderDB</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. Formale Definitionen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. Im PR-Nenner gezählte Entscheidungen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. Übereinstimmung blunderDB ↔ XG ↔ gnuBG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. Eigene Zahlen überprüfen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. gnuBG-Referenz</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Anhang: Datenbankschema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. Version 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. Version 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">13.1. Formale Definitionen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">13.2. Im PR-Nenner gezählte Entscheidungen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">13.3. Übereinstimmung blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">13.4. Eigene Zahlen überprüfen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">13.5. gnuBG-Referenz</a></li>
 </ul>
 </li>
 </ul>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.21.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.22.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -54,11 +54,12 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
 </ul>
 
         </div>
@@ -248,6 +249,10 @@
 <td><p>2026/06/01</p></td>
 <td><p>インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。言語を選択するための設定ウィンドウを追加。ツールバーの歯車型ボタンからアクセスできます。言語の選択はセッションをまたいで保持されます。:ref:`configuration` を参照。</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.22.0</p></td>
+<td><p>2026/06/02</p></td>
+<td><p>デスクトップアプリケーションを補完する、高度かつ任意のヘッドレスモード（サーバー）を追加：エンジンをHTTP + JSONで公開するデーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code>、テナントごとの分離（およびオプションのRow-Level Security）を備えたマルチユーザーのPostgreSQLバックエンド、SQLiteデータベースをPostgreSQLへ転送する <code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code>。新しい形式（eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、BGBlitzテキスト、ネイティブライブラリ <code class="docutils literal notranslate"><span class="pre">.db</span></code>）からの単一ポジションのインポートと、形式間での重複の補完。修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。:ref:`headless` を参照。</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -360,40 +365,48 @@
 <li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. blunderDB のアイコンはどこから来ていますか？</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. コマンドラインによるポジション検索</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. 現在の結果内での検索</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. フィルターライブラリ</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. 例</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. ヘッドレスモード（サーバー）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#vue-d-ensemble">8.1. 概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-demon-serve">8.2. デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQLバックエンドとマルチユーザー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#migrer-une-base-sqlite-vers-postgresql">8.4. SQLiteデータベースをPostgreSQLへ移行する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-dispatcher-generique-call">8.5. 汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows SmartScreen の警告</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Windows Defender によるブロック</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. 付録: フィルターの高度な使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">9.1. コマンドラインによるポジション検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">9.2. 現在の結果内での検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">9.3. フィルターライブラリ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">9.4. 例</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. blunderDB のインストール</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. blunderDB の実行を許可する</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">10.1. Windows SmartScreen の警告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">10.2. Windows Defender によるブロック</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. バージョン 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. バージョン 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. バージョン 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. バージョン 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. バージョン 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. バージョン 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. バージョン 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. バージョン 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">11.1. blunderDB のインストール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">11.2. blunderDB の実行を許可する</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. 正式な定義</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. PR の分母にカウントされる決定</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. blunderDB ↔ XG ↔ gnuBG の対応</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. 自分の数値を検証する</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. gnuBG 参照</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. バージョン 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. バージョン 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. バージョン 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. バージョン 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. バージョン 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. バージョン 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. バージョン 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. バージョン 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">13.1. 正式な定義</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">13.2. PR の分母にカウントされる決定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">13.3. blunderDB ↔ XG ↔ gnuBG の対応</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">13.4. 自分の数値を検証する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">13.5. gnuBG 参照</a></li>
 </ul>
 </li>
 </ul>

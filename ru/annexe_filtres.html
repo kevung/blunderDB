@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Приложение: Расширенное использование фильтров &mdash; документация blunderDB 0.21.0</title>
+  <title>9. Приложение: Расширенное использование фильтров &mdash; документация blunderDB 0.22.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/documentation_options.js?v=3880d710"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Алфавитный указатель" href="genindex.html" />
     <link rel="search" title="Поиск" href="search.html" />
-    <link rel="next" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" href="annexe_windows_securite.html" />
-    <link rel="prev" title="7. Часто задаваемые вопросы" href="faq.html" /> 
+    <link rel="next" title="10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" href="annexe_windows_securite.html" />
+    <link rel="prev" title="8. Безголовый режим (сервер)" href="mode_headless.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,17 +55,18 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Приложение: Расширенное использование фильтров</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">8.1. Поиск позиций в командной строке</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">8.2. Поиск в текущих результатах</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">8.3. Библиотека фильтров</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exemples">8.4. Примеры</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Безголовый режим (сервер)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Приложение: Расширенное использование фильтров</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">9.1. Поиск позиций в командной строке</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">9.2. Поиск в текущих результатах</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">9.3. Библиотека фильтров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">9.4. Примеры</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -82,7 +83,7 @@
           <div role="navigation" aria-label="Навигация по страницам">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">8. </span>Приложение: Расширенное использование фильтров</li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Приложение: Расширенное использование фильтров</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -92,14 +93,14 @@
            <div itemprop="articleBody">
              
   <section id="annexe-utilisation-avancee-des-filtres">
-<span id="annexe-filtres"></span><h1><span class="section-number">8. </span>Приложение: Расширенное использование фильтров<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Ссылка на этот заголовок"></a></h1>
+<span id="annexe-filtres"></span><h1><span class="section-number">9. </span>Приложение: Расширенное использование фильтров<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Ссылка на этот заголовок"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Предупреждение</p>
 <p>Этот раздел предназначен для опытных пользователей blunderDB, желающих в полной мере использовать возможности поиска позиций.</p>
 </div>
 <p>Фильтры лежат в основе анализа позиций в blunderDB. Их использование позволяет с достаточной точностью находить конкретные позиции. В этом разделе подробно описывается использование фильтров через командную строку. Командная строка доступна по нажатию клавиши <code class="docutils literal notranslate"><span class="pre">ПРОБЕЛ</span></code>. С практикой она позволяет очень быстро комбинировать фильтры и использовать библиотеку фильтров.</p>
 <section id="recherche-de-positions-en-ligne-de-commande">
-<h2><span class="section-number">8.1. </span>Поиск позиций в командной строке<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">9.1. </span>Поиск позиций в командной строке<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
 <p>Для выполнения поиска с помощью фильтров,</p>
 <ol class="arabic simple">
 <li><p>Нажмите клавишу <code class="docutils literal notranslate"><span class="pre">TAB</span></code>, чтобы открыть панель поиска.</p></li>
@@ -118,13 +119,13 @@
 </div>
 </section>
 <section id="recherche-dans-les-resultats-courants">
-<h2><span class="section-number">8.2. </span>Поиск в текущих результатах<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">9.2. </span>Поиск в текущих результатах<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Ссылка на этот заголовок"></a></h2>
 <p>Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций. Это позволяет постепенно сужать результаты.</p>
 <p>В командной строке используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Команда <code class="docutils literal notranslate"><span class="pre">ss</span></code> работает после предварительного поиска.</p>
 <p>Окно поиска (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) также предлагает флажок «Search in current results» для той же функции.</p>
 </section>
 <section id="bibliotheque-de-filtres">
-<h2><span class="section-number">8.3. </span>Библиотека фильтров<a class="headerlink" href="#bibliotheque-de-filtres" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">9.3. </span>Библиотека фильтров<a class="headerlink" href="#bibliotheque-de-filtres" title="Ссылка на этот заголовок"></a></h2>
 <p>Библиотека фильтров позволяет пользователю сохранять поисковые команды для удобства тематических исследований.</p>
 <p>Чтобы добавить фильтр в библиотеку,</p>
 <ol class="arabic simple">
@@ -147,7 +148,7 @@
 </ol>
 </section>
 <section id="exemples">
-<h2><span class="section-number">8.4. </span>Примеры<a class="headerlink" href="#exemples" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">9.4. </span>Примеры<a class="headerlink" href="#exemples" title="Ссылка на этот заголовок"></a></h2>
 <p>Ниже приведены примеры использования фильтров в командной строке:</p>
 <table class="docutils align-center">
 <colgroup>
@@ -270,8 +271,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
-        <a href="faq.html" class="btn btn-neutral float-left" title="7. Часто задаваемые вопросы" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
-        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mode_headless.html" class="btn btn-neutral float-left" title="8. Безголовый режим (сервер)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

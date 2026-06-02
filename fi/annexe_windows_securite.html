@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi &mdash; blunderDB 0.21.0 documentation</title>
+  <title>10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi &mdash; blunderDB 0.22.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/documentation_options.js?v=47b383d9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Sisällysluettelo" href="genindex.html" />
     <link rel="search" title="Etsi" href="search.html" />
-    <link rel="next" title="10. Mac-liite: blunderDB:n mahdollinen esto" href="annexe_mac_securite.html" />
-    <link rel="prev" title="8. Liite: Suodattimien edistynyt käyttö" href="annexe_filtres.html" /> 
+    <link rel="next" title="11. Mac-liite: blunderDB:n mahdollinen esto" href="annexe_mac_securite.html" />
+    <link rel="prev" title="9. Liite: Suodattimien edistynyt käyttö" href="annexe_filtres.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,15 +55,16 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Windows SmartScreen -varoitus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Windows Defenderin esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">10.1. Windows SmartScreen -varoitus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">10.2. Windows Defenderin esto</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
 </ul>
 
         </div>
@@ -80,7 +81,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">9. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</li>
+      <li class="breadcrumb-item active"><span class="section-number">10. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
-<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<span id="annexe-windows-malware"></span><h1><span class="section-number">10. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
 <p>Seuraava koskee Windows 10- ja 11-käyttöjärjestelmiä.</p>
@@ -98,7 +99,7 @@
 <p>Windows edellyttää nykyään, että ohjelmistoja julkaisevat yritykset tai itsenäiset ohjelmistokehittäjät varmentavat sovelluksensa digitaalisesti tai jopa jakelevat ne Windows Storen kautta. Tällöin suositellaan kääntymään ulkopuolisten yritysten puoleen digitaalisen varmenteen hankkimiseksi, mikä maksaa useita satoja euroja (katso esimerkiksi <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
 <p>Koska tarjoan blunderDB:n ilmaiseksi, en halua suuntautua näihin kalliisiin vaihtoehtoihin. Tämän vuoksi on hyvin todennäköistä, että Windows varoittaa sinua mahdollisesta vaarasta tai jopa estää blunderDB:n suorittamisen kokonaan. Seuraavissa osioissa selitetään, mitä toimenpiteitä on tehtävä Windowsin vastustelun ohittamiseksi.</p>
 <section id="avertissement-windows-smartscreen">
-<h2><span class="section-number">9.1. </span>Windows SmartScreen -varoitus<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.1. </span>Windows SmartScreen -varoitus<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
 <p>Kun suoritat blunderDB:n sen lataamisen jälkeen, Windows saattaa näyttää seuraavanlaisen varoituksen:</p>
 <figure class="align-default">
 <img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
@@ -123,7 +124,7 @@
 </ol>
 </section>
 <section id="blocage-windows-defender">
-<h2><span class="section-number">9.2. </span>Windows Defenderin esto<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.2. </span>Windows Defenderin esto<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
 <p>Joissakin Windowsin suojausasetuksissa voi käydä niin, että SmartScreenin ohittamisesta huolimatta (katso edellinen osio) Windows Defender estää blunderDB:n suorittamisen seuraavanlaisilla viesteillä:</p>
 <figure class="align-center">
 <img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
@@ -198,8 +199,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. Liite: Suodattimien edistynyt käyttö" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Mac-liite: blunderDB:n mahdollinen esto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="9. Liite: Suodattimien edistynyt käyttö" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="11. Mac-liite: blunderDB:n mahdollinen esto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

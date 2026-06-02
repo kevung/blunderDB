@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{02.06.2026}
-\release{0.21.0}
+\release{0.22.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -617,6 +617,22 @@ Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, paneel
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.22.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+2.6.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Lisätty headless\sphinxhyphen{}tila (palvelin), edistynyt ja valinnainen, joka täydentää työpöytäsovellusta: \sphinxcode{\sphinxupquote{serve}}\sphinxhyphen{}demoni, joka tarjoaa moottorin HTTP + JSON \sphinxhyphen{}rajapinnan kautta, monikäyttäjäinen PostgreSQL\sphinxhyphen{}taustajärjestelmä, jossa tiedot on eristetty vuokralaisittain (sekä valinnainen Row\sphinxhyphen{}Level Security), \sphinxcode{\sphinxupquote{migrate}}\sphinxhyphen{}komento SQLite\sphinxhyphen{}tietokannan siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen \sphinxcode{\sphinxupquote{call}}\sphinxhyphen{}välittäjä, joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin. Yksittäisten asemien tuonti uusista muodoista (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz\sphinxhyphen{}teksti, natiivi \sphinxcode{\sphinxupquote{.db}} \sphinxhyphen{}kirjasto) sekä duplikaattien rikastaminen muotojen välillä. Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa ei ole avattu, eikä Comments\sphinxhyphen{}paneeli enää jää silmukkaan avattaessa. Katso :ref:`headless`.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -638,15 +654,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
 
 \end{itemize}
 
@@ -662,7 +678,7 @@ Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita ter
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0}
+Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
@@ -5598,6 +5614,585 @@ blunderDB toimii Windowsissa, Linuxissa ja Macissa.
 \label{\detokenize{faq:d-ou-vient-l-icone-de-blunderdb}}
 \sphinxAtStartPar
 blunderDB:n kuvake on ”goggling”\sphinxhyphen{}hymiö \sphinxhref{https://commons.wikimedia.org/wiki/SMirC}{SMirC\sphinxhyphen{}sarjasta}.
+
+\sphinxstepscope
+
+
+\section{Headless\sphinxhyphen{}tila (palvelin)}
+\label{\detokenize{mode_headless:mode-headless-serveur}}\label{\detokenize{mode_headless:headless}}\label{\detokenize{mode_headless::doc}}
+\begin{sphinxadmonition}{note}{Muista:}
+\sphinxAtStartPar
+Tässä osiossa kuvataan blunderDB:n \sphinxstylestrong{edistynyt ja valinnainen tila}, joka on tarkoitettu palvelinkäyttöön, monikäyttäjäympäristöihin ja automaatioon. \sphinxstylestrong{blunderDB:n tavanomainen ja suositeltu käyttötapa on edelleen työpöytäsovellus}, joka kuvataan edellisissä luvuissa. Jos käytät blunderDB:tä yksin omalla tietokoneellasi, et tarvitse tätä tilaa: voit ohittaa tämän luvun menettämättä mitään analyysiominaisuuksista.
+\end{sphinxadmonition}
+
+
+\subsection{Yleiskatsaus}
+\label{\detokenize{mode_headless:vue-d-ensemble}}
+\sphinxAtStartPar
+Sama \sphinxcode{\sphinxupquote{blunderdb}}\sphinxhyphen{}binääri voi työpöytäsovelluksen ja komentorivikomentojen (katso {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoriviliittymä (CLI)}}}}}) lisäksi toimia \sphinxstylestrong{headless\sphinxhyphen{}tilassa}: ilman graafista käyttöliittymää, ohjattuna kokonaan komentoriviltä tai verkon kautta. Tämä tila kattaa kolme käyttötapaa:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{demoni} \sphinxcode{\sphinxupquote{serve}} — tarjoaa blunderDB:n moottorin HTTP + JSON \sphinxhyphen{}palveluna, jotta jaettua tietokantaa voidaan pyörittää palvelimella ja käyttää usean käyttäjän kesken;
+
+\item {} 
+\sphinxAtStartPar
+yleiskäyttöinen \sphinxcode{\sphinxupquote{call}}\sphinxhyphen{}välittäjä — kutsuu mitä tahansa tallennustoimintoa suoraan paikallisesti, skriptausta ja testausta varten;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{migrate}}\sphinxhyphen{}komento — siirtää yhden käyttäjän SQLite\sphinxhyphen{}tietokannan monikäyttäjäiseen PostgreSQL\sphinxhyphen{}taustajärjestelmään.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Nämä kolme käyttötapaa nojaavat yhteiseen \sphinxstylestrong{tallennuskerrokseen}, joka osaa puhua kahdelle taustajärjestelmälle: \sphinxstylestrong{SQLite} (työpöytäsovelluksen tavanomainen \sphinxcode{\sphinxupquote{.db}}\sphinxhyphen{}tiedostomuoto) ja \sphinxstylestrong{PostgreSQL} (monikäyttäjäisiin palvelinkäyttöönottoihin).
+
+
+\subsection{\sphinxstyleliteralintitle{\sphinxupquote{serve}}\sphinxhyphen{}demoni}
+\label{\detokenize{mode_headless:le-demon-serve}}\label{\detokenize{mode_headless:headless-serve}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{blunderdb serve}} käynnistää moottorin HTTP\sphinxhyphen{}palveluna, joka vastaa JSON\sphinxhyphen{}muodossa. Sen avulla voi isännöidä asematietokantaa yhdellä koneella ja käyttää sitä useasta asiakkaasta.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Servir une base SQLite locale sur le port 8080}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+
+\PYG{c+c1}{\PYGZsh{} Servir un backend PostgreSQL}
+blunderdb\PYG{+w}{ }serve\PYG{+w}{ }\PYGZhy{}\PYGZhy{}backend\PYG{+w}{ }postgres\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}dsn\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/blunderdb?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}addr\PYG{+w}{ }:8080
+\end{sphinxVerbatim}
+
+\begin{sphinxadmonition}{warning}{Varoitus:}
+\sphinxAtStartPar
+\sphinxstylestrong{Demoni ei suorita minkäänlaista todennusta.} Se luottaa \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}\sphinxhyphen{}pyyntöotsakkeeseen ja \sphinxstylestrong{on} ajettava todennuksesta huolehtivan käänteisvälityspalvelimen (nginx, Caddy…) takana. \sphinxstylestrong{Älä koskaan altista sitä suoraan julkiseen internetiin.}
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Valinnat:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{74}\X{12}{74}\X{40}{74}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Valinta
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Oletus
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Merkitys
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <polku>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+SQLite\sphinxhyphen{}tiedosto (oikotie komennolle \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <polku>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <tyyppi>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+tallennustaustajärjestelmä: \sphinxcode{\sphinxupquote{sqlite}} tai \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <merkkijono>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+taustajärjestelmän yhteysmerkkijono
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}addr <isäntä:portti>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{:8080}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+kuunteluosoite
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}log\sphinxhyphen{}level <taso>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{info}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+lokitustaso: \sphinxcode{\sphinxupquote{debug|info|warn|error}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{true}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+tarjoaa \sphinxcode{\sphinxupquote{/metrics}} (Prometheus\sphinxhyphen{}muoto)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}cors\sphinxhyphen{}allow\sphinxhyphen{}origin <alkuperä>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+ottaa CORS:n käyttöön tälle alkuperälle (oletuksena pois käytöstä)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}rps <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{0}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+pyyntöraja sekunnissa vuokralaista kohti (0 = pois käytöstä)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rate\sphinxhyphen{}limit\sphinxhyphen{}burst <n>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{2×rps}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+token\sphinxhyphen{}ämpärin koko pyyntöpiikkejä varten
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{false}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+PostgreSQL: ottaa käyttöön vuokralaiskohtaisen Row\sphinxhyphen{}Level Securityn (syvyyspuolustus, valinnainen)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Useimmat valinnat voidaan antaa myös ympäristömuuttujalla (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+
+
+\subsubsection{Päätepisteet}
+\label{\detokenize{mode_headless:points-d-acces}}
+\sphinxAtStartPar
+Palvelu tarjoaa hallinnolliset päätepisteet, jotka ovat aina läsnä:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /healthz}} — elossaolo (prosessi on käynnissä);
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /readyz}} — valmius (tallennus vastaa);
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{GET /metrics}} — Prometheus\sphinxhyphen{}metriikat (jos \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metrics}} on käytössä).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Toiminnallinen rajapinta noudattaa kaavaa \sphinxcode{\sphinxupquote{POST /v1/<perhe>.<metodi>}} (esimerkiksi \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki\sphinxhyphen{}kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. Listauspäätepisteet palauttavat NDJSON\sphinxhyphen{}virran (yksi JSON\sphinxhyphen{}objekti riviä kohti). Palvelin pysähtyy siististi signaaleilla \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
+
+
+\subsection{PostgreSQL\sphinxhyphen{}taustajärjestelmä ja monikäyttäjäisyys}
+\label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
+\sphinxAtStartPar
+Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot \sphinxstylestrong{PostgreSQL}:ään SQLite\sphinxhyphen{}tiedoston sijaan. Taustajärjestelmä valitaan valinnalla \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend postgres}} ja yhteysmerkkijonolla \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn}}. Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä.
+
+\sphinxAtStartPar
+Tiedot on \sphinxstylestrong{eristetty vuokralaisittain}: jokainen pyyntö sisältää scope\sphinxhyphen{}tunnisteen (otsake \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, oletuksena \sphinxcode{\sphinxupquote{default}}), mikä sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. Valinta \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} ottaa lisäksi käyttöön PostgreSQL:n \sphinxstylestrong{Row\sphinxhyphen{}Level Securityn}: vuokralaiskohtaiset eristyskäytännöt asennetaan ja \sphinxcode{\sphinxupquote{app.tenant\_id}} asetetaan yhteyskohtaisesti. Tämä on valinnainen syvyyspuolustus, joka on oletuksena pois käytöstä.
+
+
+\subsection{SQLite\sphinxhyphen{}tietokannan siirtäminen PostgreSQL:ään}
+\label{\detokenize{mode_headless:migrer-une-base-sqlite-vers-postgresql}}\label{\detokenize{mode_headless:headless-migrate}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{blunderdb migrate}} kopioi yhden käyttäjän SQLite\sphinxhyphen{}tietokannan PostgreSQL\sphinxhyphen{}taustajärjestelmään valitun vuokralais\sphinxhyphen{}scopen alle — tämä on tapa « ladata » työpöytäkirjasto palvelinkäyttöönottoon.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}to\PYG{+w}{   }\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@host:5432/db?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant
+
+\PYG{c+c1}{\PYGZsh{} Prévisualiser sans rien écrire}
+blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite:///chemin/vers/base.db\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}tenant\PYGZhy{}id\PYG{+w}{ }mon\PYGZhy{}tenant\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dry\PYGZhy{}run
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Migraatio kopioi \sphinxstylestrong{asemat, niiden analyysit ja kommentit, ottelut (pelit + siirrot), turnaukset (ottelulinkkeineen) ja kokoelmat (koostumuksineen)}, kohdistaen pää\sphinxhyphen{} ja viiteavaimet uudelleen, kaiken kohdepuolen \sphinxstylestrong{yhdessä transaktiossa}: toiminto on atominen (epäonnistuminen jättää kohteen koskemattomaksi, riittää että käynnistää uudelleen). Edistyminen ja lopullinen yhteenveto tulostetaan NDJSON\sphinxhyphen{}muodossa vakiotulosteeseen.
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{24}{76}\X{12}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Valinta
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Oletus
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Merkitys
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from <uri>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+lähde\sphinxhyphen{}SQLite\sphinxhyphen{}tietokanta (\sphinxcode{\sphinxupquote{sqlite:///polku}} tai pelkkä polku)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to <dsn>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+kohde\sphinxhyphen{}PostgreSQL:n DSN (\sphinxcode{\sphinxupquote{postgres://…}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tenant\sphinxhyphen{}id <scope>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+kohteen vuokralais\sphinxhyphen{}scope (pakollinen paitsi \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}}\sphinxhyphen{}tilassa)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dry\sphinxhyphen{}run}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+laskee, mitä kopioitaisiin, kirjoittamatta mitään
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}on\sphinxhyphen{}conflict <käytäntö>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{""}} keskeyttää, jos vuokralaisella on jo tietoja; \sphinxcode{\sphinxupquote{skip}} yhdistää (asemien deduplikointi Zobrist\sphinxhyphen{}hashin perusteella)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Muista:}
+\sphinxAtStartPar
+Vielä migroimatta jäävät sovellustilat: Anki\sphinxhyphen{}pakat/\sphinxhyphen{}kortit, suodatinkirjasto, haku\sphinxhyphen{} ja komentohistoria sekä istunnon metatiedot. Etusijalla on asemakirjaston ja otteluhistorian migraatio.
+\end{sphinxadmonition}
+
+
+\subsection{Yleiskäyttöinen \sphinxstyleliteralintitle{\sphinxupquote{call}}\sphinxhyphen{}välittäjä}
+\label{\detokenize{mode_headless:le-dispatcher-generique-call}}\label{\detokenize{mode_headless:headless-call}}
+\sphinxAtStartPar
+Aiempien alikomentojen ({\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoriviliittymä (CLI)}}}}}) lisäksi \sphinxcode{\sphinxupquote{blunderdb call}} tarjoaa \sphinxstylestrong{kaikki} tallennustoiminnot suoraan paikallisesti. Se kulkee samojen käsittelijöiden kautta kuin \sphinxcode{\sphinxupquote{serve}}\sphinxhyphen{}demoni: toiminta on siis identtinen komennon \sphinxcode{\sphinxupquote{POST /v1/<perhe>.<metodi>}} kanssa. Tämä on hyödyllistä skriptauksessa ja integraatiotesteissä.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Lister toutes les méthodes disponibles}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }\PYGZhy{}\PYGZhy{}list
+
+\PYG{c+c1}{\PYGZsh{} Lectures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }metadata.counts\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.list\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}limit\PYGZdq{}:10\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.get\PYG{+w}{     }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:1\PYGZcb{}\PYGZsq{}}
+
+\PYG{c+c1}{\PYGZsh{} Écritures}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }positions.save\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}position\PYGZdq{}:\PYGZob{}...\PYGZcb{}\PYGZcb{}\PYGZsq{}}
+blunderdb\PYG{+w}{ }call\PYG{+w}{ }matches.delete\PYG{+w}{  }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }ma\PYGZus{}base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}json\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}\PYGZdq{}id\PYGZdq{}:42\PYGZcb{}\PYGZsq{}}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Valinnat:}
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{22}{76}\X{14}{76}\X{40}{76}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Valinta
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Oletus
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Merkitys
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db <polku>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+SQLite\sphinxhyphen{}tiedosto (oikotie komennolle \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend sqlite \sphinxhyphen{}\sphinxhyphen{}dsn <polku>}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}backend <tyyppi>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{sqlite}} tai \sphinxcode{\sphinxupquote{postgres}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dsn <merkkijono>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\$BLUNDERDB\_DSN}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+taustajärjestelmän yhteysmerkkijono
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}scope <merkkijono>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{default}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+vuokralais\sphinxhyphen{}scope (lähetetään otsakkeena \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}})
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json <merkkijono>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\{\}}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+pyynnön runko JSON\sphinxhyphen{}muodossa
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}json\sphinxhyphen{}file <polku>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+lukee pyynnön rungon tiedostosta
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}list}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+näyttää kaikki metodit \sphinxcode{\sphinxupquote{<perhe>.<metodi>}} ja lopettaa
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+JSON\sphinxhyphen{}vastaus (tai NDJSON\sphinxhyphen{}virta \sphinxcode{\sphinxupquote{*.list}}\sphinxhyphen{}päätepisteille) kirjoitetaan vakiotulosteeseen. Virhetilanteessa prosessi päättyy nollasta poikkeavalla koodilla ja kuori \sphinxcode{\sphinxupquote{\{"error":\{…\}\}}} tulostetaan vakiotulosteeseen, jotta se pysyy jäsenneltävänä (esimerkiksi \sphinxcode{\sphinxupquote{jq}}:lla).
 
 \sphinxstepscope
 

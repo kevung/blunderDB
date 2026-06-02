@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. ダウンロードとインストール &mdash; blunderDB 0.21.0 ドキュメント</title>
+  <title>1. ダウンロードとインストール &mdash; blunderDB 0.22.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -55,11 +55,12 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
 </ul>
 
         </div>
@@ -90,11 +91,11 @@
 <p>blunderDB はインストール不要の単一実行ファイルとして提供されます。</p>
 <p>blunderDB の最新バージョンは MIT ライセンスの下で利用可能です：</p>
 <ul class="simple">
-<li><p>Windows 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.21.0.exe</a></p></li>
-<li><p>Linux 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.21.0</a></p></li>
-<li><p>Mac 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.21.0.zip</a></p></li>
+<li><p>Windows 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe</a></p></li>
+<li><p>Linux 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0</a></p></li>
+<li><p>Mac 版：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip</a></p></li>
 </ul>
-<p>オフラインで参照するには、このドキュメントを PDF 形式でダウンロードすることもできます：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.21.0-en.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.21.0-en.pdf</a></p>
+<p>オフラインで参照するには、このドキュメントを PDF 形式でダウンロードすることもできます：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-en.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-en.pdf</a></p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
 <p>blunderDB はグラフィカルインターフェースのレンダリングに Webview2 を使用します。Webview2 はすでにオペレーティングシステムにネイティブに存在している可能性が高いです。そうでない場合、blunderDB の初回実行時にダウンロードとインストールが提案されます。ユーザーによる操作は不要です。</p>
@@ -105,15 +106,15 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
-<p>Linux でエラー <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code> が発生する場合、ディストリビューションが webkit2gtk-4.0 の代わりに webkit2gtk-4.1 を使用しています。専用ビルドをダウンロードしてください：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.21.0</a></p>
+<p>Linux でエラー <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code> が発生する場合、ディストリビューションが webkit2gtk-4.0 の代わりに webkit2gtk-4.1 を使用しています。専用ビルドをダウンロードしてください：<a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0</a></p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">警告</p>
-<p>Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">9 章</span></a> を参照してください。</p>
+<p>Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">10 章</span></a> を参照してください。</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">警告</p>
-<p>Mac では、blunderDB の実行を拒否する場合があります。理由と回避方法については <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">10 章</span></a> を参照してください。</p>
+<p>Mac では、blunderDB の実行を拒否する場合があります。理由と回避方法については <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">11 章</span></a> を参照してください。</p>
 </div>
 </section>
 

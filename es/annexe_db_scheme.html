@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>11. Anexo: Esquema de la base de datos &mdash; documentación de blunderDB - 0.21.0</title>
+  <title>12. Anexo: Esquema de la base de datos &mdash; documentación de blunderDB - 0.22.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,15 +16,15 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7f6bb778"></script>
+      <script src="_static/documentation_options.js?v=ed146993"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="genindex.html" />
     <link rel="search" title="Búsqueda" href="search.html" />
-    <link rel="next" title="12. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB" href="stats_parity.html" />
-    <link rel="prev" title="10. Anexo Mac: posible bloqueo de blunderDB" href="annexe_mac_securite.html" /> 
+    <link rel="next" title="13. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB" href="stats_parity.html" />
+    <link rel="prev" title="11. Anexo Mac: posible bloqueo de blunderDB" href="annexe_mac_securite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,21 +55,22 @@
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Atajos de teclado</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaz de línea de comandos (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Preguntas frecuentes (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Anexo: Uso avanzado de los filtros</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Anexo Mac: posible bloqueo de blunderDB</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Anexo: Esquema de la base de datos</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">11.1. Versión 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">11.2. Versión 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">11.3. Versión 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">11.4. Versión 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">11.5. Versión 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">11.6. Versión 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">11.7. Versión 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">11.8. Versión 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">8. Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Anexo: Esquema de la base de datos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Versión 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Versión 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Versión 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Versión 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Versión 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Versión 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Versión 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Versión 1.7.0</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
 </ul>
 
         </div>
@@ -86,7 +87,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">11. </span>Anexo: Esquema de la base de datos</li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Anexo: Esquema de la base de datos</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,13 +97,13 @@
            <div itemprop="articleBody">
              
   <section id="annexe-schema-de-la-base-de-donnees">
-<span id="annexe-db-migration"></span><h1><span class="section-number">11. </span>Anexo: Esquema de la base de datos<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Anexo: Esquema de la base de datos<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
 <div class="admonition important">
 <p class="admonition-title">Importante</p>
 <p>Haga siempre una copia de seguridad de su archivo .db antes de realizar migraciones de la base de datos.</p>
 </div>
 <section id="version-1-0-0">
-<h2><span class="section-number">11.1. </span>Versión 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.1. </span>Versión 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
 <p>La versión 1.0.0 de la base de datos contiene las siguientes tablas:</p>
 <ul class="simple">
 <li><p><strong>position</strong>: Almacena las posiciones con las columnas <cite>id</cite> (clave primaria) y <cite>state</cite> (estado de la posición en formato JSON).</p></li>
@@ -112,7 +113,7 @@
 </ul>
 </section>
 <section id="version-1-1-0">
-<h2><span class="section-number">11.2. </span>Versión 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.2. </span>Versión 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
 <p>La versión 1.1.0 de la base de datos añade la siguiente tabla:</p>
 <ul class="simple">
 <li><p><strong>command_history</strong>: Almacena el historial de comandos con las columnas <cite>id</cite> (clave primaria), <cite>command</cite> (texto del comando) y <cite>timestamp</cite> (fecha y hora de ejecución del comando).</p></li>
@@ -121,7 +122,7 @@
 <p>Para migrar la base de datos de la versión 1.0.0 a la versión 1.1.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> en blunderDB.</p>
 </section>
 <section id="version-1-2-0">
-<h2><span class="section-number">11.3. </span>Versión 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.3. </span>Versión 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
 <p>La versión 1.2.0 de la base de datos añade la siguiente tabla:</p>
 <ul class="simple">
 <li><p><strong>filter_library</strong>: Almacena los filtros de búsqueda con las columnas <cite>id</cite> (clave primaria), <cite>name</cite> (nombre del filtro), <cite>command</cite> (comando asociado al filtro) y <cite>edit_position</cite> (posición editada al guardar el filtro).</p></li>
@@ -130,7 +131,7 @@
 <p>Para migrar la base de datos de la versión 1.1.0 a la versión 1.2.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> en blunderDB.</p>
 </section>
 <section id="version-1-3-0">
-<h2><span class="section-number">11.4. </span>Versión 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.4. </span>Versión 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
 <p>La versión 1.3.0 de la base de datos añade la siguiente tabla:</p>
 <ul class="simple">
 <li><p><strong>search_history</strong>: Almacena el historial de búsquedas de posiciones con las columnas <cite>id</cite> (clave primaria), <cite>command</cite> (texto del comando de búsqueda), <cite>position</cite> (estado de la posición en el momento de la búsqueda) y <cite>timestamp</cite> (fecha y hora de la búsqueda).</p></li>
@@ -139,7 +140,7 @@
 <p>Para migrar la base de datos de la versión 1.2.0 a la versión 1.3.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> en blunderDB.</p>
 </section>
 <section id="version-1-4-0">
-<h2><span class="section-number">11.5. </span>Versión 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.5. </span>Versión 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
 <p>La versión 1.4.0 de la base de datos añade las siguientes tablas para la gestión de partidas:</p>
 <ul class="simple">
 <li><p><strong>match</strong>: Almacena las partidas importadas con las columnas <cite>id</cite> (clave primaria), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite> y <cite>match_hash</cite> (hash para la detección de duplicados).</p></li>
@@ -150,7 +151,7 @@
 <p>La migración de 1.3.0 a 1.4.0 es automática al abrir la base de datos.</p>
 </section>
 <section id="version-1-5-0">
-<h2><span class="section-number">11.6. </span>Versión 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.6. </span>Versión 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
 <p>La versión 1.5.0 de la base de datos añade las siguientes tablas para la gestión de colecciones:</p>
 <ul class="simple">
 <li><p><strong>collection</strong>: Almacena las colecciones de posiciones con las columnas <cite>id</cite> (clave primaria), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite> y <cite>updated_at</cite>.</p></li>
@@ -159,7 +160,7 @@
 <p>La migración de 1.4.0 a 1.5.0 es automática al abrir la base de datos.</p>
 </section>
 <section id="version-1-6-0">
-<h2><span class="section-number">11.7. </span>Versión 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.7. </span>Versión 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
 <p>La versión 1.6.0 de la base de datos añade la siguiente tabla para la gestión de torneos:</p>
 <ul class="simple">
 <li><p><strong>tournament</strong>: Almacena los torneos con las columnas <cite>id</cite> (clave primaria), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite> y <cite>updated_at</cite>.</p></li>
@@ -168,7 +169,7 @@
 <p>La migración de 1.5.0 a 1.6.0 es automática al abrir la base de datos.</p>
 </section>
 <section id="version-1-7-0">
-<h2><span class="section-number">11.8. </span>Versión 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.8. </span>Versión 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
 <p>La versión 1.7.0 de la base de datos añade la siguiente columna:</p>
 <ul class="simple">
 <li><p>Adición de la columna <cite>last_visited_position</cite> en la tabla <cite>match</cite> para recordar la última posición visitada en cada partida.</p></li>
@@ -185,8 +186,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="10. Anexo Mac: posible bloqueo de blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
-        <a href="stats_parity.html" class="btn btn-neutral float-right" title="12. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="11. Anexo Mac: posible bloqueo de blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="13. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
