@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:49
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 01:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1201,11 +1201,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 597--599
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 597--599
-\TU/FreeSerif(2)/m/n/10 που επιτρέπει την επιλογή της γλώσσας. Η επιλογή της
- []
-
-
 Package fontspec Info: Font family 'FreeMono(1)' created for font 'FreeMono'
 (fontspec)             with options [Script=Greek].
 (fontspec)              
@@ -1266,7 +1261,7 @@ Underfull \hbox (badness 10000) detected at line 616
  []
 
 [3]
-Overfull \vbox (1415.11995pt too high) has occurred while \output is active []
+Overfull \vbox (1427.11995pt too high) has occurred while \output is active []
 
 
 [4]

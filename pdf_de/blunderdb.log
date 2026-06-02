@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:49
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 01:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1236,7 +1236,7 @@ uage=DEU;+smcp;"
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 632.
 [3]
-Overfull \vbox (1259.71999pt too high) has occurred while \output is active []
+Overfull \vbox (1283.71999pt too high) has occurred while \output is active []
 
 
 [4]
@@ -1467,6 +1467,6 @@ Here is how much of TeX's memory you used:
  41135 multiletter control sequences out of 15000+600000
  566758 words of font info for 136 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,608s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1291b,608s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (67 pages).

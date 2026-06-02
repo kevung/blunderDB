@@ -239,7 +239,7 @@
 </tr>
 <tr class="row-even"><td><p>0.19.0</p></td>
 <td><p>2026/05/07</p></td>
-<td><p>統計パネルの追加：PR（Performance Rate）、Snowie Error Rate、MWC cost（Match Winning Chance cost）の各指標、フィルターバー（プレイヤー、トーナメント、日付、決定の種類、マッチ長）、レベルカード／移動平均PR／トップブランダーを表示するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示する進捗タブ、キューブアクションごとの内訳とエラーの大きさのヒストグラムを表示するエラータブ。すべての指標からポジション／マッチ／トーナメントへのインタラクティブなドリルダウン。PR／MWCの即時切り替え。CLIコマンド list --type stats。PR／Snowie ER／MWC指標をeXtremeGammonおよびgnuBGに整合（接近したキューブのエクイティしきい値0.16）。Double/Pass決定のcube_error計算の修正。統計モデルのドキュメント化（:ref:`stats_parity`）。:ref:`stats` を参照。</p></td>
+<td><p>統計パネルの追加：PR（Performance Rate）、Snowie Error Rate、MWC cost（Match Winning Chance cost）の各指標、フィルターバー（プレイヤー、トーナメント、日付、決定の種類、マッチ長）、レベルカード／移動平均PR／トップブランダーを表示するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示する進捗タブ、キューブアクションごとの内訳とエラーの大きさのヒストグラムを表示するエラータブ。すべての指標からポジション／マッチ／トーナメントへのインタラクティブなドリルダウン。PR／MWCの即時切り替え。CLIコマンド list --type stats。PR／Snowie ER／MWC指標をeXtremeGammonおよびgnuBGに整合（接近したキューブのエクイティしきい値0.16）。Double/Pass決定のcube_error計算の修正。統計モデルのドキュメント化（<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a>）。<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照。</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.20.0</p></td>
 <td><p>2026/05/31</p></td>
@@ -247,11 +247,11 @@
 </tr>
 <tr class="row-even"><td><p>0.21.0</p></td>
 <td><p>2026/06/01</p></td>
-<td><p>インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。言語を選択するための設定ウィンドウを追加。ツールバーの歯車型ボタンからアクセスできます。言語の選択はセッションをまたいで保持されます。:ref:`configuration` を参照。</p></td>
+<td><p>インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。言語を選択するための設定ウィンドウを追加。ツールバーの歯車型ボタンからアクセスできます。言語の選択はセッションをまたいで保持されます。<a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> を参照。</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.22.0</p></td>
 <td><p>2026/06/02</p></td>
-<td><p>デスクトップアプリケーションを補完する、高度かつ任意のヘッドレスモード（サーバー）を追加：エンジンをHTTP + JSONで公開するデーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code>、テナントごとの分離（およびオプションのRow-Level Security）を備えたマルチユーザーのPostgreSQLバックエンド、SQLiteデータベースをPostgreSQLへ転送する <code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code>。新しい形式（eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、BGBlitzテキスト、ネイティブライブラリ <code class="docutils literal notranslate"><span class="pre">.db</span></code>）からの単一ポジションのインポートと、形式間での重複の補完。修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。:ref:`headless` を参照。</p></td>
+<td><p>デスクトップアプリケーションを補完する、高度かつ任意のヘッドレスモード（サーバー）を追加：エンジンをHTTP + JSONで公開するデーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code>、テナントごとの分離（およびオプションのRow-Level Security）を備えたマルチユーザーのPostgreSQLバックエンド、SQLiteデータベースをPostgreSQLへ転送する <code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code>。新しい形式（eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、BGBlitzテキスト、ネイティブライブラリ <code class="docutils literal notranslate"><span class="pre">.db</span></code>）からの単一ポジションのインポートと、形式間での重複の補完。修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照。</p></td>
 </tr>
 </tbody>
 </table>

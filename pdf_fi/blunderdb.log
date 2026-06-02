@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 00:50
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.2)  2 JUN 2026 01:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1084,27 +1084,15 @@ rittelyllä ja
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 583--585
-\TU/FreeSerif(0)/m/n/10 ja gnuBG:n kanssa (0.16 equity-kynnys läheisille tuplau
-ksille).
+Underfull \hbox (badness 5787) in paragraph at lines 583--585
+\TU/FreeSerif(0)/m/n/10 -indikaattoreiden yhtenäistäminen eXtremeGammonin ja gn
+uBG:n
  []
 
 
-Underfull \hbox (badness 6188) in paragraph at lines 583--585
-\TU/FreeSerif(0)/m/n/10 Korjattu cube_error-laskenta Double/Pass-päätöksille. T
-ilastomallin
- []
-
-
-Underfull \hbox (badness 6188) detected at line 586
-\TU/FreeSerif(0)/m/n/10 Korjattu cube_error-laskenta Double/Pass-päätöksille. T
-ilastomallin
- []
-
-
-Underfull \hbox (badness 10000) detected at line 586
-\TU/FreeSerif(0)/m/n/10 ja gnuBG:n kanssa (0.16 equity-kynnys läheisille tuplau
-ksille).
+Underfull \hbox (badness 5787) detected at line 586
+\TU/FreeSerif(0)/m/n/10 -indikaattoreiden yhtenäistäminen eXtremeGammonin ja gn
+uBG:n
  []
 
 
@@ -1176,7 +1164,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 631--633
  []
 
 
-Underfull \hbox (badness 10000) detected at line 634
+Underfull \hbox (badness 5985) detected at line 634
 \TU/FreeSerif(0)/m/n/10 duplikaattien rikastaminen muotojen välillä. Korjaukset
 : paneelit
  []
@@ -1200,7 +1188,7 @@ Underfull \hbox (badness 10000) detected at line 634
  []
 
 
-Underfull \hbox (badness 10000) detected at line 634
+Underfull \hbox (badness 6510) detected at line 634
 \TU/FreeSerif(0)/m/n/10 taustajärjestelmä, jossa tiedot on eristetty vuokralais
 ittain (sekä
  []
@@ -1212,7 +1200,7 @@ ainen, joka
  []
 
 [3]
-Overfull \vbox (1163.11995pt too high) has occurred while \output is active []
+Overfull \vbox (1187.11995pt too high) has occurred while \output is active []
 
 
 [4]
@@ -1467,10 +1455,10 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  19364 strings out of 476443
  395074 string characters out of 5793963
- 1992627 words of memory out of 5000000
+ 1991627 words of memory out of 5000000
  40921 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1357b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (67 pages).
