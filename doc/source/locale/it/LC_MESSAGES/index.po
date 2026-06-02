@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-02 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -225,8 +225,7 @@ msgstr "16 febbraio 2025"
 
 #: ../../source/index.rst:1
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
-msgstr ""
-"Supporto del giapponese e del tedesco nelle esportazioni di XG."
+msgstr "Supporto del giapponese e del tedesco nelle esportazioni di XG."
 
 #: ../../source/index.rst:1
 msgid "0.8.0"
@@ -289,8 +288,8 @@ msgid ""
 "Navigation dans les matchs: parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
 msgstr ""
-"Navigazione nei match: scorrimento delle mosse di un match importato, con "
-"evidenziazione della mossa giocata."
+"Navigazione nei match: scorrimento delle mosse di un match importato, con"
+" evidenziazione della mossa giocata."
 
 #: ../../source/index.rst:5
 msgid ""
@@ -302,8 +301,7 @@ msgstr ""
 
 #: ../../source/index.rst:7
 msgid "Import par dossier récursif et import par glisser-déposer."
-msgstr ""
-"Importazione per cartella ricorsiva e importazione tramite trascinamento."
+msgstr "Importazione per cartella ricorsiva e importazione tramite trascinamento."
 
 #: ../../source/index.rst:9
 msgid ""
@@ -403,8 +401,7 @@ msgstr "19 marzo 2026"
 
 #: ../../source/index.rst:1
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
-msgstr ""
-"Importazione di file di posizione eXtreme Gammon (XGP) con analisi."
+msgstr "Importazione di file di posizione eXtreme Gammon (XGP) con analisi."
 
 #: ../../source/index.rst:1
 msgid "0.13.0"
@@ -452,8 +449,7 @@ msgstr "Colonna torneo nel pannello dei match con modifica inline."
 
 #: ../../source/index.rst:15
 msgid "Affichage automatique du panneau d'analyse après une recherche."
-msgstr ""
-"Visualizzazione automatica del pannello di analisi dopo una ricerca."
+msgstr "Visualizzazione automatica del pannello di analisi dopo una ricerca."
 
 #: ../../source/index.rst:1
 msgid "0.14.0"
@@ -466,8 +462,8 @@ msgstr "30 marzo 2026"
 #: ../../source/index.rst:1
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
-"Pannello Anki dedicato per lo studio a ripetizione dilazionata "
-"(algoritmo FSRS)."
+"Pannello Anki dedicato per lo studio a ripetizione dilazionata (algoritmo"
+" FSRS)."
 
 #: ../../source/index.rst:3
 msgid "Import des commentaires depuis les fichiers XG."
@@ -535,13 +531,13 @@ msgid ""
 "panneau de recherche lors du changement d'onglets. Suppression de 62 "
 "instructions de débogage des chemins critiques."
 msgstr ""
-"Ottimizzazione dello storage: compressione zlib dei dati di analisi (~80% "
-"di riduzione), codifica compatta delle posizioni (~90% di riduzione della "
-"dimensione). Aggiunta di 5 indici mancanti per migliorare le prestazioni "
-"di ricerca. Correzione della ricerca per errore di cubo. Correzione della "
-"modalità EDIT dopo una ricerca senza risultati. Ripristino dello stato "
-"del pannello di ricerca al cambio di scheda. Rimozione di 62 istruzioni "
-"di debug dai percorsi critici."
+"Ottimizzazione dello storage: compressione zlib dei dati di analisi (~80%"
+" di riduzione), codifica compatta delle posizioni (~90% di riduzione "
+"della dimensione). Aggiunta di 5 indici mancanti per migliorare le "
+"prestazioni di ricerca. Correzione della ricerca per errore di cubo. "
+"Correzione della modalità EDIT dopo una ricerca senza risultati. "
+"Ripristino dello stato del pannello di ricerca al cambio di scheda. "
+"Rimozione di 62 istruzioni di debug dai percorsi critici."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -597,11 +593,11 @@ msgid ""
 msgstr ""
 "Aggiunta del pannello Stats: indicatori PR (Performance Rate), Snowie "
 "Error Rate e MWC cost (Match Winning Chance cost), barra di filtro "
-"(giocatore, torneo, date, tipo di decisione, lunghezza del match), scheda "
-"Dashboard con schede di livello / PR mobile / top blunder, scheda "
-"Progressione con curva per torneo e scatter plot per match, scheda Errori "
-"con ripartizione per azione di cubo e istogramma delle magnitudini. Drill-"
-"down interattivo verso le posizioni / match / tornei da tutti gli "
+"(giocatore, torneo, date, tipo di decisione, lunghezza del match), scheda"
+" Dashboard con schede di livello / PR mobile / top blunder, scheda "
+"Progressione con curva per torneo e scatter plot per match, scheda Errori"
+" con ripartizione per azione di cubo e istogramma delle magnitudini. "
+"Drill-down interattivo verso le posizioni / match / tornei da tutti gli "
 "indicatori. Toggle PR / MWC istantaneo. Comando CLI list --type stats. "
 "Allineamento degli indicatori PR / Snowie ER / MWC con eXtremeGammon e "
 "gnuBG (soglia di equità 0.16 per i cubi marginali). Correzione del "
@@ -629,8 +625,8 @@ msgid ""
 msgstr ""
 "Aggiunta della struttura di esclusione *Except* al pannello di ricerca: "
 "esclude le posizioni che contengono uno dei pezzi disegnati, con "
-"marcatore « deve essere vuoto » (doppio clic) e numero di pezzi per punto "
-"non limitato (comando x). Aggiunta dell'opzione « solo primo dado » al "
+"marcatore « deve essere vuoto » (doppio clic) e numero di pezzi per punto"
+" non limitato (comando x). Aggiunta dell'opzione « solo primo dado » al "
 "filtro di lancio dei dadi (variante D1, opzione CLI --dice). Pannello "
 "Commenti: focus automatico del campo di immissione all'apertura e "
 "pulsanti modifica / elimina sempre visibili. Correzione del filtro « "
@@ -663,15 +659,49 @@ msgstr ""
 "viene conservata da una sessione all'altra. Vedi "
 ":ref:\\`configuration\\`."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:1
+msgid "0.22.0"
+msgstr "0.22.0"
+
+#: ../../source/index.rst:1
+msgid "02/06/2026"
+msgstr "2 giugno 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage. Import de positions uniques depuis de nouveaux formats (eXtreme"
+" Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec "
+"enrichissement des doublons entre formats. Corrections : les panneaux ne "
+"provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau "
+"Commentaires ne boucle plus à l'ouverture. Voir :ref:\\`headless\\`."
+msgstr ""
+"Aggiunta di una modalità headless (server), avanzata e facoltativa, che "
+"completa l'applicazione desktop: un demone ``serve`` che espone il motore "
+"in HTTP + JSON, un backend PostgreSQL multiutente con compartimentazione "
+"per tenant (e Row-Level Security come opzione), un comando ``migrate`` per "
+"trasferire un database SQLite verso PostgreSQL e un dispatcher generico "
+"``call`` che dà accesso a riga di comando a tutte le operazioni di "
+"archiviazione. Import di singole posizioni da nuovi formati (eXtreme "
+"Gammon ``.xgp``, BGBlitz testo, libreria nativa ``.db``) con "
+"arricchimento dei duplicati tra formati. Correzioni: i pannelli non "
+"causano più errori quando nessun database è aperto e il pannello Commenti "
+"non entra più in loop all'apertura. Vedi :ref:\\`headless\\`."
+
+#: ../../source/index.rst:148
 msgid "Sommaire"
 msgstr "Indice"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Contacts"
 msgstr "Contatti"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:183
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -679,7 +709,7 @@ msgstr ""
 "Autore: Kévin Unger <blunderdb@proton.me>. Puoi anche trovarmi su Heroes "
 "con il nickname postmanpat."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -695,32 +725,31 @@ msgstr ""
 "per condividere la tua esperienza. Tutti i riscontri (costruttivi) sono "
 "benvenuti."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:193
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Ecco diversi modi per discutere:"
 
-#: ../../source/index.rst:193
-msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
-msgstr ""
-"unirsi al server Discord di blunderDB: https://discord.gg/DA5PpzM9En"
-
 #: ../../source/index.rst:195
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr "unirsi al server Discord di blunderDB: https://discord.gg/DA5PpzM9En"
+
+#: ../../source/index.rst:197
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "scrivermi una mail a blunderdb@proton.me,"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:199
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "parlare con me, se ci incontriamo a un torneo,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "sur Github,"
 msgstr "su Github,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "aprire un ticket: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -728,31 +757,31 @@ msgstr ""
 "per correzioni di bug o proposte di miglioramento, creare una pull "
 "request."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "Faire un don"
 msgstr "Fare una donazione"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
-msgstr ""
-"Se apprezzi blunderDB e vuoi sostenere gli sviluppi passati e futuri, "
-"puoi"
+msgstr "Se apprezzi blunderDB e vuoi sostenere gli sviluppi passati e futuri, puoi"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "offrirmi da bere se abbiamo il piacere di incontrarci!"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:215
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
-msgstr "fare una piccola donazione tramite PayPal all'indirizzo blunderdb@proton.me"
+msgstr ""
+"fare una piccola donazione tramite PayPal all'indirizzo "
+"blunderdb@proton.me"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:218
 msgid "Remerciements"
 msgstr "Ringraziamenti"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:220
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -761,7 +790,7 @@ msgstr ""
 "nostra cara figlia Perrine. Desidero ringraziare in modo particolare "
 "alcuni amici:"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -769,11 +798,11 @@ msgid ""
 "jouer."
 msgstr ""
 "*Tristan Remille*, per avermi avviato al backgammon con gioia e "
-"benevolenza; per indicare la Via nella comprensione di questo meraviglioso "
-"gioco; per continuare a incoraggiarmi nonostante i miei modesti tentativi "
-"di giocare meglio."
+"benevolenza; per indicare la Via nella comprensione di questo "
+"meraviglioso gioco; per continuare a incoraggiarmi nonostante i miei "
+"modesti tentativi di giocare meglio."
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -782,3 +811,4 @@ msgstr ""
 "*Nicolas Harmand*, allegro compagno ormai da più di una decina d'anni in "
 "belle avventure, e un fantastico compagno di gioco da quando ha preso il "
 "virus del backgammon."
+

@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-02 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -32,13 +31,13 @@ msgid ""
 "différents filtres combinables arbitrairement. blunderDB peut également "
 "être utilisé pour constituer des catalogues de positions de référence."
 msgstr ""
-"Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων θέσεων "
-"τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει ένα μοναδικό μέρος "
-"όπου ένας παίκτης μπορεί να συγκεντρώσει τις θέσεις που έχει συναντήσει "
-"(διαδικτυακά, σε τουρνουά) και να μπορεί να μελετήσει ξανά αυτές τις θέσεις "
-"φιλτράροντάς τες με διάφορα φίλτρα που μπορούν να συνδυαστούν αυθαίρετα. Το "
-"blunderDB μπορεί επίσης να χρησιμοποιηθεί για τη δημιουργία καταλόγων θέσεων "
-"αναφοράς."
+"Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων "
+"θέσεων τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει ένα "
+"μοναδικό μέρος όπου ένας παίκτης μπορεί να συγκεντρώσει τις θέσεις που "
+"έχει συναντήσει (διαδικτυακά, σε τουρνουά) και να μπορεί να μελετήσει "
+"ξανά αυτές τις θέσεις φιλτράροντάς τες με διάφορα φίλτρα που μπορούν να "
+"συνδυαστούν αυθαίρετα. Το blunderDB μπορεί επίσης να χρησιμοποιηθεί για "
+"τη δημιουργία καταλόγων θέσεων αναφοράς."
 
 #: ../../source/index.rst:13
 msgid "La présente documentation est structurée de la manière suivante:"
@@ -289,8 +288,8 @@ msgid ""
 "Navigation dans les matchs: parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
 msgstr ""
-"Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με "
-"επισήμανση της κίνησης που παίχτηκε."
+"Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με"
+" επισήμανση της κίνησης που παίχτηκε."
 
 #: ../../source/index.rst:5
 msgid ""
@@ -388,8 +387,7 @@ msgstr "Προσθήκη φίλτρων ανά αγώνα και ανά τουρ
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
-msgstr ""
-"Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης."
+msgstr "Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης."
 
 #: ../../source/index.rst:1
 msgid "0.12.0"
@@ -416,8 +414,8 @@ msgid ""
 "Simplification de l'interface: la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
 msgstr ""
-"Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται "
-"πλέον απευθείας μέσω των πινάκων."
+"Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται"
+" πλέον απευθείας μέσω των πινάκων."
 
 #: ../../source/index.rst:3
 msgid "Ligne de commande intégrée dans la barre d'état."
@@ -482,8 +480,8 @@ msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
 msgstr ""
-"Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή "
-"το ταμπλό με ανάλυση με Ctrl+X Ctrl+X)."
+"Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή"
+" το ταμπλό με ανάλυση με Ctrl+X Ctrl+X)."
 
 #: ../../source/index.rst:1
 msgid "0.16.0"
@@ -531,11 +529,11 @@ msgid ""
 msgstr ""
 "Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% "
 "μείωση), συμπαγής κωδικοποίηση των θέσεων (~90% μείωση του μεγέθους). "
-"Προσθήκη 5 ευρετηρίων που έλειπαν για τη βελτίωση της απόδοσης αναζήτησης. "
-"Διόρθωση της αναζήτησης κατά σφάλμα ντουμπλέ. Διόρθωση της λειτουργίας EDIT "
-"μετά από αναζήτηση χωρίς αποτελέσματα. Επαναφορά της κατάστασης του πίνακα "
-"αναζήτησης κατά την εναλλαγή καρτελών. Αφαίρεση 62 εντολών εντοπισμού "
-"σφαλμάτων από τις κρίσιμες διαδρομές."
+"Προσθήκη 5 ευρετηρίων που έλειπαν για τη βελτίωση της απόδοσης "
+"αναζήτησης. Διόρθωση της αναζήτησης κατά σφάλμα ντουμπλέ. Διόρθωση της "
+"λειτουργίας EDIT μετά από αναζήτηση χωρίς αποτελέσματα. Επαναφορά της "
+"κατάστασης του πίνακα αναζήτησης κατά την εναλλαγή καρτελών. Αφαίρεση 62 "
+"εντολών εντοπισμού σφαλμάτων από τις κρίσιμες διαδρομές."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -555,8 +553,8 @@ msgid ""
 "README. Correction de tous les avertissements ESLint (46→0) et Vite "
 "(6→0)."
 msgstr ""
-"Σημαντική αναδιάρθρωση του κώδικα: διαχωρισμός του db.go (10k γραμμές) σε "
-"19 εξειδικευμένα αρχεία, εξαγωγή 7 ενοτήτων υπηρεσιών από το App.svelte "
+"Σημαντική αναδιάρθρωση του κώδικα: διαχωρισμός του db.go (10k γραμμές) σε"
+" 19 εξειδικευμένα αρχεία, εξαγωγή 7 ενοτήτων υπηρεσιών από το App.svelte "
 "(4888→469 γραμμές), ενοποίηση των stores των modal/πινάκων. Πλήρης "
 "μετάβαση στα Svelte 5 runes. Αντικατάσταση 9 modal πινάκων με ένα γενικό "
 "στοιχείο DataTableModal. Προσθήκη ESLint + Prettier + vitest (125 tests "
@@ -591,15 +589,15 @@ msgid ""
 msgstr ""
 "Προσθήκη του πίνακα Stats: δείκτες PR (Performance Rate), Snowie Error "
 "Rate και MWC cost (Match Winning Chance cost), γραμμή φίλτρου (παίκτης, "
-"τουρνουά, ημερομηνίες, τύπος απόφασης, μήκος αγώνα), καρτέλα Dashboard με "
-"κάρτες επιπέδου / κυλιόμενο PR / κορυφαία blunders, καρτέλα Progression με "
-"καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με "
+"τουρνουά, ημερομηνίες, τύπος απόφασης, μήκος αγώνα), καρτέλα Dashboard με"
+" κάρτες επιπέδου / κυλιόμενο PR / κορυφαία blunders, καρτέλα Progression "
+"με καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με "
 "κατανομή ανά ενέργεια ντουμπλέ και ιστόγραμμα των μεγεθών. Διαδραστική "
 "εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους δείκτες. "
 "Στιγμιαία εναλλαγή PR / MWC. Εντολή CLI list --type stats. Ευθυγράμμιση "
-"των δεικτών PR / Snowie ER / MWC με τα eXtremeGammon και gnuBG (όριο 0.16 "
-"equity για τα κοντινά ντουμπλέ). Διόρθωση του υπολογισμού του cube_error "
-"για τις αποφάσεις Double/Pass. Τεκμηρίωση του στατιστικού μοντέλου "
+"των δεικτών PR / Snowie ER / MWC με τα eXtremeGammon και gnuBG (όριο 0.16"
+" equity για τα κοντινά ντουμπλέ). Διόρθωση του υπολογισμού του cube_error"
+" για τις αποφάσεις Double/Pass. Τεκμηρίωση του στατιστικού μοντέλου "
 "(:ref:\\`stats_parity\\`). Δείτε :ref:\\`stats\\`."
 
 #: ../../source/index.rst:1
@@ -621,14 +619,14 @@ msgid ""
 "supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
 "trouvait pas tous les tags de commentaires."
 msgstr ""
-"Προσθήκη της δομής αποκλεισμού *Except* στον πίνακα αναζήτησης: αποκλείει "
-"τις θέσεις που περιέχουν οποιοδήποτε από τα σχεδιασμένα πούλια, με "
+"Προσθήκη της δομής αποκλεισμού *Except* στον πίνακα αναζήτησης: αποκλείει"
+" τις θέσεις που περιέχουν οποιοδήποτε από τα σχεδιασμένα πούλια, με "
 "σήμανση « πρέπει να είναι κενό » (διπλό κλικ) και χωρίς όριο στον αριθμό "
-"πουλιών ανά σημείο (εντολή x). Προσθήκη της επιλογής « μόνο το πρώτο "
-"ζάρι » στο φίλτρο ζαριάς (παραλλαγή D1, επιλογή CLI --dice). Πίνακας "
-"Σχόλια: το πεδίο εισαγωγής εστιάζεται αυτόματα κατά το άνοιγμα και τα "
-"κουμπιά επεξεργασία / διαγραφή είναι πάντα ορατά. Διόρθωση του φίλτρου "
-"« Search Text » που δεν έβρισκε όλες τις ετικέτες σχολίων."
+"πουλιών ανά σημείο (εντολή x). Προσθήκη της επιλογής « μόνο το πρώτο ζάρι"
+" » στο φίλτρο ζαριάς (παραλλαγή D1, επιλογή CLI --dice). Πίνακας Σχόλια: "
+"το πεδίο εισαγωγής εστιάζεται αυτόματα κατά το άνοιγμα και τα κουμπιά "
+"επεξεργασία / διαγραφή είναι πάντα ορατά. Διόρθωση του φίλτρου « Search "
+"Text » που δεν έβρισκε όλες τις ετικέτες σχολίων."
 
 #: ../../source/index.rst:1
 msgid "0.21.0"
@@ -653,18 +651,53 @@ msgstr ""
 "αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, "
 "ελληνικά ή ρωσικά. Προσθήκη ενός παραθύρου ρυθμίσεων, προσβάσιμου μέσω "
 "ενός κουμπιού σε σχήμα γραναζιού στη γραμμή εργαλείων, που επιτρέπει την "
-"επιλογή της γλώσσας. Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία "
-"στην άλλη. Δείτε :ref:\\`configuration\\`."
+"επιλογή της γλώσσας. Η επιλογή της γλώσσας διατηρείται από τη μία "
+"συνεδρία στην άλλη. Δείτε :ref:\\`configuration\\`."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:1
+msgid "0.22.0"
+msgstr "0.22.0"
+
+#: ../../source/index.rst:1
+msgid "02/06/2026"
+msgstr "2 Ιουνίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage. Import de positions uniques depuis de nouveaux formats (eXtreme"
+" Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec "
+"enrichissement des doublons entre formats. Corrections : les panneaux ne "
+"provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau "
+"Commentaires ne boucle plus à l'ouverture. Voir :ref:\\`headless\\`."
+msgstr ""
+"Προσθήκη μιας λειτουργίας χωρίς γραφικό περιβάλλον (διακομιστής), "
+"προηγμένης και προαιρετικής, που συμπληρώνει την εφαρμογή γραφείου: ένας "
+"δαίμονας ``serve`` που εκθέτει τη μηχανή σε HTTP + JSON, ένα backend "
+"PostgreSQL πολλαπλών χρηστών με διαχωρισμό ανά tenant (και Row-Level "
+"Security προαιρετικά), μια εντολή ``migrate`` για τη μεταφορά μιας βάσης "
+"SQLite προς PostgreSQL, και ένας γενικός dispatcher ``call`` που παρέχει "
+"πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης. "
+"Εισαγωγή μεμονωμένων θέσεων από νέες μορφές (eXtreme Gammon ``.xgp``, "
+"κείμενο BGBlitz, εγγενής βιβλιοθήκη ``.db``) με εμπλουτισμό των διπλότυπων"
+" μεταξύ μορφών. Διορθώσεις: οι πίνακες δεν προκαλούν πλέον σφάλμα όταν δεν"
+" είναι ανοιχτή καμία βάση και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο "
+"κατά το άνοιγμα. Δείτε :ref:\\`headless\\`."
+
+#: ../../source/index.rst:148
 msgid "Sommaire"
 msgstr "Πίνακας περιεχομένων"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Contacts"
 msgstr "Επικοινωνία"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:183
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -672,7 +705,7 @@ msgstr ""
 "Συγγραφέας: Kévin Unger <blunderdb@proton.me>. Μπορείτε επίσης να με "
 "βρείτε στο Heroes με το ψευδώνυμο postmanpat."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -684,37 +717,37 @@ msgstr ""
 "Ανέπτυξα αρχικά το blunderDB για προσωπική μου χρήση, ώστε να μπορώ να "
 "εντοπίζω μοτίβα στα λάθη μου. Ωστόσο, είναι πολύ ευχάριστο να λαμβάνεις "
 "σχόλια, ειδικά όταν έχεις ξοδέψει πολλές ώρες σε σχεδιασμό, "
-"προγραμματισμό, αποσφαλμάτωση... Γι' αυτό μη διστάσετε να μου γράψετε για "
-"να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι "
+"προγραμματισμό, αποσφαλμάτωση... Γι' αυτό μη διστάσετε να μου γράψετε για"
+" να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι "
 "ευπρόσδεκτα."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:193
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Ακολουθούν διάφοροι τρόποι για να επικοινωνήσετε:"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:195
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 "συμμετάσχετε στον διακομιστή Discord του blunderDB: "
 "https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:197
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "στείλτε μου email στο blunderdb@proton.me,"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:199
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "μιλήστε μαζί μου, αν συναντηθούμε σε κάποιο τουρνουά,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "sur Github,"
 msgstr "στο Github,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ανοίξτε ένα ζήτημα: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -722,11 +755,11 @@ msgstr ""
 "για διορθώσεις σφαλμάτων ή προτάσεις βελτίωσης, δημιουργήστε ένα pull "
 "request."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "Faire un don"
 msgstr "Κάντε μια δωρεά"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -734,19 +767,19 @@ msgstr ""
 "Αν εκτιμάτε το blunderDB και θέλετε να στηρίξετε την παρελθούσα και "
 "μελλοντική ανάπτυξή του, μπορείτε"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "να με κεράσετε ένα ποτό αν έχουμε τη χαρά να συναντηθούμε!"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:215
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "να κάνετε μια μικρή δωρεά μέσω PayPal στη διεύθυνση blunderdb@proton.me"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:218
 msgid "Remerciements"
 msgstr "Ευχαριστίες"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:220
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -754,24 +787,25 @@ msgstr ""
 "Αφιερώνω αυτό το μικρό λογισμικό στη σύντροφό μου Anne-Claire και στη "
 "γλυκιά μας κόρη Perrine. Θέλω να ευχαριστήσω ιδιαίτερα μερικούς φίλους:"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
 " jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
 "jouer."
 msgstr ""
-"*Tristan Remille*, για τη μύησή μου στο τάβλι με χαρά και καλοσύνη· για το "
-"ότι μου δείχνει τον Δρόμο στην κατανόηση αυτού του υπέροχου παιχνιδιού· "
-"για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου προσπάθειες να "
-"παίξω καλύτερα."
+"*Tristan Remille*, για τη μύησή μου στο τάβλι με χαρά και καλοσύνη· για "
+"το ότι μου δείχνει τον Δρόμο στην κατανόηση αυτού του υπέροχου "
+"παιχνιδιού· για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου "
+"προσπάθειες να παίξω καλύτερα."
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
 " depuis qu'il a choppé le virus du backgammon."
 msgstr ""
 "*Nicolas Harmand*, χαρούμενος σύντροφος εδώ και πάνω από μια δεκαετία σε "
-"υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον "
-"ιό του τάβλι."
+"υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον"
+" ιό του τάβλι."
+

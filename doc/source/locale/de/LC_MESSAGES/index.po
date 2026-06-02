@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-02 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -32,13 +32,13 @@ msgid ""
 "différents filtres combinables arbitrairement. blunderDB peut également "
 "être utilisé pour constituer des catalogues de positions de référence."
 msgstr ""
-"blunderDB ist eine Software zum Erstellen von Datenbanken mit "
-"Backgammon-Stellungen. Ihre wichtigste Stärke besteht darin, einen "
-"einzigen Ort bereitzustellen, an dem ein Spieler die Stellungen sammeln "
-"kann, die er angetroffen hat (online, bei Turnieren), und diese "
-"Stellungen erneut studieren zu können, indem er sie mit verschiedenen, "
-"beliebig kombinierbaren Filtern filtert. blunderDB kann außerdem dazu "
-"verwendet werden, Kataloge von Referenzstellungen zu erstellen."
+"blunderDB ist eine Software zum Erstellen von Datenbanken mit Backgammon-"
+"Stellungen. Ihre wichtigste Stärke besteht darin, einen einzigen Ort "
+"bereitzustellen, an dem ein Spieler die Stellungen sammeln kann, die er "
+"angetroffen hat (online, bei Turnieren), und diese Stellungen erneut "
+"studieren zu können, indem er sie mit verschiedenen, beliebig "
+"kombinierbaren Filtern filtert. blunderDB kann außerdem dazu verwendet "
+"werden, Kataloge von Referenzstellungen zu erstellen."
 
 #: ../../source/index.rst:13
 msgid "La présente documentation est structurée de la manière suivante:"
@@ -389,8 +389,7 @@ msgstr "Hinzufügen von Filtern nach Match und nach Turnier."
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
-msgstr ""
-"Automatisches Leeren des Bretts beim Öffnen des Suchpanels."
+msgstr "Automatisches Leeren des Bretts beim Öffnen des Suchpanels."
 
 #: ../../source/index.rst:1
 msgid "0.12.0"
@@ -463,8 +462,8 @@ msgstr "30. März 2026"
 #: ../../source/index.rst:1
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
-"Eigenes Anki-Panel für das Lernen mit verteilter Wiederholung "
-"(FSRS-Algorithmus)."
+"Eigenes Anki-Panel für das Lernen mit verteilter Wiederholung (FSRS-"
+"Algorithmus)."
 
 #: ../../source/index.rst:3
 msgid "Import des commentaires depuis les fichiers XG."
@@ -505,12 +504,11 @@ msgid ""
 "sauvegarde d'abord)."
 msgstr ""
 "Datenbankschema v2.0.0: Deduplizierung der Stellungen über Zobrist-Hash, "
-"denormalisierte Filterspalten, Bitboard-Muster-Vorfilter, "
-"WAL-Journaling. Stapelimport >=3x schneller, gefilterte Suche <=100 ms "
-"bei 10k+ Stellungen. HINWEIS: DB-Dateien, die mit v0.16.0 erstellt "
-"wurden, können von älteren Versionen nicht geöffnet werden; alte DBs "
-"werden automatisch an Ort und Stelle migriert (zuerst eine Sicherung "
-"anlegen)."
+"denormalisierte Filterspalten, Bitboard-Muster-Vorfilter, WAL-Journaling."
+" Stapelimport >=3x schneller, gefilterte Suche <=100 ms bei 10k+ "
+"Stellungen. HINWEIS: DB-Dateien, die mit v0.16.0 erstellt wurden, können "
+"von älteren Versionen nicht geöffnet werden; alte DBs werden automatisch "
+"an Ort und Stelle migriert (zuerst eine Sicherung anlegen)."
 
 #: ../../source/index.rst:1
 msgid "0.17.0"
@@ -534,10 +532,10 @@ msgstr ""
 "Speicheroptimierung: zlib-Komprimierung der Analysedaten (~80%ige "
 "Reduzierung), kompakte Kodierung der Stellungen (~90%ige Reduzierung der "
 "Größe). Hinzufügen von 5 fehlenden Indizes zur Verbesserung der "
-"Suchleistung. Korrektur der Suche nach Cube-Fehler. Korrektur des "
-"EDIT-Modus nach einer Suche ohne Ergebnisse. Wiederherstellung des "
-"Zustands des Suchpanels beim Wechsel der Reiter. Entfernung von 62 "
-"Debug-Anweisungen aus den kritischen Pfaden."
+"Suchleistung. Korrektur der Suche nach Cube-Fehler. Korrektur des EDIT-"
+"Modus nach einer Suche ohne Ergebnisse. Wiederherstellung des Zustands "
+"des Suchpanels beim Wechsel der Reiter. Entfernung von 62 Debug-"
+"Anweisungen aus den kritischen Pfaden."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -564,8 +562,8 @@ msgstr ""
 "generische DataTableModal-Komponente. Hinzufügen von ESLint + Prettier + "
 "vitest (125 Frontend-Tests) mit CI. WCAG-2.1-AA-Konformität (sichtbarer "
 "Fokus, ARIA-Rollen, Tastaturnavigation). Umstellung des Database-Mutex "
-"auf RWMutex für bessere Lese-Parallelität. Vollständige CLI-Dokumentation "
-"(CLI_USAGE.md + Sphinx FR/EN). Neuschreiben der README. Behebung aller "
+"auf RWMutex für bessere Lese-Parallelität. Vollständige CLI-Dokumentation"
+" (CLI_USAGE.md + Sphinx FR/EN). Neuschreiben der README. Behebung aller "
 "ESLint-Warnungen (46→0) und Vite-Warnungen (6→0)."
 
 #: ../../source/index.rst:1
@@ -593,13 +591,13 @@ msgid ""
 msgstr ""
 "Hinzufügen des Stats-Panels: Indikatoren PR (Performance Rate), Snowie "
 "Error Rate und MWC cost (Match Winning Chance cost), Filterleiste "
-"(Spieler, Turnier, Datum, Entscheidungstyp, Matchlänge), Dashboard-Reiter "
-"mit Niveau-Karten / gleitendem PR / Top-Blunders, Progression-Reiter mit "
-"Kurve pro Turnier und Streudiagramm pro Match, Fehler-Reiter mit "
+"(Spieler, Turnier, Datum, Entscheidungstyp, Matchlänge), Dashboard-Reiter"
+" mit Niveau-Karten / gleitendem PR / Top-Blunders, Progression-Reiter mit"
+" Kurve pro Turnier und Streudiagramm pro Match, Fehler-Reiter mit "
 "Aufschlüsselung nach Cube-Aktion und Histogramm der Fehlergrößen. "
-"Interaktives Drill-down zu den Stellungen / Matches / Turnieren von allen "
-"Indikatoren aus. Sofortiges Umschalten zwischen PR / MWC. CLI-Befehl list "
-"--type stats. Abgleich der Indikatoren PR / Snowie ER / MWC mit "
+"Interaktives Drill-down zu den Stellungen / Matches / Turnieren von allen"
+" Indikatoren aus. Sofortiges Umschalten zwischen PR / MWC. CLI-Befehl "
+"list --type stats. Abgleich der Indikatoren PR / Snowie ER / MWC mit "
 "eXtremeGammon und gnuBG (Equity-Schwelle 0.16 für knappe Cubes). "
 "Korrektur der cube_error-Berechnung für Double/Pass-Entscheidungen. "
 "Dokumentation des Statistikmodells (:ref:\\`stats_parity\\`). Siehe "
@@ -627,9 +625,9 @@ msgstr ""
 "Hinzufügen der Ausschluss-Struktur *Except* zum Suchpanel: schließt "
 "Stellungen aus, die einen der gezeichneten Steine enthalten, mit einem "
 "Marker « muss leer sein » (Doppelklick) und unbegrenzter Anzahl an "
-"Steinen pro Punkt (Befehl x). Hinzufügen der Option « nur erster Würfel » "
-"zum Würfelfilter (Variante D1, CLI-Option --dice). Kommentare-Panel: das "
-"Eingabefeld wird beim Öffnen automatisch fokussiert und die "
+"Steinen pro Punkt (Befehl x). Hinzufügen der Option « nur erster Würfel »"
+" zum Würfelfilter (Variante D1, CLI-Option --dice). Kommentare-Panel: das"
+" Eingabefeld wird beim Öffnen automatisch fokussiert und die "
 "Schaltflächen Bearbeiten / Löschen sind immer sichtbar. Korrektur des "
 "Filters « Search Text », der nicht alle Kommentar-Tags fand."
 
@@ -652,31 +650,66 @@ msgid ""
 "à l'autre. Voir :ref:\\`configuration\\`."
 msgstr ""
 "Internationalisierung der Oberfläche: das gesamte blunderDB "
-"(Symbolleiste, Panels, Meldungen, Hilfe) kann nun wahlweise auf Englisch, "
-"Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, "
+"(Symbolleiste, Panels, Meldungen, Hilfe) kann nun wahlweise auf Englisch,"
+" Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, "
 "Griechisch oder Russisch angezeigt werden. Hinzufügen eines "
 "Konfigurationsfensters, das über eine zahnradförmige Schaltfläche in der "
 "Symbolleiste erreichbar ist und die Auswahl der Sprache ermöglicht. Die "
 "Sprachauswahl bleibt über Sitzungen hinweg erhalten. Siehe "
 ":ref:\\`configuration\\`."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:1
+msgid "0.22.0"
+msgstr "0.22.0"
+
+#: ../../source/index.rst:1
+msgid "02/06/2026"
+msgstr "2. Juni 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage. Import de positions uniques depuis de nouveaux formats (eXtreme"
+" Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec "
+"enrichissement des doublons entre formats. Corrections : les panneaux ne "
+"provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau "
+"Commentaires ne boucle plus à l'ouverture. Voir :ref:\\`headless\\`."
+msgstr ""
+"Hinzufügen eines Headless-Modus (Server), fortgeschritten und optional, der "
+"die Desktop-Anwendung ergänzt: ein Daemon ``serve``, der die Engine über "
+"HTTP + JSON bereitstellt, ein mehrbenutzerfähiges PostgreSQL-Backend mit "
+"Abschottung pro Tenant (und optionaler Row-Level Security), ein Befehl "
+"``migrate`` zum Übertragen einer SQLite-Datenbank nach PostgreSQL sowie ein "
+"generischer Dispatcher ``call``, der über die Kommandozeile Zugriff auf alle "
+"Speicheroperationen gibt. Import einzelner Stellungen aus neuen Formaten "
+"(eXtreme Gammon ``.xgp``, BGBlitz-Text, native ``.db``-Bibliothek) mit "
+"Anreicherung der Duplikate zwischen den Formaten. Korrekturen: Die Panels "
+"verursachen keinen Fehler mehr, wenn keine Datenbank geöffnet ist, und das "
+"Kommentar-Panel läuft beim Öffnen nicht mehr in eine Schleife. Siehe "
+":ref:\\`headless\\`."
+
+#: ../../source/index.rst:148
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:183
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
-"Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes "
-"unter dem Benutzernamen postmanpat."
+"Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes"
+" unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -692,32 +725,31 @@ msgstr ""
 "Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:193
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:193
-msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
-msgstr ""
-"dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
-
 #: ../../source/index.rst:195
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
+
+#: ../../source/index.rst:197
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:199
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -725,11 +757,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -737,19 +769,19 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:215
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:218
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:220
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -758,7 +790,7 @@ msgstr ""
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
 "danken:"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -770,12 +802,13 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
 " depuis qu'il a choppé le virus du backgammon."
 msgstr ""
 "*Nicolas Harmand*, fröhlicher Gefährte seit nunmehr über einem Jahrzehnt "
-"in tollen Abenteuern und ein fantastischer Spielpartner, seit er sich mit "
-"dem Backgammon-Virus angesteckt hat."
+"in tollen Abenteuern und ein fantastischer Spielpartner, seit er sich mit"
+" dem Backgammon-Virus angesteckt hat."
+

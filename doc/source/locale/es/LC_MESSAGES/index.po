@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-02 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -84,8 +84,8 @@ msgid ""
 "la **FAQ** fournit quelques réponses aux interrogations les plus "
 "fréquentes."
 msgstr ""
-"las **preguntas frecuentes (FAQ)** ofrecen respuestas a las preguntas más "
-"habituales."
+"las **preguntas frecuentes (FAQ)** ofrecen respuestas a las preguntas más"
+" habituales."
 
 #: ../../source/index.rst:32
 msgid "Historique des versions"
@@ -387,8 +387,7 @@ msgstr "Añadidos filtros por match y por torneo."
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
-msgstr ""
-"Borrado automático del tablero al abrir el panel de búsqueda."
+msgstr "Borrado automático del tablero al abrir el panel de búsqueda."
 
 #: ../../source/index.rst:1
 msgid "0.12.0"
@@ -502,12 +501,13 @@ msgid ""
 "les anciennes DB sont migrées automatiquement sur place (faire une "
 "sauvegarde d'abord)."
 msgstr ""
-"Esquema de base de datos v2.0.0: deduplicación de posiciones mediante hash "
-"Zobrist, columnas de filtrado desnormalizadas, prefiltro de patrones "
-"bitboard, registro WAL. Importación por lotes >=3x más rápida, búsqueda "
-"filtrada <=100 ms en más de 10k posiciones. NOTA: los archivos DB creados "
-"con la v0.16.0 no pueden abrirse con versiones anteriores; las DB antiguas "
-"se migran automáticamente in situ (haga primero una copia de seguridad)."
+"Esquema de base de datos v2.0.0: deduplicación de posiciones mediante "
+"hash Zobrist, columnas de filtrado desnormalizadas, prefiltro de patrones"
+" bitboard, registro WAL. Importación por lotes >=3x más rápida, búsqueda "
+"filtrada <=100 ms en más de 10k posiciones. NOTA: los archivos DB creados"
+" con la v0.16.0 no pueden abrirse con versiones anteriores; las DB "
+"antiguas se migran automáticamente in situ (haga primero una copia de "
+"seguridad)."
 
 #: ../../source/index.rst:1
 msgid "0.17.0"
@@ -528,12 +528,12 @@ msgid ""
 "panneau de recherche lors du changement d'onglets. Suppression de 62 "
 "instructions de débogage des chemins critiques."
 msgstr ""
-"Optimización del almacenamiento: compresión zlib de los datos de análisis "
-"(~80% de reducción), codificación compacta de las posiciones (~90% de "
+"Optimización del almacenamiento: compresión zlib de los datos de análisis"
+" (~80% de reducción), codificación compacta de las posiciones (~90% de "
 "reducción del tamaño). Añadidos 5 índices que faltaban para mejorar el "
 "rendimiento de búsqueda. Corregida la búsqueda por error de cubo. "
-"Corregido el modo EDIT tras una búsqueda sin resultados. Restauración del "
-"estado del panel de búsqueda al cambiar de pestaña. Eliminadas 62 "
+"Corregido el modo EDIT tras una búsqueda sin resultados. Restauración del"
+" estado del panel de búsqueda al cambiar de pestaña. Eliminadas 62 "
 "instrucciones de depuración de las rutas críticas."
 
 #: ../../source/index.rst:1
@@ -560,10 +560,10 @@ msgstr ""
 "modales/paneles. Migración completa a Svelte 5 runes. Sustitución de 9 "
 "modales de tabla por un componente genérico DataTableModal. Añadidos "
 "ESLint + Prettier + vitest (125 tests de frontend) con CI. Conformidad "
-"WCAG 2.1 AA (foco visible, roles ARIA, navegación por teclado). Cambio del "
-"mutex de Database a RWMutex para un mejor paralelismo en lectura. "
-"Documentación CLI completa (CLI_USAGE.md + Sphinx FR/EN). Reescritura del "
-"README. Corregidas todas las advertencias de ESLint (46→0) y de Vite "
+"WCAG 2.1 AA (foco visible, roles ARIA, navegación por teclado). Cambio "
+"del mutex de Database a RWMutex para un mejor paralelismo en lectura. "
+"Documentación CLI completa (CLI_USAGE.md + Sphinx FR/EN). Reescritura del"
+" README. Corregidas todas las advertencias de ESLint (46→0) y de Vite "
 "(6→0)."
 
 #: ../../source/index.rst:1
@@ -622,14 +622,15 @@ msgid ""
 "supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
 "trouvait pas tous les tags de commentaires."
 msgstr ""
-"Añadida la estructura de exclusión *Except* al panel de búsqueda: excluye "
-"las posiciones que contienen alguna de las fichas dibujadas, con marcador "
-"« debe estar vacío » (doble clic) y sin límite en el número de fichas por "
-"punto (comando x). Añadida la opción « solo el primer dado » al filtro de "
-"tirada de dados (variante D1, opción CLI --dice). Panel Comentarios: el "
-"campo de entrada recibe el foco automáticamente al abrirlo y los botones "
-"editar / eliminar siempre están visibles. Corregido el filtro « Search "
-"Text » que no encontraba todas las etiquetas de comentarios."
+"Añadida la estructura de exclusión *Except* al panel de búsqueda: excluye"
+" las posiciones que contienen alguna de las fichas dibujadas, con "
+"marcador « debe estar vacío » (doble clic) y sin límite en el número de "
+"fichas por punto (comando x). Añadida la opción « solo el primer dado » "
+"al filtro de tirada de dados (variante D1, opción CLI --dice). Panel "
+"Comentarios: el campo de entrada recibe el foco automáticamente al "
+"abrirlo y los botones editar / eliminar siempre están visibles. Corregido"
+" el filtro « Search Text » que no encontraba todas las etiquetas de "
+"comentarios."
 
 #: ../../source/index.rst:1
 msgid "0.21.0"
@@ -650,22 +651,57 @@ msgid ""
 "à l'autre. Voir :ref:\\`configuration\\`."
 msgstr ""
 "Internacionalización de la interfaz: la totalidad de blunderDB (barra de "
-"herramientas, paneles, mensajes, ayuda) puede mostrarse ahora, a elección, "
-"en inglés, francés, alemán, italiano, español, finés, japonés, griego o "
-"ruso. Añadida una ventana de configuración, accesible mediante un botón en "
-"forma de rueda dentada en la barra de herramientas, que permite "
-"seleccionar el idioma. La elección del idioma se conserva de una sesión a "
-"otra. Véase :ref:\\`configuration\\`."
+"herramientas, paneles, mensajes, ayuda) puede mostrarse ahora, a "
+"elección, en inglés, francés, alemán, italiano, español, finés, japonés, "
+"griego o ruso. Añadida una ventana de configuración, accesible mediante "
+"un botón en forma de rueda dentada en la barra de herramientas, que "
+"permite seleccionar el idioma. La elección del idioma se conserva de una "
+"sesión a otra. Véase :ref:\\`configuration\\`."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:1
+msgid "0.22.0"
+msgstr "0.22.0"
+
+#: ../../source/index.rst:1
+msgid "02/06/2026"
+msgstr "2 de junio de 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage. Import de positions uniques depuis de nouveaux formats (eXtreme"
+" Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec "
+"enrichissement des doublons entre formats. Corrections : les panneaux ne "
+"provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau "
+"Commentaires ne boucle plus à l'ouverture. Voir :ref:\\`headless\\`."
+msgstr ""
+"Añadido un modo headless (servidor), avanzado y opcional, que complementa "
+"la aplicación de escritorio: un demonio ``serve`` que expone el motor "
+"mediante HTTP + JSON, un backend PostgreSQL multiusuario con "
+"compartimentación por tenant (y Row-Level Security opcional), un comando "
+"``migrate`` para transferir una base SQLite a PostgreSQL, y un despachador "
+"genérico ``call`` que da acceso desde la línea de comandos a todas las "
+"operaciones de almacenamiento. Importación de posiciones individuales "
+"desde nuevos formatos (eXtreme Gammon ``.xgp``, BGBlitz en texto, "
+"biblioteca nativa ``.db``) con enriquecimiento de los duplicados entre "
+"formatos. Correcciones: los paneles ya no provocan errores cuando no hay "
+"ninguna base abierta y el panel Comentarios ya no entra en bucle al "
+"abrirlo. Véase :ref:\\`headless\\`."
+
+#: ../../source/index.rst:148
 msgid "Sommaire"
 msgstr "Índice"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Contacts"
 msgstr "Contacto"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:183
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -673,7 +709,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. También puede encontrarme en "
 "Heroes con el seudónimo postmanpat."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -684,36 +720,36 @@ msgid ""
 msgstr ""
 "Desarrollé blunderDB inicialmente para mi uso personal, con el fin de "
 "poder detectar patrones en mis errores. Pero resulta muy gratificante "
-"recibir comentarios, sobre todo cuando uno ha dedicado un montón de horas "
-"al diseño, la programación y la depuración... Así que no dude en "
+"recibir comentarios, sobre todo cuando uno ha dedicado un montón de horas"
+" al diseño, la programación y la depuración... Así que no dude en "
 "escribirme para compartir su experiencia. Todos los comentarios "
 "(constructivos) son bienvenidos."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:193
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Aquí tiene varias maneras de ponerse en contacto:"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:195
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "unirse al servidor de Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:197
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "escribirme un correo a blunderdb@proton.me,"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:199
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "hablar conmigo, si coincidimos en un torneo,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "sur Github,"
 msgstr "en Github,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "abrir un ticket: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -721,11 +757,11 @@ msgstr ""
 "para correcciones de errores o propuestas de mejora, crear una pull "
 "request."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "Faire un don"
 msgstr "Hacer una donación"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -733,19 +769,19 @@ msgstr ""
 "Si le gusta blunderDB y desea apoyar los desarrollos pasados y futuros, "
 "puede"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "¡invitarme a una copa si tenemos el placer de encontrarnos!"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:215
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "hacer una pequeña donación por PayPal a la dirección blunderdb@proton.me"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:218
 msgid "Remerciements"
 msgstr "Agradecimientos"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:220
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -754,7 +790,7 @@ msgstr ""
 "querida hija Perrine. Quiero dar las gracias muy especialmente a algunos "
 "amigos:"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -762,11 +798,11 @@ msgid ""
 "jouer."
 msgstr ""
 "*Tristan Remille*, por haberme iniciado en el backgammon con alegría y "
-"benevolencia; por mostrar el Camino en la comprensión de este maravilloso "
-"juego; por seguir animándome a pesar de mis pobres intentos de jugar "
+"benevolencia; por mostrar el Camino en la comprensión de este maravilloso"
+" juego; por seguir animándome a pesar de mis pobres intentos de jugar "
 "mejor."
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -775,3 +811,4 @@ msgstr ""
 "*Nicolas Harmand*, alegre compañero desde hace ya más de una década en "
 "grandes aventuras, y un fantástico compañero de juego desde que pilló el "
 "virus del backgammon."
+

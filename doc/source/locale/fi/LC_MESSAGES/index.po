@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-02 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -35,8 +35,8 @@ msgstr ""
 "blunderDB on ohjelma backgammon-positioiden tietokantojen luomiseen. Sen "
 "tärkein vahvuus on tarjota yksi paikka, johon pelaaja voi koota "
 "kohtaamiaan positioita (verkossa, turnauksissa) ja tutkia näitä "
-"positioita uudelleen suodattamalla niitä erilaisilla suodattimilla, joita "
-"voi yhdistellä vapaasti. blunderDB:tä voi käyttää myös "
+"positioita uudelleen suodattamalla niitä erilaisilla suodattimilla, joita"
+" voi yhdistellä vapaasti. blunderDB:tä voi käyttää myös "
 "referenssipositioiden luetteloiden kokoamiseen."
 
 #: ../../source/index.rst:13
@@ -323,8 +323,7 @@ msgstr "Turnaukset: otteluiden ryhmittely tapahtuman mukaan."
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
-msgstr ""
-"Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio)."
+msgstr "Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio)."
 
 #: ../../source/index.rst:17
 msgid "Migration automatique du schéma de base de données."
@@ -523,12 +522,12 @@ msgid ""
 "panneau de recherche lors du changement d'onglets. Suppression de 62 "
 "instructions de débogage des chemins critiques."
 msgstr ""
-"Tallennuksen optimointi: analyysitietojen zlib-pakkaus (~80 %:n pienennys), "
-"positioiden kompakti koodaus (~90 %:n koon pienennys). Lisätty 5 puuttuvaa "
-"indeksiä hakusuorituskyvyn parantamiseksi. Korjattu tuplausvirheen mukaan "
-"tehtävä haku. Korjattu EDIT-tila haun jälkeen, kun tuloksia ei ole. "
-"Hakupaneelin tilan palautus välilehtiä vaihdettaessa. Poistettu 62 "
-"virheenkorjaustulostetta kriittisiltä poluilta."
+"Tallennuksen optimointi: analyysitietojen zlib-pakkaus (~80 %:n "
+"pienennys), positioiden kompakti koodaus (~90 %:n koon pienennys). "
+"Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi. Korjattu "
+"tuplausvirheen mukaan tehtävä haku. Korjattu EDIT-tila haun jälkeen, kun "
+"tuloksia ei ole. Hakupaneelin tilan palautus välilehtiä vaihdettaessa. "
+"Poistettu 62 virheenkorjaustulostetta kriittisiltä poluilta."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -555,8 +554,8 @@ msgstr ""
 "komponentilla. Lisätty ESLint + Prettier + vitest (125 frontend-testiä) "
 "CI:n kanssa. WCAG 2.1 AA -saavutettavuus (näkyvä fokus, ARIA-roolit, "
 "näppäimistönavigointi). Database-mutex päivitetty RWMutexiksi paremman "
-"lukurinnakkaisuuden vuoksi. Täydellinen CLI-dokumentaatio (CLI_USAGE.md + "
-"Sphinx FR/EN). README kirjoitettu uudelleen. Korjattu kaikki ESLint-"
+"lukurinnakkaisuuden vuoksi. Täydellinen CLI-dokumentaatio (CLI_USAGE.md +"
+" Sphinx FR/EN). README kirjoitettu uudelleen. Korjattu kaikki ESLint-"
 "varoitukset (46→0) ja Vite-varoitukset (6→0)."
 
 #: ../../source/index.rst:1
@@ -583,16 +582,16 @@ msgid ""
 "statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
 msgstr ""
 "Lisätty Stats-paneeli: PR (Performance Rate)-, Snowie Error Rate- ja MWC "
-"cost (Match Winning Chance cost) -indikaattorit, suodatinpalkki (pelaaja, "
-"turnaus, päivämäärät, päätöstyyppi, ottelun pituus), Dashboard-välilehti "
-"tasokorteilla / liukuvalla PR:llä / pahimmilla blundereilla, Progression-"
-"välilehti turnauskohtaisella käyrällä ja ottelukohtaisella "
+"cost (Match Winning Chance cost) -indikaattorit, suodatinpalkki (pelaaja,"
+" turnaus, päivämäärät, päätöstyyppi, ottelun pituus), Dashboard-välilehti"
+" tasokorteilla / liukuvalla PR:llä / pahimmilla blundereilla, "
+"Progression-välilehti turnauskohtaisella käyrällä ja ottelukohtaisella "
 "hajontakaaviolla, Errors-välilehti tuplaustoimintojen erittelyllä ja "
 "virheiden suuruuksien histogrammilla. Interaktiivinen porautuminen "
-"positioihin / otteluihin / turnauksiin kaikista indikaattoreista. "
-"Välitön PR / MWC -vaihto. CLI-komento list --type stats. PR / Snowie ER / "
-"MWC -indikaattoreiden yhtenäistäminen eXtremeGammonin ja gnuBG:n kanssa "
-"(0.16 equity-kynnys läheisille tuplauksille). Korjattu cube_error-laskenta "
+"positioihin / otteluihin / turnauksiin kaikista indikaattoreista. Välitön"
+" PR / MWC -vaihto. CLI-komento list --type stats. PR / Snowie ER / MWC "
+"-indikaattoreiden yhtenäistäminen eXtremeGammonin ja gnuBG:n kanssa (0.16"
+" equity-kynnys läheisille tuplauksille). Korjattu cube_error-laskenta "
 "Double/Pass-päätöksille. Tilastomallin dokumentaatio "
 "(:ref:\\`stats_parity\\`). Katso :ref:\\`stats\\`."
 
@@ -617,11 +616,11 @@ msgid ""
 msgstr ""
 "Lisätty *Except*-poissulkurakenne hakupaneeliin: poissulkee positiot, "
 "jotka sisältävät jonkin piirretyistä nappuloista, merkillä « täytyy olla "
-"tyhjä » (kaksoisnapsautus) ja rajoittamattomalla nappulamäärällä pistettä "
-"kohti (komento x). Lisätty « vain ensimmäinen noppa » -vaihtoehto "
+"tyhjä » (kaksoisnapsautus) ja rajoittamattomalla nappulamäärällä pistettä"
+" kohti (komento x). Lisätty « vain ensimmäinen noppa » -vaihtoehto "
 "noppasuodattimeen (D1-variantti, CLI-vaihtoehto --dice). Comments-"
-"paneeli: syöttökenttä fokusoidaan automaattisesti avattaessa ja muokkaa / "
-"poista -painikkeet ovat aina näkyvissä. Korjattu « Search Text » "
+"paneeli: syöttökenttä fokusoidaan automaattisesti avattaessa ja muokkaa /"
+" poista -painikkeet ovat aina näkyvissä. Korjattu « Search Text » "
 "-suodatin, joka ei löytänyt kaikkia kommenttitageja."
 
 #: ../../source/index.rst:1
@@ -643,21 +642,56 @@ msgid ""
 "à l'autre. Voir :ref:\\`configuration\\`."
 msgstr ""
 "Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, "
-"paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi, "
-"ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, kreikaksi "
-"tai venäjäksi. Lisätty asetusikkuna, joka avataan työkalupalkin "
-"hammasrataspainikkeesta ja josta voi valita kielen. Kielivalinta "
+"paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi,"
+" ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, "
+"kreikaksi tai venäjäksi. Lisätty asetusikkuna, joka avataan työkalupalkin"
+" hammasrataspainikkeesta ja josta voi valita kielen. Kielivalinta "
 "säilytetään istunnosta toiseen. Katso :ref:\\`configuration\\`."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:1
+msgid "0.22.0"
+msgstr "0.22.0"
+
+#: ../../source/index.rst:1
+msgid "02/06/2026"
+msgstr "2.6.2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage. Import de positions uniques depuis de nouveaux formats (eXtreme"
+" Gammon ``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec "
+"enrichissement des doublons entre formats. Corrections : les panneaux ne "
+"provoquent plus d'erreur lorsqu'aucune base n'est ouverte et le panneau "
+"Commentaires ne boucle plus à l'ouverture. Voir :ref:\\`headless\\`."
+msgstr ""
+"Lisätty headless-tila (palvelin), edistynyt ja valinnainen, joka täydentää "
+"työpöytäsovellusta: ``serve``-demoni, joka tarjoaa moottorin HTTP + JSON "
+"-rajapinnan kautta, monikäyttäjäinen PostgreSQL-taustajärjestelmä, jossa "
+"tiedot on eristetty vuokralaisittain (sekä valinnainen Row-Level Security), "
+"``migrate``-komento SQLite-tietokannan siirtämiseen PostgreSQL:ään, sekä "
+"yleiskäyttöinen ``call``-välittäjä, joka antaa komentoriviltä pääsyn "
+"kaikkiin tallennustoimintoihin. Yksittäisten asemien tuonti uusista "
+"muodoista (eXtreme Gammon ``.xgp``, BGBlitz-teksti, natiivi ``.db`` "
+"-kirjasto) sekä duplikaattien rikastaminen muotojen välillä. Korjaukset: "
+"paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa ei ole avattu, "
+"eikä Comments-paneeli enää jää silmukkaan avattaessa. Katso "
+":ref:\\`headless\\`."
+
+#: ../../source/index.rst:148
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:181
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:183
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -665,7 +699,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:186
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -680,42 +714,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:193
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:195
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:197
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:199
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
-msgstr ""
-"virhekorjauksia tai parannusehdotuksia varten luo pull request."
+msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -723,19 +756,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:215
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:218
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:220
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -744,7 +777,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -756,12 +789,13 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
 " depuis qu'il a choppé le virus du backgammon."
 msgstr ""
-"*Nicolas Harmand*, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa "
-"seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
+"*Nicolas Harmand*, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa"
+" seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
 "backgammon-tartunnan."
+
