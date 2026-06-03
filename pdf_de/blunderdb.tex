@@ -2150,6 +2150,17 @@ help, he, h
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+tutorial, tour
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Ouvre le catalogue des visites guidées de l’interface.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 meta
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5602,7 +5613,14 @@ Die Datenbank ist eine einfache SQLite\sphinxhyphen{}Datei. Auch ohne blunderDB 
 \subsection{Was waren die Entwurfsprinzipien von blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-Die modale Bedienung von blunderDB (NORMAL, EDIT) ist vom sehr leistungsfähigen Texteditor \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim} inspiriert. Ich wollte blunderDB leichtgewichtig, eigenständig, ohne Installation und für verschiedene Plattformen verfügbar machen, weshalb ich die Programmiersprache Go und die Bibliothek Svelte gewählt habe. Für die Serialisierung der Datenbank musste das Dateiformat plattformübergreifend und geeignet sein, eine Datenbank zu enthalten. Das SQLite\sphinxhyphen{}Dateiformat schien dafür wie geschaffen.
+L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d‘\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
+texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
+léger, autonome, sans installation et disponible pour différentes plateformes,
+d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.
 
 
 \subsection{Wie ist die Softwarearchitektur von blunderDB aufgebaut?}

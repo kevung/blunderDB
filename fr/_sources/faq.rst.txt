@@ -148,9 +148,9 @@ blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
 Quelles ont été les principes de conception de blunderDB?
 ---------------------------------------------------------
 
-Le fonctionnement modal de blunderDB (NORMAL, EDIT) s'inspire du très
-puissant éditeur de texte `Vim
-<https://en.wikipedia.org/wiki/Vim_(text_editor)>`_. Je souhaitais blunderDB
+L'ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d'*ESPACE*, et ses raccourcis clavier — s'inspire du très puissant éditeur de
+texte `Vim <https://en.wikipedia.org/wiki/Vim_(text_editor)>`_. Je souhaitais blunderDB
 léger, autonome, sans installation et disponible pour différentes plateformes,
 d'où mon choix du langage Go et de la bibliothèque Svelte. Pour la
 sérialisation de la base de données, le format de fichiers doit être

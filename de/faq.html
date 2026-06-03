@@ -176,7 +176,14 @@
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">7.12. </span>Was waren die Entwurfsprinzipien von blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
-<p>Die modale Bedienung von blunderDB (NORMAL, EDIT) ist vom sehr leistungsfähigen Texteditor <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a> inspiriert. Ich wollte blunderDB leichtgewichtig, eigenständig, ohne Installation und für verschiedene Plattformen verfügbar machen, weshalb ich die Programmiersprache Go und die Bibliothek Svelte gewählt habe. Für die Serialisierung der Datenbank musste das Dateiformat plattformübergreifend und geeignet sein, eine Datenbank zu enthalten. Das SQLite-Dateiformat schien dafür wie geschaffen.</p>
+<p>L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d‘<em>ESPACE</em>, et ses raccourcis clavier — s’inspire du très puissant éditeur de
+texte <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. Je souhaitais blunderDB
+léger, autonome, sans installation et disponible pour différentes plateformes,
+d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi-plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">7.13. </span>Wie ist die Softwarearchitektur von blunderDB aufgebaut?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>

@@ -19,6 +19,7 @@ Opérations globales
    "export_db, edb", "Exporte la sélection courante vers une nouvelle base de données."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
+   "tutorial, tour", "Ouvre le catalogue des visites guidées de l'interface."
    "meta", "Affiche les métadonnées de la base de données."
    "epc", "Ouvre le panneau EPC (Effective Pip Count)."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."

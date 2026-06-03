@@ -2150,6 +2150,17 @@ Avaa blunderDB:n ohjeen.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+tutorial, tour
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Ouvre le catalogue des visites guidées de l’interface.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 meta
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5602,7 +5613,14 @@ Tietokanta on yksinkertainen SQLite\sphinxhyphen{}tiedosto. Ilman blunderDB:tä 
 \subsection{Mitkä olivat blunderDB:n suunnitteluperiaatteet?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-blunderDB:n modaalinen toiminta (NORMAL, EDIT) on saanut inspiraationsa erittäin tehokkaasta tekstieditorista \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Halusin blunderDB:stä kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mikä johti Go\sphinxhyphen{}ohjelmointikielen ja Svelte\sphinxhyphen{}kirjaston valintaan. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite\sphinxhyphen{}tiedostomuoto vaikutti täydelliseltä valinnalta.
+L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d’\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
+texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
+léger, autonome, sans installation et disponible pour différentes plateformes,
+d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.
 
 
 \subsection{Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}

@@ -579,7 +579,7 @@ May 7, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube\_error pour les décisions Double/Pass. Documentation du modèle de statistiques ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). Voir {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
+Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per\sphinxhyphen{}tournament curve and per\sphinxhyphen{}match scatter plot, Errors tab with cube\sphinxhyphen{}action breakdown and error magnitude histogram. Interactive drill\sphinxhyphen{}down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list –type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube\_error calculation for Double/Pass decisions. Statistics model documentation ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). See {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -611,7 +611,7 @@ June 1, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue. Le choix de la langue est conservé d’une session à l’autre. Voir {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}.
+Interface internationalisation: the whole of blunderDB (toolbar, panels, messages, help) can now be displayed in English, French, German, Italian, Spanish, Finnish, Japanese, Greek or Russian, as you choose. Added a configuration window, accessible through a gear\sphinxhyphen{}shaped button in the toolbar, to select the language. The language choice is kept across sessions. See {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -622,12 +622,12 @@ Internationalisation de l’interface : l’intégralité de blunderDB (barre d�
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-02/06/2026
+June 2, 2026
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout d’un mode headless (serveur), avancé et facultatif, qui complète l’application de bureau : un démon \sphinxcode{\sphinxupquote{serve}} exposant le moteur en HTTP + JSON, un backend PostgreSQL multi\sphinxhyphen{}utilisateur avec cloisonnement par tenant (et Row\sphinxhyphen{}Level Security en option), une commande \sphinxcode{\sphinxupquote{migrate}} pour transférer une base SQLite vers PostgreSQL, et un dispatcher générique \sphinxcode{\sphinxupquote{call}} donnant accès en ligne de commande à toutes les opérations de stockage. Import de positions uniques depuis de nouveaux formats (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz texte, bibliothèque native \sphinxcode{\sphinxupquote{.db}}) avec enrichissement des doublons entre formats. Corrections : les panneaux ne provoquent plus d’erreur lorsqu’aucune base n’est ouverte et le panneau Commentaires ne boucle plus à l’ouverture. Voir {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
+Added a headless (server) mode, advanced and optional, complementing the desktop application: a \sphinxcode{\sphinxupquote{serve}} daemon exposing the engine over HTTP + JSON, a multi\sphinxhyphen{}user PostgreSQL backend with per\sphinxhyphen{}tenant isolation (and optional Row\sphinxhyphen{}Level Security), a \sphinxcode{\sphinxupquote{migrate}} command to transfer a SQLite database to PostgreSQL, and a generic \sphinxcode{\sphinxupquote{call}} dispatcher giving command\sphinxhyphen{}line access to every storage operation. Import of single positions from new formats (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz text, native \sphinxcode{\sphinxupquote{.db}} library) with enrichment of duplicates across formats. Fixes: panels no longer raise an error when no database is open, and the Comments panel no longer loops on opening. See {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2143,6 +2143,17 @@ help, he, h
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open blunderDB help.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+tutorial, tour
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Ouvre le catalogue des visites guidées de l’interface.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5604,7 +5615,14 @@ The database is a simple SQLite file. In the absence of blunderDB, it can thus b
 \subsection{What were the design principles of blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-The modal operation of blunderDB (NORMAL, EDIT) is inspired by the very powerful text editor \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. I wanted blunderDB to be lightweight, standalone, installation\sphinxhyphen{}free, and available on multiple platforms, which led to my choice of the Go programming language and the Svelte library. For database serialization, the file format needed to be cross\sphinxhyphen{}platform and suitable for containing a database. The SQLite file format seemed like the perfect choice.
+L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d’\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
+texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
+léger, autonome, sans installation et disponible pour différentes plateformes,
+d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.
 
 
 \subsection{What is the software architecture of blunderDB?}

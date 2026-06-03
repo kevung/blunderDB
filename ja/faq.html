@@ -176,7 +176,14 @@
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">7.12. </span>blunderDB の設計原則は何でしたか？<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
-<p>blunderDB のモーダル操作（NORMAL、EDIT）は、非常に強力なテキストエディター <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a> から着想を得ています。blunderDB を軽量で、スタンドアロンで、インストール不要で、複数のプラットフォームで利用可能にしたかったため、Go プログラミング言語と Svelte ライブラリを選択しました。データベースのシリアライズには、ファイル形式がクロスプラットフォームでデータベースを保持するのに適している必要がありました。SQLite ファイル形式が最適だと思われました。</p>
+<p>L'ergonomie de blunderDB — sa ligne de commande, activée par la barre
+d'<em>ESPACE</em>, et ses raccourcis clavier — s'inspire du très puissant éditeur de
+texte <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. Je souhaitais blunderDB
+léger, autonome, sans installation et disponible pour différentes plateformes,
+d'où mon choix du langage Go et de la bibliothèque Svelte. Pour la
+sérialisation de la base de données, le format de fichiers doit être
+multi-plateforme et adapté pour contenir une base de données. Le format de
+fichier sqlite semblait tout indiqué.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">7.13. </span>blunderDB のソフトウェアアーキテクチャは何ですか？<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
