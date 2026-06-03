@@ -29,7 +29,8 @@
         <h2 class="stats-title">{$t('stats.title')}</h2>
         <div class="metric-toggle" role="group" aria-label={$t('stats.metricLabel')}>
             <button class="metric-btn" class:active={$statsMetricStore === 'pr'} onclick={() => statsMetricStore.set('pr')} aria-pressed={$statsMetricStore === 'pr'}>{$t('stats.metricPR')}</button>
-            <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>{$t('stats.metricMWC')}</button>
+            <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>{$t('stats.metricMWC')}</button
+            >
         </div>
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>
     </header>
@@ -37,8 +38,12 @@
     <StatsFilterBar />
 
     <nav class="tabs" role="tablist">
-        <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}>{$t('stats.tabDashboard')}</button>
-        <button class="tab-btn" class:active={activeTab === 'progression'} role="tab" aria-selected={activeTab === 'progression'} onclick={() => (activeTab = 'progression')}>{$t('stats.tabProgression')}</button>
+        <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}
+            >{$t('stats.tabDashboard')}</button
+        >
+        <button class="tab-btn" class:active={activeTab === 'progression'} role="tab" aria-selected={activeTab === 'progression'} onclick={() => (activeTab = 'progression')}
+            >{$t('stats.tabProgression')}</button
+        >
         <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
     </nav>
 

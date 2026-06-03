@@ -65,11 +65,6 @@
         return (entry.ErrorMP / 1000).toFixed(3);
     }
 
-    /** Decision type label for a blunder. */
-    function decisionLabel(entry) {
-        return entry.DecisionType === 1 ? 'Cube' : 'Checker';
-    }
-
     /** Short date display (YYYY-MM-DD → YYYY-MM-DD or first 10 chars). */
     function shortDate(dateStr) {
         if (!dateStr) return '';
@@ -117,9 +112,12 @@
 
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
-        {result.Totals.NumTournaments} {$t('stats.tournaments')} ·
-        {result.Totals.NumMatches} {$t('stats.matches')} ·
-        {result.Totals.NumDecisions} {$t('stats.decisions')}
+        {result.Totals.NumTournaments}
+        {$t('stats.tournaments')} ·
+        {result.Totals.NumMatches}
+        {$t('stats.matches')} ·
+        {result.Totals.NumDecisions}
+        {$t('stats.decisions')}
     </p>
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
@@ -143,7 +141,11 @@
             <ol class="blunders-list">
                 {#each result.TopBlunders as entry, i (entry.PositionID)}
                     <li class="blunder-item">
-                        <button class="blunder-main" onclick={() => openBlunder(entry.PositionID)} title="{entry.DecisionType === 1 ? $t('stats.decisionTypeCube') : $t('stats.decisionTypeChecker')} — {$t('stats.clickToOpenPosition')}">
+                        <button
+                            class="blunder-main"
+                            onclick={() => openBlunder(entry.PositionID)}
+                            title="{entry.DecisionType === 1 ? $t('stats.decisionTypeCube') : $t('stats.decisionTypeChecker')} — {$t('stats.clickToOpenPosition')}"
+                        >
                             <span class="blunder-rank">#{i + 1}</span>
                             <span class="blunder-type">{entry.DecisionType === 1 ? $t('stats.decisionTypeCube') : $t('stats.decisionTypeChecker')}</span>
                             <span class="blunder-error">{fmtBlunderError(entry)}</span>
