@@ -1,12 +1,12 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"strings"
-	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
@@ -44,7 +44,7 @@ func (d *Database) emitMigrationProgress(phase string, done, total int) {
 // statements are idempotent so repeated runs are safe.
 //
 // The caller must hold d.mu.
-func (d *Database) migrate_1_9_0_to_2_0_0() error {
+func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 	// 1. ALTER TABLE — add new nullable columns (swallow "duplicate column")
 	// -----------------------------------------------------------------
 	newPositionCols := []string{
@@ -117,8 +117,8 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("migration cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			rows, err := d.db.Query(
@@ -210,8 +210,8 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("migration cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			rows, err := d.db.Query(
@@ -526,7 +526,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 // This reduces the position table size by ~85-90% on the state column.
 //
 // The caller must hold d.mu.
-func (d *Database) migrate_2_1_0_to_2_2_0() error {
+func (d *Database) migrate_2_1_0_to_2_2_0(ctx context.Context) error {
 	var posTotal int
 	_ = d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
 
@@ -542,8 +542,8 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("migration cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			rows, err := d.db.Query(
@@ -619,7 +619,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 // column is re-encoded. This reduces analysis storage by ~60-80%.
 //
 // The caller must hold d.mu.
-func (d *Database) migrate_2_2_0_to_2_3_0() error {
+func (d *Database) migrate_2_2_0_to_2_3_0(ctx context.Context) error {
 	var anaTotal int
 	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE data IS NOT NULL AND data != ''`).Scan(&anaTotal)
 
@@ -635,8 +635,8 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("migration cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			rows, err := d.db.Query(
@@ -712,7 +712,7 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 //  4. If the played move is found at index > 0, updates best_move_equity_error.
 //
 // The caller must hold d.mu.
-func (d *Database) migrate_2_3_0_to_2_4_0() error {
+func (d *Database) migrate_2_3_0_to_2_4_0(ctx context.Context) error {
 	var anaTotal int
 	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error = 0`).Scan(&anaTotal)
 
@@ -743,8 +743,8 @@ func (d *Database) migrate_2_3_0_to_2_4_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("migration cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			rows, err := d.db.Query(
@@ -831,7 +831,7 @@ func (d *Database) migrate_2_3_0_to_2_4_0() error {
 // A position is "forced" in the gnuBG sense when there is only one legal checker
 // play (pmr->ml.cMoves == 1 in gnubg/analysis.c:458). blunderDB detects this by
 // checking that CheckerAnalysis.Moves has exactly one entry.
-func (d *Database) migrate_2_4_0_to_2_5_0() error {
+func (d *Database) migrate_2_4_0_to_2_5_0(ctx context.Context) error {
 	// Add the column (idempotent: no-op if it already exists after a partial run).
 	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_forced INTEGER NOT NULL DEFAULT 0`); err != nil {
 		// SQLite returns "duplicate column name" on repeat; ignore that specific error.
@@ -867,9 +867,9 @@ func (d *Database) migrate_2_4_0_to_2_5_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
+			if err := ctx.Err(); err != nil {
 				tx.Rollback()
-				return fmt.Errorf("migration cancelled")
+				return err
 			}
 
 			rows, err := d.db.Query(`
@@ -943,7 +943,7 @@ func (d *Database) migrate_2_4_0_to_2_5_0() error {
 //	isClose = (OptimalEquity - rDouble) < 0.16
 //
 // Take/Pass positions always get is_close_cube = 1 (cube was already offered).
-func (d *Database) migrate_2_5_0_to_2_6_0() error {
+func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_close_cube INTEGER NOT NULL DEFAULT 0`); err != nil {
 		if err.Error() != `duplicate column name: is_close_cube` {
 			return fmt.Errorf("migrate 2.6.0 add column: %w", err)
@@ -987,9 +987,9 @@ func (d *Database) migrate_2_5_0_to_2_6_0() error {
 		done := 0
 
 		for {
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
+			if err := ctx.Err(); err != nil {
 				tx.Rollback()
-				return fmt.Errorf("migration cancelled")
+				return err
 			}
 
 			rows, err := d.db.Query(`
@@ -1081,7 +1081,7 @@ func (d *Database) migrate_2_5_0_to_2_6_0() error {
 // Fix: recompute the ZobristHash from the stored position state for every position
 // with cube_value >= 1. This is idempotent: already-correct hashes are unchanged
 // (recomputing with the fixed function returns the same correct value).
-func (d *Database) migrate_2_6_0_to_2_7_0() error {
+func (d *Database) migrate_2_6_0_to_2_7_0(ctx context.Context) error {
 	// If the position table doesn't yet have a zobrist_hash column (possible when
 	// migrating from a very old schema that was never at 2.0.0), skip the
 	// hash-patching step — the hashes will be computed correctly on first use.
@@ -1147,9 +1147,9 @@ func (d *Database) migrate_2_6_0_to_2_7_0() error {
 	defer stmt.Close()
 
 	for _, f := range fixes {
-		if atomic.LoadInt32(&d.importCancelled) != 0 {
+		if err := ctx.Err(); err != nil {
 			tx.Rollback()
-			return fmt.Errorf("migration cancelled")
+			return err
 		}
 		if _, err := stmt.Exec(f.newHash, f.id); err != nil {
 			tx.Rollback()
@@ -1253,7 +1253,7 @@ func (d *Database) migrate_2_8_0_to_2_9_0() error {
 // (migrate_hook.go), by the headless storage backend opening a pre-existing
 // database. The caller must hold d.mu when d is a shared instance; the
 // storage path uses a transient Database, so no lock is needed there.
-func (d *Database) runMigrationChain() error {
+func (d *Database) runMigrationChain(ctx context.Context) error {
 	var err error
 	// Check the database version
 	var dbVersion string
@@ -1605,7 +1605,7 @@ func (d *Database) runMigrationChain() error {
 	// Auto-migrate from 1.9.0 to 2.0.0
 	// Backfills new scalar columns, deduplicates positions, and creates indexes.
 	if dbVersion == "1.9.0" {
-		if err := d.migrate_1_9_0_to_2_0_0(); err != nil {
+		if err := d.migrate_1_9_0_to_2_0_0(ctx); err != nil {
 			return fmt.Errorf("migration 1.9.0→2.0.0 failed: %w", err)
 		}
 		dbVersion = "2.0.0"
@@ -1625,7 +1625,7 @@ func (d *Database) runMigrationChain() error {
 	// Compacts position.state from full Position JSON to board-only array,
 	// reducing storage by ~85-90% on the state column. Also prunes command history.
 	if dbVersion == "2.1.0" {
-		if err := d.migrate_2_1_0_to_2_2_0(); err != nil {
+		if err := d.migrate_2_1_0_to_2_2_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.1.0→2.2.0 failed: %w", err)
 		}
 		dbVersion = "2.2.0"
@@ -1635,7 +1635,7 @@ func (d *Database) runMigrationChain() error {
 	// Compresses analysis.data JSON blobs with zlib, reducing analysis storage
 	// by ~60-80%. Scalar filter columns are unchanged.
 	if dbVersion == "2.2.0" {
-		if err := d.migrate_2_2_0_to_2_3_0(); err != nil {
+		if err := d.migrate_2_2_0_to_2_3_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.2.0→2.3.0 failed: %w", err)
 		}
 		dbVersion = "2.3.0"
@@ -1645,7 +1645,7 @@ func (d *Database) runMigrationChain() error {
 	// Repairs best_move_equity_error for positions where PlayedMoves was missing
 	// from the analysis JSON blob in earlier migrations, by looking up move.checker_move.
 	if dbVersion == "2.3.0" {
-		if err := d.migrate_2_3_0_to_2_4_0(); err != nil {
+		if err := d.migrate_2_3_0_to_2_4_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.3.0→2.4.0 failed: %w", err)
 		}
 		dbVersion = "2.4.0"
@@ -1655,7 +1655,7 @@ func (d *Database) runMigrationChain() error {
 	// Adds is_forced column to analysis; backfills checker positions with exactly
 	// one legal move (len(CheckerAnalysis.Moves) == 1).
 	if dbVersion == "2.4.0" {
-		if err := d.migrate_2_4_0_to_2_5_0(); err != nil {
+		if err := d.migrate_2_4_0_to_2_5_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.4.0→2.5.0 failed: %w", err)
 		}
 		dbVersion = "2.5.0"
@@ -1665,7 +1665,7 @@ func (d *Database) runMigrationChain() error {
 	// Adds is_close_cube column to analysis; backfills cube positions using the
 	// gnuBG isCloseCubedecision predicate (threshold 0.16 equity, eval.c:5088).
 	if dbVersion == "2.5.0" {
-		if err := d.migrate_2_5_0_to_2_6_0(); err != nil {
+		if err := d.migrate_2_5_0_to_2_6_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.5.0→2.6.0 failed: %w", err)
 		}
 		dbVersion = "2.6.0"
@@ -1676,7 +1676,7 @@ func (d *Database) runMigrationChain() error {
 	// where cubeValueIndex() was called with an exponent instead of actual cube
 	// value, causing cube=0 (initial) and cube=1 (2-cube) to hash identically.
 	if dbVersion == "2.6.0" {
-		if err := d.migrate_2_6_0_to_2_7_0(); err != nil {
+		if err := d.migrate_2_6_0_to_2_7_0(ctx); err != nil {
 			return fmt.Errorf("migration 2.6.0→2.7.0 failed: %w", err)
 		}
 		dbVersion = "2.7.0"

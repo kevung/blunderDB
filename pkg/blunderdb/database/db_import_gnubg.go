@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -11,7 +12,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/kevung/gnubgparser"
@@ -24,6 +24,9 @@ import (
 // ImportGnuBGMatchFromText imports a match from clipboard/string content in MAT/TXT format
 // using the gnubgparser library. Only MAT/TXT format is supported (no SGF).
 func (d *Database) ImportGnuBGMatchFromText(content string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -32,13 +35,16 @@ func (d *Database) ImportGnuBGMatchFromText(content string) (int64, error) {
 		return 0, fmt.Errorf("failed to parse match text: %w", err)
 	}
 
-	return d.importGnuBGMatchInternal(gnuMatch, "clipboard", false)
+	return d.importGnuBGMatchInternal(ctx, gnuMatch, "clipboard", false)
 }
 
 // ImportGnuBGMatch imports a match from a GnuBG file (SGF, MAT, or TXT format)
 // using the gnubgparser library. SGF files include full analysis data,
 // while MAT/TXT files contain only moves (no analysis).
 func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -65,12 +71,12 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to parse file: %w", err)
 	}
 
-	return d.importGnuBGMatchInternal(gnuMatch, filePath, isSGF)
+	return d.importGnuBGMatchInternal(ctx, gnuMatch, filePath, isSGF)
 }
 
 // importGnuBGMatchInternal is the shared implementation for importing a parsed GnuBG match.
 // isSGF indicates SGF format where moves use absolute coordinates.
-func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePath string, isSGF bool) (int64, error) {
+func (d *Database) importGnuBGMatchInternal(ctx context.Context, gnuMatch *gnubgparser.Match, filePath string, isSGF bool) (int64, error) {
 	// Parse match date
 	matchDate := parseMatchDate(gnuMatch.Metadata.Date)
 
@@ -91,11 +97,11 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
+	// Unconditional rollback: a no-op once tx.Commit() succeeds, but guarantees
+	// the transaction is released on any early return — including ctx
+	// cancellation, whose error propagates through a shadowed `err` and so
+	// would not trip a conditional `if err != nil` rollback.
+	defer tx.Rollback()
 
 	// Insert match metadata or reuse existing canonical match
 	var matchID int64
@@ -276,8 +282,8 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 			moveNumber := int32(0)
 			for i := range game.Moves {
 				// Cancellation check at the top of every move iteration.
-				if atomic.LoadInt32(&d.importCancelled) != 0 {
-					return 0, fmt.Errorf("import cancelled")
+				if err := ctx.Err(); err != nil {
+					return 0, err
 				}
 
 				moveRec := &game.Moves[i]

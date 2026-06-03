@@ -7,6 +7,18 @@ via `multipart/form-data` instead of buffering whole files in RAM.
 
 **Estimate.** 3-5 days. **Risk.** Medium. **PRs.** 1 (possibly 2).
 
+> **Status: done.** The server-side substance shipped with [sheet 12](12-imports-exports-over-storage.md):
+> `ctx` is threaded through every `ingest.*` importer, per-request cancellation
+> runs via an `importRegistry` + `POST /v1/imports.cancel`, uploads stream to a
+> temp file (`spoolToTemp`, bounded by `MaxBytesReader`), and progress is emitted
+> as NDJSON. The remaining item — removing the process-global `importCancelled`
+> atomic from the legacy `Database` wrapper — is now also done: a per-`Database`
+> `context.CancelFunc` (`beginCancellableImport`/`CancelImport`, guarded by
+> `cancelMu`) is threaded through `ImportXGMatch`, `ImportGnuBGMatch[FromText]`,
+> `ImportBGFMatch`, `CommitImportDatabase` and the whole `runMigrationChain`.
+> `ctx.Err()` replaces every former atomic check; `migrate_hook` drives
+> cancellation from the storage ctx. Covered by `cancel_test.go` (incl. `-race`).
+
 **Prerequisites.** [P2](02-storage-interface.md) (`ctx` in interface),
 [P6](06-serve-http.md) (`/v1/imports.cancel` endpoint).
 
@@ -22,11 +34,11 @@ via `multipart/form-data` instead of buffering whole files in RAM.
 
 ## Steps
 
-- [ ] **Add `ctx context.Context`** to every method in the importer
+- [x] **Add `ctx context.Context`** to every method in the importer
       packages (`pkg/blunderdb/importers/*.go`). They already take it from
       `Storage` in P2; ensure they propagate it down to every loop
       iteration that today checks `atomic.LoadInt32(&d.importCancelled)`.
-- [ ] **Replace the atomic check** at every callsite:
+- [x] **Replace the atomic check** at every callsite:
       ```go
       // before
       if atomic.LoadInt32(&d.importCancelled) != 0 {
@@ -39,13 +51,18 @@ via `multipart/form-data` instead of buffering whole files in RAM.
       ```
       Granularity: at every match boundary (current behaviour), at every
       DB write inside a long batch, and at every parser progress callback.
-- [ ] **Remove `importCancelled` field** from `Database` (and from
+- [x] **Remove `importCancelled` field** from `Database` (and from
       anything else that referenced it).
-- [ ] **`defer tx.Rollback()` everywhere.** Even when `ctx.Err()` aborts a
+- [x] **`defer tx.Rollback()` everywhere.** Even when `ctx.Err()` aborts a
       partial import, the transaction must be rolled back or the
-      connection is left holding locks. Add a panic-recover around each
-      import body to ensure rollback even on unexpected error paths.
-- [ ] **Per-request cancellation in the server** (P6 surfaced this):
+      connection is left holding locks. **Done** for the legacy XG/GnuBG/BGF
+      imports: the prior conditional `defer func(){ if err != nil {...} }()`
+      missed cancellation (whose error propagates through a *shadowed* `err`,
+      leaving the outer `err` nil → tx leaked). Replaced with an unconditional
+      `defer tx.Rollback()` (a no-op after a successful `Commit`), which is
+      simpler than a panic-recover and guarantees release on every early
+      return.
+- [x] **Per-request cancellation in the server** (P6 surfaced this):
       ```go
       // internal/server/handlers/imports.go
       type Server struct {
@@ -64,7 +81,7 @@ via `multipart/form-data` instead of buffering whole files in RAM.
           if c, ok := s.imports[id]; ok { c(); delete(s.imports, id) }
       }
       ```
-- [ ] **Streaming upload** via `multipart/form-data`:
+- [x] **Streaming upload** via `multipart/form-data`:
       ```go
       reader, err := r.MultipartReader()
       for {
@@ -84,7 +101,7 @@ via `multipart/form-data` instead of buffering whole files in RAM.
         this until volumes justify it.
       Recommendation: temp-file path for this iteration; track upstream
       work as a follow-up.
-- [ ] **Progress events**. While importing, emit NDJSON events to the
+- [x] **Progress events**. While importing, emit NDJSON events to the
       response writer:
       ```json
       {"event":"progress","matches":1,"games":3,"positions":120}
@@ -129,7 +146,7 @@ via `multipart/form-data` instead of buffering whole files in RAM.
 
 ## Verification
 
-- [ ] `grep -rn 'importCancelled' pkg/` returns no hits.
+- [x] `grep -rn 'importCancelled' pkg/` returns no hits.
 - [ ] `POST /v1/imports.xg` followed by `POST /v1/imports.cancel` triggers
       a clean abort within 200 ms.
 - [ ] `server_test.go` cancellation case green.

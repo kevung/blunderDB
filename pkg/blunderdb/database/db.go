@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"sync"
 
@@ -12,9 +13,40 @@ import (
 type Database struct {
 	db                *sql.DB
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
-	importCancelled   int32                               // Flag to cancel ongoing import (atomic)
+	cancelMu          sync.Mutex                          // guards importCancel (held briefly, never with mu)
+	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
+}
+
+// beginCancellableImport creates a fresh cancellable context for an import or
+// migration and registers its cancel func so CancelImport can abort it from
+// another goroutine (e.g. the Wails frontend) while the operation holds d.mu.
+// cancelMu — never d.mu — guards the registration, so CancelImport never blocks
+// on the running import. The returned done func must be deferred: it clears the
+// registration and releases the context's resources.
+func (d *Database) beginCancellableImport() (context.Context, func()) {
+	ctx, cancel := context.WithCancel(context.Background())
+	d.cancelMu.Lock()
+	d.importCancel = cancel
+	d.cancelMu.Unlock()
+	return ctx, func() {
+		d.cancelMu.Lock()
+		d.importCancel = nil
+		d.cancelMu.Unlock()
+		cancel()
+	}
+}
+
+// CancelImport aborts any in-flight import or migration started through the
+// Database wrapper. It is bound to the Wails frontend. No-op when idle.
+func (d *Database) CancelImport() {
+	d.cancelMu.Lock()
+	cancel := d.importCancel
+	d.cancelMu.Unlock()
+	if cancel != nil {
+		cancel()
+	}
 }
 
 // rebuildStore (re)creates the SQLite Storage that wraps the current *sql.DB.
@@ -488,7 +520,9 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
-	if err := d.runMigrationChain(); err != nil {
+	migCtx, migDone := d.beginCancellableImport()
+	defer migDone()
+	if err := d.runMigrationChain(migCtx); err != nil {
 		return err
 	}
 

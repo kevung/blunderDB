@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/kevung/bgfparser"
@@ -24,6 +23,9 @@ import (
 // ImportBGFMatch imports a match from a BGBlitz BGF file using the bgfparser library.
 // BGF files contain full match data including moves, analysis, and cube decisions.
 func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -74,11 +76,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
+	// Unconditional rollback: a no-op once tx.Commit() succeeds, but guarantees
+	// the transaction is released on any early return — including ctx
+	// cancellation, whose error propagates through a shadowed `err` and so
+	// would not trip a conditional `if err != nil` rollback.
+	defer tx.Rollback()
 
 	// Insert match metadata or reuse existing canonical match
 	var matchID int64
@@ -156,8 +158,8 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			pendingCubeDouble := false // tracks if previous move was a cube double encoded as amove
 			for moveIdx, moveRaw := range movesData {
 				// Cancellation check at the top of every move iteration.
-				if atomic.LoadInt32(&d.importCancelled) != 0 {
-					return 0, fmt.Errorf("import cancelled")
+				if err := ctx.Err(); err != nil {
+					return 0, err
 				}
 
 				moveData, ok := moveRaw.(map[string]interface{})

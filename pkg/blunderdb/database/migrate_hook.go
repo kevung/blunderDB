@@ -15,11 +15,11 @@ import (
 // (cycle), so it exposes a registration hook instead.
 //
 // The migrator runs on a transient Database bound to the storage handle: it has
-// no progress callback and a zero importCancelled flag, so the upgrade runs to
-// completion without GUI cancellation — the right behaviour for the headless
-// path.
+// no progress callback, and cancellation is driven by the caller-supplied ctx
+// (the storage layer's context) rather than the GUI's CancelImport — the right
+// behaviour for the headless path.
 func init() {
-	sqlite.RegisterMigrator(func(_ context.Context, db *sql.DB) error {
-		return (&Database{db: db}).runMigrationChain()
+	sqlite.RegisterMigrator(func(ctx context.Context, db *sql.DB) error {
+		return (&Database{db: db}).runMigrationChain(ctx)
 	})
 }

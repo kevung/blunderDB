@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
-	"sync/atomic"
 )
 
 // AnalyzeImportDatabase analyzes what would be imported without making changes
@@ -195,11 +194,11 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 // CommitImportDatabase performs the actual import within a transaction (ACID)
 func (d *Database) CommitImportDatabase(importPath string) (map[string]interface{}, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Reset cancellation flag at start
-	d.resetImportCancellation()
 
 	// Check that the current database is open
 	if d.db == nil {
@@ -214,9 +213,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	// Ensure rollback on error or cancellation
 	defer func() {
-		if err != nil || d.isImportCancelled() {
+		if err != nil || ctx.Err() != nil {
 			tx.Rollback()
-			if d.isImportCancelled() {
+			if ctx.Err() != nil {
 				slog.Info("transaction rolled back due to user cancellation")
 			} else {
 				slog.Warn("transaction rolled back due to error")
@@ -303,7 +302,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	for rows.Next() {
 		// Check for cancellation
-		if d.isImportCancelled() {
+		if err = ctx.Err(); err != nil {
 			slog.Info("import cancelled by user during processing")
 			return nil, fmt.Errorf("import cancelled by user")
 		}
@@ -476,7 +475,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	}
 
 	// Final check for cancellation before committing
-	if d.isImportCancelled() {
+	if err = ctx.Err(); err != nil {
 		slog.Info("import cancelled by user before commit")
 		return nil, fmt.Errorf("import cancelled by user")
 	}
@@ -496,22 +495,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
-}
-
-// CancelImport sets the flag to cancel any ongoing import operation
-func (d *Database) CancelImport() {
-	atomic.StoreInt32(&d.importCancelled, 1)
-	slog.Info("import cancellation requested")
-}
-
-// isImportCancelled checks if import has been cancelled (internal method, no lock needed as it's called within locked context)
-func (d *Database) isImportCancelled() bool {
-	return atomic.LoadInt32(&d.importCancelled) == 1
-}
-
-// resetImportCancellation resets the cancellation flag (internal method)
-func (d *Database) resetImportCancellation() {
-	atomic.StoreInt32(&d.importCancelled, 0)
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead

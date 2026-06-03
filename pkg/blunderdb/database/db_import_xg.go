@@ -1,13 +1,13 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 	"math"
 	"sort"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/kevung/xgparser/xgparser"
@@ -18,6 +18,9 @@ import (
 // Import XG match file using xgparser library
 // This function uses raw segment parsing to capture complete cube action information
 func (d *Database) ImportXGMatch(filePath string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -84,11 +87,11 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
+	// Unconditional rollback: a no-op once tx.Commit() succeeds, but guarantees
+	// the transaction is released on any early return — including ctx
+	// cancellation, whose error propagates through a shadowed `err` and so
+	// would not trip a conditional `if err != nil` rollback.
+	defer tx.Rollback()
 
 	// Insert match metadata (including match_hash and canonical_hash)
 	// If canonical duplicate, don't create new match - reuse existing match ID
@@ -209,7 +212,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	} else {
 		// Normal import: create game/move records and import everything
-		if err := d.importXGGamesAndMoves(tx, matchID, match, rawCubeInfo, cache); err != nil {
+		if err := d.importXGGamesAndMoves(ctx, tx, matchID, match, rawCubeInfo, cache); err != nil {
 			return 0, err
 		}
 	}
@@ -234,7 +237,7 @@ type RawCubeAction struct {
 }
 
 // importXGGamesAndMoves imports all games, moves, and analysis from an XG match
-func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, cache *importCache) error {
+func (d *Database) importXGGamesAndMoves(ctx context.Context, tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, cache *importCache) error {
 	for gameIdx, game := range match.Games {
 		gameID, err := d.importGame(tx, matchID, &game)
 		if err != nil {
@@ -247,8 +250,8 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 
 		for moveIdx, move := range game.Moves {
 			// Cancellation check at the top of every move iteration.
-			if atomic.LoadInt32(&d.importCancelled) != 0 {
-				return fmt.Errorf("import cancelled")
+			if err := ctx.Err(); err != nil {
+				return err
 			}
 
 			var rawCube *RawCubeAction
