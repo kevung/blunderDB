@@ -40,6 +40,7 @@ func (cli *CLI) runSearch(args []string) error {
 	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
 	matchIDsFlag := searchCmd.String("match-ids", "", "Filter by match IDs (comma-separated, e.g. '1,3,5' or range '2,7')")
 	tournamentIDsFlag := searchCmd.String("tournament-ids", "", "Filter by tournament IDs (comma-separated, e.g. '1,3' or range '1,5')")
+	positionIDsFlag := searchCmd.String("position-ids", "", "Filter by position IDs (range '2,7' or explicit list '5;10;15')")
 	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
 
 	searchCmd.Usage = func() {
@@ -236,6 +237,7 @@ func (cli *CLI) runSearch(args []string) error {
 		DiceRollMode:            diceRollMode,
 		MatchIDsFilter:          *matchIDsFlag,
 		TournamentIDsFilter:     *tournamentIDsFlag,
+		PositionIDsFilter:       *positionIDsFlag,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

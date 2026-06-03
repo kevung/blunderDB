@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Ajustes",
-        "language": "Idioma"
+        "language": "Idioma",
+        "colors": "Colores del tablero",
+        "colorBackground": "Fondo",
+        "colorBorder": "Borde",
+        "colorPoint1": "Puntas claras",
+        "colorPoint2": "Puntas oscuras",
+        "colorChecker1": "Fichas del jugador 1",
+        "colorChecker2": "Fichas del jugador 2",
+        "resetColors": "Restablecer"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",

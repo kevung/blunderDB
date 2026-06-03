@@ -22,12 +22,62 @@ type StatsFilterPersisted struct {
 	Metric        string  `json:"metric"` // "pr" | "mwc"
 }
 
+// BoardColors holds the user-customisable board palette. Empty fields fall back
+// to DefaultBoardColors() so older config files (and partial customisations)
+// keep rendering correctly.
+type BoardColors struct {
+	Background string `json:"background"` // board background fill
+	Border     string `json:"border"`     // board border / point stroke
+	Point1     string `json:"point1"`     // light points (triangle fill 1)
+	Point2     string `json:"point2"`     // dark points (triangle fill 2)
+	Checker1   string `json:"checker1"`   // player 1 checkers
+	Checker2   string `json:"checker2"`   // player 2 checkers
+}
+
+// DefaultBoardColors returns the historical hard-coded palette from Board.svelte.
+func DefaultBoardColors() BoardColors {
+	return BoardColors{
+		Background: "#f0f0f0",
+		Border:     "#333333",
+		Point1:     "#d9d9d9",
+		Point2:     "#a6a6a6",
+		Checker1:   "#333333",
+		Checker2:   "#ffffff",
+	}
+}
+
+// withDefaults fills any empty field with its default, so partial or missing
+// persisted colours never render as blank.
+func (bc BoardColors) withDefaults() BoardColors {
+	d := DefaultBoardColors()
+	if bc.Background == "" {
+		bc.Background = d.Background
+	}
+	if bc.Border == "" {
+		bc.Border = d.Border
+	}
+	if bc.Point1 == "" {
+		bc.Point1 = d.Point1
+	}
+	if bc.Point2 == "" {
+		bc.Point2 = d.Point2
+	}
+	if bc.Checker1 == "" {
+		bc.Checker1 = d.Checker1
+	}
+	if bc.Checker2 == "" {
+		bc.Checker2 = d.Checker2
+	}
+	return bc
+}
+
 type Config struct {
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
 	LastDatabasePath string               `json:"last_database_path"`
 	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
 	Language         string               `json:"language,omitempty"`
+	BoardColors      BoardColors          `json:"board_colors,omitempty"`
 }
 
 func NewConfig() *Config {
@@ -36,6 +86,7 @@ func NewConfig() *Config {
 		WindowWidth:  initialWidth,
 		WindowHeight: initialHeight,
 		Language:     "en",
+		BoardColors:  DefaultBoardColors(),
 	}
 }
 
@@ -88,6 +139,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	if c.Language == "" {
 		c.Language = "en"
 	}
+	c.BoardColors = config.BoardColors.withDefaults()
+	config.BoardColors = c.BoardColors
 
 	return &config, nil
 }
@@ -132,6 +185,17 @@ func (c *Config) GetLanguage() string {
 // SaveLanguage persists the given UI language code to disk.
 func (c *Config) SaveLanguage(lang string) error {
 	c.Language = lang
+	return c.SaveConfig(c)
+}
+
+// GetBoardColors returns the persisted board palette (empty fields defaulted).
+func (c *Config) GetBoardColors() BoardColors {
+	return c.BoardColors.withDefaults()
+}
+
+// SaveBoardColors persists the given board palette to disk.
+func (c *Config) SaveBoardColors(colors BoardColors) error {
+	c.BoardColors = colors.withDefaults()
 	return c.SaveConfig(c)
 }
 

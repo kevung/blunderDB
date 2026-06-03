@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Asetukset",
-        "language": "Kieli"
+        "language": "Kieli",
+        "colors": "Laudan värit",
+        "colorBackground": "Tausta",
+        "colorBorder": "Reuna",
+        "colorPoint1": "Vaaleat kärjet",
+        "colorPoint2": "Tummat kärjet",
+        "colorChecker1": "Pelaajan 1 nappulat",
+        "colorChecker2": "Pelaajan 2 nappulat",
+        "resetColors": "Palauta oletukset"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

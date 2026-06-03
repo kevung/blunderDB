@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Settings",
-        "language": "Language"
+        "language": "Language",
+        "colors": "Board colours",
+        "colorBackground": "Background",
+        "colorBorder": "Border",
+        "colorPoint1": "Light points",
+        "colorPoint2": "Dark points",
+        "colorChecker1": "Player 1 checkers",
+        "colorChecker2": "Player 2 checkers",
+        "resetColors": "Reset to defaults"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Paramètres",
-        "language": "Langue"
+        "language": "Langue",
+        "colors": "Couleurs du plateau",
+        "colorBackground": "Fond",
+        "colorBorder": "Bordure",
+        "colorPoint1": "Flèches claires",
+        "colorPoint2": "Flèches foncées",
+        "colorChecker1": "Pions du joueur 1",
+        "colorChecker2": "Pions du joueur 2",
+        "resetColors": "Réinitialiser"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",

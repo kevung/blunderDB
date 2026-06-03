@@ -184,6 +184,7 @@ type SearchFilters struct {
 	MoveErrorFilter               string   `json:"moveErrorFilter"`
 	MatchIDsFilter                string   `json:"matchIDsFilter"`
 	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`
+	PositionIDsFilter             string   `json:"positionIDsFilter"`
 	RestrictToPositionIDs         string   `json:"restrictToPositionIDs"`
 }
 

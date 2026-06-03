@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Einstellungen",
-        "language": "Sprache"
+        "language": "Sprache",
+        "colors": "Brettfarben",
+        "colorBackground": "Hintergrund",
+        "colorBorder": "Rahmen",
+        "colorPoint1": "Helle Zungen",
+        "colorPoint2": "Dunkle Zungen",
+        "colorChecker1": "Steine Spieler 1",
+        "colorChecker2": "Steine Spieler 2",
+        "resetColors": "Zurücksetzen"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

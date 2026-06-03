@@ -1,11 +1,26 @@
 <script>
     import { trapFocus } from '../utils/focusTrap.js';
     import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
+    import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
 
     let { visible = false, onClose } = $props();
 
+    // Board colour settings, in display order. Each maps a store key to a label.
+    const COLOR_SETTINGS = [
+        { key: 'background', labelKey: 'config.colorBackground' },
+        { key: 'border', labelKey: 'config.colorBorder' },
+        { key: 'point1', labelKey: 'config.colorPoint1' },
+        { key: 'point2', labelKey: 'config.colorPoint2' },
+        { key: 'checker1', labelKey: 'config.colorChecker1' },
+        { key: 'checker2', labelKey: 'config.colorChecker2' }
+    ];
+
     function onLanguageChange(event) {
         setLanguage(event.currentTarget.value);
+    }
+
+    function onColorChange(key, event) {
+        setBoardColor(key, event.currentTarget.value);
     }
 
     function handleKeyDown(event) {
@@ -28,6 +43,17 @@
                         <option value={code}>{LANGUAGE_LABELS[code]}</option>
                     {/each}
                 </select>
+            </div>
+
+            <div class="section-title">{$t('config.colors')}</div>
+            {#each COLOR_SETTINGS as setting (setting.key)}
+                <div class="setting-row">
+                    <label for={`config-color-${setting.key}`}>{$t(setting.labelKey)}</label>
+                    <input id={`config-color-${setting.key}`} type="color" class="setting-color" value={$boardColorsStore[setting.key]} oninput={(e) => onColorChange(setting.key, e)} />
+                </div>
+            {/each}
+            <div class="setting-row reset-row">
+                <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
             </div>
 
             <div class="modal-buttons">
@@ -114,6 +140,42 @@
         outline: none;
         border-color: #6c757d;
         box-shadow: 0 0 5px rgba(108, 117, 125, 0.5);
+    }
+
+    .section-title {
+        margin: 16px 0 4px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .setting-color {
+        flex: 0 0 auto;
+        width: 48px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: none;
+        cursor: pointer;
+    }
+
+    .reset-row {
+        justify-content: flex-end;
+    }
+
+    .secondary-button {
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .secondary-button:hover {
+        background-color: #e9e9e9;
     }
 
     .modal-buttons {

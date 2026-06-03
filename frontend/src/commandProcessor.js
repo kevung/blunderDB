@@ -255,7 +255,8 @@ function handleSubSearch(command, positions) {
                 parsedFilters.tournamentIDsFilter,
                 currentIDs,
                 false,
-                parsedFilters.diceRollMode
+                parsedFilters.diceRollMode,
+                parsedFilters.positionIDsFilter
             );
         }
     } else {
@@ -358,7 +359,8 @@ function handleSearch(command) {
                 parsedFilters.tournamentIDsFilter,
                 '',
                 false,
-                parsedFilters.diceRollMode
+                parsedFilters.diceRollMode,
+                parsedFilters.positionIDsFilter
             );
         }
     } else {
@@ -435,6 +437,15 @@ export function parseFilters(filters, command) {
         tournamentIDsFilter = parts.join(';');
     }
 
+    // Position-id filter: `id12`, `id5,10` (range 5..10), or several `id` tokens
+    // joined as an explicit list (e.g. `id5 id10`). Mirrors the ma/tn convention.
+    const positionIDTokens = filters.filter((f) => typeof f === 'string' && /^id\d/.test(f));
+    let positionIDsFilter = '';
+    if (positionIDTokens.length > 0) {
+        const parts = positionIDTokens.map((token) => token.slice(2));
+        positionIDsFilter = parts.join(';');
+    }
+
     return {
         includeCube,
         includeScore,
@@ -468,7 +479,8 @@ export function parseFilters(filters, command) {
         player2JanBlotFilter,
         moveErrorFilter,
         matchIDsFilter,
-        tournamentIDsFilter
+        tournamentIDsFilter,
+        positionIDsFilter
     };
 }
 
@@ -484,7 +496,11 @@ function insertTags(tags) {
                 textAreaEl.focus();
             }
         }, 0);
-        SaveComment(get(currentPositionIndexStore), updatedText);
+        // NOTE: SaveComment expects the position *id*, not the array index.
+        const positionId = get(positionsStore)[get(currentPositionIndexStore)]?.id;
+        if (positionId != null) {
+            SaveComment(positionId, updatedText);
+        }
         return updatedText;
     });
 }

@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Настройки",
-        "language": "Язык"
+        "language": "Язык",
+        "colors": "Цвета доски",
+        "colorBackground": "Фон",
+        "colorBorder": "Граница",
+        "colorPoint1": "Светлые пункты",
+        "colorPoint2": "Тёмные пункты",
+        "colorChecker1": "Шашки игрока 1",
+        "colorChecker2": "Шашки игрока 2",
+        "resetColors": "Сбросить"
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",

@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "設定",
-        "language": "言語"
+        "language": "言語",
+        "colors": "ボードの色",
+        "colorBackground": "背景",
+        "colorBorder": "枠線",
+        "colorPoint1": "明るいポイント",
+        "colorPoint2": "暗いポイント",
+        "colorChecker1": "プレイヤー1のチェッカー",
+        "colorChecker2": "プレイヤー2のチェッカー",
+        "resetColors": "デフォルトに戻す"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

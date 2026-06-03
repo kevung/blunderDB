@@ -7,6 +7,7 @@
     import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { initLanguage } from './i18n';
+    import { initBoardColors } from './stores/boardColorsStore';
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
@@ -346,6 +347,9 @@
         } catch (_e) {
             initLanguage('en');
         }
+
+        // Load the persisted board palette (falls back to defaults internally).
+        initBoardColors();
 
         try {
             const lastDbPath = await GetLastDatabasePath();

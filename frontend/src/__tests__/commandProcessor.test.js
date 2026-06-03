@@ -12,6 +12,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import { parseFilters, processCommand, initCommandProcessor } from '../commandProcessor.js';
+import { SaveComment } from '../../wailsjs/go/database/Database.js';
 import { translate, resolveStatusMessage } from '../i18n';
 
 // The status store now holds a tMsg() descriptor ({ i18nKey, i18nParams }) so
@@ -304,6 +305,24 @@ describe('parseFilters', () => {
         expect(parseFilters([], 's').tournamentIDsFilter).toBe('');
     });
 
+    // -- position ID filter --------------------------------------------------
+    test('single position ID', () => {
+        expect(parseFilters(['id42'], 's id42').positionIDsFilter).toBe('42');
+    });
+
+    test('position ID range stays a single comma token', () => {
+        expect(parseFilters(['id5,10'], 's id5,10').positionIDsFilter).toBe('5,10');
+    });
+
+    test('multiple position IDs join with semicolons', () => {
+        const result = parseFilters(['id5', 'id10', 'id15'], 's id5 id10 id15');
+        expect(result.positionIDsFilter).toBe('5;10;15');
+    });
+
+    test('no position IDs returns empty string', () => {
+        expect(parseFilters([], 's').positionIDsFilter).toBe('');
+    });
+
     // -- combined filters ----------------------------------------------------
     test('multiple filters combined', () => {
         const filters = ['cube', 'p>30', 'w>50', 'E>0.05', 'nc'];
@@ -384,6 +403,16 @@ describe('processCommand', () => {
         const entries = get(logEntriesStore);
         expect(entries.length).toBe(1);
         expect(entries[0].message).toContain('Tags added');
+    });
+
+    test('# command saves the comment to the current position id (not the array index)', () => {
+        // Regression: SaveComment expects a position *id*, not the array index.
+        SaveComment.mockClear();
+        positionsStore.set([{ id: 10 }, { id: 20 }, { id: 30 }]);
+        currentPositionIndexStore.set(1); // index 1 -> position id 20
+        processCommand('#blunder');
+        expect(SaveComment).toHaveBeenCalledTimes(1);
+        expect(SaveComment.mock.calls[0][0]).toBe(20);
     });
 
     // -- simple callback commands --------------------------------------------

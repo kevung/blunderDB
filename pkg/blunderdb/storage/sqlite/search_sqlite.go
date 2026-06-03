@@ -101,6 +101,23 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 	}
 
+	// User-facing position-id filter (command-line token `id`). Uses the same
+	// list/range semantics as the match/tournament filters (e.g. "2,7" is the
+	// range 2..7; ";"-joined values are an explicit list).
+	if f.PositionIDsFilter != "" {
+		ids, err := parseFilterIDList(f.PositionIDsFilter)
+		if err == nil && len(ids) > 0 {
+			placeholders := strings.Repeat("?,", len(ids))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(" AND p.id IN (" + placeholders + ")")
+			for _, id := range ids {
+				args = append(args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
 	var bitboardTight bool
 	if useSQLFilters {
 		if f.DecisionTypeFilter {

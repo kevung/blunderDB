@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Impostazioni",
-        "language": "Lingua"
+        "language": "Lingua",
+        "colors": "Colori della board",
+        "colorBackground": "Sfondo",
+        "colorBorder": "Bordo",
+        "colorPoint1": "Punte chiare",
+        "colorPoint2": "Punte scure",
+        "colorChecker1": "Pedine giocatore 1",
+        "colorChecker2": "Pedine giocatore 2",
+        "resetColors": "Ripristina"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

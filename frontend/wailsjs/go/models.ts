@@ -1121,6 +1121,7 @@ export namespace domain {
 	    moveErrorFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
+	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
 	
 	    static createFrom(source: any = {}) {
@@ -1163,6 +1164,7 @@ export namespace domain {
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
+	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
 	    }
 	
@@ -1242,6 +1244,28 @@ export namespace gui {
 
 export namespace main {
 	
+	export class BoardColors {
+	    background: string;
+	    border: string;
+	    point1: string;
+	    point2: string;
+	    checker1: string;
+	    checker2: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new BoardColors(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.background = source["background"];
+	        this.border = source["border"];
+	        this.point1 = source["point1"];
+	        this.point2 = source["point2"];
+	        this.checker1 = source["checker1"];
+	        this.checker2 = source["checker2"];
+	    }
+	}
 	export class StatsFilterPersisted {
 	    player_name: string;
 	    tournament_ids: number[];
@@ -1272,6 +1296,7 @@ export namespace main {
 	    last_database_path: string;
 	    stats_filter?: StatsFilterPersisted;
 	    language?: string;
+	    board_colors?: BoardColors;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -1284,6 +1309,7 @@ export namespace main {
 	        this.last_database_path = source["last_database_path"];
 	        this.stats_filter = this.convertValues(source["stats_filter"], StatsFilterPersisted);
 	        this.language = source["language"];
+	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

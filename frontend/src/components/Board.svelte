@@ -8,6 +8,7 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
     import { searchStructureModeStore } from '../stores/searchExcludePositionStore';
+    import { boardColorsStore } from '../stores/boardColorsStore';
 
     // Sentinel colour stored on an exclude-structure point that must hold no checker.
     const EXCLUDE_EMPTY = 2;
@@ -68,6 +69,21 @@
     // selectedMove is read inside drawBoard() via this derived;
     // the actual redraw is triggered by the subscribe in onMount (synchronous).
     let selectedMove = $derived($selectedMoveStore);
+
+    // Apply the user-customisable palette to boardCfg and redraw. boardCfg is a
+    // plain object read imperatively by the draw functions, so we mutate it in
+    // place and trigger a redraw whenever the colours change (and once the
+    // two.js canvas exists).
+    $effect(() => {
+        const colors = $boardColorsStore;
+        boardCfg.fill = colors.background;
+        boardCfg.stroke = colors.border;
+        boardCfg.triangle.fill1 = colors.point1;
+        boardCfg.triangle.fill2 = colors.point2;
+        boardCfg.triangle.stroke = colors.border;
+        boardCfg.checker.colors = [colors.checker1, colors.checker2];
+        if (two && canvas) drawBoard();
+    });
 
     let boardDescription = $derived.by(() => {
         const pos = $positionStore;

@@ -18,7 +18,15 @@
     },
     "config": {
         "title": "Ρυθμίσεις",
-        "language": "Γλώσσα"
+        "language": "Γλώσσα",
+        "colors": "Χρώματα ταμπλό",
+        "colorBackground": "Φόντο",
+        "colorBorder": "Περίγραμμα",
+        "colorPoint1": "Ανοιχτές μύτες",
+        "colorPoint2": "Σκούρες μύτες",
+        "colorChecker1": "Πούλια παίκτη 1",
+        "colorChecker2": "Πούλια παίκτη 2",
+        "resetColors": "Επαναφορά"
     },
     "toolbar": {
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",

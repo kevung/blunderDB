@@ -11,6 +11,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/database/Database.js';
     import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/database/Database.js';
+    import { getCommandSuggestions } from '../commandVocabulary.js';
 
     let {
         onToggleHelp,
@@ -45,6 +46,39 @@
 
     let historyIndex = -1;
 
+    // --- Command autocompletion ------------------------------------------------
+    // Suggestions are derived from the typed command word. Tab / Shift-Tab cycle
+    // through them (filling the input); Escape dismisses the dropdown without
+    // closing the modal. ArrowUp/Down stay reserved for command history.
+    let suggestionsDismissed = $state(false);
+    let selectedSuggestion = $state(0);
+    let suggestions = $derived(suggestionsDismissed ? [] : getCommandSuggestions($commandTextStore));
+
+    // Reset the dismissal + selection whenever the typed text changes.
+    $effect(() => {
+        $commandTextStore; // track dependency so edits reset the dropdown
+        suggestionsDismissed = false;
+        selectedSuggestion = 0;
+    });
+
+    function applySuggestion(index) {
+        const cmd = suggestions[index];
+        if (!cmd) return;
+        commandTextStore.set(cmd.name);
+        requestAnimationFrame(() => {
+            inputEl?.setSelectionRange(cmd.name.length, cmd.name.length);
+            inputEl?.focus();
+        });
+    }
+
+    function cycleSuggestion(step) {
+        if (suggestions.length === 0) return;
+        // First Tab on a fresh list completes the highlighted (first) entry;
+        // subsequent Tabs advance through the remaining matches.
+        applySuggestion(selectedSuggestion);
+        selectedSuggestion = (selectedSuggestion + step + suggestions.length) % suggestions.length;
+    }
+
     // Focus + load history when command modal opens; remove click-outside listener when closed
     $effect(() => {
         const value = $activeModal;
@@ -67,6 +101,18 @@
         event.stopPropagation();
 
         if ($activeModal === MODAL.COMMAND) {
+            if (event.code === 'Tab') {
+                // Tab / Shift-Tab cycle through autocompletion matches.
+                event.preventDefault();
+                cycleSuggestion(event.shiftKey ? -1 : 1);
+                return;
+            }
+            if (event.code === 'Escape' && suggestions.length > 0) {
+                // Dismiss the dropdown first; a second Escape closes the modal.
+                event.preventDefault();
+                suggestionsDismissed = true;
+                return;
+            }
             if (event.code === 'ArrowUp') {
                 if (historyIndex < commandHistory.length - 1) {
                     historyIndex++;
@@ -681,8 +727,12 @@
                     textAreaEl.focus();
                 }
             }, 0);
-            // Save the updated comment to the database
-            SaveComment($currentPositionIndexStore, updatedText);
+            // Save the updated comment to the database.
+            // NOTE: SaveComment expects the position *id*, not the array index.
+            const positionId = positions[$currentPositionIndexStore]?.id;
+            if (positionId != null) {
+                SaveComment(positionId, updatedText);
+            }
             return updatedText;
         });
     }
@@ -711,17 +761,43 @@
 </script>
 
 {#if $activeModal === MODAL.COMMAND}
-    <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder=" Type your command here. " onkeydown={handleKeyDown} />
+    <div class="command-container">
+        <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder=" Type your command here. " onkeydown={handleKeyDown} />
+        {#if suggestions.length > 0}
+            <ul class="command-suggestions" role="listbox">
+                {#each suggestions as cmd, i (cmd.name)}
+                    <li
+                        role="option"
+                        aria-selected={i === selectedSuggestion}
+                        class:selected={i === selectedSuggestion}
+                        onmousedown={(e) => {
+                            e.preventDefault();
+                            applySuggestion(i);
+                        }}
+                    >
+                        <span class="cmd-name">{cmd.name}</span>
+                        {#if cmd.aliases.length > 0}
+                            <span class="cmd-aliases">{cmd.aliases.join(', ')}</span>
+                        {/if}
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
 {/if}
 
 <style>
-    input {
+    .command-container {
         position: fixed;
         top: 350px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1000;
         width: 70%;
+    }
+    .command-input {
+        width: 100%;
+        box-sizing: border-box;
         padding: 8px;
         border: 1px solid rgba(0, 0, 0, 0.3); /* Subtle border */
         border-radius: 1px;
@@ -729,5 +805,39 @@
         outline: none;
         background-color: white; /* Ensure background is opaque */
         font-size: 18px;
+    }
+    .command-suggestions {
+        list-style: none;
+        margin: 2px 0 0 0;
+        padding: 0;
+        max-height: 220px;
+        overflow-y: auto;
+        background-color: white;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 1px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .command-suggestions li {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 4px 10px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+    .command-suggestions li.selected {
+        background-color: #e8f0fe;
+    }
+    .command-suggestions li:hover {
+        background-color: #f0f0f0;
+    }
+    .cmd-name {
+        font-family: monospace;
+        font-weight: 600;
+    }
+    .cmd-aliases {
+        color: #888;
+        font-size: 13px;
+        font-family: monospace;
     }
 </style>
