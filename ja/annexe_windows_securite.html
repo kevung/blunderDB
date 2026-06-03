@@ -60,6 +60,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">10.1. Windows SmartScreen の警告</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">10.2. Windows Defender によるブロック</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">10.3. Vérifier l'intégrité du téléchargement (SHA256)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
@@ -97,7 +98,13 @@
 <p>以下は Windows 10 および 11 オペレーティングシステムに関するものです。</p>
 </div>
 <p>Windows は現在、ソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証すること、または Windows Store 経由で配布することを要求しています。そのため、外部企業を通じてデジタル証明書を取得することが推奨されており、その費用は数百ユーロにのぼります（例：<a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> を参照）。</p>
-<p>blunderDB を無料で提供しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Windows が潜在的な脅威について警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Windows の警告を回避するために行う操作を説明します。</p>
+<p>Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces
+possibilités onéreuses. Une piste <strong>gratuite</strong> réservée aux logiciels libres
+(la <em>SignPath Foundation</em>, <a class="reference external" href="https://signpath.org/">https://signpath.org/</a>) est à l'étude pour signer les
+binaires Windows sans frais ; tant qu'elle n'est pas en place, il est fort
+probable que Windows vous avertisse d'un potentiel danger, voire bloque
+complètement l'exécution de blunderDB. Les sections suivantes expliquent les
+opérations à réaliser pour passer outre les réticences de Windows.</p>
 <section id="avertissement-windows-smartscreen">
 <h2><span class="section-number">10.1. </span>Windows SmartScreen の警告<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
 <p>blunderDB をダウンロードして実行すると、Windows が次のような警告を表示する場合があります</p>
@@ -192,6 +199,24 @@
 <figure class="align-center">
 <img alt="_images/win7.png" src="_images/win7.png" />
 </figure>
+</section>
+<section id="verifier-l-integrite-du-telechargement-sha256">
+<h2><span class="section-number">10.3. </span>Vérifier l'intégrité du téléchargement (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Link to this heading"></a></h2>
+<p>Chaque binaire publié sur la page des <em>releases</em> est accompagné d'un fichier
+<code class="docutils literal notranslate"><span class="pre">.sha256</span></code> contenant son empreinte cryptographique. Vérifier cette empreinte
+permet de s'assurer que le fichier téléchargé est authentique et n'a pas été
+altéré, ce qui constitue une garantie utile en l'absence de signature de code.</p>
+<p>Sous Windows (PowerShell), dans le dossier de téléchargement :</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows</span><span class="p">-&lt;</span><span class="n">version</span><span class="p">&gt;.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</pre></div>
+</div>
+<p>Comparez la valeur affichée avec celle du fichier
+<code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Les deux doivent être identiques.</p>
+<p>Sous Linux ou macOS :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderDB-linux-&lt;version&gt;.sha256<span class="w">      </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-&lt;version&gt;.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
 </section>
 </section>
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 12:38
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 12:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1138,7 +1138,7 @@ File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [44]
+ [44] [45]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1147,13 +1147,14 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
+ [46] [47] [48] [49]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [45] [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56]
+ [50] [51] [52] [53] [54] [55] [56]
 [57] [58]
 Capitolo 3.
 [59
@@ -1172,13 +1173,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: FA1A004E941EE79BAA3D6CAB318FC22C;32022.
+(rerunfilecheck)             Checksum: A21AE5791C1E38B988F6731A9F956B23;32358.
  ) 
 Here is how much of TeX's memory you used:
- 19365 strings out of 476443
- 394990 string characters out of 5793963
+ 19366 strings out of 476443
+ 395061 string characters out of 5793963
  1997627 words of memory out of 5000000
- 40922 multiletter control sequences out of 15000+600000
+ 40923 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,1198b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s

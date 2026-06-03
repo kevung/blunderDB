@@ -14,10 +14,12 @@ https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-d
 ).
 
 Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces
-possibilités onéreuses. Par conséquent, il est fort probable que Windows vous
-avertisse d'un potentiel danger, voire bloque complètement l'exécution de
-blunderDB. Les sections suivantes expliquent les opérations à réaliser pour
-passer outre les réticences de Windows.
+possibilités onéreuses. Une piste **gratuite** réservée aux logiciels libres
+(la *SignPath Foundation*, https://signpath.org/) est à l'étude pour signer les
+binaires Windows sans frais ; tant qu'elle n'est pas en place, il est fort
+probable que Windows vous avertisse d'un potentiel danger, voire bloque
+complètement l'exécution de blunderDB. Les sections suivantes expliquent les
+opérations à réaliser pour passer outre les réticences de Windows.
 
 Avertissement Windows SmartScreen
 ---------------------------------
@@ -109,5 +111,30 @@ Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :
 
 .. figure:: img/win7.png
    :align: center
+
+
+Vérifier l'intégrité du téléchargement (SHA256)
+-----------------------------------------------
+
+Chaque binaire publié sur la page des *releases* est accompagné d'un fichier
+``.sha256`` contenant son empreinte cryptographique. Vérifier cette empreinte
+permet de s'assurer que le fichier téléchargé est authentique et n'a pas été
+altéré, ce qui constitue une garantie utile en l'absence de signature de code.
+
+Sous Windows (PowerShell), dans le dossier de téléchargement :
+
+.. code-block:: powershell
+
+   Get-FileHash .\blunderDB-windows-<version>.exe -Algorithm SHA256
+
+Comparez la valeur affichée avec celle du fichier
+``blunderDB-windows-<version>.exe.sha256``. Les deux doivent être identiques.
+
+Sous Linux ou macOS :
+
+.. code-block:: bash
+
+   sha256sum -c blunderDB-linux-<version>.sha256      # Linux
+   shasum -a 256 -c blunderDB-macos-<version>.zip.sha256   # macOS
 
 

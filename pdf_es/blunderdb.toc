@@ -135,30 +135,31 @@
 \contentsline {section}{\numberline {2.10}Anexo Windows: detección errónea de blunderDB como software malicioso}{43}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Advertencia de Windows SmartScreen}{44}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Bloqueo de Windows Defender}{44}{subsection.2.10.2}%
-\contentsline {section}{\numberline {2.11}Anexo Mac: posible bloqueo de blunderDB}{48}{section.2.11}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{48}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Anexo Mac: posible bloqueo de blunderDB}{53}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Instalación de blunderDB}{53}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorización para ejecutar blunderDB}{53}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Anexo: Esquema de la base de datos}{53}{section.2.12}%
 \contentsline {subsection}{\numberline {2.12.1}Versión 1.0.0}{53}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Versión 1.1.0}{53}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.2}Versión 1.1.0}{54}{subsection.2.12.2}%
 \contentsline {subsection}{\numberline {2.12.3}Versión 1.2.0}{54}{subsection.2.12.3}%
 \contentsline {subsection}{\numberline {2.12.4}Versión 1.3.0}{54}{subsection.2.12.4}%
 \contentsline {subsection}{\numberline {2.12.5}Versión 1.4.0}{54}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Versión 1.5.0}{54}{subsection.2.12.6}%
+\contentsline {subsection}{\numberline {2.12.6}Versión 1.5.0}{55}{subsection.2.12.6}%
 \contentsline {subsection}{\numberline {2.12.7}Versión 1.6.0}{55}{subsection.2.12.7}%
 \contentsline {subsection}{\numberline {2.12.8}Versión 1.7.0}{55}{subsection.2.12.8}%
 \contentsline {section}{\numberline {2.13}Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB}{55}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Definiciones formales}{56}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{56}{subsubsection*.43}%
 \contentsline {subsubsection}{Snowie Error Rate}{56}{subsubsection*.44}%
-\contentsline {subsubsection}{Pérdida de MWC (Match Winning Chance)}{56}{subsubsection*.45}%
-\contentsline {subsection}{\numberline {2.13.2}Decisiones contabilizadas en el denominador del PR}{56}{subsection.2.13.2}%
+\contentsline {subsubsection}{Pérdida de MWC (Match Winning Chance)}{57}{subsubsection*.45}%
+\contentsline {subsection}{\numberline {2.13.2}Decisiones contabilizadas en el denominador del PR}{57}{subsection.2.13.2}%
 \contentsline {subsubsection}{Jugadas de fichas — decisiones contabilizadas}{57}{subsubsection*.46}%
 \contentsline {subsubsection}{Decisiones de cubo — decisiones contabilizadas}{57}{subsubsection*.47}%
 \contentsline {subsubsection}{Resumen del filtro}{57}{subsubsection*.48}%
 \contentsline {subsection}{\numberline {2.13.3}Correspondencia blunderDB ↔ XG ↔ gnuBG}{57}{subsection.2.13.3}%
 \contentsline {subsubsection}{Comparación XG ↔ blunderDB (mismo motor de análisis)}{57}{subsubsection*.49}%
-\contentsline {subsubsection}{Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)}{57}{subsubsection*.50}%
+\contentsline {subsubsection}{Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)}{58}{subsubsection*.50}%
 \contentsline {subsection}{\numberline {2.13.4}Validar sus propias cifras}{58}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}Referencia gnuBG}{58}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Contacto}{59}{chapter.3}%

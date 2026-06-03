@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 12:36
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 12:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1113,7 +1113,7 @@ File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [45]
+ [45] [46]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1122,26 +1122,27 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
+ [47] [48] [49] [50]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [46] [47] [48] [49] [50] [51] [52] [53] [54]
-Underfull \hbox (badness 10000) in paragraph at lines 7495--7497
+ [51] [52] [53] [54]
+Underfull \hbox (badness 10000) in paragraph at lines 7525--7527
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.0.0 à 
 la version 1.1.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7513--7515
+Underfull \hbox (badness 10000) in paragraph at lines 7543--7545
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.1.0 à 
 la version 1.2.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7531--7533
+Underfull \hbox (badness 10000) in paragraph at lines 7561--7563
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.2.0 à 
 la version 1.3.0, exécutez la commande
  []
@@ -1164,13 +1165,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: E3F37F8B7E2C57AFBFD6182F34445AE3;33021.
+(rerunfilecheck)             Checksum: F3FC245DD8AA672895B8F88CB555FC23;33357.
  ) 
 Here is how much of TeX's memory you used:
- 18958 strings out of 476443
- 377443 string characters out of 5793963
+ 18959 strings out of 476443
+ 377514 string characters out of 5793963
  2004627 words of memory out of 5000000
- 40531 multiletter control sequences out of 15000+600000
+ 40532 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,1198b,560s stack positions out of 10000i,1000n,20000p,200000b,200000s

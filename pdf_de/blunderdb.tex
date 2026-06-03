@@ -6731,7 +6731,13 @@ Das Folgende betrifft die Betriebssysteme Windows 10 und 11.
 Windows verlangt heutzutage von Softwareherstellern oder unabhängigen Softwareentwicklern, ihre Anwendungen digital zu zertifizieren oder sie sogar über den Windows Store zu vertreiben. Es wird daher empfohlen, sich an externe Unternehmen zu wenden, um ein digitales Zertifikat zu erhalten, das mehrere hundert Euro kostet (siehe zum Beispiel \sphinxurl{https://learn.microsoft.com/en-us/archive/blogs/ie\_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen} ).
 
 \sphinxAtStartPar
-Da ich blunderDB kostenlos anbiete, möchte ich diese kostspieligen Möglichkeiten nicht in Anspruch nehmen. Folglich ist es sehr wahrscheinlich, dass Windows Sie vor einer potenziellen Gefahr warnt oder die Ausführung von blunderDB sogar vollständig blockiert. Die folgenden Abschnitte erläutern die Schritte, um die Bedenken von Windows zu umgehen.
+Partageant blunderDB gratuitement, je ne souhaite pas m’orienter vers ces
+possibilités onéreuses. Une piste \sphinxstylestrong{gratuite} réservée aux logiciels libres
+(la \sphinxstyleemphasis{SignPath Foundation}, \sphinxurl{https://signpath.org/}) est à l’étude pour signer les
+binaires Windows sans frais ; tant qu’elle n’est pas en place, il est fort
+probable que Windows vous avertisse d’un potentiel danger, voire bloque
+complètement l’exécution de blunderDB. Les sections suivantes expliquent les
+opérations à réaliser pour passer outre les réticences de Windows.
 
 
 \subsection{Windows\sphinxhyphen{}SmartScreen\sphinxhyphen{}Warnung}
@@ -6921,6 +6927,34 @@ Klicken Sie auf \sphinxstylestrong{Einen Ausschluss hinzufügen} und wählen Sie
 
 \noindent\sphinxincludegraphics{{win7}.png}
 \end{figure}
+
+
+\subsection{Vérifier l’intégrité du téléchargement (SHA256)}
+\label{\detokenize{annexe_windows_securite:verifier-l-integrite-du-telechargement-sha256}}
+\sphinxAtStartPar
+Chaque binaire publié sur la page des \sphinxstyleemphasis{releases} est accompagné d’un fichier
+\sphinxcode{\sphinxupquote{.sha256}} contenant son empreinte cryptographique. Vérifier cette empreinte
+permet de s’assurer que le fichier téléchargé est authentique et n’a pas été
+altéré, ce qui constitue une garantie utile en l’absence de signature de code.
+
+\sphinxAtStartPar
+Sous Windows (PowerShell), dans le dossier de téléchargement :
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{n+nb}{Get\PYGZhy{}FileHash} \PYG{p}{.}\PYG{p}{\PYGZbs{}}\PYG{n}{blunderDB}\PYG{n}{\PYGZhy{}windows}\PYG{p}{\PYGZhy{}}\PYG{p}{\PYGZlt{}}\PYG{n}{version}\PYG{p}{\PYGZgt{}}\PYG{p}{.}\PYG{n}{exe} \PYG{n}{\PYGZhy{}Algorithm} \PYG{n}{SHA256}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Comparez la valeur affichée avec celle du fichier
+\sphinxcode{\sphinxupquote{blunderDB\sphinxhyphen{}windows\sphinxhyphen{}<version>.exe.sha256}}. Les deux doivent être identiques.
+
+\sphinxAtStartPar
+Sous Linux ou macOS :
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+sha256sum\PYG{+w}{ }\PYGZhy{}c\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}\PYGZlt{}version\PYGZgt{}.sha256\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} Linux}
+shasum\PYG{+w}{ }\PYGZhy{}a\PYG{+w}{ }\PYG{l+m}{256}\PYG{+w}{ }\PYGZhy{}c\PYG{+w}{ }blunderDB\PYGZhy{}macos\PYGZhy{}\PYGZlt{}version\PYGZgt{}.zip.sha256\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} macOS}
+\end{sphinxVerbatim}
 
 \sphinxstepscope
 

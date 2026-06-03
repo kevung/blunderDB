@@ -135,7 +135,8 @@
 \contentsline {section}{\numberline {2.10}Appendice Windows: rilevamento errato di blunderDB come malware}{43}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Avviso Windows SmartScreen}{44}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Blocco di Windows Defender}{44}{subsection.2.10.2}%
-\contentsline {section}{\numberline {2.11}Appendice Mac: possibile blocco di blunderDB}{45}{section.2.11}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{50}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Appendice Mac: possibile blocco di blunderDB}{53}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Installazione di blunderDB}{53}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorizzazione all’esecuzione di blunderDB}{53}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Appendice: Schema del database}{53}{section.2.12}%

@@ -134,31 +134,32 @@
 \contentsline {subsection}{\numberline {2.9.4}Beispiele}{43}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware}{44}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows\sphinxhyphen {}SmartScreen\sphinxhyphen {}Warnung}{45}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Blockierung durch Windows Defender}{45}{subsection.2.10.2}%
-\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}Anhang: Mögliche Blockierung von blunderDB}{49}{section.2.11}%
+\contentsline {subsection}{\numberline {2.10.2}Blockierung durch Windows Defender}{46}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{49}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}Anhang: Mögliche Blockierung von blunderDB}{54}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Installation von blunderDB}{54}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Erlauben der Ausführung von blunderDB}{54}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Anhang: Datenbankschema}{54}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Version 1.0.0}{54}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.1}Version 1.0.0}{55}{subsection.2.12.1}%
 \contentsline {subsection}{\numberline {2.12.2}Version 1.1.0}{55}{subsection.2.12.2}%
 \contentsline {subsection}{\numberline {2.12.3}Version 1.2.0}{55}{subsection.2.12.3}%
 \contentsline {subsection}{\numberline {2.12.4}Version 1.3.0}{55}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}Version 1.4.0}{55}{subsection.2.12.5}%
+\contentsline {subsection}{\numberline {2.12.5}Version 1.4.0}{56}{subsection.2.12.5}%
 \contentsline {subsection}{\numberline {2.12.6}Version 1.5.0}{56}{subsection.2.12.6}%
 \contentsline {subsection}{\numberline {2.12.7}Version 1.6.0}{56}{subsection.2.12.7}%
 \contentsline {subsection}{\numberline {2.12.8}Version 1.7.0}{56}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB}{56}{section.2.13}%
+\contentsline {section}{\numberline {2.13}Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB}{57}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Formale Definitionen}{57}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{57}{subsubsection*.43}%
 \contentsline {subsubsection}{Snowie Error Rate}{57}{subsubsection*.44}%
-\contentsline {subsubsection}{MWC\sphinxhyphen {}Verlust (Match Winning Chance)}{57}{subsubsection*.45}%
+\contentsline {subsubsection}{MWC\sphinxhyphen {}Verlust (Match Winning Chance)}{58}{subsubsection*.45}%
 \contentsline {subsection}{\numberline {2.13.2}Im PR\sphinxhyphen {}Nenner gezählte Entscheidungen}{58}{subsection.2.13.2}%
 \contentsline {subsubsection}{Steinzüge — gezählte Entscheidungen}{58}{subsubsection*.46}%
 \contentsline {subsubsection}{Cube\sphinxhyphen {}Entscheidungen — gezählte Entscheidungen}{58}{subsubsection*.47}%
 \contentsline {subsubsection}{Zusammenfassung des Filters}{58}{subsubsection*.48}%
 \contentsline {subsection}{\numberline {2.13.3}Übereinstimmung blunderDB ↔ XG ↔ gnuBG}{58}{subsection.2.13.3}%
-\contentsline {subsubsection}{Vergleich XG ↔ blunderDB (gleiche Analyse\sphinxhyphen {}Engine)}{58}{subsubsection*.49}%
-\contentsline {subsubsection}{Vergleich gnuBG ↔ blunderDB (SGF\sphinxhyphen {}Import — unterschiedliche Engines)}{58}{subsubsection*.50}%
+\contentsline {subsubsection}{Vergleich XG ↔ blunderDB (gleiche Analyse\sphinxhyphen {}Engine)}{59}{subsubsection*.49}%
+\contentsline {subsubsection}{Vergleich gnuBG ↔ blunderDB (SGF\sphinxhyphen {}Import — unterschiedliche Engines)}{59}{subsubsection*.50}%
 \contentsline {subsection}{\numberline {2.13.4}Eigene Zahlen überprüfen}{59}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}gnuBG\sphinxhyphen {}Referenz}{59}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Kontakt}{61}{chapter.3}%

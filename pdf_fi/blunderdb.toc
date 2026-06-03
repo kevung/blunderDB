@@ -135,16 +135,17 @@
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{43}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{44}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{44}{subsection.2.10.2}%
-\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{49}{section.2.11}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{48}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{53}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}blunderDB:n asennus}{53}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Luvan antaminen blunderDB:n suorittamiseen}{53}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Liite: Tietokannan skeema}{53}{section.2.12}%
 \contentsline {subsection}{\numberline {2.12.1}Versio 1.0.0}{53}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Versio 1.1.0}{53}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.2}Versio 1.1.0}{54}{subsection.2.12.2}%
 \contentsline {subsection}{\numberline {2.12.3}Versio 1.2.0}{54}{subsection.2.12.3}%
 \contentsline {subsection}{\numberline {2.12.4}Versio 1.3.0}{54}{subsection.2.12.4}%
 \contentsline {subsection}{\numberline {2.12.5}Versio 1.4.0}{54}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Versio 1.5.0}{54}{subsection.2.12.6}%
+\contentsline {subsection}{\numberline {2.12.6}Versio 1.5.0}{55}{subsection.2.12.6}%
 \contentsline {subsection}{\numberline {2.12.7}Versio 1.6.0}{55}{subsection.2.12.7}%
 \contentsline {subsection}{\numberline {2.12.8}Versio 1.7.0}{55}{subsection.2.12.8}%
 \contentsline {section}{\numberline {2.13}Liite: Tilastomalli — XG / gnuBG / blunderDB \sphinxhyphen {}yhdenmukaisuus}{55}{section.2.13}%
@@ -152,8 +153,8 @@
 \contentsline {subsubsection}{PR (Performance Rate)}{56}{subsubsection*.43}%
 \contentsline {subsubsection}{Snowie Error Rate}{56}{subsubsection*.44}%
 \contentsline {subsubsection}{MWC\sphinxhyphen {}tappio (Match Winning Chance)}{56}{subsubsection*.45}%
-\contentsline {subsection}{\numberline {2.13.2}PR:n nimittäjässä lasketut päätökset}{56}{subsection.2.13.2}%
-\contentsline {subsubsection}{Nappulasiirrot — lasketut päätökset}{56}{subsubsection*.46}%
+\contentsline {subsection}{\numberline {2.13.2}PR:n nimittäjässä lasketut päätökset}{57}{subsection.2.13.2}%
+\contentsline {subsubsection}{Nappulasiirrot — lasketut päätökset}{57}{subsubsection*.46}%
 \contentsline {subsubsection}{Tuplauskuution päätökset — lasketut päätökset}{57}{subsubsection*.47}%
 \contentsline {subsubsection}{Suodattimen yhteenveto}{57}{subsubsection*.48}%
 \contentsline {subsection}{\numberline {2.13.3}Vastaavuus blunderDB ↔ XG ↔ gnuBG}{57}{subsection.2.13.3}%
