@@ -3436,6 +3436,28 @@ tnx,y
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+idx
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher la position d\textquotesingle{}identifiant x (ex: id12).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+idx,y
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher les positions d\textquotesingle{}identifiants x à y (ex: id5,10).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -3454,7 +3476,10 @@ tnx,y
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-連続していない複数のマッチ内を検索するには、フィルタ \sphinxcode{\sphinxupquote{ma}} を複数回並べて指定します（例: マッチ 23 と 43 の場合は \sphinxcode{\sphinxupquote{s ma23 ma43}}）。同じ原則がトーナメントの \sphinxcode{\sphinxupquote{tn}} にも適用されます。
+Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
+filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
+Le même principe s\textquotesingle{}applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
+positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{注釈:}

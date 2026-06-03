@@ -194,6 +194,8 @@ c'est-à-dire après le début de commande ``s``.
    "max,y", "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
    "tnx", "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
    "tnx,y", "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
+   "idx", "Rechercher la position d'identifiant x (ex: id12)."
+   "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D` ou `D1`)
@@ -210,7 +212,8 @@ c'est-à-dire après le début de commande ``s``.
 
 .. note:: Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
    filtre ``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43).
-   Le même principe s'applique pour les tournois avec ``tn``.
+   Le même principe s'applique pour les tournois avec ``tn`` et pour les
+   positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10).
 
 .. note:: Rechercher dans un tournoi (``tn``) revient à rechercher dans
    l'ensemble des matchs du tournoi concerné. Les identifiants des matchs et des

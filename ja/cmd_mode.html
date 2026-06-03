@@ -521,6 +521,12 @@
 <tr class="row-odd"><td><p>tnx,y</p></td>
 <td><p>識別子 x から y のトーナメント内を検索します（例: tn1,3）。</p></td>
 </tr>
+<tr class="row-even"><td><p>idx</p></td>
+<td><p>Rechercher la position d'identifiant x (ex: id12).</p></td>
+</tr>
+<tr class="row-odd"><td><p>idx,y</p></td>
+<td><p>Rechercher les positions d'identifiants x à y (ex: id5,10).</p></td>
+</tr>
 </tbody>
 </table>
 <div class="admonition note">
@@ -533,7 +539,10 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
-<p>連続していない複数のマッチ内を検索するには、フィルタ <code class="docutils literal notranslate"><span class="pre">ma</span></code> を複数回並べて指定します（例: マッチ 23 と 43 の場合は <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code>）。同じ原則がトーナメントの <code class="docutils literal notranslate"><span class="pre">tn</span></code> にも適用されます。</p>
+<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
+filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
+Le même principe s'applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code> et pour les
+positions avec <code class="docutils literal notranslate"><span class="pre">id</span></code> (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> pour les positions 5 et 10).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>

@@ -66,18 +66,18 @@
 \contentsline {subsection}{\numberline {2.4.2}局面とナビゲーション}{26}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}編集と検索}{27}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}検索フィルタ}{27}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}その他のコマンド}{30}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.5}その他のコマンド}{31}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}キーボードショートカット}{31}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}データベース}{31}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}ポジション}{31}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}ポジション}{32}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}ナビゲーション}{32}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}表示}{32}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}アクション}{32}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}ツール}{32}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.6}ツール}{33}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}コマンドライン}{33}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}検索履歴パネル}{33}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}フィルターライブラリパネル}{33}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}分析パネル}{33}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.10}分析パネル}{34}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}マッチパネル}{34}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Ankiパネル（間隔反復）}{34}{subsection.2.5.12}%
 \contentsline {section}{\numberline {2.6}コマンドラインインターフェース（CLI）}{34}{section.2.6}%
@@ -90,7 +90,7 @@
 \contentsline {subsubsection}{ポジションのインポート}{36}{subsubsection*.24}%
 \contentsline {subsubsection}{一括インポート}{36}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.6.6}export — データをエクスポートする}{37}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}search — ポジションを検索する}{37}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.7}search — ポジションを検索する}{38}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — 内容を一覧表示する}{39}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}match — マッチを表示する}{39}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — データベースのメタデータ}{40}{subsection.2.6.10}%
@@ -107,25 +107,25 @@
 \contentsline {subsection}{\numberline {2.7.2}blunderDB 作成の動機は何ですか？}{43}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{43}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{43}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{43}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{44}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}どのマッチファイル形式がサポートされていますか？}{44}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{44}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{44}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{44}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{45}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}blunderDB を変更、コピー、共有できますか？}{45}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}blunderDB はどのデータ形式を使用していますか？}{45}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}blunderDB の設計原則は何でしたか？}{45}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}blunderDB のソフトウェアアーキテクチャは何ですか？}{45}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}blunderDB はどのプラットフォームで動作しますか？}{45}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}blunderDB のアイコンはどこから来ていますか？}{45}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}ヘッドレスモード（サーバー）}{45}{section.2.8}%
+\contentsline {section}{\numberline {2.8}ヘッドレスモード（サーバー）}{46}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}概要}{46}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{46}{subsection.2.8.2}%
 \contentsline {subsubsection}{エンドポイント}{47}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{47}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{48}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{48}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{49}{section.2.9}%
+\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{49}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{50}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{50}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{50}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{51}{subsection.2.9.3}%
