@@ -190,6 +190,8 @@
                     exitApp();
                 } else if (command === 'help' || command === 'he' || command === 'h') {
                     onToggleHelp();
+                } else if (command === 'tutorial' || command === 'tour') {
+                    openModal(MODAL.TOUR);
                 } else if (command === 'e') {
                     onLoadAllPositions();
                 } else if (command.startsWith('ss')) {

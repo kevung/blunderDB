@@ -60,7 +60,100 @@
         "savePosition": "Tallenna asema",
         "settings": "Asetukset",
         "togglePipcount": "Näytä/piilota pip-laskuri",
-        "updatePosition": "Päivitä asema"
+        "updatePosition": "Päivitä asema",
+        "tour": "Opastetut kierrokset"
+    },
+    "tour": {
+        "next": "Seuraava",
+        "prev": "Takaisin",
+        "done": "Valmis",
+        "start": "Aloita",
+        "catalogTitle": "Opastetut kierrokset",
+        "catalogDesc": "Tutustu käyttöliittymään nopeasti. Voit toistaa kierrokset milloin tahansa.",
+        "general": {
+            "title": "Yleiskierros",
+            "desc": "Nopea katsaus käyttöliittymän pääosiin.",
+            "welcome": {
+                "title": "Tervetuloa blunderDB:hen",
+                "body": "Tämä lyhyt kierros esittelee käyttöliittymän tärkeimmät osat. Siirry painikkeilla Seuraava ja Takaisin, tai poistu Esc-näppäimellä."
+            },
+            "toolbar": {
+                "title": "Työkalupalkki",
+                "body": "Luo tai avaa tietokantoja, tuo otteluita ja asemia, navigoi sekä avaa asetukset ja ohje täältä."
+            },
+            "board": {
+                "title": "Lauta",
+                "body": "Nykyinen asema näkyy tässä. Luot ja muokkaat asemia suoraan laudalla: napsauta asettaaksesi nappulat sekä aseta nopat, tuplauskuutio ja pistetilanne."
+            },
+            "panels": {
+                "title": "Paneelit",
+                "body": "Analyysi, kommentit, haku, tilastot, kokoelmat, ottelut ja turnaukset löytyvät näistä välilehdistä laudan alta."
+            },
+            "commandline": {
+                "title": "Tilarivi ja komentorivi",
+                "body": "Alareunan tilarivi näyttää aseman tiedot. Avaa komentorivi välilyönnillä ja kirjoita komento: ”s” hakuun, ”?” käyttöoppaaseen."
+            },
+            "help": {
+                "title": "Ohje",
+                "body": "Avaa koko käyttöopas milloin tahansa tästä painikkeesta (tai paina ”?”)."
+            },
+            "done": {
+                "title": "Valmista tuli",
+                "body": "Toista mikä tahansa kierros työkalupalkin tohtorinhattu-kuvakkeesta tai ”tutorial”-komennolla."
+            }
+        },
+        "search": {
+            "title": "Asemien haku",
+            "desc": "Etsi asemia rakenteen, suodattimien ja tilastojen mukaan.",
+            "intro": {
+                "title": "Haku",
+                "body": "blunderDB:llä voit etsiä asemia nappularakenteen, skalaarisuodattimien ja analyysitilastojen mukaan."
+            },
+            "tab": {
+                "title": "Haku-välilehti",
+                "body": "Avaa Haku-välilehti yhdistelläksesi suodattimia: pip-laskuri, ulos pelatut nappulat, takanappulat, pistetilanteet, voitto-/gammon-prosentit, nopat ja muuta."
+            },
+            "structure": {
+                "title": "Haku rakenteen mukaan",
+                "body": "Aseta viiteasema laudalle ja hae sitten asemia, joilla on sama nappularakenne."
+            },
+            "commandline": {
+                "title": "Haku komentoriviltä",
+                "body": "Paina välilyöntiä ja kirjoita ”s” ja suodattimet, esim. ”s w>50 p>30”. Kirjoita ”?” suodattimien täydelliseen ohjeeseen."
+            }
+        },
+        "matches": {
+            "title": "Otteluiden tarkastelu",
+            "desc": "Tuo kokonaisia otteluita ja käy ne läpi siirto siirrolta.",
+            "intro": {
+                "title": "Ottelut",
+                "body": "Tuo kokonaisia otteluita eXtreme Gammonista, GNU Backgammonista tai BGBlitzistä ja käy ne läpi asiayhteydessä."
+            },
+            "tab": {
+                "title": "Ottelut-välilehti",
+                "body": "Avaa Ottelut-välilehti nähdäksesi tuodut ottelut sekä kunkin pelaajan PR:n ja MWC-tappion."
+            },
+            "review": {
+                "title": "Ottelun läpikäynti",
+                "body": "Valitse ottelu käydäksesi sen siirrot läpi; lauta näyttää jokaisen päätöksen, ja voit tutkia virheet matkan varrella."
+            }
+        },
+        "tournaments": {
+            "title": "Turnausten tarkastelu",
+            "desc": "Ryhmittele ottelut turnauksiksi ja seuraa suoritustasi.",
+            "intro": {
+                "title": "Turnaukset",
+                "body": "Ryhmittele ottelusi turnauksiksi seurataksesi suoritustasi eri tapahtumissa."
+            },
+            "tab": {
+                "title": "Turnaukset-välilehti",
+                "body": "Avaa Turnaukset-välilehti hallitaksesi turnauksia ja tarkastellaksesi kunkin pelaajan merkintöjä ja tuloksia."
+            },
+            "drill": {
+                "title": "Tarkastele yksityiskohtia",
+                "body": "Turnauksesta voit porautua sen otteluihin ja taustalla oleviin asemiin."
+            }
+        }
     },
     "help": {
         "tabManual": "Käyttöopas",

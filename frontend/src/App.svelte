@@ -99,6 +99,8 @@
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import HelpModal from './components/HelpModal.svelte';
     import ConfigModal from './components/ConfigModal.svelte';
+    import TourCatalogModal from './components/TourCatalogModal.svelte';
+    import { maybeRunFirstRunTour } from './services/tourService.js';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import MetModal from './components/MetModal.svelte';
     import DataTableModal from './components/DataTableModal.svelte';
@@ -351,6 +353,9 @@
         // Load the persisted board palette (falls back to defaults internally).
         initBoardColors();
 
+        // On first launch only, show the guided-tour catalog once.
+        maybeRunFirstRunTour();
+
         try {
             const lastDbPath = await GetLastDatabasePath();
             if (lastDbPath) await openDatabaseByPath(lastDbPath);
@@ -415,13 +420,14 @@
         onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
         onToggleConfig={() => toggleModal(MODAL.CONFIG)}
+        onToggleTour={() => toggleModal(MODAL.TOUR)}
         onLoadAllPositions={loadAllPositions}
         onToggleEPCMode={toggleEPCMode}
     />
 
     <ViewTabs />
 
-    <div class="scrollable-content" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
+    <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
         {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
             <div class="exclude-structure-badge">EXCLUDE</div>
         {/if}
@@ -431,7 +437,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="resize-handle" onmousedown={onResizeHandleMouseDown}></div>
 
-    <div class="panel-wrapper" style="height: {panelHeight}px;">
+    <div class="panel-wrapper" data-tour="panels" style="height: {panelHeight}px;">
         <TabbedPanel
             onLoadPositionsByFilters={loadPositionsByFilters}
             onCloseAnalysis={toggleAnalysisPanel}
@@ -506,6 +512,8 @@
 
     <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
     <ConfigModal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
+
+    <TourCatalogModal visible={$activeModal === MODAL.TOUR} onClose={() => closeModal()} />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>

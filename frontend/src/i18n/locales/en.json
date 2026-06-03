@@ -60,7 +60,100 @@
         "savePosition": "Save Position",
         "settings": "Settings",
         "togglePipcount": "Toggle Pipcount",
-        "updatePosition": "Update Position"
+        "updatePosition": "Update Position",
+        "tour": "Guided tours"
+    },
+    "tour": {
+        "next": "Next",
+        "prev": "Back",
+        "done": "Done",
+        "start": "Start",
+        "catalogTitle": "Guided tours",
+        "catalogDesc": "Quick tours of the interface — replay them any time.",
+        "general": {
+            "title": "General tour",
+            "desc": "A quick overview of the interface.",
+            "welcome": {
+                "title": "Welcome to blunderDB",
+                "body": "A quick tour of the interface. Press Esc to exit."
+            },
+            "toolbar": {
+                "title": "Toolbar",
+                "body": "Databases, imports, navigation, settings and help."
+            },
+            "board": {
+                "title": "The board",
+                "body": "Edit positions here: click to place checkers, set the dice, cube and score."
+            },
+            "panels": {
+                "title": "Panels",
+                "body": "Analysis, comments, search, stats, collections, matches and tournaments."
+            },
+            "commandline": {
+                "title": "Command line",
+                "body": "Press Space for the command line. Type 's' to search, '?' for help."
+            },
+            "help": {
+                "title": "Help",
+                "body": "The full manual (or press '?')."
+            },
+            "done": {
+                "title": "All set!",
+                "body": "Replay tours from the cap icon, or the 'tutorial' command."
+            }
+        },
+        "search": {
+            "title": "Searching positions",
+            "desc": "Find positions by structure, filters and stats.",
+            "intro": {
+                "title": "Searching",
+                "body": "Find positions by structure, filters and statistics."
+            },
+            "tab": {
+                "title": "Search filters",
+                "body": "Combine filters: pip count, checkers, scores, win rates, dice and more."
+            },
+            "structure": {
+                "title": "By structure",
+                "body": "Set up a position to find others with the same structure."
+            },
+            "commandline": {
+                "title": "Command line",
+                "body": "Or press Space and type, e.g. 's w>50 p>30'. '?' lists the filters."
+            }
+        },
+        "matches": {
+            "title": "Reviewing matches",
+            "desc": "Import and review full matches.",
+            "intro": {
+                "title": "Matches",
+                "body": "Import full matches (XG, GnuBG, BGBlitz) and review them."
+            },
+            "tab": {
+                "title": "Your matches",
+                "body": "Imported matches, with PR and MWC loss per player."
+            },
+            "review": {
+                "title": "Step through",
+                "body": "Pick a match to replay its moves and study the blunders."
+            }
+        },
+        "tournaments": {
+            "title": "Reviewing tournaments",
+            "desc": "Group matches and track performance.",
+            "intro": {
+                "title": "Tournaments",
+                "body": "Group matches into tournaments to track your performance."
+            },
+            "tab": {
+                "title": "Your tournaments",
+                "body": "Manage events and review per-player results."
+            },
+            "drill": {
+                "title": "Drill down",
+                "body": "Jump from a tournament to its matches and positions."
+            }
+        }
     },
     "help": {
         "tabManual": "Manual",

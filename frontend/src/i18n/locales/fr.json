@@ -60,7 +60,100 @@
         "savePosition": "Enregistrer la position",
         "settings": "Paramètres",
         "togglePipcount": "Afficher/masquer le pipcount",
-        "updatePosition": "Mettre à jour la position"
+        "updatePosition": "Mettre à jour la position",
+        "tour": "Visites guidées"
+    },
+    "tour": {
+        "next": "Suivant",
+        "prev": "Précédent",
+        "done": "Terminer",
+        "start": "Démarrer",
+        "catalogTitle": "Visites guidées",
+        "catalogDesc": "Visites rapides de l'interface — rejouables à tout moment.",
+        "general": {
+            "title": "Tour général",
+            "desc": "Un aperçu rapide de l'interface.",
+            "welcome": {
+                "title": "Bienvenue dans blunderDB",
+                "body": "Une visite rapide de l'interface. Échap pour quitter."
+            },
+            "toolbar": {
+                "title": "Barre d'outils",
+                "body": "Bases, imports, navigation, paramètres et aide."
+            },
+            "board": {
+                "title": "Le plateau",
+                "body": "Éditez les positions ici : cliquez pour poser les pions, réglez dés, videau et score."
+            },
+            "panels": {
+                "title": "Panneaux",
+                "body": "Analyse, commentaires, recherche, stats, collections, matchs et tournois."
+            },
+            "commandline": {
+                "title": "Ligne de commande",
+                "body": "Appuyez sur Espace pour la ligne de commande. Tapez « s » pour rechercher, « ? » pour l'aide."
+            },
+            "help": {
+                "title": "Aide",
+                "body": "Le manuel complet (ou touche « ? »)."
+            },
+            "done": {
+                "title": "C'est parti !",
+                "body": "Rejouez les visites via l'icône chapeau, ou la commande « tutorial »."
+            }
+        },
+        "search": {
+            "title": "Rechercher des positions",
+            "desc": "Trouvez des positions par structure, filtres et stats.",
+            "intro": {
+                "title": "Recherche",
+                "body": "Trouvez des positions par structure, filtres et statistiques."
+            },
+            "tab": {
+                "title": "Filtres de recherche",
+                "body": "Combinez les filtres : pip count, pions, scores, taux de gain, dés et plus."
+            },
+            "structure": {
+                "title": "Par structure",
+                "body": "Composez une position pour en trouver d'autres de même structure."
+            },
+            "commandline": {
+                "title": "Ligne de commande",
+                "body": "Ou Espace puis par ex. « s w>50 p>30 ». « ? » liste les filtres."
+            }
+        },
+        "matches": {
+            "title": "Revoir des matchs",
+            "desc": "Importez et revoyez des matchs complets.",
+            "intro": {
+                "title": "Matchs",
+                "body": "Importez des matchs complets (XG, GnuBG, BGBlitz) et revoyez-les."
+            },
+            "tab": {
+                "title": "Vos matchs",
+                "body": "Matchs importés, avec PR et perte de MWC par joueur."
+            },
+            "review": {
+                "title": "Parcourir",
+                "body": "Choisissez un match pour parcourir ses coups et étudier les erreurs."
+            }
+        },
+        "tournaments": {
+            "title": "Revoir des tournois",
+            "desc": "Regroupez des matchs et suivez vos performances.",
+            "intro": {
+                "title": "Tournois",
+                "body": "Regroupez des matchs en tournois pour suivre vos performances."
+            },
+            "tab": {
+                "title": "Vos tournois",
+                "body": "Gérez les événements et revoyez les résultats par joueur."
+            },
+            "drill": {
+                "title": "Explorer",
+                "body": "Passez d'un tournoi à ses matchs et positions."
+            }
+        }
     },
     "help": {
         "tabManual": "Manuel",

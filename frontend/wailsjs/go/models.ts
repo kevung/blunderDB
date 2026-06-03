@@ -1254,7 +1254,7 @@ export namespace main {
 	    dice: string;
 	    diceDot: string;
 	    cube: string;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new BoardColors(source);
 	    }
@@ -1303,6 +1303,7 @@ export namespace main {
 	    stats_filter?: StatsFilterPersisted;
 	    language?: string;
 	    board_colors?: BoardColors;
+	    tour_seen?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -1316,6 +1317,7 @@ export namespace main {
 	        this.stats_filter = this.convertValues(source["stats_filter"], StatsFilterPersisted);
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
+	        this.tour_seen = source["tour_seen"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

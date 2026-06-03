@@ -93,6 +93,7 @@ type Config struct {
 	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
 	Language         string               `json:"language,omitempty"`
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
+	TourSeen         bool                 `json:"tour_seen,omitempty"`
 }
 
 func NewConfig() *Config {
@@ -156,6 +157,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	}
 	c.BoardColors = config.BoardColors.withDefaults()
 	config.BoardColors = c.BoardColors
+	c.TourSeen = config.TourSeen
 
 	return &config, nil
 }
@@ -211,6 +213,17 @@ func (c *Config) GetBoardColors() BoardColors {
 // SaveBoardColors persists the given board palette to disk.
 func (c *Config) SaveBoardColors(colors BoardColors) error {
 	c.BoardColors = colors.withDefaults()
+	return c.SaveConfig(c)
+}
+
+// GetTourSeen reports whether the first-run guided-tour catalog has been shown.
+func (c *Config) GetTourSeen() bool {
+	return c.TourSeen
+}
+
+// SaveTourSeen persists whether the first-run guided-tour catalog has been shown.
+func (c *Config) SaveTourSeen(seen bool) error {
+	c.TourSeen = seen
 	return c.SaveConfig(c)
 }
 

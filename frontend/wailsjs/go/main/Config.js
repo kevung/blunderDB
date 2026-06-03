@@ -18,6 +18,10 @@ export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
+export function GetTourSeen() {
+  return window['go']['main']['Config']['GetTourSeen']();
+}
+
 export function LoadConfig() {
   return window['go']['main']['Config']['LoadConfig']();
 }
@@ -40,6 +44,10 @@ export function SaveLastDatabasePath(arg1) {
 
 export function SaveStatsFilter(arg1) {
   return window['go']['main']['Config']['SaveStatsFilter'](arg1);
+}
+
+export function SaveTourSeen(arg1) {
+  return window['go']['main']['Config']['SaveTourSeen'](arg1);
 }
 
 export function SaveWindowDimensions(arg1, arg2) {

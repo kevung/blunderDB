@@ -60,7 +60,100 @@
         "savePosition": "Guardar posición",
         "settings": "Ajustes",
         "togglePipcount": "Alternar conteo de pips",
-        "updatePosition": "Actualizar posición"
+        "updatePosition": "Actualizar posición",
+        "tour": "Visitas guiadas"
+    },
+    "tour": {
+        "next": "Siguiente",
+        "prev": "Atrás",
+        "done": "Hecho",
+        "start": "Iniciar",
+        "catalogTitle": "Visitas guiadas",
+        "catalogDesc": "Haz un recorrido rápido por la interfaz. Puedes repetirlas cuando quieras.",
+        "general": {
+            "title": "Visita general",
+            "desc": "Una visión rápida de la interfaz principal.",
+            "welcome": {
+                "title": "Bienvenido a blunderDB",
+                "body": "Esta breve visita te muestra las partes principales de la interfaz. Usa Siguiente y Atrás para navegar, o Esc para salir."
+            },
+            "toolbar": {
+                "title": "Barra de herramientas",
+                "body": "Crea o abre bases de datos, importa partidas y posiciones, navega, y abre los ajustes y la ayuda desde aquí."
+            },
+            "board": {
+                "title": "El tablero",
+                "body": "La posición actual se muestra aquí. Creas y editas posiciones directamente en el tablero: haz clic para colocar fichas, y fija los dados, el cubo y el marcador."
+            },
+            "panels": {
+                "title": "Paneles",
+                "body": "Análisis, comentarios, búsqueda, estadísticas, colecciones, partidas y torneos están en estas pestañas bajo el tablero."
+            },
+            "commandline": {
+                "title": "Barra de estado y línea de comandos",
+                "body": "La barra de estado de abajo muestra información de la posición. Pulsa la barra espaciadora para abrir la línea de comandos y escribe un comando: «s» para buscar, «?» para el manual."
+            },
+            "help": {
+                "title": "Ayuda",
+                "body": "Abre el manual completo en cualquier momento desde este botón (o pulsa «?»)."
+            },
+            "done": {
+                "title": "Todo listo",
+                "body": "Repite cualquier visita desde el icono de birrete en la barra de herramientas, o con el comando «tutorial»."
+            }
+        },
+        "search": {
+            "title": "Buscar posiciones",
+            "desc": "Encuentra posiciones por estructura, filtros y estadísticas.",
+            "intro": {
+                "title": "Búsqueda",
+                "body": "blunderDB permite encontrar posiciones por estructura de fichas, filtros escalares y estadísticas de análisis."
+            },
+            "tab": {
+                "title": "Pestaña Búsqueda",
+                "body": "Abre la pestaña Búsqueda para combinar filtros: pip count, fichas fuera, fichas retrasadas, marcadores, tasas de victoria/gammon, dados y más."
+            },
+            "structure": {
+                "title": "Buscar por estructura",
+                "body": "Compón una posición de referencia en el tablero y luego busca posiciones que compartan esa estructura de fichas."
+            },
+            "commandline": {
+                "title": "Buscar desde la línea de comandos",
+                "body": "Pulsa Espacio y escribe «s» seguido de filtros, p. ej. «s w>50 p>30». Escribe «?» para la referencia completa de filtros."
+            }
+        },
+        "matches": {
+            "title": "Revisar partidas",
+            "desc": "Importa partidas completas y revísalas jugada a jugada.",
+            "intro": {
+                "title": "Partidas",
+                "body": "Importa partidas completas de eXtreme Gammon, GNU Backgammon o BGBlitz y revísalas en contexto."
+            },
+            "tab": {
+                "title": "Pestaña Partidas",
+                "body": "Abre la pestaña Partidas para ver tus partidas importadas, con el PR y la pérdida de MWC de cada jugador."
+            },
+            "review": {
+                "title": "Recorrer una partida",
+                "body": "Selecciona una partida para recorrer sus jugadas; el tablero muestra cada decisión y puedes estudiar los errores por el camino."
+            }
+        },
+        "tournaments": {
+            "title": "Revisar torneos",
+            "desc": "Agrupa partidas en torneos y sigue tu rendimiento.",
+            "intro": {
+                "title": "Torneos",
+                "body": "Agrupa tus partidas en torneos para seguir tu rendimiento a lo largo de los eventos."
+            },
+            "tab": {
+                "title": "Pestaña Torneos",
+                "body": "Abre la pestaña Torneos para gestionar torneos y revisar las entradas y resultados de cada jugador."
+            },
+            "drill": {
+                "title": "Explorar en detalle",
+                "body": "Desde un torneo puedes descender a sus partidas y a las posiciones subyacentes."
+            }
+        }
     },
     "help": {
         "tabManual": "Manual",

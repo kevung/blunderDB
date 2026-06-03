@@ -60,7 +60,100 @@
         "savePosition": "Position speichern",
         "settings": "Einstellungen",
         "togglePipcount": "Pipcount ein-/ausblenden",
-        "updatePosition": "Position aktualisieren"
+        "updatePosition": "Position aktualisieren",
+        "tour": "Geführte Touren"
+    },
+    "tour": {
+        "next": "Weiter",
+        "prev": "Zurück",
+        "done": "Fertig",
+        "start": "Starten",
+        "catalogTitle": "Geführte Touren",
+        "catalogDesc": "Machen Sie eine kurze Tour durch die Oberfläche. Sie können sie jederzeit wiederholen.",
+        "general": {
+            "title": "Allgemeine Tour",
+            "desc": "Ein kurzer Überblick über die Hauptoberfläche.",
+            "welcome": {
+                "title": "Willkommen bei blunderDB",
+                "body": "Diese kurze Tour führt Sie durch die wichtigsten Teile der Oberfläche. Nutzen Sie Weiter und Zurück zum Navigieren, oder Esc zum Verlassen."
+            },
+            "toolbar": {
+                "title": "Symbolleiste",
+                "body": "Datenbanken anlegen oder öffnen, Partien und Stellungen importieren, navigieren sowie Einstellungen und Hilfe öffnen Sie von hier."
+            },
+            "board": {
+                "title": "Das Brett",
+                "body": "Die aktuelle Stellung wird hier angezeigt. Sie erstellen und bearbeiten Stellungen direkt auf dem Brett: klicken Sie, um Steine zu setzen, und legen Sie Würfel, Dopplerwürfel und Punktestand fest."
+            },
+            "panels": {
+                "title": "Panels",
+                "body": "Analyse, Kommentare, Suche, Statistiken, Sammlungen, Partien und Turniere finden Sie in diesen Reitern unter dem Brett."
+            },
+            "commandline": {
+                "title": "Statusleiste und Kommandozeile",
+                "body": "Die Statusleiste unten zeigt Stellungsinfos. Drücken Sie die Leertaste, um die Kommandozeile zu öffnen, und geben Sie dann einen Befehl ein: „s“ zum Suchen, „?“ für das Handbuch."
+            },
+            "help": {
+                "title": "Hilfe",
+                "body": "Öffnen Sie das vollständige Handbuch jederzeit über diese Schaltfläche (oder mit „?“)."
+            },
+            "done": {
+                "title": "Alles bereit",
+                "body": "Wiederholen Sie jede Tour über das Doktorhut-Symbol in der Symbolleiste oder mit dem Befehl „tutorial“."
+            }
+        },
+        "search": {
+            "title": "Stellungen suchen",
+            "desc": "Finden Sie Stellungen nach Struktur, Filtern und Statistiken.",
+            "intro": {
+                "title": "Suche",
+                "body": "Mit blunderDB finden Sie Stellungen nach Steinstruktur, skalaren Filtern und Analysestatistiken."
+            },
+            "tab": {
+                "title": "Reiter Suche",
+                "body": "Öffnen Sie den Reiter Suche, um Filter zu kombinieren: Pip-Count, ausgespielte Steine, Rücksteine, Punktestände, Gewinn-/Gammon-Raten, Würfel und mehr."
+            },
+            "structure": {
+                "title": "Nach Struktur suchen",
+                "body": "Bauen Sie eine Referenzstellung auf dem Brett auf und suchen Sie dann Stellungen mit derselben Steinstruktur."
+            },
+            "commandline": {
+                "title": "Über die Kommandozeile suchen",
+                "body": "Drücken Sie die Leertaste und tippen Sie „s“ gefolgt von Filtern, z. B. „s w>50 p>30“. Tippen Sie „?“ für die vollständige Filterreferenz."
+            }
+        },
+        "matches": {
+            "title": "Partien durchsehen",
+            "desc": "Importieren Sie ganze Partien und sehen Sie sie Zug für Zug durch.",
+            "intro": {
+                "title": "Partien",
+                "body": "Importieren Sie ganze Partien aus eXtreme Gammon, GNU Backgammon oder BGBlitz und sehen Sie sie im Kontext durch."
+            },
+            "tab": {
+                "title": "Reiter Partien",
+                "body": "Öffnen Sie den Reiter Partien, um Ihre importierten Partien mit PR und MWC-Verlust je Spieler zu sehen."
+            },
+            "review": {
+                "title": "Eine Partie durchgehen",
+                "body": "Wählen Sie eine Partie, um ihre Züge durchzugehen; das Brett zeigt jede Entscheidung, und Sie können die Fehler unterwegs studieren."
+            }
+        },
+        "tournaments": {
+            "title": "Turniere durchsehen",
+            "desc": "Fassen Sie Partien zu Turnieren zusammen und verfolgen Sie Ihre Leistung.",
+            "intro": {
+                "title": "Turniere",
+                "body": "Fassen Sie Ihre Partien zu Turnieren zusammen, um Ihre Leistung über Veranstaltungen hinweg zu verfolgen."
+            },
+            "tab": {
+                "title": "Reiter Turniere",
+                "body": "Öffnen Sie den Reiter Turniere, um Turniere zu verwalten und die Einträge und Ergebnisse jedes Spielers durchzusehen."
+            },
+            "drill": {
+                "title": "Im Detail erkunden",
+                "body": "Von einem Turnier aus können Sie zu seinen Partien und den zugrunde liegenden Stellungen navigieren."
+            }
+        }
     },
     "help": {
         "tabManual": "Handbuch",

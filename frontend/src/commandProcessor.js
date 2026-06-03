@@ -64,6 +64,8 @@ export function processCommand(command) {
         callbacks.exitApp?.();
     } else if (command === 'help' || command === 'he' || command === 'h') {
         callbacks.onToggleHelp?.();
+    } else if (command === 'tutorial' || command === 'tour') {
+        openModal(MODAL.TOUR);
     } else if (command === 'e') {
         callbacks.onLoadAllPositions?.();
     } else if (command === 'stats' || command === 'st') {

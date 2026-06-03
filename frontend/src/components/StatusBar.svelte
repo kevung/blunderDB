@@ -189,7 +189,7 @@
     });
 </script>
 
-<div class="status-bar" role="status" aria-live="polite" data-testid="status-bar">
+<div class="status-bar" role="status" aria-live="polite" data-testid="status-bar" data-tour="statusbar">
     {#if showInput}
         <div class="command-input-row">
             <span class="prompt-char">&gt;</span>
