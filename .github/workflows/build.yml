@@ -273,7 +273,34 @@ jobs:
         if: runner.os == 'Windows'
         run: wails build --platform 'windows' -o blunderDB-windows-${{ steps.vars.outputs.version }}.exe -upx -clean -tags webkit2_41
         shell: bash
-        
+
+      # Optional Authenticode signing via SignPath.io — FREE for open-source
+      # projects through the SignPath Foundation (https://signpath.org/). This
+      # removes the "unknown publisher" warning and accelerates Windows
+      # SmartScreen reputation (an OV certificate builds reputation over time;
+      # only an expensive EV cert clears SmartScreen instantly).
+      #
+      # Disabled by default so CI stays green without configuration. To enable:
+      #   1. Apply to the SignPath Foundation OSS program and create a project.
+      #   2. Add secret  SIGNPATH_API_TOKEN  and variable  SIGNPATH_ORGANIZATION_ID.
+      #   3. Set repository variable  ENABLE_SIGNPATH = true.
+      #   4. Replace the *-slug values below with the ones from your SignPath
+      #      project (the SignPath setup wizard generates the exact block,
+      #      including how the unsigned artifact is submitted and the signed one
+      #      downloaded back into build/bin/ before checksums are computed).
+      - name: Sign Windows binary (SignPath, free for OSS)
+        if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && vars.ENABLE_SIGNPATH == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: blunderdb
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: windows-exe
+          local-artifact-directory: build/bin
+          output-artifact-directory: build/bin
+          wait-for-completion: true
+
       - name: Build App MacOS
         if: runner.os == 'macOS'
         run: |
@@ -309,6 +336,26 @@ jobs:
         run: |
           ditto -c -k --keepParent ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.zip
 
+
+      # Publish SHA256 checksums alongside each binary so users can verify their
+      # download (helps mitigate SmartScreen/antivirus distrust at zero cost).
+      # The .sha256 files land in build/bin/ and are picked up by the release
+      # glob below. `sha256sum` exists in Git Bash on Windows and on Linux;
+      # macOS falls back to `shasum -a 256`. Directories (the .app bundle) are
+      # skipped — only the distributable files are hashed.
+      - name: Generate SHA256 checksums
+        shell: bash
+        run: |
+          cd build/bin
+          for f in *; do
+            [ -f "$f" ] || continue
+            case "$f" in *.sha256) continue;; esac
+            if command -v sha256sum >/dev/null 2>&1; then
+              sha256sum "$f" > "$f.sha256"
+            else
+              shasum -a 256 "$f" > "$f.sha256"
+            fi
+          done
 
       # Upload build assets
       - uses: actions/upload-artifact@v4
