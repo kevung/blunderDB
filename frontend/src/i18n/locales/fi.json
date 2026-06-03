@@ -26,6 +26,9 @@
         "colorPoint2": "Tummat kärjet",
         "colorChecker1": "Pelaajan 1 nappulat",
         "colorChecker2": "Pelaajan 2 nappulat",
+        "colorDice": "Nopat",
+        "colorDiceDot": "Nopan silmät",
+        "colorCube": "Tuplauskuutio",
         "resetColors": "Palauta oletukset"
     },
     "toolbar": {

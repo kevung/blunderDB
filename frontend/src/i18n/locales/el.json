@@ -26,6 +26,9 @@
         "colorPoint2": "Σκούρες μύτες",
         "colorChecker1": "Πούλια παίκτη 1",
         "colorChecker2": "Πούλια παίκτη 2",
+        "colorDice": "Ζάρια",
+        "colorDiceDot": "Κουκκίδες ζαριών",
+        "colorCube": "Κύβος",
         "resetColors": "Επαναφορά"
     },
     "toolbar": {

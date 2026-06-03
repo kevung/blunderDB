@@ -10,7 +10,10 @@ export const DEFAULT_BOARD_COLORS = {
     point1: '#d9d9d9',
     point2: '#a6a6a6',
     checker1: '#333333',
-    checker2: '#ffffff'
+    checker2: '#ffffff',
+    dice: '#ffffff',
+    diceDot: '#000000',
+    cube: '#ffffff'
 };
 
 export const BOARD_COLOR_KEYS = Object.keys(DEFAULT_BOARD_COLORS);

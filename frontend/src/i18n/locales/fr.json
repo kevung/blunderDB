@@ -26,6 +26,9 @@
         "colorPoint2": "Flèches foncées",
         "colorChecker1": "Pions du joueur 1",
         "colorChecker2": "Pions du joueur 2",
+        "colorDice": "Dés",
+        "colorDiceDot": "Points des dés",
+        "colorCube": "Videau",
         "resetColors": "Réinitialiser"
     },
     "toolbar": {

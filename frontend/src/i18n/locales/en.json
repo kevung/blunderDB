@@ -26,6 +26,9 @@
         "colorPoint2": "Dark points",
         "colorChecker1": "Player 1 checkers",
         "colorChecker2": "Player 2 checkers",
+        "colorDice": "Dice",
+        "colorDiceDot": "Dice pips",
+        "colorCube": "Doubling cube",
         "resetColors": "Reset to defaults"
     },
     "toolbar": {

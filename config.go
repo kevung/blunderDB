@@ -27,11 +27,14 @@ type StatsFilterPersisted struct {
 // keep rendering correctly.
 type BoardColors struct {
 	Background string `json:"background"` // board background fill
-	Border     string `json:"border"`     // board border / point stroke
+	Border     string `json:"border"`     // board border / point & piece stroke
 	Point1     string `json:"point1"`     // light points (triangle fill 1)
 	Point2     string `json:"point2"`     // dark points (triangle fill 2)
 	Checker1   string `json:"checker1"`   // player 1 checkers
 	Checker2   string `json:"checker2"`   // player 2 checkers
+	Dice       string `json:"dice"`       // dice face fill
+	DiceDot    string `json:"diceDot"`    // dice pip colour
+	Cube       string `json:"cube"`       // doubling cube face fill
 }
 
 // DefaultBoardColors returns the historical hard-coded palette from Board.svelte.
@@ -43,6 +46,9 @@ func DefaultBoardColors() BoardColors {
 		Point2:     "#a6a6a6",
 		Checker1:   "#333333",
 		Checker2:   "#ffffff",
+		Dice:       "#ffffff",
+		DiceDot:    "#000000",
+		Cube:       "#ffffff",
 	}
 }
 
@@ -67,6 +73,15 @@ func (bc BoardColors) withDefaults() BoardColors {
 	}
 	if bc.Checker2 == "" {
 		bc.Checker2 = d.Checker2
+	}
+	if bc.Dice == "" {
+		bc.Dice = d.Dice
+	}
+	if bc.DiceDot == "" {
+		bc.DiceDot = d.DiceDot
+	}
+	if bc.Cube == "" {
+		bc.Cube = d.Cube
 	}
 	return bc
 }

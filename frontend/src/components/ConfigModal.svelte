@@ -12,7 +12,10 @@
         { key: 'point1', labelKey: 'config.colorPoint1' },
         { key: 'point2', labelKey: 'config.colorPoint2' },
         { key: 'checker1', labelKey: 'config.colorChecker1' },
-        { key: 'checker2', labelKey: 'config.colorChecker2' }
+        { key: 'checker2', labelKey: 'config.colorChecker2' },
+        { key: 'dice', labelKey: 'config.colorDice' },
+        { key: 'diceDot', labelKey: 'config.colorDiceDot' },
+        { key: 'cube', labelKey: 'config.colorCube' }
     ];
 
     function onLanguageChange(event) {

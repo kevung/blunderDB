@@ -26,6 +26,9 @@
         "colorPoint2": "Puntas oscuras",
         "colorChecker1": "Fichas del jugador 1",
         "colorChecker2": "Fichas del jugador 2",
+        "colorDice": "Dados",
+        "colorDiceDot": "Puntos de los dados",
+        "colorCube": "Cubo de doblaje",
         "resetColors": "Restablecer"
     },
     "toolbar": {

@@ -26,6 +26,9 @@
         "colorPoint2": "Тёмные пункты",
         "colorChecker1": "Шашки игрока 1",
         "colorChecker2": "Шашки игрока 2",
+        "colorDice": "Кости",
+        "colorDiceDot": "Точки костей",
+        "colorCube": "Куб удвоения",
         "resetColors": "Сбросить"
     },
     "toolbar": {

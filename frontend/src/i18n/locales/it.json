@@ -26,6 +26,9 @@
         "colorPoint2": "Punte scure",
         "colorChecker1": "Pedine giocatore 1",
         "colorChecker2": "Pedine giocatore 2",
+        "colorDice": "Dadi",
+        "colorDiceDot": "Punti dei dadi",
+        "colorCube": "Cubo del raddoppio",
         "resetColors": "Ripristina"
     },
     "toolbar": {

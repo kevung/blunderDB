@@ -48,6 +48,13 @@
             sizeFactor: 0.97,
             colors: ['#333333', '#ffffff'], // Dark grey and white checkers
             linewidth: 2.5 // Added linewidth property and set to 2
+        },
+        dice: {
+            fill: '#ffffff', // White dice face
+            dot: '#000000' // Dice pips
+        },
+        cube: {
+            fill: '#ffffff' // White doubling cube face
         }
     };
 
@@ -82,6 +89,9 @@
         boardCfg.triangle.fill2 = colors.point2;
         boardCfg.triangle.stroke = colors.border;
         boardCfg.checker.colors = [colors.checker1, colors.checker2];
+        boardCfg.dice.fill = colors.dice;
+        boardCfg.dice.dot = colors.diceDot;
+        boardCfg.cube.fill = colors.cube;
         if (two && canvas) drawBoard();
     });
 
@@ -1309,8 +1319,8 @@
             cubePosition.size = doublingCubeSize;
 
             const doublingCube = two.makeRectangle(cubePosition.x, cubePosition.y, doublingCubeSize, doublingCubeSize);
-            doublingCube.fill = '#ffffff'; // White doubling cube
-            doublingCube.stroke = '#333333'; // Dark grey border
+            doublingCube.fill = boardCfg.cube.fill;
+            doublingCube.stroke = boardCfg.stroke; // follows the board border colour
             doublingCube.linewidth = 2.5; // Adjust linewidth accordingly
             const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), cubePosition.x, cubePosition.y);
             doublingCubeText.size = 34; // Checker size
@@ -1439,8 +1449,8 @@
             dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
                 const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
-                dieElement.fill = '#ffffff'; // White dice
-                dieElement.stroke = '#333333'; // Dark grey border
+                dieElement.fill = boardCfg.dice.fill;
+                dieElement.stroke = boardCfg.stroke; // follows the board border colour
                 dieElement.linewidth = 2.5; // Adjust linewidth accordingly
 
                 if (decisionType === 0) {
@@ -1482,7 +1492,7 @@
 
                     dotPositions[die].forEach(([dx, dy]) => {
                         const dot = two.makeCircle(dieXpos + (dx * diceSize) / 3, diceYpos + (dy * diceSize) / 3, diceSize / 12);
-                        dot.fill = 'black';
+                        dot.fill = boardCfg.dice.dot;
                     });
                 }
             });

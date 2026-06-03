@@ -1251,7 +1251,10 @@ export namespace main {
 	    point2: string;
 	    checker1: string;
 	    checker2: string;
-	
+	    dice: string;
+	    diceDot: string;
+	    cube: string;
+
 	    static createFrom(source: any = {}) {
 	        return new BoardColors(source);
 	    }
@@ -1264,6 +1267,9 @@ export namespace main {
 	        this.point2 = source["point2"];
 	        this.checker1 = source["checker1"];
 	        this.checker2 = source["checker2"];
+	        this.dice = source["dice"];
+	        this.diceDot = source["diceDot"];
+	        this.cube = source["cube"];
 	    }
 	}
 	export class StatsFilterPersisted {

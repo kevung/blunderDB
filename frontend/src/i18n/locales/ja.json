@@ -26,6 +26,9 @@
         "colorPoint2": "暗いポイント",
         "colorChecker1": "プレイヤー1のチェッカー",
         "colorChecker2": "プレイヤー2のチェッカー",
+        "colorDice": "ダイス",
+        "colorDiceDot": "ダイスの目",
+        "colorCube": "ダブリングキューブ",
         "resetColors": "デフォルトに戻す"
     },
     "toolbar": {

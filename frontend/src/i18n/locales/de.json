@@ -26,6 +26,9 @@
         "colorPoint2": "Dunkle Zungen",
         "colorChecker1": "Steine Spieler 1",
         "colorChecker2": "Steine Spieler 2",
+        "colorDice": "Würfel",
+        "colorDiceDot": "Würfelaugen",
+        "colorCube": "Dopplerwürfel",
         "resetColors": "Zurücksetzen"
     },
     "toolbar": {
