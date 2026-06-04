@@ -15,6 +15,7 @@
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
     import { get } from 'svelte/store';
     import { t, tMsg, resolveStatusMessage } from '../i18n';
+    import { getCommandSuggestions } from '../commandVocabulary.js';
 
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
@@ -23,6 +24,36 @@
     let showInput = $derived($showCommandInputStore);
     let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
+
+    // --- Command autocompletion ------------------------------------------------
+    // Suggestions for the typed command word. Tab / Shift-Tab cycle through them;
+    // Escape dismisses the dropdown (a second Escape closes the command line).
+    // ArrowUp/Down stay reserved for command history.
+    let suggestionsDismissed = $state(false);
+    let selectedSuggestion = $state(0);
+    let suggestions = $derived(suggestionsDismissed ? [] : getCommandSuggestions($commandTextStore));
+
+    $effect(() => {
+        $commandTextStore; // track dependency so edits reset the dropdown
+        suggestionsDismissed = false;
+        selectedSuggestion = 0;
+    });
+
+    function applySuggestion(index) {
+        const cmd = suggestions[index];
+        if (!cmd) return;
+        commandTextStore.set(cmd.name);
+        requestAnimationFrame(() => {
+            inputEl?.setSelectionRange(cmd.name.length, cmd.name.length);
+            inputEl?.focus();
+        });
+    }
+
+    function cycleSuggestion(step) {
+        if (suggestions.length === 0) return;
+        applySuggestion(selectedSuggestion);
+        selectedSuggestion = (selectedSuggestion + step + suggestions.length) % suggestions.length;
+    }
 
     // The status store may hold a plain string or a tMsg() descriptor
     // ({ i18nKey, i18nParams }). Resolving through $t here makes the displayed
@@ -54,6 +85,20 @@
     }
 
     function handleKeyDown(event) {
+        if (event.code === 'Tab') {
+            // Tab / Shift-Tab cycle through autocompletion matches.
+            event.stopPropagation();
+            event.preventDefault();
+            cycleSuggestion(event.shiftKey ? -1 : 1);
+            return;
+        }
+        if (event.code === 'Escape' && suggestions.length > 0) {
+            // Dismiss the dropdown first; a second Escape closes the command line.
+            event.stopPropagation();
+            event.preventDefault();
+            suggestionsDismissed = true;
+            return;
+        }
         if (event.code === 'ArrowUp') {
             event.stopPropagation();
             event.preventDefault();
@@ -192,6 +237,26 @@
 <div class="status-bar" role="status" aria-live="polite" data-testid="status-bar" data-tour="statusbar">
     {#if showInput}
         <div class="command-input-row">
+            {#if suggestions.length > 0}
+                <ul class="command-suggestions" role="listbox">
+                    {#each suggestions as cmd, i (cmd.name)}
+                        <li
+                            role="option"
+                            aria-selected={i === selectedSuggestion}
+                            class:selected={i === selectedSuggestion}
+                            onmousedown={(e) => {
+                                e.preventDefault();
+                                applySuggestion(i);
+                            }}
+                        >
+                            <span class="cmd-name">{cmd.name}</span>
+                            {#if cmd.aliases.length > 0}
+                                <span class="cmd-aliases">{cmd.aliases.join(', ')}</span>
+                            {/if}
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
             <span class="prompt-char">&gt;</span>
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder={$t('statusBar.typeCommand')} onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
@@ -249,11 +314,60 @@
     }
 
     .command-input-row {
+        position: relative;
         flex: 1;
         display: flex;
         align-items: center;
         padding: 0 6px;
         min-width: 0;
+    }
+
+    /* The status bar sits at the bottom, so the dropdown opens upwards. */
+    .command-suggestions {
+        position: absolute;
+        bottom: 100%;
+        left: 6px;
+        margin: 0 0 2px 0;
+        padding: 0;
+        list-style: none;
+        min-width: 220px;
+        max-height: 220px;
+        overflow-y: auto;
+        background-color: white;
+        border: 1px solid rgba(0, 0, 0, 0.25);
+        border-radius: 2px;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1100;
+    }
+
+    .command-suggestions li {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        padding: 4px 10px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .command-suggestions li.selected {
+        background-color: #e8f0fe;
+    }
+
+    .command-suggestions li:hover {
+        background-color: #f0f0f0;
+    }
+
+    .cmd-name {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .cmd-aliases {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 11px;
+        color: #888;
     }
 
     .prompt-char {
