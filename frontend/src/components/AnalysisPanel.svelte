@@ -3,6 +3,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
+    import { normalizeCubeAction } from '../utils/cubeAction.js';
     import { t } from '../i18n';
     let { onClose } = $props();
 
@@ -233,21 +234,6 @@
         }
 
         return false;
-    }
-
-    // Normalize cube action for exact matching
-    // Maps all variants to canonical forms: "nodouble", "double", "take", "pass"
-    function normalizeCubeAction(action) {
-        const s = action.toLowerCase().replace(/\s+/g, '');
-        // Map combined actions to individual parts
-        if (s === 'double/take' || s === 'doubletake') return ['double', 'take'];
-        if (s === 'double/pass' || s === 'doublepass') return ['double', 'pass'];
-        if (s === 'nodouble' || s === 'nodoubleorredouble' || s === 'noredouble') return ['nodouble'];
-        if (s === 'redouble') return ['double'];
-        // Standalone take/pass (opponent's response): map to the combined row
-        if (s === 'take') return ['double', 'take'];
-        if (s === 'pass' || s === 'drop') return ['double', 'pass'];
-        return [s]; // "double", etc.
     }
 
     function isPlayedCubeAction(action) {

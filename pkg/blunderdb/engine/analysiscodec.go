@@ -172,6 +172,20 @@ func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) 
 	return 0, false
 }
 
+// IsResponseCubeAction reports whether a cube action is a pure take/pass
+// response (the cube was offered to this player), as opposed to a doubling
+// decision such as Double / Double/Take / No Double. The doubler's combined
+// actions ("Double/Take", "Double/Pass") are NOT responses. Used for board
+// orientation and to decide whether to render the offered cube on the board.
+func IsResponseCubeAction(action string) bool {
+	s := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(action)), " ", "")
+	if strings.Contains(s, "double") { // double, double/take, double/pass, nodouble, redouble
+		return false
+	}
+	return s == "dt" || s == "dp" ||
+		strings.Contains(s, "take") || strings.Contains(s, "pass") || strings.Contains(s, "drop")
+}
+
 // PopulateAnalysisColumns computes the scalar analysis columns from a
 // PositionAnalysis. playedMove and playedCubeAction are the actions taken in
 // this position (may be empty). Rates are stored × 100, equities × 1000.
