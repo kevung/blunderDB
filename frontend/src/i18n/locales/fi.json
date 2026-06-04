@@ -70,6 +70,8 @@
         "start": "Aloita",
         "catalogTitle": "Opastetut kierrokset",
         "catalogDesc": "Tutustu käyttöliittymään nopeasti. Voit toistaa kierrokset milloin tahansa.",
+        "loadDemo": "Lataa demo-data",
+        "demoHint": "Tutustu esimerkkitietokantaan (2 ottelua + turnaus).",
         "general": {
             "title": "Yleiskierros",
             "desc": "Nopea katsaus käyttöliittymän pääosiin.",

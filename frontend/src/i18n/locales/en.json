@@ -70,6 +70,8 @@
         "start": "Start",
         "catalogTitle": "Guided tours",
         "catalogDesc": "Quick tours of the interface — replay them any time.",
+        "loadDemo": "Load demo data",
+        "demoHint": "Explore a sample database (2 matches + a tournament).",
         "general": {
             "title": "General tour",
             "desc": "A quick overview of the interface.",

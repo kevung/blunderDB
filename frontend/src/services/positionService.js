@@ -270,6 +270,7 @@ export async function loadAnalysisForPosition(position) {
 }
 
 export async function loadAllPositions() {
+    logger.error('[BUG-TRACE] loadAllPositions called from:\n' + new Error().stack);
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
@@ -1004,6 +1005,7 @@ export async function toggleMatchMode() {
     }
 
     if (get(statusBarModeStore) === 'MATCH') {
+        logger.error('[BUG-TRACE] toggleMatchMode EXIT from:\n' + new Error().stack);
         logger.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             try {

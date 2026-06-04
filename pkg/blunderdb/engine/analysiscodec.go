@@ -140,6 +140,38 @@ func ComputeIsCloseCube(dca *domain.DoublingCubeAnalysis, playedCubeAction strin
 	return 0
 }
 
+// CubeActionError returns the equity error (in equity points, signed) of the
+// given played cube action relative to the best action, and ok=false when the
+// action is empty or unrecognized. This is the single source of truth for
+// cube-error attribution, shared by PopulateAnalysisColumns (which feeds the
+// denormalized analysis.cube_error column and the stats/SQL pre-filter) and by
+// the search move-error filters, so they cannot drift apart.
+//
+// A doubling decision (Double / Double/Take / Double/Pass / Redouble) is scored
+// by how much worse doubling is than the best action, i.e. the worse of the two
+// opponent responses: min(DoubleTakeError, DoublePassError). A pure response
+// (Take / Pass) is scored from the responder's perspective: how much worse the
+// chosen response is than the optimal one. Matching is case-insensitive and
+// tolerates the abbreviations (nd/dt/dp/drop) that appear in move.cube_action
+// and in filter input.
+func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) (float64, bool) {
+	if dca == nil || playedCubeAction == "" {
+		return 0, false
+	}
+	s := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(playedCubeAction)), " ", "")
+	switch {
+	case s == "nd" || strings.Contains(s, "nodouble"):
+		return dca.CubefulNoDoubleError, true
+	case strings.Contains(s, "double"): // double, double/take, double/pass, redouble
+		return math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError), true
+	case s == "dt" || strings.Contains(s, "take"):
+		return math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity, true
+	case s == "dp" || strings.Contains(s, "pass") || strings.Contains(s, "drop"):
+		return math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity, true
+	}
+	return 0, false
+}
+
 // PopulateAnalysisColumns computes the scalar analysis columns from a
 // PositionAnalysis. playedMove and playedCubeAction are the actions taken in
 // this position (may be empty). Rates are stored × 100, equities × 1000.
@@ -159,18 +191,7 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 		c.Player2GammonRate = int64(math.Round(dca.OpponentGammonChances * 100))
 		c.Player2BackgammonRate = int64(math.Round(dca.OpponentBackgammonChances * 100))
 
-		if playedCubeAction != "" {
-			var raw float64
-			switch playedCubeAction {
-			case "NoDouble", "No Double":
-				raw = dca.CubefulNoDoubleError
-			case "Double", "Double/Take", "Double/Pass":
-				raw = math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError)
-			case "Take":
-				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity
-			case "Pass":
-				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity
-			}
+		if raw, ok := CubeActionError(dca, playedCubeAction); ok {
 			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
 		}
 	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {

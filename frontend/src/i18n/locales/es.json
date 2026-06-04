@@ -70,6 +70,8 @@
         "start": "Iniciar",
         "catalogTitle": "Visitas guiadas",
         "catalogDesc": "Haz un recorrido rápido por la interfaz. Puedes repetirlas cuando quieras.",
+        "loadDemo": "Cargar datos de demo",
+        "demoHint": "Explora una base de ejemplo (2 partidas + un torneo).",
         "general": {
             "title": "Visita general",
             "desc": "Una visión rápida de la interfaz principal.",

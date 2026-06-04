@@ -70,6 +70,8 @@
         "start": "Avvia",
         "catalogTitle": "Tour guidati",
         "catalogDesc": "Fai un rapido tour dell'interfaccia. Puoi ripeterli in qualsiasi momento.",
+        "loadDemo": "Carica dati demo",
+        "demoHint": "Esplora un database di esempio (2 partite + un torneo).",
         "general": {
             "title": "Tour generale",
             "desc": "Una rapida panoramica dell'interfaccia principale.",

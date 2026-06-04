@@ -70,6 +70,8 @@
         "start": "Starten",
         "catalogTitle": "Geführte Touren",
         "catalogDesc": "Machen Sie eine kurze Tour durch die Oberfläche. Sie können sie jederzeit wiederholen.",
+        "loadDemo": "Demo-Daten laden",
+        "demoHint": "Eine Beispieldatenbank erkunden (2 Partien + ein Turnier).",
         "general": {
             "title": "Allgemeine Tour",
             "desc": "Ein kurzer Überblick über die Hauptoberfläche.",

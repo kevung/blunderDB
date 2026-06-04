@@ -2,9 +2,12 @@ package gui
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
+	_ "embed"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,6 +17,16 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+// demoDBGz is a small, self-contained sample database (a couple of imported
+// matches grouped into a tournament, with analysis) embedded gzip-compressed so
+// the guided tours and first-time users have real content to explore. Regenerate
+// with: ./blunderdb create -db demo.db && ./blunderdb import -db demo.db -type
+// match -file <a.xg> ... ; sqlite3 demo.db 'PRAGMA journal_mode=DELETE; VACUUM;'
+// ; gzip -9 -c demo.db > internal/gui/demo.db.gz
+//
+//go:embed demo.db.gz
+var demoDBGz []byte
+
 // App struct
 type App struct {
 	ctx context.Context
@@ -22,6 +35,34 @@ type App struct {
 // NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
+}
+
+// PrepareDemoDatabase decompresses the embedded sample database to a fresh
+// temporary file and returns its path. The frontend then opens it through the
+// normal open-database flow, so loading the demo behaves exactly like opening
+// any other database (a fresh copy each time, never mutating the embedded data).
+func (a *App) PrepareDemoDatabase() (string, error) {
+	gz, err := gzip.NewReader(bytes.NewReader(demoDBGz))
+	if err != nil {
+		return "", fmt.Errorf("reading demo database: %w", err)
+	}
+	defer gz.Close()
+
+	data, err := io.ReadAll(gz)
+	if err != nil {
+		return "", fmt.Errorf("decompressing demo database: %w", err)
+	}
+
+	f, err := os.CreateTemp("", "blunderdb-demo-*.db")
+	if err != nil {
+		return "", fmt.Errorf("creating temp demo database: %w", err)
+	}
+	defer f.Close()
+
+	if _, err := f.Write(data); err != nil {
+		return "", fmt.Errorf("writing temp demo database: %w", err)
+	}
+	return f.Name(), nil
 }
 
 func (a *App) SaveDatabaseDialog() (string, error) {

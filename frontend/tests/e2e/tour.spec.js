@@ -25,12 +25,17 @@ test.beforeEach(async ({ page }) => {
     await page.waitForTimeout(100);
 });
 
-test('catalog lists the four tours', async ({ page }) => {
+test('catalog lists the four tours and a demo button', async ({ page }) => {
     await page.click('[data-tour="tour"]');
     await page.waitForSelector('.tour-list', { timeout: 4000 });
     const items = page.locator('.tour-list li');
     await expect(items).toHaveCount(4);
+    // Demo-data button is present and clickable (no-op under the Wails mock).
+    const demo = page.locator('.demo-button');
+    await expect(demo).toBeVisible();
     await page.screenshot({ path: `${SHOT}-catalog.png` });
+    await demo.click();
+    await expect(page.locator('.tour-list')).toHaveCount(0); // catalog closed
 });
 
 test('general tour spotlight + text', async ({ page }) => {

@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
 import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion } from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
@@ -123,6 +123,20 @@ export async function openDatabase() {
         await openDatabaseByPath(filePath);
     } catch (error) {
         logger.error('Error opening file dialog:', error);
+        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
+    }
+}
+
+// Load the embedded sample database (a couple of matches + a tournament with
+// analysis) so users — and the guided tours — have real content to explore.
+// Decompresses to a fresh temp file and reuses the normal open flow.
+export async function loadDemoDatabase() {
+    try {
+        const filePath = await PrepareDemoDatabase();
+        if (!filePath) return;
+        await openDatabaseByPath(filePath);
+    } catch (error) {
+        logger.error('Error loading demo database:', error);
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
     }
 }

@@ -40,7 +40,7 @@
     import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from './stores/exportModalStore.js';
 
     // Services
-    import { newDatabase, openDatabase, openDatabaseByPath, exitApp, closeWarningModal, warningMessageStore } from './services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, closeWarningModal, warningMessageStore } from './services/databaseService.js';
     import {
         showPosition,
         loadAllPositions,
@@ -204,6 +204,7 @@
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
+        logger.error('[BUG-TRACE] App effect currentPositionIndexStore=' + value + ' positions.length=' + positions.length + '\n' + new Error().stack);
         if (positions.length > 0 && value >= 0 && value < positions.length) {
             showPosition(positions[value]).then(() => {
                 if (cancelled) return;
@@ -315,6 +316,7 @@
             onToggleHelp: toggleHelpModal,
             onNewDatabase: newDatabase,
             onOpenDatabase: openDatabase,
+            onLoadDemo: loadDemoDatabase,
             onImportDatabase: importDatabase,
             onExportDatabase: exportDatabase,
             importPosition,

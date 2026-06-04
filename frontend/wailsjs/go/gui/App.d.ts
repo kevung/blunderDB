@@ -24,6 +24,8 @@ export function OpenPositionFolderDialog():Promise<string>;
 
 export function OpenXGFileDialog():Promise<string>;
 
+export function PrepareDemoDatabase():Promise<string>;
+
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 
 export function SaveDatabaseDialog():Promise<string>;

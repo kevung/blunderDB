@@ -2,8 +2,14 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { t } from '../i18n';
     import { TOURS, startTour } from '../services/tourService.js';
+    import { loadDemoDatabase } from '../services/databaseService.js';
 
     let { visible = false, onClose } = $props();
+
+    function loadDemo() {
+        onClose();
+        loadDemoDatabase();
+    }
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
@@ -35,6 +41,11 @@
                     </li>
                 {/each}
             </ul>
+
+            <div class="demo-row">
+                <span class="demo-hint">{$t('tour.demoHint')}</span>
+                <button class="demo-button" onclick={loadDemo}>{$t('tour.loadDemo')}</button>
+            </div>
 
             <div class="modal-buttons">
                 <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
@@ -143,6 +154,37 @@
 
     .start-button:hover {
         background-color: #5a6268;
+    }
+
+    .demo-row {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        text-align: left;
+    }
+
+    .demo-hint {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .demo-button {
+        flex: 0 0 auto;
+        padding: 6px 14px;
+        border: 1px solid #6c757d;
+        border-radius: 4px;
+        background-color: white;
+        color: #6c757d;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .demo-button:hover {
+        background-color: #f0f0f0;
     }
 
     .modal-buttons {

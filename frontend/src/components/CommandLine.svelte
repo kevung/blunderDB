@@ -33,7 +33,8 @@
         toggleMatchPanel,
         toggleCollectionPanel,
         toggleEPCMode,
-        toggleMatchMode
+        toggleMatchMode,
+        onLoadDemo
     } = $props();
     let inputEl;
 
@@ -192,6 +193,8 @@
                     onToggleHelp();
                 } else if (command === 'tutorial' || command === 'tour') {
                     openModal(MODAL.TOUR);
+                } else if (command === 'demo') {
+                    onLoadDemo?.();
                 } else if (command === 'e') {
                     onLoadAllPositions();
                 } else if (command.startsWith('ss')) {

@@ -46,6 +46,10 @@ export function OpenXGFileDialog() {
   return window['go']['gui']['App']['OpenXGFileDialog']();
 }
 
+export function PrepareDemoDatabase() {
+  return window['go']['gui']['App']['PrepareDemoDatabase']();
+}
+
 export function ReadFileContent(arg1) {
   return window['go']['gui']['App']['ReadFileContent'](arg1);
 }

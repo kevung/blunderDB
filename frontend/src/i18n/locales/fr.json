@@ -70,6 +70,8 @@
         "start": "Démarrer",
         "catalogTitle": "Visites guidées",
         "catalogDesc": "Visites rapides de l'interface — rejouables à tout moment.",
+        "loadDemo": "Charger des données de démo",
+        "demoHint": "Explorez une base d'exemple (2 matchs + un tournoi).",
         "general": {
             "title": "Tour général",
             "desc": "Un aperçu rapide de l'interface.",

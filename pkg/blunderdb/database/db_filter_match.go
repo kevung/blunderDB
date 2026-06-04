@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // The functions below evaluate position filters that need database access
@@ -538,26 +540,10 @@ func MatchesMoveErrorFilter(p *Position, filter string, d *Database) bool {
 		if len(playedActions) == 0 {
 			return false
 		}
-		bestAction := strings.ToLower(analysis.DoublingCubeAnalysis.BestCubeAction)
 		for _, played := range playedActions {
-			playedLower := strings.ToLower(played)
-			if playedLower == bestAction {
-				moveError = 0
+			if e, ok := engine.CubeActionError(analysis.DoublingCubeAnalysis, played); ok {
+				moveError = math.Abs(e)
 				found = true
-			} else {
-				switch {
-				case strings.Contains(playedLower, "no double") || playedLower == "nd":
-					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulNoDoubleError)
-					found = true
-				case strings.Contains(playedLower, "take") || playedLower == "dt":
-					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError)
-					found = true
-				case strings.Contains(playedLower, "pass") || strings.Contains(playedLower, "drop") || playedLower == "dp":
-					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulDoublePassError)
-					found = true
-				}
-			}
-			if found {
 				break
 			}
 		}
