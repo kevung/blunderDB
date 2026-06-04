@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 14:57
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.4)  4 JUN 2026 05:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1056,78 +1056,78 @@ Capitolo 2.
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
 [21] [22] [23] [24] [25] [26] [27] [28]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4687.
+(Font)              scaled to size 4.49997pt on input line 4698.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4688.
+(Font)              scaled to size 8.99994pt on input line 4699.
  [29] [30] [31] [32] [33] [34]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5434.
+(Font)              scaled to size 8.99994pt on input line 5445.
  [35]
 [36] [37]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5695.
+(Font)              scaled to size 10.79993pt on input line 5706.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 5779--5781
+Overfull \hbox (11.423pt too wide) in paragraph at lines 5790--5792
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 5782
+Overfull \hbox (11.423pt too wide) detected at line 5793
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5838--5840
+Underfull \hbox (badness 10000) in paragraph at lines 5849--5851
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [38] [39]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6158--6160
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6169--6171
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6161
+Overfull \hbox (1.06567pt too wide) detected at line 6172
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [40] [41]
-Underfull \hbox (badness 6412) in paragraph at lines 6456--6458
+Underfull \hbox (badness 6412) in paragraph at lines 6467--6469
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 6459
+Underfull \hbox (badness 6412) detected at line 6470
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6472--6474
+Underfull \hbox (badness 6412) in paragraph at lines 6483--6485
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 6488--6490
-[]\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 6499--6501
+[]\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6510--6512
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6513--6515
+Underfull \hbox (badness 10000) in paragraph at lines 6524--6526
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6578--6580
+Underfull \hbox (badness 10000) in paragraph at lines 6589--6591
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6594--6596
+Underfull \hbox (badness 6412) in paragraph at lines 6605--6607
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
@@ -1178,7 +1178,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  19366 strings out of 476443
  395061 string characters out of 5793963
- 1998627 words of memory out of 5000000
+ 1997627 words of memory out of 5000000
  40923 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191

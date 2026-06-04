@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.3)  3 JUN 2026 14:57
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.4)  4 JUN 2026 05:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1282,127 +1282,127 @@ Underfull \hbox (badness 8019) in paragraph at lines 1668--1670
  []
 
 [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32]
-[33] [34] [35] [36] [37] [38] [39]
-Underfull \hbox (badness 5954) in paragraph at lines 5693--5695
+[33] [34] [35] [36] [37] [38] [39] [40]
+Underfull \hbox (badness 5954) in paragraph at lines 5704--5706
 []\TU/FreeSerif(2)/b/n/10 Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας. 
 \TU/FreeSerif(2)/m/n/10 Εμπιστεύεται την κεφαλίδα αιτήματος
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 5761--5763
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 5772--5774
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 5764
+Overfull \hbox (19.82352pt too wide) detected at line 5775
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5820--5822
+Underfull \hbox (badness 10000) in paragraph at lines 5831--5833
 [][][]\TU/FreeMono(2)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5830--5832
+Underfull \hbox (badness 10000) in paragraph at lines 5841--5843
 []\TU/FreeSerif(2)/m/n/10 ενεργοποιεί CORS για αυτή την προέλευση
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5852--5854
+Underfull \hbox (badness 10000) in paragraph at lines 5863--5865
 [][][]\TU/FreeMono(2)/m/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5888--5890
+Underfull \hbox (badness 10000) in paragraph at lines 5899--5901
 []\TU/FreeSerif(2)/m/n/10 Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθού
 ν μέσω μεταβλητής περιβάλλοντος
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5888--5890
+Underfull \hbox (badness 10000) in paragraph at lines 5899--5901
 \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(2)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(
 2)/m/n/10 , \TU/FreeMono(2)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(2)/m/n/10 , \TU/F
 reeMono(2)/m/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(2)/m/n/1
 0 BLUNDERDB_LOG_LEVEL\TU/FreeSerif(2)/m/n/10 ,
  []
 
-[40]
-Underfull \hbox (badness 7595) in paragraph at lines 6009--6011
+[41]
+Underfull \hbox (badness 7595) in paragraph at lines 6020--6022
 []\TU/FreeSerif(2)/m/n/10 scope tenant προορισμού (υποχρεωτικό εκτός από
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6031--6033
+Underfull \hbox (badness 10000) in paragraph at lines 6042--6044
 [][][]\TU/FreeMono(2)/m/n/10 on[]conflict
  []
 
-[41]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6140--6142
+[42]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6151--6153
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6143
+Overfull \hbox (9.46619pt too wide) detected at line 6154
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[42] [43]
-Underfull \hbox (badness 10000) in paragraph at lines 6449--6451
+[43] [44]
+Underfull \hbox (badness 10000) in paragraph at lines 6460--6462
 []\TU/FreeSerif(2)/m/n/10 Πολύ καλό για
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6470--6472
-[]\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
- []
-
-
-Underfull \hbox (badness 10000) detected at line 6473
-[]\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 6481--6483
+[]\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 6484
+[]\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6492--6494
 []\TU/FreeSerif(2)/m/n/10 Λάθη του παίκτη 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6481--6483
+Underfull \hbox (badness 10000) in paragraph at lines 6492--6494
 \TU/FreeSerif(2)/m/n/10 μεγαλύτερα από 40
  []
 
 
-Underfull \hbox (badness 5288) in paragraph at lines 6509--6511
+Underfull \hbox (badness 5288) in paragraph at lines 6520--6522
 []\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6539--6541
+Underfull \hbox (badness 10000) in paragraph at lines 6550--6552
 []\TU/FreeSerif(2)/m/n/10 Φράγμα εναντίον
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6571--6573
+Underfull \hbox (badness 10000) in paragraph at lines 6582--6584
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6571--6573
+Underfull \hbox (badness 10000) in paragraph at lines 6582--6584
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6574
+Underfull \hbox (badness 10000) detected at line 6585
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6574
+Underfull \hbox (badness 10000) detected at line 6585
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
-[44] [45]
+[45]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
  [46]
@@ -1425,9 +1425,8 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [50] [51] [52] [53] [54] [55] [56] [57] [58]
-[59]
-Underfull \hbox (badness 7522) in paragraph at lines 7638--7640
+ [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
+Underfull \hbox (badness 7522) in paragraph at lines 7649--7651
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
@@ -1453,12 +1452,12 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: 62B05E68852D58586D0BA8021A10B40F;42125.
  ) 
 Here is how much of TeX's memory you used:
- 19594 strings out of 476443
- 402371 string characters out of 5793963
- 1997627 words of memory out of 5000000
- 41055 multiletter control sequences out of 15000+600000
- 568875 words of font info for 194 fonts, out of 8000000 for 9000
+ 19596 strings out of 476443
+ 402430 string characters out of 5793963
+ 2000627 words of memory out of 5000000
+ 41056 multiletter control sequences out of 15000+600000
+ 568940 words of font info for 195 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,610s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (71 pages).

@@ -65,73 +65,73 @@
 \contentsline {subsection}{\numberline {2.3.21}Αναζήτηση θέσεων με βάση κριτήρια}{21}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Λίστα εντολών}{22}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Καθολικές λειτουργίες}{22}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Θέσεις και πλοήγηση}{22}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.2}Θέσεις και πλοήγηση}{23}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}Επεξεργασία και αναζήτηση}{23}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Φίλτρα αναζήτησης}{23}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Διάφορες εντολές}{26}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}Συντομεύσεις πληκτρολογίου}{26}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Βάση δεδομένων}{26}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.5}Συντομεύσεις πληκτρολογίου}{27}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Βάση δεδομένων}{27}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Θέση}{27}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Πλοήγηση}{27}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Εμφάνιση}{27}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Ενέργειες}{27}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.4}Εμφάνιση}{28}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Ενέργειες}{28}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Εργαλεία}{28}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Γραμμή εντολών}{28}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Πίνακας ιστορικού αναζήτησης}{28}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Πίνακας βιβλιοθήκης φίλτρων}{28}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.9}Πίνακας βιβλιοθήκης φίλτρων}{29}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Πίνακας ανάλυσης}{29}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Πίνακας αγώνων}{29}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)}{29}{subsection.2.5.12}%
-\contentsline {section}{\numberline {2.6}Διεπαφή γραμμής εντολών (CLI)}{29}{section.2.6}%
-\contentsline {subsection}{\numberline {2.6.1}Εισαγωγή}{29}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.6}Διεπαφή γραμμής εντολών (CLI)}{30}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Εισαγωγή}{30}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Γενική σύνταξη}{30}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Διαθέσιμες εντολές}{30}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}create — Δημιουργία βάσης δεδομένων}{30}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.4}create — Δημιουργία βάσης δεδομένων}{31}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}import — Εισαγωγή δεδομένων}{31}{subsection.2.6.5}%
 \contentsline {subsubsection}{Εισαγωγή αγώνα}{31}{subsubsection*.23}%
 \contentsline {subsubsection}{Εισαγωγή θέσεων}{31}{subsubsection*.24}%
 \contentsline {subsubsection}{Μαζική εισαγωγή}{31}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.6.6}export — Εξαγωγή δεδομένων}{31}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.6}export — Εξαγωγή δεδομένων}{32}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Αναζήτηση θέσεων}{32}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — Εμφάνιση περιεχομένου}{33}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.8}list — Εμφάνιση περιεχομένου}{34}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}match — Εμφάνιση αγώνα}{34}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Μεταδεδομένα της βάσης}{34}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}edit — Τροποποίηση μεταδεδομένων}{34}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.11}edit — Τροποποίηση μεταδεδομένων}{35}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Έλεγχος ακεραιότητας}{35}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}delete — Διαγραφή δεδομένων}{35}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.13}delete — Διαγραφή δεδομένων}{36}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}Παραδείγματα ροών εργασίας}{36}{subsection.2.6.14}%
 \contentsline {subsubsection}{Εισαγωγή ενός καταλόγου τουρνουά}{36}{subsubsection*.26}%
 \contentsline {subsubsection}{Τακτικό αντίγραφο ασφαλείας}{36}{subsubsection*.27}%
-\contentsline {subsubsection}{Ανάλυση σφαλμάτων}{36}{subsubsection*.28}%
-\contentsline {subsection}{\numberline {2.6.15}Κωδικοί εξόδου}{36}{subsection.2.6.15}%
+\contentsline {subsubsection}{Ανάλυση σφαλμάτων}{37}{subsubsection*.28}%
+\contentsline {subsection}{\numberline {2.6.15}Κωδικοί εξόδου}{37}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Συχνές ερωτήσεις (FAQ)}{37}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Ποιος είναι ο σκοπός του blunderDB;}{37}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Τι ώθησε στη δημιουργία του blunderDB;}{37}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;}{37}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;}{37}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;}{37}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.3}Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;}{38}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;}{38}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;}{38}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}Ποιες μορφές αρχείων αγώνων υποστηρίζονται;}{38}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Τι είναι μια συλλογή;}{38}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}Τι είναι το EPC;}{38}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}Διαθέτει το blunderDB διεπαφή γραμμής εντολών;}{38}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;}{38}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.7}Τι είναι μια συλλογή;}{39}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}Τι είναι το EPC;}{39}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}Διαθέτει το blunderDB διεπαφή γραμμής εντολών;}{39}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;}{39}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;}{39}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;}{39}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;}{39}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}Σε ποιες πλατφόρμες λειτουργεί το blunderDB;}{39}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{39}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}{39}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Επισκόπηση}{39}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.7.14}Σε ποιες πλατφόρμες λειτουργεί το blunderDB;}{40}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{40}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}{40}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Επισκόπηση}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Ο δαίμονας \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{40}{subsection.2.8.2}%
 \contentsline {subsubsection}{Σημεία πρόσβασης}{41}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL και πολλαπλοί χρήστες}{41}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Μετανάστευση μιας βάσης SQLite προς PostgreSQL}{41}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.4}Μετανάστευση μιας βάσης SQLite προς PostgreSQL}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Ο γενικός dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{42}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Παράρτημα: Προχωρημένη χρήση των φίλτρων}{43}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Αναζήτηση θέσεων από τη γραμμή εντολών}{43}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{43}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{44}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Βιβλιοθήκη φίλτρων}{44}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Παραδείγματα}{44}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.4}Παραδείγματα}{45}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού}{46}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Προειδοποίηση Windows SmartScreen}{46}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Μπλοκάρισμα από το Windows Defender}{47}{subsection.2.10.2}%

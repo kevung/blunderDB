@@ -20,6 +20,7 @@ Opérations globales
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
    "tutorial, tour", "Ouvre le catalogue des visites guidées de l'interface."
+   "demo", "Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir l'outil."
    "meta", "Affiche les métadonnées de la base de données."
    "epc", "Ouvre le panneau EPC (Effective Pip Count)."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."

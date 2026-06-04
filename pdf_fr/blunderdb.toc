@@ -65,28 +65,28 @@
 \contentsline {section}{\numberline {2.4}Liste des commandes}{22}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Opérations globales}{22}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Positions et navigation}{22}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Édition et recherche}{22}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Édition et recherche}{23}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Filtres de recherche}{23}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Commandes diverses}{26}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Raccourcis clavier}{26}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Base de données}{26}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Position}{26}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{27}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigation}{27}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Affichage}{27}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Actions}{27}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Outils}{27}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Ligne de commande}{27}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.6}Outils}{28}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Ligne de commande}{28}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Panneau historique de recherche}{28}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Panneau bibliothèque de filtres}{28}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Panneau d’analyse}{28}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}Panneau des matchs}{28}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.10}Panneau d’analyse}{29}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}Panneau des matchs}{29}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Panneau Anki (répétition espacée)}{29}{subsection.2.5.12}%
 \contentsline {section}{\numberline {2.6}Interface en ligne de commande (CLI)}{29}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Introduction}{29}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Syntaxe générale}{29}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.2}Syntaxe générale}{30}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Commandes disponibles}{30}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Créer une base de données}{30}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Importer des données}{30}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.5}import — Importer des données}{31}{subsection.2.6.5}%
 \contentsline {subsubsection}{Import d’un match}{31}{subsubsection*.23}%
 \contentsline {subsubsection}{Import de positions}{31}{subsubsection*.24}%
 \contentsline {subsubsection}{Import par lot}{31}{subsubsection*.25}%
@@ -98,8 +98,8 @@
 \contentsline {subsection}{\numberline {2.6.11}edit — Modifier les métadonnées}{34}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Vérifier l’intégrité}{35}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Supprimer des données}{35}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Exemples de flux de travail}{35}{subsection.2.6.14}%
-\contentsline {subsubsection}{Import d’un répertoire de tournoi}{35}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.6.14}Exemples de flux de travail}{36}{subsection.2.6.14}%
+\contentsline {subsubsection}{Import d’un répertoire de tournoi}{36}{subsubsection*.26}%
 \contentsline {subsubsection}{Sauvegarde régulière}{36}{subsubsection*.27}%
 \contentsline {subsubsection}{Analyse des erreurs}{36}{subsubsection*.28}%
 \contentsline {subsection}{\numberline {2.6.15}Codes de retour}{36}{subsection.2.6.15}%
