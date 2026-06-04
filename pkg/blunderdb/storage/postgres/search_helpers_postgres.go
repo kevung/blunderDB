@@ -408,9 +408,7 @@ func parseSearchTextKeywords(searchText string) []string {
 func isPlayer1TakePassCubeAction(ctx context.Context, db execer, p *domain.Position) bool {
 	_, player1CubeActions := getPlayer1MovesForPosition(ctx, db, p.ID)
 	for _, action := range player1CubeActions {
-		actionLower := strings.ToLower(action)
-		if strings.Contains(actionLower, "take") || actionLower == "dt" ||
-			strings.Contains(actionLower, "pass") || strings.Contains(actionLower, "drop") || actionLower == "dp" {
+		if engine.IsResponseCubeAction(action) {
 			return true
 		}
 	}

@@ -487,9 +487,7 @@ func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []str
 func IsPlayer1TakePassCubeAction(p *Position, d *Database) bool {
 	_, player1CubeActions := d.getPlayer1MovesForPosition(p.ID)
 	for _, action := range player1CubeActions {
-		actionLower := strings.ToLower(action)
-		if strings.Contains(actionLower, "take") || actionLower == "dt" ||
-			strings.Contains(actionLower, "pass") || strings.Contains(actionLower, "drop") || actionLower == "dp" {
+		if engine.IsResponseCubeAction(action) {
 			return true
 		}
 	}

@@ -2,7 +2,8 @@
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
-    import { selectedMoveStore } from '../stores/analysisStore'; // Import selectedMoveStore
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
+    import { isResponseCubeAction } from '../utils/cubeAction.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -64,6 +65,7 @@
     let height;
     let unsubscribe;
     let unsubscribeSelectedMove;
+    let unsubscribeAnalysis;
     let _isMouseDown = false;
     let startMousePos = null;
     // Manual double-click tracking for the Except "must be empty" marker. Native
@@ -901,6 +903,12 @@
             if (two && canvas) drawBoard();
         });
 
+        // Redraw when analysis loads/changes so the offered cube (take/pass
+        // decisions) appears for the displayed position outside match mode.
+        unsubscribeAnalysis = analysisStore.subscribe(() => {
+            if (two && canvas) drawBoard();
+        });
+
         logCanvasSize();
         window.addEventListener('resize', logCanvasSize);
     });
@@ -920,6 +928,7 @@
         window.removeEventListener('keydown', handleKeyDown);
         if (unsubscribe) unsubscribe();
         if (unsubscribeSelectedMove) unsubscribeSelectedMove();
+        if (unsubscribeAnalysis) unsubscribeAnalysis();
     });
 
     // Helper function to get the position to display
@@ -1019,6 +1028,23 @@
         // Get the position to display (may be mirrored in match mode)
         const position = getDisplayPosition();
         logger.log('drawBoard - decision_type: ', position.decision_type); // Debug log
+
+        // A take/pass (response) decision: the cube has been offered to the
+        // player on roll. We render the offered cube in the middle of the board
+        // (standard convention) rather than at its owner spot. The signal is the
+        // played cube action — in match mode the current move's action, otherwise
+        // the analysis' recorded played actions.
+        const isCubeResponse = (() => {
+            if (position.decision_type !== 1) return false;
+            const matchCtx = get(matchContextStore);
+            if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+                const mp = matchCtx.movePositions[matchCtx.currentIndex];
+                return !!mp && isResponseCubeAction(mp.cube_action);
+            }
+            const ana = get(analysisStore);
+            const acts = (ana && ana.playedCubeActions) || [];
+            return acts.some(isResponseCubeAction);
+        })();
 
         function createTriangle(x, y, flip) {
             if (flip == false) {
@@ -1306,7 +1332,16 @@
             const doublingCubeSize = 0.9 * boardCheckerSize; // Reduce the size of the doubling cube
             const gap = 0.75 * boardCheckerSize;
 
-            if (position.cube.owner === -1) {
+            if (isCubeResponse) {
+                // Cube offered (take/pass decision): placed by the opponent in the
+                // middle of the left half of the board, between the triangles. The
+                // board is 13 checkers wide (6 + bar + 6), so the left pan spans
+                // [-6.5, -0.5] checkers from centre and its midpoint is -3.5. Kept
+                // on the left — the same side the cube normally sits — so it never
+                // clashes with the bear-off (checker-off) indication on the right.
+                cubePosition.x = boardOrigXpos - 3.5 * boardCheckerSize;
+                cubePosition.y = boardOrigYpos;
+            } else if (position.cube.owner === -1) {
                 cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
                 cubePosition.y = boardOrigYpos;
             } else if (position.cube.owner === 0) {
