@@ -61,16 +61,9 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	}
 
 	s := &Storage{binder: binder{db: pool}, pool: pool}
-	fresh, err := s.isFreshDB(ctx)
-	if err != nil {
+	if err := s.Migrate(ctx); err != nil {
 		pool.Close()
 		return nil, err
-	}
-	if fresh {
-		if err := bootstrap(ctx, pool); err != nil {
-			pool.Close()
-			return nil, err
-		}
 	}
 	return s, nil
 }
@@ -119,18 +112,21 @@ func (s *Storage) Version(ctx context.Context) (string, error) {
 }
 
 // Migrate brings the database up to the current schema version. A fresh
-// database is bootstrapped to the v2.7.0 schema. PostgreSQL tracks its own
-// forward migration chain and does not replay the historical SQLite chain
-// (see migrations/README.md).
+// database is bootstrapped to the v2.7.0 baseline; then any forward migrations
+// (002+) not yet recorded in schema_migrations are applied. PostgreSQL tracks
+// its own forward migration chain and does not replay the historical SQLite
+// chain (see migrations/README.md).
 func (s *Storage) Migrate(ctx context.Context) error {
 	fresh, err := s.isFreshDB(ctx)
 	if err != nil {
 		return err
 	}
 	if fresh {
-		return bootstrap(ctx, s.pool)
+		if err := bootstrap(ctx, s.pool); err != nil {
+			return err
+		}
 	}
-	return nil
+	return migrateForward(ctx, s.pool)
 }
 
 // isFreshDB reports whether the database has no schema yet (no metadata
