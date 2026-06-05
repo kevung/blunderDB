@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:39+0200\n"
+"POT-Creation-Date: 2026-06-05 04:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -517,6 +517,7 @@ msgid "20/04/2026"
 msgstr "20 de abril de 2026"
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -691,15 +692,40 @@ msgstr ""
 "no hay ninguna base abierta y el panel Comentarios ya no entra en bucle "
 "al abrirlo. Véase :ref:`headless`."
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:1
+msgid "0.23.0"
+msgstr "0.23.0"
+
+#: ../../source/index.rst:1
+msgid "05/06/2026"
+msgstr "5 de junio de 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
+" tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
+"et d'une base d'exemple chargeable par la commande ``demo`` pour "
+"découvrir l'outil sans importer ses propres parties. Personnalisation des"
+" couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis "
+"la fenêtre de configuration. Autocomplétion de la ligne de commande "
+"(touche *TAB*). Panneau de recherche : contrôle explicite du type de "
+"décision (Pions / Videau), avec un sous-type Double / Pas de double ou "
+"Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; "
+"le videau proposé est affiché au centre du plateau pour les décisions de "
+"prise/passe. Recherche d'une position par son identifiant (filtre "
+"``id``). Correction de l'attribution de l'erreur de videau au joueur 1. "
+"Voir :ref:`visites_guidees`."
+msgstr "Adición de visitas guiadas de la interfaz (visita general, búsqueda, partidas, torneos), repetibles desde la barra de herramientas o con el comando ``tour``, y de una base de ejemplo cargable con el comando ``demo`` para descubrir la herramienta sin importar las partidas propias. Personalización de los colores del tablero (fondo, borde, puntas, fichas, dados, cubo) desde la ventana de configuración. Autocompletado de la línea de comandos (tecla *TAB*). Panel de búsqueda: control explícito del tipo de decisión (Fichas / Cubo), con un subtipo Doblar / No doblar o Aceptar / Pasar para las decisiones de cubo, sincronizado con el tablero; el cubo propuesto se muestra en el centro del tablero para las decisiones de aceptar/pasar. Búsqueda de una posición por su identificador (filtro ``id``). Corrección de la atribución del error de cubo al jugador 1. Ver :ref:`visites_guidees`."
+
+#: ../../source/index.rst:149
 msgid "Sommaire"
 msgstr "Índice"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:182
 msgid "Contacts"
 msgstr "Contacto"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:184
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -707,7 +733,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. También puede encontrarme en "
 "Heroes con el seudónimo postmanpat."
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -723,31 +749,31 @@ msgstr ""
 "escribirme para compartir su experiencia. Todos los comentarios "
 "(constructivos) son bienvenidos."
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:194
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Aquí tiene varias maneras de ponerse en contacto:"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "unirse al servidor de Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "escribirme un correo a blunderdb@proton.me,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "hablar conmigo, si coincidimos en un torneo,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "sur Github,"
 msgstr "en Github,"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "abrir un ticket: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -755,11 +781,11 @@ msgstr ""
 "para correcciones de errores o propuestas de mejora, crear una pull "
 "request."
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "Faire un don"
 msgstr "Hacer una donación"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -767,19 +793,19 @@ msgstr ""
 "Si le gusta blunderDB y desea apoyar los desarrollos pasados y futuros, "
 "puede"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "¡invitarme a una copa si tenemos el placer de encontrarnos!"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "hacer una pequeña donación por PayPal a la dirección blunderdb@proton.me"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Remerciements"
 msgstr "Agradecimientos"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -788,7 +814,7 @@ msgstr ""
 "querida hija Perrine. Quiero dar las gracias muy especialmente a algunos "
 "amigos:"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -800,7 +826,7 @@ msgstr ""
 " juego; por seguir animándome a pesar de mis pobres intentos de jugar "
 "mejor."
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -809,4 +835,3 @@ msgstr ""
 "*Nicolas Harmand*, alegre compañero desde hace ya más de una década en "
 "grandes aventuras, y un fantástico compañero de juego desde que pilló el "
 "virus del backgammon."
-

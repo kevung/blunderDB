@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:39+0200\n"
+"POT-Creation-Date: 2026-06-05 04:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -520,6 +520,7 @@ msgid "20/04/2026"
 msgstr "20 aprile 2026"
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -654,8 +655,7 @@ msgstr ""
 "giapponese, greco o russo. Aggiunta di una finestra di configurazione, "
 "accessibile tramite un pulsante a forma di ingranaggio nella barra degli "
 "strumenti, che permette di selezionare la lingua. La scelta della lingua "
-"viene conservata da una sessione all'altra. Vedi "
-":ref:`configuration`."
+"viene conservata da una sessione all'altra. Vedi :ref:`configuration`."
 
 #: ../../source/index.rst:1
 msgid "0.22.0"
@@ -691,15 +691,40 @@ msgstr ""
 "causano più errori quando nessun database è aperto e il pannello Commenti"
 " non entra più in loop all'apertura. Vedi :ref:`headless`."
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:1
+msgid "0.23.0"
+msgstr "0.23.0"
+
+#: ../../source/index.rst:1
+msgid "05/06/2026"
+msgstr "5 giugno 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
+" tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
+"et d'une base d'exemple chargeable par la commande ``demo`` pour "
+"découvrir l'outil sans importer ses propres parties. Personnalisation des"
+" couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis "
+"la fenêtre de configuration. Autocomplétion de la ligne de commande "
+"(touche *TAB*). Panneau de recherche : contrôle explicite du type de "
+"décision (Pions / Videau), avec un sous-type Double / Pas de double ou "
+"Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; "
+"le videau proposé est affiché au centre du plateau pour les décisions de "
+"prise/passe. Recherche d'une position par son identifiant (filtre "
+"``id``). Correction de l'attribution de l'erreur de videau au joueur 1. "
+"Voir :ref:`visites_guidees`."
+msgstr "Aggiunta di visite guidate dell'interfaccia (visita generale, ricerca, partite, tornei), ripetibili dalla barra degli strumenti o con il comando ``tour``, e di un database di esempio caricabile con il comando ``demo`` per scoprire lo strumento senza importare le proprie partite. Personalizzazione dei colori del board (sfondo, bordo, punte, pedine, dadi, cubo) dalla finestra delle impostazioni. Autocompletamento della riga di comando (tasto *TAB*). Pannello di ricerca: controllo esplicito del tipo di decisione (Pedine / Cubo), con un sotto-tipo Raddoppio / No raddoppio o Accetta / Passa per le decisioni di cubo, sincronizzato con il board; il cubo proposto è mostrato al centro del board per le decisioni di prendi/passa. Ricerca di una posizione tramite il suo identificativo (filtro ``id``). Correzione dell'attribuzione dell'errore di cubo al giocatore 1. Vedi :ref:`visites_guidees`."
+
+#: ../../source/index.rst:149
 msgid "Sommaire"
 msgstr "Indice"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:182
 msgid "Contacts"
 msgstr "Contatti"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:184
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -707,7 +732,7 @@ msgstr ""
 "Autore: Kévin Unger <blunderdb@proton.me>. Puoi anche trovarmi su Heroes "
 "con il nickname postmanpat."
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -723,31 +748,31 @@ msgstr ""
 "per condividere la tua esperienza. Tutti i riscontri (costruttivi) sono "
 "benvenuti."
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:194
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Ecco diversi modi per discutere:"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "unirsi al server Discord di blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "scrivermi una mail a blunderdb@proton.me,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "parlare con me, se ci incontriamo a un torneo,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "sur Github,"
 msgstr "su Github,"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "aprire un ticket: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -755,31 +780,31 @@ msgstr ""
 "per correzioni di bug o proposte di miglioramento, creare una pull "
 "request."
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "Faire un don"
 msgstr "Fare una donazione"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "Se apprezzi blunderDB e vuoi sostenere gli sviluppi passati e futuri, puoi"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "offrirmi da bere se abbiamo il piacere di incontrarci!"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 "fare una piccola donazione tramite PayPal all'indirizzo "
 "blunderdb@proton.me"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Remerciements"
 msgstr "Ringraziamenti"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -788,7 +813,7 @@ msgstr ""
 "nostra cara figlia Perrine. Desidero ringraziare in modo particolare "
 "alcuni amici:"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -800,7 +825,7 @@ msgstr ""
 "meraviglioso gioco; per continuare a incoraggiarmi nonostante i miei "
 "modesti tentativi di giocare meglio."
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -809,4 +834,3 @@ msgstr ""
 "*Nicolas Harmand*, allegro compagno ormai da più di una decina d'anni in "
 "belle avventure, e un fantastico compagno di gioco da quando ha preso il "
 "virus del backgammon."
-

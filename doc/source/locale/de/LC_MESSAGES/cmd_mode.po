@@ -6,24 +6,34 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-05 04:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: de <LL@li.org>\n"
 "Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
 msgid "Liste des commandes"
 msgstr "Liste der Befehle"
 
-#: ../../source/cmd_mode.rst:9
+#: ../../source/cmd_mode.rst:6
+msgid ""
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
+"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
+"parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
+"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
+msgstr "Die Kommandozeile in der Statusleiste öffnet sich durch Drücken der *LEERTASTE*. Während der Eingabe eines Befehls erscheint automatisch eine Liste mit Vorschlägen: Die *TAB*-Taste (oder *UMSCHALT-TAB*) durchläuft die Vorschläge und vervollständigt den Befehl, während *ESC* die Liste schließt (ein zweites *ESC* schließt die Kommandozeile). Die Tasten *AUF* und *AB* bleiben dem Befehlsverlauf vorbehalten."
+
+#: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
 msgstr "Globale Operationen"
 
@@ -84,6 +94,24 @@ msgid "Ouvre l'aide de blunderDB."
 msgstr "Öffnet die Hilfe von blunderDB."
 
 #: ../../source/cmd_mode.rst:1
+msgid "tutorial, tour"
+msgstr "tutorial, tour"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre le catalogue des visites guidées de l'interface."
+msgstr "Öffnet den Katalog der geführten Touren durch die Oberfläche."
+
+#: ../../source/cmd_mode.rst:1
+msgid "demo"
+msgstr "demo"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
+"l'outil."
+msgstr "Lädt eine Beispieldatenbank (Matches, Turnier, Analysen), um das Werkzeug zu erkunden."
+
+#: ../../source/cmd_mode.rst:1
 msgid "meta"
 msgstr "meta"
 
@@ -120,8 +148,7 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
 msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 2 für lange Rennen."
 
 #: ../../source/cmd_mode.rst:1
@@ -145,8 +172,7 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
 msgstr "Öffnet die Takepoint-Tabelle bei Dopplerstand 4 für lange Rennen."
 
 #: ../../source/cmd_mode.rst:1
@@ -181,7 +207,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 4."
 
-#: ../../source/cmd_mode.rst:38
+#: ../../source/cmd_mode.rst:47
 msgid "Positions et navigation"
 msgstr "Positionen und Navigation"
 
@@ -191,11 +217,11 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
+" txt, bgf)."
 msgstr ""
-"Importiert eine oder mehrere Positionen/Matches aus einer Datei (xg, xgp, "
-"sgf, mat, txt, bgf)."
+"Importiert eine oder mehrere Positionen/Matches aus einer Datei (xg, xgp,"
+" sgf, mat, txt, bgf)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -285,7 +311,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:62
+#: ../../source/cmd_mode.rst:71
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -321,74 +347,78 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Sucht unter den aktuell gefilterten Positionen."
 
-#: ../../source/cmd_mode.rst:79
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:81
+#: ../../source/cmd_mode.rst:90
 msgid ""
-"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-"
-"à-dire après le début de commande ``s``."
+"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
+"c'est-à-dire après le début de commande ``s``."
 msgstr ""
-"Die folgenden Filter müssen bei einer Suche aneinandergereiht werden, das "
-"heißt nach dem Befehlsbeginn ``s``."
+"Die folgenden Filter müssen bei einer Suche aneinandergereiht werden, das"
+" heißt nach dem Befehlsbeginn ``s``."
 
-#: ../../source/cmd_mode.rst:86
+#: ../../source/cmd_mode.rst:95
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
-"structure de pions courante, ignore la position du videau, du score et des "
-"dés. Pour prendre en compte la position du videau, du score, des dés, il "
-"faut le mentionner explicitement dans la recherche."
+"structure de pions courante, ignore la position du videau, du score et "
+"des dés. Pour prendre en compte la position du videau, du score, des dés,"
+" il faut le mentionner explicitement dans la recherche."
 msgstr ""
-"Bei der Positionssuche berücksichtigt blunderDB standardmäßig die aktuelle "
-"Steinstruktur und ignoriert die Stellung des Dopplers, den Spielstand und "
-"die Würfel. Um die Stellung des Dopplers, den Spielstand und die Würfel zu "
-"berücksichtigen, muss dies in der Suche ausdrücklich angegeben werden."
+"Bei der Positionssuche berücksichtigt blunderDB standardmäßig die "
+"aktuelle Steinstruktur und ignoriert die Stellung des Dopplers, den "
+"Spielstand und die Würfel. Um die Stellung des Dopplers, den Spielstand "
+"und die Würfel zu berücksichtigen, muss dies in der Suche ausdrücklich "
+"angegeben werden."
 
-#: ../../source/cmd_mode.rst:92
+#: ../../source/cmd_mode.rst:101
 msgid ""
-"La commande de recherche ``s`` est disponible dans le panneau de recherche "
-"(touche ``TAB``). La commande ``ss`` permet de chercher parmi les résultats "
-"actuellement filtrés."
+"La commande de recherche ``s`` est disponible dans le panneau de "
+"recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
+"les résultats actuellement filtrés."
 msgstr ""
 "Der Suchbefehl ``s`` ist im Suchpanel verfügbar (Taste ``TAB``). Mit dem "
-"Befehl ``ss`` kann unter den aktuell gefilterten Ergebnissen gesucht werden."
+"Befehl ``ss`` kann unter den aktuell gefilterten Ergebnissen gesucht "
+"werden."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:106
 msgid ""
-"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre"
-" le point 24 et le point 19."
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
+"entre le point 24 et le point 19."
 msgstr ""
 "blunderDB betrachtet einen rückständigen Stein (Backchecker) als einen "
 "Stein, der sich zwischen Punkt 24 und Punkt 19 befindet."
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:110
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
-"blunderDB betrachtet die Anzahl der Steine in der Zone als die Anzahl der "
-"Steine, die sich zwischen Punkt 12 und Punkt 1 befinden."
+"blunderDB betrachtet die Anzahl der Steine in der Zone als die Anzahl der"
+" Steine, die sich zwischen Punkt 12 und Punkt 1 befinden."
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:114
 msgid ""
-"blunderDB considère que l'outfield s'étend entre le point 18 et le point 7."
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point "
+"7."
 msgstr ""
 "blunderDB betrachtet das Outfield als den Bereich zwischen Punkt 18 und "
 "Punkt 7."
 
-#: ../../source/cmd_mode.rst:108
+#: ../../source/cmd_mode.rst:117
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr ""
-"blunderDB betrachtet das Heimfeld als den Bereich zwischen Punkt 1 und Punkt"
-" 6."
+"blunderDB betrachtet das Heimfeld als den Bereich zwischen Punkt 1 und "
+"Punkt 6."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
 msgstr ""
-"Die Parameter zum Filtern von Positionen können beliebig kombiniert werden."
+"Die Parameter zum Filtern von Positionen können beliebig kombiniert "
+"werden."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Requête"
@@ -423,8 +453,7 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr ""
 "Die Position erfüllt den Würfelwurf (beide Würfel, unabhängig von der "
 "Reihenfolge)."
@@ -435,8 +464,8 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
-" du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la "
+"valeur du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
 "Die Position erfüllt den Würfelwurf nur beim ersten Würfel (der Wert des "
 "ersten Würfels erscheint auf einem der beiden Würfel der Position)."
@@ -546,22 +575,20 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr ""
-"Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist größer "
-"als x."
+"Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist "
+"größer als x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr ""
-"Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist kleiner "
-"als x."
+"Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist "
+"kleiner als x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -569,8 +596,8 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
-"et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
+" x et y."
 msgstr ""
 "Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) liegt "
 "zwischen x und y."
@@ -990,8 +1017,8 @@ msgid ""
 "Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
 "Pass."
 msgstr ""
-"Die besten Doppler-Entscheidungen für No Double/Take, Double Take, Double "
-"Pass."
+"Die besten Doppler-Entscheidungen für No Double/Take, Double Take, Double"
+" Pass."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T>x"
@@ -1049,69 +1076,85 @@ msgstr "tnx,y"
 msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 msgstr "Sucht in den Turnieren mit den IDs von x bis y (z. B. tn1,3)."
 
-#: ../../source/cmd_mode.rst:199
+#: ../../source/cmd_mode.rst:1
+msgid "idx"
+msgstr "idx"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher la position d'identifiant x (ex: id12)."
+msgstr "Die Position mit der Kennung x suchen (z. B. id12)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "idx,y"
+msgstr "idx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
+msgstr "Die Positionen mit den Kennungen x bis y suchen (z. B. id5,10)."
+
+#: ../../source/cmd_mode.rst:210
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique *a"
-" fortiori* de filtrer les positions en fonction du type de décision (`d`). "
-"Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur du premier "
-"dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés"
-" du lancer)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
+" *a fortiori* de filtrer les positions en fonction du type de décision "
+"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
+"du premier dé est utilisée pour matcher les positions (sur l'un ou "
+"l'autre des deux dés du lancer)."
 msgstr ""
 "Das Filtern von Positionen nach dem Würfelwurf (`D` oder `D1`) bedeutet "
-"*erst recht*, die Positionen nach dem Entscheidungstyp (`d`) zu filtern. Der"
-" Filter `D1` ignoriert den Wert des zweiten Würfels: Nur der Wert des ersten"
-" Würfels wird verwendet, um Positionen zuzuordnen (auf einem der beiden "
-"Würfel des Wurfs)."
+"*erst recht*, die Positionen nach dem Entscheidungstyp (`d`) zu filtern. "
+"Der Filter `D1` ignoriert den Wert des zweiten Würfels: Nur der Wert des "
+"ersten Würfels wird verwendet, um Positionen zuzuordnen (auf einem der "
+"beiden Würfel des Wurfs)."
 
-#: ../../source/cmd_mode.rst:205
+#: ../../source/cmd_mode.rst:216
 msgid ""
-"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`), le"
-" joueur est en retard à la course par rapport à l'adversaire si `x>0` et en "
-"avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips d'avance à "
-"la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à la course."
+"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
+" le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
+"et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips "
+"d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de "
+"retard à la course."
 msgstr ""
-"Beim Filter für die relative Renndifferenz (`p>x`, `p<x`, `px,y`) liegt der "
-"Spieler im Rennen gegenüber dem Gegner zurück, wenn `x>0`, und in Führung, "
-"wenn `x<0`. Beispiel: `p<-10`: Der Spieler liegt im Rennen mindestens 10 "
-"Pips in Führung. `p50,70`: Der Spieler liegt im Rennen zwischen 50 und 70 "
-"Pips zurück."
+"Beim Filter für die relative Renndifferenz (`p>x`, `p<x`, `px,y`) liegt "
+"der Spieler im Rennen gegenüber dem Gegner zurück, wenn `x>0`, und in "
+"Führung, wenn `x<0`. Beispiel: `p<-10`: Der Spieler liegt im Rennen "
+"mindestens 10 Pips in Führung. `p50,70`: Der Spieler liegt im Rennen "
+"zwischen 50 und 70 Pips zurück."
 
-#: ../../source/cmd_mode.rst:211
+#: ../../source/cmd_mode.rst:222
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
-"même principe s'applique pour les tournois avec ``tn``."
-msgstr ""
-"Um in mehreren nicht zusammenhängenden Matches zu suchen, reihen Sie den "
-"Filter ``ma`` mehrfach aneinander (z. B. ``s ma23 ma43`` für die Matches 23 "
-"und 43). Das gleiche Prinzip gilt für Turniere mit ``tn``."
+"même principe s'applique pour les tournois avec ``tn`` et pour les "
+"positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
+msgstr "Um in mehreren nicht zusammenhängenden Matches zu suchen, wird der Filter ``ma`` mehrfach aneinandergereiht (z. B. ``s ma23 ma43`` für die Matches 23 und 43). Dasselbe Prinzip gilt für Turniere mit ``tn`` und für Positionen mit ``id`` (z. B. ``s id5 id10`` für die Positionen 5 und 10)."
 
-#: ../../source/cmd_mode.rst:215
+#: ../../source/cmd_mode.rst:227
 msgid ""
-"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble des"
-" matchs du tournoi concerné. Les identifiants des matchs et des tournois "
-"sont visibles dans les colonnes ID des panneaux correspondants."
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
+"des matchs du tournoi concerné. Les identifiants des matchs et des "
+"tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
-"Eine Suche in einem Turnier (``tn``) entspricht einer Suche in allen Matches"
-" des betreffenden Turniers. Die IDs der Matches und Turniere sind in den ID-"
-"Spalten der entsprechenden Panels sichtbar."
+"Eine Suche in einem Turnier (``tn``) entspricht einer Suche in allen "
+"Matches des betreffenden Turniers. Die IDs der Matches und Turniere sind "
+"in den ID-Spalten der entsprechenden Panels sichtbar."
 
-#: ../../source/cmd_mode.rst:219
+#: ../../source/cmd_mode.rst:231
+#, python-format
 msgid ""
-"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les "
-"positions en prenant en compte la structure des pions, le score et le cube "
-"de la position éditée où le joueur a entre 20 et 5 pips d'avance à la "
-"course, avec au moins 60% de chances de gain, au moins 10 pions dans la "
-"zone, et l'adversaire a entre 2 et 3 pions arriérés."
+"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
+"les positions en prenant en compte la structure des pions, le score et le"
+" cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
+"la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
+"la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 "Zum Beispiel filtert der Befehl ``s s c p-20,-5 w>60 z>10 K2,3`` alle "
-"Positionen unter Berücksichtigung der Steinstruktur, des Spielstands und des"
-" Dopplers der bearbeiteten Position, bei denen der Spieler im Rennen "
+"Positionen unter Berücksichtigung der Steinstruktur, des Spielstands und "
+"des Dopplers der bearbeiteten Position, bei denen der Spieler im Rennen "
 "zwischen 20 und 5 Pips in Führung liegt, mit mindestens 60 % der "
-"Gewinnchancen, mindestens 10 Steinen in der Zone, und der Gegner zwischen 2 "
-"und 3 rückständige Steine hat."
+"Gewinnchancen, mindestens 10 Steinen in der Zone, und der Gegner zwischen"
+" 2 und 3 rückständige Steine hat."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:241
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 
@@ -1123,10 +1166,10 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Löscht den Befehlsverlauf."
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:250
 msgid ""
-"Les migrations de base de données sont désormais effectuées automatiquement "
-"lors de l'ouverture d'une base de données."
+"Les migrations de base de données sont désormais effectuées "
+"automatiquement lors de l'ouverture d'une base de données."
 msgstr ""
-"Datenbankmigrationen werden jetzt beim Öffnen einer Datenbank automatisch "
-"durchgeführt."
+"Datenbankmigrationen werden jetzt beim Öffnen einer Datenbank automatisch"
+" durchgeführt."

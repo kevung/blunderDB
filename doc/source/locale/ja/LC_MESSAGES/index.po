@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:39+0200\n"
+"POT-Creation-Date: 2026-06-05 04:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -478,6 +478,7 @@ msgid "20/04/2026"
 msgstr "2026/04/20"
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -618,15 +619,40 @@ msgstr ""
 "``.db``）からの単一ポジションのインポートと、形式間での重複の補完。修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。:ref:`headless`"
 " を参照。"
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:1
+msgid "0.23.0"
+msgstr "0.23.0"
+
+#: ../../source/index.rst:1
+msgid "05/06/2026"
+msgstr "2026/06/05"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
+" tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
+"et d'une base d'exemple chargeable par la commande ``demo`` pour "
+"découvrir l'outil sans importer ses propres parties. Personnalisation des"
+" couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis "
+"la fenêtre de configuration. Autocomplétion de la ligne de commande "
+"(touche *TAB*). Panneau de recherche : contrôle explicite du type de "
+"décision (Pions / Videau), avec un sous-type Double / Pas de double ou "
+"Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; "
+"le videau proposé est affiché au centre du plateau pour les décisions de "
+"prise/passe. Recherche d'une position par son identifiant (filtre "
+"``id``). Correction de l'attribution de l'erreur de videau au joueur 1. "
+"Voir :ref:`visites_guidees`."
+msgstr "インターフェースのガイドツアー（全体ツアー、検索、マッチ、トーナメント）を追加しました。ツールバーまたはコマンド ``tour`` から再生でき、自分の対局をインポートせずにツールを試せるよう、コマンド ``demo`` で読み込めるサンプルデータベースも追加しました。設定ウィンドウから盤面の色（背景、枠線、ポイント、チェッカー、ダイス、キューブ）をカスタマイズできるようにしました。コマンドラインの自動補完（ *TAB* キー）を追加しました。検索パネル: 判断タイプ（チェッカー / キューブ）を明示的に制御できるようにし、キューブの判断にはダブル / ノーダブルまたはテイク / パスのサブタイプを設け、盤面と同期させました。テイク／パスの判断では、提示されたキューブが盤面の中央に表示されます。識別子によるポジションの検索（フィルタ ``id`` ）を追加しました。キューブエラーのプレイヤー1への帰属を修正しました。 :ref:`visites_guidees` を参照してください。"
+
+#: ../../source/index.rst:149
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:182
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:184
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -634,7 +660,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -644,59 +670,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:194
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -704,7 +730,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -714,7 +740,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -722,4 +748,3 @@ msgid ""
 msgstr ""
 "*Nicolas Harmand* "
 "には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。"
-

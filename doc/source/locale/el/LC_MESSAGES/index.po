@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:39+0200\n"
+"POT-Creation-Date: 2026-06-05 04:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -518,6 +518,7 @@ msgid "20/04/2026"
 msgstr "20 Απριλίου 2026"
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -689,15 +690,40 @@ msgstr ""
 "σφάλμα όταν δεν είναι ανοιχτή καμία βάση και ο πίνακας Σχόλια δεν "
 "δημιουργεί πλέον βρόχο κατά το άνοιγμα. Δείτε :ref:`headless`."
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:1
+msgid "0.23.0"
+msgstr "0.23.0"
+
+#: ../../source/index.rst:1
+msgid "05/06/2026"
+msgstr "5 Ιουνίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
+" tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
+"et d'une base d'exemple chargeable par la commande ``demo`` pour "
+"découvrir l'outil sans importer ses propres parties. Personnalisation des"
+" couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis "
+"la fenêtre de configuration. Autocomplétion de la ligne de commande "
+"(touche *TAB*). Panneau de recherche : contrôle explicite du type de "
+"décision (Pions / Videau), avec un sous-type Double / Pas de double ou "
+"Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; "
+"le videau proposé est affiché au centre du plateau pour les décisions de "
+"prise/passe. Recherche d'une position par son identifiant (filtre "
+"``id``). Correction de l'attribution de l'erreur de videau au joueur 1. "
+"Voir :ref:`visites_guidees`."
+msgstr "Προσθήκη ξεναγήσεων του περιβάλλοντος (γενική ξενάγηση, αναζήτηση, αγώνες, τουρνουά), επαναλήψιμων από τη γραμμή εργαλείων ή με την εντολή ``tour``, και μιας βάσης δείγματος που φορτώνεται με την εντολή ``demo`` για την εξερεύνηση του εργαλείου χωρίς εισαγωγή των δικών σας παρτίδων. Προσαρμογή των χρωμάτων του ταμπλό (φόντο, περίγραμμα, μύτες, πούλια, ζάρια, κύβος) από το παράθυρο ρυθμίσεων. Αυτόματη συμπλήρωση της γραμμής εντολών (πλήκτρο *TAB*). Πάνελ αναζήτησης: ρητός έλεγχος του τύπου απόφασης (Πιόνια / Κύβος), με υποτύπο Διπλασιασμός / Όχι ή Αποδοχή / Πάσο για τις αποφάσεις κύβου, συγχρονισμένος με το ταμπλό· ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό για τις αποφάσεις αποδοχής/πάσο. Αναζήτηση μιας θέσης με το αναγνωριστικό της (φίλτρο ``id``). Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1. Βλ. :ref:`visites_guidees`."
+
+#: ../../source/index.rst:149
 msgid "Sommaire"
 msgstr "Πίνακας περιεχομένων"
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:182
 msgid "Contacts"
 msgstr "Επικοινωνία"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:184
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -705,7 +731,7 @@ msgstr ""
 "Συγγραφέας: Kévin Unger <blunderdb@proton.me>. Μπορείτε επίσης να με "
 "βρείτε στο Heroes με το ψευδώνυμο postmanpat."
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -721,33 +747,33 @@ msgstr ""
 " να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι "
 "ευπρόσδεκτα."
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:194
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Ακολουθούν διάφοροι τρόποι για να επικοινωνήσετε:"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 "συμμετάσχετε στον διακομιστή Discord του blunderDB: "
 "https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "στείλτε μου email στο blunderdb@proton.me,"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "μιλήστε μαζί μου, αν συναντηθούμε σε κάποιο τουρνουά,"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "sur Github,"
 msgstr "στο Github,"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ανοίξτε ένα ζήτημα: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -755,11 +781,11 @@ msgstr ""
 "για διορθώσεις σφαλμάτων ή προτάσεις βελτίωσης, δημιουργήστε ένα pull "
 "request."
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "Faire un don"
 msgstr "Κάντε μια δωρεά"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -767,19 +793,19 @@ msgstr ""
 "Αν εκτιμάτε το blunderDB και θέλετε να στηρίξετε την παρελθούσα και "
 "μελλοντική ανάπτυξή του, μπορείτε"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "να με κεράσετε ένα ποτό αν έχουμε τη χαρά να συναντηθούμε!"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "να κάνετε μια μικρή δωρεά μέσω PayPal στη διεύθυνση blunderdb@proton.me"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Remerciements"
 msgstr "Ευχαριστίες"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -787,7 +813,7 @@ msgstr ""
 "Αφιερώνω αυτό το μικρό λογισμικό στη σύντροφό μου Anne-Claire και στη "
 "γλυκιά μας κόρη Perrine. Θέλω να ευχαριστήσω ιδιαίτερα μερικούς φίλους:"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -799,7 +825,7 @@ msgstr ""
 "παιχνιδιού· για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου "
 "προσπάθειες να παίξω καλύτερα."
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -808,4 +834,3 @@ msgstr ""
 "*Nicolas Harmand*, χαρούμενος σύντροφος εδώ και πάνω από μια δεκαετία σε "
 "υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον"
 " ιό του τάβλι."
-
