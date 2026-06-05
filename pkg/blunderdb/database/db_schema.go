@@ -292,6 +292,7 @@ func (d *Database) ensureAllTablesExist() error {
 		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
 		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
 		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+		`ALTER TABLE position ADD COLUMN is_cube_response INTEGER NOT NULL DEFAULT 0`,
 	}
 	for _, stmt := range newPositionCols {
 		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
@@ -316,6 +317,7 @@ func (d *Database) ensureAllTablesExist() error {
 	v2indexesSafe := []string{
 		`CREATE INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_cube_response  ON position(decision_type, is_cube_response)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,

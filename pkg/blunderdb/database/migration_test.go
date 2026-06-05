@@ -1631,3 +1631,117 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 		}
 	}
 }
+
+// TestMigrate_2_9_0_to_2_10_0_IsCubeResponse verifies the is_cube_response column
+// is added and backfilled from the move table: cube positions whose played cube
+// action is a take/pass response get 1, doubling decisions and checker positions
+// stay 0.
+func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "v290_is_cube_response.db")
+
+	rawDB, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+
+	_, err = rawDB.Exec(`
+		CREATE TABLE position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT,
+			decision_type INTEGER DEFAULT 0
+		);
+		CREATE TABLE analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER,
+			data BLOB
+		);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE filter_library (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, command TEXT, edit_position TEXT);
+		CREATE TABLE search_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, position TEXT, timestamp INTEGER);
+		CREATE TABLE match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT, player2_name TEXT,
+			match_length INTEGER, match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT, game_count INTEGER DEFAULT 0,
+			match_hash TEXT, tournament_id INTEGER,
+			last_visited_position INTEGER DEFAULT -1
+		);
+		CREATE TABLE game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER, game_number INTEGER,
+			initial_score_1 INTEGER, initial_score_2 INTEGER,
+			winner INTEGER, points_won INTEGER,
+			move_count INTEGER DEFAULT 0
+		);
+		CREATE TABLE move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER, move_number INTEGER,
+			move_type TEXT, position_id INTEGER,
+			player INTEGER, dice_1 INTEGER, dice_2 INTEGER,
+			checker_move TEXT, cube_action TEXT
+		);
+		CREATE TABLE move_analysis (id INTEGER PRIMARY KEY AUTOINCREMENT, move_id INTEGER, analysis_type TEXT);
+		CREATE TABLE collection (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE collection_position (id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL, position_id INTEGER NOT NULL, sort_order INTEGER DEFAULT 0, added_at DATETIME DEFAULT CURRENT_TIMESTAMP, UNIQUE(collection_id, position_id));
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '2.9.0');
+	`)
+	if err != nil {
+		t.Fatalf("setup schema: %v", err)
+	}
+
+	// id=1: cube, Take response → 1
+	// id=2: cube, Double (doubling decision) → 0
+	// id=3: cube, No Double → 0
+	// id=4: cube, Pass response → 1
+	// id=5: checker position → 0
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (5,'{}',0)`)
+	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,1,'cube',1,'Take')`)
+	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,2,'cube',2,'Double')`)
+	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,3,'cube',3,'No Double')`)
+	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,4,'cube',4,'Pass')`)
+	rawDB.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+
+	ver, _ := d.CheckDatabaseVersion()
+	if ver != DatabaseVersion {
+		t.Errorf("expected version %s, got %s", DatabaseVersion, ver)
+	}
+
+	var colExists int
+	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('position') WHERE name='is_cube_response'`).Scan(&colExists)
+	if colExists != 1 {
+		t.Fatalf("is_cube_response column not found after migration")
+	}
+
+	cases := []struct {
+		id       int
+		wantResp int
+		label    string
+	}{
+		{1, 1, "Take response"},
+		{2, 0, "Double decision"},
+		{3, 0, "No Double decision"},
+		{4, 1, "Pass response"},
+		{5, 0, "checker position"},
+	}
+	for _, tc := range cases {
+		var got int
+		d.db.QueryRow(`SELECT is_cube_response FROM position WHERE id = ?`, tc.id).Scan(&got)
+		if got != tc.wantResp {
+			t.Errorf("position id=%d (%s): is_cube_response=%d, want %d", tc.id, tc.label, got, tc.wantResp)
+		}
+	}
+}

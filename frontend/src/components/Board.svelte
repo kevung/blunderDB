@@ -8,7 +8,7 @@
     import Two from 'two.js';
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
-    import { searchStructureModeStore } from '../stores/searchExcludePositionStore';
+    import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
 
     // Sentinel colour stored on an exclude-structure point that must hold no checker.
@@ -66,6 +66,7 @@
     let unsubscribe;
     let unsubscribeSelectedMove;
     let unsubscribeAnalysis;
+    let unsubscribeOfferedCube;
     let _isMouseDown = false;
     let startMousePos = null;
     // Manual double-click tracking for the Except "must be empty" marker. Native
@@ -625,6 +626,18 @@
             mouseY <= cubePosition.y + cubePosition.size / 2
         ) {
             positionStore.update((pos) => {
+                // Take/pass search: the cube is an offered (centered) cube. Edit its
+                // value while keeping it centered (owner -1); an offered cube is at
+                // least a double, so value stays ≥ 1 (displayed ≥ 2).
+                if (get(searchOfferedCubeStore) && pos.decision_type === 1) {
+                    if (event.button === 0) {
+                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
+                    } else if (event.button === 2) {
+                        pos.cube.value = Math.max(pos.cube.value - 1, 1);
+                    }
+                    pos.cube.owner = -1;
+                    return pos;
+                }
                 if (pos.cube.owner === -1) {
                     pos.cube.value = Math.min(pos.cube.value + 1, 6);
                     pos.cube.owner = event.button === 0 ? 0 : 1;
@@ -909,6 +922,12 @@
             if (two && canvas) drawBoard();
         });
 
+        // Redraw when the take/pass "offered cube" mode toggles so the cube moves
+        // between its centered (offered) and owner positions immediately.
+        unsubscribeOfferedCube = searchOfferedCubeStore.subscribe(() => {
+            if (two && canvas) drawBoard();
+        });
+
         logCanvasSize();
         window.addEventListener('resize', logCanvasSize);
     });
@@ -929,6 +948,7 @@
         if (unsubscribe) unsubscribe();
         if (unsubscribeSelectedMove) unsubscribeSelectedMove();
         if (unsubscribeAnalysis) unsubscribeAnalysis();
+        if (unsubscribeOfferedCube) unsubscribeOfferedCube();
     });
 
     // Helper function to get the position to display
@@ -1036,6 +1056,10 @@
         // the analysis' recorded played actions.
         const isCubeResponse = (() => {
             if (position.decision_type !== 1) return false;
+            // While editing, the centered "offered cube" is shown only when the
+            // user is explicitly building a take/pass (response) search — never
+            // from stale analysis of a previously viewed position.
+            if (mode === 'EDIT') return get(searchOfferedCubeStore) === true;
             const matchCtx = get(matchContextStore);
             if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
                 const mp = matchCtx.movePositions[matchCtx.currentIndex];

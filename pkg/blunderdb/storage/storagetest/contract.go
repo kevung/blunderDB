@@ -54,6 +54,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Session/SaveLoadEmpty", testSessionSaveLoad},
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
+		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
@@ -468,6 +469,85 @@ func testSearchFilterByDecisionType(t *testing.T, s storage.Storage) {
 	}
 	if got[0].DecisionType != domain.CheckerAction {
 		t.Errorf("filtered position DecisionType: got %d, want %d", got[0].DecisionType, domain.CheckerAction)
+	}
+}
+
+func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	// Two distinct cube positions (distinct boards → distinct Zobrist hashes).
+	// The take position carries a centered offered cube (owner -1, value 1), as
+	// take/pass positions are always stored.
+	takePos := cubePos()
+	takePos.Cube = domain.Cube{Owner: -1, Value: 1}
+	doublePos := cubePos()
+	doublePos.Board.Points[5] = domain.Point{Checkers: 1, Color: domain.White}
+
+	takeID, err := s.Positions().Save(ctx, "", &takePos)
+	if err != nil {
+		t.Fatalf("Save take position: %v", err)
+	}
+	doubleID, err := s.Positions().Save(ctx, "", &doublePos)
+	if err != nil {
+		t.Fatalf("Save double position: %v", err)
+	}
+	if takeID == doubleID {
+		t.Fatalf("cube positions deduped to the same id")
+	}
+
+	// The take position records a take/pass response → is_cube_response = 1.
+	if err := s.Analyses().Save(ctx, "", takeID, &domain.PositionAnalysis{
+		PlayedCubeActions: []string{"Take"},
+	}); err != nil {
+		t.Fatalf("Save take analysis: %v", err)
+	}
+	// The double position records a doubling decision → stays is_cube_response = 0.
+	if err := s.Analyses().Save(ctx, "", doubleID, &domain.PositionAnalysis{
+		PlayedCubeActions: []string{"Double"},
+	}); err != nil {
+		t.Fatalf("Save double analysis: %v", err)
+	}
+
+	search := func(sub string) []int64 {
+		f := domain.SearchFilters{DecisionTypeFilter: true, CubeResponseFilter: sub}
+		f.Filter.DecisionType = domain.CubeAction
+		f.Filter.PlayerOnRoll = takePos.PlayerOnRoll
+		var ids []int64
+		for pos, err := range s.Search().Find(ctx, "", f) {
+			if err != nil {
+				t.Fatalf("Find(%q): %v", sub, err)
+			}
+			ids = append(ids, pos.ID)
+		}
+		return ids
+	}
+
+	if got := search("takepass"); len(got) != 1 || got[0] != takeID {
+		t.Errorf("takepass filter: got %v, want [%d]", got, takeID)
+	}
+	if got := search("double"); len(got) != 1 || got[0] != doubleID {
+		t.Errorf("double filter: got %v, want [%d]", got, doubleID)
+	}
+	if got := search(""); len(got) != 2 {
+		t.Errorf("all-cube filter: got %d positions, want 2", len(got))
+	}
+
+	// IncludeCube + take/pass must match the centered offered cube (owner -1) even
+	// though the board filter sends an owned cube — the board can't construct a
+	// centered value>1 cube.
+	fc := domain.SearchFilters{DecisionTypeFilter: true, CubeResponseFilter: "takepass", IncludeCube: true}
+	fc.Filter.DecisionType = domain.CubeAction
+	fc.Filter.PlayerOnRoll = takePos.PlayerOnRoll
+	fc.Filter.Cube = domain.Cube{Owner: 0, Value: 1} // owned on the board; forced to -1 for take/pass
+	var ids []int64
+	for pos, err := range s.Search().Find(ctx, "", fc) {
+		if err != nil {
+			t.Fatalf("Find(includeCube takepass): %v", err)
+		}
+		ids = append(ids, pos.ID)
+	}
+	if len(ids) != 1 || ids[0] != takeID {
+		t.Errorf("includeCube+takepass filter: got %v, want [%d]", ids, takeID)
 	}
 }
 

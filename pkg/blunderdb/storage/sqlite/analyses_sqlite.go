@@ -69,6 +69,18 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	if err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
 	}
+
+	// Flag the position as a take/pass cube response if any played cube action is
+	// a response (only ever set to 1; OR semantics for a deduped position).
+	for _, action := range a.PlayedCubeActions {
+		if engine.IsResponseCubeAction(action) {
+			if _, err := s.db.ExecContext(ctx,
+				`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
+				return fmt.Errorf("sqlite: flag cube response: %w", err)
+			}
+			break
+		}
+	}
 	return nil
 }
 

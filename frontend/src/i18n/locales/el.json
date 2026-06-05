@@ -224,6 +224,13 @@
         "searchTextHint": "Κείμενο αναζήτησης",
         "selectFilter": "Επιλέξτε ένα φίλτρο",
         "tournamentIdsHint": "ID τουρνουά",
+        "decision": {
+            "checker": "Πιόνια",
+            "cube": "Κύβος",
+            "cubeAll": "Όλα",
+            "cubeDouble": "Διπλασιασμός / Όχι",
+            "cubeTakePass": "Αποδοχή / Πάσο"
+        },
         "filters": {
             "includeCube": "Συμπερίληψη κύβου",
             "includeScore": "Συμπερίληψη σκορ",

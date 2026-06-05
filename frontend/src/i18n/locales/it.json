@@ -224,6 +224,13 @@
         "searchTextHint": "Testo da cercare",
         "selectFilter": "Seleziona un filtro",
         "tournamentIdsHint": "ID dei tornei",
+        "decision": {
+            "checker": "Pedine",
+            "cube": "Cubo",
+            "cubeAll": "Tutti",
+            "cubeDouble": "Raddoppio / No raddoppio",
+            "cubeTakePass": "Accetta / Passa"
+        },
         "filters": {
             "includeCube": "Includi cubo",
             "includeScore": "Includi punteggio",

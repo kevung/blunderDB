@@ -1071,6 +1071,127 @@ func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 	return nil
 }
 
+// migrate_2_9_0_to_2_10_0 adds the is_cube_response column to position and
+// backfills it: a cube position (decision_type = 1) is flagged 1 when any of its
+// recorded played cube actions is a take/pass response (engine.IsResponseCubeAction),
+// as opposed to a doubling decision (Double / No Double / Redouble). This lets the
+// search filter distinguish "double/no-double" from "take/pass" cube decisions.
+func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
+	if _, err := d.db.Exec(`ALTER TABLE position ADD COLUMN is_cube_response INTEGER NOT NULL DEFAULT 0`); err != nil {
+		if err.Error() != `duplicate column name: is_cube_response` {
+			return fmt.Errorf("migrate 2.10.0 add column: %w", err)
+		}
+	}
+
+	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_position_cube_response ON position(decision_type, is_cube_response)`); err != nil {
+		// On minimal legacy schemas decision_type may not exist yet; the v2
+		// column backfill (ensureAllTablesExist) re-creates this index afterwards.
+		slog.Debug("migrate 2.10.0 deferring cube_response index", "err", err)
+	}
+
+	// Backfill all cube positions (decision_type = 1) from the move table.
+	var total int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE decision_type = 1`).Scan(&total)
+
+	if total > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE position SET is_cube_response = 1 WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.10.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		// Look up the played cube actions for a position from the move table.
+		lookupActions, err := d.db.Prepare(`
+			SELECT COALESCE(cube_action, '')
+			FROM move
+			WHERE position_id = ? AND cube_action IS NOT NULL AND cube_action != ''`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.10.0 prepare action lookup: %w", err)
+		}
+		defer lookupActions.Close()
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return fmt.Errorf("migrate 2.10.0 begin tx: %w", err)
+		}
+
+		const batchSize = 1000
+		var lastID int64
+		done := 0
+
+		for {
+			if err := ctx.Err(); err != nil {
+				tx.Rollback()
+				return err
+			}
+
+			rows, err := d.db.Query(`
+				SELECT id FROM position
+				WHERE decision_type = 1 AND id > ?
+				ORDER BY id LIMIT ?`, lastID, batchSize)
+			if err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.10.0 query: %w", err)
+			}
+			var batch []int64
+			for rows.Next() {
+				var id int64
+				if err := rows.Scan(&id); err == nil {
+					batch = append(batch, id)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, id := range batch {
+				lastID = id
+
+				// A position is a response if ANY of its played cube actions is a
+				// take/pass (OR semantics across matches for a deduped position).
+				isResp := false
+				actRows, err := lookupActions.Query(id)
+				if err == nil {
+					for actRows.Next() {
+						var ca string
+						if err := actRows.Scan(&ca); err == nil && engine.IsResponseCubeAction(ca) {
+							isResp = true
+						}
+					}
+					actRows.Close()
+				}
+
+				if isResp {
+					if _, err := tx.Stmt(updateStmt).Exec(id); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.10.0 update: %w", err)
+					}
+				}
+				done++
+				if done%500 == 0 {
+					d.emitMigrationProgress("is_cube_response_backfill", done, total)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf("migrate 2.10.0 commit: %w", err)
+		}
+		d.emitMigrationProgress("is_cube_response_backfill", total, total)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.10.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.9.0", "to", "2.10.0")
+	return nil
+}
+
 // migrate_2_6_0_to_2_7_0 fixes Zobrist hashes that were computed with the wrong
 // cube-value convention. The ZobristHash function received Cube.Value as an EXPONENT
 // (0=cube@1, 1=cube@2, 2=cube@4, …) but passed it to cubeValueIndex() which expects
@@ -1700,6 +1821,16 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			return fmt.Errorf("migration 2.8.0→2.9.0 failed: %w", err)
 		}
 		dbVersion = "2.9.0"
+	}
+
+	// Auto-migrate from 2.9.0 to 2.10.0
+	// Adds is_cube_response column to position; backfills cube positions by
+	// detecting take/pass responses from the move table (engine.IsResponseCubeAction).
+	if dbVersion == "2.9.0" {
+		if err := d.migrate_2_9_0_to_2_10_0(ctx); err != nil {
+			return fmt.Errorf("migration 2.9.0→2.10.0 failed: %w", err)
+		}
+		dbVersion = "2.10.0"
 	}
 
 	// Ensure all required tables and columns exist.

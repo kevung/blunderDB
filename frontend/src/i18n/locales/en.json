@@ -224,10 +224,17 @@
         "searchTextHint": "Search text",
         "selectFilter": "Select a filter",
         "tournamentIdsHint": "Tournament IDs",
+        "decision": {
+            "checker": "Checker",
+            "cube": "Cube",
+            "cubeAll": "All",
+            "cubeDouble": "Double / No double",
+            "cubeTakePass": "Take / Pass"
+        },
         "filters": {
             "includeCube": "Include Cube",
             "includeScore": "Include Score",
-            "includeDecisionType": "Include Decision Type",
+            "includeDecisionType": "Decision Type",
             "includeDiceRoll": "Include Dice Roll",
             "noContact": "No Contact",
             "mirrorPosition": "Mirror Position",

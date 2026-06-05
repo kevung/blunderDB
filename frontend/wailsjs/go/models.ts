@@ -1108,6 +1108,7 @@ export namespace domain {
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
+	    cubeResponseFilter: string;
 	    diceRollFilter: boolean;
 	    diceRollMode: string;
 	    movePatternFilter: string;
@@ -1151,6 +1152,7 @@ export namespace domain {
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];
+	        this.cubeResponseFilter = source["cubeResponseFilter"];
 	        this.diceRollFilter = source["diceRollFilter"];
 	        this.diceRollMode = source["diceRollMode"];
 	        this.movePatternFilter = source["movePatternFilter"];

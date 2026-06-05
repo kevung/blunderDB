@@ -125,6 +125,15 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		if f.DecisionTypeFilter {
 			where.WriteString(" AND p.decision_type = ? AND p.player_on_roll = ?")
 			args = append(args, f.Filter.DecisionType, f.Filter.PlayerOnRoll)
+			// Cube sub-type: distinguish double/no-double from take/pass responses.
+			if f.Filter.DecisionType == domain.CubeAction {
+				switch f.CubeResponseFilter {
+				case "double":
+					where.WriteString(" AND p.is_cube_response = FALSE")
+				case "takepass":
+					where.WriteString(" AND p.is_cube_response = TRUE")
+				}
+			}
 		}
 		if f.DiceRollFilter {
 			if f.DiceRollMode == "first" {
@@ -144,6 +153,11 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		if f.IncludeCube {
 			if f.Filter.Cube.Value == 0 {
 				where.WriteString(" AND p.cube_value IS NULL")
+			} else if f.DecisionTypeFilter && f.CubeResponseFilter == "takepass" {
+				// A take/pass offered cube is always centered (owner -1); the board
+				// can't build a centered value>1 cube, so match the centered owner.
+				where.WriteString(" AND p.cube_value = ? AND p.cube_owner = -1")
+				args = append(args, f.Filter.Cube.Value)
 			} else {
 				where.WriteString(" AND p.cube_value = ? AND p.cube_owner = ?")
 				args = append(args, f.Filter.Cube.Value, f.Filter.Cube.Owner)
@@ -226,7 +240,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
-		p.has_jacoby, p.has_beaver,
+		p.has_jacoby, p.has_beaver, p.is_cube_response,
 		a.id, a.data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
@@ -245,12 +259,13 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		var posState string
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2 *int64
 		var pHJ, pHB *bool
+		var pICR *bool
 		var anaID *int64
 		var anaData []byte
 
 		if err := rows.Scan(
 			&posID, &posState,
-			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pICR,
 			&anaID, &anaData,
 		); err != nil {
 			return nil, fmt.Errorf("postgres: search scan: %w", err)
@@ -298,6 +313,17 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 				}
 				if f.DecisionTypeFilter && !pos.MatchesDecisionType(f.Filter) {
 					return false
+				}
+				// Cube sub-type (take/pass vs double/no-double) lives in the
+				// is_cube_response column, scanned separately above.
+				if f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
+					isResp := pICR != nil && *pICR
+					if f.CubeResponseFilter == "double" && isResp {
+						return false
+					}
+					if f.CubeResponseFilter == "takepass" && !isResp {
+						return false
+					}
 				}
 				if f.DiceRollFilter && !pos.MatchesDiceRollMode(f.Filter, f.DiceRollMode) {
 					return false

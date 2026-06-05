@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.9.0"
+	DatabaseVersion = "2.10.0"
 )
 
 // Anki deck source types
@@ -171,6 +171,7 @@ type SearchFilters struct {
 	Player1AbsolutePipCountFilter string   `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string   `json:"equityFilter"`
 	DecisionTypeFilter            bool     `json:"decisionTypeFilter"`
+	CubeResponseFilter            string   `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only, "takepass" = take/pass only
 	DiceRollFilter                bool     `json:"diceRollFilter"`
 	DiceRollMode                  string   `json:"diceRollMode"`
 	MovePatternFilter             string   `json:"movePatternFilter"`

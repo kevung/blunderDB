@@ -224,6 +224,13 @@
         "searchTextHint": "Texto de búsqueda",
         "selectFilter": "Selecciona un filtro",
         "tournamentIdsHint": "ID de torneos",
+        "decision": {
+            "checker": "Fichas",
+            "cube": "Cubo",
+            "cubeAll": "Todos",
+            "cubeDouble": "Doblar / No doblar",
+            "cubeTakePass": "Aceptar / Pasar"
+        },
         "filters": {
             "includeCube": "Incluir cubo",
             "includeScore": "Incluir marcador",

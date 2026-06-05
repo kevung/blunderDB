@@ -38,7 +38,8 @@ var schemaStatements = []string{
 		occupancy_2       INTEGER,
 		point_mask_1      INTEGER,
 		point_mask_2      INTEGER,
-		state             TEXT    NOT NULL
+		state             TEXT    NOT NULL,
+		is_cube_response  INTEGER NOT NULL DEFAULT 0
 	)`,
 	`CREATE TABLE IF NOT EXISTS analysis (
 		id                          INTEGER PRIMARY KEY,
@@ -215,6 +216,7 @@ var schemaStatements = []string{
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_cube_response  ON position(decision_type, is_cube_response)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,

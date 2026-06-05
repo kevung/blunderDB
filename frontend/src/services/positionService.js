@@ -401,6 +401,11 @@ export async function loadPositionsByFilters(
 
         const searchFilterPositionJSON = JSON.stringify(currentPosition);
 
+        // Cube sub-type (only meaningful when the decision-type filter is a cube
+        // decision): `dr` = take/pass responses, `dd` = double/no-double. Derived
+        // from the filter tokens so both the panel and the command line share it.
+        const cubeResponseFilter = Array.isArray(filters) ? (filters.includes('dr') ? 'takepass' : filters.includes('dd') ? 'double' : '') : '';
+
         const loadedPositions = await LoadPositionsByFilters({
             filter: currentPosition,
             excludeFilter: excludePosition,
@@ -423,6 +428,7 @@ export async function loadPositionsByFilters(
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,
+            cubeResponseFilter,
             diceRollFilter,
             diceRollMode,
             movePatternFilter,
