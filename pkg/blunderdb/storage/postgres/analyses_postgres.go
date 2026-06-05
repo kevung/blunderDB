@@ -72,6 +72,19 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	if err != nil {
 		return fmt.Errorf("postgres: save analysis: %w", err)
 	}
+
+	// Flag the position as a take/pass cube response if any played cube action is
+	// a response (only ever set to TRUE; OR semantics for a deduped position).
+	for _, action := range a.PlayedCubeActions {
+		if engine.IsResponseCubeAction(action) {
+			if _, err := s.db.Exec(ctx,
+				`UPDATE position SET is_cube_response = TRUE WHERE id = $1 AND tenant_id = $2`,
+				positionID, tenant); err != nil {
+				return fmt.Errorf("postgres: flag cube response: %w", err)
+			}
+			break
+		}
+	}
 	return nil
 }
 

@@ -1,10 +1,10 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
-    import { onMount, onDestroy, tick } from 'svelte';
+    import { onMount, onDestroy, tick, untrack } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
-    import { searchExcludePositionStore, searchStructureModeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
+    import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
@@ -127,6 +127,13 @@
     let player2JanBlotRangeMin = $state(0);
     let player2JanBlotRangeMax = $state(15);
     let diceRollOption = $state('both'); // 'both' | 'first'
+    // Decision-type filter (Display group). The "Include Decision Type" checkbox is
+    // the on/off ("Indifférent") gate; when on, decisionMode reflects the board
+    // (Pions = checker / Cube = cube decision) and cubeSubType refines a cube
+    // decision into all / double-no-double / take-pass.
+    let decisionMode = $state('checker'); // 'checker' | 'cube' — meaningful while the filter is enabled
+    let cubeSubType = $state('all'); // 'all' | 'double' | 'takepass'
+    let lastCheckerDice = $state([3, 1]); // remembers the roll when toggling Pions ⇄ Cube from the panel
     let creationDateOption = $state('min');
     let creationDateMin = $state('');
     let creationDateMax = $state('');
@@ -273,6 +280,92 @@
         if ($activeTabStore === 'search' && structureMode === 'include') {
             savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
         }
+    });
+
+    // Board → panel: editing the board (placing dice → checker, clicking a player
+    // rectangle → cube) drives the Pions/Cube choice. Only tracks the include board.
+    $effect(() => {
+        const dt = $positionStore?.decision_type === 1 ? 'cube' : 'checker';
+        if ($activeTabStore === 'search' && structureMode === 'include') {
+            untrack(() => {
+                if (decisionMode !== dt) decisionMode = dt;
+            });
+        }
+    });
+
+    // A cube decision has no dice, so the Dice Roll filter is meaningless when the
+    // decision-type filter constrains to a cube decision.
+    $effect(() => {
+        if (filterEnabled['Include Decision Type'] && decisionMode === 'cube') {
+            untrack(() => {
+                filterEnabled['Include Dice Roll'] = false;
+            });
+        }
+    });
+
+    // Panel → board: choosing Pions/Cube edits the include board (and remembers the
+    // last real roll so toggling back to Pions restores it).
+    function selectDecisionMode(mode) {
+        if (structureMode !== 'include') return;
+        positionStore.update((p) => {
+            if (mode === 'cube') {
+                if (p.decision_type !== 1) {
+                    if (Array.isArray(p.dice) && (p.dice[0] || p.dice[1])) {
+                        lastCheckerDice = [p.dice[0], p.dice[1]];
+                    }
+                    p.decision_type = 1;
+                    p.dice = [0, 0];
+                }
+            } else {
+                p.decision_type = 0;
+                if (!Array.isArray(p.dice) || (!p.dice[0] && !p.dice[1])) {
+                    p.dice = [lastCheckerDice[0], lastCheckerDice[1]];
+                }
+            }
+            return p;
+        });
+        decisionMode = mode;
+        if (mode === 'cube' && cubeSubType === 'takepass') applyOfferedCube();
+    }
+
+    // applyOfferedCube turns the board cube into a centered "offered" cube (owner
+    // -1), matching how take/pass positions are stored (the board can't otherwise
+    // build a centered value>1 cube). An offered cube is at least a double.
+    function applyOfferedCube() {
+        if (structureMode !== 'include') return;
+        positionStore.update((p) => {
+            p.decision_type = 1;
+            p.dice = [0, 0];
+            p.cube.owner = -1;
+            if (!p.cube.value || p.cube.value < 1) p.cube.value = 1;
+            return p;
+        });
+    }
+
+    // Panel → cube sub-type. Take/pass needs the board cube rendered/edited as a
+    // centered offered cube; double/all use the normal owner-based cube.
+    function selectCubeSubType(value) {
+        cubeSubType = value;
+        if (value === 'takepass') {
+            applyOfferedCube();
+        } else if (structureMode === 'include') {
+            // Leaving take/pass: reset the offered cube (centered, value > 1) back
+            // to the initial centered 1-cube. An owned cube set in double mode
+            // (owner 0/1) is preserved.
+            positionStore.update((p) => {
+                if (p.cube.owner === -1 && p.cube.value >= 1) {
+                    p.cube.value = 0;
+                }
+                return p;
+            });
+        }
+    }
+
+    // Drive the offered-cube flag the board reads: on only while building a
+    // take/pass query on the include board of the search tab.
+    $effect(() => {
+        const offered = $activeTabStore === 'search' && structureMode === 'include' && !!filterEnabled['Include Decision Type'] && decisionMode === 'cube' && cubeSubType === 'takepass';
+        untrack(() => searchOfferedCubeStore.set(offered));
     });
 
     // restoreExcludeStructure resets the structure editing state to 'include' and
@@ -481,6 +574,13 @@
             }
         });
 
+        // Cube sub-type: when the decision-type filter constrains to a cube
+        // decision, narrow to double/no-double (`dd`) or take/pass (`dr`). The `d`
+        // token already carries the cube decision_type read from the board.
+        if (filterEnabled['Include Decision Type'] && decisionMode === 'cube' && cubeSubType !== 'all') {
+            transformedFilters.push(cubeSubType === 'takepass' ? 'dr' : 'dd');
+        }
+
         const incCube = transformedFilters.includes('cube');
         const incScore = transformedFilters.includes('score');
         const ncFilter = transformedFilters.includes('nc');
@@ -683,6 +783,9 @@
         player2JanBlotRangeMin = 0;
         player2JanBlotRangeMax = 15;
         diceRollOption = 'both';
+        decisionMode = 'checker';
+        cubeSubType = 'all';
+        searchOfferedCubeStore.set(false);
         matchIDsInput = '';
         tournamentIDsInput = '';
         creationDateOption = 'min';
@@ -1043,6 +1146,7 @@
             player2JanBlotRangeMin,
             player2JanBlotRangeMax,
             diceRollOption,
+            cubeSubType,
             creationDateOption,
             creationDateMin,
             creationDateMax,
@@ -1180,6 +1284,7 @@
         player2JanBlotRangeMin = saved.player2JanBlotRangeMin;
         player2JanBlotRangeMax = saved.player2JanBlotRangeMax;
         if (saved.diceRollOption) diceRollOption = saved.diceRollOption;
+        if (saved.cubeSubType) cubeSubType = saved.cubeSubType;
         creationDateOption = saved.creationDateOption;
         creationDateMin = saved.creationDateMin;
         creationDateMax = saved.creationDateMax;
@@ -1197,6 +1302,8 @@
 
     onDestroy(() => {
         saveSearchState();
+        // Don't leak the offered-cube flag into normal position editing.
+        searchOfferedCubeStore.set(false);
         document.removeEventListener('keydown', handleKeyDown);
     });
 </script>
@@ -1239,12 +1346,57 @@
                             {#each group.filters as filter (filter)}
                                 <div class="filter-item" class:active={filterEnabled[filter]}>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" bind:checked={filterEnabled[filter]} />
-                                        <span class="filter-label">{filterLabel(filter)}</span>
+                                        <input
+                                            type="checkbox"
+                                            bind:checked={filterEnabled[filter]}
+                                            disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
+                                        />
+                                        <span class="filter-label" class:label-disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
+                                            >{filterLabel(filter)}</span
+                                        >
                                     </label>
                                     {#if filterEnabled[filter]}
                                         <div class="filter-params">
-                                            {#if filter === 'Include Dice Roll'}
+                                            {#if filter === 'Include Decision Type'}
+                                                <div class="decision-mode-controls">
+                                                    <div class="decision-segment">
+                                                        <button type="button" class="decision-btn" class:active={decisionMode === 'checker'} onclick={() => selectDecisionMode('checker')}
+                                                            >{$t('search.decision.checker')}</button
+                                                        >
+                                                        <button type="button" class="decision-btn" class:active={decisionMode === 'cube'} onclick={() => selectDecisionMode('cube')}
+                                                            >{$t('search.decision.cube')}</button
+                                                        >
+                                                    </div>
+                                                    {#if decisionMode === 'cube'}
+                                                        <div class="minmax-controls">
+                                                            <label
+                                                                ><input type="radio" name="cubeSubType" value="all" checked={cubeSubType === 'all'} onchange={() => selectCubeSubType('all')} />
+                                                                {$t('search.decision.cubeAll')}</label
+                                                            >
+                                                            <label
+                                                                ><input
+                                                                    type="radio"
+                                                                    name="cubeSubType"
+                                                                    value="double"
+                                                                    checked={cubeSubType === 'double'}
+                                                                    onchange={() => selectCubeSubType('double')}
+                                                                />
+                                                                {$t('search.decision.cubeDouble')}</label
+                                                            >
+                                                            <label
+                                                                ><input
+                                                                    type="radio"
+                                                                    name="cubeSubType"
+                                                                    value="takepass"
+                                                                    checked={cubeSubType === 'takepass'}
+                                                                    onchange={() => selectCubeSubType('takepass')}
+                                                                />
+                                                                {$t('search.decision.cubeTakePass')}</label
+                                                            >
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {:else if filter === 'Include Dice Roll'}
                                                 <div class="minmax-controls">
                                                     <label><input type="radio" bind:group={diceRollOption} value="both" /> {$t('search.bothDice')}</label>
                                                     <label><input type="radio" bind:group={diceRollOption} value="first" /> {$t('search.firstDieOnly')}</label>
@@ -2253,6 +2405,36 @@
     }
     .btn-clear:hover {
         background: #999;
+    }
+    .decision-mode-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .decision-segment {
+        display: flex;
+        gap: 4px;
+    }
+    .decision-btn {
+        font-size: 11px;
+        padding: 3px 10px;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #555;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .decision-btn:hover {
+        background: #f0f0f0;
+    }
+    .decision-btn.active {
+        color: #333;
+        font-weight: 600;
+        border-color: #555;
+        background: #fff;
+    }
+    .label-disabled {
+        opacity: 0.45;
     }
     .minmax-controls {
         display: flex;

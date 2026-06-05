@@ -45,12 +45,13 @@ func startPostgres(t *testing.T) string {
 	return dsn
 }
 
-// wantTables is the full v2.7.0 table set, sorted.
+// wantTables is the full table set, sorted (the v2.7.0 baseline plus the
+// schema_migrations bookkeeping table created by the forward-migration runner).
 var wantTables = []string{
 	"analysis", "anki_card", "anki_deck", "collection", "collection_position",
 	"command_history", "comment", "filter_library", "game", "match",
-	"metadata", "move", "move_analysis", "position", "search_history",
-	"tournament",
+	"metadata", "move", "move_analysis", "position", "schema_migrations",
+	"search_history", "tournament",
 }
 
 // wantIndexes is the full set of named idx_* indexes, sorted.
@@ -61,14 +62,15 @@ var wantIndexes = []string{
 	"idx_anki_card_deck", "idx_anki_card_due",
 	"idx_collection_position_collection", "idx_game_match", "idx_match_canonical",
 	"idx_match_hash", "idx_move_game", "idx_move_position",
+	"idx_position_cube_response",
 	"idx_position_decision_dice", "idx_position_decision_pip",
 	"idx_position_dice", "idx_position_off", "idx_position_pip_diff",
 	"idx_position_score", "idx_position_score_cube", "idx_position_zobrist",
 }
 
 // TestMigratePostgres opens a fresh database, runs Migrate, and confirms the
-// v2.7.0 schema landed: all 16 tables, every named index, the database_version
-// row, and a tenant_id column on every domain table.
+// schema landed: all 17 tables, every named index, the database_version row,
+// and a tenant_id column on every domain table.
 func TestMigratePostgres(t *testing.T) {
 	ctx := context.Background()
 	dsn := startPostgres(t)
@@ -109,9 +111,10 @@ func TestMigratePostgres(t *testing.T) {
 		t.Errorf("indexes:\n got  %v\n want %v", indexes, wantIndexes)
 	}
 
-	// Every domain table is multi-tenant; metadata is database-level.
+	// Every domain table is multi-tenant; metadata and schema_migrations are
+	// database-level infrastructure.
 	for _, tbl := range wantTables {
-		if tbl == "metadata" {
+		if tbl == "metadata" || tbl == "schema_migrations" {
 			continue
 		}
 		var n int

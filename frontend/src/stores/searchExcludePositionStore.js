@@ -27,6 +27,11 @@ export const searchExcludePositionStore = writable(emptySearchBoardPosition());
 // Read by the board container to show a red cue while editing the exclude structure.
 export const searchStructureModeStore = writable('include');
 
+// True while the Search panel is building a take/pass (cube response) query: the
+// board then renders and edits the cube as a centered "offered" cube (owner -1)
+// instead of an owned one, matching how take/pass positions are stored.
+export const searchOfferedCubeStore = writable(false);
+
 // boardHasCheckers reports whether a position/board template has any checker set.
 export function boardHasCheckers(position) {
     const points = position?.board?.points;

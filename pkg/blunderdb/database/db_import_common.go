@@ -453,6 +453,20 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		}
 	}
 
+	// Flag the position as a take/pass cube response if any recorded played cube
+	// action is a response (Take/Pass/Drop) rather than a doubling decision. This
+	// lets search distinguish "double/no-double" from "take/pass" cube decisions.
+	// OR semantics across matches for a deduped position: only ever set to 1,
+	// never reset to 0.
+	for _, action := range analysis.PlayedCubeActions {
+		if engine.IsResponseCubeAction(action) {
+			if _, err := tx.Exec(`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
+				return err
+			}
+			break
+		}
+	}
+
 	return nil
 }
 

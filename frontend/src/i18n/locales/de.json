@@ -224,6 +224,13 @@
         "searchTextHint": "Suchtext",
         "selectFilter": "Filter auswählen",
         "tournamentIdsHint": "Turnier-IDs",
+        "decision": {
+            "checker": "Zug",
+            "cube": "Dopplung",
+            "cubeAll": "Alle",
+            "cubeDouble": "Dopplung / Kein Doppel",
+            "cubeTakePass": "Annehmen / Aufgeben"
+        },
         "filters": {
             "includeCube": "Dopplerwürfel einbeziehen",
             "includeScore": "Spielstand einbeziehen",

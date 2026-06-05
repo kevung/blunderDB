@@ -7,8 +7,66 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	_ "modernc.org/sqlite"
 )
+
+// TestImport_PopulatesIsCubeResponse verifies that importing a real match sets
+// position.is_cube_response exactly for the cube positions whose played cube
+// action is a take/pass response (engine.IsResponseCubeAction).
+func TestImport_PopulatesIsCubeResponse(t *testing.T) {
+	db := newTestDB(t)
+
+	testFile := filepath.Join("testdata", "test.sgf")
+	if _, err := os.Stat(testFile); os.IsNotExist(err) {
+		t.Skip("test.sgf not found in testdata/")
+	}
+	if _, err := db.ImportGnuBGMatch(testFile); err != nil {
+		t.Fatalf("ImportGnuBGMatch: %v", err)
+	}
+
+	rows, err := db.db.Query(`
+		SELECT p.id, p.is_cube_response, COALESCE(m.cube_action, '')
+		FROM position p
+		LEFT JOIN move m ON m.position_id = p.id
+		WHERE p.decision_type = 1`)
+	if err != nil {
+		t.Fatalf("query cube positions: %v", err)
+	}
+	defer rows.Close()
+
+	stored := map[int64]bool{}   // position id → stored is_cube_response flag
+	expected := map[int64]bool{} // position id → any take/pass action seen
+	for rows.Next() {
+		var id int64
+		var flag int
+		var action string
+		if err := rows.Scan(&id, &flag, &action); err != nil {
+			t.Fatalf("scan: %v", err)
+		}
+		stored[id] = flag == 1
+		if engine.IsResponseCubeAction(action) {
+			expected[id] = true
+		}
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("rows: %v", err)
+	}
+
+	if len(stored) == 0 {
+		t.Skip("no cube positions in test.sgf")
+	}
+	responses := 0
+	for id := range stored {
+		if stored[id] != expected[id] {
+			t.Errorf("position %d: is_cube_response=%v, want %v", id, stored[id], expected[id])
+		}
+		if expected[id] {
+			responses++
+		}
+	}
+	t.Logf("cube positions=%d, take/pass responses=%d", len(stored), responses)
+}
 
 // testUnmarshalPositionState unmarshals a position state string that may be
 // either compact board encoding ([28]int array) or legacy full-JSON.

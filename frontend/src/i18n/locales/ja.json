@@ -224,6 +224,13 @@
         "searchTextHint": "検索テキスト",
         "selectFilter": "フィルターを選択",
         "tournamentIdsHint": "トーナメント ID",
+        "decision": {
+            "checker": "チェッカー",
+            "cube": "キューブ",
+            "cubeAll": "すべて",
+            "cubeDouble": "ダブル / ノーダブル",
+            "cubeTakePass": "テイク / パス"
+        },
         "filters": {
             "includeCube": "キューブを含める",
             "includeScore": "スコアを含める",

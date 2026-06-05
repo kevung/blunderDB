@@ -224,10 +224,17 @@
         "searchTextHint": "Texte de recherche",
         "selectFilter": "Sélectionner un filtre",
         "tournamentIdsHint": "ID de tournoi",
+        "decision": {
+            "checker": "Pions",
+            "cube": "Videau",
+            "cubeAll": "Tous",
+            "cubeDouble": "Double / Pas de double",
+            "cubeTakePass": "Prise / Passe"
+        },
         "filters": {
             "includeCube": "Inclure le videau",
             "includeScore": "Inclure le score",
-            "includeDecisionType": "Inclure le type de décision",
+            "includeDecisionType": "Type de décision",
             "includeDiceRoll": "Inclure le lancer de dés",
             "noContact": "Sans contact",
             "mirrorPosition": "Position miroir",

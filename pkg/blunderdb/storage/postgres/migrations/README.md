@@ -18,11 +18,22 @@ So PostgreSQL **starts fresh at the terminal SQLite schema, v2.7.0**:
 ## Forward chain
 
 New schema changes are added as `NNN_description.sql` files, applied in
-numeric order. `002_*.sql` is reserved for P4 (the `scope` column on
-`session` / per-session tables).
+numeric order by `migrateForward` (see `migrate_postgres.go`). On every `Open`
+/ `Migrate`, each file beyond the `001` baseline that is not yet recorded in the
+`schema_migrations` table is applied (simple-protocol batch) and recorded. Make
+every migration **idempotent** (`ADD COLUMN IF NOT EXISTS`,
+`CREATE INDEX IF NOT EXISTS`, set-based backfills) so that applying it to a
+freshly bootstrapped database — whose `001` baseline already contains the change
+— is a harmless no-op.
 
-When you add a migration, also bump `domain.DatabaseVersion` if the change is
-schema-visible, and extend the migration test.
+- `002_is_cube_response.sql` — `position.is_cube_response` column + index, with a
+  take/pass backfill from `move.cube_action` (mirrors
+  `engine.IsResponseCubeAction`).
+
+When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
+fresh databases get it directly), have the migration bump `database_version` in
+`metadata`, bump `domain.DatabaseVersion` if schema-visible, and extend the
+migration test.
 
 ## Multi-tenancy
 

@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS position (
     occupancy_2       BIGINT,
     point_mask_1      BIGINT,
     point_mask_2      BIGINT,
-    state             TEXT    NOT NULL
+    state             TEXT    NOT NULL,
+    is_cube_response  BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS analysis (
@@ -231,6 +232,7 @@ CREATE TABLE IF NOT EXISTS anki_card (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position (tenant_id, zobrist_hash);
 CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position (tenant_id, decision_type, pip_diff);
 CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position (tenant_id, decision_type, dice_1, dice_2);
+CREATE        INDEX IF NOT EXISTS idx_position_cube_response  ON position (tenant_id, decision_type) WHERE is_cube_response;
 CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position (tenant_id, pip_diff);
 CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position (tenant_id, dice_1, dice_2);
 CREATE        INDEX IF NOT EXISTS idx_position_off            ON position (tenant_id, off_1, off_2);

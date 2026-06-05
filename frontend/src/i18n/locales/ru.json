@@ -224,6 +224,13 @@
         "searchTextHint": "Текст поиска",
         "selectFilter": "Выберите фильтр",
         "tournamentIdsHint": "ID турниров",
+        "decision": {
+            "checker": "Шашки",
+            "cube": "Куб",
+            "cubeAll": "Все",
+            "cubeDouble": "Дабл / Без дабла",
+            "cubeTakePass": "Тейк / Пас"
+        },
         "filters": {
             "includeCube": "Включить куб",
             "includeScore": "Включить счёт",

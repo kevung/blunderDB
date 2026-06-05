@@ -224,6 +224,13 @@
         "searchTextHint": "Hakuteksti",
         "selectFilter": "Valitse suodatin",
         "tournamentIdsHint": "Turnaustunnukset",
+        "decision": {
+            "checker": "Siirto",
+            "cube": "Tuplaus",
+            "cubeAll": "Kaikki",
+            "cubeDouble": "Tuplaus / Ei tuplausta",
+            "cubeTakePass": "Hyväksy / Luovuta"
+        },
         "filters": {
             "includeCube": "Sisällytä tuplauskuutio",
             "includeScore": "Sisällytä pistetilanne",
