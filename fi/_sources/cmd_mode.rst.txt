@@ -3,6 +3,13 @@
 Liste des commandes
 ===================
 
+La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur la
+touche *ESPACE*. Lors de la saisie d'une commande, une liste de suggestions
+apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) parcourt les
+propositions et complète la commande, tandis que *ÉCHAP* referme la liste (un
+second *ÉCHAP* ferme la ligne de commande). Les touches *HAUT* et *BAS* restent
+réservées à l'historique des commandes.
+
 .. _cmd_global:
 
 Opérations globales

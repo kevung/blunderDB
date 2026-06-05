@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.0-u1.29-230214-2.6 (utf8.uptex) (TeX Live 2023/Debian) (preloaded format=uplatex 2026.6.5)  5 JUN 2026 01:25
+This is e-upTeX, Version 3.141592653-p4.1.0-u1.29-230214-2.6 (utf8.uptex) (TeX Live 2023/Debian) (preloaded format=uplatex 2026.6.5)  5 JUN 2026 02:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -959,6 +959,10 @@ File: t1txtt.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
 (Font)              No change on input line 605.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 621.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 621.
  [3]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -969,7 +973,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [4]
-Overfull \vbox (1342.31613pt too high) has occurred while \output is active []
+Overfull \vbox (1567.31613pt too high) has occurred while \output is active []
 
 
 
@@ -985,26 +989,26 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 ]
 第 2 章
 LaTeX Font Info:    Font shape `JT2/mc/m/n' will be
-(Font)              scaled to size 13.85594pt on input line 620.
+(Font)              scaled to size 13.85594pt on input line 636.
 LaTeX Font Info:    Font shape `JY2/mc/m/n' will be
-(Font)              scaled to size 13.85594pt on input line 620.
+(Font)              scaled to size 13.85594pt on input line 636.
 LaTeX Font Info:    Font shape `JT2/mc/b/n' in size <14.4> not available
-(Font)              Font shape `JT2/mc/bx/n' tried instead on input line 620.
+(Font)              Font shape `JT2/mc/bx/n' tried instead on input line 636.
 LaTeX Font Info:    Font shape `JT2/mc/bx/n' in size <14.4> not available
-(Font)              Font shape `JT2/gt/m/n' tried instead on input line 620.
+(Font)              Font shape `JT2/gt/m/n' tried instead on input line 636.
 LaTeX Font Info:    Font shape `JT2/gt/m/n' will be
-(Font)              scaled to size 13.85594pt on input line 620.
+(Font)              scaled to size 13.85594pt on input line 636.
 LaTeX Font Info:    Font shape `JY2/mc/b/n' in size <14.4> not available
-(Font)              Font shape `JY2/mc/bx/n' tried instead on input line 620.
+(Font)              Font shape `JY2/mc/bx/n' tried instead on input line 636.
 LaTeX Font Info:    Font shape `JY2/mc/bx/n' in size <14.4> not available
-(Font)              Font shape `JY2/gt/m/n' tried instead on input line 620.
+(Font)              Font shape `JY2/gt/m/n' tried instead on input line 636.
 LaTeX Font Info:    Font shape `JY2/gt/m/n' will be
-(Font)              scaled to size 13.85594pt on input line 620.
+(Font)              scaled to size 13.85594pt on input line 636.
 [7]
 LaTeX Font Info:    Font shape `JT2/mc/m/n' will be
-(Font)              scaled to size 11.54663pt on input line 673.
+(Font)              scaled to size 11.54663pt on input line 689.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 679.
+(Font)              No change on input line 695.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1016,9 +1020,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [8]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 810.
+(Font)              No change on input line 822.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 844.
+(Font)              No change on input line 830.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1030,13 +1034,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [9]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 892.
+(Font)              No change on input line 864.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 899.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 899.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 903.
+(Font)              No change on input line 891.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1048,27 +1048,27 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [10]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 913.
+(Font)              No change on input line 924.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 913.
+(Font)              No change on input line 931.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 927.
+(Font)              No change on input line 931.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 927.
+(Font)              No change on input line 935.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 927.
+(Font)              No change on input line 945.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 933.
+(Font)              No change on input line 945.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 933.
+(Font)              No change on input line 959.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 939.
+(Font)              No change on input line 959.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 939.
+(Font)              No change on input line 959.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 939.
+(Font)              No change on input line 965.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 942.
+(Font)              No change on input line 965.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1080,37 +1080,55 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [11]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 953.
+(Font)              No change on input line 971.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 953.
+(Font)              No change on input line 971.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 953.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 953.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 959.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 959.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 966.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 966.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 970.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 970.
+(Font)              No change on input line 971.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
 (Font)              No change on input line 974.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 978.
+(Font)              No change on input line 977.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 987.
+(Font)              No change on input line 977.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 991.
+(Font)              No change on input line 977.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 998.
+(Font)              No change on input line 977.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 998.
+(Font)              No change on input line 977.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 977.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 977.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 977.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 988.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 988.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 988.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 988.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 994.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 994.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1001.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1001.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1005.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1005.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1009.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1013.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1022.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1122,7 +1140,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [12]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1038.
+(Font)              No change on input line 1026.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1033.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1033.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1073.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1134,9 +1158,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [13]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1108.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1201.
+(Font)              No change on input line 1143.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1148,9 +1170,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [14]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1246.
+(Font)              No change on input line 1236.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1249.
+(Font)              No change on input line 1281.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1284.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1162,23 +1186,21 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [15]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1311.
+(Font)              No change on input line 1346.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1311.
+(Font)              No change on input line 1346.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1311.
+(Font)              No change on input line 1346.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1311.
+(Font)              No change on input line 1346.
 LaTeX Font Info:    Font shape `JT2/mc/m/n' will be
-(Font)              scaled to size 6.73553pt on input line 1338.
+(Font)              scaled to size 6.73553pt on input line 1373.
 LaTeX Font Info:    Font shape `JT2/mc/m/n' will be
-(Font)              scaled to size 4.8111pt on input line 1338.
+(Font)              scaled to size 4.8111pt on input line 1373.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1354.
+(Font)              No change on input line 1389.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1357.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1372.
+(Font)              No change on input line 1392.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1190,23 +1212,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [16]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1384.
+(Font)              No change on input line 1407.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1384.
+(Font)              No change on input line 1419.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1415.
+(Font)              No change on input line 1419.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1426.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1429.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1432.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1432.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1435.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1435.
+(Font)              No change on input line 1450.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1218,15 +1230,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [17]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1468.
+(Font)              No change on input line 1461.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1473.
+(Font)              No change on input line 1464.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1480.
+(Font)              No change on input line 1467.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1484.
+(Font)              No change on input line 1467.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1491.
+(Font)              No change on input line 1470.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1470.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1503.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1238,9 +1254,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [18]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1524.
+(Font)              No change on input line 1508.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1532.
+(Font)              No change on input line 1515.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1519.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1526.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1559.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1252,19 +1274,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [19]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1564.
+(Font)              No change on input line 1567.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1575.
+(Font)              No change on input line 1599.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1575.
+(Font)              No change on input line 1610.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1575.
+(Font)              No change on input line 1610.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1581.
+(Font)              No change on input line 1610.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1602.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1606.
+(Font)              No change on input line 1616.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1276,49 +1296,25 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [20]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1626.
+(Font)              No change on input line 1637.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1626.
+(Font)              No change on input line 1641.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1630.
+(Font)              No change on input line 1661.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1634.
+(Font)              No change on input line 1661.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1634.
+(Font)              No change on input line 1665.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1638.
+(Font)              No change on input line 1669.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1638.
+(Font)              No change on input line 1669.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1648.
+(Font)              No change on input line 1673.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1673.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
 (Font)              No change on input line 1683.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1691.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1703.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1707.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1330,31 +1326,51 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [21]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1724.
+(Font)              No change on input line 1718.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1728.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1732.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1732.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1736.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1736.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1740.
+(Font)              No change on input line 1726.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1744.
+(Font)              No change on input line 1738.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1750.
+(Font)              No change on input line 1738.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1762.
+(Font)              No change on input line 1738.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1786.
+(Font)              No change on input line 1738.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1794.
+(Font)              No change on input line 1738.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1802.
+(Font)              No change on input line 1738.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1742.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1759.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1763.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1767.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1767.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1771.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1771.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1775.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1779.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1785.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1366,15 +1382,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [22]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1842.
+(Font)              No change on input line 1797.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1850.
+(Font)              No change on input line 1821.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1863.
+(Font)              No change on input line 1829.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1876.
+(Font)              No change on input line 1837.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1897.
+(Font)              No change on input line 1877.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1885.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 1898.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1386,23 +1406,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [23]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1918.
+(Font)              No change on input line 1911.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1946.
+(Font)              No change on input line 1932.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1950.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1958.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1958.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1958.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1958.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1961.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1961.
+(Font)              No change on input line 1953.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1414,31 +1422,37 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [24]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1971.
+(Font)              No change on input line 1981.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1975.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1980.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1980.
-LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 1988.
+(Font)              No change on input line 1985.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
 (Font)              No change on input line 1993.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
 (Font)              No change on input line 1993.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2000.
+(Font)              No change on input line 1993.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2017.
+(Font)              No change on input line 1993.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2021.
+(Font)              No change on input line 1996.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2021.
+(Font)              No change on input line 1996.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2021.
+(Font)              No change on input line 2006.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 2025.
+(Font)              No change on input line 2010.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2015.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2015.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2023.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2028.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2028.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2035.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1449,6 +1463,31 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [25]
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2052.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2056.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2056.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2056.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2060.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
+(Font)              No change on input line 2073.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 15.0pt, for example:
@@ -1486,29 +1525,32 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [29]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3491.
+(Font)              No change on input line 3529.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3491.
+(Font)              No change on input line 3529.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3491.
+(Font)              No change on input line 3529.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3491.
+(Font)              No change on input line 3529.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3491.
+(Font)              No change on input line 3529.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 3496.
+(Font)              No change on input line 3534.
+
+Underfull \vbox (badness 1675) detected at line 3535
+ []
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1556,12 +1598,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [34]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 4672.
+(Font)              No change on input line 4707.
 LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4672.
+(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4707.
 
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 4675.
+(Font)              No change on input line 4710.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1573,13 +1615,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [35]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 4943.
+(Font)              No change on input line 4978.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 4946.
+(Font)              No change on input line 4981.
 LaTeX Font Info:    Font shape `JT2/mc/m/n' will be
-(Font)              scaled to size 7.69775pt on input line 4948.
+(Font)              scaled to size 7.69775pt on input line 4983.
 LaTeX Font Info:    Font shape `JY2/mc/m/n' will be
-(Font)              scaled to size 7.69775pt on input line 4948.
+(Font)              scaled to size 7.69775pt on input line 4983.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1591,11 +1633,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [36]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5020.
+(Font)              No change on input line 5055.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5023.
+(Font)              No change on input line 5058.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5026.
+(Font)              No change on input line 5061.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1612,20 +1654,20 @@ LaTeX Font Info:    Trying to load font information for TS1+txtt on input line
 File: ts1txtt.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5122.
+(Font)              No change on input line 5157.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5125.
+(Font)              No change on input line 5160.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5128.
+(Font)              No change on input line 5163.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5131.
+(Font)              No change on input line 5166.
 LaTeX Font Info:    Font shape `TS1/txtt/m/it' in size <10> not available
-(Font)              Font shape `TS1/txtt/m/sl' tried instead on input line 5131
+(Font)              Font shape `TS1/txtt/m/sl' tried instead on input line 5166
 .
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5134.
+(Font)              No change on input line 5169.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5137.
+(Font)              No change on input line 5172.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1637,11 +1679,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [38]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5172.
+(Font)              No change on input line 5207.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5175.
+(Font)              No change on input line 5210.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5178.
+(Font)              No change on input line 5213.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1653,15 +1695,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [39]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5217.
+(Font)              No change on input line 5252.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5220.
+(Font)              No change on input line 5255.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5223.
+(Font)              No change on input line 5258.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5254.
+(Font)              No change on input line 5289.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5257.
+(Font)              No change on input line 5292.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1673,15 +1715,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [40]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5303.
+(Font)              No change on input line 5338.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5306.
+(Font)              No change on input line 5341.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5344.
+(Font)              No change on input line 5379.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5347.
+(Font)              No change on input line 5382.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5350.
+(Font)              No change on input line 5385.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1693,24 +1735,24 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [41]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5389.
+(Font)              No change on input line 5424.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5392.
+(Font)              No change on input line 5427.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5403.
+(Font)              No change on input line 5438.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5406.
+(Font)              No change on input line 5441.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5409.
+(Font)              No change on input line 5444.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5417.
+(Font)              No change on input line 5452.
 LaTeX Font Info:    Font shape `T1/txtt/b/n' in size <10> not available
-(Font)              Font shape `T1/txtt/bx/n' tried instead on input line 5418.
+(Font)              Font shape `T1/txtt/bx/n' tried instead on input line 5453.
 
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5425.
+(Font)              No change on input line 5460.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5428.
+(Font)              No change on input line 5463.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1722,7 +1764,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [42]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5466.
+(Font)              No change on input line 5501.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1734,17 +1776,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [43]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5544.
+(Font)              No change on input line 5579.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5544.
+(Font)              No change on input line 5579.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5548.
+(Font)              No change on input line 5583.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5552.
+(Font)              No change on input line 5587.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5552.
+(Font)              No change on input line 5587.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5556.
+(Font)              No change on input line 5591.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1756,7 +1798,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [44]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5601.
+(Font)              No change on input line 5636.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1768,14 +1810,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [45]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 5659.
+(Font)              No change on input line 5694.
 LaTeX Font Info:    Font shape `T1/txtt/b/n' in size <12> not available
-(Font)              Font shape `T1/txtt/bx/n' tried instead on input line 5679.
+(Font)              Font shape `T1/txtt/bx/n' tried instead on input line 5714.
 
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5685.
+(Font)              No change on input line 5720.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5688.
+(Font)              No change on input line 5723.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1786,28 +1828,28 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [46]
-Underfull \hbox (badness 10000) in paragraph at lines 5736--5738
+Underfull \hbox (badness 10000) in paragraph at lines 5771--5773
 []\T1/qtm/m/n/10 SQLite \JY2/mc/m/n/10 フ ァイル （[][]\T1/txtt/m/n/10 bac
 kend sqlite [][]dsn
  []
 
 
-Overfull \hbox (12.16307pt too wide) in paragraph at lines 5763--5765
+Overfull \hbox (12.16307pt too wide) in paragraph at lines 5798--5800
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (12.16307pt too wide) detected at line 5766
+Overfull \hbox (12.16307pt too wide) detected at line 5801
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5822--5824
+Underfull \hbox (badness 10000) in paragraph at lines 5857--5859
 [][][]\T1/txtt/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5890--5892
+Underfull \hbox (badness 10000) in paragraph at lines 5925--5927
 []\JY2/mc/m/n/10 ほとんどのオプシ ョンは環境変数 （\T1/txtt/m/n
 /10 BLUNDERDB_BACKEND\JY2/mc/m/n/10 、 \T1/txtt/m/n/10 BLUNDERDB_DSN\JY2/mc/m/
 n/10 、 \T1/txtt/m/n/10 BLUNDERDB_ADDR\JY2/mc/m/n/10 、
@@ -1823,9 +1865,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [47]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 5937.
+(Font)              No change on input line 5972.
 
-Underfull \hbox (badness 10000) in paragraph at lines 6033--6035
+Underfull \hbox (badness 10000) in paragraph at lines 6068--6070
 [][][]\T1/txtt/m/n/10 on[]conflict
  []
 
@@ -1839,26 +1881,26 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [48]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 6062.
+(Font)              No change on input line 6097.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 6065.
+(Font)              No change on input line 6100.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 6068.
+(Font)              No change on input line 6103.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 6073.
+(Font)              No change on input line 6108.
 
-Underfull \hbox (badness 10000) in paragraph at lines 6115--6117
+Underfull \hbox (badness 10000) in paragraph at lines 6150--6152
 []\T1/qtm/m/n/10 SQLite \JY2/mc/m/n/10 フ ァイル （[][]\T1/txtt/m/n/10 bac
 kend sqlite [][]dsn
  []
 
 
-Overfull \hbox (2.19186pt too wide) in paragraph at lines 6142--6144
+Overfull \hbox (2.19186pt too wide) in paragraph at lines 6177--6179
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (2.19186pt too wide) detected at line 6145
+Overfull \hbox (2.19186pt too wide) detected at line 6180
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
@@ -1871,7 +1913,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [49]
-Underfull \hbox (badness 7963) in paragraph at lines 6267--6269
+Underfull \hbox (badness 7963) in paragraph at lines 6302--6304
 []\JY2/mc/m/n/10 検索を開始する前に 、 現在のポジシ ョンが
 目的のものでない場合は 、 必ず消去すること
  []
@@ -1903,14 +1945,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [52]
-Underfull \hbox (badness 10000) in paragraph at lines 6732--6734
+Underfull \hbox (badness 10000) in paragraph at lines 6767--6769
 \T1/qtm/m/n/10 en-[]us / archive / blogs / ie _ fr / certi^^\cats-[]de-[]signat
 ure-[]de-[]code-[]ev-[]extended-[]validation-[]et-[]microsoft-[]smartscreen$[][
 ] \JY2/mc/m/n/10 を
  []
 
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 6738.
+(Font)              No change on input line 6773.
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 
@@ -1969,12 +2011,12 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
 LaTeX Font Info:    Trying to load font information for TS1+qhv on input line 6
-934.
+969.
  (/usr/share/texmf/tex/latex/tex-gyre/ts1qhv.fd
 File: ts1qhv.fd 2009/09/25 v1.2 font definition file for TS1/qhv
 )
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 6937.
+(Font)              No change on input line 6972.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2004,9 +2046,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [59]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 6957.
+(Font)              No change on input line 6992.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 6958.
+(Font)              No change on input line 6993.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2036,11 +2078,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [62]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7036.
+(Font)              No change on input line 7071.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7040.
+(Font)              No change on input line 7075.
 
-Underfull \hbox (badness 10000) in paragraph at lines 7063--7065
+Underfull \hbox (badness 10000) in paragraph at lines 7098--7100
 []\JY2/mc/m/n/10 デ ータベ ースをバ ージ ョン \T1/qtm/m/n/10 1.0.0 
 \JY2/mc/m/n/10 からバ ージ ョン \T1/qtm/m/n/10 1.1.0 \JY2/mc/m/n/10 に
 移行するには 、 \T1/qtm/m/n/10 blun-derDB \JY2/mc/m/n/10 で
@@ -2055,115 +2097,115 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [63]
-Underfull \hbox (badness 10000) in paragraph at lines 7081--7083
+Underfull \hbox (badness 10000) in paragraph at lines 7116--7118
 []\JY2/mc/m/n/10 デ ータベ ースをバ ージ ョン \T1/qtm/m/n/10 1.1.0 
 \JY2/mc/m/n/10 からバ ージ ョン \T1/qtm/m/n/10 1.2.0 \JY2/mc/m/n/10 に
 移行するには 、 \T1/qtm/m/n/10 blun-derDB \JY2/mc/m/n/10 で
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7099--7101
+Underfull \hbox (badness 10000) in paragraph at lines 7134--7136
 []\JY2/mc/m/n/10 デ ータベ ースをバ ージ ョン \T1/qtm/m/n/10 1.2.0 
 \JY2/mc/m/n/10 からバ ージ ョン \T1/qtm/m/n/10 1.3.0 \JY2/mc/m/n/10 に
 移行するには 、 \T1/qtm/m/n/10 blun-derDB \JY2/mc/m/n/10 で
  []
 
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7110.
+(Font)              No change on input line 7145.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7114.
+(Font)              No change on input line 7149.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7118.
+(Font)              No change on input line 7153.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7122.
+(Font)              No change on input line 7157.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7137.
+(Font)              No change on input line 7172.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7137.
+(Font)              No change on input line 7172.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7137.
+(Font)              No change on input line 7172.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7137.
+(Font)              No change on input line 7172.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7137.
+(Font)              No change on input line 7172.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7141.
+(Font)              No change on input line 7176.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 15.0pt, for example:
@@ -2174,53 +2216,53 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [64]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7156.
+(Font)              No change on input line 7191.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7160.
+(Font)              No change on input line 7195.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7160.
+(Font)              No change on input line 7195.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7160.
+(Font)              No change on input line 7195.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7175.
+(Font)              No change on input line 7210.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7175.
+(Font)              No change on input line 7210.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7199.
+(Font)              No change on input line 7234.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7203.
+(Font)              No change on input line 7238.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7207.
+(Font)              No change on input line 7242.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7211.
+(Font)              No change on input line 7246.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7217.
+(Font)              No change on input line 7252.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7221.
+(Font)              No change on input line 7256.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7225.
+(Font)              No change on input line 7260.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7229.
+(Font)              No change on input line 7264.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7235.
+(Font)              No change on input line 7270.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7239.
+(Font)              No change on input line 7274.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7243.
+(Font)              No change on input line 7278.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7249.
+(Font)              No change on input line 7284.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7253.
+(Font)              No change on input line 7288.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2279,9 +2321,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 ]
 第 5 章
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7725.
+(Font)              No change on input line 7760.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7729.
+(Font)              No change on input line 7764.
 (./blunderdb.ind) [75] (./blunderdb.aux)
  ***********
 pLaTeX2e <2023-02-14u04>+1, based on
@@ -2289,15 +2331,15 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 0E17D9FF45DBC378480690077EC1E817;26301.
+(rerunfilecheck)             Checksum: 654EA5F859E283227C704D2654E95F86;26501.
  ) 
 Here is how much of TeX's memory you used:
- 16294 strings out of 475989
- 280212 string characters out of 5789716
- 2011820 words of memory out of 5000000
- 38109 multiletter control sequences out of 15000+600000
+ 16296 strings out of 475989
+ 280278 string characters out of 5789716
+ 2016820 words of memory out of 5000000
+ 38111 multiletter control sequences out of 15000+600000
  667503 words of font info for 125 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 72i,19n,83p,1337b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,19n,83p,1469b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.dvi (79 pages, 491496 bytes).
+Output written on blunderdb.dvi (79 pages, 499676 bytes).

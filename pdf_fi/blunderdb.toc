@@ -8,73 +8,74 @@
 \contentsline {subsection}{\numberline {2.2.2}Päätoiminnot}{6}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}Käyttöliittymän kuvaus}{6}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4}Asetukset}{7}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}Asemien selaaminen}{8}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}Asemien muokkaus}{8}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Komentorivi}{8}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}Analyysipaneeli}{8}{subsection.2.2.8}%
-\contentsline {subsection}{\numberline {2.2.9}Kommenttipaneeli}{8}{subsection.2.2.9}%
-\contentsline {subsection}{\numberline {2.2.10}Hakupaneeli}{9}{subsection.2.2.10}%
-\contentsline {subsection}{\numberline {2.2.11}Kokoelmapaneeli}{9}{subsection.2.2.11}%
-\contentsline {subsection}{\numberline {2.2.12}Ottelupaneeli}{9}{subsection.2.2.12}%
-\contentsline {subsection}{\numberline {2.2.13}Turnauspaneeli}{9}{subsection.2.2.13}%
-\contentsline {subsection}{\numberline {2.2.14}Stats\sphinxhyphen {}paneeli}{9}{subsection.2.2.14}%
-\contentsline {subsubsection}{Johdanto}{9}{subsubsection*.3}%
+\contentsline {subsection}{\numberline {2.2.5}Opastetut kierrokset ja esimerkkitietokanta}{8}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Asemien selaaminen}{8}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Asemien muokkaus}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}Komentorivi}{8}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.9}Analyysipaneeli}{9}{subsection.2.2.9}%
+\contentsline {subsection}{\numberline {2.2.10}Kommenttipaneeli}{9}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.11}Hakupaneeli}{9}{subsection.2.2.11}%
+\contentsline {subsection}{\numberline {2.2.12}Kokoelmapaneeli}{9}{subsection.2.2.12}%
+\contentsline {subsection}{\numberline {2.2.13}Ottelupaneeli}{9}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.14}Turnauspaneeli}{10}{subsection.2.2.14}%
+\contentsline {subsection}{\numberline {2.2.15}Stats\sphinxhyphen {}paneeli}{10}{subsection.2.2.15}%
+\contentsline {subsubsection}{Johdanto}{10}{subsubsection*.3}%
 \contentsline {subsubsection}{Paneelin avaaminen}{10}{subsubsection*.4}%
 \contentsline {subsubsection}{Suodatinpalkki}{10}{subsubsection*.5}%
-\contentsline {paragraph}{Pelaajanäkökulma}{10}{paragraph*.6}%
-\contentsline {paragraph}{Saatavilla olevat suodattimet}{10}{paragraph*.7}%
+\contentsline {paragraph}{Pelaajanäkökulma}{11}{paragraph*.6}%
+\contentsline {paragraph}{Saatavilla olevat suodattimet}{11}{paragraph*.7}%
 \contentsline {subsubsection}{PR / MWC \sphinxhyphen {}vaihto}{11}{subsubsection*.8}%
-\contentsline {subsubsection}{Dashboard\sphinxhyphen {}välilehti}{11}{subsubsection*.9}%
-\contentsline {paragraph}{Tasokortit}{11}{paragraph*.10}%
+\contentsline {subsubsection}{Dashboard\sphinxhyphen {}välilehti}{12}{subsubsection*.9}%
+\contentsline {paragraph}{Tasokortit}{12}{paragraph*.10}%
 \contentsline {paragraph}{Liukuva PR viimeisten N päätöksen perusteella}{12}{paragraph*.11}%
 \contentsline {paragraph}{Top blunders}{12}{paragraph*.12}%
 \contentsline {subsubsection}{Progression\sphinxhyphen {}välilehti}{12}{subsubsection*.13}%
 \contentsline {paragraph}{Turnauskohtainen viivakaavio}{12}{paragraph*.14}%
 \contentsline {paragraph}{Ottelukohtainen hajontakaavio}{12}{paragraph*.15}%
-\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{12}{subsubsection*.16}%
-\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{12}{paragraph*.17}%
+\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{13}{subsubsection*.16}%
+\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{13}{paragraph*.17}%
 \contentsline {paragraph}{Checker / Cube \sphinxhyphen {}vertailu}{13}{paragraph*.18}%
 \contentsline {paragraph}{Virheiden suuruusjakauman histogrammi}{13}{paragraph*.19}%
 \contentsline {subsubsection}{Yhdistämissääntö}{13}{subsubsection*.20}%
 \contentsline {subsubsection}{MWC: rajoitukset}{13}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.15}EPC\sphinxhyphen {}paneeli}{13}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Anki\sphinxhyphen {}paneeli}{14}{subsection.2.2.16}%
-\contentsline {subsection}{\numberline {2.2.17}Metatietopaneeli}{14}{subsection.2.2.17}%
-\contentsline {subsection}{\numberline {2.2.18}Lokipaneeli}{14}{subsection.2.2.18}%
-\contentsline {section}{\numberline {2.3}Käyttöopas}{14}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{14}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.2.16}EPC\sphinxhyphen {}paneeli}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.17}Anki\sphinxhyphen {}paneeli}{14}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.18}Metatietopaneeli}{14}{subsection.2.2.18}%
+\contentsline {subsection}{\numberline {2.2.19}Lokipaneeli}{14}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}Käyttöopas}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{15}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{15}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Tuo ja yhdistä tietokanta}{15}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{15}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{16}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{16}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Merkitse asema tunnisteella}{16}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Poista asema}{16}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{16}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{17}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Tuo ottelu}{17}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Tuo ottelukansio}{17}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{17}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{18}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Selaa ottelua}{18}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Hallitse ottelupaneelia}{18}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Hallitse kokoelmia}{18}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Hallitse turnauksia}{19}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{19}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Laske EPC}{19}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{19}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{20}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{20}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{20}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Hae asemia kriteerien perusteella}{20}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Komentoluettelo}{21}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Yleiset toiminnot}{21}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Asemat ja navigointi}{21}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.2}Asemat ja navigointi}{22}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}Muokkaus ja haku}{22}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Hakusuodattimet}{22}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Sekalaisia komentoja}{25}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}Näppäimistöoikotiet}{25}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Tietokanta}{25}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.5}Näppäimistöoikotiet}{26}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Tietokanta}{26}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Asema}{26}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigointi}{26}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Näyttö}{26}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Toiminnot}{26}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.5}Toiminnot}{27}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Työkalut}{27}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Komentorivi}{27}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Hakuhistoriapaneeli}{27}{subsection.2.5.8}%

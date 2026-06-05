@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.22.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.23.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5686f5df"></script>
+      <script src="_static/documentation_options.js?v=2753bf86"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -238,7 +238,7 @@
 </tr>
 <tr class="row-even"><td><p>0.19.0</p></td>
 <td><p>May 7, 2026</p></td>
-<td><p>Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube_error pour les décisions Double/Pass. Documentation du modèle de statistiques (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annex: Statistics model — XG / gnuBG / blunderDB alignment</span></a>). Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats Panel</span></a>.</p></td>
+<td><p>Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per-tournament curve and per-match scatter plot, Errors tab with cube-action breakdown and error magnitude histogram. Interactive drill-down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list –type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube_error calculation for Double/Pass decisions. Statistics model documentation (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annex: Statistics model — XG / gnuBG / blunderDB alignment</span></a>). See <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats Panel</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.20.0</p></td>
 <td><p>May 31, 2026</p></td>
@@ -246,11 +246,15 @@
 </tr>
 <tr class="row-even"><td><p>0.21.0</p></td>
 <td><p>June 1, 2026</p></td>
-<td><p>Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue. Le choix de la langue est conservé d’une session à l’autre. Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
+<td><p>Interface internationalisation: the whole of blunderDB (toolbar, panels, messages, help) can now be displayed in English, French, German, Italian, Spanish, Finnish, Japanese, Greek or Russian, as you choose. Added a configuration window, accessible through a gear-shaped button in the toolbar, to select the language. The language choice is kept across sessions. See <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.22.0</p></td>
-<td><p>02/06/2026</p></td>
-<td><p>Ajout d’un mode headless (serveur), avancé et facultatif, qui complète l’application de bureau : un démon <code class="docutils literal notranslate"><span class="pre">serve</span></code> exposant le moteur en HTTP + JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par tenant (et Row-Level Security en option), une commande <code class="docutils literal notranslate"><span class="pre">migrate</span></code> pour transférer une base SQLite vers PostgreSQL, et un dispatcher générique <code class="docutils literal notranslate"><span class="pre">call</span></code> donnant accès en ligne de commande à toutes les opérations de stockage. Import de positions uniques depuis de nouveaux formats (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz texte, bibliothèque native <code class="docutils literal notranslate"><span class="pre">.db</span></code>) avec enrichissement des doublons entre formats. Corrections : les panneaux ne provoquent plus d’erreur lorsqu’aucune base n’est ouverte et le panneau Commentaires ne boucle plus à l’ouverture. Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></td>
+<td><p>June 2, 2026</p></td>
+<td><p>Added a headless (server) mode, advanced and optional, complementing the desktop application: a <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon exposing the engine over HTTP + JSON, a multi-user PostgreSQL backend with per-tenant isolation (and optional Row-Level Security), a <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command to transfer a SQLite database to PostgreSQL, and a generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher giving command-line access to every storage operation. Import of single positions from new formats (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz text, native <code class="docutils literal notranslate"><span class="pre">.db</span></code> library) with enrichment of duplicates across formats. Fixes: panels no longer raise an error when no database is open, and the Comments panel no longer loops on opening. See <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>June 5, 2026</p></td>
+<td><p>Added guided tours of the interface (general tour, search, matches, tournaments), replayable from the toolbar or with the <code class="docutils literal notranslate"><span class="pre">tour</span></code> command, and a sample database loadable with the <code class="docutils literal notranslate"><span class="pre">demo</span></code> command to explore the tool without importing your own games. Customisation of the board colours (background, border, points, checkers, dice, doubling cube) from the configuration window. Command-line autocompletion (<em>TAB</em> key). Search panel: explicit control over the decision type (Checker / Cube), with a Double / No double or Take / Pass sub-type for cube decisions, synchronised with the board; the offered cube is shown in the centre of the board for take/pass decisions. Search for a position by its identifier (<code class="docutils literal notranslate"><span class="pre">id</span></code> filter). Fixed the attribution of the cube error to player 1. See <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Guided tours and sample database</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -265,20 +269,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Main Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description of the interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Browsing positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Editing positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. The command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Analysis Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Comments Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Search Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Collections Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Matches Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Tournaments Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Metadata Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Log Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. Guided tours and sample database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. Analysis Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. Comments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. Search Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. Collections Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. Matches Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. Tournaments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Stats Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. EPC Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Anki Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. Metadata Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. Log Panel</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a><ul>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentazione blunderDB 0.22.0 </title>
+  <title>blunderDB &mdash; Documentazione blunderDB 0.23.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=30782b8f"></script>
+      <script src="_static/documentation_options.js?v=41ad61d6"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -253,6 +253,10 @@
 <td><p>2 giugno 2026</p></td>
 <td><p>Aggiunta di una modalità headless (server), avanzata e facoltativa, che completa l’applicazione desktop: un demone <code class="docutils literal notranslate"><span class="pre">serve</span></code> che espone il motore in HTTP + JSON, un backend PostgreSQL multiutente con compartimentazione per tenant (e Row-Level Security come opzione), un comando <code class="docutils literal notranslate"><span class="pre">migrate</span></code> per trasferire un database SQLite verso PostgreSQL e un dispatcher generico <code class="docutils literal notranslate"><span class="pre">call</span></code> che dà accesso a riga di comando a tutte le operazioni di archiviazione. Import di singole posizioni da nuovi formati (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz testo, libreria nativa <code class="docutils literal notranslate"><span class="pre">.db</span></code>) con arricchimento dei duplicati tra formati. Correzioni: i pannelli non causano più errori quando nessun database è aperto e il pannello Commenti non entra più in loop all’apertura. Vedi <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modalità headless (server)</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>5 giugno 2026</p></td>
+<td><p>Aggiunta di visite guidate dell’interfaccia (visita generale, ricerca, partite, tornei), ripetibili dalla barra degli strumenti o con il comando <code class="docutils literal notranslate"><span class="pre">tour</span></code>, e di un database di esempio caricabile con il comando <code class="docutils literal notranslate"><span class="pre">demo</span></code> per scoprire lo strumento senza importare le proprie partite. Personalizzazione dei colori del board (sfondo, bordo, punte, pedine, dadi, cubo) dalla finestra delle impostazioni. Autocompletamento della riga di comando (tasto <em>TAB</em>). Pannello di ricerca: controllo esplicito del tipo di decisione (Pedine / Cubo), con un sotto-tipo Raddoppio / No raddoppio o Accetta / Passa per le decisioni di cubo, sincronizzato con il board; il cubo proposto è mostrato al centro del board per le decisioni di prendi/passa. Ricerca di una posizione tramite il suo identificativo (filtro <code class="docutils literal notranslate"><span class="pre">id</span></code>). Correzione dell’attribuzione dell’errore di cubo al giocatore 1. Vedi <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visite guidate e database di esempio</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -266,20 +270,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Interazioni principali</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Descrizione dell’interfaccia</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Configurazione</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Navigazione tra le posizioni</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Modifica delle posizioni</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. La riga di comando</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Pannello Analisi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Pannello Commenti</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Pannello Ricerca</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Pannello Raccolte</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Pannello Match</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Pannello Tornei</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Pannello Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Pannello EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Pannello Anki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Pannello Metadati</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Pannello Registro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. Visite guidate e database di esempio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. Navigazione tra le posizioni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. Modifica delle posizioni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. La riga di comando</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. Pannello Analisi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. Pannello Commenti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. Pannello Ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. Pannello Raccolte</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. Pannello Match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. Pannello Tornei</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Pannello Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. Pannello EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Pannello Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. Pannello Metadati</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. Pannello Registro</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a><ul>

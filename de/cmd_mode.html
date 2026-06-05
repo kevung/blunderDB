@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Liste der Befehle &mdash; blunderDB 0.22.0 Dokumentation</title>
+  <title>4. Liste der Befehle &mdash; blunderDB 0.23.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=2bf92ed5"></script>
+      <script src="_static/documentation_options.js?v=5a2c648c"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -95,6 +95,7 @@
              
   <section id="liste-des-commandes">
 <span id="cmd-mode"></span><h1><span class="section-number">4. </span>Liste der Befehle<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<p>Die Kommandozeile in der Statusleiste öffnet sich durch Drücken der <em>LEERTASTE</em>. Während der Eingabe eines Befehls erscheint automatisch eine Liste mit Vorschlägen: Die <em>TAB</em>-Taste (oder <em>UMSCHALT-TAB</em>) durchläuft die Vorschläge und vervollständigt den Befehl, während <em>ESC</em> die Liste schließt (ein zweites <em>ESC</em> schließt die Kommandozeile). Die Tasten <em>AUF</em> und <em>AB</em> bleiben dem Befehlsverlauf vorbehalten.</p>
 <section id="operations-globales">
 <span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Globale Operationen<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
@@ -127,10 +128,10 @@
 <td><p>Öffnet die Hilfe von blunderDB.</p></td>
 </tr>
 <tr class="row-even"><td><p>tutorial, tour</p></td>
-<td><p>Ouvre le catalogue des visites guidées de l’interface.</p></td>
+<td><p>Öffnet den Katalog der geführten Touren durch die Oberfläche.</p></td>
 </tr>
 <tr class="row-odd"><td><p>demo</p></td>
-<td><p>Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.</p></td>
+<td><p>Lädt eine Beispieldatenbank (Matches, Turnier, Analysen), um das Werkzeug zu erkunden.</p></td>
 </tr>
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Zeigt die Metadaten der Datenbank an.</p></td>
@@ -528,10 +529,10 @@
 <td><p>Sucht in den Turnieren mit den IDs von x bis y (z. B. tn1,3).</p></td>
 </tr>
 <tr class="row-even"><td><p>idx</p></td>
-<td><p>Rechercher la position d’identifiant x (ex: id12).</p></td>
+<td><p>Die Position mit der Kennung x suchen (z. B. id12).</p></td>
 </tr>
 <tr class="row-odd"><td><p>idx,y</p></td>
-<td><p>Rechercher les positions d’identifiants x à y (ex: id5,10).</p></td>
+<td><p>Die Positionen mit den Kennungen x bis y suchen (z. B. id5,10).</p></td>
 </tr>
 </tbody>
 </table>
@@ -545,10 +546,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code> et pour les
-positions avec <code class="docutils literal notranslate"><span class="pre">id</span></code> (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> pour les positions 5 et 10).</p>
+<p>Um in mehreren nicht zusammenhängenden Matches zu suchen, wird der Filter <code class="docutils literal notranslate"><span class="pre">ma</span></code> mehrfach aneinandergereiht (z. B. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> für die Matches 23 und 43). Dasselbe Prinzip gilt für Turniere mit <code class="docutils literal notranslate"><span class="pre">tn</span></code> und für Positionen mit <code class="docutils literal notranslate"><span class="pre">id</span></code> (z. B. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> für die Positionen 5 und 10).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>

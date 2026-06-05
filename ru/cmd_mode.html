@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Список команд &mdash; документация blunderDB 0.22.0</title>
+  <title>4. Список команд &mdash; документация blunderDB 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3880d710"></script>
+      <script src="_static/documentation_options.js?v=49559d49"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -95,6 +95,7 @@
              
   <section id="liste-des-commandes">
 <span id="cmd-mode"></span><h1><span class="section-number">4. </span>Список команд<a class="headerlink" href="#liste-des-commandes" title="Ссылка на этот заголовок"></a></h1>
+<p>Командная строка, расположенная в строке состояния, открывается нажатием клавиши <em>ПРОБЕЛ</em>. При вводе команды автоматически появляется список подсказок: клавиша <em>TAB</em> (или <em>SHIFT-TAB</em>) перебирает предложения и дополняет команду, а <em>ESC</em> закрывает список (второе нажатие <em>ESC</em> закрывает командную строку). Клавиши <em>ВВЕРХ</em> и <em>ВНИЗ</em> остаются зарезервированными для истории команд.</p>
 <section id="operations-globales">
 <span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Глобальные операции<a class="headerlink" href="#operations-globales" title="Ссылка на этот заголовок"></a></h2>
 <table class="docutils align-center">
@@ -127,10 +128,10 @@
 <td><p>Открывает справку blunderDB.</p></td>
 </tr>
 <tr class="row-even"><td><p>tutorial, tour</p></td>
-<td><p>Ouvre le catalogue des visites guidées de l’interface.</p></td>
+<td><p>Открывает каталог обучающих туров по интерфейсу.</p></td>
 </tr>
 <tr class="row-odd"><td><p>demo</p></td>
-<td><p>Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.</p></td>
+<td><p>Загружает образец базы данных (матчи, турнир, анализы) для знакомства с инструментом.</p></td>
 </tr>
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Отображает метаданные базы данных.</p></td>
@@ -528,10 +529,10 @@
 <td><p>Поиск в турнирах с идентификаторами от x до y (пример: tn1,3).</p></td>
 </tr>
 <tr class="row-even"><td><p>idx</p></td>
-<td><p>Rechercher la position d’identifiant x (ex: id12).</p></td>
+<td><p>Найти позицию с идентификатором x (напр. id12).</p></td>
 </tr>
 <tr class="row-odd"><td><p>idx,y</p></td>
-<td><p>Rechercher les positions d’identifiants x à y (ex: id5,10).</p></td>
+<td><p>Найти позиции с идентификаторами от x до y (напр. id5,10).</p></td>
 </tr>
 </tbody>
 </table>
@@ -545,10 +546,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code> et pour les
-positions avec <code class="docutils literal notranslate"><span class="pre">id</span></code> (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> pour les positions 5 et 10).</p>
+<p>Чтобы искать в нескольких несмежных матчах, повторите фильтр <code class="docutils literal notranslate"><span class="pre">ma</span></code> несколько раз (напр. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> для матчей 23 и 43). Тот же принцип применяется к турнирам с <code class="docutils literal notranslate"><span class="pre">tn</span></code> и к позициям с <code class="docutils literal notranslate"><span class="pre">id</span></code> (напр. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> для позиций 5 и 10).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>

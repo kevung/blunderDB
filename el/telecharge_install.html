@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Λήψη και εγκατάσταση &mdash; Τεκμηρίωση του blunderDB - 0.22.0</title>
+  <title>1. Λήψη και εγκατάσταση &mdash; Τεκμηρίωση του blunderDB - 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=489ff7e7"></script>
+      <script src="_static/documentation_options.js?v=394abdbe"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -91,11 +91,11 @@
 <p>Το blunderDB είναι ένα μοναδικό εκτελέσιμο αρχείο που δεν απαιτεί καμία εγκατάσταση.</p>
 <p>Η τελευταία έκδοση του blunderDB είναι διαθέσιμη με άδεια MIT:</p>
 <ul class="simple">
-<li><p>για Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe</a></p></li>
-<li><p>για Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0</a></p></li>
-<li><p>για Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip</a></p></li>
+<li><p>για Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe</a></p></li>
+<li><p>για Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0</a></p></li>
+<li><p>για Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip</a></p></li>
 </ul>
-<p>Για ανάγνωση εκτός σύνδεσης, μπορείτε επίσης να κατεβάσετε αυτή την τεκμηρίωση σε μορφή PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-el.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.22.0-el.pdf</a></p>
+<p>Για ανάγνωση εκτός σύνδεσης, μπορείτε επίσης να κατεβάσετε αυτή την τεκμηρίωση σε μορφή PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.23.0-el.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.23.0-el.pdf</a></p>
 <div class="admonition note">
 <p class="admonition-title">Σημείωση</p>
 <p>Το blunderDB χρησιμοποιεί το Webview2 για την απόδοση του γραφικού περιβάλλοντος. Είναι πολύ πιθανό το Webview2 να είναι ήδη εγκατεστημένο εγγενώς στο λειτουργικό σας σύστημα. Σε αντίθετη περίπτωση, η πρώτη εκτέλεση του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν απαιτείται καμία ενέργεια από τον χρήστη.</p>
@@ -106,7 +106,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Σημείωση</p>
-<p>Στο Linux, εάν λάβετε το σφάλμα <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, η διανομή σας χρησιμοποιεί το webkit2gtk-4.1 αντί του webkit2gtk-4.0. Κατεβάστε την ειδική έκδοση: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0</a></p>
+<p>Στο Linux, εάν λάβετε το σφάλμα <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, η διανομή σας χρησιμοποιεί το webkit2gtk-4.1 αντί του webkit2gtk-4.0. Κατεβάστε την ειδική έκδοση: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0</a></p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Προειδοποίηση</p>

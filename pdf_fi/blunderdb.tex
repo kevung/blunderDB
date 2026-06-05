@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{05.06.2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -633,6 +633,22 @@ Lisätty headless\sphinxhyphen{}tila (palvelin), edistynyt ja valinnainen, joka 
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+5.6.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Lisätty käyttöliittymän opastettuja kierroksia (yleiskierros, haku, ottelut, turnaukset), jotka voi toistaa työkalupalkista tai komennolla \sphinxcode{\sphinxupquote{tour}}, sekä komennolla \sphinxcode{\sphinxupquote{demo}} ladattava esimerkkitietokanta työkaluun tutustumiseksi tuomatta omia pelejä. Laudan värien mukauttaminen (tausta, reuna, kärjet, nappulat, nopat, kuutio) asetusikkunasta. Komentorivin automaattitäydennys (\sphinxstyleemphasis{TAB}\sphinxhyphen{}näppäin). Hakupaneeli: nimenomainen päätöstyypin hallinta (Siirto / Tuplaus), kuutiopäätöksille alityyppi Tuplaus / Ei tuplausta tai Hyväksy / Luovuta, synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä hyväksy/luovuta\sphinxhyphen{}päätöksissä. Aseman haku sen tunnuksella (suodatin \sphinxcode{\sphinxupquote{id}}). Korjattu kuutiovirheen kohdistaminen pelaajalle 1. Katso {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Opastetut kierrokset ja esimerkkitietokanta}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -654,15 +670,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -678,7 +694,7 @@ Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita ter
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
@@ -830,6 +846,10 @@ näyttää blunderDB:n ohje,
 
 \item {} 
 \sphinxAtStartPar
+näyttää opastettujen kierrosten luettelon (katso {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Opastetut kierrokset ja esimerkkitietokanta}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 määrittää tietokannan viennin asetukset,
 
 \item {} 
@@ -859,7 +879,7 @@ kunkin pelaajan pistetilanteen,
 
 \item {} 
 \sphinxAtStartPar
-pelattavat nopat. Jos nopilla ei näy arvoja, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös.
+pelattavat nopat. Jos nopilla ei näy arvoja, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös. Kun kuutiopäätös on vastaus tuplaukseen (hyväksy/luovuta), tarjottu kuutio näytetään laudan keskellä tarjotulla arvolla.
 
 \end{itemize}
 
@@ -893,6 +913,18 @@ Asetuspainike (hammasrattaan muotoinen kuvake), joka sijaitsee työkalupalkissa 
 
 \sphinxAtStartPar
 Sen avulla voit valita käyttöliittymän kielen seuraavista: englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka ja venäjä. Koko käyttöliittymä (työkalupalkki, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilytetään istunnosta toiseen.
+
+\sphinxAtStartPar
+Asetusikkunassa voi myös mukauttaa laudan värejä. Jokaisella elementillä on oma värivalitsimensa: tausta, reuna, vaaleat ja tummat kärjet, pelaajan 1 ja pelaajan 2 nappulat, nopat, nopan silmät ja kuutio. \sphinxstyleemphasis{Palauta oletukset} \sphinxhyphen{}painike palauttaa kaikki värit oletusarvoihinsa. Kielen tavoin valitut värit säilyvät istunnosta toiseen.
+
+
+\subsection{Opastetut kierrokset ja esimerkkitietokanta}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+Käytön aloittamisen helpottamiseksi blunderDB tarjoaa käyttöliittymästä \sphinxstylestrong{opastettuja kierroksia}. Kierrosten luettelo avataan työkalupalkista tai komennolla \sphinxcode{\sphinxupquote{tour}} (alias \sphinxcode{\sphinxupquote{tutorial}}). Käytettävissä on neljä kierrosta: yleinen käyttöliittymäkierros sekä asemien hakuun, otteluiden tarkasteluun ja turnausten tarkasteluun keskittyvät kierrokset. Jokainen kierros korostaa käyttöliittymän asianmukaiset elementit vaihe vaiheelta, ja sen voi toistaa milloin tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan automaattisesti.
+
+\sphinxAtStartPar
+Komento \sphinxcode{\sphinxupquote{demo}} lataa \sphinxstylestrong{esimerkkitietokannan} (otteluita, turnauksen ja analyysejä), jonka avulla voit tutustua työkalun ominaisuuksiin tuomatta omia pelejäsi. Opastetut kierrokset käyttävät tätä tietokantaa, kun mitään tietokantaa ei ole avattu.
 
 
 \subsection{Asemien selaaminen}
@@ -967,6 +999,9 @@ Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta \hyp
 
 \sphinxAtStartPar
 Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä komentoa \sphinxcode{\sphinxupquote{ss}}, jota seuraavat suodattimet (esim. \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Hakupaneeli tarjoaa samaa toimintoa varten myös valintaruudun \sphinxstyleemphasis{Search in current results}.
+
+\sphinxAtStartPar
+Paneeli tarjoaa nimenomaisen hallinnan haettavalle \sphinxstylestrong{päätöstyypille}: \sphinxstyleemphasis{Indifférent} (ei suodatinta), \sphinxstyleemphasis{Siirto} (siirtopäätökset) tai \sphinxstyleemphasis{Tuplaus} (kuutiopäätökset). Kun \sphinxstyleemphasis{Tuplaus} on valittuna, toinen luettelo tarkentaa alityypin: \sphinxstyleemphasis{Kaikki}, \sphinxstyleemphasis{Tuplaus / Ei tuplausta} (vuorossa olevan pelaajan on päätettävä, tuplaako) tai \sphinxstyleemphasis{Hyväksy / Luovuta} (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. \sphinxstyleemphasis{Hyväksy / Luovuta} \sphinxhyphen{}tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.
 
 \begin{sphinxadmonition}{tip}{Vihje:}
 \sphinxAtStartPar
@@ -2061,6 +2096,9 @@ Näytetyt asemat ovat ne tietokannan asemat, jotka täyttävät käyttäjän sy�
 
 \section{Komentoluettelo}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+Komentorivi, joka sijaitsee tilarivillä, avataan painamalla \sphinxstyleemphasis{VÄLILYÖNTI}\sphinxhyphen{}näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy automaattisesti: \sphinxstyleemphasis{TAB}\sphinxhyphen{}näppäin (tai \sphinxstyleemphasis{VAIHTO\sphinxhyphen{}TAB}) selaa ehdotuksia ja täydentää komennon, kun taas \sphinxstyleemphasis{ESC} sulkee luettelon (toinen \sphinxstyleemphasis{ESC} sulkee komentorivin). \sphinxstyleemphasis{YLÖS}\sphinxhyphen{} ja \sphinxstyleemphasis{ALAS}\sphinxhyphen{}näppäimet on edelleen varattu komentohistorialle.
+
 
 \subsection{Yleiset toiminnot}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}
@@ -2155,7 +2193,7 @@ tutorial, tour
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le catalogue des visites guidées de l’interface.
+Avaa käyttöliittymän opastettujen kierrosten luettelon.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2166,7 +2204,7 @@ demo
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.
+Lataa esimerkkitietokannan (otteluita, turnaus, analyysejä) työkaluun tutustumista varten.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3492,7 +3530,7 @@ idx
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher la position d’identifiant x (ex: id12).
+Hae asemaa, jonka tunnus on x (esim. id12).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3503,7 +3541,7 @@ idx,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher les positions d’identifiants x à y (ex: id5,10).
+Hae asemia, joiden tunnukset ovat välillä x–y (esim. id5,10).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3525,10 +3563,7 @@ Kilpajuoksun suhteellisen eron suodattimessa (\sphinxtitleref{p>x}, \sphinxtitle
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
-positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
+Useista ei\sphinxhyphen{}peräkkäisistä otteluista hakeaksesi toista suodatin \sphinxcode{\sphinxupquote{ma}} useita kertoja (esim. \sphinxcode{\sphinxupquote{s ma23 ma43}} otteluille 23 ja 43). Sama periaate pätee turnauksiin suodattimella \sphinxcode{\sphinxupquote{tn}} ja asemiin suodattimella \sphinxcode{\sphinxupquote{id}} (esim. \sphinxcode{\sphinxupquote{s id5 id10}} asemille 5 ja 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Muista:}

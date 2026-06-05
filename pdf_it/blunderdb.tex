@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{05 giu 2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -633,6 +633,22 @@ Aggiunta di una modalità headless (server), avanzata e facoltativa, che complet
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+5 giugno 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Aggiunta di visite guidate dell’interfaccia (visita generale, ricerca, partite, tornei), ripetibili dalla barra degli strumenti o con il comando \sphinxcode{\sphinxupquote{tour}}, e di un database di esempio caricabile con il comando \sphinxcode{\sphinxupquote{demo}} per scoprire lo strumento senza importare le proprie partite. Personalizzazione dei colori del board (sfondo, bordo, punte, pedine, dadi, cubo) dalla finestra delle impostazioni. Autocompletamento della riga di comando (tasto \sphinxstyleemphasis{TAB}). Pannello di ricerca: controllo esplicito del tipo di decisione (Pedine / Cubo), con un sotto\sphinxhyphen{}tipo Raddoppio / No raddoppio o Accetta / Passa per le decisioni di cubo, sincronizzato con il board; il cubo proposto è mostrato al centro del board per le decisioni di prendi/passa. Ricerca di una posizione tramite il suo identificativo (filtro \sphinxcode{\sphinxupquote{id}}). Correzione dell’attribuzione dell’errore di cubo al giocatore 1. Vedi {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Visite guidate e database di esempio}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -654,15 +670,15 @@ L’ultima versione di blunderDB è disponibile con licenza MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -678,7 +694,7 @@ Su Linux, se blunderDB non è eseguibile dopo il download, eseguire in un termin
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avvertimento:}
@@ -830,6 +846,10 @@ visualizzare la guida di blunderDB,
 
 \item {} 
 \sphinxAtStartPar
+visualizzare il catalogo delle visite guidate (vedi {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Visite guidate e database di esempio}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 configurare le impostazioni di esportazione del database,
 
 \item {} 
@@ -859,7 +879,7 @@ il punteggio di ciascun giocatore,
 
 \item {} 
 \sphinxAtStartPar
-i dadi da giocare. Se sui dadi non è visualizzato alcun valore, la posizione dei dadi indica quale giocatore ha il turno e che la posizione è una decisione di cubo.
+i dadi da giocare. Se sui dadi non è mostrato alcun valore, la posizione dei dadi indica quale giocatore ha il turno e che la posizione è una decisione di cubo. Quando la decisione di cubo è una risposta a un raddoppio (prendi/passa), il cubo proposto è mostrato al centro del board, al valore offerto.
 
 \end{itemize}
 
@@ -893,6 +913,18 @@ Il pulsante di configurazione (icona a forma di ingranaggio) situato nella barra
 
 \sphinxAtStartPar
 Essa permette di scegliere la lingua dell’interfaccia tra inglese, francese, tedesco, italiano, spagnolo, finlandese, giapponese, greco e russo. L’intera interfaccia (barra degli strumenti, pannelli, messaggi, guida) viene tradotta nella lingua selezionata. La scelta della lingua viene salvata e mantenuta da una sessione all’altra.
+
+\sphinxAtStartPar
+La finestra delle impostazioni permette inoltre di personalizzare i colori del board. Ogni elemento dispone del proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante \sphinxstyleemphasis{Ripristina} riporta tutti i colori ai valori predefiniti. Come la lingua, i colori scelti vengono conservati da una sessione all’altra.
+
+
+\subsection{Visite guidate e database di esempio}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+Per facilitare i primi passi, blunderDB propone delle \sphinxstylestrong{visite guidate} dell’interfaccia. Il catalogo delle visite si apre dalla barra degli strumenti o con il comando \sphinxcode{\sphinxupquote{tour}} (alias \sphinxcode{\sphinxupquote{tutorial}}). Sono disponibili quattro visite: una visita generale dell’interfaccia e visite dedicate alla ricerca di posizioni, alla revisione delle partite e alla revisione dei tornei. Ogni visita evidenzia gli elementi interessati dell’interfaccia, passo dopo passo, e può essere ripetuta in qualsiasi momento. Al primo avvio, la visita generale viene proposta automaticamente.
+
+\sphinxAtStartPar
+Il comando \sphinxcode{\sphinxupquote{demo}} carica un \sphinxstylestrong{database di esempio} (partite, un torneo e analisi) che permette di scoprire le funzionalità dello strumento senza importare le proprie partite. Le visite guidate si appoggiano a questo database quando nessun database è aperto.
 
 
 \subsection{Navigazione tra le posizioni}
@@ -967,6 +999,9 @@ Il pannello \sphinxstylestrong{Ricerca} (\sphinxstyleemphasis{CTRL\sphinxhyphen{
 
 \sphinxAtStartPar
 Per affinare una ricerca tra le posizioni attualmente filtrate, usare il comando \sphinxcode{\sphinxupquote{ss}} seguito da filtri (es.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Il pannello di ricerca offre anche una casella di spunta \sphinxstyleemphasis{Search in current results} per la stessa funzionalità.
+
+\sphinxAtStartPar
+Il pannello offre un controllo esplicito del \sphinxstylestrong{tipo di decisione} ricercato: \sphinxstyleemphasis{Indifferente} (nessun filtro), \sphinxstyleemphasis{Pedine} (decisioni di mossa) o \sphinxstyleemphasis{Cubo} (decisioni di cubo). Quando è selezionato \sphinxstyleemphasis{Cubo}, un secondo elenco precisa il sotto\sphinxhyphen{}tipo: \sphinxstyleemphasis{Tutti}, \sphinxstyleemphasis{Raddoppio / No raddoppio} (il giocatore di turno deve decidere se raddoppiare) o \sphinxstyleemphasis{Accetta / Passa} (risposta a un raddoppio avversario). Il controllo è sincronizzato con il board: modificare i dadi o il cubo sul board aggiorna il tipo di decisione, e viceversa. In modalità \sphinxstyleemphasis{Accetta / Passa}, il cubo è mostrato al centro del board al valore offerto; tale valore resta modificabile.
 
 \begin{sphinxadmonition}{tip}{Suggerimento:}
 \sphinxAtStartPar
@@ -2061,6 +2096,9 @@ Le posizioni visualizzate sono quelle del database che hanno soddisfatto i crite
 
 \section{Elenco dei comandi}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+La riga di comando, situata nella barra di stato, si apre premendo il tasto \sphinxstyleemphasis{SPAZIO}. Durante la digitazione di un comando, appare automaticamente un elenco di suggerimenti: il tasto \sphinxstyleemphasis{TAB} (o \sphinxstyleemphasis{MAIUSC\sphinxhyphen{}TAB}) scorre le proposte e completa il comando, mentre \sphinxstyleemphasis{ESC} chiude l’elenco (un secondo \sphinxstyleemphasis{ESC} chiude la riga di comando). I tasti \sphinxstyleemphasis{SU} e \sphinxstyleemphasis{GIÙ} restano riservati alla cronologia dei comandi.
+
 
 \subsection{Operazioni globali}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}
@@ -2155,7 +2193,7 @@ tutorial, tour
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le catalogue des visites guidées de l’interface.
+Apre il catalogo delle visite guidate dell’interfaccia.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2166,7 +2204,7 @@ demo
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.
+Carica un database di esempio (partite, torneo, analisi) per scoprire lo strumento.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3492,7 +3530,7 @@ idx
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher la position d’identifiant x (ex: id12).
+Cercare la posizione con identificativo x (es. id12).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3503,7 +3541,7 @@ idx,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher les positions d’identifiants x à y (ex: id5,10).
+Cercare le posizioni con identificativi da x a y (es. id5,10).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3525,10 +3563,7 @@ Per il filtro di differenza relativa nella corsa (\sphinxtitleref{p>x}, \sphinxt
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
-positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
+Per cercare in più partite non contigue, ripetere più volte il filtro \sphinxcode{\sphinxupquote{ma}} (es. \sphinxcode{\sphinxupquote{s ma23 ma43}} per le partite 23 e 43). Lo stesso principio si applica ai tornei con \sphinxcode{\sphinxupquote{tn}} e alle posizioni con \sphinxcode{\sphinxupquote{id}} (es. \sphinxcode{\sphinxupquote{s id5 id10}} per le posizioni 5 e 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Nota:}

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.22.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.23.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
+      <script src="_static/documentation_options.js?v=be490428"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -253,6 +253,10 @@
 <td><p>2026/06/02</p></td>
 <td><p>デスクトップアプリケーションを補完する、高度かつ任意のヘッドレスモード（サーバー）を追加：エンジンをHTTP + JSONで公開するデーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code>、テナントごとの分離（およびオプションのRow-Level Security）を備えたマルチユーザーのPostgreSQLバックエンド、SQLiteデータベースをPostgreSQLへ転送する <code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code>。新しい形式（eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、BGBlitzテキスト、ネイティブライブラリ <code class="docutils literal notranslate"><span class="pre">.db</span></code>）からの単一ポジションのインポートと、形式間での重複の補完。修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照。</p></td>
 </tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>2026/06/05</p></td>
+<td><p>インターフェースのガイドツアー（全体ツアー、検索、マッチ、トーナメント）を追加しました。ツールバーまたはコマンド <code class="docutils literal notranslate"><span class="pre">tour</span></code> から再生でき、自分の対局をインポートせずにツールを試せるよう、コマンド <code class="docutils literal notranslate"><span class="pre">demo</span></code> で読み込めるサンプルデータベースも追加しました。設定ウィンドウから盤面の色（背景、枠線、ポイント、チェッカー、ダイス、キューブ）をカスタマイズできるようにしました。コマンドラインの自動補完（ <em>TAB</em> キー）を追加しました。検索パネル: 判断タイプ（チェッカー / キューブ）を明示的に制御できるようにし、キューブの判断にはダブル / ノーダブルまたはテイク / パスのサブタイプを設け、盤面と同期させました。テイク／パスの判断では、提示されたキューブが盤面の中央に表示されます。識別子によるポジションの検索（フィルタ <code class="docutils literal notranslate"><span class="pre">id</span></code> ）を追加しました。キューブエラーのプレイヤー1への帰属を修正しました。 <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照してください。</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -266,20 +270,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. 主な操作</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. インターフェースの説明</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. 設定</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. ポジションのナビゲーション</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. ポジションの編集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. コマンドライン</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. 分析パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. コメントパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. 検索パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. コレクションパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. マッチパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. トーナメントパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. メタデータパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. ログパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. ガイドツアーとサンプルデータベース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. ポジションのナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. ポジションの編集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. コマンドライン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. 分析パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. コメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. 検索パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. コレクションパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. マッチパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. トーナメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Stats パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. EPC パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Anki パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. メタデータパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. ログパネル</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a><ul>

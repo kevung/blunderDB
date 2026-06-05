@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. マニュアル &mdash; blunderDB 0.22.0 ドキュメント</title>
+  <title>2. マニュアル &mdash; blunderDB 0.23.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cf9c4e71"></script>
+      <script src="_static/documentation_options.js?v=be490428"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -55,49 +55,50 @@
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. 主な操作</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. インターフェースの説明</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.4. 設定</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.5. ポジションのナビゲーション</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.6. ポジションの編集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.7. コマンドライン</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.8. 分析パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.9. コメントパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.10. 検索パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.11. コレクションパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.12. マッチパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.13. トーナメントパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.14. Stats パネル</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.14.1. はじめに</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.14.2. パネルを開く</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.14.3. フィルターバー</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.14.3.1. プレイヤーの視点</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.14.3.2. 利用可能なフィルター</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.5. ガイドツアーとサンプルデータベース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.6. ポジションのナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.7. ポジションの編集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.8. コマンドライン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.9. 分析パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.10. コメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.11. 検索パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.12. コレクションパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. マッチパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. トーナメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Stats パネル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. はじめに</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. パネルを開く</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. フィルターバー</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. プレイヤーの視点</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.15.3.2. 利用可能なフィルター</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.14.4. PR / MWC の切り替え</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.14.5. Dashboard タブ</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.14.5.1. レベルカード</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.14.5.2. 直近 N 回の判断にわたる移動 PR</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.14.5.3. Top blunders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.15.4. PR / MWC の切り替え</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.15.5. Dashboard タブ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.15.5.1. レベルカード</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.15.5.2. 直近 N 回の判断にわたる移動 PR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.15.5.3. Top blunders</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.14.6. Progression タブ</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.14.6.1. トーナメントごとの曲線</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.14.6.2. マッチごとの散布図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.15.6. Progression タブ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.15.6.1. トーナメントごとの曲線</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.15.6.2. マッチごとの散布図</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.14.7. Erreurs タブ</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.14.7.1. キューブのアクションごとの内訳</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.14.7.2. Checker / Cube の内訳</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.14.7.3. エラーの大きさのヒストグラム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.15.7. Erreurs タブ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.15.7.1. キューブのアクションごとの内訳</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.15.7.2. Checker / Cube の内訳</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.15.7.3. エラーの大きさのヒストグラム</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.14.8. 集計ルール</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.14.9. MWC：制限事項</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.15.8. 集計ルール</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.15.9. MWC：制限事項</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.15. EPC パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.16. Anki パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.17. メタデータパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.18. ログパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.16. EPC パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.17. Anki パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.18. メタデータパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.19. ログパネル</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
@@ -184,6 +185,7 @@
 <p>次の目的でモーダルウィンドウを表示できます：</p>
 <ul class="simple">
 <li><p>blunderDB のヘルプを表示する、</p></li>
+<li><p>ガイドツアーのカタログを表示します（ <a class="reference internal" href="#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照）、</p></li>
 <li><p>データベースのエクスポートを設定する、</p></li>
 <li><p>blunderDB を設定する。特にインターフェースの言語を設定する（<a class="reference internal" href="#configuration"><span class="std std-ref">設定</span></a> を参照）。</p></li>
 </ul>
@@ -193,7 +195,7 @@
 <li><p>キューブのレベルと所有者、</p></li>
 <li><p>各プレイヤーのピップカウント、</p></li>
 <li><p>各プレイヤーのスコア、</p></li>
-<li><p>プレイするダイス。ダイスに値が表示されていない場合、ダイスの位置はどちらのプレイヤーの手番かを示し、そのポジションがキューブの判断であることを示します。</p></li>
+<li><p>出目です。ダイスに値が表示されていない場合、ダイスの位置はどちらのプレイヤーに手番があるかを示し、そのポジションがキューブの判断であることを表します。キューブの判断がダブルへの応答（テイク／パス）である場合、提示されたキューブが盤面の中央に、提示された値で表示されます。</p></li>
 </ul>
 <p>ステータスバーは左から右に次の情報で構成されています：</p>
 <ul class="simple">
@@ -210,9 +212,15 @@
 <span id="id2"></span><h2><span class="section-number">2.4. </span>設定<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p>ツールバーのヘルプボタンの左にある設定ボタン（歯車の形のアイコン）を押すと、blunderDB の設定ウィンドウが開きます。</p>
 <p>このウィンドウでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語の中からインターフェースの言語を選択できます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。</p>
+<p>設定ウィンドウでは、盤面の色をカスタマイズすることもできます。各要素にはそれぞれ独自のカラーピッカーがあります。背景、枠線、明るいポイントと暗いポイント、プレイヤー1とプレイヤー2のチェッカー、ダイス、ダイスの目、そしてダブリングキューブです。 <em>デフォルトに戻す</em> ボタンを押すと、すべての色がデフォルトに戻ります。言語と同様に、選択した色はセッションをまたいで保持されます。</p>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>ガイドツアーとサンプルデータベース<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>操作に慣れやすくするため、blunderDB はインターフェースの <strong>ガイドツアー</strong> を用意しています。ツアーのカタログは、ツールバーから、またはコマンド <code class="docutils literal notranslate"><span class="pre">tour</span></code> （別名 <code class="docutils literal notranslate"><span class="pre">tutorial</span></code> ）で開けます。4つのツアーが利用できます。インターフェースの全体ツアー、そしてポジションの検索、マッチのレビュー、トーナメントのレビューに特化したツアーです。各ツアーは、関連するインターフェースの要素を一手順ずつ強調表示し、いつでも再生できます。初回起動時には、全体ツアーが自動的に案内されます。</p>
+<p>コマンド <code class="docutils literal notranslate"><span class="pre">demo</span></code> は、自分の対局をインポートしなくてもツールの機能を試せる <strong>サンプルデータベース</strong> （マッチ、トーナメント、解析）を読み込みます。データベースが開かれていない場合、ガイドツアーはこのデータベースを利用します。</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>ポジションのナビゲーション<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>ポジションのナビゲーション<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
 <p>既定では、blunderDB では次のことができます：</p>
 <ul class="simple">
 <li><p>現在のライブラリのさまざまなポジションをスクロールする、</p></li>
@@ -225,7 +233,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>ポジションの編集<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>ポジションの編集<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
 <p><em>TAB</em> キーを押すと検索パネルが開き、ボード上のポジションを編集して、データベースに追加したり、検索するポジションの構造を定義したりできます。チェッカーの配置、キューブ、スコア、手番はマウスで変更できます（<a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">ポジションを編集する</span></a> を参照）。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -233,7 +241,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.7. </span>コマンドライン<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<span id="mode-command"></span><h2><span class="section-number">2.8. </span>コマンドライン<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>ステータスバーに内蔵されたコマンドラインでは、グラフィカルインターフェースで利用できる blunderDB のすべての機能を実行できます。データベースに対する一般的な操作、ポジションのナビゲーション、分析やコメントの表示、フィルターに基づくポジションの検索などです。インターフェースにある程度慣れたら、特にポジション検索機能において blunderDB を強力かつ快適に使用できるコマンドラインを徐々に使うことをお勧めします。</p>
 <p>コマンドラインを開くには、<em>スペース</em> キーを押します。リクエストを送信してコマンドラインを閉じるには、<em>Enter</em> キーを押します。</p>
 <p>blunderDB は、ユーザーが送信したリクエストが有効である限りそれを実行し、必要に応じてデータベースの状態を即座に変更します。ユーザーによる明示的な保存操作はありません。</p>
@@ -243,28 +251,29 @@
 </div>
 </section>
 <section id="panneau-analyse">
-<span id="id3"></span><h2><span class="section-number">2.8. </span>分析パネル<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<span id="id3"></span><h2><span class="section-number">2.9. </span>分析パネル<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
 <p><strong>分析</strong> パネル（<em>CTRL-L</em>）は、eXtreme Gammon（XG）、GNUbg、または BGBlitz からインポートした現在のポジションの分析データを表示します。最良の選択肢（チェッカーの手またはキューブの判断）を、そのエクイティ値と対応するエラーと共に提示します。<em>d</em> キーでチェッカーの手の分析とキューブの分析を切り替えられます。マッチを辿っているときは、実際にプレイされた手が選択肢のリストで強調表示されます。パネルを表示または非表示にするには、<em>CTRL-L</em> を押すか <code class="docutils literal notranslate"><span class="pre">list</span></code> コマンドを実行します。</p>
 </section>
 <section id="panneau-commentaires">
-<span id="id4"></span><h2><span class="section-number">2.9. </span>コメントパネル<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<span id="id4"></span><h2><span class="section-number">2.10. </span>コメントパネル<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
 <p><strong>コメント</strong> パネル（<em>CTRL-P</em>）は、現在のポジションに関連付けられたコメントを表示、追加、編集します。XG ファイルからインポートされたコメントは、対応するポジションに自動的に関連付けられます。パネルを表示または非表示にするには、<em>CTRL-P</em> を押すか <code class="docutils literal notranslate"><span class="pre">comment</span></code> コマンドを実行します。</p>
 </section>
 <section id="panneau-recherche">
-<span id="id5"></span><h2><span class="section-number">2.10. </span>検索パネル<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<span id="id5"></span><h2><span class="section-number">2.11. </span>検索パネル<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
 <p><strong>検索</strong> パネル（<em>CTRL-F</em> または <em>TAB</em>）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。<em>TAB</em> キーは検索パネルとポジションエディターを同時に開き、ボード上で検索するチェッカーの構造を定義できます。</p>
 <p>現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドを使用します（例：<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。検索パネルには同じ機能のための <em>Search in current results</em> チェックボックスも用意されています。</p>
+<p>このパネルでは、検索する <strong>判断タイプ</strong> を明示的に制御できます。 <em>指定なし</em> （フィルタなし）、 <em>チェッカー</em> （チェッカーの判断）、または <em>キューブ</em> （キューブの判断）です。 <em>キューブ</em> を選択すると、2つ目のリストでサブタイプを指定できます。 <em>すべて</em> 、 <em>ダブル / ノーダブル</em> （手番のプレイヤーがダブルするかを判断する）、または <em>テイク / パス</em> （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 <em>テイク / パス</em> モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なフィルターの一覧については <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">4 章</span></a> を参照してください。</p>
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.11. </span>コレクションパネル<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>コレクションパネル<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
 <p><strong>コレクション</strong> パネル（<em>CTRL-B</em>）では、ポジションのコレクションを管理できます。コレクションは作成、名前変更、削除ができます。ポジションを追加したり取り除いたりできます。コレクションをダブルクリックすると、<em>左</em> キーと <em>右</em> キーでそのポジションを閲覧できます。コレクションの順序やコレクション内のポジションの順序は、ドラッグ＆ドロップで変更できます。パネルを表示または非表示にするには、<em>CTRL-B</em> を押すか <code class="docutils literal notranslate"><span class="pre">collection</span></code> コマンドを実行します。</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.12. </span>マッチパネル<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<span id="mode-match"></span><h2><span class="section-number">2.13. </span>マッチパネル<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
 <p><strong>マッチ</strong> パネル（<em>CTRL-Tab</em>）はインポートしたマッチを一覧表示します。マッチをダブルクリックする（または <em>Enter</em> を押す）と、その手を辿ることができます。<code class="docutils literal notranslate"><span class="pre">m</span></code> コマンドは最後に閲覧したマッチのナビゲーションを再開します。</p>
 <p>ユーザーは次のことができます：</p>
 <ul class="simple">
@@ -281,13 +290,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.13. </span>トーナメントパネル<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.14. </span>トーナメントパネル<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p><strong>トーナメント</strong> パネル（<em>CTRL-Y</em>）では、整理された記録管理とイベントごとの統計分析のために、マッチをトーナメントにまとめることができます。トーナメントは作成、名前変更、削除ができ、マッチを割り当てられます。Stats パネルの統計はトーナメントごとにフィルターできます。パネルを表示または非表示にするには、<em>CTRL-Y</em> を押します。</p>
 </section>
 <section id="panneau-stats">
-<span id="stats"></span><h2><span class="section-number">2.14. </span>Stats パネル<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<span id="stats"></span><h2><span class="section-number">2.15. </span>Stats パネル<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
 <section id="id7">
-<h3><span class="section-number">2.14.1. </span>はじめに<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.1. </span>はじめに<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p><strong>Stats</strong> パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、<a href="#id1"><span class="problematic" id="id2">**</span></a>PR**（Performance Rate）と <a href="#id3"><span class="problematic" id="id4">**</span></a>MWC cost**（Match Winning Chance cost）の指標を計算して表示します。</p>
 <p>Stats パネルは特に次の用途に役立ちます：</p>
 <ul class="simple">
@@ -298,7 +307,7 @@
 </ul>
 </section>
 <section id="ouverture-du-panneau">
-<h3><span class="section-number">2.14.2. </span>パネルを開く<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.2. </span>パネルを開く<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
 <p>Stats パネルを開くには：</p>
 <ul class="simple">
 <li><p><em>CTRL-D</em> を押します。</p></li>
@@ -310,10 +319,10 @@
 </div>
 </section>
 <section id="barre-de-filtre">
-<h3><span class="section-number">2.14.3. </span>フィルターバー<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.3. </span>フィルターバー<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
 <p>パネル上部のフィルターバーでは、計算をポジションの部分集合に限定できます。</p>
 <section id="perspective-joueur">
-<h4><span class="section-number">2.14.3.1. </span>プレイヤーの視点<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.3.1. </span>プレイヤーの視点<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
 <p><strong>Joueur</strong> ドロップダウンリストでは、分析対象のプレイヤーに従って統計をフィルターできます。blunderDB はデータベースで最も頻繁に名前が出てくるプレイヤーを自動的に選択します。これはいつでも変更できます。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -321,7 +330,7 @@
 </div>
 </section>
 <section id="filtres-disponibles">
-<h4><span class="section-number">2.14.3.2. </span>利用可能なフィルター<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.3.2. </span>利用可能なフィルター<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><strong>Tournoi(s)</strong> — 1 つまたは複数のトーナメントへの限定。複数のトーナメントを同時に選択できます。</p></li>
 <li><p><strong>Dates</strong> — 期間の範囲（<a href="#id1"><span class="problematic" id="id2">*</span></a>De*〔開始〕… <a href="#id3"><span class="problematic" id="id4">*</span></a>À*〔終了〕）。開始日のみが指定された場合、それ以降のポジションが含まれます。</p></li>
@@ -336,7 +345,7 @@
 </section>
 </section>
 <section id="toggle-pr-mwc">
-<h3><span class="section-number">2.14.4. </span>PR / MWC の切り替え<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.4. </span>PR / MWC の切り替え<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
 <p>パネル上部の <strong>PR / MWC</strong> ボタンは、すべてのタブで表示される指標を切り替えます。</p>
 <p><strong>PR（Performance Rate）</strong></p>
 <blockquote>
@@ -382,10 +391,10 @@
 <p>PR ↔ MWC の切り替えは瞬時に行われます。バックエンドでの再計算は実行されません。</p>
 </section>
 <section id="onglet-dashboard">
-<h3><span class="section-number">2.14.5. </span>Dashboard タブ<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.5. </span>Dashboard タブ<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
 <p><strong>Dashboard</strong> タブは主要な指標の概要を示します。</p>
 <section id="cartes-de-niveau">
-<h4><span class="section-number">2.14.5.1. </span>レベルカード<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.1. </span>レベルカード<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
 <p>3 つのカードが次の項目について PR（または MWC）を表示します：</p>
 <ul class="simple">
 <li><p><strong>All</strong> — すべての判断（手＋キューブ）；</p></li>
@@ -399,20 +408,20 @@
 </div>
 </section>
 <section id="pr-glissant-sur-n-dernieres-decisions">
-<h4><span class="section-number">2.14.5.2. </span>直近 N 回の判断にわたる移動 PR<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.2. </span>直近 N 回の判断にわたる移動 PR<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
 <p>直近 <em>N</em> 回の判断（N = 5、10、50、100、250、500、1000）について計算された PR（または MWC）値の列により、最近の傾向を把握できます。グレー表示の値は、利用可能な判断数を超える N に対応します。</p>
 <p>値をクリックすると、対応する直近 <em>N</em> 件のポジションが読み込まれます。</p>
 </section>
 <section id="top-blunders">
-<h4><span class="section-number">2.14.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
 <p>最悪のエラー（または MWC cost）上位 10 件のリストで、大きさの降順に並べられています。行をクリックすると、該当するポジションが分析パネルに読み込まれます。</p>
 </section>
 </section>
 <section id="onglet-progression">
-<h3><span class="section-number">2.14.6. </span>Progression タブ<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.6. </span>Progression タブ<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
 <p><strong>Progression</strong> タブは、時間の経過に伴うレベルの推移を示します。</p>
 <section id="courbe-par-tournoi">
-<h4><span class="section-number">2.14.6.1. </span>トーナメントごとの曲線<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.6.1. </span>トーナメントごとの曲線<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
 <p>折れ線グラフが各トーナメントの PR（または MWC）を表示します（X 軸：トーナメントの順序、Y 軸：指標の値）。色付きの帯がレベルのしきい値を表します。</p>
 <p>グラフ上の点をクリックすると、2 つのオプションを持つコンテキストメニューが開きます：</p>
 <ul class="simple">
@@ -421,7 +430,7 @@
 </ul>
 </section>
 <section id="scatter-plot-par-match">
-<h4><span class="section-number">2.14.6.2. </span>マッチごとの散布図<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.6.2. </span>マッチごとの散布図<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
 <p>散布図が各マッチを表します（X 軸：日付、Y 軸：PR または MWC）。点の大きさはマッチ内の判断数に比例します。</p>
 <p>点をクリックするとコンテキストメニューが開きます：</p>
 <ul class="simple">
@@ -431,24 +440,24 @@
 </section>
 </section>
 <section id="onglet-erreurs">
-<h3><span class="section-number">2.14.7. </span>Erreurs タブ<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.7. </span>Erreurs タブ<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
 <p><strong>Erreurs</strong> タブはエラーの原因を分解して示します。</p>
 <section id="repartition-par-action-de-videau">
-<h4><span class="section-number">2.14.7.1. </span>キューブのアクションごとの内訳<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.1. </span>キューブのアクションごとの内訳<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
 <p>棒グラフが各種のキューブの判断について PR（または MWC）を表示します：<em>NoDouble</em>、<em>DoubleTake</em>、<em>DoublePass</em>、<em>TooGood</em>。各バーはツールチップで判断数とブランダー率も示します。</p>
 <p>バーをクリックすると、そのキューブのアクションに対応するポジションのうち <strong>エラーがあるものだけ</strong> が読み込まれます（ドリルダウン）。</p>
 </section>
 <section id="repartition-checker-cube">
-<h4><span class="section-number">2.14.7.2. </span>Checker / Cube の内訳<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.2. </span>Checker / Cube の内訳<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
 <p>比較図が、プレイした手の PR とキューブの判断の PR を並べて表示します。バーをクリックすると、エラーがある部分集合のポジションが読み込まれます。</p>
 </section>
 <section id="histogramme-des-magnitudes-d-erreur">
-<h4><span class="section-number">2.14.7.3. </span>エラーの大きさのヒストグラム<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.3. </span>エラーの大きさのヒストグラム<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
 <p>ヒストグラムが、ポイントの千分の一単位での大きさに従ってエラーを分布させます（区分：0–5、5–10、10–25、25–50、50–100、≥ 100）。バーをクリックすると、その区分のポジションが読み込まれます。</p>
 </section>
 </section>
 <section id="regle-d-agregation">
-<h3><span class="section-number">2.14.8. </span>集計ルール<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.8. </span>集計ルール<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
 <div class="admonition important">
 <p class="admonition-title">重要</p>
 <p>トーナメント（または任意の部分集合）の PR は <strong>合計／合計</strong> ルールで計算されます。各マッチの個別 PR の平均としては決して計算されません。</p>
@@ -466,7 +475,7 @@
 </div>
 </section>
 <section id="mwc-limitations">
-<h3><span class="section-number">2.14.9. </span>MWC：制限事項<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.9. </span>MWC：制限事項<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>MWC cost は、競技バックギャモンにおける事実上の参照テーブルである <strong>MET Kazaross-XG2</strong> から計算されます。結果は、他の MET を使用するソフトウェアと直接比較することはできません。</p></li>
 <li><p><em>money-game</em> のポジション（マッチスコアなし）は MWC の計算から <strong>除外</strong> されます。データベースに money-game のポジションが多く含まれている場合、MWC cost は過小評価されるか、利用できないことがあります。</p></li>
@@ -475,7 +484,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.15. </span>EPC パネル<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>EPC パネル<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
 <p><strong>EPC</strong> パネル（<em>CTRL-E</em>）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。<em>CTRL-E</em> を押すか、下部パネルの EPC タブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行することで有効になります。</p>
 <p>このパネルでは、ユーザーがインナーボード（最後の 6 ポイント）内のチェッカーの配置を編集すると、各プレイヤーについて次の情報がリアルタイムで表示されます：</p>
 <ul class="simple">
@@ -493,7 +502,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.16. </span>Anki パネル<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Anki パネル<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p><strong>Anki</strong> パネル（<em>CTRL-K</em>）では、FSRS アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。</p>
 <p><strong>デッキの作成：</strong> <em>New Deck</em> をクリックすると、コレクションまたは現在の検索結果からデッキを作成できます。検索に基づくデッキは、Anki タブをアクティブにすると自動的に同期されます。</p>
 <p><strong>復習：</strong> デッキを選択してから <em>Study</em> をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。各カードは対応するポジションをボード上に表示します。あなたの想起度を <em>1*（もう一度）、*2*（難しい）、*3*（普通）、または *4*（簡単）のキーで評価してください。*Esc</em> を押すと停止してデッキのリストに戻ります。</p>
@@ -501,11 +510,11 @@
 <p><strong>デッキの管理：</strong> アクションボタンを使って、デッキの名前変更、同期、リセット、削除ができます。FSRS のパラメータ（目標保持率、最大間隔、ランダム性）は、設定（歯車アイコン）でデッキごとに構成できます。</p>
 </section>
 <section id="panneau-metadonnees">
-<span id="panneau-metadata"></span><h2><span class="section-number">2.17. </span>メタデータパネル<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<span id="panneau-metadata"></span><h2><span class="section-number">2.18. </span>メタデータパネル<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
 <p><strong>メタデータ</strong> パネルは、現在のデータベースの一般情報を表示します：名前、説明、ポジション数、マッチ数とゲーム数、スキーマのバージョン。<code class="docutils literal notranslate"><span class="pre">meta</span></code> コマンドでアクセスできます。</p>
 </section>
 <section id="panneau-journal">
-<span id="panneau-log"></span><h2><span class="section-number">2.18. </span>ログパネル<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
+<span id="panneau-log"></span><h2><span class="section-number">2.19. </span>ログパネル<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
 <p><strong>ログ</strong> パネルは、最近の操作のログを表示します：インポート、エクスポート、およびデータベースに対する操作と、その結果やタイムスタンプです。インポートエラーの診断に役立ちます。</p>
 </section>
 </section>

@@ -85,6 +85,8 @@ Des fenêtres modales peuvent s'afficher pour:
 
 * afficher l'aide de blunderDB,
 
+* afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),
+
 * paramétrer l'export de la base de données,
 
 * configurer blunderDB, notamment la langue de l'interface (voir
@@ -102,7 +104,9 @@ La zone d'affichage principale met à disposition à l'utilisateur:
 
 * les dés à jouer. Si aucune valeur n'est affichée sur les dés, la
   position des dés indique quel joueur a le trait et que la position est
-  une décision de cube.
+  une décision de cube. Lorsque la décision de cube est une réponse à un
+  doublement (prise/passe), le videau proposé est affiché au centre du
+  plateau, à la valeur offerte.
 
 La barre d'état est structurée de gauche à droite par les informations
 suivantes:
@@ -133,6 +137,31 @@ français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
 et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d'une session à l'autre.
+
+La fenêtre de configuration permet également de personnaliser les couleurs du
+plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
+la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
+2, les dés, les points des dés et le videau. Le bouton *Réinitialiser* rétablit
+l'ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
+conservées d'une session à l'autre.
+
+.. _visites_guidees:
+
+Visites guidées et base d'exemple
+---------------------------------
+
+Pour faciliter la prise en main, blunderDB propose des **visites guidées** de
+l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou avec
+la commande ``tour`` (alias ``tutorial``). Quatre visites sont disponibles : un
+tour général de l'interface, et des visites dédiées à la recherche de positions,
+à la revue des matchs et à la revue des tournois. Chaque visite met en évidence
+les éléments concernés de l'interface, étape par étape, et peut être rejouée à
+tout moment. Au premier démarrage, le tour général est proposé automatiquement.
+
+La commande ``demo`` charge une **base d'exemple** (matchs, tournoi et analyses)
+permettant de découvrir les fonctionnalités de l'outil sans importer ses propres
+parties. Les visites guidées s'appuient sur cette base lorsqu'aucune base n'est
+ouverte.
 
 .. _mode_normal:
 
@@ -228,6 +257,15 @@ Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). Le panneau
 de recherche propose également une case à cocher *Search in current results*
 pour la même fonctionnalité.
+
+Le panneau propose un contrôle explicite du **type de décision** recherché :
+*Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
+(décisions de cube). Lorsque *Videau* est sélectionné, une seconde liste précise
+le sous-type : *Tous*, *Double / Pas de double* (le joueur au trait doit décider
+de doubler) ou *Prise / Passe* (réponse à un doublement adverse). Le contrôle est
+synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
+jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
+affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
    disponibles.

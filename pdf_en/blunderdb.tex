@@ -80,7 +80,7 @@
 
 \title{blunderDB}
 \date{Jun 05, 2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -579,7 +579,7 @@ May 7, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube\_error pour les décisions Double/Pass. Documentation du modèle de statistiques ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). Voir {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
+Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per\sphinxhyphen{}tournament curve and per\sphinxhyphen{}match scatter plot, Errors tab with cube\sphinxhyphen{}action breakdown and error magnitude histogram. Interactive drill\sphinxhyphen{}down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list –type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube\_error calculation for Double/Pass decisions. Statistics model documentation ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). See {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -611,7 +611,7 @@ June 1, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe. Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue. Le choix de la langue est conservé d’une session à l’autre. Voir {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}.
+Interface internationalisation: the whole of blunderDB (toolbar, panels, messages, help) can now be displayed in English, French, German, Italian, Spanish, Finnish, Japanese, Greek or Russian, as you choose. Added a configuration window, accessible through a gear\sphinxhyphen{}shaped button in the toolbar, to select the language. The language choice is kept across sessions. See {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuration}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -622,12 +622,28 @@ Internationalisation de l’interface : l’intégralité de blunderDB (barre d�
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-02/06/2026
+June 2, 2026
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout d’un mode headless (serveur), avancé et facultatif, qui complète l’application de bureau : un démon \sphinxcode{\sphinxupquote{serve}} exposant le moteur en HTTP + JSON, un backend PostgreSQL multi\sphinxhyphen{}utilisateur avec cloisonnement par tenant (et Row\sphinxhyphen{}Level Security en option), une commande \sphinxcode{\sphinxupquote{migrate}} pour transférer une base SQLite vers PostgreSQL, et un dispatcher générique \sphinxcode{\sphinxupquote{call}} donnant accès en ligne de commande à toutes les opérations de stockage. Import de positions uniques depuis de nouveaux formats (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz texte, bibliothèque native \sphinxcode{\sphinxupquote{.db}}) avec enrichissement des doublons entre formats. Corrections : les panneaux ne provoquent plus d’erreur lorsqu’aucune base n’est ouverte et le panneau Commentaires ne boucle plus à l’ouverture. Voir {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
+Added a headless (server) mode, advanced and optional, complementing the desktop application: a \sphinxcode{\sphinxupquote{serve}} daemon exposing the engine over HTTP + JSON, a multi\sphinxhyphen{}user PostgreSQL backend with per\sphinxhyphen{}tenant isolation (and optional Row\sphinxhyphen{}Level Security), a \sphinxcode{\sphinxupquote{migrate}} command to transfer a SQLite database to PostgreSQL, and a generic \sphinxcode{\sphinxupquote{call}} dispatcher giving command\sphinxhyphen{}line access to every storage operation. Import of single positions from new formats (eXtreme Gammon \sphinxcode{\sphinxupquote{.xgp}}, BGBlitz text, native \sphinxcode{\sphinxupquote{.db}} library) with enrichment of duplicates across formats. Fixes: panels no longer raise an error when no database is open, and the Comments panel no longer loops on opening. See {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+June 5, 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Added guided tours of the interface (general tour, search, matches, tournaments), replayable from the toolbar or with the \sphinxcode{\sphinxupquote{tour}} command, and a sample database loadable with the \sphinxcode{\sphinxupquote{demo}} command to explore the tool without importing your own games. Customisation of the board colours (background, border, points, checkers, dice, doubling cube) from the configuration window. Command\sphinxhyphen{}line autocompletion (\sphinxstyleemphasis{TAB} key). Search panel: explicit control over the decision type (Checker / Cube), with a Double / No double or Take / Pass sub\sphinxhyphen{}type for cube decisions, synchronised with the board; the offered cube is shown in the centre of the board for take/pass decisions. Search for a position by its identifier (\sphinxcode{\sphinxupquote{id}} filter). Fixed the attribution of the cube error to player 1. See {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Guided tours and sample database}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -652,15 +668,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -676,7 +692,7 @@ On Linux, if blunderDB is not executable after downloading, run the command \sph
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-On Linux, if you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1 instead of webkit2gtk\sphinxhyphen{}4.0. Download the dedicated build: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+On Linux, if you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1 instead of webkit2gtk\sphinxhyphen{}4.0. Download the dedicated build: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warning:}
@@ -828,6 +844,10 @@ display the blunderDB help,
 
 \item {} 
 \sphinxAtStartPar
+display the catalogue of guided tours (see {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Guided tours and sample database}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 configure database export settings,
 
 \item {} 
@@ -857,7 +877,7 @@ the score of each player,
 
 \item {} 
 \sphinxAtStartPar
-the dice to play. If no values are displayed on the dice, the position of the dice indicates which player has the turn and that the position is a cube decision.
+the dice to play. If no values are shown on the dice, the position of the dice indicates which player is on roll and that the position is a cube decision. When the cube decision is a response to a double (take/pass), the offered cube is shown in the centre of the board, at the offered value.
 
 \end{itemize}
 
@@ -891,6 +911,18 @@ The configuration button (gear\sphinxhyphen{}shaped icon) located in the toolbar
 
 \sphinxAtStartPar
 It lets you choose the interface language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.
+
+\sphinxAtStartPar
+The configuration window also lets you customise the board colours. Each element has its own colour picker: the background, the border, the light and dark points, player 1’s and player 2’s checkers, the dice, the dice pips and the doubling cube. The \sphinxstyleemphasis{Reset} button restores all the default colours. Like the language, the chosen colours are kept from one session to the next.
+
+
+\subsection{Guided tours and sample database}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+To make getting started easier, blunderDB offers \sphinxstylestrong{guided tours} of the interface. The tour catalogue opens from the toolbar or with the \sphinxcode{\sphinxupquote{tour}} command (alias \sphinxcode{\sphinxupquote{tutorial}}). Four tours are available: a general tour of the interface, and tours dedicated to searching positions, reviewing matches and reviewing tournaments. Each tour highlights the relevant interface elements, step by step, and can be replayed at any time. On first launch, the general tour is offered automatically.
+
+\sphinxAtStartPar
+The \sphinxcode{\sphinxupquote{demo}} command loads a \sphinxstylestrong{sample database} (matches, a tournament and analyses) that lets you explore the tool’s features without importing your own games. The guided tours rely on this database when no database is open.
 
 
 \subsection{Browsing positions}
@@ -965,6 +997,9 @@ The \sphinxstylestrong{Search} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F}
 
 \sphinxAtStartPar
 To refine a search among the currently filtered positions, use the \sphinxcode{\sphinxupquote{ss}} command followed by filters (e.g.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). The search panel also offers a \sphinxstyleemphasis{Search in current results} checkbox for the same functionality.
+
+\sphinxAtStartPar
+The panel offers an explicit control over the \sphinxstylestrong{decision type} searched for: \sphinxstyleemphasis{Indifferent} (no filter), \sphinxstyleemphasis{Checker} (checker decisions) or \sphinxstyleemphasis{Cube} (cube decisions). When \sphinxstyleemphasis{Cube} is selected, a second list specifies the sub\sphinxhyphen{}type: \sphinxstyleemphasis{All}, \sphinxstyleemphasis{Double / No double} (the player on roll has to decide whether to double) or \sphinxstyleemphasis{Take / Pass} (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In \sphinxstyleemphasis{Take / Pass} mode, the cube is shown in the centre of the board at the offered value; that value remains editable.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
@@ -2059,6 +2094,9 @@ The displayed positions are those from the database that meet the search criteri
 
 \section{List of commands}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+The command line, located in the status bar, opens by pressing the \sphinxstyleemphasis{SPACE} key. As you type a command, a list of suggestions appears automatically: the \sphinxstyleemphasis{TAB} key (or \sphinxstyleemphasis{SHIFT\sphinxhyphen{}TAB}) cycles through the suggestions and completes the command, while \sphinxstyleemphasis{ESC} closes the list (a second \sphinxstyleemphasis{ESC} closes the command line). The \sphinxstyleemphasis{UP} and \sphinxstyleemphasis{DOWN} keys remain reserved for the command history.
+
 
 \subsection{Global operations}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}
@@ -2153,7 +2191,7 @@ tutorial, tour
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le catalogue des visites guidées de l’interface.
+Opens the catalogue of guided interface tours.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2164,7 +2202,7 @@ demo
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.
+Loads a sample database (matches, tournament, analyses) to explore the tool.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3490,7 +3528,7 @@ idx
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher la position d’identifiant x (ex: id12).
+Search for the position with identifier x (e.g. id12).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3501,7 +3539,7 @@ idx,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher les positions d’identifiants x à y (ex: id5,10).
+Search for the positions with identifiers x to y (e.g. id5,10).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3523,10 +3561,7 @@ For the relative difference filter in the race (\sphinxtitleref{p>x}, \sphinxtit
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
-positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
+To search across several non\sphinxhyphen{}contiguous matches, repeat the \sphinxcode{\sphinxupquote{ma}} filter (e.g. \sphinxcode{\sphinxupquote{s ma23 ma43}} for matches 23 and 43). The same principle applies to tournaments with \sphinxcode{\sphinxupquote{tn}} and to positions with \sphinxcode{\sphinxupquote{id}} (e.g. \sphinxcode{\sphinxupquote{s id5 id10}} for positions 5 and 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Note:}

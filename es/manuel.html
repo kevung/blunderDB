@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; documentación de blunderDB - 0.22.0</title>
+  <title>2. Manual &mdash; documentación de blunderDB - 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ed146993"></script>
+      <script src="_static/documentation_options.js?v=9cc123ca"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -55,49 +55,50 @@
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Interacciones principales</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Descripción de la interfaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.4. Configuración</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.5. Navegación por las posiciones</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.6. Edición de posiciones</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.7. La línea de comandos</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.8. Panel de Análisis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.9. Panel de Comentarios</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.10. Panel de Búsqueda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.11. Panel de Colecciones</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.12. Panel de Partidas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.13. Panel de Torneos</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.14. Panel Stats</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.14.1. Introducción</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.14.2. Apertura del panel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.14.3. Barra de filtro</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.14.3.1. Perspectiva del jugador</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.14.3.2. Filtros disponibles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.5. Visitas guiadas y base de ejemplo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.6. Navegación por las posiciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.7. Edición de posiciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.8. La línea de comandos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.9. Panel de Análisis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.10. Panel de Comentarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.11. Panel de Búsqueda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.12. Panel de Colecciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. Panel de Partidas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. Panel de Torneos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Panel Stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. Introducción</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. Apertura del panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. Barra de filtro</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. Perspectiva del jugador</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.15.3.2. Filtros disponibles</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.14.4. Conmutador PR / MWC</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.14.5. Pestaña Dashboard</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.14.5.1. Tarjetas de nivel</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.14.5.2. PR deslizante sobre las últimas N decisiones</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.14.5.3. Top blunders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.15.4. Conmutador PR / MWC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.15.5. Pestaña Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.15.5.1. Tarjetas de nivel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.15.5.2. PR deslizante sobre las últimas N decisiones</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.15.5.3. Top blunders</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.14.6. Pestaña Progresión</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.14.6.1. Curva por torneo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.14.6.2. Gráfico de dispersión por partida</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.15.6. Pestaña Progresión</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.15.6.1. Curva por torneo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.15.6.2. Gráfico de dispersión por partida</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.14.7. Pestaña Errores</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.14.7.1. Reparto por acción de cubo</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.14.7.2. Comparación Checker / Cube</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.14.7.3. Histograma de las magnitudes de error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.15.7. Pestaña Errores</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.15.7.1. Reparto por acción de cubo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.15.7.2. Comparación Checker / Cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.15.7.3. Histograma de las magnitudes de error</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.14.8. Regla de agregación</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.14.9. MWC: limitaciones</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.15.8. Regla de agregación</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.15.9. MWC: limitaciones</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.15. Panel EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.16. Panel Anki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.17. Panel de Metadatos</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.18. Panel de Registro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.16. Panel EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.17. Panel Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.18. Panel de Metadatos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.19. Panel de Registro</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guía del usuario</a></li>
@@ -184,6 +185,7 @@
 <p>Pueden mostrarse ventanas modales para:</p>
 <ul class="simple">
 <li><p>mostrar la ayuda de blunderDB,</p></li>
+<li><p>mostrar el catálogo de visitas guiadas (ver <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Visitas guiadas y base de ejemplo</span></a>),</p></li>
 <li><p>configurar la exportación de la base de datos,</p></li>
 <li><p>configurar blunderDB, en particular el idioma de la interfaz (véase <a class="reference internal" href="#configuration"><span class="std std-ref">Configuración</span></a>).</p></li>
 </ul>
@@ -193,7 +195,7 @@
 <li><p>el nivel y el propietario del cubo,</p></li>
 <li><p>el pip count de cada jugador,</p></li>
 <li><p>la puntuación de cada jugador,</p></li>
-<li><p>los dados que jugar. Si no se muestra ningún valor en los dados, la posición de los dados indica qué jugador tiene el turno y que la posición es una decisión de cubo.</p></li>
+<li><p>los dados a jugar. Si no se muestra ningún valor en los dados, la posición de los dados indica qué jugador tiene el turno y que la posición es una decisión de cubo. Cuando la decisión de cubo es una respuesta a un doblaje (aceptar/pasar), el cubo propuesto se muestra en el centro del tablero, con el valor ofrecido.</p></li>
 </ul>
 <p>La barra de estado está estructurada de izquierda a derecha con la siguiente información:</p>
 <ul class="simple">
@@ -210,9 +212,15 @@
 <span id="id2"></span><h2><span class="section-number">2.4. </span>Configuración<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p>El botón de configuración (icono con forma de engranaje) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB.</p>
 <p>Esta permite elegir el idioma de la interfaz entre inglés, francés, alemán, italiano, español, finés, japonés, griego y ruso. Toda la interfaz (barra de herramientas, paneles, mensajes, ayuda) se traduce al idioma seleccionado. La elección del idioma se guarda y se mantiene de una sesión a otra.</p>
+<p>La ventana de configuración también permite personalizar los colores del tablero. Cada elemento dispone de su propio selector de color: el fondo, el borde, las puntas claras y oscuras, las fichas del jugador 1 y del jugador 2, los dados, los puntos de los dados y el cubo. El botón <em>Restablecer</em> restaura todos los colores predeterminados. Al igual que el idioma, los colores elegidos se conservan de una sesión a otra.</p>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Visitas guiadas y base de ejemplo<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>Para facilitar la toma de contacto, blunderDB ofrece <strong>visitas guiadas</strong> de la interfaz. El catálogo de visitas se abre desde la barra de herramientas o con el comando <code class="docutils literal notranslate"><span class="pre">tour</span></code> (alias <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>). Hay cuatro visitas disponibles: una visita general de la interfaz, y visitas dedicadas a la búsqueda de posiciones, a la revisión de partidas y a la revisión de torneos. Cada visita resalta los elementos correspondientes de la interfaz, paso a paso, y puede repetirse en cualquier momento. En el primer arranque, la visita general se ofrece automáticamente.</p>
+<p>El comando <code class="docutils literal notranslate"><span class="pre">demo</span></code> carga una <strong>base de ejemplo</strong> (partidas, un torneo y análisis) que permite descubrir las funcionalidades de la herramienta sin importar las partidas propias. Las visitas guiadas se apoyan en esta base cuando no hay ninguna base abierta.</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>Navegación por las posiciones<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>Navegación por las posiciones<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
 <p>Por defecto, blunderDB permite:</p>
 <ul class="simple">
 <li><p>desplazarse por las distintas posiciones de la biblioteca actual,</p></li>
@@ -225,7 +233,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>Edición de posiciones<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>Edición de posiciones<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
 <p>Pulsar la tecla <em>TAB</em> abre el panel de búsqueda y permite editar una posición en el tablero para añadirla a la base de datos o para definir una estructura de posición que buscar. La distribución de las fichas, el cubo, la puntuación y el turno pueden modificarse con el ratón (véase <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editar una posición</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
@@ -233,7 +241,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.7. </span>La línea de comandos<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<span id="mode-command"></span><h2><span class="section-number">2.8. </span>La línea de comandos<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>La línea de comandos, integrada en la barra de estado, permite realizar todas las funcionalidades de blunderDB disponibles en la interfaz gráfica: operaciones generales sobre la base de datos, navegación por las posiciones, visualización del análisis o de los comentarios, búsqueda de posiciones según filtros… Tras una primera toma de contacto con la interfaz, se recomienda utilizar progresivamente la línea de comandos, que permite un uso potente y fluido de blunderDB, especialmente para las funcionalidades de búsqueda de posiciones.</p>
 <p>Para abrir la línea de comandos, pulse la tecla <em>ESPACIO</em>. Para enviar una consulta y cerrar la línea de comandos, pulse la tecla <em>INTRO</em>.</p>
 <p>blunderDB ejecuta las consultas enviadas por el usuario siempre que sean válidas y modifica inmediatamente el estado de la base de datos si procede. No se requieren acciones de guardado explícitas por parte del usuario.</p>
@@ -243,28 +251,29 @@
 </div>
 </section>
 <section id="panneau-analyse">
-<span id="id3"></span><h2><span class="section-number">2.8. </span>Panel de Análisis<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<span id="id3"></span><h2><span class="section-number">2.9. </span>Panel de Análisis<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
 <p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg o BGBlitz. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">list</span></code> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-commentaires">
-<span id="id4"></span><h2><span class="section-number">2.9. </span>Panel de Comentarios<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<span id="id4"></span><h2><span class="section-number">2.10. </span>Panel de Comentarios<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
 <p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y modifica los comentarios asociados a la posición actual. Los comentarios importados de los ficheros XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">comment</span></code> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-recherche">
-<span id="id5"></span><h2><span class="section-number">2.10. </span>Panel de Búsqueda<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<span id="id5"></span><h2><span class="section-number">2.11. </span>Panel de Búsqueda<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
 <p>El panel <strong>Búsqueda</strong> (<em>CTRL-F</em> o <em>TAB</em>) permite filtrar las posiciones según criterios libremente combinables: estructura de fichas, tipo de decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla <em>TAB</em> abre simultáneamente el panel de búsqueda y el editor de posición, lo que permite definir una estructura de fichas que buscar directamente en el tablero.</p>
 <p>Para afinar una búsqueda entre las posiciones filtradas actualmente, use el comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguido de filtros (p. ej.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). El panel de búsqueda ofrece también una casilla <em>Search in current results</em> para la misma funcionalidad.</p>
+<p>El panel ofrece un control explícito del <strong>tipo de decisión</strong> buscado: <em>Indiferente</em> (ningún filtro), <em>Fichas</em> (decisiones de jugada) o <em>Cubo</em> (decisiones de cubo). Cuando se selecciona <em>Cubo</em>, una segunda lista precisa el subtipo: <em>Todos</em>, <em>Doblar / No doblar</em> (el jugador con el turno debe decidir si doblar) o <em>Aceptar / Pasar</em> (respuesta a un doblaje del rival). El control está sincronizado con el tablero: modificar los dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa. En modo <em>Aceptar / Pasar</em>, el cubo se muestra en el centro del tablero con el valor ofrecido; ese valor sigue siendo editable.</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
 <p>Consulte la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Sección 4</span></a> para ver la lista de filtros disponibles.</p>
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.11. </span>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Pueden añadirse o quitarse posiciones de ellas. Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El orden de las colecciones y de las posiciones dentro de ellas puede modificarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">collection</span></code> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.12. </span>Panel de Partidas<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<span id="mode-match"></span><h2><span class="section-number">2.13. </span>Panel de Partidas<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
 <p>El panel <strong>Partidas</strong> (<em>CTRL-Tab</em>) lista las partidas importadas. Haga doble clic en una partida (o pulse <em>INTRO</em>) para navegar por sus jugadas. El comando <code class="docutils literal notranslate"><span class="pre">m</span></code> reanuda la navegación en la última partida visitada.</p>
 <p>El usuario puede:</p>
 <ul class="simple">
@@ -281,13 +290,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.13. </span>Panel de Torneos<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.14. </span>Panel de Torneos<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>El panel <strong>Torneos</strong> (<em>CTRL-Y</em>) permite agrupar partidas en torneos para un seguimiento organizado y un análisis estadístico por evento. Los torneos pueden crearse, renombrarse y eliminarse; las partidas pueden asignarse a ellos. Las estadísticas del panel Stats pueden filtrarse por torneo. Pulse <em>CTRL-Y</em> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-stats">
-<span id="stats"></span><h2><span class="section-number">2.14. </span>Panel Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<span id="stats"></span><h2><span class="section-number">2.15. </span>Panel Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
 <section id="id7">
-<h3><span class="section-number">2.14.1. </span>Introducción<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.1. </span>Introducción<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <p>El panel <strong>Stats</strong> permite analizar el nivel de juego y seguir la progresión a lo largo del tiempo a partir de las posiciones importadas en la base de datos. Calcula y muestra los indicadores <strong>PR</strong> (Performance Rate) y <strong>MWC cost</strong> (Match Winning Chance cost) para el conjunto de las posiciones o para un subconjunto filtrado.</p>
 <p>El panel Stats resulta especialmente útil para:</p>
 <ul class="simple">
@@ -298,7 +307,7 @@
 </ul>
 </section>
 <section id="ouverture-du-panneau">
-<h3><span class="section-number">2.14.2. </span>Apertura del panel<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.2. </span>Apertura del panel<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
 <p>Para abrir el panel Stats:</p>
 <ul class="simple">
 <li><p>Pulse <em>CTRL-D</em>.</p></li>
@@ -310,10 +319,10 @@
 </div>
 </section>
 <section id="barre-de-filtre">
-<h3><span class="section-number">2.14.3. </span>Barra de filtro<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.3. </span>Barra de filtro<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
 <p>La barra de filtro, en la parte superior del panel, permite restringir el cálculo a un subconjunto de posiciones.</p>
 <section id="perspective-joueur">
-<h4><span class="section-number">2.14.3.1. </span>Perspectiva del jugador<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.3.1. </span>Perspectiva del jugador<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
 <p>La lista desplegable <strong>Jugador</strong> permite filtrar las estadísticas según el jugador analizado. blunderDB selecciona automáticamente el jugador cuyo nombre aparece con más frecuencia en la base de datos, modificable en cualquier momento.</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
@@ -321,7 +330,7 @@
 </div>
 </section>
 <section id="filtres-disponibles">
-<h4><span class="section-number">2.14.3.2. </span>Filtros disponibles<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.3.2. </span>Filtros disponibles<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><strong>Torneo(s)</strong> — restricción a uno o varios torneos. Pueden seleccionarse varios torneos simultáneamente.</p></li>
 <li><p><strong>Fechas</strong> — intervalo temporal (<em>Desde</em> … <em>Hasta</em>). Si solo se indica la fecha de inicio, se incluyen las posiciones más recientes.</p></li>
@@ -336,7 +345,7 @@
 </section>
 </section>
 <section id="toggle-pr-mwc">
-<h3><span class="section-number">2.14.4. </span>Conmutador PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.4. </span>Conmutador PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
 <p>El botón <strong>PR / MWC</strong> situado en la parte superior del panel alterna la métrica mostrada en todas las pestañas.</p>
 <p><strong>PR (Performance Rate)</strong></p>
 <blockquote>
@@ -382,10 +391,10 @@
 <p>El cambio PR ↔ MWC es instantáneo: no se realiza ningún recálculo en el backend.</p>
 </section>
 <section id="onglet-dashboard">
-<h3><span class="section-number">2.14.5. </span>Pestaña Dashboard<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.5. </span>Pestaña Dashboard<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
 <p>La pestaña <strong>Dashboard</strong> ofrece una vista sintética de los indicadores clave.</p>
 <section id="cartes-de-niveau">
-<h4><span class="section-number">2.14.5.1. </span>Tarjetas de nivel<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.1. </span>Tarjetas de nivel<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
 <p>Tres tarjetas muestran el PR (o MWC) para:</p>
 <ul class="simple">
 <li><p><strong>All</strong> — todas las decisiones (fichas + cubo);</p></li>
@@ -399,20 +408,20 @@
 </div>
 </section>
 <section id="pr-glissant-sur-n-dernieres-decisions">
-<h4><span class="section-number">2.14.5.2. </span>PR deslizante sobre las últimas N decisiones<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.2. </span>PR deslizante sobre las últimas N decisiones<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
 <p>Una fila de valores PR (o MWC) calculados sobre las últimas <em>N</em> decisiones (N = 5, 10, 50, 100, 250, 500, 1000) permite medir la tendencia reciente. Los valores atenuados corresponden a un N superior al número de decisiones disponibles.</p>
 <p>Hacer clic en un valor carga las últimas <em>N</em> posiciones correspondientes.</p>
 </section>
 <section id="top-blunders">
-<h4><span class="section-number">2.14.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
 <p>La lista de los 10 peores errores (o MWC cost), ordenados por magnitud decreciente. Hacer clic en una fila carga la posición implicada en el panel de análisis.</p>
 </section>
 </section>
 <section id="onglet-progression">
-<h3><span class="section-number">2.14.6. </span>Pestaña Progresión<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.6. </span>Pestaña Progresión<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
 <p>La pestaña <strong>Progresión</strong> presenta la evolución del nivel a lo largo del tiempo.</p>
 <section id="courbe-par-tournoi">
-<h4><span class="section-number">2.14.6.1. </span>Curva por torneo<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.6.1. </span>Curva por torneo<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
 <p>Un gráfico de líneas muestra el PR (o MWC) para cada torneo (eje X: orden de los torneos, eje Y: valor de la métrica). Unas bandas de color materializan los umbrales de nivel.</p>
 <p>Hacer clic en un punto del gráfico abre un menú contextual con dos opciones:</p>
 <ul class="simple">
@@ -421,7 +430,7 @@
 </ul>
 </section>
 <section id="scatter-plot-par-match">
-<h4><span class="section-number">2.14.6.2. </span>Gráfico de dispersión por partida<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.6.2. </span>Gráfico de dispersión por partida<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
 <p>Un diagrama de dispersión representa cada partida (eje X: fecha, eje Y: PR o MWC). El tamaño del punto es proporcional al número de decisiones de la partida.</p>
 <p>Hacer clic en un punto abre un menú contextual:</p>
 <ul class="simple">
@@ -431,24 +440,24 @@
 </section>
 </section>
 <section id="onglet-erreurs">
-<h3><span class="section-number">2.14.7. </span>Pestaña Errores<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.7. </span>Pestaña Errores<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
 <p>La pestaña <strong>Errores</strong> desglosa las fuentes de error.</p>
 <section id="repartition-par-action-de-videau">
-<h4><span class="section-number">2.14.7.1. </span>Reparto por acción de cubo<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.1. </span>Reparto por acción de cubo<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
 <p>Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Cada barra indica también el número de decisiones y la tasa de blunders en una información emergente.</p>
 <p>Hacer clic en una barra carga las posiciones correspondientes a esa acción de cubo, <strong>solo las que tienen un error</strong> (drill-down).</p>
 </section>
 <section id="repartition-checker-cube">
-<h4><span class="section-number">2.14.7.2. </span>Comparación Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.2. </span>Comparación Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
 <p>Un diagrama comparativo coloca lado a lado el PR de las jugadas de fichas y de las decisiones de cubo. Hacer clic en una barra carga las posiciones del subconjunto con error.</p>
 </section>
 <section id="histogramme-des-magnitudes-d-erreur">
-<h4><span class="section-number">2.14.7.3. </span>Histograma de las magnitudes de error<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.15.7.3. </span>Histograma de las magnitudes de error<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
 <p>Un histograma distribuye los errores según su magnitud en milésimas de punto (intervalos: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Hacer clic en una barra carga las posiciones del intervalo.</p>
 </section>
 </section>
 <section id="regle-d-agregation">
-<h3><span class="section-number">2.14.8. </span>Regla de agregación<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.8. </span>Regla de agregación<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
 <div class="admonition important">
 <p class="admonition-title">Importante</p>
 <p>El PR de un torneo (o de cualquier subconjunto) se calcula mediante la regla <strong>suma/suma</strong>, nunca como media de los PR individuales de las partidas.</p>
@@ -466,7 +475,7 @@
 </div>
 </section>
 <section id="mwc-limitations">
-<h3><span class="section-number">2.14.9. </span>MWC: limitaciones<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.15.9. </span>MWC: limitaciones<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>El MWC cost se calcula a partir de la <strong>MET Kazaross-XG2</strong>, tabla de referencia de facto en el backgammon competitivo. Los resultados no son directamente comparables con programas que usan otras METs.</p></li>
 <li><p>Las posiciones de <em>money-game</em> (sin puntuación de match) se <strong>excluyen</strong> del cálculo de MWC. Si su base de datos contiene muchas posiciones de money-game, el MWC cost puede estar subestimado o no estar disponible.</p></li>
@@ -475,7 +484,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.15. </span>Panel EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>Panel EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
 <p>El panel <strong>EPC</strong> (<em>CTRL-E</em>) calcula el EPC (Effective Pip Count) de una posición de bearoff. Se activa pulsando <em>CTRL-E</em>, haciendo clic en la pestaña EPC del panel inferior, o ejecutando el comando <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>En este panel, el usuario edita la posición de las fichas en el tablero interior (los 6 últimos puntos) y se muestra en tiempo real la siguiente información para cada jugador:</p>
 <ul class="simple">
@@ -493,7 +502,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.16. </span>Panel Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Panel Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p>El panel <strong>Anki</strong> (<em>CTRL-K</em>) permite estudiar posiciones mediante repetición espaciada utilizando el algoritmo FSRS. El usuario puede crear mazos a partir de colecciones o de resultados de búsqueda.</p>
 <p><strong>Creación de mazos:</strong> Haga clic en <em>New Deck</em> para crear un mazo a partir de una colección o de los resultados de búsqueda actuales. Los mazos basados en una búsqueda se sincronizan automáticamente al activar la pestaña Anki.</p>
 <p><strong>Repaso:</strong> Seleccione un mazo y luego haga clic en <em>Study</em> (o haga doble clic en un mazo) para empezar a repasar las cartas pendientes. Cada carta muestra la posición correspondiente en el tablero. Evalúe su recuerdo con las teclas <em>1</em> (Repetir), <em>2</em> (Difícil), <em>3</em> (Bien) o <em>4</em> (Fácil). Pulse <em>Esc</em> para detenerse y volver a la lista de mazos.</p>
@@ -501,11 +510,11 @@
 <p><strong>Gestión de mazos:</strong> Utilice los botones de acción para renombrar, sincronizar, reiniciar o eliminar mazos. Los parámetros FSRS (retención objetivo, intervalo máximo, factor de aleatoriedad) pueden configurarse por mazo en los Ajustes (icono de engranaje).</p>
 </section>
 <section id="panneau-metadonnees">
-<span id="panneau-metadata"></span><h2><span class="section-number">2.17. </span>Panel de Metadatos<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<span id="panneau-metadata"></span><h2><span class="section-number">2.18. </span>Panel de Metadatos<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
 <p>El panel <strong>Metadatos</strong> muestra la información general de la base de datos actual: nombre, descripción, número de posiciones, número de partidas y juegos, versión del esquema. Accesible mediante el comando <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
 </section>
 <section id="panneau-journal">
-<span id="panneau-log"></span><h2><span class="section-number">2.18. </span>Panel de Registro<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
+<span id="panneau-log"></span><h2><span class="section-number">2.19. </span>Panel de Registro<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
 <p>El panel <strong>Registro</strong> muestra el registro de las operaciones recientes: importaciones, exportaciones y operaciones sobre la base de datos, con sus resultados y marcas de tiempo. Resulta útil para diagnosticar los errores de importación.</p>
 </section>
 </section>

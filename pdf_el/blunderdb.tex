@@ -64,7 +64,7 @@
 
 \title{blunderDB}
 \date{05 Ιουνίου 2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -615,6 +615,22 @@
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+5 Ιουνίου 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Προσθήκη ξεναγήσεων του περιβάλλοντος (γενική ξενάγηση, αναζήτηση, αγώνες, τουρνουά), επαναλήψιμων από τη γραμμή εργαλείων ή με την εντολή \sphinxcode{\sphinxupquote{tour}}, και μιας βάσης δείγματος που φορτώνεται με την εντολή \sphinxcode{\sphinxupquote{demo}} για την εξερεύνηση του εργαλείου χωρίς εισαγωγή των δικών σας παρτίδων. Προσαρμογή των χρωμάτων του ταμπλό (φόντο, περίγραμμα, μύτες, πούλια, ζάρια, κύβος) από το παράθυρο ρυθμίσεων. Αυτόματη συμπλήρωση της γραμμής εντολών (πλήκτρο \sphinxstyleemphasis{TAB}). Πάνελ αναζήτησης: ρητός έλεγχος του τύπου απόφασης (Πιόνια / Κύβος), με υποτύπο Διπλασιασμός / Όχι ή Αποδοχή / Πάσο για τις αποφάσεις κύβου, συγχρονισμένος με το ταμπλό· ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό για τις αποφάσεις αποδοχής/πάσο. Αναζήτηση μιας θέσης με το αναγνωριστικό της (φίλτρο \sphinxcode{\sphinxupquote{id}}). Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1. Βλ. {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ξεναγήσεις και βάση δείγματος}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -636,15 +652,15 @@
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -660,7 +676,7 @@
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Στο Linux, εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί το webkit2gtk\sphinxhyphen{}4.1 αντί του webkit2gtk\sphinxhyphen{}4.0. Κατεβάστε την ειδική έκδοση: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+Στο Linux, εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί το webkit2gtk\sphinxhyphen{}4.1 αντί του webkit2gtk\sphinxhyphen{}4.0. Κατεβάστε την ειδική έκδοση: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Προειδοποίηση:}
@@ -812,6 +828,10 @@
 
 \item {} 
 \sphinxAtStartPar
+εμφάνιση του καταλόγου των ξεναγήσεων (βλ. {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ξεναγήσεις και βάση δείγματος}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 ρύθμιση της εξαγωγής της βάσης δεδομένων,
 
 \item {} 
@@ -841,7 +861,7 @@
 
 \item {} 
 \sphinxAtStartPar
-τα ζάρια προς παίξιμο. Αν δεν εμφανίζεται καμία τιμή στα ζάρια, η θέση των ζαριών υποδεικνύει ποιος παίκτης έχει τη σειρά και ότι η θέση είναι μια απόφαση κύβου (cube).
+τα ζάρια προς παίξιμο. Αν δεν εμφανίζεται καμία τιμή στα ζάρια, η θέση των ζαριών υποδεικνύει ποιος παίκτης έχει τη σειρά και ότι η θέση είναι μια απόφαση κύβου. Όταν η απόφαση κύβου είναι απάντηση σε διπλασιασμό (αποδοχή/πάσο), ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό, στην προσφερόμενη τιμή.
 
 \end{itemize}
 
@@ -875,6 +895,18 @@
 
 \sphinxAtStartPar
 Αυτό επιτρέπει την επιλογή της γλώσσας της διεπαφής μεταξύ Αγγλικών, Γαλλικών, Γερμανικών, Ιταλικών, Ισπανικών, Φινλανδικών, Ιαπωνικών, Ελληνικών και Ρωσικών. Το σύνολο της διεπαφής (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή της γλώσσας αποθηκεύεται και διατηρείται από τη μία περίοδο λειτουργίας στην άλλη.
+
+\sphinxAtStartPar
+Το παράθυρο ρυθμίσεων επιτρέπει επίσης την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτές και σκούρες μύτες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι κουκκίδες των ζαριών και ο κύβος. Το κουμπί \sphinxstyleemphasis{Επαναφορά} επαναφέρει όλα τα χρώματα στις προεπιλεγμένες τιμές. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.
+
+
+\subsection{Ξεναγήσεις και βάση δείγματος}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+Για να διευκολυνθεί η εξοικείωση, το blunderDB προσφέρει \sphinxstylestrong{ξεναγήσεις} του περιβάλλοντος. Ο κατάλογος των ξεναγήσεων ανοίγει από τη γραμμή εργαλείων ή με την εντολή \sphinxcode{\sphinxupquote{tour}} (ψευδώνυμο \sphinxcode{\sphinxupquote{tutorial}}). Είναι διαθέσιμες τέσσερις ξεναγήσεις: μια γενική ξενάγηση του περιβάλλοντος, και ξεναγήσεις αφιερωμένες στην αναζήτηση θέσεων, στην ανασκόπηση αγώνων και στην ανασκόπηση τουρνουά. Κάθε ξενάγηση επισημαίνει τα σχετικά στοιχεία του περιβάλλοντος, βήμα προς βήμα, και μπορεί να επαναληφθεί ανά πάσα στιγμή. Κατά την πρώτη εκκίνηση, η γενική ξενάγηση προτείνεται αυτόματα.
+
+\sphinxAtStartPar
+Η εντολή \sphinxcode{\sphinxupquote{demo}} φορτώνει μια \sphinxstylestrong{βάση δείγματος} (αγώνες, τουρνουά και αναλύσεις) που επιτρέπει την εξερεύνηση των λειτουργιών του εργαλείου χωρίς εισαγωγή των δικών σας παρτίδων. Οι ξεναγήσεις στηρίζονται σε αυτή τη βάση όταν δεν υπάρχει ανοιχτή βάση.
 
 
 \subsection{Πλοήγηση στις θέσεις}
@@ -949,6 +981,9 @@
 
 \sphinxAtStartPar
 Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή \sphinxcode{\sphinxupquote{ss}} ακολουθούμενη από φίλτρα (π.χ.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου \sphinxstyleemphasis{Search in current results} για την ίδια λειτουργία.
+
+\sphinxAtStartPar
+Το πάνελ προσφέρει έναν ρητό έλεγχο του \sphinxstylestrong{τύπου απόφασης} που αναζητείται: \sphinxstyleemphasis{Αδιάφορο} (κανένα φίλτρο), \sphinxstyleemphasis{Πιόνια} (αποφάσεις κίνησης) ή \sphinxstyleemphasis{Κύβος} (αποφάσεις κύβου). Όταν είναι επιλεγμένο το \sphinxstyleemphasis{Κύβος}, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: \sphinxstyleemphasis{Όλα}, \sphinxstyleemphasis{Διπλασιασμός / Όχι} (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή \sphinxstyleemphasis{Αποδοχή / Πάσο} (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία \sphinxstyleemphasis{Αποδοχή / Πάσο}, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.
 
 \begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
 \sphinxAtStartPar
@@ -2043,6 +2078,9 @@ BGBlitz: αρχεία \sphinxstyleemphasis{.bgf} και \sphinxstyleemphasis{.tx
 
 \section{Λίστα εντολών}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+Η γραμμή εντολών, που βρίσκεται στη γραμμή κατάστασης, ανοίγει πατώντας το πλήκτρο \sphinxstyleemphasis{ΔΙΑΣΤΗΜΑ}. Κατά την πληκτρολόγηση μιας εντολής, εμφανίζεται αυτόματα μια λίστα προτάσεων: το πλήκτρο \sphinxstyleemphasis{TAB} (ή \sphinxstyleemphasis{SHIFT\sphinxhyphen{}TAB}) διατρέχει τις προτάσεις και συμπληρώνει την εντολή, ενώ το \sphinxstyleemphasis{ESC} κλείνει τη λίστα (ένα δεύτερο \sphinxstyleemphasis{ESC} κλείνει τη γραμμή εντολών). Τα πλήκτρα \sphinxstyleemphasis{ΠΑΝΩ} και \sphinxstyleemphasis{ΚΑΤΩ} παραμένουν δεσμευμένα για το ιστορικό εντολών.
+
 
 \subsection{Καθολικές λειτουργίες}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}
@@ -2137,7 +2175,7 @@ tutorial, tour
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le catalogue des visites guidées de l’interface.
+Ανοίγει τον κατάλογο των ξεναγήσεων του περιβάλλοντος.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2148,7 +2186,7 @@ demo
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.
+Φορτώνει μια βάση δείγματος (αγώνες, τουρνουά, αναλύσεις) για την εξερεύνηση του εργαλείου.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3474,7 +3512,7 @@ idx
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher la position d’identifiant x (ex: id12).
+Αναζήτηση της θέσης με αναγνωριστικό x (π.χ. id12).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3485,7 +3523,7 @@ idx,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher les positions d’identifiants x à y (ex: id5,10).
+Αναζήτηση των θέσεων με αναγνωριστικά από x έως y (π.χ. id5,10).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3507,10 +3545,7 @@ Rechercher les positions d’identifiants x à y (ex: id5,10).
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
-positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
+Για αναζήτηση σε πολλούς μη συνεχόμενους αγώνες, επαναλάβετε το φίλτρο \sphinxcode{\sphinxupquote{ma}} πολλές φορές (π.χ. \sphinxcode{\sphinxupquote{s ma23 ma43}} για τους αγώνες 23 και 43). Η ίδια αρχή ισχύει για τα τουρνουά με \sphinxcode{\sphinxupquote{tn}} και για τις θέσεις με \sphinxcode{\sphinxupquote{id}} (π.χ. \sphinxcode{\sphinxupquote{s id5 id10}} για τις θέσεις 5 και 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Σημείωση:}

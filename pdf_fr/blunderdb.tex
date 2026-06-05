@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{05 juin 2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -646,6 +646,22 @@ Ajout d’un mode headless (serveur), avancé et facultatif, qui complète l’a
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+05/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ajout de visites guidées de l’interface (tour général, recherche, matchs, tournois), rejouables depuis la barre d’outils ou la commande \sphinxcode{\sphinxupquote{tour}}, et d’une base d’exemple chargeable par la commande \sphinxcode{\sphinxupquote{demo}} pour découvrir l’outil sans importer ses propres parties. Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis la fenêtre de configuration. Autocomplétion de la ligne de commande (touche \sphinxstyleemphasis{TAB}). Panneau de recherche : contrôle explicite du type de décision (Pions / Videau), avec un sous\sphinxhyphen{}type Double / Pas de double ou Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; le videau proposé est affiché au centre du plateau pour les décisions de prise/passe. Recherche d’une position par son identifiant (filtre \sphinxcode{\sphinxupquote{id}}). Correction de l’attribution de l’erreur de videau au joueur 1. Voir {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Visites guidées et base d’exemple}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -667,15 +683,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -700,7 +716,7 @@ téléchargement, exécuter dans un terminal la commande \sphinxcode{\sphinxupqu
 Sous Linux, si vous obtenez l’erreur \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37:
 cannot open shared object file}}, votre distribution utilise
 webkit2gtk\sphinxhyphen{}4.1 au lieu de webkit2gtk\sphinxhyphen{}4.0. Téléchargez la version
-dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avertissement:}
@@ -867,6 +883,10 @@ afficher l’aide de blunderDB,
 
 \item {} 
 \sphinxAtStartPar
+afficher le catalogue des visites guidées (voir {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Visites guidées et base d’exemple}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 paramétrer l’export de la base de données,
 
 \item {} 
@@ -899,7 +919,9 @@ le score de chaque joueur,
 \sphinxAtStartPar
 les dés à jouer. Si aucune valeur n’est affichée sur les dés, la
 position des dés indique quel joueur a le trait et que la position est
-une décision de cube.
+une décision de cube. Lorsque la décision de cube est une réponse à un
+doublement (prise/passe), le videau proposé est affiché au centre du
+plateau, à la valeur offerte.
 
 \end{itemize}
 
@@ -944,6 +966,32 @@ français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le 
 et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d’une session à l’autre.
+
+\sphinxAtStartPar
+La fenêtre de configuration permet également de personnaliser les couleurs du
+plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
+la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
+2, les dés, les points des dés et le videau. Le bouton \sphinxstyleemphasis{Réinitialiser} rétablit
+l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
+conservées d’une session à l’autre.
+
+
+\subsection{Visites guidées et base d’exemple}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+Pour faciliter la prise en main, blunderDB propose des \sphinxstylestrong{visites guidées} de
+l’interface. Le catalogue des visites s’ouvre depuis la barre d’outils ou avec
+la commande \sphinxcode{\sphinxupquote{tour}} (alias \sphinxcode{\sphinxupquote{tutorial}}). Quatre visites sont disponibles : un
+tour général de l’interface, et des visites dédiées à la recherche de positions,
+à la revue des matchs et à la revue des tournois. Chaque visite met en évidence
+les éléments concernés de l’interface, étape par étape, et peut être rejouée à
+tout moment. Au premier démarrage, le tour général est proposé automatiquement.
+
+\sphinxAtStartPar
+La commande \sphinxcode{\sphinxupquote{demo}} charge une \sphinxstylestrong{base d’exemple} (matchs, tournoi et analyses)
+permettant de découvrir les fonctionnalités de l’outil sans importer ses propres
+parties. Les visites guidées s’appuient sur cette base lorsqu’aucune base n’est
+ouverte.
 
 
 \subsection{Navigation dans les positions}
@@ -1053,6 +1101,16 @@ Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Le panneau
 de recherche propose également une case à cocher \sphinxstyleemphasis{Search in current results}
 pour la même fonctionnalité.
+
+\sphinxAtStartPar
+Le panneau propose un contrôle explicite du \sphinxstylestrong{type de décision} recherché :
+\sphinxstyleemphasis{Indifférent} (aucun filtre), \sphinxstyleemphasis{Pions} (décisions de coup) ou \sphinxstyleemphasis{Videau}
+(décisions de cube). Lorsque \sphinxstyleemphasis{Videau} est sélectionné, une seconde liste précise
+le sous\sphinxhyphen{}type : \sphinxstyleemphasis{Tous}, \sphinxstyleemphasis{Double / Pas de double} (le joueur au trait doit décider
+de doubler) ou \sphinxstyleemphasis{Prise / Passe} (réponse à un doublement adverse). Le contrôle est
+synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
+jour le type de décision, et inversement. En mode \sphinxstyleemphasis{Prise / Passe}, le videau est
+affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
@@ -2326,6 +2384,14 @@ les critères de recherche entrés par l’utilisateur.
 
 \section{Liste des commandes}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+La ligne de commande, située dans la barre d’état, s’ouvre en appuyant sur la
+touche \sphinxstyleemphasis{ESPACE}. Lors de la saisie d’une commande, une liste de suggestions
+apparaît automatiquement : la touche \sphinxstyleemphasis{TAB} (ou \sphinxstyleemphasis{MAJ\sphinxhyphen{}TAB}) parcourt les
+propositions et complète la commande, tandis que \sphinxstyleemphasis{ÉCHAP} referme la liste (un
+second \sphinxstyleemphasis{ÉCHAP} ferme la ligne de commande). Les touches \sphinxstyleemphasis{HAUT} et \sphinxstyleemphasis{BAS} restent
+réservées à l’historique des commandes.
+
 
 \subsection{Opérations globales}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}

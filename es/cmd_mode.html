@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Lista de comandos &mdash; documentación de blunderDB - 0.22.0</title>
+  <title>4. Lista de comandos &mdash; documentación de blunderDB - 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ed146993"></script>
+      <script src="_static/documentation_options.js?v=9cc123ca"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -95,6 +95,7 @@
              
   <section id="liste-des-commandes">
 <span id="cmd-mode"></span><h1><span class="section-number">4. </span>Lista de comandos<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<p>La línea de comandos, situada en la barra de estado, se abre pulsando la tecla <em>ESPACIO</em>. Al escribir un comando, aparece automáticamente una lista de sugerencias: la tecla <em>TAB</em> (o <em>MAYÚS-TAB</em>) recorre las propuestas y completa el comando, mientras que <em>ESC</em> cierra la lista (un segundo <em>ESC</em> cierra la línea de comandos). Las teclas <em>ARRIBA</em> y <em>ABAJO</em> siguen reservadas al historial de comandos.</p>
 <section id="operations-globales">
 <span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Operaciones globales<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
@@ -127,10 +128,10 @@
 <td><p>Abre la ayuda de blunderDB.</p></td>
 </tr>
 <tr class="row-even"><td><p>tutorial, tour</p></td>
-<td><p>Ouvre le catalogue des visites guidées de l’interface.</p></td>
+<td><p>Abre el catálogo de visitas guiadas de la interfaz.</p></td>
 </tr>
 <tr class="row-odd"><td><p>demo</p></td>
-<td><p>Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.</p></td>
+<td><p>Carga una base de ejemplo (partidas, torneo, análisis) para descubrir la herramienta.</p></td>
 </tr>
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Muestra los metadatos de la base de datos.</p></td>
@@ -528,10 +529,10 @@
 <td><p>Buscar en los torneos con identificadores de x a y (p. ej.: tn1,3).</p></td>
 </tr>
 <tr class="row-even"><td><p>idx</p></td>
-<td><p>Rechercher la position d’identifiant x (ex: id12).</p></td>
+<td><p>Buscar la posición con identificador x (p. ej. id12).</p></td>
 </tr>
 <tr class="row-odd"><td><p>idx,y</p></td>
-<td><p>Rechercher les positions d’identifiants x à y (ex: id5,10).</p></td>
+<td><p>Buscar las posiciones con identificadores de x a y (p. ej. id5,10).</p></td>
 </tr>
 </tbody>
 </table>
@@ -545,10 +546,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code> et pour les
-positions avec <code class="docutils literal notranslate"><span class="pre">id</span></code> (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> pour les positions 5 et 10).</p>
+<p>Para buscar en varias partidas no contiguas, repetir el filtro <code class="docutils literal notranslate"><span class="pre">ma</span></code> varias veces (p. ej. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> para las partidas 23 y 43). El mismo principio se aplica a los torneos con <code class="docutils literal notranslate"><span class="pre">tn</span></code> y a las posiciones con <code class="docutils literal notranslate"><span class="pre">id</span></code> (p. ej. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> para las posiciones 5 y 10).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>

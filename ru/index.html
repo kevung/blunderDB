@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.22.0</title>
+  <title>blunderDB &mdash; документация blunderDB 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3880d710"></script>
+      <script src="_static/documentation_options.js?v=49559d49"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -253,6 +253,10 @@
 <td><p>02/06/2026</p></td>
 <td><p>Добавлен безголовый (серверный) режим, продвинутый и необязательный, дополняющий настольное приложение: демон <code class="docutils literal notranslate"><span class="pre">serve</span></code>, предоставляющий движок по HTTP + JSON, многопользовательский бэкенд PostgreSQL с разделением по арендаторам (и Row-Level Security по выбору), команда <code class="docutils literal notranslate"><span class="pre">migrate</span></code> для переноса базы SQLite в PostgreSQL и универсальный диспетчер <code class="docutils literal notranslate"><span class="pre">call</span></code>, дающий доступ из командной строки ко всем операциям хранения. Импорт отдельных позиций из новых форматов (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, текст BGBlitz, нативная библиотека <code class="docutils literal notranslate"><span class="pre">.db</span></code>) с обогащением дубликатов между форматами. Исправления: панели больше не вызывают ошибку, когда ни одна база не открыта, а панель Комментарии больше не зацикливается при открытии. См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>05/06/2026</p></td>
+<td><p>Добавлены обучающие туры по интерфейсу (общий тур, поиск, матчи, турниры), повторяемые с панели инструментов или командой <code class="docutils literal notranslate"><span class="pre">tour</span></code>, и образец базы данных, загружаемый командой <code class="docutils literal notranslate"><span class="pre">demo</span></code> для знакомства с инструментом без импорта собственных партий. Настройка цветов доски (фон, граница, пункты, шашки, кости, куб удвоения) из окна настроек. Автодополнение командной строки (клавиша <em>TAB</em>). Панель поиска: явное управление типом решения (Шашки / Куб), с подтипом Дабл / Без дабла или Тейк / Пас для решений по кубу, синхронизированное с доской; предложенный куб отображается в центре доски для решений тейк/пас. Поиск позиции по её идентификатору (фильтр <code class="docutils literal notranslate"><span class="pre">id</span></code>). Исправлено отнесение ошибки куба игроку 1. См. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Обучающие туры и образец базы данных</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -266,20 +270,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Основные взаимодействия</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Описание интерфейса</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Конфигурация</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Навигация по позициям</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Редактирование позиций</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Командная строка</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Панель анализа</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Панель комментариев</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Панель поиска</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Панель коллекций</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Панель матчей</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Панель турниров</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Панель Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Панель EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Панель Anki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Панель метаданных</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Панель журнала</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. Обучающие туры и образец базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. Навигация по позициям</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. Редактирование позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. Панель комментариев</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. Панель поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. Панель коллекций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. Панель турниров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Панель Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. Панель EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Панель Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. Панель метаданных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. Панель журнала</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a><ul>

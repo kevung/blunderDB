@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.22.0</title>
+  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.23.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=489ff7e7"></script>
+      <script src="_static/documentation_options.js?v=394abdbe"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -253,6 +253,10 @@
 <td><p>2 Ιουνίου 2026</p></td>
 <td><p>Προσθήκη μιας λειτουργίας χωρίς γραφικό περιβάλλον (διακομιστής), προηγμένης και προαιρετικής, που συμπληρώνει την εφαρμογή γραφείου: ένας δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code> που εκθέτει τη μηχανή σε HTTP + JSON, ένα backend PostgreSQL πολλαπλών χρηστών με διαχωρισμό ανά tenant (και Row-Level Security προαιρετικά), μια εντολή <code class="docutils literal notranslate"><span class="pre">migrate</span></code> για τη μεταφορά μιας βάσης SQLite προς PostgreSQL, και ένας γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code> που παρέχει πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης. Εισαγωγή μεμονωμένων θέσεων από νέες μορφές (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, κείμενο BGBlitz, εγγενής βιβλιοθήκη <code class="docutils literal notranslate"><span class="pre">.db</span></code>) με εμπλουτισμό των διπλότυπων μεταξύ μορφών. Διορθώσεις: οι πίνακες δεν προκαλούν πλέον σφάλμα όταν δεν είναι ανοιχτή καμία βάση και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο κατά το άνοιγμα. Δείτε <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>5 Ιουνίου 2026</p></td>
+<td><p>Προσθήκη ξεναγήσεων του περιβάλλοντος (γενική ξενάγηση, αναζήτηση, αγώνες, τουρνουά), επαναλήψιμων από τη γραμμή εργαλείων ή με την εντολή <code class="docutils literal notranslate"><span class="pre">tour</span></code>, και μιας βάσης δείγματος που φορτώνεται με την εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> για την εξερεύνηση του εργαλείου χωρίς εισαγωγή των δικών σας παρτίδων. Προσαρμογή των χρωμάτων του ταμπλό (φόντο, περίγραμμα, μύτες, πούλια, ζάρια, κύβος) από το παράθυρο ρυθμίσεων. Αυτόματη συμπλήρωση της γραμμής εντολών (πλήκτρο <em>TAB</em>). Πάνελ αναζήτησης: ρητός έλεγχος του τύπου απόφασης (Πιόνια / Κύβος), με υποτύπο Διπλασιασμός / Όχι ή Αποδοχή / Πάσο για τις αποφάσεις κύβου, συγχρονισμένος με το ταμπλό· ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό για τις αποφάσεις αποδοχής/πάσο. Αναζήτηση μιας θέσης με το αναγνωριστικό της (φίλτρο <code class="docutils literal notranslate"><span class="pre">id</span></code>). Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1. Βλ. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Ξεναγήσεις και βάση δείγματος</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -266,20 +270,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Κύριες αλληλεπιδράσεις</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Περιγραφή της διεπαφής</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Ρυθμίσεις</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Πλοήγηση στις θέσεις</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Επεξεργασία θέσεων</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Η γραμμή εντολών</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Πίνακας Ανάλυσης</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Πίνακας Σχολίων</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Πίνακας Αναζήτησης</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Πίνακας Συλλογών</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Πίνακας Αγώνων</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Πίνακας Τουρνουά</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Πίνακας Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Πίνακας EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Πίνακας Anki</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Πίνακας Μεταδεδομένων</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Πίνακας Καταγραφής</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. Ξεναγήσεις και βάση δείγματος</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. Πλοήγηση στις θέσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. Επεξεργασία θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. Η γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. Πίνακας Ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. Πίνακας Σχολίων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. Πίνακας Αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. Πίνακας Συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. Πίνακας Αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. Πίνακας Τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Πίνακας Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. Πίνακας EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Πίνακας Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. Πίνακας Μεταδεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. Πίνακας Καταγραφής</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a><ul>

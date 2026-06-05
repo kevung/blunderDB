@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{05.06.2026}
-\release{0.22.0}
+\release{0.23.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -633,6 +633,22 @@ Hinzufügen eines Headless\sphinxhyphen{}Modus (Server), fortgeschritten und opt
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.23.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+05/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Hinzufügen geführter Touren durch die Oberfläche (allgemeine Tour, Suche, Matches, Turniere), wiederholbar über die Symbolleiste oder den Befehl \sphinxcode{\sphinxupquote{tour}}, sowie einer Beispieldatenbank, die sich mit dem Befehl \sphinxcode{\sphinxupquote{demo}} laden lässt, um das Werkzeug zu erkunden, ohne eigene Partien zu importieren. Anpassung der Brettfarben (Hintergrund, Rahmen, Zungen, Steine, Würfel, Dopplerwürfel) über das Einstellungsfenster. Autovervollständigung der Kommandozeile (\sphinxstyleemphasis{TAB}\sphinxhyphen{}Taste). Suchpanel: explizite Steuerung des Entscheidungstyps (Zug / Dopplung), mit einem Untertyp Dopplung / Kein Doppel oder Annehmen / Aufgeben für Doppler\sphinxhyphen{}Entscheidungen, synchronisiert mit dem Brett; der angebotene Dopplerwürfel wird bei Annehmen/Aufgeben\sphinxhyphen{}Entscheidungen in der Mitte des Bretts angezeigt. Suche einer Position über ihre Kennung (Filter \sphinxcode{\sphinxupquote{id}}). Behebung der Zuordnung des Doppler\sphinxhyphen{}Fehlers zu Spieler 1. Siehe {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Geführte Touren und Beispieldatenbank}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -654,15 +670,15 @@ Die neueste Version von blunderDB ist unter der MIT\sphinxhyphen{}Lizenz verfüg
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.22.0.exe}
+für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.22.0}
+für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
 
 \item {} 
 \sphinxAtStartPar
-für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.22.0.zip}
+für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
 
 \end{itemize}
 
@@ -678,7 +694,7 @@ Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, führe
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.22.0}
+Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warnung:}
@@ -830,6 +846,10 @@ die Hilfe von blunderDB anzuzeigen,
 
 \item {} 
 \sphinxAtStartPar
+den Katalog der geführten Touren anzeigen (siehe {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Geführte Touren und Beispieldatenbank}}}}}),
+
+\item {} 
+\sphinxAtStartPar
 den Export der Datenbank zu konfigurieren,
 
 \item {} 
@@ -859,7 +879,7 @@ den Punktestand jedes Spielers,
 
 \item {} 
 \sphinxAtStartPar
-die zu spielenden Würfel. Wenn auf den Würfeln keine Werte angezeigt werden, gibt die Position der Würfel an, welcher Spieler am Zug ist und dass die Stellung eine Doppler\sphinxhyphen{}Entscheidung ist.
+die zu spielenden Würfel. Wenn auf den Würfeln keine Werte angezeigt werden, gibt die Position der Würfel an, welcher Spieler am Zug ist und dass die Stellung eine Doppler\sphinxhyphen{}Entscheidung ist. Wenn die Doppler\sphinxhyphen{}Entscheidung eine Antwort auf ein Doppel ist (Annehmen/Aufgeben), wird der angebotene Dopplerwürfel in der Mitte des Bretts mit dem angebotenen Wert angezeigt.
 
 \end{itemize}
 
@@ -893,6 +913,18 @@ Die Konfigurationsschaltfläche (zahnradförmiges Symbol) in der Werkzeugleiste,
 
 \sphinxAtStartPar
 Dort kann die Sprache der Benutzeroberfläche unter Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch und Russisch gewählt werden. Die gesamte Benutzeroberfläche (Werkzeugleiste, Panels, Meldungen, Hilfe) wird in die gewählte Sprache übersetzt. Die Sprachwahl wird gespeichert und über die Sitzungen hinweg beibehalten.
+
+\sphinxAtStartPar
+Im Einstellungsfenster lassen sich außerdem die Brettfarben anpassen. Jedes Element besitzt einen eigenen Farbwähler: der Hintergrund, der Rahmen, die hellen und dunklen Zungen, die Steine von Spieler 1 und Spieler 2, die Würfel, die Würfelaugen und der Dopplerwürfel. Die Schaltfläche \sphinxstyleemphasis{Zurücksetzen} stellt alle Standardfarben wieder her. Wie die Sprache bleiben auch die gewählten Farben von einer Sitzung zur nächsten erhalten.
+
+
+\subsection{Geführte Touren und Beispieldatenbank}
+\label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
+\sphinxAtStartPar
+Um den Einstieg zu erleichtern, bietet blunderDB \sphinxstylestrong{geführte Touren} durch die Oberfläche an. Der Katalog der Touren öffnet sich über die Symbolleiste oder mit dem Befehl \sphinxcode{\sphinxupquote{tour}} (Alias \sphinxcode{\sphinxupquote{tutorial}}). Es stehen vier Touren zur Verfügung: eine allgemeine Tour durch die Oberfläche sowie Touren zur Stellungssuche, zur Durchsicht der Matches und zur Durchsicht der Turniere. Jede Tour hebt Schritt für Schritt die betreffenden Elemente der Oberfläche hervor und kann jederzeit wiederholt werden. Beim ersten Start wird die allgemeine Tour automatisch angeboten.
+
+\sphinxAtStartPar
+Der Befehl \sphinxcode{\sphinxupquote{demo}} lädt eine \sphinxstylestrong{Beispieldatenbank} (Matches, ein Turnier und Analysen), mit der sich die Funktionen des Werkzeugs erkunden lassen, ohne eigene Partien zu importieren. Die geführten Touren greifen auf diese Datenbank zurück, wenn keine Datenbank geöffnet ist.
 
 
 \subsection{Navigation durch die Stellungen}
@@ -967,6 +999,9 @@ Das Panel \sphinxstylestrong{Suche} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} 
 
 \sphinxAtStartPar
 Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl \sphinxcode{\sphinxupquote{ss}} gefolgt von Filtern (z. B.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen \sphinxstyleemphasis{Search in current results}.
+
+\sphinxAtStartPar
+Das Panel bietet eine explizite Steuerung des gesuchten \sphinxstylestrong{Entscheidungstyps}: \sphinxstyleemphasis{Egal} (kein Filter), \sphinxstyleemphasis{Zug} (Zugentscheidungen) oder \sphinxstyleemphasis{Dopplung} (Doppler\sphinxhyphen{}Entscheidungen). Wenn \sphinxstyleemphasis{Dopplung} ausgewählt ist, gibt eine zweite Liste den Untertyp an: \sphinxstyleemphasis{Alle}, \sphinxstyleemphasis{Dopplung / Kein Doppel} (der Spieler am Zug muss über das Doppeln entscheiden) oder \sphinxstyleemphasis{Annehmen / Aufgeben} (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus \sphinxstyleemphasis{Annehmen / Aufgeben} wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.
 
 \begin{sphinxadmonition}{tip}{Tipp:}
 \sphinxAtStartPar
@@ -2061,6 +2096,9 @@ Die angezeigten Positionen sind diejenigen aus der Datenbank, die die vom Benutz
 
 \section{Liste der Befehle}
 \label{\detokenize{cmd_mode:liste-des-commandes}}\label{\detokenize{cmd_mode:cmd-mode}}\label{\detokenize{cmd_mode::doc}}
+\sphinxAtStartPar
+Die Kommandozeile in der Statusleiste öffnet sich durch Drücken der \sphinxstyleemphasis{LEERTASTE}. Während der Eingabe eines Befehls erscheint automatisch eine Liste mit Vorschlägen: Die \sphinxstyleemphasis{TAB}\sphinxhyphen{}Taste (oder \sphinxstyleemphasis{UMSCHALT\sphinxhyphen{}TAB}) durchläuft die Vorschläge und vervollständigt den Befehl, während \sphinxstyleemphasis{ESC} die Liste schließt (ein zweites \sphinxstyleemphasis{ESC} schließt die Kommandozeile). Die Tasten \sphinxstyleemphasis{AUF} und \sphinxstyleemphasis{AB} bleiben dem Befehlsverlauf vorbehalten.
+
 
 \subsection{Globale Operationen}
 \label{\detokenize{cmd_mode:operations-globales}}\label{\detokenize{cmd_mode:cmd-global}}
@@ -2155,7 +2193,7 @@ tutorial, tour
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le catalogue des visites guidées de l’interface.
+Öffnet den Katalog der geführten Touren durch die Oberfläche.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2166,7 +2204,7 @@ demo
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.
+Lädt eine Beispieldatenbank (Matches, Turnier, Analysen), um das Werkzeug zu erkunden.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3492,7 +3530,7 @@ idx
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher la position d’identifiant x (ex: id12).
+Die Position mit der Kennung x suchen (z. B. id12).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3503,7 +3541,7 @@ idx,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Rechercher les positions d’identifiants x à y (ex: id5,10).
+Die Positionen mit den Kennungen x bis y suchen (z. B. id5,10).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3525,10 +3563,7 @@ Beim Filter für die relative Renndifferenz (\sphinxtitleref{p>x}, \sphinxtitler
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}} et pour les
-positions avec \sphinxcode{\sphinxupquote{id}} (ex: \sphinxcode{\sphinxupquote{s id5 id10}} pour les positions 5 et 10).
+Um in mehreren nicht zusammenhängenden Matches zu suchen, wird der Filter \sphinxcode{\sphinxupquote{ma}} mehrfach aneinandergereiht (z. B. \sphinxcode{\sphinxupquote{s ma23 ma43}} für die Matches 23 und 43). Dasselbe Prinzip gilt für Turniere mit \sphinxcode{\sphinxupquote{tn}} und für Positionen mit \sphinxcode{\sphinxupquote{id}} (z. B. \sphinxcode{\sphinxupquote{s id5 id10}} für die Positionen 5 und 10).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Bemerkung:}

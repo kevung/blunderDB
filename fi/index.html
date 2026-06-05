@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.22.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.23.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=47b383d9"></script>
+      <script src="_static/documentation_options.js?v=3666c980"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -253,6 +253,10 @@
 <td><p>2.6.2026</p></td>
 <td><p>Lisätty headless-tila (palvelin), edistynyt ja valinnainen, joka täydentää työpöytäsovellusta: <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni, joka tarjoaa moottorin HTTP + JSON -rajapinnan kautta, monikäyttäjäinen PostgreSQL-taustajärjestelmä, jossa tiedot on eristetty vuokralaisittain (sekä valinnainen Row-Level Security), <code class="docutils literal notranslate"><span class="pre">migrate</span></code>-komento SQLite-tietokannan siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä, joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin. Yksittäisten asemien tuonti uusista muodoista (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz-teksti, natiivi <code class="docutils literal notranslate"><span class="pre">.db</span></code> -kirjasto) sekä duplikaattien rikastaminen muotojen välillä. Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa ei ole avattu, eikä Comments-paneeli enää jää silmukkaan avattaessa. Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.23.0</p></td>
+<td><p>5.6.2026</p></td>
+<td><p>Lisätty käyttöliittymän opastettuja kierroksia (yleiskierros, haku, ottelut, turnaukset), jotka voi toistaa työkalupalkista tai komennolla <code class="docutils literal notranslate"><span class="pre">tour</span></code>, sekä komennolla <code class="docutils literal notranslate"><span class="pre">demo</span></code> ladattava esimerkkitietokanta työkaluun tutustumiseksi tuomatta omia pelejä. Laudan värien mukauttaminen (tausta, reuna, kärjet, nappulat, nopat, kuutio) asetusikkunasta. Komentorivin automaattitäydennys (<em>TAB</em>-näppäin). Hakupaneeli: nimenomainen päätöstyypin hallinta (Siirto / Tuplaus), kuutiopäätöksille alityyppi Tuplaus / Ei tuplausta tai Hyväksy / Luovuta, synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä hyväksy/luovuta-päätöksissä. Aseman haku sen tunnuksella (suodatin <code class="docutils literal notranslate"><span class="pre">id</span></code>). Korjattu kuutiovirheen kohdistaminen pelaajalle 1. Katso <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Opastetut kierrokset ja esimerkkitietokanta</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -266,20 +270,21 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Päätoiminnot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Käyttöliittymän kuvaus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Asetukset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Asemien selaaminen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Asemien muokkaus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Komentorivi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Analyysipaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Kommenttipaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Hakupaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Kokoelmapaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Ottelupaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Turnauspaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats-paneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC-paneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki-paneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Metatietopaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Lokipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.5. Opastetut kierrokset ja esimerkkitietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.6. Asemien selaaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.7. Asemien muokkaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.8. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.9. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.10. Kommenttipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.11. Hakupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.12. Kokoelmapaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.13. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.14. Turnauspaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.15. Stats-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.16. EPC-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.17. Anki-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.18. Metatietopaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.19. Lokipaneeli</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a><ul>

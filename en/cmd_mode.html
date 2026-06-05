@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. List of commands &mdash; blunderDB 0.22.0 documentation</title>
+  <title>4. List of commands &mdash; blunderDB 0.23.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5686f5df"></script>
+      <script src="_static/documentation_options.js?v=2753bf86"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -94,6 +94,7 @@
              
   <section id="liste-des-commandes">
 <span id="cmd-mode"></span><h1><span class="section-number">4. </span>List of commands<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<p>The command line, located in the status bar, opens by pressing the <em>SPACE</em> key. As you type a command, a list of suggestions appears automatically: the <em>TAB</em> key (or <em>SHIFT-TAB</em>) cycles through the suggestions and completes the command, while <em>ESC</em> closes the list (a second <em>ESC</em> closes the command line). The <em>UP</em> and <em>DOWN</em> keys remain reserved for the command history.</p>
 <section id="operations-globales">
 <span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Global operations<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
@@ -126,10 +127,10 @@
 <td><p>Open blunderDB help.</p></td>
 </tr>
 <tr class="row-even"><td><p>tutorial, tour</p></td>
-<td><p>Ouvre le catalogue des visites guidées de l’interface.</p></td>
+<td><p>Opens the catalogue of guided interface tours.</p></td>
 </tr>
 <tr class="row-odd"><td><p>demo</p></td>
-<td><p>Charge une base d’exemple (matchs, tournoi, analyses) pour découvrir l’outil.</p></td>
+<td><p>Loads a sample database (matches, tournament, analyses) to explore the tool.</p></td>
 </tr>
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Display database metadata.</p></td>
@@ -527,10 +528,10 @@
 <td><p>Search in tournaments with IDs from x to y (e.g. tn1,3).</p></td>
 </tr>
 <tr class="row-even"><td><p>idx</p></td>
-<td><p>Rechercher la position d’identifiant x (ex: id12).</p></td>
+<td><p>Search for the position with identifier x (e.g. id12).</p></td>
 </tr>
 <tr class="row-odd"><td><p>idx,y</p></td>
-<td><p>Rechercher les positions d’identifiants x à y (ex: id5,10).</p></td>
+<td><p>Search for the positions with identifiers x to y (e.g. id5,10).</p></td>
 </tr>
 </tbody>
 </table>
@@ -544,10 +545,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
-Le même principe s’applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code> et pour les
-positions avec <code class="docutils literal notranslate"><span class="pre">id</span></code> (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> pour les positions 5 et 10).</p>
+<p>To search across several non-contiguous matches, repeat the <code class="docutils literal notranslate"><span class="pre">ma</span></code> filter (e.g. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> for matches 23 and 43). The same principle applies to tournaments with <code class="docutils literal notranslate"><span class="pre">tn</span></code> and to positions with <code class="docutils literal notranslate"><span class="pre">id</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">id5</span> <span class="pre">id10</span></code> for positions 5 and 10).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
