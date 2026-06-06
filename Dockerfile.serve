@@ -1,0 +1,32 @@
+# Dockerfile.serve — headless blunderDB engine (HTTP + JSON daemon).
+#
+# Builds ONLY the `serve` binary via ./cmd/serve: pure Go, no Wails, no Node,
+# no embedded frontend. The SQLite backend uses the pure-Go modernc.org/sqlite
+# driver, so the binary builds with CGO disabled and links statically.
+#
+# Generic & Desktop-friendly: this image runs the same engine the Desktop app
+# embeds, just headless. It performs NO authentication — run it behind an
+# authenticating reverse-proxy (e.g. gammonGo) and never expose it publicly.
+
+# --- build stage ---------------------------------------------------------
+FROM golang:1.25-alpine AS build
+WORKDIR /src
+
+# Cache module downloads.
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Build the headless serve binary.
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/blunderdb ./cmd/serve
+
+# --- runtime stage -------------------------------------------------------
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /out/blunderdb /usr/local/bin/blunderdb
+
+# Defaults; override via env (BLUNDERDB_BACKEND/DSN/ADDR/RLS) in compose.
+ENV BLUNDERDB_BACKEND=postgres \
+    BLUNDERDB_ADDR=:8080
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/blunderdb"]
