@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.23.0</title>
+  <title>blunderDB &mdash; документация blunderDB 0.24.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=49559d49"></script>
+      <script src="_static/documentation_options.js?v=c70e6c87"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -256,6 +256,10 @@
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>05/06/2026</p></td>
 <td><p>Добавлены обучающие туры по интерфейсу (общий тур, поиск, матчи, турниры), повторяемые с панели инструментов или командой <code class="docutils literal notranslate"><span class="pre">tour</span></code>, и образец базы данных, загружаемый командой <code class="docutils literal notranslate"><span class="pre">demo</span></code> для знакомства с инструментом без импорта собственных партий. Настройка цветов доски (фон, граница, пункты, шашки, кости, куб удвоения) из окна настроек. Автодополнение командной строки (клавиша <em>TAB</em>). Панель поиска: явное управление типом решения (Шашки / Куб), с подтипом Дабл / Без дабла или Тейк / Пас для решений по кубу, синхронизированное с доской; предложенный куб отображается в центре доски для решений тейк/пас. Поиск позиции по её идентификатору (фильтр <code class="docutils literal notranslate"><span class="pre">id</span></code>). Исправлено отнесение ошибки куба игроку 1. См. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Обучающие туры и образец базы данных</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>Добавлен образ контейнера (Docker) для headless-режима: выделенная точка входа <code class="docutils literal notranslate"><span class="pre">serve</span></code> и <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, создающий статический бинарный файл без графического интерфейса, для развёртывания движка blunderDB как службы за обратным прокси-сервером. См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

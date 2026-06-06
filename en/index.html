@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.23.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.24.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=2753bf86"></script>
+      <script src="_static/documentation_options.js?v=a9084e48"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -255,6 +255,10 @@
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>June 5, 2026</p></td>
 <td><p>Added guided tours of the interface (general tour, search, matches, tournaments), replayable from the toolbar or with the <code class="docutils literal notranslate"><span class="pre">tour</span></code> command, and a sample database loadable with the <code class="docutils literal notranslate"><span class="pre">demo</span></code> command to explore the tool without importing your own games. Customisation of the board colours (background, border, points, checkers, dice, doubling cube) from the configuration window. Command-line autocompletion (<em>TAB</em> key). Search panel: explicit control over the decision type (Checker / Cube), with a Double / No double or Take / Pass sub-type for cube decisions, synchronised with the board; the offered cube is shown in the centre of the board for take/pass decisions. Search for a position by its identifier (<code class="docutils literal notranslate"><span class="pre">id</span></code> filter). Fixed the attribution of the cube error to player 1. See <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Guided tours and sample database</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>Added a container image (Docker) for headless mode: a dedicated <code class="docutils literal notranslate"><span class="pre">serve</span></code> entry point and a <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> producing a static binary with no graphical interface, to deploy the blunderDB engine as a service behind a reverse proxy. See <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

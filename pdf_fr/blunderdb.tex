@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{06 juin 2026}
-\release{0.23.0}
+\release{0.24.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -662,6 +662,22 @@ Ajout de visites guidées de l’interface (tour général, recherche, matchs, t
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.24.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+06/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ajout d’une image conteneur (Docker) pour le mode headless : un point d’entrée dédié \sphinxcode{\sphinxupquote{serve}} et un \sphinxcode{\sphinxupquote{Dockerfile.serve}} produisant un binaire statique sans interface graphique, afin de déployer le moteur de blunderDB comme service derrière un reverse\sphinxhyphen{}proxy. Voir {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Mode headless (serveur)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -683,15 +699,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.23.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.24.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.23.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.24.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.23.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.24.0.zip}
 
 \end{itemize}
 
@@ -716,7 +732,7 @@ téléchargement, exécuter dans un terminal la commande \sphinxcode{\sphinxupqu
 Sous Linux, si vous obtenez l’erreur \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37:
 cannot open shared object file}}, votre distribution utilise
 webkit2gtk\sphinxhyphen{}4.1 au lieu de webkit2gtk\sphinxhyphen{}4.0. Téléchargez la version
-dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.23.0}
+dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.24.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avertissement:}

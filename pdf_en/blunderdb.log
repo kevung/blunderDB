@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.6)  6 JUN 2026 15:15
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.6)  6 JUN 2026 16:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1025,13 +1025,13 @@ Chapter 1.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 630.
 [3]
-Overfull \vbox (1129.11995pt too high) has occurred while \output is active []
+Overfull \vbox (1177.11995pt too high) has occurred while \output is active []
 
 
 [4]
 Chapter 2.
 
-Underfull \hbox (badness 5878) in paragraph at lines 689--691
+Underfull \hbox (badness 5878) in paragraph at lines 705--707
 []\TU/FreeSerif(0)/m/n/10 On Linux, if blunderDB is not executable after downlo
 ading, run the command \TU/FreeMono(0)/m/n/10 chmod +x ./
  []
@@ -1041,73 +1041,73 @@ ading, run the command \TU/FreeMono(0)/m/n/10 chmod +x ./
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
 [21] [22] [23] [24] [25] [26] [27] [28]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4731.
+(Font)              scaled to size 4.49997pt on input line 4747.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4732.
+(Font)              scaled to size 8.99994pt on input line 4748.
  [29] [30] [31] [32] [33] [34]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5482.
+(Font)              scaled to size 8.99994pt on input line 5498.
  [35]
 [36] [37]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5743.
+(Font)              scaled to size 10.79993pt on input line 5759.
 
-Underfull \hbox (badness 10000) in paragraph at lines 5827--5829
+Underfull \hbox (badness 10000) in paragraph at lines 5843--5845
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 5830
+Underfull \hbox (badness 10000) detected at line 5846
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5886--5888
+Underfull \hbox (badness 10000) in paragraph at lines 5902--5904
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [38] [39]
-Underfull \hbox (badness 10000) in paragraph at lines 6206--6208
+Underfull \hbox (badness 10000) in paragraph at lines 6222--6224
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6209
+Underfull \hbox (badness 10000) detected at line 6225
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 [40] [41]
-Underfull \hbox (badness 10000) in paragraph at lines 6504--6506
+Underfull \hbox (badness 10000) in paragraph at lines 6520--6522
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6520--6522
+Underfull \hbox (badness 10000) in paragraph at lines 6536--6538
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6536--6538
+Underfull \hbox (badness 10000) in paragraph at lines 6552--6554
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6561--6563
+Underfull \hbox (badness 10000) in paragraph at lines 6577--6579
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6561--6563
+Underfull \hbox (badness 10000) in paragraph at lines 6577--6579
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6564
+Underfull \hbox (badness 10000) detected at line 6580
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6642--6644
+Underfull \hbox (badness 10000) in paragraph at lines 6658--6660
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 

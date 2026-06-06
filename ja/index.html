@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.23.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.24.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=be490428"></script>
+      <script src="_static/documentation_options.js?v=3012f5e6"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -256,6 +256,10 @@
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>2026/06/05</p></td>
 <td><p>インターフェースのガイドツアー（全体ツアー、検索、マッチ、トーナメント）を追加しました。ツールバーまたはコマンド <code class="docutils literal notranslate"><span class="pre">tour</span></code> から再生でき、自分の対局をインポートせずにツールを試せるよう、コマンド <code class="docutils literal notranslate"><span class="pre">demo</span></code> で読み込めるサンプルデータベースも追加しました。設定ウィンドウから盤面の色（背景、枠線、ポイント、チェッカー、ダイス、キューブ）をカスタマイズできるようにしました。コマンドラインの自動補完（ <em>TAB</em> キー）を追加しました。検索パネル: 判断タイプ（チェッカー / キューブ）を明示的に制御できるようにし、キューブの判断にはダブル / ノーダブルまたはテイク / パスのサブタイプを設け、盤面と同期させました。テイク／パスの判断では、提示されたキューブが盤面の中央に表示されます。識別子によるポジションの検索（フィルタ <code class="docutils literal notranslate"><span class="pre">id</span></code> ）を追加しました。キューブエラーのプレイヤー1への帰属を修正しました。 <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照してください。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>ヘッドレスモード向けのコンテナイメージ（Docker）を追加しました。専用のエントリポイント <code class="docutils literal notranslate"><span class="pre">serve</span></code> と、グラフィカルインターフェースを持たない静的バイナリを生成する <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> を用意し、blunderDB エンジンをリバースプロキシの背後でサービスとしてデプロイできるようにしました。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p></td>
 </tr>
 </tbody>
 </table>

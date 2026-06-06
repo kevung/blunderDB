@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.23.0 Dokumentation</title>
+  <title>blunderDB &mdash; blunderDB 0.24.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5a2c648c"></script>
+      <script src="_static/documentation_options.js?v=d4779542"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -256,6 +256,10 @@
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>05/06/2026</p></td>
 <td><p>Hinzufügen geführter Touren durch die Oberfläche (allgemeine Tour, Suche, Matches, Turniere), wiederholbar über die Symbolleiste oder den Befehl <code class="docutils literal notranslate"><span class="pre">tour</span></code>, sowie einer Beispieldatenbank, die sich mit dem Befehl <code class="docutils literal notranslate"><span class="pre">demo</span></code> laden lässt, um das Werkzeug zu erkunden, ohne eigene Partien zu importieren. Anpassung der Brettfarben (Hintergrund, Rahmen, Zungen, Steine, Würfel, Dopplerwürfel) über das Einstellungsfenster. Autovervollständigung der Kommandozeile (<em>TAB</em>-Taste). Suchpanel: explizite Steuerung des Entscheidungstyps (Zug / Dopplung), mit einem Untertyp Dopplung / Kein Doppel oder Annehmen / Aufgeben für Doppler-Entscheidungen, synchronisiert mit dem Brett; der angebotene Dopplerwürfel wird bei Annehmen/Aufgeben-Entscheidungen in der Mitte des Bretts angezeigt. Suche einer Position über ihre Kennung (Filter <code class="docutils literal notranslate"><span class="pre">id</span></code>). Behebung der Zuordnung des Doppler-Fehlers zu Spieler 1. Siehe <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Geführte Touren und Beispieldatenbank</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>Hinzugefügt: ein Container-Image (Docker) für den Headless-Modus: ein dedizierter Einstiegspunkt <code class="docutils literal notranslate"><span class="pre">serve</span></code> und eine <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, die eine statische Binärdatei ohne grafische Oberfläche erzeugt, um die blunderDB-Engine als Dienst hinter einem Reverse-Proxy bereitzustellen. Siehe <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-Modus (Server)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

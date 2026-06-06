@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.23.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.24.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=afdf5384"></script>
+      <script src="_static/documentation_options.js?v=2184a24a"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -265,6 +265,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>05/06/2026</p></td>
 <td><p>Ajout de visites guidées de l’interface (tour général, recherche, matchs, tournois), rejouables depuis la barre d’outils ou la commande <code class="docutils literal notranslate"><span class="pre">tour</span></code>, et d’une base d’exemple chargeable par la commande <code class="docutils literal notranslate"><span class="pre">demo</span></code> pour découvrir l’outil sans importer ses propres parties. Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis la fenêtre de configuration. Autocomplétion de la ligne de commande (touche <em>TAB</em>). Panneau de recherche : contrôle explicite du type de décision (Pions / Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; le videau proposé est affiché au centre du plateau pour les décisions de prise/passe. Recherche d’une position par son identifiant (filtre <code class="docutils literal notranslate"><span class="pre">id</span></code>). Correction de l’attribution de l’erreur de videau au joueur 1. Voir <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visites guidées et base d’exemple</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>Ajout d’une image conteneur (Docker) pour le mode headless : un point d’entrée dédié <code class="docutils literal notranslate"><span class="pre">serve</span></code> et un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> produisant un binaire statique sans interface graphique, afin de déployer le moteur de blunderDB comme service derrière un reverse-proxy. Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

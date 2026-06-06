@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; documentación de blunderDB - 0.23.0</title>
+  <title>blunderDB &mdash; documentación de blunderDB - 0.24.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9cc123ca"></script>
+      <script src="_static/documentation_options.js?v=129ad204"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -256,6 +256,10 @@
 <tr class="row-even"><td><p>0.23.0</p></td>
 <td><p>5 de junio de 2026</p></td>
 <td><p>Adición de visitas guiadas de la interfaz (visita general, búsqueda, partidas, torneos), repetibles desde la barra de herramientas o con el comando <code class="docutils literal notranslate"><span class="pre">tour</span></code>, y de una base de ejemplo cargable con el comando <code class="docutils literal notranslate"><span class="pre">demo</span></code> para descubrir la herramienta sin importar las partidas propias. Personalización de los colores del tablero (fondo, borde, puntas, fichas, dados, cubo) desde la ventana de configuración. Autocompletado de la línea de comandos (tecla <em>TAB</em>). Panel de búsqueda: control explícito del tipo de decisión (Fichas / Cubo), con un subtipo Doblar / No doblar o Aceptar / Pasar para las decisiones de cubo, sincronizado con el tablero; el cubo propuesto se muestra en el centro del tablero para las decisiones de aceptar/pasar. Búsqueda de una posición por su identificador (filtro <code class="docutils literal notranslate"><span class="pre">id</span></code>). Corrección de la atribución del error de cubo al jugador 1. Ver <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visitas guiadas y base de ejemplo</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.24.0</p></td>
+<td><p>06/06/2026</p></td>
+<td><p>Añadida una imagen de contenedor (Docker) para el modo headless: un punto de entrada dedicado <code class="docutils literal notranslate"><span class="pre">serve</span></code> y un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> que produce un binario estático sin interfaz gráfica, para desplegar el motor de blunderDB como servicio detrás de un proxy inverso. Véase <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modo headless (servidor)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
