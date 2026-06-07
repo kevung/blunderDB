@@ -2,10 +2,13 @@ package server
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -19,6 +22,17 @@ type existsReq struct {
 
 type xgidReq struct {
 	XGID string `json:"xgid"`
+}
+
+// xgpReq carries a base64-encoded .xgp single-position file.
+type xgpReq struct {
+	Data string `json:"data"`
+}
+
+// xgpResp is the parsed position plus its analysis (if the file carried one).
+type xgpResp struct {
+	Position *domain.Position         `json:"position"`
+	Analysis *domain.PositionAnalysis `json:"analysis,omitempty"`
 }
 
 type existsResp struct {
@@ -56,6 +70,38 @@ func (s *Server) positionRoutes() []route {
 				return nil, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
 			}
 			return &pos, nil
+		})},
+		// Parse a single-position XG file (.xgp) into a Position + optional analysis
+		// (pure; no storage). The file bytes arrive base64-encoded. Whole matches
+		// (.xg) are a separate import, not this single-position path.
+		{http.MethodPost, "/v1/positions.fromXGP", rpc(func(ctx context.Context, scope string, req xgpReq) (xgpResp, error) {
+			raw, err := base64.StdEncoding.DecodeString(req.Data)
+			if err != nil {
+				return xgpResp{}, fmt.Errorf("%w: bad base64 data", storage.ErrInvalid)
+			}
+			f, err := os.CreateTemp("", "blunderdb-*.xgp")
+			if err != nil {
+				return xgpResp{}, err
+			}
+			defer os.Remove(f.Name())
+			if _, err := f.Write(raw); err != nil {
+				f.Close()
+				return xgpResp{}, err
+			}
+			f.Close()
+
+			graphs, err := ingest.MapXGPPosition(f.Name())
+			if err != nil {
+				return xgpResp{}, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
+			}
+			if len(graphs) == 0 || graphs[0].Position == nil {
+				return xgpResp{}, fmt.Errorf("%w: no position in file", storage.ErrInvalid)
+			}
+			resp := xgpResp{Position: graphs[0].Position}
+			if len(graphs[0].Analyses) > 0 {
+				resp.Analysis = graphs[0].Analyses[0]
+			}
+			return resp, nil
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)
