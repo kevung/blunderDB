@@ -29,6 +29,11 @@ type xgpReq struct {
 	Data string `json:"data"`
 }
 
+// legalMovesReq carries a position (board + dice + player on roll) to enumerate.
+type legalMovesReq struct {
+	Position *domain.Position `json:"position"`
+}
+
 // xgpResp is the parsed position plus its analysis (if the file carried one).
 type xgpResp struct {
 	Position *domain.Position         `json:"position"`
@@ -102,6 +107,19 @@ func (s *Server) positionRoutes() []route {
 				resp.Analysis = graphs[0].Analyses[0]
 			}
 			return resp, nil
+		})},
+		// Enumerate every legal complete play for a position's dice (pure; no
+		// storage). Powers interactive "play your move" UIs (énigme answer mode,
+		// and the Desktop board). Empty slice = no legal move (a dance).
+		{http.MethodPost, "/v1/positions.legalMoves", rpc(func(ctx context.Context, scope string, req legalMovesReq) ([]domain.LegalPlay, error) {
+			if req.Position == nil {
+				return nil, fmt.Errorf("%w: missing position", storage.ErrInvalid)
+			}
+			plays := domain.LegalMoves(req.Position)
+			if plays == nil {
+				plays = []domain.LegalPlay{}
+			}
+			return plays, nil
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)
