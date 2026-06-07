@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:18+0200\n"
+"POT-Creation-Date: 2026-06-07 22:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -32,7 +32,9 @@ msgid ""
 "ce mode : vous pouvez ignorer ce chapitre sans rien perdre des "
 "fonctionnalités d'analyse."
 msgstr ""
-"このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの\\ **高度かつ任意のモード**\\ について説明します。\\ **blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**\\ のままです。自分のコンピューター上でblunderDBを単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。"
+"このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの\\ **高度かつ任意のモード**\\ "
+"について説明します。\\ **blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**\\ "
+"のままです。自分のコンピューター上でblunderDBを単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。"
 
 #: ../../source/mode_headless.rst:18
 msgid "Vue d'ensemble"
@@ -45,7 +47,9 @@ msgid ""
 "headless** : sans interface graphique, piloté entièrement en ligne de "
 "commande ou par le réseau. Ce mode regroupe trois usages :"
 msgstr ""
-"同じバイナリ ``blunderdb`` は、デスクトップアプリケーションやコマンドライン（:ref:`cli` を参照）に加えて、**ヘッドレスモード** で動作することができます：グラフィカルインターフェースなしで、コマンドラインまたはネットワークから完全に操作されます。このモードは3つの用途をまとめています："
+"同じバイナリ ``blunderdb`` は、デスクトップアプリケーションやコマンドライン（:ref:`cli` "
+"を参照）に加えて、**ヘッドレスモード** "
+"で動作することができます：グラフィカルインターフェースなしで、コマンドラインまたはネットワークから完全に操作されます。このモードは3つの用途をまとめています："
 
 #: ../../source/mode_headless.rst:25
 msgid ""
@@ -53,21 +57,20 @@ msgid ""
 "HTTP + JSON, pour faire tourner une base partagée sur un serveur et y "
 "accéder à plusieurs ;"
 msgstr ""
-"**デーモン** ``serve`` — blunderDBのエンジンをHTTP + JSONサービスとして公開し、共有データベースをサーバー上で稼働させ、複数人でアクセスできるようにします；"
+"**デーモン** ``serve`` — blunderDBのエンジンをHTTP + "
+"JSONサービスとして公開し、共有データベースをサーバー上で稼働させ、複数人でアクセスできるようにします；"
 
 #: ../../source/mode_headless.rst:28
 msgid ""
 "le dispatcher générique ``call`` — appelle n'importe quelle opération de "
 "stockage directement, en local, pour le scripting et les tests ;"
-msgstr ""
-"汎用ディスパッチャ ``call`` — スクリプティングやテストのために、任意のストレージ操作をローカルで直接呼び出します；"
+msgstr "汎用ディスパッチャ ``call`` — スクリプティングやテストのために、任意のストレージ操作をローカルで直接呼び出します；"
 
 #: ../../source/mode_headless.rst:30
 msgid ""
 "la commande ``migrate`` — transfère une base SQLite mono-utilisateur vers"
 " un backend PostgreSQL multi-utilisateur."
-msgstr ""
-"``migrate`` コマンド — シングルユーザーのSQLiteデータベースをマルチユーザーのPostgreSQLバックエンドに転送します。"
+msgstr "``migrate`` コマンド — シングルユーザーのSQLiteデータベースをマルチユーザーのPostgreSQLバックエンドに転送します。"
 
 #: ../../source/mode_headless.rst:33
 msgid ""
@@ -76,7 +79,9 @@ msgid ""
 "habituel de l'application de bureau) et **PostgreSQL** (pour les "
 "déploiements serveur multi-utilisateurs)."
 msgstr ""
-"これら3つの用途は、2つのバックエンドと対話できる共通の\\ **ストレージレイヤー**\\ に依存しています：\\ **SQLite**\\ （デスクトップアプリケーションの通常の ``.db`` ファイル形式）と **PostgreSQL**\\ （マルチユーザーのサーバーデプロイ向け）です。"
+"これら3つの用途は、2つのバックエンドと対話できる共通の\\ **ストレージレイヤー**\\ に依存しています：\\ **SQLite**\\ "
+"（デスクトップアプリケーションの通常の ``.db`` ファイル形式）と **PostgreSQL**\\ "
+"（マルチユーザーのサーバーデプロイ向け）です。"
 
 #: ../../source/mode_headless.rst:41
 msgid "Le démon ``serve``"
@@ -88,7 +93,8 @@ msgid ""
 "JSON. Il permet d'héberger une base de positions sur une machine et d'y "
 "accéder depuis plusieurs clients."
 msgstr ""
-"``blunderdb serve`` は、JSONで応答するHTTPサービスとしてエンジンを起動します。これにより、ポジションのデータベースを1台のマシン上でホストし、複数のクライアントからアクセスできるようになります。"
+"``blunderdb serve`` "
+"は、JSONで応答するHTTPサービスとしてエンジンを起動します。これにより、ポジションのデータベースを1台のマシン上でホストし、複数のクライアントからアクセスできるようになります。"
 
 #: ../../source/mode_headless.rst:59
 msgid ""
@@ -97,48 +103,49 @@ msgid ""
 "reverse-proxy (nginx, Caddy…) chargé de l'authentification. **Ne "
 "l'exposez jamais directement sur l'Internet public.**"
 msgstr ""
-"**デーモンは認証を一切行いません。** リクエストヘッダー ``X-Tenant-ID`` を信頼しており、認証を担うリバースプロキシ（nginx、Caddy…）の背後で動作させる**必要があります**。**決して公開インターネット上に直接公開しないでください。**"
+"**デーモンは認証を一切行いません。** リクエストヘッダー ``X-Tenant-ID`` "
+"を信頼しており、認証を担うリバースプロキシ（nginx、Caddy…）の背後で動作させる**必要があります**。**決して公開インターネット上に直接公開しないでください。**"
 
-#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:226
+#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:231
 msgid "**Options:**"
 msgstr "**オプション：**"
 
-#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:174
-#: ../../source/mode_headless.rst:232
+#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:179
+#: ../../source/mode_headless.rst:237
 msgid "Option"
 msgstr "オプション"
 
-#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:175
-#: ../../source/mode_headless.rst:233
+#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:180
+#: ../../source/mode_headless.rst:238
 msgid "Défaut"
 msgstr "デフォルト"
 
-#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:176
-#: ../../source/mode_headless.rst:234
+#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:181
+#: ../../source/mode_headless.rst:239
 msgid "Signification"
 msgstr "意味"
 
-#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:235
+#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:240
 msgid "``--db <chemin>``"
 msgstr "``--db <chemin>``"
 
 #: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:92
-#: ../../source/mode_headless.rst:178 ../../source/mode_headless.rst:181
-#: ../../source/mode_headless.rst:184 ../../source/mode_headless.rst:187
-#: ../../source/mode_headless.rst:236 ../../source/mode_headless.rst:251
-#: ../../source/mode_headless.rst:254
+#: ../../source/mode_headless.rst:183 ../../source/mode_headless.rst:186
+#: ../../source/mode_headless.rst:189 ../../source/mode_headless.rst:192
+#: ../../source/mode_headless.rst:241 ../../source/mode_headless.rst:256
+#: ../../source/mode_headless.rst:259
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:237
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:242
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "SQLiteファイル（``--backend sqlite --dsn <chemin>`` のショートカット）"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:238
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:243
 msgid "``--backend <type>``"
 msgstr "``--backend <type>``"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:239
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:244
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -146,15 +153,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "ストレージバックエンド：``sqlite`` または ``postgres``"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:241
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:246
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <chaîne>``"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:242
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:247
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:243
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:248
 msgid "chaîne de connexion du backend"
 msgstr "バックエンドの接続文字列"
 
@@ -238,16 +245,14 @@ msgstr "``false``"
 msgid ""
 "PostgreSQL : active la Row-Level Security par tenant (défense en "
 "profondeur, sur option)"
-msgstr ""
-"PostgreSQL：テナントごとのRow-Level Securityを有効にする（多層防御、オプション）"
+msgstr "PostgreSQL：テナントごとのRow-Level Securityを有効にする（多層防御、オプション）"
 
 #: ../../source/mode_headless.rst:105
 msgid ""
 "La plupart des options peuvent aussi être fournies par variable "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
 "``BLUNDERDB_ADDR``, ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``)."
-msgstr ""
-"ほとんどのオプションは環境変数（``BLUNDERDB_BACKEND``、``BLUNDERDB_DSN``、``BLUNDERDB_ADDR``、``BLUNDERDB_LOG_LEVEL``、``BLUNDERDB_RLS``）でも指定できます。"
+msgstr "ほとんどのオプションは環境変数（``BLUNDERDB_BACKEND``、``BLUNDERDB_DSN``、``BLUNDERDB_ADDR``、``BLUNDERDB_LOG_LEVEL``、``BLUNDERDB_RLS``）でも指定できます。"
 
 #: ../../source/mode_headless.rst:110
 msgid "Points d'accès"
@@ -279,22 +284,34 @@ msgid ""
 " (un objet JSON par ligne). Le serveur s'arrête proprement sur ``SIGINT``"
 " / ``SIGTERM``."
 msgstr ""
-"ビジネスロジックのインターフェースは ``POST /v1/<famille>.<méthode>`` のスキーマに従います（例：``/v1/positions.save``、``/v1/matches.get``）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは ``SIGINT`` / ``SIGTERM`` で正常に停止します。"
+"ビジネスロジックのインターフェースは ``POST /v1/<famille>.<méthode>`` "
+"のスキーマに従います（例：``/v1/positions.save``、``/v1/matches.get``）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは"
+" ``SIGINT`` / ``SIGTERM`` で正常に停止します。"
 
-#: ../../source/mode_headless.rst:128
+#: ../../source/mode_headless.rst:125
+msgid ""
+"Deux méthodes de la famille ``positions`` décodent une position sans "
+"l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir "
+"d'une chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de "
+"position unique ``.xgp``."
+msgstr "``positions`` ファミリーの2つのメソッドは、局面を保存せずにデコードします。``positions.fromXGID`` は XGID 文字列から局面を再構築し、``positions.fromXGP`` は単一局面ファイル ``.xgp`` から再構築します。"
+
+#: ../../source/mode_headless.rst:133
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "PostgreSQLバックエンドとマルチユーザー"
 
-#: ../../source/mode_headless.rst:130
+#: ../../source/mode_headless.rst:135
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
 "sélectionné par ``--backend postgres`` et la chaîne de connexion "
 "``--dsn``. Le schéma est créé et migré automatiquement au démarrage."
 msgstr ""
-"共有デプロイの場合、blunderDBはSQLiteファイルではなく **PostgreSQL** にデータを保存できます。バックエンドは ``--backend postgres`` と接続文字列 ``--dsn`` で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。"
+"共有デプロイの場合、blunderDBはSQLiteファイルではなく **PostgreSQL** にデータを保存できます。バックエンドは "
+"``--backend postgres`` と接続文字列 ``--dsn`` "
+"で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。"
 
-#: ../../source/mode_headless.rst:135
+#: ../../source/mode_headless.rst:140
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte un identifiant de scope (en-tête ``X-Tenant-ID``, par défaut "
@@ -305,21 +322,27 @@ msgid ""
 "connexion. C'est une défense en profondeur facultative, désactivée par "
 "défaut."
 msgstr ""
-"データは**テナント（利用者）ごとに分離**されています：各リクエストにはスコープ識別子（ヘッダー ``X-Tenant-ID``、デフォルトは ``default``）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。``--rls`` オプションは、補完的にPostgreSQLの **Row-Level Security** を有効にします：テナントごとの分離ポリシーがインストールされ、``app.tenant_id`` が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
+"データは**テナント（利用者）ごとに分離**されています：各リクエストにはスコープ識別子（ヘッダー ``X-Tenant-ID``、デフォルトは "
+"``default``）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。``--rls`` "
+"オプションは、補完的にPostgreSQLの **Row-Level Security** "
+"を有効にします：テナントごとの分離ポリシーがインストールされ、``app.tenant_id`` "
+"が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
 
-#: ../../source/mode_headless.rst:146
+#: ../../source/mode_headless.rst:151
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "SQLiteデータベースをPostgreSQLへ移行する"
 
-#: ../../source/mode_headless.rst:148
+#: ../../source/mode_headless.rst:153
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour"
 " « téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
-"``blunderdb migrate`` は、シングルユーザーのSQLiteデータベースを、選択したテナントスコープのもとでPostgreSQLバックエンドにコピーします — これは、デスクトップのライブラリをサーバーデプロイへ「アップロード」するための手段です。"
+"``blunderdb migrate`` "
+"は、シングルユーザーのSQLiteデータベースを、選択したテナントスコープのもとでPostgreSQLバックエンドにコピーします — "
+"これは、デスクトップのライブラリをサーバーデプロイへ「アップロード」するための手段です。"
 
-#: ../../source/mode_headless.rst:163
+#: ../../source/mode_headless.rst:168
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -329,69 +352,71 @@ msgid ""
 "intacte, il suffit de relancer). La progression et le bilan final sont "
 "émis en NDJSON sur la sortie standard."
 msgstr ""
-"このマイグレーションは、**ポジション、その分析とコメント、マッチ（ゲーム + 手）、トーナメント（そのマッチリンクを含む）、コレクション（その構成を含む）** をコピーし、主キーと外部キーを再割り当てします。これらはすべて、宛先側の**単一のトランザクション**内で行われます：操作はアトミックです（失敗しても宛先はそのまま残るため、再実行するだけで済みます）。進捗と最終的な集計は、標準出力にNDJSONで出力されます。"
+"このマイグレーションは、**ポジション、その分析とコメント、マッチ（ゲーム + "
+"手）、トーナメント（そのマッチリンクを含む）、コレクション（その構成を含む）** "
+"をコピーし、主キーと外部キーを再割り当てします。これらはすべて、宛先側の**単一のトランザクション**内で行われます：操作はアトミックです（失敗しても宛先はそのまま残るため、再実行するだけで済みます）。進捗と最終的な集計は、標準出力にNDJSONで出力されます。"
 
-#: ../../source/mode_headless.rst:177
+#: ../../source/mode_headless.rst:182
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:179
+#: ../../source/mode_headless.rst:184
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr "ソースのSQLiteデータベース（``sqlite:///chemin`` または単なるパス）"
 
-#: ../../source/mode_headless.rst:180
+#: ../../source/mode_headless.rst:185
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:182
+#: ../../source/mode_headless.rst:187
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "宛先のPostgreSQL DSN（``postgres://…``）"
 
-#: ../../source/mode_headless.rst:183
+#: ../../source/mode_headless.rst:188
 msgid "``--tenant-id <scope>``"
 msgstr "``--tenant-id <scope>``"
 
-#: ../../source/mode_headless.rst:185
+#: ../../source/mode_headless.rst:190
 msgid "scope de tenant de destination (obligatoire sauf en ``--dry-run``)"
 msgstr "宛先のテナントスコープ（``--dry-run`` 以外では必須）"
 
-#: ../../source/mode_headless.rst:186
+#: ../../source/mode_headless.rst:191
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:188
+#: ../../source/mode_headless.rst:193
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "何も書き込まずに、コピーされる内容を数える"
 
-#: ../../source/mode_headless.rst:189
+#: ../../source/mode_headless.rst:194
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politique>``"
 
-#: ../../source/mode_headless.rst:190
+#: ../../source/mode_headless.rst:195
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:191
+#: ../../source/mode_headless.rst:196
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
 msgstr ""
-"``\"\"`` はテナントにすでにデータがある場合に中断します；``skip`` はマージします（Zobristハッシュによるポジションの重複排除）"
+"``\"\"`` はテナントにすでにデータがある場合に中断します；``skip`` "
+"はマージします（Zobristハッシュによるポジションの重複排除）"
 
-#: ../../source/mode_headless.rst:196
+#: ../../source/mode_headless.rst:201
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
 "métadonnées de session. La priorité est la migration de la bibliothèque "
 "de positions et de l'historique de matchs."
-msgstr ""
-"アプリケーションの状態は（まだ）移行されません：Ankiのデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。"
+msgstr "アプリケーションの状態は（まだ）移行されません：Ankiのデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。"
 
-#: ../../source/mode_headless.rst:204
+#: ../../source/mode_headless.rst:209
 msgid "Le dispatcher générique ``call``"
 msgstr "汎用ディスパッチャ ``call``"
 
-#: ../../source/mode_headless.rst:206
+#: ../../source/mode_headless.rst:211
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -399,54 +424,56 @@ msgid ""
 "comportement est donc identique à ``POST /v1/<famille>.<méthode>``. C'est"
 " utile pour le scripting et les tests d'intégration."
 msgstr ""
-"従来のサブコマンド（:ref:`cli`）を補完するものとして、``blunderdb call`` は**すべての**ストレージ操作をローカルで直接公開します。デーモン ``serve`` と同じハンドラを経由するため、動作は ``POST /v1/<famille>.<méthode>`` と同一です。スクリプティングや統合テストに便利です。"
+"従来のサブコマンド（:ref:`cli`）を補完するものとして、``blunderdb call`` "
+"は**すべての**ストレージ操作をローカルで直接公開します。デーモン ``serve`` と同じハンドラを経由するため、動作は ``POST "
+"/v1/<famille>.<méthode>`` と同一です。スクリプティングや統合テストに便利です。"
 
-#: ../../source/mode_headless.rst:240
+#: ../../source/mode_headless.rst:245
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` または ``postgres``"
 
-#: ../../source/mode_headless.rst:244
+#: ../../source/mode_headless.rst:249
 msgid "``--scope <chaîne>``"
 msgstr "``--scope <chaîne>``"
 
-#: ../../source/mode_headless.rst:245
+#: ../../source/mode_headless.rst:250
 msgid "``default``"
 msgstr "``default``"
 
-#: ../../source/mode_headless.rst:246
+#: ../../source/mode_headless.rst:251
 msgid "scope de tenant (envoyé comme ``X-Tenant-ID``)"
 msgstr "テナントスコープ（``X-Tenant-ID`` として送信される）"
 
-#: ../../source/mode_headless.rst:247
+#: ../../source/mode_headless.rst:252
 msgid "``--json <chaîne>``"
 msgstr "``--json <chaîne>``"
 
-#: ../../source/mode_headless.rst:248
+#: ../../source/mode_headless.rst:253
 #, python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:249
+#: ../../source/mode_headless.rst:254
 msgid "corps de la requête au format JSON"
 msgstr "JSON形式のリクエストボディ"
 
-#: ../../source/mode_headless.rst:250
+#: ../../source/mode_headless.rst:255
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <chemin>``"
 
-#: ../../source/mode_headless.rst:252
+#: ../../source/mode_headless.rst:257
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "ファイルからリクエストボディを読み込む"
 
-#: ../../source/mode_headless.rst:253
+#: ../../source/mode_headless.rst:258
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:255
+#: ../../source/mode_headless.rst:260
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "すべての ``<famille>.<méthode>`` メソッドを表示して終了する"
 
-#: ../../source/mode_headless.rst:257
+#: ../../source/mode_headless.rst:262
 #, python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
@@ -454,4 +481,6 @@ msgid ""
 "avec un code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur "
 "la sortie standard pour rester analysable (par exemple avec ``jq``)."
 msgstr ""
-"JSONレスポンス（または ``*.list`` エンドポイントの場合はNDJSONストリーム）は標準出力に書き込まれます。エラーが発生した場合、プロセスは非ゼロのコードで終了し、解析可能な状態を保つために（例えば ``jq`` で）、``{\"error\":{…}}`` というエンベロープが標準出力に出力されます。"
+"JSONレスポンス（または ``*.list`` "
+"エンドポイントの場合はNDJSONストリーム）は標準出力に書き込まれます。エラーが発生した場合、プロセスは非ゼロのコードで終了し、解析可能な状態を保つために（例えば"
+" ``jq`` で）、``{\"error\":{…}}`` というエンベロープが標準出力に出力されます。"

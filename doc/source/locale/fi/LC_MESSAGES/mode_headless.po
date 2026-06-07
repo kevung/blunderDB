@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 02:18+0200\n"
+"POT-Creation-Date: 2026-06-07 22:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -33,12 +33,12 @@ msgid ""
 "ce mode : vous pouvez ignorer ce chapitre sans rien perdre des "
 "fonctionnalités d'analyse."
 msgstr ""
-"Tässä osiossa kuvataan blunderDB:n **edistynyt ja valinnainen tila**, joka "
-"on tarkoitettu palvelinkäyttöön, monikäyttäjäympäristöihin ja "
+"Tässä osiossa kuvataan blunderDB:n **edistynyt ja valinnainen tila**, "
+"joka on tarkoitettu palvelinkäyttöön, monikäyttäjäympäristöihin ja "
 "automaatioon. **blunderDB:n tavanomainen ja suositeltu käyttötapa on "
 "edelleen työpöytäsovellus**, joka kuvataan edellisissä luvuissa. Jos "
-"käytät blunderDB:tä yksin omalla tietokoneellasi, et tarvitse tätä tilaa: "
-"voit ohittaa tämän luvun menettämättä mitään analyysiominaisuuksista."
+"käytät blunderDB:tä yksin omalla tietokoneellasi, et tarvitse tätä tilaa:"
+" voit ohittaa tämän luvun menettämättä mitään analyysiominaisuuksista."
 
 #: ../../source/mode_headless.rst:18
 msgid "Vue d'ensemble"
@@ -51,10 +51,10 @@ msgid ""
 "headless** : sans interface graphique, piloté entièrement en ligne de "
 "commande ou par le réseau. Ce mode regroupe trois usages :"
 msgstr ""
-"Sama ``blunderdb``-binääri voi työpöytäsovelluksen ja komentorivikomentojen "
-"(katso :ref:`cli`) lisäksi toimia **headless-tilassa**: ilman graafista "
-"käyttöliittymää, ohjattuna kokonaan komentoriviltä tai verkon kautta. Tämä "
-"tila kattaa kolme käyttötapaa:"
+"Sama ``blunderdb``-binääri voi työpöytäsovelluksen ja "
+"komentorivikomentojen (katso :ref:`cli`) lisäksi toimia **headless-"
+"tilassa**: ilman graafista käyttöliittymää, ohjattuna kokonaan "
+"komentoriviltä tai verkon kautta. Tämä tila kattaa kolme käyttötapaa:"
 
 #: ../../source/mode_headless.rst:25
 msgid ""
@@ -72,7 +72,8 @@ msgid ""
 "stockage directement, en local, pour le scripting et les tests ;"
 msgstr ""
 "yleiskäyttöinen ``call``-välittäjä — kutsuu mitä tahansa "
-"tallennustoimintoa suoraan paikallisesti, skriptausta ja testausta varten;"
+"tallennustoimintoa suoraan paikallisesti, skriptausta ja testausta "
+"varten;"
 
 #: ../../source/mode_headless.rst:30
 msgid ""
@@ -90,9 +91,9 @@ msgid ""
 "déploiements serveur multi-utilisateurs)."
 msgstr ""
 "Nämä kolme käyttötapaa nojaavat yhteiseen **tallennuskerrokseen**, joka "
-"osaa puhua kahdelle taustajärjestelmälle: **SQLite** (työpöytäsovelluksen "
-"tavanomainen ``.db``-tiedostomuoto) ja **PostgreSQL** (monikäyttäjäisiin "
-"palvelinkäyttöönottoihin)."
+"osaa puhua kahdelle taustajärjestelmälle: **SQLite** (työpöytäsovelluksen"
+" tavanomainen ``.db``-tiedostomuoto) ja **PostgreSQL** (monikäyttäjäisiin"
+" palvelinkäyttöönottoihin)."
 
 #: ../../source/mode_headless.rst:41
 msgid "Le démon ``serve``"
@@ -105,8 +106,8 @@ msgid ""
 "accéder depuis plusieurs clients."
 msgstr ""
 "``blunderdb serve`` käynnistää moottorin HTTP-palveluna, joka vastaa "
-"JSON-muodossa. Sen avulla voi isännöidä asematietokantaa yhdellä koneella "
-"ja käyttää sitä useasta asiakkaasta."
+"JSON-muodossa. Sen avulla voi isännöidä asematietokantaa yhdellä koneella"
+" ja käyttää sitä useasta asiakkaasta."
 
 #: ../../source/mode_headless.rst:59
 msgid ""
@@ -115,51 +116,51 @@ msgid ""
 "reverse-proxy (nginx, Caddy…) chargé de l'authentification. **Ne "
 "l'exposez jamais directement sur l'Internet public.**"
 msgstr ""
-"**Demoni ei suorita minkäänlaista todennusta.** Se luottaa "
-"``X-Tenant-ID``-pyyntöotsakkeeseen ja **on** ajettava todennuksesta "
-"huolehtivan käänteisvälityspalvelimen (nginx, Caddy…) takana. **Älä "
-"koskaan altista sitä suoraan julkiseen internetiin.**"
+"**Demoni ei suorita minkäänlaista todennusta.** Se luottaa ``X-Tenant-"
+"ID``-pyyntöotsakkeeseen ja **on** ajettava todennuksesta huolehtivan "
+"käänteisvälityspalvelimen (nginx, Caddy…) takana. **Älä koskaan altista "
+"sitä suoraan julkiseen internetiin.**"
 
-#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:226
+#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:231
 msgid "**Options:**"
 msgstr "**Valinnat:**"
 
-#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:174
-#: ../../source/mode_headless.rst:232
+#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:179
+#: ../../source/mode_headless.rst:237
 msgid "Option"
 msgstr "Valinta"
 
-#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:175
-#: ../../source/mode_headless.rst:233
+#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:180
+#: ../../source/mode_headless.rst:238
 msgid "Défaut"
 msgstr "Oletus"
 
-#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:176
-#: ../../source/mode_headless.rst:234
+#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:181
+#: ../../source/mode_headless.rst:239
 msgid "Signification"
 msgstr "Merkitys"
 
-#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:235
+#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:240
 msgid "``--db <chemin>``"
 msgstr "``--db <polku>``"
 
 #: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:92
-#: ../../source/mode_headless.rst:178 ../../source/mode_headless.rst:181
-#: ../../source/mode_headless.rst:184 ../../source/mode_headless.rst:187
-#: ../../source/mode_headless.rst:236 ../../source/mode_headless.rst:251
-#: ../../source/mode_headless.rst:254
+#: ../../source/mode_headless.rst:183 ../../source/mode_headless.rst:186
+#: ../../source/mode_headless.rst:189 ../../source/mode_headless.rst:192
+#: ../../source/mode_headless.rst:241 ../../source/mode_headless.rst:256
+#: ../../source/mode_headless.rst:259
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:237
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:242
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "SQLite-tiedosto (oikotie komennolle ``--backend sqlite --dsn <polku>``)"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:238
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:243
 msgid "``--backend <type>``"
 msgstr "``--backend <tyyppi>``"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:239
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:244
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -167,15 +168,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "tallennustaustajärjestelmä: ``sqlite`` tai ``postgres``"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:241
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:246
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <merkkijono>``"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:242
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:247
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:243
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:248
 msgid "chaîne de connexion du backend"
 msgstr "taustajärjestelmän yhteysmerkkijono"
 
@@ -304,17 +305,26 @@ msgid ""
 " / ``SIGTERM``."
 msgstr ""
 "Toiminnallinen rajapinta noudattaa kaavaa ``POST /v1/<perhe>.<metodi>`` "
-"(esimerkiksi ``/v1/positions.save``, ``/v1/matches.get``). Perheet kattavat "
-"asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki-kortit, "
-"suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. "
-"Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä "
-"kohti). Palvelin pysähtyy siististi signaaleilla ``SIGINT`` / ``SIGTERM``."
+"(esimerkiksi ``/v1/positions.save``, ``/v1/matches.get``). Perheet "
+"kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, "
+"Anki-kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja "
+"tuonnin. Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti"
+" riviä kohti). Palvelin pysähtyy siististi signaaleilla ``SIGINT`` / "
+"``SIGTERM``."
 
-#: ../../source/mode_headless.rst:128
+#: ../../source/mode_headless.rst:125
+msgid ""
+"Deux méthodes de la famille ``positions`` décodent une position sans "
+"l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir "
+"d'une chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de "
+"position unique ``.xgp``."
+msgstr "Kaksi ``positions``-perheen metodia purkaa aseman tallentamatta sitä: ``positions.fromXGID`` rakentaa aseman XGID-merkkijonosta ja ``positions.fromXGP`` yksittäisen aseman ``.xgp``-tiedostosta."
+
+#: ../../source/mode_headless.rst:133
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys"
 
-#: ../../source/mode_headless.rst:130
+#: ../../source/mode_headless.rst:135
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -323,10 +333,10 @@ msgid ""
 msgstr ""
 "Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot "
 "**PostgreSQL**:ään SQLite-tiedoston sijaan. Taustajärjestelmä valitaan "
-"valinnalla ``--backend postgres`` ja yhteysmerkkijonolla ``--dsn``. Skeema "
-"luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä."
+"valinnalla ``--backend postgres`` ja yhteysmerkkijonolla ``--dsn``. "
+"Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä."
 
-#: ../../source/mode_headless.rst:135
+#: ../../source/mode_headless.rst:140
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte un identifiant de scope (en-tête ``X-Tenant-ID``, par défaut "
@@ -337,29 +347,29 @@ msgid ""
 "connexion. C'est une défense en profondeur facultative, désactivée par "
 "défaut."
 msgstr ""
-"Tiedot on **eristetty vuokralaisittain**: jokainen pyyntö sisältää "
-"scope-tunnisteen (otsake ``X-Tenant-ID``, oletuksena ``default``), mikä "
-"sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. "
+"Tiedot on **eristetty vuokralaisittain**: jokainen pyyntö sisältää scope-"
+"tunnisteen (otsake ``X-Tenant-ID``, oletuksena ``default``), mikä sallii "
+"usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. "
 "Valinta ``--rls`` ottaa lisäksi käyttöön PostgreSQL:n **Row-Level "
 "Securityn**: vuokralaiskohtaiset eristyskäytännöt asennetaan ja "
 "``app.tenant_id`` asetetaan yhteyskohtaisesti. Tämä on valinnainen "
 "syvyyspuolustus, joka on oletuksena pois käytöstä."
 
-#: ../../source/mode_headless.rst:146
+#: ../../source/mode_headless.rst:151
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "SQLite-tietokannan siirtäminen PostgreSQL:ään"
 
-#: ../../source/mode_headless.rst:148
+#: ../../source/mode_headless.rst:153
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour"
 " « téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
-"``blunderdb migrate`` kopioi yhden käyttäjän SQLite-tietokannan PostgreSQL-"
-"taustajärjestelmään valitun vuokralais-scopen alle — tämä on tapa "
-"« ladata » työpöytäkirjasto palvelinkäyttöönottoon."
+"``blunderdb migrate`` kopioi yhden käyttäjän SQLite-tietokannan "
+"PostgreSQL-taustajärjestelmään valitun vuokralais-scopen alle — tämä on "
+"tapa « ladata » työpöytäkirjasto palvelinkäyttöönottoon."
 
-#: ../../source/mode_headless.rst:163
+#: ../../source/mode_headless.rst:168
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -369,63 +379,63 @@ msgid ""
 "intacte, il suffit de relancer). La progression et le bilan final sont "
 "émis en NDJSON sur la sortie standard."
 msgstr ""
-"Migraatio kopioi **asemat, niiden analyysit ja kommentit, ottelut (pelit + "
-"siirrot), turnaukset (ottelulinkkeineen) ja kokoelmat "
+"Migraatio kopioi **asemat, niiden analyysit ja kommentit, ottelut (pelit "
+"+ siirrot), turnaukset (ottelulinkkeineen) ja kokoelmat "
 "(koostumuksineen)**, kohdistaen pää- ja viiteavaimet uudelleen, kaiken "
-"kohdepuolen **yhdessä transaktiossa**: toiminto on atominen (epäonnistuminen "
-"jättää kohteen koskemattomaksi, riittää että käynnistää uudelleen). "
-"Edistyminen ja lopullinen yhteenveto tulostetaan NDJSON-muodossa "
-"vakiotulosteeseen."
+"kohdepuolen **yhdessä transaktiossa**: toiminto on atominen "
+"(epäonnistuminen jättää kohteen koskemattomaksi, riittää että käynnistää "
+"uudelleen). Edistyminen ja lopullinen yhteenveto tulostetaan NDJSON-"
+"muodossa vakiotulosteeseen."
 
-#: ../../source/mode_headless.rst:177
+#: ../../source/mode_headless.rst:182
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:179
+#: ../../source/mode_headless.rst:184
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr "lähde-SQLite-tietokanta (``sqlite:///polku`` tai pelkkä polku)"
 
-#: ../../source/mode_headless.rst:180
+#: ../../source/mode_headless.rst:185
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:182
+#: ../../source/mode_headless.rst:187
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "kohde-PostgreSQL:n DSN (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:183
+#: ../../source/mode_headless.rst:188
 msgid "``--tenant-id <scope>``"
 msgstr "``--tenant-id <scope>``"
 
-#: ../../source/mode_headless.rst:185
+#: ../../source/mode_headless.rst:190
 msgid "scope de tenant de destination (obligatoire sauf en ``--dry-run``)"
 msgstr "kohteen vuokralais-scope (pakollinen paitsi ``--dry-run``-tilassa)"
 
-#: ../../source/mode_headless.rst:186
+#: ../../source/mode_headless.rst:191
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:188
+#: ../../source/mode_headless.rst:193
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "laskee, mitä kopioitaisiin, kirjoittamatta mitään"
 
-#: ../../source/mode_headless.rst:189
+#: ../../source/mode_headless.rst:194
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <käytäntö>``"
 
-#: ../../source/mode_headless.rst:190
+#: ../../source/mode_headless.rst:195
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:191
+#: ../../source/mode_headless.rst:196
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
 msgstr ""
-"``\"\"`` keskeyttää, jos vuokralaisella on jo tietoja; ``skip`` "
-"yhdistää (asemien deduplikointi Zobrist-hashin perusteella)"
+"``\"\"`` keskeyttää, jos vuokralaisella on jo tietoja; ``skip`` yhdistää "
+"(asemien deduplikointi Zobrist-hashin perusteella)"
 
-#: ../../source/mode_headless.rst:196
+#: ../../source/mode_headless.rst:201
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -436,11 +446,11 @@ msgstr ""
 "suodatinkirjasto, haku- ja komentohistoria sekä istunnon metatiedot. "
 "Etusijalla on asemakirjaston ja otteluhistorian migraatio."
 
-#: ../../source/mode_headless.rst:204
+#: ../../source/mode_headless.rst:209
 msgid "Le dispatcher générique ``call``"
 msgstr "Yleiskäyttöinen ``call``-välittäjä"
 
-#: ../../source/mode_headless.rst:206
+#: ../../source/mode_headless.rst:211
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -450,56 +460,56 @@ msgid ""
 msgstr ""
 "Aiempien alikomentojen (:ref:`cli`) lisäksi ``blunderdb call`` tarjoaa "
 "**kaikki** tallennustoiminnot suoraan paikallisesti. Se kulkee samojen "
-"käsittelijöiden kautta kuin ``serve``-demoni: toiminta on siis identtinen "
-"komennon ``POST /v1/<perhe>.<metodi>`` kanssa. Tämä on hyödyllistä "
+"käsittelijöiden kautta kuin ``serve``-demoni: toiminta on siis identtinen"
+" komennon ``POST /v1/<perhe>.<metodi>`` kanssa. Tämä on hyödyllistä "
 "skriptauksessa ja integraatiotesteissä."
 
-#: ../../source/mode_headless.rst:240
+#: ../../source/mode_headless.rst:245
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` tai ``postgres``"
 
-#: ../../source/mode_headless.rst:244
+#: ../../source/mode_headless.rst:249
 msgid "``--scope <chaîne>``"
 msgstr "``--scope <merkkijono>``"
 
-#: ../../source/mode_headless.rst:245
+#: ../../source/mode_headless.rst:250
 msgid "``default``"
 msgstr "``default``"
 
-#: ../../source/mode_headless.rst:246
+#: ../../source/mode_headless.rst:251
 msgid "scope de tenant (envoyé comme ``X-Tenant-ID``)"
 msgstr "vuokralais-scope (lähetetään otsakkeena ``X-Tenant-ID``)"
 
-#: ../../source/mode_headless.rst:247
+#: ../../source/mode_headless.rst:252
 msgid "``--json <chaîne>``"
 msgstr "``--json <merkkijono>``"
 
-#: ../../source/mode_headless.rst:248
+#: ../../source/mode_headless.rst:253
 #, python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:249
+#: ../../source/mode_headless.rst:254
 msgid "corps de la requête au format JSON"
 msgstr "pyynnön runko JSON-muodossa"
 
-#: ../../source/mode_headless.rst:250
+#: ../../source/mode_headless.rst:255
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <polku>``"
 
-#: ../../source/mode_headless.rst:252
+#: ../../source/mode_headless.rst:257
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "lukee pyynnön rungon tiedostosta"
 
-#: ../../source/mode_headless.rst:253
+#: ../../source/mode_headless.rst:258
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:255
+#: ../../source/mode_headless.rst:260
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "näyttää kaikki metodit ``<perhe>.<metodi>`` ja lopettaa"
 
-#: ../../source/mode_headless.rst:257
+#: ../../source/mode_headless.rst:262
 #, python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
@@ -508,7 +518,7 @@ msgid ""
 "la sortie standard pour rester analysable (par exemple avec ``jq``)."
 msgstr ""
 "JSON-vastaus (tai NDJSON-virta ``*.list``-päätepisteille) kirjoitetaan "
-"vakiotulosteeseen. Virhetilanteessa prosessi päättyy nollasta poikkeavalla "
-"koodilla ja kuori ``{\"error\":{…}}`` tulostetaan vakiotulosteeseen, jotta "
-"se pysyy jäsenneltävänä (esimerkiksi ``jq``:lla)."
-
+"vakiotulosteeseen. Virhetilanteessa prosessi päättyy nollasta "
+"poikkeavalla koodilla ja kuori ``{\"error\":{…}}`` tulostetaan "
+"vakiotulosteeseen, jotta se pysyy jäsenneltävänä (esimerkiksi "
+"``jq``:lla)."
