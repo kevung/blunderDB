@@ -122,6 +122,11 @@ filtres, sessions, recherche, métadonnées, statistiques et import. Les
 endpoints de listing renvoient un flux NDJSON (un objet JSON par ligne). Le
 serveur s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
 
+Deux méthodes de la famille ``positions`` décodent une position sans
+l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
+chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
+``.xgp``.
+
 .. _headless_postgres:
 
 Backend PostgreSQL et multi-utilisateurs

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.24.0 Dokumentation</title>
+  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.25.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d4779542"></script>
+      <script src="_static/documentation_options.js?v=a5a2df1b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -194,6 +194,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus-Metriken (falls <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> aktiv ist).</p></li>
 </ul>
 <p>Die fachliche Oberfläche folgt dem Schema <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;Familie&gt;.&lt;Methode&gt;</span></code> (zum Beispiel <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Die Familien umfassen Stellungen, Analysen, Matches, Kommentare, Sammlungen, Turniere, Anki-Karten, Filter, Sitzungen, Suche, Metadaten, Statistiken und Import. Die Listing-Endpunkte liefern einen NDJSON-Strom (ein JSON-Objekt pro Zeile). Der Server wird bei <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> sauber beendet.</p>
+<p>Zwei Methoden der <code class="docutils literal notranslate"><span class="pre">positions</span></code>-Familie dekodieren eine Stellung, ohne sie zu speichern: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rekonstruiert eine Stellung aus einer XGID-Zeichenkette und <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> aus einer Einzelstellungsdatei <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

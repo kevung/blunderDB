@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.24.0</title>
+  <title>8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.25.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b7114c70"></script>
+      <script src="_static/documentation_options.js?v=c6c40629"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -194,6 +194,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — μετρικές Prometheus (αν το <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> είναι ενεργό).</p></li>
 </ul>
 <p>Η επιφάνεια λειτουργιών ακολουθεί το σχήμα <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> (για παράδειγμα <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Οι οικογένειες καλύπτουν τις θέσεις, τις αναλύσεις, τους αγώνες, τα σχόλια, τις συλλογές, τα τουρνουά, τις κάρτες Anki, τα φίλτρα, τις συνεδρίες, την αναζήτηση, τα μεταδεδομένα, τα στατιστικά και την εισαγωγή. Τα σημεία πρόσβασης καταχώρισης επιστρέφουν μια ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζεται καθαρά με <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<p>Δύο μέθοδοι της οικογένειας <code class="docutils literal notranslate"><span class="pre">positions</span></code> αποκωδικοποιούν μια θέση χωρίς να την αποθηκεύουν: η <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> ανακατασκευάζει μια θέση από μια συμβολοσειρά XGID και η <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> από ένα αρχείο μεμονωμένης θέσης <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

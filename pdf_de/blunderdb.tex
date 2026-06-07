@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{06.06.2026}
-\release{0.24.0}
+\date{07.06.2026}
+\release{0.25.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -665,6 +665,22 @@ Hinzugefügt: ein Container\sphinxhyphen{}Image (Docker) für den Headless\sphin
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.25.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+07/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Server\sphinxhyphen{}Modus (headless): zwei neue Methoden, um eine Stellung zu rekonstruieren, ohne sie zu speichern — \sphinxcode{\sphinxupquote{positions.fromXGID}} dekodiert eine XGID\sphinxhyphen{}Zeichenkette in eine Stellung, und \sphinxcode{\sphinxupquote{positions.fromXGP}} liest eine Einzelstellungsdatei \sphinxcode{\sphinxupquote{.xgp}}. Siehe {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}Modus (Server)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -686,15 +702,15 @@ Die neueste Version von blunderDB ist unter der MIT\sphinxhyphen{}Lizenz verfüg
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.24.0.exe}
+für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.25.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.24.0}
+für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.25.0}
 
 \item {} 
 \sphinxAtStartPar
-für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.24.0.zip}
+für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.25.0.zip}
 
 \end{itemize}
 
@@ -710,7 +726,7 @@ Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, führe
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.24.0}
+Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.25.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warnung:}
@@ -5990,6 +6006,9 @@ Der Dienst stellt stets vorhandene Betriebs\sphinxhyphen{}Endpunkte bereit:
 
 \sphinxAtStartPar
 Die fachliche Oberfläche folgt dem Schema \sphinxcode{\sphinxupquote{POST /v1/<Familie>.<Methode>}} (zum Beispiel \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Die Familien umfassen Stellungen, Analysen, Matches, Kommentare, Sammlungen, Turniere, Anki\sphinxhyphen{}Karten, Filter, Sitzungen, Suche, Metadaten, Statistiken und Import. Die Listing\sphinxhyphen{}Endpunkte liefern einen NDJSON\sphinxhyphen{}Strom (ein JSON\sphinxhyphen{}Objekt pro Zeile). Der Server wird bei \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}} sauber beendet.
+
+\sphinxAtStartPar
+Zwei Methoden der \sphinxcode{\sphinxupquote{positions}}\sphinxhyphen{}Familie dekodieren eine Stellung, ohne sie zu speichern: \sphinxcode{\sphinxupquote{positions.fromXGID}} rekonstruiert eine Stellung aus einer XGID\sphinxhyphen{}Zeichenkette und \sphinxcode{\sphinxupquote{positions.fromXGP}} aus einer Einzelstellungsdatei \sphinxcode{\sphinxupquote{.xgp}}.
 
 
 \subsection{PostgreSQL\sphinxhyphen{}Backend und Mehrbenutzerbetrieb}

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.24.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.25.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=2184a24a"></script>
+      <script src="_static/documentation_options.js?v=5051e813"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -269,6 +269,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-odd"><td><p>0.24.0</p></td>
 <td><p>06/06/2026</p></td>
 <td><p>Ajout d’une image conteneur (Docker) pour le mode headless : un point d’entrée dédié <code class="docutils literal notranslate"><span class="pre">serve</span></code> et un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> produisant un binaire statique sans interface graphique, afin de déployer le moteur de blunderDB comme service derrière un reverse-proxy. Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25.0</p></td>
+<td><p>07/06/2026</p></td>
+<td><p>Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une position sans l’enregistrer — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> décode une chaîne XGID en position, et <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> lit un fichier de position unique <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>. Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

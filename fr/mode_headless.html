@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Mode headless (serveur) &mdash; Documentation blunderDB 0.24.0</title>
+  <title>8. Mode headless (serveur) &mdash; Documentation blunderDB 0.25.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=2184a24a"></script>
+      <script src="_static/documentation_options.js?v=5051e813"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -223,6 +223,10 @@ positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
 filtres, sessions, recherche, métadonnées, statistiques et import. Les
 endpoints de listing renvoient un flux NDJSON (un objet JSON par ligne). Le
 serveur s’arrête proprement sur <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<p>Deux méthodes de la famille <code class="docutils literal notranslate"><span class="pre">positions</span></code> décodent une position sans
+l’enregistrer : <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> reconstruit une position à partir d’une
+chaîne XGID, et <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> à partir d’un fichier de position unique
+<code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

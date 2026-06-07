@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{06 giu 2026}
-\release{0.24.0}
+\date{07 giu 2026}
+\release{0.25.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -665,6 +665,22 @@ Aggiunta un’immagine container (Docker) per la modalità headless: un punto di
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.25.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+07/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Modalità server (headless): due nuovi metodi per ricostruire una posizione senza salvarla — \sphinxcode{\sphinxupquote{positions.fromXGID}} decodifica una stringa XGID in una posizione e \sphinxcode{\sphinxupquote{positions.fromXGP}} legge un file di posizione singola \sphinxcode{\sphinxupquote{.xgp}}. Vedi {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Modalità headless (server)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -686,15 +702,15 @@ L’ultima versione di blunderDB è disponibile con licenza MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.24.0.exe}
+per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.25.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.24.0}
+per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.25.0}
 
 \item {} 
 \sphinxAtStartPar
-per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.24.0.zip}
+per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.25.0.zip}
 
 \end{itemize}
 
@@ -710,7 +726,7 @@ Su Linux, se blunderDB non è eseguibile dopo il download, eseguire in un termin
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.24.0}
+Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.25.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avvertimento:}
@@ -5990,6 +6006,9 @@ Il servizio espone dei punti di accesso operativi, sempre presenti:
 
 \sphinxAtStartPar
 La superficie applicativa segue lo schema \sphinxcode{\sphinxupquote{POST /v1/<famiglia>.<metodo>}} (per esempio \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Le famiglie coprono posizioni, analisi, match, commenti, collezioni, tornei, carte Anki, filtri, sessioni, ricerca, metadati, statistiche e import. Gli endpoint di elenco restituiscono un flusso NDJSON (un oggetto JSON per riga). Il server si arresta in modo pulito su \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
+
+\sphinxAtStartPar
+Due metodi della famiglia \sphinxcode{\sphinxupquote{positions}} decodificano una posizione senza salvarla: \sphinxcode{\sphinxupquote{positions.fromXGID}} ricostruisce una posizione da una stringa XGID e \sphinxcode{\sphinxupquote{positions.fromXGP}} da un file di posizione singola \sphinxcode{\sphinxupquote{.xgp}}.
 
 
 \subsection{Backend PostgreSQL e multiutente}

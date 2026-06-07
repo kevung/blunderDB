@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Безголовый режим (сервер) &mdash; документация blunderDB 0.24.0</title>
+  <title>8. Безголовый режим (сервер) &mdash; документация blunderDB 0.25.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c70e6c87"></script>
+      <script src="_static/documentation_options.js?v=b6db26de"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -194,6 +194,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — метрики Prometheus (если активна опция <code class="docutils literal notranslate"><span class="pre">--metrics</span></code>).</p></li>
 </ul>
 <p>Прикладная поверхность следует схеме <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;семейство&gt;.&lt;метод&gt;</span></code> (например, <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Семейства охватывают позиции, анализы, матчи, комментарии, коллекции, турниры, карточки Anki, фильтры, сессии, поиск, метаданные, статистику и импорт. Эндпоинты списков возвращают поток NDJSON (по одному объекту JSON на строку). Сервер корректно останавливается по <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<p>Два метода семейства <code class="docutils literal notranslate"><span class="pre">positions</span></code> декодируют позицию, не сохраняя её: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> восстанавливает позицию из строки XGID, а <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> — из файла одиночной позиции <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless-tila (palvelin) &mdash; blunderDB 0.24.0 documentation</title>
+  <title>8. Headless-tila (palvelin) &mdash; blunderDB 0.25.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b83d384e"></script>
+      <script src="_static/documentation_options.js?v=c9e87217"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -194,6 +194,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus-metriikat (jos <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> on käytössä).</p></li>
 </ul>
 <p>Toiminnallinen rajapinta noudattaa kaavaa <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> (esimerkiksi <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki-kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä kohti). Palvelin pysähtyy siististi signaaleilla <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<p>Kaksi <code class="docutils literal notranslate"><span class="pre">positions</span></code>-perheen metodia purkaa aseman tallentamatta sitä: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rakentaa aseman XGID-merkkijonosta ja <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> yksittäisen aseman <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>-tiedostosta.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

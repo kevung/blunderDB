@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{06.06.2026}
-\release{0.24.0}
+\date{07.06.2026}
+\release{0.25.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -665,6 +665,22 @@ Lisätty konttikuva (Docker) headless\sphinxhyphen{}tilaa varten: erillinen \sph
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.25.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+07/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen tallentamatta sitä — \sphinxcode{\sphinxupquote{positions.fromXGID}} purkaa XGID\sphinxhyphen{}merkkijonon asemaksi ja \sphinxcode{\sphinxupquote{positions.fromXGP}} lukee yksittäisen aseman \sphinxcode{\sphinxupquote{.xgp}}\sphinxhyphen{}tiedoston. Katso {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}tila (palvelin)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -686,15 +702,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.24.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.25.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.24.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.25.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.24.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.25.0.zip}
 
 \end{itemize}
 
@@ -710,7 +726,7 @@ Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita ter
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.24.0}
+Linuxissa, jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä webkit2gtk\sphinxhyphen{}4.0:n sijaan. Lataa sille tarkoitettu versio: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.25.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
@@ -5990,6 +6006,9 @@ Palvelu tarjoaa hallinnolliset päätepisteet, jotka ovat aina läsnä:
 
 \sphinxAtStartPar
 Toiminnallinen rajapinta noudattaa kaavaa \sphinxcode{\sphinxupquote{POST /v1/<perhe>.<metodi>}} (esimerkiksi \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki\sphinxhyphen{}kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. Listauspäätepisteet palauttavat NDJSON\sphinxhyphen{}virran (yksi JSON\sphinxhyphen{}objekti riviä kohti). Palvelin pysähtyy siististi signaaleilla \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
+
+\sphinxAtStartPar
+Kaksi \sphinxcode{\sphinxupquote{positions}}\sphinxhyphen{}perheen metodia purkaa aseman tallentamatta sitä: \sphinxcode{\sphinxupquote{positions.fromXGID}} rakentaa aseman XGID\sphinxhyphen{}merkkijonosta ja \sphinxcode{\sphinxupquote{positions.fromXGP}} yksittäisen aseman \sphinxcode{\sphinxupquote{.xgp}}\sphinxhyphen{}tiedostosta.
 
 
 \subsection{PostgreSQL\sphinxhyphen{}taustajärjestelmä ja monikäyttäjäisyys}

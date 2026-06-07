@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless mode (server) &mdash; blunderDB 0.24.0 documentation</title>
+  <title>8. Headless mode (server) &mdash; blunderDB 0.25.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a9084e48"></script>
+      <script src="_static/documentation_options.js?v=d8dd0411"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -193,6 +193,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus metrics (if <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> is enabled).</p></li>
 </ul>
 <p>The business surface follows the <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;family&gt;.&lt;method&gt;</span></code> scheme (for example <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). The families cover positions, analyses, matches, comments, collections, tournaments, Anki cards, filters, sessions, search, metadata, statistics and import. Listing endpoints return an NDJSON stream (one JSON object per line). The server shuts down cleanly on <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<p>Two methods in the <code class="docutils literal notranslate"><span class="pre">positions</span></code> family decode a position without storing it: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rebuilds a position from an XGID string, and <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> from a single-position <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> file.</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentazione blunderDB 0.24.0 </title>
+  <title>blunderDB &mdash; Documentazione blunderDB 0.25.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cff69018"></script>
+      <script src="_static/documentation_options.js?v=be23da41"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -260,6 +260,10 @@
 <tr class="row-odd"><td><p>0.24.0</p></td>
 <td><p>06/06/2026</p></td>
 <td><p>Aggiunta un’immagine container (Docker) per la modalità headless: un punto di ingresso dedicato <code class="docutils literal notranslate"><span class="pre">serve</span></code> e un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> che produce un binario statico senza interfaccia grafica, per distribuire il motore di blunderDB come servizio dietro un reverse proxy. Vedi <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modalità headless (server)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25.0</p></td>
+<td><p>07/06/2026</p></td>
+<td><p>Modalità server (headless): due nuovi metodi per ricostruire una posizione senza salvarla — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> decodifica una stringa XGID in una posizione e <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> legge un file di posizione singola <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>. Vedi <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modalità headless (server)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. ヘッドレスモード（サーバー） &mdash; blunderDB 0.24.0 ドキュメント</title>
+  <title>8. ヘッドレスモード（サーバー） &mdash; blunderDB 0.25.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3012f5e6"></script>
+      <script src="_static/documentation_options.js?v=41c7bfbf"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -194,6 +194,7 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheusメトリクス（<code class="docutils literal notranslate"><span class="pre">--metrics</span></code> が有効な場合）。</p></li>
 </ul>
 <p>ビジネスロジックのインターフェースは <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> のスキーマに従います（例：<code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>、<code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> で正常に停止します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">positions</span></code> ファミリーの2つのメソッドは、局面を保存せずにデコードします。<code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> は XGID 文字列から局面を再構築し、<code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> は単一局面ファイル <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> から再構築します。</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

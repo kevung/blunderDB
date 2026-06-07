@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.24.0 Dokumentation</title>
+  <title>blunderDB &mdash; blunderDB 0.25.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d4779542"></script>
+      <script src="_static/documentation_options.js?v=a5a2df1b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -260,6 +260,10 @@
 <tr class="row-odd"><td><p>0.24.0</p></td>
 <td><p>06/06/2026</p></td>
 <td><p>Hinzugefügt: ein Container-Image (Docker) für den Headless-Modus: ein dedizierter Einstiegspunkt <code class="docutils literal notranslate"><span class="pre">serve</span></code> und eine <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, die eine statische Binärdatei ohne grafische Oberfläche erzeugt, um die blunderDB-Engine als Dienst hinter einem Reverse-Proxy bereitzustellen. Siehe <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-Modus (Server)</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25.0</p></td>
+<td><p>07/06/2026</p></td>
+<td><p>Server-Modus (headless): zwei neue Methoden, um eine Stellung zu rekonstruieren, ohne sie zu speichern — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> dekodiert eine XGID-Zeichenkette in eine Stellung, und <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> liest eine Einzelstellungsdatei <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>. Siehe <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-Modus (Server)</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
