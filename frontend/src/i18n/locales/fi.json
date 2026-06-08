@@ -496,6 +496,10 @@
         "user": "Käyttäjä",
         "version": "Versio"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "p"
+    },
     "board": {
         "description": "Backgammon-lauta. Pelaajan 1 pip-luku {pip1}, pelaajan 2 pip-luku {pip2}. {roller} siirtää.",
         "label": "Backgammon-lauta",

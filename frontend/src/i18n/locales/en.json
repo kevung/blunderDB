@@ -496,6 +496,10 @@
         "user": "User",
         "version": "Version"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "pt"
+    },
     "board": {
         "description": "Backgammon board. Player 1 pip count {pip1}, Player 2 pip count {pip2}. {roller} to move.",
         "label": "Backgammon board",

@@ -496,6 +496,10 @@
         "user": "Пользователь",
         "version": "Версия"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "оч"
+    },
     "board": {
         "description": "Доска для backgammon. Pip игрока 1: {pip1}, pip игрока 2: {pip2}. Ход {roller}.",
         "label": "Доска для backgammon",

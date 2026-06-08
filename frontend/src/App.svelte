@@ -94,6 +94,7 @@
     // Components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
+    import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
@@ -456,6 +457,8 @@
     />
 
     <ViewTabs />
+
+    <MatchInfoBar />
 
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>

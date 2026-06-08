@@ -496,6 +496,10 @@
         "user": "Utilisateur",
         "version": "Version"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "pt"
+    },
     "board": {
         "description": "Plateau de backgammon. Pipcount du joueur 1 : {pip1}, pipcount du joueur 2 : {pip2}. À {roller} de jouer.",
         "label": "Plateau de backgammon",

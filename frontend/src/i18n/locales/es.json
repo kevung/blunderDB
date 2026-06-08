@@ -496,6 +496,10 @@
         "user": "Usuario",
         "version": "Versión"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "pts"
+    },
     "board": {
         "description": "Tablero de backgammon. Conteo de pips del jugador 1: {pip1}, conteo de pips del jugador 2: {pip2}. Le toca mover a {roller}.",
         "label": "Tablero de backgammon",

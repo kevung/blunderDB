@@ -496,6 +496,10 @@
         "user": "Utente",
         "version": "Versione"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "pt"
+    },
     "board": {
         "description": "Tavola da backgammon. Conteggio pip del Giocatore 1 {pip1}, conteggio pip del Giocatore 2 {pip2}. Tocca a {roller} muovere.",
         "label": "Tavola da backgammon",

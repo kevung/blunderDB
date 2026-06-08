@@ -496,6 +496,10 @@
         "user": "Benutzer",
         "version": "Version"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "Pkt"
+    },
     "board": {
         "description": "Backgammon-Brett. Pip-Count von Spieler 1 {pip1}, Pip-Count von Spieler 2 {pip2}. {roller} ist am Zug.",
         "label": "Backgammon-Brett",
