@@ -1,0 +1,1458 @@
+{
+  "_comment": "Shared parse contract corpus. Asserted by BOTH the Go parser (pkg/blunderdb/parser, parse_contract_test.go) AND the GUI parsePosition (frontend/src/__tests__/parseContract.test.js). Generated from the CURRENT frontend parsePosition (the spec). Conventions: position is the domain.Position JSON shape (snake_case); analysis.doublingCubeAnalysis is the camelCase object or null; analysis.checkerAnalysis is the bare moves array.",
+  "cases": [
+    {
+      "name": "bare_xgid",
+      "input": "XGID=bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            -1,
+            -1
+          ],
+          "player_on_roll": 0,
+          "decision_type": 1,
+          "has_jacoby": 1,
+          "has_beaver": 1
+        },
+        "analysis": {
+          "analysisType": "",
+          "xgid": "bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10",
+          "analysisEngineVersion": "",
+          "comment": "",
+          "doublingCubeAnalysis": null,
+          "checkerAnalysis": []
+        }
+      }
+    },
+    {
+      "name": "xg_cube_fr_beaver",
+      "input": "XGID=bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10\n\nX:Joueur 1   O:Joueur 2\nLe score est X:0 O:0. Partie illimitée, Jacoby Beaver\n +13-14-15-16-17-18------19-20-21-22-23-24-+\n | X           O    |   | O              X |\n +12-11-10--9--8--7-------6--5--4--3--2--1-+\nCourse  X: 162  O: 164 X-O: 0-0\nVideau: 1\nX: lance ou double\n\nAnalysé avec XG Roller++\nChance de gain du joueur: 54.09% (G:20.06% B:0.47%)\nChance de gain de l'adversaire: 45.91% (G:12.14% B:0.58%)\n\nEquités sans videau: Pas de double=+0.160, Double=+0.324\n\nEquités avec videau\n       Pas de double: +0.224\n       Double/Beaver: -0.021 (-0.245)\n       Double/Passe:  +1.000 (+0.776)\n\nMeilleur action du videau: Pas de double / Beaver\nPourcentage de passes incorrectes pour rendre la décision de double correcte: 24.0%\n\neXtreme Gammon Version: 2.19.211.pre-release",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 4,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            -1,
+            -1
+          ],
+          "player_on_roll": 0,
+          "decision_type": 1,
+          "has_jacoby": 1,
+          "has_beaver": 1
+        },
+        "analysis": {
+          "analysisType": "DoublingCube",
+          "xgid": "bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19.211.pre-release",
+          "comment": "",
+          "doublingCubeAnalysis": {
+            "analysisEngine": "XG",
+            "analysisDepth": "XG Roller++",
+            "playerWinChances": 54.09,
+            "playerGammonChances": 20.06,
+            "playerBackgammonChances": 0.47,
+            "opponentWinChances": 45.91,
+            "opponentGammonChances": 12.14,
+            "opponentBackgammonChances": 0.58,
+            "cubelessNoDoubleEquity": 0.16,
+            "cubelessDoubleEquity": 0.324,
+            "cubefulNoDoubleEquity": 0.224,
+            "cubefulNoDoubleError": 0,
+            "cubefulDoublePassEquity": 1,
+            "cubefulDoublePassError": 0.776,
+            "cubefulDoubleTakeEquity": -0.021,
+            "cubefulDoubleTakeError": -0.245,
+            "bestCubeAction": "Pas de double / Beaver",
+            "wrongPassPercentage": 24
+          },
+          "checkerAnalysis": []
+        }
+      }
+    },
+    {
+      "name": "xg_cube_fr_toogood_redouble",
+      "input": "XGID=-BaB--C---a-cD-Aabbe-A-A-A:1:-1:-1:00:2:0:0:9:10\n\nX:James MacNaughtan   O:Nicolas Harmand\nLe score est X:0 O:2 match en 9 pt(s)\n +13-14-15-16-17-18------19-20-21-22-23-24-+\n | X     X          |   | O        O  X  O |\n +12-11-10--9--8--7-------6--5--4--3--2--1-+\nCourse  X: 146  O: 162 X-O: 0-2/9\nVideau: 2, X a le videau\nX: lance ou double\n\nAnalysé avec XG Roller++\nChance de gain du joueur: 72,00% (G:31,15% B:2,80%)\nChance de gain de l'adversaire: 28,00% (G:6,88% B:0,24%)\n\nEquités sans videau: Pas de double=+0,751, Double=+1,693\n\nEquités avec videau\n       Pas de redouble: +1,068\n       Redouble/Prend:  +1,573 (+0,505)\n       Redouble/Passe:  +1,000 (-0,068)\n\nMeilleur action du videau: Trop bon pour redoubler / Passe\nPourcentage de prises incorrectes pour rendre la décision de double correcte: 11.8%\n\neXtreme Gammon Version: 2.10, TEM: Kazaross XG2",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 1,
+                "color": 1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 1,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 4,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              },
+              {
+                "checkers": 1,
+                "color": 1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 1,
+                "color": 0
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": 1,
+            "value": 1
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            7,
+            9
+          ],
+          "player_on_roll": 1,
+          "decision_type": 1,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "DoublingCube",
+          "xgid": "-BaB--C---a-cD-Aabbe-A-A-A:1:-1:-1:00:2:0:0:9:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.10. TEM: Kazaross XG2",
+          "comment": "",
+          "doublingCubeAnalysis": {
+            "analysisEngine": "XG",
+            "analysisDepth": "XG Roller++",
+            "playerWinChances": 28,
+            "playerGammonChances": 6.88,
+            "playerBackgammonChances": 0.24,
+            "opponentWinChances": 72,
+            "opponentGammonChances": 31.15,
+            "opponentBackgammonChances": 2.8,
+            "cubelessNoDoubleEquity": 0.751,
+            "cubelessDoubleEquity": 1.693,
+            "cubefulNoDoubleEquity": 1.068,
+            "cubefulNoDoubleError": 0,
+            "cubefulDoubleTakeEquity": 1.573,
+            "cubefulDoubleTakeError": 0.505,
+            "cubefulDoublePassEquity": 1,
+            "cubefulDoublePassError": -0.068,
+            "bestCubeAction": "Trop bon pour redoubler / Passe",
+            "wrongTakePercentage": 11.8
+          },
+          "checkerAnalysis": []
+        }
+      }
+    },
+    {
+      "name": "xg_cube_en",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10\n\nX:Player   O:Opponent\nScore is X:0 O:0 7 point match\nCube: 1\nX on roll, cube decision?\n\nAnalyzed in Rollout\nPlayer Winning Chances: 54.00% (G:15.00% B:1.00%)\nOpponent Winning Chances: 46.00% (G:12.00% B:0.50%)\n\nCubeless Equities: No Double=+0.200, Double=+0.350\n\nCubeful Equities:\n       No double:     +0.250 (-0.050)\n       Double/Take:   +0.300\n       Double/Pass:   +1.000 (+0.700)\n\nBest Cube action: Double / Take\nPercentage of wrong pass needed to make the double decision right: 20.0%\nPercentage of wrong take needed to make the double decision right: 5.0%\n\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 0,
+          "decision_type": 1,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "DoublingCube",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "",
+          "doublingCubeAnalysis": {
+            "analysisEngine": "XG",
+            "analysisDepth": "Rollout",
+            "playerWinChances": 54,
+            "playerGammonChances": 15,
+            "playerBackgammonChances": 1,
+            "opponentWinChances": 46,
+            "opponentGammonChances": 12,
+            "opponentBackgammonChances": 0.5,
+            "cubelessNoDoubleEquity": 0.2,
+            "cubelessDoubleEquity": 0.35,
+            "cubefulNoDoubleEquity": 0.25,
+            "cubefulNoDoubleError": -0.05,
+            "cubefulDoubleTakeEquity": 0.3,
+            "cubefulDoubleTakeError": 0,
+            "cubefulDoublePassEquity": 1,
+            "cubefulDoublePassError": 0.7,
+            "bestCubeAction": "Double / Take",
+            "wrongPassPercentage": 20,
+            "wrongTakePercentage": 5
+          },
+          "checkerAnalysis": []
+        }
+      }
+    },
+    {
+      "name": "xg_checker_en",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10\n\nX:Player   O:Opponent\nScore is X:0 O:0 7 point match\nCube: 1\nX to play 31\n\n    1. 4-ply       24/23 13/10                  eq:+0.123\n      Player:   54.32% (G:12.34% B:0.56%)\n      Opponent: 45.68% (G:10.12% B:0.34%)\n\n    2. 4-ply       24/20                        eq:+0.100 (-0.023)\n      Player:   53.00% (G:11.00% B:0.50%)\n      Opponent: 47.00% (G:11.00% B:0.40%)\n\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            3,
+            1
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 0,
+          "decision_type": 0,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "CheckerMove",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "",
+          "doublingCubeAnalysis": null,
+          "checkerAnalysis": [
+            {
+              "index": 1,
+              "analysisDepth": "4-ply",
+              "analysisEngine": "XG",
+              "move": "24/23 13/10",
+              "equity": 0.123,
+              "equityError": 0,
+              "playerWinChance": 54.32,
+              "playerGammonChance": 12.34,
+              "playerBackgammonChance": 0.56,
+              "opponentWinChance": 45.68,
+              "opponentGammonChance": 10.12,
+              "opponentBackgammonChance": 0.34
+            },
+            {
+              "index": 2,
+              "analysisDepth": "4-ply",
+              "analysisEngine": "XG",
+              "move": "24/20",
+              "equity": 0.1,
+              "equityError": -0.023,
+              "playerWinChance": 53,
+              "playerGammonChance": 11,
+              "playerBackgammonChance": 0.5,
+              "opponentWinChance": 47,
+              "opponentGammonChance": 11,
+              "opponentBackgammonChance": 0.4
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "xg_checker_en_p2",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:31:0:0:0:7:10\n\nX:Player   O:Opponent\nScore is X:0 O:0 7 point match\nCube: 1\nO to play 31\n\n    1. 4-ply       24/23 13/10                  eq:+0.123\n      Player:   54.32% (G:12.34% B:0.56%)\n      Opponent: 45.68% (G:10.12% B:0.34%)\n\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            3,
+            1
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 1,
+          "decision_type": 0,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "CheckerMove",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:-1:31:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "",
+          "doublingCubeAnalysis": null,
+          "checkerAnalysis": [
+            {
+              "index": 1,
+              "analysisDepth": "4-ply",
+              "analysisEngine": "XG",
+              "move": "24/23 13/10",
+              "equity": 0.123,
+              "equityError": 0,
+              "playerWinChance": 45.68,
+              "playerGammonChance": 10.12,
+              "playerBackgammonChance": 0.34,
+              "opponentWinChance": 54.32,
+              "opponentGammonChance": 12.34,
+              "opponentBackgammonChance": 0.56
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "internal_doubling",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10\n\nPosition:\nBoard: {\"points\":[],\"bearoff\":[0,0]}\nCube: {\"owner\":-1,\"value\":0}\nDice: 0, 0\nScore: -1, -1\nPlayer on roll: 0\nDecision type: 1\n\nAnalysis:\nDoubling Cube Analysis:\nAnalysis Depth: \"4-ply\"\nPlayer Win Chances: 54%\nPlayer Gammon Chances: 15%\nPlayer Backgammon Chances: 1%\nOpponent Win Chances: 46%\nOpponent Gammon Chances: 12%\nOpponent Backgammon Chances: 0.5%\nCubeless No Double Equity: 0.2\nCubeless Double Equity: 0.35\nCubeful No Double Equity: 0.25\nCubeful No Double Error: 0.05\nCubeful Double Take Equity: 0.3\nCubeful Double Take Error: 0\nCubeful Double Pass Equity: 1\nCubeful Double Pass Error: 0.7\nBest Cube Action: Double / Take\nWrong Pass Percentage: 20%\nWrong Take Percentage: 5%\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 0,
+          "decision_type": 1,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "DoublingCube",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "",
+          "doublingCubeAnalysis": {
+            "analysisDepth": "4-ply",
+            "analysisEngine": "XG",
+            "playerWinChances": 54,
+            "playerGammonChances": 15,
+            "playerBackgammonChances": 1,
+            "opponentWinChances": 46,
+            "opponentGammonChances": 12,
+            "opponentBackgammonChances": 0.5,
+            "cubelessNoDoubleEquity": 0.2,
+            "cubelessDoubleEquity": 0.35,
+            "cubefulNoDoubleEquity": 0.25,
+            "cubefulNoDoubleError": 0.05,
+            "cubefulDoubleTakeEquity": 0.3,
+            "cubefulDoubleTakeError": 0,
+            "cubefulDoublePassEquity": 1,
+            "cubefulDoublePassError": 0.7,
+            "bestCubeAction": "Double / Take",
+            "wrongPassPercentage": 20,
+            "wrongTakePercentage": 5
+          },
+          "checkerAnalysis": []
+        }
+      }
+    },
+    {
+      "name": "internal_checker",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10\n\nPosition:\nBoard: {\"points\":[],\"bearoff\":[0,0]}\nCube: {\"owner\":-1,\"value\":0}\nDice: 3, 1\nScore: -1, -1\nPlayer on roll: 0\nDecision type: 0\n\nAnalysis:\nChecker Move Analysis:\nMove 1: 24/23 13/10\nAnalysis Depth: \"4-ply\"\nEquity: 0.123\nEquity Error: 0\nPlayer Win Chance: 54.32%\nPlayer Gammon Chance: 12.34%\nPlayer Backgammon Chance: 0.56%\nOpponent Win Chance: 45.68%\nOpponent Gammon Chance: 10.12%\nOpponent Backgammon Chance: 0.34%\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            3,
+            1
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 0,
+          "decision_type": 0,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "CheckerMove",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "",
+          "doublingCubeAnalysis": null,
+          "checkerAnalysis": [
+            {
+              "index": 1,
+              "move": "24/23 13/10",
+              "analysisDepth": "4-ply",
+              "analysisEngine": "XG",
+              "equity": 0.123,
+              "equityError": 0,
+              "playerWinChance": 54.32,
+              "playerGammonChance": 12.34,
+              "playerBackgammonChance": 0.56,
+              "opponentWinChance": 45.68,
+              "opponentGammonChance": 10.12,
+              "opponentBackgammonChance": 0.34
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "xg_cube_en_comment",
+      "input": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10\n\nX:Player   O:Opponent\nScore is X:0 O:0 7 point match\nCube: 1\nX on roll, cube decision?\n\nAnalyzed in Rollout\nPlayer Winning Chances: 54.00% (G:15.00% B:1.00%)\nOpponent Winning Chances: 46.00% (G:12.00% B:0.50%)\n\nCubeless Equities: No Double=+0.200, Double=+0.350\n\nCubeful Equities:\n       No double:     +0.250 (-0.050)\n       Double/Take:   +0.300\n       Double/Pass:   +1.000 (+0.700)\n\nBest Cube action: Double / Take\nPercentage of wrong pass needed to make the double decision right: 20.0%\nPercentage of wrong take needed to make the double decision right: 5.0%\n\nThis is a note about the position, with 1,234 as a number.\n\neXtreme Gammon Version: 2.19",
+      "expected": {
+        "position": {
+          "board": {
+            "points": [
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 5,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 3,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 5,
+                "color": 1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              },
+              {
+                "checkers": 2,
+                "color": 0
+              },
+              {
+                "checkers": 0,
+                "color": -1
+              }
+            ],
+            "bearoff": [
+              0,
+              0
+            ]
+          },
+          "cube": {
+            "owner": -1,
+            "value": 0
+          },
+          "dice": [
+            0,
+            0
+          ],
+          "score": [
+            7,
+            7
+          ],
+          "player_on_roll": 0,
+          "decision_type": 1,
+          "has_jacoby": 0,
+          "has_beaver": 0
+        },
+        "analysis": {
+          "analysisType": "DoublingCube",
+          "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
+          "comment": "This is a note about the position. with 1.234 as a number.",
+          "doublingCubeAnalysis": {
+            "analysisEngine": "XG",
+            "analysisDepth": "Rollout",
+            "playerWinChances": 54,
+            "playerGammonChances": 15,
+            "playerBackgammonChances": 1,
+            "opponentWinChances": 46,
+            "opponentGammonChances": 12,
+            "opponentBackgammonChances": 0.5,
+            "cubelessNoDoubleEquity": 0.2,
+            "cubelessDoubleEquity": 0.35,
+            "cubefulNoDoubleEquity": 0.25,
+            "cubefulNoDoubleError": -0.05,
+            "cubefulDoubleTakeEquity": 0.3,
+            "cubefulDoubleTakeError": 0,
+            "cubefulDoublePassEquity": 1,
+            "cubefulDoublePassError": 0.7,
+            "bestCubeAction": "Double / Take",
+            "wrongPassPercentage": 20,
+            "wrongTakePercentage": 5
+          },
+          "checkerAnalysis": []
+        }
+      }
+    }
+  ]
+}
