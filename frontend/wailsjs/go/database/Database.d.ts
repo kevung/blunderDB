@@ -3,6 +3,7 @@
 import {domain} from '../models';
 import {database} from '../models';
 import {sql} from '../models';
+import {parser} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
@@ -179,6 +180,8 @@ export function Migrate_1_2_0_to_1_3_0():Promise<void>;
 export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
+
+export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function PositionExists(arg1:domain.Position):Promise<Record<string, any>>;
 
