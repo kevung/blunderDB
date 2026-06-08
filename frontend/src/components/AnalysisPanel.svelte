@@ -506,117 +506,119 @@
         {/if}
 
         {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
-            <table class="checker-table">
-                <thead>
-                    <tr>
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'move'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('move'))();
-                            }}>{$t('analysis.move')}{getSortIndicator('move')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'equity'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('equity'))();
-                            }}>{$t('analysis.equity')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'error'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('error'))();
-                            }}>{$t('analysis.error')}{getSortIndicator('error')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'pw'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('pw'))();
-                            }}>{$t('analysis.playerWin')}{getSortIndicator('pw')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'pg'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('pg'))();
-                            }}>{$t('analysis.playerGammon')}{getSortIndicator('pg')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'pb'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('pb'))();
-                            }}>{$t('analysis.playerBackgammon')}{getSortIndicator('pb')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'ow'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('ow'))();
-                            }}>{$t('analysis.opponentWin')}{getSortIndicator('ow')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'og'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('og'))();
-                            }}>{$t('analysis.opponentGammon')}{getSortIndicator('og')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'ob'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('ob'))();
-                            }}>{$t('analysis.opponentBackgammon')}{getSortIndicator('ob')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'depth'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('depth'))();
-                            }}>{$t('analysis.depth')}{getSortIndicator('depth')}</th
-                        >
-                        <th
-                            class="sortable"
-                            class:active-sort={sortColumn === 'engine'}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                (() => handleSort('engine'))();
-                            }}>{$t('analysis.engine')}{getSortIndicator('engine')}</th
-                        >
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each sortedMoves as move (move.index ?? move.move)}
-                        <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
-                            <td>{move.move}</td>
-                            <td>{formatEquity(move.equity || 0)}</td>
-                            <td>{formatEquity(move.equityError || 0)}</td>
-                            <td>{(move.playerWinChance || 0).toFixed(2)}</td>
-                            <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
-                            <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
-                            <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
-                            <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
-                            <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
-                            <td>{move.analysisDepth}</td>
-                            <td>{move.analysisEngine || ''}</td>
+            <div class="checker-scroll">
+                <table class="checker-table">
+                    <thead>
+                        <tr>
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'move'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('move'))();
+                                }}>{$t('analysis.move')}{getSortIndicator('move')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'equity'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('equity'))();
+                                }}>{$t('analysis.equity')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'error'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('error'))();
+                                }}>{$t('analysis.error')}{getSortIndicator('error')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'pw'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('pw'))();
+                                }}>{$t('analysis.playerWin')}{getSortIndicator('pw')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'pg'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('pg'))();
+                                }}>{$t('analysis.playerGammon')}{getSortIndicator('pg')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'pb'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('pb'))();
+                                }}>{$t('analysis.playerBackgammon')}{getSortIndicator('pb')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'ow'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('ow'))();
+                                }}>{$t('analysis.opponentWin')}{getSortIndicator('ow')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'og'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('og'))();
+                                }}>{$t('analysis.opponentGammon')}{getSortIndicator('og')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'ob'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('ob'))();
+                                }}>{$t('analysis.opponentBackgammon')}{getSortIndicator('ob')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'depth'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('depth'))();
+                                }}>{$t('analysis.depth')}{getSortIndicator('depth')}</th
+                            >
+                            <th
+                                class="sortable"
+                                class:active-sort={sortColumn === 'engine'}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => handleSort('engine'))();
+                                }}>{$t('analysis.engine')}{getSortIndicator('engine')}</th
+                            >
                         </tr>
-                    {/each}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {#each sortedMoves as move (move.index ?? move.move)}
+                            <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
+                                <td>{move.move}</td>
+                                <td>{formatEquity(move.equity || 0)}</td>
+                                <td>{formatEquity(move.equityError || 0)}</td>
+                                <td>{(move.playerWinChance || 0).toFixed(2)}</td>
+                                <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
+                                <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
+                                <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
+                                <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
+                                <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
+                                <td>{move.analysisDepth}</td>
+                                <td>{move.analysisEngine || ''}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
         {/if}
     </div>
 </section>
@@ -631,6 +633,14 @@
         box-sizing: border-box;
         outline: none;
         resize: none;
+        /* Establish a query container so the layout below can adapt to the
+           panel's own width — works whether the panel is a wide bottom band or
+           a narrow side column, independent of the global position mode. */
+        container-type: inline-size;
+    }
+
+    .checker-scroll {
+        width: 100%;
     }
 
     .analysis-content {
@@ -695,6 +705,31 @@
 
     th {
         background-color: #f2f2f2;
+    }
+
+    /* Narrow panel (e.g. side column): the three cube tables, normally laid out
+       side by side, stack vertically and take the full width; the wide
+       multi-column checker table scrolls horizontally instead of crushing its
+       columns. */
+    @container (max-width: 600px) {
+        .tables-container {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .left-table,
+        .right-table,
+        .info-table {
+            width: 100%;
+        }
+
+        .checker-scroll {
+            overflow-x: auto;
+        }
+
+        .checker-table {
+            min-width: 560px;
+        }
     }
 
     th:nth-child(1) {

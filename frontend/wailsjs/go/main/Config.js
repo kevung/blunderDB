@@ -14,6 +14,10 @@ export function GetLastDatabasePath() {
   return window['go']['main']['Config']['GetLastDatabasePath']();
 }
 
+export function GetPanelPosition() {
+  return window['go']['main']['Config']['GetPanelPosition']();
+}
+
 export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
@@ -44,6 +48,10 @@ export function SaveLanguage(arg1) {
 
 export function SaveLastDatabasePath(arg1) {
   return window['go']['main']['Config']['SaveLastDatabasePath'](arg1);
+}
+
+export function SavePanelPosition(arg1) {
+  return window['go']['main']['Config']['SavePanelPosition'](arg1);
 }
 
 export function SaveStatsFilter(arg1) {

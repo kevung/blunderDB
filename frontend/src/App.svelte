@@ -9,6 +9,7 @@
     import { initLanguage } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
+    import { initPanelPosition, effectivePositionStore, PANEL_SIDE } from './stores/panelLayoutStore';
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
@@ -120,6 +121,8 @@
     // Component state
     let mainArea;
     let panelHeight = $state(250);
+    let panelWidth = $state(420);
+    let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let _isResizing = false;
     let showDropOverlay = $state(false);
     let dragCounter = 0;
@@ -133,6 +136,16 @@
     // EPC sync: re-runs when position OR mode changes (both are tracked deps)
     $effect(() => {
         if ($statusBarModeStore === 'EPC' && $positionStore) updateEPC($positionStore);
+    });
+
+    // Re-fit the board whenever the effective panel position flips (manual mode
+    // change, or an auto-mode threshold crossing). The rAF defers the synthetic
+    // resize until after the flex layout has reflowed, so two.js measures the
+    // new container box. Dispatching 'resize' that doesn't change the window
+    // size is a no-op for windowAspectStore (safe_not_equal), so this can't loop.
+    $effect(() => {
+        $effectivePositionStore; // tracked dep
+        requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     });
 
     // Reload positions when trigger increments (positionReloadTriggerStore is
@@ -252,12 +265,20 @@
     function onResizeHandleMouseDown(e) {
         e.preventDefault();
         _isResizing = true;
-        document.body.style.cursor = 'ns-resize';
+        // Side panel: drag horizontally to resize its width (it sits to the
+        // right of the board, so dragging left grows it). Bottom panel: drag
+        // vertically to resize its height (dragging up grows it).
+        const side = isSidePanel;
+        document.body.style.cursor = side ? 'ew-resize' : 'ns-resize';
         document.body.style.userSelect = 'none';
-        const startY = e.clientY;
-        const startHeight = panelHeight;
+        const start = side ? e.clientX : e.clientY;
+        const startSize = side ? panelWidth : panelHeight;
         function onMouseMove(e) {
-            panelHeight = Math.min(Math.max(80, startHeight + (startY - e.clientY)), window.innerHeight - 160);
+            if (side) {
+                panelWidth = Math.min(Math.max(150, startSize + (start - e.clientX)), window.innerWidth - 200);
+            } else {
+                panelHeight = Math.min(Math.max(80, startSize + (start - e.clientY)), window.innerHeight - 160);
+            }
             window.dispatchEvent(new Event('resize'));
         }
         function onMouseUp() {
@@ -359,6 +380,9 @@
         // Apply the persisted interface scale (falls back to 100% internally).
         initUIScale();
 
+        // Apply the persisted panel position (falls back to bottom internally).
+        initPanelPosition();
+
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();
 
@@ -433,24 +457,26 @@
 
     <ViewTabs />
 
-    <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
-        {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
-            <div class="exclude-structure-badge">EXCLUDE</div>
-        {/if}
-        <Board />
-    </div>
+    <div class="body" class:side={isSidePanel}>
+        <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
+            {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
+                <div class="exclude-structure-badge">EXCLUDE</div>
+            {/if}
+            <Board />
+        </div>
 
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="resize-handle" onmousedown={onResizeHandleMouseDown}></div>
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="resize-handle" class:side={isSidePanel} onmousedown={onResizeHandleMouseDown}></div>
 
-    <div class="panel-wrapper" data-tour="panels" style="height: {panelHeight}px;">
-        <TabbedPanel
-            onLoadPositionsByFilters={loadPositionsByFilters}
-            onCloseAnalysis={toggleAnalysisPanel}
-            onCloseComment={toggleCommentPanel}
-            onOpenCollection={handleOpenCollection}
-            onAddToFilterLibrary={addSearchToFilterLibrary}
-        />
+        <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${panelHeight}px;`}>
+            <TabbedPanel
+                onLoadPositionsByFilters={loadPositionsByFilters}
+                onCloseAnalysis={toggleAnalysisPanel}
+                onCloseComment={toggleCommentPanel}
+                onOpenCollection={handleOpenCollection}
+                onAddToFilterLibrary={addSearchToFilterLibrary}
+            />
+        </div>
     </div>
 
     <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
@@ -543,12 +569,26 @@
         overflow: hidden;
     }
 
+    /* Wraps the board, the resize handle and the panel. Column (panel at the
+       bottom) by default; row (panel as a vertical column on the right) in
+       side mode. flex:1 makes it consume the height between ViewTabs and the
+       StatusBar. */
+    .body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .body.side {
+        flex-direction: row;
+    }
+
     .scrollable-content {
         flex: 1;
         min-height: 0;
+        min-width: 0;
         overflow: hidden;
         padding: 0;
-        width: 100%;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
@@ -585,6 +625,11 @@
         z-index: 10;
         transition: background 0.15s;
     }
+    .resize-handle.side {
+        height: auto;
+        width: 2px;
+        cursor: ew-resize;
+    }
 
     .resize-handle:hover,
     .resize-handle:active {
@@ -596,6 +641,10 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+    }
+    /* In side mode the height style is dropped; width is set inline instead. */
+    .panel-wrapper.side {
+        height: auto;
     }
 
     .drop-overlay {

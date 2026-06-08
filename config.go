@@ -94,6 +94,16 @@ const (
 	DefaultUIScale = 100
 )
 
+// Panel position modes. The tabbed panel is either docked at the bottom (the
+// historical default), pinned as a vertical column on the side, or switched
+// automatically based on the window aspect ratio (handled frontend-side).
+const (
+	PanelPositionBottom  = "bottom"
+	PanelPositionSide    = "side"
+	PanelPositionAuto    = "auto"
+	DefaultPanelPosition = PanelPositionBottom
+)
+
 type Config struct {
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
@@ -102,6 +112,7 @@ type Config struct {
 	Language         string               `json:"language,omitempty"`
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
 	UIScale          int                  `json:"ui_scale,omitempty"`
+	PanelPosition    string               `json:"panel_position,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
 }
 
@@ -120,14 +131,27 @@ func clampUIScale(scale int) int {
 	return scale
 }
 
+// sanitizePanelPosition coerces a persisted/incoming panel position into a
+// known value, mapping the zero value (missing in older config files) and any
+// unrecognised string to the default (bottom).
+func sanitizePanelPosition(pos string) string {
+	switch pos {
+	case PanelPositionBottom, PanelPositionSide, PanelPositionAuto:
+		return pos
+	default:
+		return DefaultPanelPosition
+	}
+}
+
 func NewConfig() *Config {
 	initialWidth, initialHeight := calculateInitialDimensions()
 	return &Config{
-		WindowWidth:  initialWidth,
-		WindowHeight: initialHeight,
-		Language:     "en",
-		BoardColors:  DefaultBoardColors(),
-		UIScale:      DefaultUIScale,
+		WindowWidth:   initialWidth,
+		WindowHeight:  initialHeight,
+		Language:      "en",
+		BoardColors:   DefaultBoardColors(),
+		UIScale:       DefaultUIScale,
+		PanelPosition: DefaultPanelPosition,
 	}
 }
 
@@ -184,6 +208,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.BoardColors = c.BoardColors
 	c.UIScale = clampUIScale(config.UIScale)
 	config.UIScale = c.UIScale
+	c.PanelPosition = sanitizePanelPosition(config.PanelPosition)
+	config.PanelPosition = c.PanelPosition
 	c.TourSeen = config.TourSeen
 
 	return &config, nil
@@ -253,6 +279,19 @@ func (c *Config) GetUIScale() int {
 // to the supported range.
 func (c *Config) SaveUIScale(scale int) error {
 	c.UIScale = clampUIScale(scale)
+	return c.SaveConfig(c)
+}
+
+// GetPanelPosition returns the persisted panel position mode (sanitised;
+// defaults to "bottom").
+func (c *Config) GetPanelPosition() string {
+	return sanitizePanelPosition(c.PanelPosition)
+}
+
+// SavePanelPosition persists the given panel position mode to disk, coerced to
+// a known value.
+func (c *Config) SavePanelPosition(pos string) error {
+	c.PanelPosition = sanitizePanelPosition(pos)
 	return c.SaveConfig(c)
 }
 

@@ -1306,6 +1306,7 @@ export namespace main {
 	    language?: string;
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
+	    panel_position?: string;
 	    tour_seen?: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -1321,6 +1322,7 @@ export namespace main {
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
+	        this.panel_position = source["panel_position"];
 	        this.tour_seen = source["tour_seen"];
 	    }
 	

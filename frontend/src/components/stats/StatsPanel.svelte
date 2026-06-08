@@ -169,6 +169,9 @@
         flex: 1;
         min-height: 0;
         overflow-y: auto;
+        /* Let wide stats tables scroll rather than get clipped when the panel
+           is a narrow side column. */
+        overflow-x: auto;
     }
 
     .loading-msg {
