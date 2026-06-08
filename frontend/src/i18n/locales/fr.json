@@ -758,6 +758,8 @@
         "title": "Stats",
         "loading": "Chargement…",
         "metricLabel": "Métrique",
+        "metricPR": "PR",
+        "metricMWC": "MWC",
         "closePanel": "Fermer le panneau Stats",
         "tabDashboard": "Dashboard",
         "tabProgression": "Progression",

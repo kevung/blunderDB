@@ -758,6 +758,8 @@
         "title": "Stats",
         "loading": "Loading…",
         "metricLabel": "Metric",
+        "metricPR": "PR",
+        "metricMWC": "MWC",
         "closePanel": "Close stats panel",
         "tabDashboard": "Dashboard",
         "tabProgression": "Progression",
