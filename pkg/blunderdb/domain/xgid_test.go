@@ -117,4 +117,29 @@ func TestDecodeXGIDMoneyGame(t *testing.T) {
 	if pos.Score != [2]int{-1, -1} {
 		t.Errorf("money game Score: got %v, want [-1 -1]", pos.Score)
 	}
+	// field 7 = 1 → Jacoby on, Beaver off.
+	if pos.HasJacoby != 1 || pos.HasBeaver != 0 {
+		t.Errorf("money game flags: got jacoby=%d beaver=%d, want jacoby=1 beaver=0", pos.HasJacoby, pos.HasBeaver)
+	}
+}
+
+func TestDecodeXGIDJacobyBeaver(t *testing.T) {
+	// Money game with field 7 = 3 (Jacoby + Beaver) — the "Pas de double /
+	// Beaver" position from issue #13. Both flags must be set.
+	pos, err := DecodeXGID("XGID=bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10")
+	if err != nil {
+		t.Fatalf("DecodeXGID: %v", err)
+	}
+	if pos.HasJacoby != 1 || pos.HasBeaver != 1 {
+		t.Errorf("flags: got jacoby=%d beaver=%d, want both 1", pos.HasJacoby, pos.HasBeaver)
+	}
+
+	// Match play: field 7 is the Crawford flag, not jacoby/beaver — both stay 0.
+	pos, err = DecodeXGID("-b----E-C---eE---c-e----B-:0:0:1:31:0:0:1:7:3")
+	if err != nil {
+		t.Fatalf("DecodeXGID (match): %v", err)
+	}
+	if pos.HasJacoby != 0 || pos.HasBeaver != 0 {
+		t.Errorf("match play flags: got jacoby=%d beaver=%d, want both 0", pos.HasJacoby, pos.HasBeaver)
+	}
 }

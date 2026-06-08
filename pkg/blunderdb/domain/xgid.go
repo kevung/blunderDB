@@ -123,6 +123,22 @@ func DecodeXGID(xgid string) (Position, error) {
 		pos.Score = [2]int{-1, -1} // money game (engine convention)
 	}
 
+	// --- Jacoby / Beaver (field 7) ---
+	// In a money game (matchLen 0/absent) field 7 is a bitmask: bit 0 = Jacoby,
+	// bit 1 = Beaver (so 3 = both). In match play it is the Crawford flag and
+	// carries no jacoby/beaver information, so it is ignored there. This mirrors
+	// the GUI clipboard parser (frontend/src/services/importService.js).
+	if !okM || matchLen == 0 {
+		if flag, ok := xgidInt(fields, 7); ok {
+			if flag&1 != 0 {
+				pos.HasJacoby = 1
+			}
+			if flag&2 != 0 {
+				pos.HasBeaver = 1
+			}
+		}
+	}
+
 	return pos, nil
 }
 
