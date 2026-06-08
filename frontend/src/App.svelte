@@ -529,12 +529,14 @@
         display: flex;
         flex-direction: column;
         /* Interface scaling: `zoom` enlarges the whole UI (icons, fonts, panels,
-           modals and the SVG board, which stays crisp). The viewport units are
-           divided by the same factor so the zoomed box still fills exactly one
-           viewport — preventing scrollbars/overflow at scales other than 100%. */
+           modals and the SVG board, which stays crisp). The WebKit/WebView
+           engines resolve `vw`/`vh` in the zoomed coordinate system, so plain
+           100vw/100vh still fill exactly one viewport at any scale — do NOT
+           divide them by the scale (that under-sizes the box and leaves gaps
+           on the right and below the status bar). */
         zoom: var(--ui-scale, 1);
-        height: calc(100vh / var(--ui-scale, 1));
-        width: calc(100vw / var(--ui-scale, 1));
+        height: 100vh;
+        width: 100vw;
         padding: 0;
         box-sizing: border-box;
         position: relative;
