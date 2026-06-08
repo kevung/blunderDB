@@ -496,6 +496,10 @@
         "user": "Χρήστης",
         "version": "Έκδοση"
     },
+    "matchInfo": {
+        "vs": "vs",
+        "points": "πτ"
+    },
     "board": {
         "description": "Ταμπλό backgammon. Μέτρηση pip Παίκτη 1 {pip1}, μέτρηση pip Παίκτη 2 {pip2}. Σειρά του {roller}.",
         "label": "Ταμπλό backgammon",

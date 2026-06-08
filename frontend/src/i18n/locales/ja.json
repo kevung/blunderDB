@@ -496,6 +496,10 @@
         "user": "ユーザー",
         "version": "バージョン"
     },
+    "matchInfo": {
+        "vs": "対",
+        "points": "pt"
+    },
     "board": {
         "description": "backgammon の盤面。プレイヤー 1 の pip カウント {pip1}、プレイヤー 2 の pip カウント {pip2}。{roller} の手番です。",
         "label": "backgammon の盤面",

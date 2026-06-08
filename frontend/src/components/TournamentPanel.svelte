@@ -483,7 +483,8 @@
             commentTextStore.set('');
             selectedMoveStore.set(null);
             statusBarModeStore.set('MATCH');
-            statusBarTextStore.set(`${match.player1_name} vs ${match.player2_name}`);
+            // Player names are shown in the match-info header bar above the
+            // board (MatchInfoBar.svelte); no longer echoed in the status bar.
             lastVisitedMatchStore.set({
                 matchID: match.id,
                 currentIndex: startIndex,
