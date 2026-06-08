@@ -43,3 +43,35 @@ func TestGetBoardColorsDefaultsEmpty(t *testing.T) {
 		t.Errorf("GetBoardColors did not default empty config")
 	}
 }
+
+func TestClampUIScale(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, DefaultUIScale}, // missing in old config files → default
+		{100, 100},          // in range
+		{50, 50},            // lower bound
+		{200, 200},          // upper bound
+		{10, MinUIScale},    // below range → clamped up
+		{1000, MaxUIScale},  // above range → clamped down
+		{-5, MinUIScale},    // negative → clamped up
+	}
+	for _, c := range cases {
+		if got := clampUIScale(c.in); got != c.want {
+			t.Errorf("clampUIScale(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+func TestNewConfigHasDefaultUIScale(t *testing.T) {
+	if c := NewConfig(); c.UIScale != DefaultUIScale {
+		t.Errorf("NewConfig UIScale = %d, want %d", c.UIScale, DefaultUIScale)
+	}
+}
+
+func TestGetUIScaleDefaultsEmpty(t *testing.T) {
+	// An empty config (e.g. an old file with no ui_scale) must report the default.
+	if got := (&Config{}).GetUIScale(); got != DefaultUIScale {
+		t.Errorf("GetUIScale on empty config = %d, want %d", got, DefaultUIScale)
+	}
+}

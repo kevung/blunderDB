@@ -86,6 +86,14 @@ func (bc BoardColors) withDefaults() BoardColors {
 	return bc
 }
 
+// UI scale bounds (percentage). The interface is rendered at UIScale% of its
+// native size; 100 means no scaling.
+const (
+	MinUIScale     = 50
+	MaxUIScale     = 200
+	DefaultUIScale = 100
+)
+
 type Config struct {
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
@@ -93,7 +101,23 @@ type Config struct {
 	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
 	Language         string               `json:"language,omitempty"`
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
+	UIScale          int                  `json:"ui_scale,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
+}
+
+// clampUIScale coerces a persisted/incoming scale into the supported range,
+// mapping the zero value (missing in older config files) to the default.
+func clampUIScale(scale int) int {
+	if scale == 0 {
+		return DefaultUIScale
+	}
+	if scale < MinUIScale {
+		return MinUIScale
+	}
+	if scale > MaxUIScale {
+		return MaxUIScale
+	}
+	return scale
 }
 
 func NewConfig() *Config {
@@ -103,6 +127,7 @@ func NewConfig() *Config {
 		WindowHeight: initialHeight,
 		Language:     "en",
 		BoardColors:  DefaultBoardColors(),
+		UIScale:      DefaultUIScale,
 	}
 }
 
@@ -157,6 +182,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	}
 	c.BoardColors = config.BoardColors.withDefaults()
 	config.BoardColors = c.BoardColors
+	c.UIScale = clampUIScale(config.UIScale)
+	config.UIScale = c.UIScale
 	c.TourSeen = config.TourSeen
 
 	return &config, nil
@@ -213,6 +240,19 @@ func (c *Config) GetBoardColors() BoardColors {
 // SaveBoardColors persists the given board palette to disk.
 func (c *Config) SaveBoardColors(colors BoardColors) error {
 	c.BoardColors = colors.withDefaults()
+	return c.SaveConfig(c)
+}
+
+// GetUIScale returns the persisted interface scale as a percentage (clamped to
+// the supported range; defaults to 100).
+func (c *Config) GetUIScale() int {
+	return clampUIScale(c.UIScale)
+}
+
+// SaveUIScale persists the given interface scale (percentage) to disk, clamped
+// to the supported range.
+func (c *Config) SaveUIScale(scale int) error {
+	c.UIScale = clampUIScale(scale)
 	return c.SaveConfig(c)
 }
 

@@ -19,6 +19,8 @@
     "config": {
         "title": "Paramètres",
         "language": "Langue",
+        "interface": "Interface",
+        "uiScale": "Échelle de l'interface",
         "colors": "Couleurs du plateau",
         "colorBackground": "Fond",
         "colorBorder": "Bordure",

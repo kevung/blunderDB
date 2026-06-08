@@ -19,6 +19,8 @@
     "config": {
         "title": "Impostazioni",
         "language": "Lingua",
+        "interface": "Interfaccia",
+        "uiScale": "Scala dell'interfaccia",
         "colors": "Colori della board",
         "colorBackground": "Sfondo",
         "colorBorder": "Bordo",

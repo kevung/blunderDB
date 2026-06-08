@@ -19,6 +19,8 @@
     "config": {
         "title": "Настройки",
         "language": "Язык",
+        "interface": "Интерфейс",
+        "uiScale": "Масштаб интерфейса",
         "colors": "Цвета доски",
         "colorBackground": "Фон",
         "colorBorder": "Граница",
