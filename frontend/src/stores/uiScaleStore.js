@@ -20,12 +20,17 @@ function sanitize(scale) {
     return Math.min(MAX_UI_SCALE, Math.max(MIN_UI_SCALE, n));
 }
 
-// Push the scale into the DOM (the CSS variable consumed by .main-container)
-// and let the board re-fit, since the available layout size changes with zoom.
-function applyToDom(scale) {
+// Push the scale into the DOM via the CSS variable consumed by .main-container.
+// This is cheap (a single reflow) and is safe to call on every slider tick.
+function applyVar(scale) {
     if (typeof document === 'undefined') return;
     document.documentElement.style.setProperty('--ui-scale', String(scale / 100));
-    // two.js sizes the board from its container's client box; nudge it to refit.
+}
+
+// Ask the board to re-fit: two.js sizes itself from its container's client box,
+// which changes with zoom. This is expensive, so only call it when the scale is
+// committed (e.g. on slider release), not on every intermediate drag value.
+function requestBoardRefit() {
     if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('resize'));
     }
@@ -33,22 +38,32 @@ function applyToDom(scale) {
 
 // Load the persisted scale at startup. Falls back to the default on any error.
 export async function initUIScale() {
+    let scale = DEFAULT_UI_SCALE;
     try {
-        const persisted = sanitize(await GetUIScale());
-        uiScaleStore.set(persisted);
-        applyToDom(persisted);
+        scale = sanitize(await GetUIScale());
     } catch (err) {
         logger.error('Failed to load UI scale, using default:', err);
-        uiScaleStore.set(DEFAULT_UI_SCALE);
-        applyToDom(DEFAULT_UI_SCALE);
     }
+    uiScaleStore.set(scale);
+    applyVar(scale);
+    requestBoardRefit();
 }
 
-// Update the interface scale, apply it live and persist it.
+// Live preview while dragging: update the store + CSS zoom only. The whole UI
+// (board SVG included) scales via `zoom` for instant feedback, but the board is
+// not re-fitted and nothing is persisted until the value is committed.
+export function previewUIScale(scale) {
+    const next = sanitize(scale);
+    uiScaleStore.set(next);
+    applyVar(next);
+}
+
+// Commit the interface scale: apply it, re-fit the board once and persist it.
 export function setUIScale(scale) {
     const next = sanitize(scale);
     uiScaleStore.set(next);
-    applyToDom(next);
+    applyVar(next);
+    requestBoardRefit();
     SaveUIScale(next).catch((err) => logger.error('Failed to save UI scale:', err));
 }
 
