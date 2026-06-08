@@ -300,8 +300,8 @@ export async function loadAllPositions() {
         positionsStore.set(Array.isArray(positions) ? positions : []);
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positions.length - 1);
-            activeTabStore.set('analysis');
+            currentPositionIndexStore.set(0);
+            activeTabStore.set('matches');
 
             hasActiveSearch = false;
             lastSearchCommand = '';

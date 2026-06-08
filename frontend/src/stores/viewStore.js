@@ -52,7 +52,7 @@ function createDefaultView(id) {
         position: createDefaultPosition(),
         analysis: createDefaultAnalysis(),
         selectedMove: null,
-        activeTab: 'analysis',
+        activeTab: 'matches',
         commentText: '',
         mode: 'NORMAL',
         matchContext: createDefaultMatchContext()
@@ -98,7 +98,7 @@ function createViewStore() {
         // enterEPCMode() / enterEditMode() once the DB is fully open.
         const mode = view.mode || 'NORMAL';
         statusBarModeStore.set(mode === 'EPC' || mode === 'EDIT' ? 'NORMAL' : mode);
-        activeTabStore.set(view.activeTab || 'analysis');
+        activeTabStore.set(view.activeTab || 'matches');
         commentTextStore.set(view.commentText || '');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
         currentPositionIndexStore.set(-1);

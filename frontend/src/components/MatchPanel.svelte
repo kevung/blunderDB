@@ -92,7 +92,11 @@
         });
     });
 
-    // Track panel open/close transitions and load data on open
+    // Track panel open/close transitions and load data on open. The panel may be
+    // open before the DB has finished loading (session restore opens the Matches
+    // tab by default, before openDatabaseByPath completes); that case is covered
+    // by the matchPanelRefreshTriggerStore bump fired once the DB is open and the
+    // session restored — see openDatabaseByPath.
     let _prevVisible = false;
     $effect(() => {
         const opened = visible; // $derived — tracked
