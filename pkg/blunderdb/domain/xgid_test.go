@@ -76,8 +76,9 @@ func TestDecodeXGIDFull(t *testing.T) {
 		}
 	}
 
-	if pos.Cube.Value != 1 || pos.Cube.Owner != None {
-		t.Errorf("cube: got {value=%d owner=%d}, want centred 1", pos.Cube.Value, pos.Cube.Owner)
+	// Cube field 0 → exponent 0 (centred cube, displays as 2^0 = 1).
+	if pos.Cube.Value != 0 || pos.Cube.Owner != None {
+		t.Errorf("cube: got {value=%d owner=%d}, want centred exponent 0", pos.Cube.Value, pos.Cube.Owner)
 	}
 	if pos.PlayerOnRoll != Black {
 		t.Errorf("PlayerOnRoll: got %d, want Black (X to play)", pos.PlayerOnRoll)
