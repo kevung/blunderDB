@@ -43,8 +43,12 @@
     }
 
     function handleKeydown(event) {
-        if (event.ctrlKey && event.key >= '1' && event.key <= '9') {
-            const idx = parseInt(event.key) - 1;
+        // Match the digit by physical key (event.code) so the labeled number keys
+        // work without Shift on layouts where the top row is shifted (e.g. AZERTY,
+        // where unshifted "1" produces "&").
+        const m = event.code.match(/^(?:Digit|Numpad)([1-9])$/);
+        if (event.ctrlKey && m) {
+            const idx = parseInt(m[1], 10) - 1;
             const vs = $views;
             if (idx < vs.length) {
                 event.preventDefault();

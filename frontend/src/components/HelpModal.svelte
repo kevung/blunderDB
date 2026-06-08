@@ -47,6 +47,12 @@
 
         if (visible) {
             event.preventDefault();
+            // Block the global keyboard dispatcher (another window-level listener)
+            // from re-processing this same event. The two window listeners fire in a
+            // load-order-dependent sequence; without this, closing on '?'/Ctrl+F nulls
+            // activeModal, defeating the global handler's isAnyModalOpen guard, which
+            // then re-toggles the modal back open (a flaky open/close race).
+            event.stopImmediatePropagation();
             if (event.key === 'Escape') {
                 onClose();
             } else if (event.ctrlKey && event.code === 'KeyF') {

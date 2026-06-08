@@ -62,6 +62,13 @@ export function toggleSearchHistoryPanel() {
 export function handleKeyDown(event) {
     event.stopPropagation();
 
+    // Match a letter shortcut by the character produced (event.key), not the
+    // physical key position (event.code). This keeps letter shortcuts on the
+    // labeled key across keyboard layouts (AZERTY, QWERTZ, Dvorak, …) instead of
+    // mapping to the US-QWERTY physical position. Non-letter keys (Space, Tab,
+    // Delete, arrows, digits) stay positional below.
+    const letter = (ch) => event.key.length === 1 && event.key.toLowerCase() === ch;
+
     if (get(isAnyModalOpen)) return;
 
     // During Anki review on the Anki tab, route review keys
@@ -81,7 +88,7 @@ export function handleKeyDown(event) {
         } else if (event.code === 'Escape') {
             event.preventDefault();
             ankiReviewActionStore.set('back');
-        } else if (event.code === 'KeyP') {
+        } else if (letter('p')) {
             togglePipcount();
         }
         return;
@@ -167,21 +174,21 @@ export function handleKeyDown(event) {
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
         }
-    } else if (event.ctrlKey && event.code === 'KeyN') {
+    } else if (event.ctrlKey && letter('n')) {
         newDatabase();
-    } else if (event.ctrlKey && event.code === 'KeyO') {
+    } else if (event.ctrlKey && letter('o')) {
         openDatabase();
-    } else if (event.ctrlKey && event.code === 'KeyQ') {
+    } else if (event.ctrlKey && letter('q')) {
         exitApp();
-    } else if (event.ctrlKey && event.shiftKey && event.code === 'KeyI') {
+    } else if (event.ctrlKey && event.shiftKey && letter('i')) {
         importDatabase();
-    } else if (event.ctrlKey && event.shiftKey && event.code === 'KeyF') {
+    } else if (event.ctrlKey && event.shiftKey && letter('f')) {
         importFolder();
-    } else if (event.ctrlKey && event.code === 'KeyI') {
+    } else if (event.ctrlKey && letter('i')) {
         importPosition();
-    } else if (event.ctrlKey && event.code === 'KeyC') {
+    } else if (event.ctrlKey && letter('c')) {
         copyPosition();
-    } else if (event.ctrlKey && event.code === 'KeyX') {
+    } else if (event.ctrlKey && letter('x')) {
         event.preventDefault();
         const now = Date.now();
         if (now - lastCtrlXTime < 500) {
@@ -191,13 +198,13 @@ export function handleKeyDown(event) {
             lastCtrlXTime = now;
             copyBoardImage();
         }
-    } else if (event.ctrlKey && event.code === 'KeyV') {
+    } else if (event.ctrlKey && letter('v')) {
         pastePosition();
-    } else if (event.ctrlKey && event.shiftKey && event.code === 'KeyS') {
+    } else if (event.ctrlKey && event.shiftKey && letter('s')) {
         exportDatabase();
-    } else if (event.ctrlKey && event.code === 'KeyS') {
+    } else if (event.ctrlKey && letter('s')) {
         saveCurrentPosition();
-    } else if (event.ctrlKey && event.code === 'KeyU') {
+    } else if (event.ctrlKey && letter('u')) {
         updatePosition();
     } else if (event.code === 'Delete') {
         deletePosition();
@@ -229,10 +236,10 @@ export function handleKeyDown(event) {
         }
     } else if (!event.ctrlKey && event.key === 'l') {
         if (!showComment) lastPosition();
-    } else if (event.ctrlKey && event.code === 'KeyB') {
+    } else if (event.ctrlKey && letter('b')) {
         event.preventDefault();
         toggleCollectionPanelAction();
-    } else if (event.ctrlKey && event.code === 'KeyR') {
+    } else if (event.ctrlKey && letter('r')) {
         loadAllPositions();
     } else if (event.ctrlKey && event.code === 'Tab') {
         event.preventDefault();
@@ -243,45 +250,45 @@ export function handleKeyDown(event) {
     } else if (!event.ctrlKey && event.code === 'Space') {
         event.preventDefault();
         showCommandInputStore.set(true);
-    } else if (event.ctrlKey && event.code === 'KeyL') {
+    } else if (event.ctrlKey && letter('l')) {
         event.preventDefault();
         if (showComment) toggleCommentPanel();
         toggleAnalysisPanel();
-    } else if (event.ctrlKey && event.code === 'KeyP') {
+    } else if (event.ctrlKey && letter('p')) {
         event.preventDefault();
         toggleCommentPanel();
-    } else if (event.ctrlKey && event.code === 'KeyF') {
+    } else if (event.ctrlKey && letter('f')) {
         toggleSearchHistoryPanel();
     } else if (!event.ctrlKey && event.key === '?') {
         toggleHelpModal();
-    } else if (event.ctrlKey && event.code === 'KeyM') {
+    } else if (event.ctrlKey && letter('m')) {
         toggleMetadataModal();
-    } else if (event.ctrlKey && event.code === 'KeyK') {
+    } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
-    } else if (event.ctrlKey && event.code === 'KeyT') {
+    } else if (event.ctrlKey && letter('t')) {
         event.preventDefault();
         viewStore.addView();
-    } else if (event.ctrlKey && event.code === 'KeyW') {
+    } else if (event.ctrlKey && letter('w')) {
         event.preventDefault();
         viewStore.closeView(get(viewStore.activeViewId));
-    } else if (event.ctrlKey && event.code === 'KeyY') {
+    } else if (event.ctrlKey && letter('y')) {
         event.preventDefault();
         toggleTournamentPanel();
-    } else if (event.ctrlKey && event.code === 'KeyD') {
+    } else if (event.ctrlKey && letter('d')) {
         event.preventDefault();
         toggleStatsPanel();
-    } else if (event.ctrlKey && event.code === 'KeyE') {
+    } else if (event.ctrlKey && letter('e')) {
         event.preventDefault();
         toggleEPCMode();
-    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && event.code === 'KeyJ')) {
+    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && event.key === 'J')) {
         event.preventDefault();
         viewStore.selectPreviousView();
-    } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && event.code === 'KeyK')) {
+    } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && event.key === 'K')) {
         event.preventDefault();
         viewStore.selectNextView();
-    } else if (!event.ctrlKey && event.code === 'KeyP') {
+    } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
-    } else if (!event.ctrlKey && event.code === 'KeyR') {
+    } else if (!event.ctrlKey && letter('r')) {
         loadRandomPosition();
     }
 }
