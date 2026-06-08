@@ -3,6 +3,7 @@
     import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
+    import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
 
     let { visible = false, onClose } = $props();
 
@@ -35,6 +36,16 @@
     // ...and the expensive board re-fit + persistence only once, on release.
     function onUIScaleChange(event) {
         setUIScale(Number(event.currentTarget.value));
+    }
+
+    const PANEL_POSITION_OPTIONS = [
+        { value: PANEL_BOTTOM, labelKey: 'config.panelPositionBottom' },
+        { value: PANEL_SIDE, labelKey: 'config.panelPositionSide' },
+        { value: PANEL_AUTO, labelKey: 'config.panelPositionAuto' }
+    ];
+
+    function onPanelPositionChange(event) {
+        setPanelPosition(event.currentTarget.value);
     }
 
     function handleKeyDown(event) {
@@ -76,6 +87,14 @@
                     />
                     <span class="scale-value">{$uiScaleStore}%</span>
                 </div>
+            </div>
+            <div class="setting-row">
+                <label for="config-panel-position">{$t('config.panelPosition')}</label>
+                <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
+                    {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
+                        <option value={opt.value}>{$t(opt.labelKey)}</option>
+                    {/each}
+                </select>
             </div>
 
             <div class="section-title">{$t('config.colors')}</div>

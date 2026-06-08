@@ -8,6 +8,8 @@ export function GetLanguage():Promise<string>;
 
 export function GetLastDatabasePath():Promise<string>;
 
+export function GetPanelPosition():Promise<string>;
+
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
 export function GetTourSeen():Promise<boolean>;
@@ -23,6 +25,8 @@ export function SaveConfig(arg1:main.Config):Promise<void>;
 export function SaveLanguage(arg1:string):Promise<void>;
 
 export function SaveLastDatabasePath(arg1:string):Promise<void>;
+
+export function SavePanelPosition(arg1:string):Promise<void>;
 
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
