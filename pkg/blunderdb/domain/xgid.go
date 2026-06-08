@@ -80,10 +80,14 @@ func DecodeXGID(xgid string) (Position, error) {
 	pos.Board.Bearoff[White] = 15 - onBoard[White]
 
 	// --- Cube (field 1: log2 value; field 2: owner) ---
-	if v, ok := xgidInt(fields, 1); ok && v >= 0 && v <= 30 {
-		pos.Cube.Value = 1 << uint(v)
+	// The XGID cube field is already the exponent (0→1, 1→2, 2→4, …), which is
+	// exactly blunderDB's storage convention (Cube.Value is the exponent; see
+	// engine/zobrist.go and ingest/xgmap.go). Store it verbatim — do NOT expand
+	// to the actual value, or the Zobrist hash and cube rendering break.
+	if v, ok := xgidInt(fields, 1); ok && v >= 0 && v <= 10 {
+		pos.Cube.Value = v
 	} else {
-		pos.Cube.Value = 1 // centred / unset → shows 1
+		pos.Cube.Value = 0 // centred / unset → exponent 0 (shows 1)
 	}
 	switch owner, _ := xgidInt(fields, 2); owner {
 	case 1:
@@ -121,6 +125,22 @@ func DecodeXGID(xgid string) (Position, error) {
 		pos.Score = [2]int{matchLen - score1, matchLen - score2} // [X=Black, O=White], away
 	} else {
 		pos.Score = [2]int{-1, -1} // money game (engine convention)
+	}
+
+	// --- Jacoby / Beaver (field 7) ---
+	// In a money game (matchLen 0/absent) field 7 is a bitmask: bit 0 = Jacoby,
+	// bit 1 = Beaver (so 3 = both). In match play it is the Crawford flag and
+	// carries no jacoby/beaver information, so it is ignored there. This mirrors
+	// the GUI clipboard parser (frontend/src/services/importService.js).
+	if !okM || matchLen == 0 {
+		if flag, ok := xgidInt(fields, 7); ok {
+			if flag&1 != 0 {
+				pos.HasJacoby = 1
+			}
+			if flag&2 != 0 {
+				pos.HasBeaver = 1
+			}
+		}
 	}
 
 	return pos, nil

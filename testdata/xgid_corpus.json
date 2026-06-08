@@ -1,0 +1,60 @@
+{
+  "_comment": "Shared XGID-decode contract corpus. Asserted by BOTH the Go decoder (pkg/blunderdb/domain/DecodeXGID, see xgid_contract_test.go) AND the GUI clipboard parser (frontend/src/services/importService.js parsePosition, see frontend/src/__tests__/xgidContract.test.js). The two implementations historically drifted (issue #13: Jacoby/Beaver flags, and the cube-value exponent vs actual-value mismatch); this corpus pins the shared, deterministic XGID-derived fields so any future divergence fails a test on at least one side. Conventions: color/owner 0=X(Black), 1=O(White), -1=None; cubeValueExp is the log2 exponent (0 -> cube shows 1, 2 -> shows 4); score is the AWAY score ([-1,-1] for money games). decision_type is intentionally NOT asserted: the GUI derives it from the analysis text while the Go decoder derives it from the dice, so they differ by design for a bare XGID. Edge cases avoided on purpose: turn=0 (Go->Black, JS->White) and match-play away score of 1 (JS applies a Crawford 1->0 remap the Go decoder does not).",
+  "cases": [
+    {
+      "name": "money game, Jacoby + Beaver, cube decision (issue #13 beaver position)",
+      "xgid": "bA----D-C---dE---d-e----B-:0:0:1:00:0:0:3:0:10",
+      "cubeOwner": -1,
+      "cubeValueExp": 0,
+      "dice": [0, 0],
+      "playerOnRoll": 0,
+      "score": [-1, -1],
+      "hasJacoby": 1,
+      "hasBeaver": 1
+    },
+    {
+      "name": "13pt match, checker decision, centred cube",
+      "xgid": "a--aB-BBA--acDa-Ab-db---BA:0:0:1:64:2:0:0:13:10",
+      "cubeOwner": -1,
+      "cubeValueExp": 0,
+      "dice": [6, 4],
+      "playerOnRoll": 0,
+      "score": [11, 13],
+      "hasJacoby": 0,
+      "hasBeaver": 0
+    },
+    {
+      "name": "7pt match, cube owned by Black at exponent 2 (value 4), White on roll",
+      "xgid": "-b----E-C---eE---c-e----B-:2:1:-1:00:3:1:0:7:3",
+      "cubeOwner": 0,
+      "cubeValueExp": 2,
+      "dice": [0, 0],
+      "playerOnRoll": 1,
+      "score": [4, 6],
+      "hasJacoby": 0,
+      "hasBeaver": 0
+    },
+    {
+      "name": "money game, Jacoby only, checker decision",
+      "xgid": "-b----E-C---eE---c-e----B-:0:0:1:31:0:0:1:0:3",
+      "cubeOwner": -1,
+      "cubeValueExp": 0,
+      "dice": [3, 1],
+      "playerOnRoll": 0,
+      "score": [-1, -1],
+      "hasJacoby": 1,
+      "hasBeaver": 0
+    },
+    {
+      "name": "money game, Beaver only, White on roll, cube decision",
+      "xgid": "-b----E-C---eE---c-e----B-:0:0:-1:00:0:0:2:0:3",
+      "cubeOwner": -1,
+      "cubeValueExp": 0,
+      "dice": [0, 0],
+      "playerOnRoll": 1,
+      "score": [-1, -1],
+      "hasJacoby": 0,
+      "hasBeaver": 1
+    }
+  ]
+}
