@@ -83,6 +83,8 @@ func (s *Server) exporterFor(f ingest.Format) ingest.Exporter {
 	switch f {
 	case ingest.FormatJSON, "":
 		return ingest.JSONExporter{S: s.opts.Storage}
+	case ingest.FormatSQLite:
+		return ingest.SQLiteExporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -99,6 +101,24 @@ func (s *Server) ingestRoutes() []route {
 		{http.MethodPost, "/v1/imports.position", s.handleImport(ingest.FormatPosition)},
 		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
+		{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
+	}
+}
+
+// handleExportSQLite serializes the caller's tenant into a blunderDB SQLite file
+// and returns it as a binary download. The exporter materializes the whole file
+// before writing any bytes to the response, so a build failure is reported with a
+// proper error status (no partial body).
+func (s *Server) handleExportSQLite() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		exp := s.exporterFor(ingest.FormatSQLite)
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Disposition", `attachment; filename="blunderdb-export.sqlite"`)
+		if err := exp.Export(r.Context(), scopeOf(r), w, ingest.ExportOptions{Format: ingest.FormatSQLite}); err != nil {
+			_ = json.NewEncoder(w).Encode(errorEnvelope{Error: errorBody{
+				Code: codeForErr(err), Message: err.Error(),
+			}})
+		}
 	}
 }
 

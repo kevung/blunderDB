@@ -25,6 +25,9 @@ const (
 	FormatBGF      Format = "bgf"
 	FormatNativeDB Format = "db"
 	FormatPosition Format = "position"
+	// FormatSQLite serializes a tenant into a fresh, valid blunderDB SQLite file
+	// (a Desktop-openable export / backup). Export-only.
+	FormatSQLite Format = "sqlite"
 )
 
 // Source is the input to an import. Reader is set for streaming formats
