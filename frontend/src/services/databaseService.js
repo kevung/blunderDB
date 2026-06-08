@@ -6,7 +6,7 @@ import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
-import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
+import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
@@ -171,6 +171,15 @@ export async function openDatabaseByPath(filePath) {
         setStatusBarMessage(tMsg('commands.dbOpened'));
         const filename = getFilenameFromPath(filePath);
         WindowSetTitle(`blunderDB - ${filename}`);
+
+        // The Matches panel may already be visible (it is the default tab,
+        // opened at mount before the DB finished loading), so its own
+        // open-transition load won't have fired against the now-open DB. Bump
+        // the refresh trigger so it loads the match list — same mechanism used
+        // after an import. Do this BEFORE restoreSessionState (which loads all
+        // positions and can be slow) so the match list appears promptly, in
+        // parallel with the restore rather than serialised after it.
+        matchPanelRefreshTriggerStore.update((n) => n + 1);
 
         const { restoreSessionState } = await import('./sessionService.js');
         await restoreSessionState();

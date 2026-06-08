@@ -27,15 +27,15 @@
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
     let tabs = $state([
-        { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
-        { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
-        { id: 'search', labelKey: 'tabbedPanel.search', icon: 'search', shortcut: 'Ctrl+F' },
-        { id: 'collections', labelKey: 'tabbedPanel.collections', icon: 'collections', shortcut: 'Ctrl+B' },
         { id: 'matches', labelKey: 'tabbedPanel.matches', icon: 'matches', shortcut: 'Ctrl+Tab' },
         { id: 'tournaments', labelKey: 'tabbedPanel.tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
-        { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
+        { id: 'collections', labelKey: 'tabbedPanel.collections', icon: 'collections', shortcut: 'Ctrl+B' },
+        { id: 'search', labelKey: 'tabbedPanel.search', icon: 'search', shortcut: 'Ctrl+F' },
+        { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
+        { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
         { id: 'epc', labelKey: 'tabbedPanel.epc', icon: 'epc', shortcut: 'Ctrl+E' },
         { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
+        { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
         { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
         { id: 'log', labelKey: 'tabbedPanel.log', icon: 'log', shortcut: '' }
     ]);

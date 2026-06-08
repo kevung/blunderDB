@@ -10,7 +10,7 @@ export const commentTextStore = writable('');
 export const analysisDataStore = writable('This is where your analysis data will be displayed.');
 
 // Active tab in the bottom panel ('log', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments')
-export const activeTabStore = writable('analysis');
+export const activeTabStore = writable('matches');
 
 // Session log entries: array of { timestamp, type, message }
 // type: 'info' (default), 'command', 'result', 'error'
