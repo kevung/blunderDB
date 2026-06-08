@@ -19,6 +19,8 @@
     "config": {
         "title": "Ρυθμίσεις",
         "language": "Γλώσσα",
+        "interface": "Διεπαφή",
+        "uiScale": "Κλίμακα διεπαφής",
         "colors": "Χρώματα ταμπλό",
         "colorBackground": "Φόντο",
         "colorBorder": "Περίγραμμα",

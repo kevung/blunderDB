@@ -19,6 +19,8 @@
     "config": {
         "title": "Settings",
         "language": "Language",
+        "interface": "Interface",
+        "uiScale": "Interface scale",
         "colors": "Board colours",
         "colorBackground": "Background",
         "colorBorder": "Border",

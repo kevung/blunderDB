@@ -2,6 +2,7 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
+    import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
 
     let { visible = false, onClose } = $props();
 
@@ -26,6 +27,16 @@
         setBoardColor(key, event.currentTarget.value);
     }
 
+    // Live, lightweight preview while dragging (CSS zoom only)...
+    function onUIScaleInput(event) {
+        previewUIScale(Number(event.currentTarget.value));
+    }
+
+    // ...and the expensive board re-fit + persistence only once, on release.
+    function onUIScaleChange(event) {
+        setUIScale(Number(event.currentTarget.value));
+    }
+
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             onClose();
@@ -46,6 +57,25 @@
                         <option value={code}>{LANGUAGE_LABELS[code]}</option>
                     {/each}
                 </select>
+            </div>
+
+            <div class="section-title">{$t('config.interface')}</div>
+            <div class="setting-row">
+                <label for="config-ui-scale">{$t('config.uiScale')}</label>
+                <div class="scale-control">
+                    <input
+                        id="config-ui-scale"
+                        type="range"
+                        class="setting-range"
+                        min={MIN_UI_SCALE}
+                        max={MAX_UI_SCALE}
+                        step={UI_SCALE_STEP}
+                        value={$uiScaleStore}
+                        oninput={onUIScaleInput}
+                        onchange={onUIScaleChange}
+                    />
+                    <span class="scale-value">{$uiScaleStore}%</span>
+                </div>
             </div>
 
             <div class="section-title">{$t('config.colors')}</div>
@@ -143,6 +173,26 @@
         outline: none;
         border-color: #6c757d;
         box-shadow: 0 0 5px rgba(108, 117, 125, 0.5);
+    }
+
+    .scale-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+    }
+
+    .setting-range {
+        width: 130px;
+        cursor: pointer;
+        accent-color: #6c757d;
+    }
+
+    .scale-value {
+        min-width: 42px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
     }
 
     .section-title {

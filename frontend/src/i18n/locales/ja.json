@@ -19,6 +19,8 @@
     "config": {
         "title": "設定",
         "language": "言語",
+        "interface": "インターフェース",
+        "uiScale": "インターフェースの倍率",
         "colors": "ボードの色",
         "colorBackground": "背景",
         "colorBorder": "枠線",

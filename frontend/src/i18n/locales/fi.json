@@ -19,6 +19,8 @@
     "config": {
         "title": "Asetukset",
         "language": "Kieli",
+        "interface": "Käyttöliittymä",
+        "uiScale": "Käyttöliittymän skaalaus",
         "colors": "Laudan värit",
         "colorBackground": "Tausta",
         "colorBorder": "Reuna",

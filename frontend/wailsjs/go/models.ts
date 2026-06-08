@@ -1305,6 +1305,7 @@ export namespace main {
 	    stats_filter?: StatsFilterPersisted;
 	    language?: string;
 	    board_colors?: BoardColors;
+	    ui_scale?: number;
 	    tour_seen?: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -1319,6 +1320,7 @@ export namespace main {
 	        this.stats_filter = this.convertValues(source["stats_filter"], StatsFilterPersisted);
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
+	        this.ui_scale = source["ui_scale"];
 	        this.tour_seen = source["tour_seen"];
 	    }
 	

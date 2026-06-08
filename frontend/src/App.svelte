@@ -8,6 +8,7 @@
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { initLanguage } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
+    import { initUIScale } from './stores/uiScaleStore';
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
@@ -355,6 +356,9 @@
         // Load the persisted board palette (falls back to defaults internally).
         initBoardColors();
 
+        // Apply the persisted interface scale (falls back to 100% internally).
+        initUIScale();
+
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();
 
@@ -524,12 +528,19 @@
     .main-container {
         display: flex;
         flex-direction: column;
+        /* Interface scaling: `zoom` enlarges the whole UI (icons, fonts, panels,
+           modals and the SVG board, which stays crisp). The WebKit/WebView
+           engines resolve `vw`/`vh` in the zoomed coordinate system, so plain
+           100vw/100vh still fill exactly one viewport at any scale — do NOT
+           divide them by the scale (that under-sizes the box and leaves gaps
+           on the right and below the status bar). */
+        zoom: var(--ui-scale, 1);
         height: 100vh;
+        width: 100vw;
         padding: 0;
         box-sizing: border-box;
         position: relative;
         overflow: hidden;
-        width: 100vw;
     }
 
     .scrollable-content {

@@ -12,6 +12,8 @@ export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
 export function GetTourSeen():Promise<boolean>;
 
+export function GetUIScale():Promise<number>;
+
 export function LoadConfig():Promise<main.Config>;
 
 export function SaveBoardColors(arg1:main.BoardColors):Promise<void>;
@@ -25,5 +27,7 @@ export function SaveLastDatabasePath(arg1:string):Promise<void>;
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
 export function SaveTourSeen(arg1:boolean):Promise<void>;
+
+export function SaveUIScale(arg1:number):Promise<void>;
 
 export function SaveWindowDimensions(arg1:number,arg2:number):Promise<void>;

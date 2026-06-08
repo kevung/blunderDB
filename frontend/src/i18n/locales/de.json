@@ -19,6 +19,8 @@
     "config": {
         "title": "Einstellungen",
         "language": "Sprache",
+        "interface": "Oberfläche",
+        "uiScale": "Oberflächenskalierung",
         "colors": "Brettfarben",
         "colorBackground": "Hintergrund",
         "colorBorder": "Rahmen",

@@ -19,6 +19,8 @@
     "config": {
         "title": "Ajustes",
         "language": "Idioma",
+        "interface": "Interfaz",
+        "uiScale": "Escala de la interfaz",
         "colors": "Colores del tablero",
         "colorBackground": "Fondo",
         "colorBorder": "Borde",
