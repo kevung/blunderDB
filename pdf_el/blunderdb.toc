@@ -18,38 +18,38 @@
 \contentsline {subsection}{\numberline {2.2.12}Πίνακας Συλλογών}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Πίνακας Αγώνων}{10}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Πίνακας Τουρνουά}{10}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Πίνακας Stats}{10}{subsection.2.2.15}%
-\contentsline {subsubsection}{Εισαγωγή}{10}{subsubsection*.3}%
+\contentsline {subsection}{\numberline {2.2.15}Πίνακας Stats}{11}{subsection.2.2.15}%
+\contentsline {subsubsection}{Εισαγωγή}{11}{subsubsection*.3}%
 \contentsline {subsubsection}{Άνοιγμα του πίνακα}{11}{subsubsection*.4}%
 \contentsline {subsubsection}{Γραμμή φίλτρου}{11}{subsubsection*.5}%
 \contentsline {paragraph}{Οπτική γωνία παίκτη}{11}{paragraph*.6}%
 \contentsline {paragraph}{Διαθέσιμα φίλτρα}{11}{paragraph*.7}%
 \contentsline {subsubsection}{Εναλλαγή PR / MWC}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Καρτέλα Dashboard}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Κάρτες επιπέδου}{12}{paragraph*.10}%
+\contentsline {paragraph}{Κάρτες επιπέδου}{13}{paragraph*.10}%
 \contentsline {paragraph}{Κυλιόμενο PR στις τελευταίες N αποφάσεις}{13}{paragraph*.11}%
 \contentsline {paragraph}{Κορυφαία σφάλματα (Top blunders)}{13}{paragraph*.12}%
 \contentsline {subsubsection}{Καρτέλα Progression}{13}{subsubsection*.13}%
 \contentsline {paragraph}{Γραμμικό γράφημα ανά τουρνουά}{13}{paragraph*.14}%
 \contentsline {paragraph}{Διάγραμμα διασποράς ανά αγώνα}{13}{paragraph*.15}%
-\contentsline {subsubsection}{Καρτέλα Erreurs}{13}{subsubsection*.16}%
-\contentsline {paragraph}{Κατανομή ανά ενέργεια κύβου}{13}{paragraph*.17}%
+\contentsline {subsubsection}{Καρτέλα Erreurs}{14}{subsubsection*.16}%
+\contentsline {paragraph}{Κατανομή ανά ενέργεια κύβου}{14}{paragraph*.17}%
 \contentsline {paragraph}{Σύγκριση Checker / Cube}{14}{paragraph*.18}%
 \contentsline {paragraph}{Ιστόγραμμα των μεγεθών σφάλματος}{14}{paragraph*.19}%
 \contentsline {subsubsection}{Κανόνας συνάθροισης}{14}{subsubsection*.20}%
 \contentsline {subsubsection}{MWC: περιορισμοί}{14}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.16}Πίνακας EPC}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.16}Πίνακας EPC}{15}{subsection.2.2.16}%
 \contentsline {subsection}{\numberline {2.2.17}Πίνακας Anki}{15}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Πίνακας Μεταδεδομένων}{15}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Πίνακας Καταγραφής}{15}{subsection.2.2.19}%
-\contentsline {section}{\numberline {2.3}Οδηγός χρήσης}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.19}Πίνακας Καταγραφής}{16}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}Οδηγός χρήσης}{16}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Δημιουργία νέας βάσης δεδομένων}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Άνοιγμα υπάρχουσας βάσης δεδομένων}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Εισαγωγή και συγχώνευση βάσης δεδομένων}{16}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Επεξεργασία θέσης}{17}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Προσθήκη θέσης στη βάση δεδομένων}{17}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Προσθήκη ετικέτας σε μια θέση}{17}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Διαγραφή θέσης}{17}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Προσθήκη ετικέτας σε μια θέση}{18}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Διαγραφή θέσης}{18}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Εισαγωγή θέσης από το XG}{18}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Εισαγωγή αγώνα}{18}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Εισαγωγή φακέλου αγώνων}{19}{subsection.2.3.10}%
@@ -71,99 +71,99 @@
 \contentsline {subsection}{\numberline {2.4.4}Φίλτρα αναζήτησης}{24}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Διάφορες εντολές}{27}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Συντομεύσεις πληκτρολογίου}{27}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Βάση δεδομένων}{27}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.1}Βάση δεδομένων}{28}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Θέση}{28}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Πλοήγηση}{28}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Εμφάνιση}{28}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Ενέργειες}{28}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.4}Εμφάνιση}{29}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Ενέργειες}{29}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Εργαλεία}{29}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Γραμμή εντολών}{29}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Πίνακας ιστορικού αναζήτησης}{29}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Πίνακας βιβλιοθήκης φίλτρων}{29}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.9}Πίνακας βιβλιοθήκης φίλτρων}{30}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Πίνακας ανάλυσης}{30}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Πίνακας αγώνων}{30}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)}{30}{subsection.2.5.12}%
-\contentsline {section}{\numberline {2.6}Διεπαφή γραμμής εντολών (CLI)}{30}{section.2.6}%
-\contentsline {subsection}{\numberline {2.6.1}Εισαγωγή}{30}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.6}Διεπαφή γραμμής εντολών (CLI)}{31}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Εισαγωγή}{31}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Γενική σύνταξη}{31}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Διαθέσιμες εντολές}{31}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}create — Δημιουργία βάσης δεδομένων}{31}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.4}create — Δημιουργία βάσης δεδομένων}{32}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}import — Εισαγωγή δεδομένων}{32}{subsection.2.6.5}%
 \contentsline {subsubsection}{Εισαγωγή αγώνα}{32}{subsubsection*.23}%
 \contentsline {subsubsection}{Εισαγωγή θέσεων}{32}{subsubsection*.24}%
 \contentsline {subsubsection}{Μαζική εισαγωγή}{32}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.6.6}export — Εξαγωγή δεδομένων}{32}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.6}export — Εξαγωγή δεδομένων}{33}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Αναζήτηση θέσεων}{33}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — Εμφάνιση περιεχομένου}{34}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.8}list — Εμφάνιση περιεχομένου}{35}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}match — Εμφάνιση αγώνα}{35}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Μεταδεδομένα της βάσης}{35}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}edit — Τροποποίηση μεταδεδομένων}{35}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.11}edit — Τροποποίηση μεταδεδομένων}{36}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Έλεγχος ακεραιότητας}{36}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}delete — Διαγραφή δεδομένων}{36}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.13}delete — Διαγραφή δεδομένων}{37}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}Παραδείγματα ροών εργασίας}{37}{subsection.2.6.14}%
 \contentsline {subsubsection}{Εισαγωγή ενός καταλόγου τουρνουά}{37}{subsubsection*.26}%
 \contentsline {subsubsection}{Τακτικό αντίγραφο ασφαλείας}{37}{subsubsection*.27}%
-\contentsline {subsubsection}{Ανάλυση σφαλμάτων}{37}{subsubsection*.28}%
-\contentsline {subsection}{\numberline {2.6.15}Κωδικοί εξόδου}{37}{subsection.2.6.15}%
+\contentsline {subsubsection}{Ανάλυση σφαλμάτων}{38}{subsubsection*.28}%
+\contentsline {subsection}{\numberline {2.6.15}Κωδικοί εξόδου}{38}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Συχνές ερωτήσεις (FAQ)}{38}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Ποιος είναι ο σκοπός του blunderDB;}{38}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Τι ώθησε στη δημιουργία του blunderDB;}{38}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;}{38}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;}{38}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;}{38}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.3}Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;}{39}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;}{39}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;}{39}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}Ποιες μορφές αρχείων αγώνων υποστηρίζονται;}{39}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Τι είναι μια συλλογή;}{39}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}Τι είναι το EPC;}{39}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}Διαθέτει το blunderDB διεπαφή γραμμής εντολών;}{39}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;}{39}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.7}Τι είναι μια συλλογή;}{40}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}Τι είναι το EPC;}{40}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}Διαθέτει το blunderDB διεπαφή γραμμής εντολών;}{40}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;}{40}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;}{40}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;}{40}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;}{40}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}Σε ποιες πλατφόρμες λειτουργεί το blunderDB;}{40}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{40}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}{40}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Επισκόπηση}{40}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.7.14}Σε ποιες πλατφόρμες λειτουργεί το blunderDB;}{41}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{41}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}{41}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Επισκόπηση}{41}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Ο δαίμονας \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{41}{subsection.2.8.2}%
 \contentsline {subsubsection}{Σημεία πρόσβασης}{42}{subsubsection*.29}%
-\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL και πολλαπλοί χρήστες}{42}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Μετανάστευση μιας βάσης SQLite προς PostgreSQL}{42}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Ο γενικός dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{43}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL και πολλαπλοί χρήστες}{43}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Μετανάστευση μιας βάσης SQLite προς PostgreSQL}{43}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Ο γενικός dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{44}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Παράρτημα: Προχωρημένη χρήση των φίλτρων}{44}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Αναζήτηση θέσεων από τη γραμμή εντολών}{44}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{44}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.1}Αναζήτηση θέσεων από τη γραμμή εντολών}{45}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{45}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Βιβλιοθήκη φίλτρων}{45}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Παραδείγματα}{45}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού}{47}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Προειδοποίηση Windows SmartScreen}{47}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Μπλοκάρισμα από το Windows Defender}{48}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{51}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB}{56}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Εγκατάσταση του blunderDB}{56}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Εξουσιοδότηση εκτέλεσης του blunderDB}{56}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}Παράρτημα: Σχήμα της βάσης δεδομένων}{56}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Έκδοση 1.0.0}{57}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Έκδοση 1.1.0}{57}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Έκδοση 1.2.0}{57}{subsection.2.12.3}%
-\contentsline {subsection}{\numberline {2.12.4}Έκδοση 1.3.0}{57}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}Έκδοση 1.4.0}{58}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Έκδοση 1.5.0}{58}{subsection.2.12.6}%
-\contentsline {subsection}{\numberline {2.12.7}Έκδοση 1.6.0}{58}{subsection.2.12.7}%
-\contentsline {subsection}{\numberline {2.12.8}Έκδοση 1.7.0}{58}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB}{59}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Τυπικοί ορισμοί}{59}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{59}{subsubsection*.43}%
-\contentsline {subsubsection}{Snowie Error Rate}{59}{subsubsection*.44}%
-\contentsline {subsubsection}{Απώλεια MWC (Match Winning Chance)}{60}{subsubsection*.45}%
-\contentsline {subsection}{\numberline {2.13.2}Μετρούμενες αποφάσεις στον παρονομαστή του PR}{60}{subsection.2.13.2}%
-\contentsline {subsubsection}{Κινήσεις πουλιών — μετρούμενες αποφάσεις}{60}{subsubsection*.46}%
-\contentsline {subsubsection}{Αποφάσεις κύβου — μετρούμενες αποφάσεις}{60}{subsubsection*.47}%
-\contentsline {subsubsection}{Σύνοψη φίλτρου}{60}{subsubsection*.48}%
-\contentsline {subsection}{\numberline {2.13.3}Αντιστοιχία blunderDB ↔ XG ↔ gnuBG}{61}{subsection.2.13.3}%
-\contentsline {subsubsection}{Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)}{61}{subsubsection*.49}%
-\contentsline {subsubsection}{Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)}{61}{subsubsection*.50}%
-\contentsline {subsection}{\numberline {2.13.4}Επαλήθευση των δικών σας αριθμών}{61}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}Αναφορά gnuBG}{61}{subsection.2.13.5}%
-\contentsline {chapter}{\numberline {3}Επικοινωνία}{63}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Κάντε μια δωρεά}{65}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Ευχαριστίες}{67}{chapter.5}%
+\contentsline {subsection}{\numberline {2.9.4}Παραδείγματα}{46}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού}{48}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Προειδοποίηση Windows SmartScreen}{48}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Μπλοκάρισμα από το Windows Defender}{49}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{52}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB}{57}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Εγκατάσταση του blunderDB}{57}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Εξουσιοδότηση εκτέλεσης του blunderDB}{57}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Παράρτημα: Σχήμα της βάσης δεδομένων}{57}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Έκδοση 1.0.0}{58}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Έκδοση 1.1.0}{58}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Έκδοση 1.2.0}{58}{subsection.2.12.3}%
+\contentsline {subsection}{\numberline {2.12.4}Έκδοση 1.3.0}{58}{subsection.2.12.4}%
+\contentsline {subsection}{\numberline {2.12.5}Έκδοση 1.4.0}{59}{subsection.2.12.5}%
+\contentsline {subsection}{\numberline {2.12.6}Έκδοση 1.5.0}{59}{subsection.2.12.6}%
+\contentsline {subsection}{\numberline {2.12.7}Έκδοση 1.6.0}{59}{subsection.2.12.7}%
+\contentsline {subsection}{\numberline {2.12.8}Έκδοση 1.7.0}{59}{subsection.2.12.8}%
+\contentsline {section}{\numberline {2.13}Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB}{60}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Τυπικοί ορισμοί}{60}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{60}{subsubsection*.43}%
+\contentsline {subsubsection}{Snowie Error Rate}{60}{subsubsection*.44}%
+\contentsline {subsubsection}{Απώλεια MWC (Match Winning Chance)}{61}{subsubsection*.45}%
+\contentsline {subsection}{\numberline {2.13.2}Μετρούμενες αποφάσεις στον παρονομαστή του PR}{61}{subsection.2.13.2}%
+\contentsline {subsubsection}{Κινήσεις πουλιών — μετρούμενες αποφάσεις}{61}{subsubsection*.46}%
+\contentsline {subsubsection}{Αποφάσεις κύβου — μετρούμενες αποφάσεις}{61}{subsubsection*.47}%
+\contentsline {subsubsection}{Σύνοψη φίλτρου}{61}{subsubsection*.48}%
+\contentsline {subsection}{\numberline {2.13.3}Αντιστοιχία blunderDB ↔ XG ↔ gnuBG}{62}{subsection.2.13.3}%
+\contentsline {subsubsection}{Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)}{62}{subsubsection*.49}%
+\contentsline {subsubsection}{Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)}{62}{subsubsection*.50}%
+\contentsline {subsection}{\numberline {2.13.4}Επαλήθευση των δικών σας αριθμών}{62}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}Αναφορά gnuBG}{62}{subsection.2.13.5}%
+\contentsline {chapter}{\numberline {3}Επικοινωνία}{65}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Κάντε μια δωρεά}{67}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Ευχαριστίες}{69}{chapter.5}%
 \xpginauxfilefalse 

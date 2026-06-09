@@ -145,6 +145,15 @@ la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 l'ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
 conservées d'une session à l'autre.
 
+La fenêtre de configuration regroupe également des réglages d'affichage de
+l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de
+réduire l'ensemble des éléments, ce qui est utile sur les écrans à haute
+densité ou pour améliorer la lisibilité. Un menu **position des panneaux**
+détermine l'emplacement des panneaux (recherche, matchs, analyse) par rapport
+au plateau : *en bas*, *sur le côté* ou *automatique* (le côté est alors choisi
+sur les écrans larges afin de mieux exploiter l'espace disponible). Comme les
+autres réglages, ces choix sont conservés d'une session à l'autre.
+
 .. _visites_guidees:
 
 Visites guidées et base d'exemple
@@ -307,6 +316,15 @@ L'utilisateur peut:
 La dernière position visitée dans chaque match est mémorisée et restaurée
 automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match``
 pour afficher ou masquer le panneau.
+
+Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
+plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)
+ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
+match, lorsque ces informations sont disponibles).
+
+À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
+d'emblée et la revue débute directement sur la première position, afin de
+commencer immédiatement la navigation.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 

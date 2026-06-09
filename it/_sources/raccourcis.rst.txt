@@ -3,6 +3,12 @@
 Raccourcis clavier
 ==================
 
+.. note::
+
+   Les raccourcis clavier sont indépendants de la disposition du clavier : ils
+   restent accessibles de la même manière quelle que soit la disposition
+   utilisée (AZERTY, QWERTY, QWERTZ, etc.).
+
 .. _raccourcis_generaux:
 
 Base de données

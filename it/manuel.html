@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuale &mdash; Documentazione blunderDB 0.25.0 </title>
+  <title>2. Manuale &mdash; Documentazione blunderDB 0.26.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=be23da41"></script>
+      <script src="_static/documentation_options.js?v=2c5c04aa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -213,6 +213,7 @@
 <p>Il pulsante di configurazione (icona a forma di ingranaggio) situato nella barra degli strumenti, a sinistra del pulsante di aiuto, apre la finestra di configurazione di blunderDB.</p>
 <p>Essa permette di scegliere la lingua dell’interfaccia tra inglese, francese, tedesco, italiano, spagnolo, finlandese, giapponese, greco e russo. L’intera interfaccia (barra degli strumenti, pannelli, messaggi, guida) viene tradotta nella lingua selezionata. La scelta della lingua viene salvata e mantenuta da una sessione all’altra.</p>
 <p>La finestra delle impostazioni permette inoltre di personalizzare i colori del board. Ogni elemento dispone del proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante <em>Ripristina</em> riporta tutti i colori ai valori predefiniti. Come la lingua, i colori scelti vengono conservati da una sessione all’altra.</p>
+<p>La finestra di configurazione raggruppa anche alcune impostazioni di visualizzazione dell’interfaccia. Un cursore di <strong>scala dell’interfaccia</strong> consente di ingrandire o ridurre l’insieme degli elementi, il che è utile sugli schermi ad alta densità o per migliorare la leggibilità. Un menu <strong>posizione dei pannelli</strong> determina la collocazione dei pannelli (ricerca, match, analisi) rispetto al tavoliere: <em>in basso</em>, <em>di lato</em> o <em>automatica</em> (il lato viene allora scelto sugli schermi larghi per sfruttare meglio lo spazio disponibile). Come le altre impostazioni, queste scelte vengono conservate da una sessione all’altra.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Visite guidate e database di esempio<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>vedere la mossa effettivamente giocata evidenziata nell’analisi.</p></li>
 </ul>
 <p>L’ultima posizione visitata in ciascun match viene memorizzata e ripristinata automaticamente. Premere <em>CTRL-Tab</em> o eseguire il comando <code class="docutils literal notranslate"><span class="pre">match</span></code> per mostrare o nascondere il pannello.</p>
+<p>Quando un match è aperto, una <strong>barra delle informazioni</strong> appare sopra il tavoliere: ricorda i giocatori coinvolti (<em>giocatore 1</em> contro <em>giocatore 2</em>) nonché il contesto del match (evento, luogo, turno, data e lunghezza del match, quando queste informazioni sono disponibili).</p>
+<p>All’apertura di un database contenente match, il pannello <strong>Match</strong> viene mostrato subito e la revisione inizia direttamente sulla prima posizione, così da cominciare immediatamente la navigazione.</p>
 <div class="admonition tip">
 <p class="admonition-title">Suggerimento</p>
 <p>Fare riferimento a <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Scorciatoie da tastiera</span></a> per le scorciatoie disponibili.</p>

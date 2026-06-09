@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.25.0 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.26.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d8dd0411"></script>
+      <script src="_static/documentation_options.js?v=4aa2dafa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -212,6 +212,14 @@
 <p>The configuration button (gear-shaped icon) located in the toolbar, to the left of the help button, opens the blunderDB configuration window.</p>
 <p>It lets you choose the interface language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.</p>
 <p>The configuration window also lets you customise the board colours. Each element has its own colour picker: the background, the border, the light and dark points, player 1’s and player 2’s checkers, the dice, the dice pips and the doubling cube. The <em>Reset</em> button restores all the default colours. Like the language, the chosen colours are kept from one session to the next.</p>
+<p>La fenêtre de configuration regroupe également des réglages d’affichage de
+l’interface. Un curseur d’<strong>échelle de l’interface</strong> permet d’agrandir ou de
+réduire l’ensemble des éléments, ce qui est utile sur les écrans à haute
+densité ou pour améliorer la lisibilité. Un menu <strong>position des panneaux</strong>
+détermine l’emplacement des panneaux (recherche, matchs, analyse) par rapport
+au plateau : <em>en bas</em>, <em>sur le côté</em> ou <em>automatique</em> (le côté est alors choisi
+sur les écrans larges afin de mieux exploiter l’espace disponible). Comme les
+autres réglages, ces choix sont conservés d’une session à l’autre.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Guided tours and sample database<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -283,6 +291,13 @@
 <li><p>see the actually played move highlighted in the analysis.</p></li>
 </ul>
 <p>The last visited position in each match is saved and restored automatically. Press <em>CTRL-Tab</em> or run the <code class="docutils literal notranslate"><span class="pre">match</span></code> command to show or hide the panel.</p>
+<p>Lorsqu’un match est ouvert, une <strong>barre d’informations</strong> apparaît au-dessus du
+plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>)
+ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
+match, lorsque ces informations sont disponibles).</p>
+<p>À l’ouverture d’une base contenant des matchs, le panneau <strong>Matchs</strong> est affiché
+d’emblée et la revue débute directement sur la première position, afin de
+commencer immédiatement la navigation.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>

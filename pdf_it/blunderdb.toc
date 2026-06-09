@@ -11,84 +11,84 @@
 \contentsline {subsection}{\numberline {2.2.5}Visite guidate e database di esempio}{8}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Navigazione tra le posizioni}{8}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Modifica delle posizioni}{8}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}La riga di comando}{8}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.8}La riga di comando}{9}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}Pannello Analisi}{9}{subsection.2.2.9}%
 \contentsline {subsection}{\numberline {2.2.10}Pannello Commenti}{9}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Pannello Ricerca}{9}{subsection.2.2.11}%
-\contentsline {subsection}{\numberline {2.2.12}Pannello Raccolte}{9}{subsection.2.2.12}%
+\contentsline {subsection}{\numberline {2.2.12}Pannello Raccolte}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Pannello Match}{10}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Pannello Tornei}{10}{subsection.2.2.14}%
 \contentsline {subsection}{\numberline {2.2.15}Pannello Stats}{10}{subsection.2.2.15}%
 \contentsline {subsubsection}{Introduzione}{10}{subsubsection*.3}%
-\contentsline {subsubsection}{Apertura del pannello}{10}{subsubsection*.4}%
+\contentsline {subsubsection}{Apertura del pannello}{11}{subsubsection*.4}%
 \contentsline {subsubsection}{Barra dei filtri}{11}{subsubsection*.5}%
 \contentsline {paragraph}{Prospettiva del giocatore}{11}{paragraph*.6}%
 \contentsline {paragraph}{Filtri disponibili}{11}{paragraph*.7}%
-\contentsline {subsubsection}{Commutazione PR / MWC}{11}{subsubsection*.8}%
+\contentsline {subsubsection}{Commutazione PR / MWC}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Scheda Dashboard}{12}{subsubsection*.9}%
 \contentsline {paragraph}{Schede di livello}{12}{paragraph*.10}%
-\contentsline {paragraph}{PR mobile sulle ultime N decisioni}{12}{paragraph*.11}%
-\contentsline {paragraph}{Top blunder}{12}{paragraph*.12}%
-\contentsline {subsubsection}{Scheda Progressione}{12}{subsubsection*.13}%
-\contentsline {paragraph}{Grafico a linee per torneo}{12}{paragraph*.14}%
+\contentsline {paragraph}{PR mobile sulle ultime N decisioni}{13}{paragraph*.11}%
+\contentsline {paragraph}{Top blunder}{13}{paragraph*.12}%
+\contentsline {subsubsection}{Scheda Progressione}{13}{subsubsection*.13}%
+\contentsline {paragraph}{Grafico a linee per torneo}{13}{paragraph*.14}%
 \contentsline {paragraph}{Scatter plot per match}{13}{paragraph*.15}%
 \contentsline {subsubsection}{Scheda Errori}{13}{subsubsection*.16}%
 \contentsline {paragraph}{Ripartizione per azione di cubo}{13}{paragraph*.17}%
-\contentsline {paragraph}{Confronto Checker / Cube}{13}{paragraph*.18}%
-\contentsline {paragraph}{Istogramma delle magnitudo d’errore}{13}{paragraph*.19}%
-\contentsline {subsubsection}{Regola di aggregazione}{13}{subsubsection*.20}%
+\contentsline {paragraph}{Confronto Checker / Cube}{14}{paragraph*.18}%
+\contentsline {paragraph}{Istogramma delle magnitudo d’errore}{14}{paragraph*.19}%
+\contentsline {subsubsection}{Regola di aggregazione}{14}{subsubsection*.20}%
 \contentsline {subsubsection}{MWC: limitazioni}{14}{subsubsection*.21}%
 \contentsline {subsection}{\numberline {2.2.16}Pannello EPC}{14}{subsection.2.2.16}%
-\contentsline {subsection}{\numberline {2.2.17}Pannello Anki}{14}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.17}Pannello Anki}{15}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Pannello Metadati}{15}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Pannello Registro}{15}{subsection.2.2.19}%
 \contentsline {section}{\numberline {2.3}Guida utente}{15}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{15}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{15}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{15}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{16}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{16}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Modificare una posizione}{16}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}Aggiungere una posizione al database}{16}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{16}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.5}Aggiungere una posizione al database}{17}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{17}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Eliminare una posizione}{17}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Importare una posizione da XG}{17}{subsection.2.3.8}%
-\contentsline {subsection}{\numberline {2.3.9}Importare un match}{17}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.9}Importare un match}{18}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Importare una cartella di match}{18}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Trascina e rilascia}{18}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navigare in un match}{18}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{18}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{19}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Gestire le collezioni}{19}{subsection.2.3.14}%
-\contentsline {subsection}{\numberline {2.3.15}Gestire i tornei}{19}{subsection.2.3.15}%
-\contentsline {subsection}{\numberline {2.3.16}Visualizzare le statistiche di performance}{19}{subsection.2.3.16}%
+\contentsline {subsection}{\numberline {2.3.15}Gestire i tornei}{20}{subsection.2.3.15}%
+\contentsline {subsection}{\numberline {2.3.16}Visualizzare le statistiche di performance}{20}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Calcolare l’EPC}{20}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Visualizzare l’analisi di una posizione importata da XG}{20}{subsection.2.3.18}%
-\contentsline {subsection}{\numberline {2.3.19}Esportare una posizione verso XG}{20}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Visualizzare le diverse posizioni}{20}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.19}Esportare una posizione verso XG}{21}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.20}Visualizzare le diverse posizioni}{21}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Cercare posizioni in base a criteri}{21}{subsection.2.3.21}%
-\contentsline {section}{\numberline {2.4}Elenco dei comandi}{21}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Elenco dei comandi}{22}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operazioni globali}{22}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posizioni e navigazione}{22}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Modifica e ricerca}{22}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Modifica e ricerca}{23}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Filtri di ricerca}{23}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Comandi vari}{26}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Scorciatoie da tastiera}{26}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Database}{26}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Posizione}{26}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Posizione}{27}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigazione}{27}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Visualizzazione}{27}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Azioni}{27}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Strumenti}{27}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Riga di comando}{27}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.6}Strumenti}{28}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Riga di comando}{28}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Pannello cronologia di ricerca}{28}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Pannello libreria di filtri}{28}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Pannello di analisi}{28}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}Pannello dei match}{28}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.10}Pannello di analisi}{29}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}Pannello dei match}{29}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Pannello Anki (ripetizione dilazionata)}{29}{subsection.2.5.12}%
 \contentsline {section}{\numberline {2.6}Interfaccia a riga di comando (CLI)}{29}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Introduzione}{29}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Sintassi generale}{29}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.2}Sintassi generale}{30}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Comandi disponibili}{30}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Creare un database}{30}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Importare dati}{30}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.5}import — Importare dati}{31}{subsection.2.6.5}%
 \contentsline {subsubsection}{Import di un match}{31}{subsubsection*.23}%
 \contentsline {subsubsection}{Import di posizioni}{31}{subsubsection*.24}%
 \contentsline {subsubsection}{Import in lotto}{31}{subsubsection*.25}%
@@ -100,8 +100,8 @@
 \contentsline {subsection}{\numberline {2.6.11}edit — Modificare i metadati}{34}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Verificare l’integrità}{35}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Eliminare dati}{35}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Esempi di flusso di lavoro}{35}{subsection.2.6.14}%
-\contentsline {subsubsection}{Import di una cartella di torneo}{35}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.6.14}Esempi di flusso di lavoro}{36}{subsection.2.6.14}%
+\contentsline {subsubsection}{Import di una cartella di torneo}{36}{subsubsection*.26}%
 \contentsline {subsubsection}{Backup periodico}{36}{subsubsection*.27}%
 \contentsline {subsubsection}{Analisi degli errori}{36}{subsubsection*.28}%
 \contentsline {subsection}{\numberline {2.6.15}Codici di uscita}{36}{subsection.2.6.15}%

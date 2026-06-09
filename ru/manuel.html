@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Руководство &mdash; документация blunderDB 0.25.0</title>
+  <title>2. Руководство &mdash; документация blunderDB 0.26.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b6db26de"></script>
+      <script src="_static/documentation_options.js?v=24a4f835"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -213,6 +213,7 @@
 <p>Кнопка настройки (значок шестерёнки) на панели инструментов, слева от кнопки справки, открывает окно конфигурации blunderDB.</p>
 <p>Она позволяет выбрать язык интерфейса: английский, французский, немецкий, итальянский, испанский, финский, японский, греческий и русский. Весь интерфейс (панель инструментов, панели, сообщения, справка) переводится на выбранный язык. Выбор языка сохраняется между сеансами.</p>
 <p>Окно настроек также позволяет настроить цвета доски. Каждый элемент имеет собственный выбор цвета: фон, граница, светлые и тёмные пункты, шашки игрока 1 и игрока 2, кости, точки костей и куб удвоения. Кнопка <em>Сбросить</em> восстанавливает все цвета по умолчанию. Как и язык, выбранные цвета сохраняются от сеанса к сеансу.</p>
+<p>Окно конфигурации также содержит настройки отображения интерфейса. Ползунок <strong>масштаба интерфейса</strong> позволяет увеличить или уменьшить все элементы интерфейса, что полезно на экранах высокой плотности или для улучшения читаемости. Меню <strong>расположения панелей</strong> определяет, где панели (поиск, матчи, анализ) располагаются относительно доски: <em>снизу</em>, <em>сбоку</em> или <em>автоматически</em> (тогда на широких экранах выбирается боковое расположение, чтобы лучше использовать доступное пространство). Как и другие настройки, эти выборы сохраняются от сеанса к сеансу.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Обучающие туры и образец базы данных<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Ссылка на этот заголовок"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>видеть фактически сыгранный ход, выделенный в анализе.</p></li>
 </ul>
 <p>Последняя посещённая позиция в каждом матче запоминается и восстанавливается автоматически. Нажмите <em>CTRL-Tab</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">match</span></code> для отображения или скрытия панели.</p>
+<p>Когда матч открыт, над доской появляется <strong>информационная панель</strong>: она показывает участвующих игроков (<em>игрок 1</em> против <em>игрока 2</em>), а также контекст матча (событие, место, раунд, дату и длину матча, когда эта информация доступна).</p>
+<p>При открытии базы данных, содержащей матчи, панель <strong>Матчи</strong> отображается сразу же, а разбор начинается прямо с первой позиции, чтобы можно было немедленно приступить к навигации.</p>
 <div class="admonition tip">
 <p class="admonition-title">Совет</p>
 <p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>

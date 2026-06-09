@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; documentación de blunderDB - 0.25.0</title>
+  <title>2. Manual &mdash; documentación de blunderDB - 0.26.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=634f985d"></script>
+      <script src="_static/documentation_options.js?v=f13046b6"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -213,6 +213,7 @@
 <p>El botón de configuración (icono con forma de engranaje) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB.</p>
 <p>Esta permite elegir el idioma de la interfaz entre inglés, francés, alemán, italiano, español, finés, japonés, griego y ruso. Toda la interfaz (barra de herramientas, paneles, mensajes, ayuda) se traduce al idioma seleccionado. La elección del idioma se guarda y se mantiene de una sesión a otra.</p>
 <p>La ventana de configuración también permite personalizar los colores del tablero. Cada elemento dispone de su propio selector de color: el fondo, el borde, las puntas claras y oscuras, las fichas del jugador 1 y del jugador 2, los dados, los puntos de los dados y el cubo. El botón <em>Restablecer</em> restaura todos los colores predeterminados. Al igual que el idioma, los colores elegidos se conservan de una sesión a otra.</p>
+<p>La ventana de configuración también incluye ajustes de visualización de la interfaz. Un control deslizante de <strong>escala de la interfaz</strong> permite agrandar o reducir todos los elementos, lo que resulta útil en pantallas de alta densidad o para mejorar la legibilidad. Un menú <strong>posición de los paneles</strong> determina la ubicación de los paneles (búsqueda, partidas, análisis) con respecto al tablero: <em>abajo</em>, <em>al lado</em> o <em>automática</em> (en este caso el lado se elige en las pantallas anchas para aprovechar mejor el espacio disponible). Como los demás ajustes, estas opciones se conservan de una sesión a otra.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Visitas guiadas y base de ejemplo<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>ver la jugada realmente jugada resaltada en el análisis.</p></li>
 </ul>
 <p>La última posición visitada en cada partida se guarda y se restaura automáticamente. Pulse <em>CTRL-Tab</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">match</span></code> para mostrar u ocultar el panel.</p>
+<p>Cuando hay una partida abierta, aparece una <strong>barra de información</strong> sobre el tablero: indica los jugadores presentes (<em>jugador 1</em> contra <em>jugador 2</em>) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esta información está disponible).</p>
+<p>Al abrir una base que contiene partidas, el panel <strong>Partidas</strong> se muestra de inmediato y la revisión comienza directamente en la primera posición, para empezar a navegar de inmediato.</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
 <p>Consulte <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Atajos de teclado</span></a> para ver los atajos disponibles.</p>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Handbuch &mdash; blunderDB 0.25.0 Dokumentation</title>
+  <title>2. Handbuch &mdash; blunderDB 0.26.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a5a2df1b"></script>
+      <script src="_static/documentation_options.js?v=37dd01f0"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -213,6 +213,7 @@
 <p>Die Konfigurationsschaltfläche (zahnradförmiges Symbol) in der Werkzeugleiste, links von der Hilfe-Schaltfläche, öffnet das Konfigurationsfenster von blunderDB.</p>
 <p>Dort kann die Sprache der Benutzeroberfläche unter Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch und Russisch gewählt werden. Die gesamte Benutzeroberfläche (Werkzeugleiste, Panels, Meldungen, Hilfe) wird in die gewählte Sprache übersetzt. Die Sprachwahl wird gespeichert und über die Sitzungen hinweg beibehalten.</p>
 <p>Im Einstellungsfenster lassen sich außerdem die Brettfarben anpassen. Jedes Element besitzt einen eigenen Farbwähler: der Hintergrund, der Rahmen, die hellen und dunklen Zungen, die Steine von Spieler 1 und Spieler 2, die Würfel, die Würfelaugen und der Dopplerwürfel. Die Schaltfläche <em>Zurücksetzen</em> stellt alle Standardfarben wieder her. Wie die Sprache bleiben auch die gewählten Farben von einer Sitzung zur nächsten erhalten.</p>
+<p>Das Konfigurationsfenster enthält außerdem Anzeigeeinstellungen für die Oberfläche. Ein Schieberegler für die <strong>Oberflächenskalierung</strong> ermöglicht es, alle Oberflächenelemente zu vergrößern oder zu verkleinern, was auf hochauflösenden Bildschirmen oder zur Verbesserung der Lesbarkeit nützlich ist. Ein Menü <strong>Panel-Position</strong> legt fest, wo die Panels (Suche, Matchs, Analyse) relativ zum Brett angezeigt werden: <em>unten</em>, <em>seitlich</em> oder <em>automatisch</em> (auf breiten Bildschirmen wird dann die seitliche Anordnung gewählt, um den verfügbaren Platz besser auszunutzen). Wie die anderen Einstellungen werden auch diese Festlegungen von einer Sitzung zur nächsten beibehalten.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Geführte Touren und Beispieldatenbank<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>den tatsächlich gespielten Zug in der Analyse hervorgehoben sehen.</p></li>
 </ul>
 <p>Die zuletzt besuchte Stellung in jedem Match wird gespeichert und automatisch wiederhergestellt. Drücken Sie <em>CTRL-Tab</em> oder führen Sie den Befehl <code class="docutils literal notranslate"><span class="pre">match</span></code> aus, um das Panel ein- oder auszublenden.</p>
+<p>Wenn ein Match geöffnet ist, erscheint über dem Brett eine <strong>Informationsleiste</strong>: Sie zeigt die beteiligten Spieler (<em>Spieler 1</em> gegen <em>Spieler 2</em>) sowie den Match-Kontext (Ereignis, Ort, Runde, Datum und Match-Länge, sofern diese Informationen verfügbar sind).</p>
+<p>Beim Öffnen einer Datenbank, die Matchs enthält, wird das Panel <strong>Matchs</strong> sofort angezeigt und die Durchsicht beginnt direkt bei der ersten Stellung, sodass Sie unmittelbar mit der Navigation beginnen können.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tipp</p>
 <p>Siehe <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Tastenkürzel</span></a> für die verfügbaren Tastenkürzel.</p>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.25.0</title>
+  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.26.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c6c40629"></script>
+      <script src="_static/documentation_options.js?v=54bbd8c2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -213,6 +213,7 @@
 <p>Το κουμπί ρυθμίσεων (εικονίδιο σε σχήμα γραναζιού) που βρίσκεται στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB.</p>
 <p>Αυτό επιτρέπει την επιλογή της γλώσσας της διεπαφής μεταξύ Αγγλικών, Γαλλικών, Γερμανικών, Ιταλικών, Ισπανικών, Φινλανδικών, Ιαπωνικών, Ελληνικών και Ρωσικών. Το σύνολο της διεπαφής (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή της γλώσσας αποθηκεύεται και διατηρείται από τη μία περίοδο λειτουργίας στην άλλη.</p>
 <p>Το παράθυρο ρυθμίσεων επιτρέπει επίσης την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτές και σκούρες μύτες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι κουκκίδες των ζαριών και ο κύβος. Το κουμπί <em>Επαναφορά</em> επαναφέρει όλα τα χρώματα στις προεπιλεγμένες τιμές. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.</p>
+<p>Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα ρυθμιστικό <strong>κλίμακας διεπαφής</strong> σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού <strong>θέσης των πλαισίων</strong> καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) σε σχέση με το ταμπλό: <em>κάτω</em>, <em>στο πλάι</em> ή <em>αυτόματα</em> (το πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Ξεναγήσεις και βάση δείγματος<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>να δει την κίνηση που παίχτηκε πραγματικά επισημασμένη στην ανάλυση.</p></li>
 </ul>
 <p>Η τελευταία θέση που επισκεφτήκατε σε κάθε αγώνα αποθηκεύεται και επαναφέρεται αυτόματα. Πατήστε <em>CTRL-Tab</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">match</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<p>Όταν ένα ματς είναι ανοιχτό, μια <strong>γραμμή πληροφοριών</strong> εμφανίζεται πάνω από το ταμπλό: δείχνει τους εμπλεκόμενους παίκτες (<em>παίκτης 1</em> εναντίον <em>παίκτη 2</em>) μαζί με το πλαίσιο του ματς (διοργάνωση, τόπος, γύρος, ημερομηνία και μήκος ματς, όταν αυτές οι πληροφορίες είναι διαθέσιμες).</p>
+<p>Κατά το άνοιγμα μιας βάσης που περιέχει ματς, το πλαίσιο <strong>Ματς</strong> εμφανίζεται αμέσως και η ανασκόπηση ξεκινά απευθείας από την πρώτη θέση, ώστε να μπορείτε να ξεκινήσετε αμέσως την πλοήγηση.</p>
 <div class="admonition tip">
 <p class="admonition-title">Πρακτική συμβουλή</p>
 <p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>

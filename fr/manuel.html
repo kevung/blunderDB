@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuel &mdash; Documentation blunderDB 0.25.0</title>
+  <title>2. Manuel &mdash; Documentation blunderDB 0.26.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5051e813"></script>
+      <script src="_static/documentation_options.js?v=c22e36f8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -245,6 +245,14 @@ la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 2, les dés, les points des dés et le videau. Le bouton <em>Réinitialiser</em> rétablit
 l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
 conservées d’une session à l’autre.</p>
+<p>La fenêtre de configuration regroupe également des réglages d’affichage de
+l’interface. Un curseur d”<strong>échelle de l’interface</strong> permet d’agrandir ou de
+réduire l’ensemble des éléments, ce qui est utile sur les écrans à haute
+densité ou pour améliorer la lisibilité. Un menu <strong>position des panneaux</strong>
+détermine l’emplacement des panneaux (recherche, matchs, analyse) par rapport
+au plateau : <em>en bas</em>, <em>sur le côté</em> ou <em>automatique</em> (le côté est alors choisi
+sur les écrans larges afin de mieux exploiter l’espace disponible). Comme les
+autres réglages, ces choix sont conservés d’une session à l’autre.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>Visites guidées et base d’exemple<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Lien vers cette rubrique"></a></h2>
@@ -378,6 +386,13 @@ commande <code class="docutils literal notranslate"><span class="pre">m</span></
 <p>La dernière position visitée dans chaque match est mémorisée et restaurée
 automatiquement. Appuyer sur <em>CTRL-Tab</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">match</span></code>
 pour afficher ou masquer le panneau.</p>
+<p>Lorsqu’un match est ouvert, une <strong>barre d’informations</strong> apparaît au-dessus du
+plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>)
+ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
+match, lorsque ces informations sont disponibles).</p>
+<p>À l’ouverture d’une base contenant des matchs, le panneau <strong>Matchs</strong> est affiché
+d’emblée et la revue débute directement sur la première position, afin de
+commencer immédiatement la navigation.</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
 <p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Raccourcis clavier</span></a> pour les raccourcis disponibles.</p>

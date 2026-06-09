@@ -7,160 +7,160 @@
 \contentsline {subsection}{\numberline {2.2.3}インターフェースの説明}{9}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4}設定}{10}{subsection.2.2.4}%
 \contentsline {subsection}{\numberline {2.2.5}ガイドツアーとサンプルデータベース}{10}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}ポジションのナビゲーション}{10}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.6}ポジションのナビゲーション}{11}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}ポジションの編集}{11}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}コマンドライン}{11}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}分析パネル}{11}{subsection.2.2.9}%
-\contentsline {subsection}{\numberline {2.2.10}コメントパネル}{11}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.10}コメントパネル}{12}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}検索パネル}{12}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}コレクションパネル}{12}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}マッチパネル}{12}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}トーナメントパネル}{13}{subsection.2.2.14}%
 \contentsline {subsection}{\numberline {2.2.15}Stats パネル}{13}{subsection.2.2.15}%
 \contentsline {subsubsection}{はじめに}{13}{subsubsection*.3}%
-\contentsline {subsubsection}{パネルを開く}{13}{subsubsection*.4}%
-\contentsline {subsubsection}{フィルターバー}{13}{subsubsection*.5}%
+\contentsline {subsubsection}{パネルを開く}{14}{subsubsection*.4}%
+\contentsline {subsubsection}{フィルターバー}{14}{subsubsection*.5}%
 \contentsline {paragraph}{プレイヤーの視点}{14}{paragraph*.6}%
 \contentsline {paragraph}{利用可能なフィルター}{14}{paragraph*.7}%
-\contentsline {subsubsection}{PR / MWC の切り替え}{14}{subsubsection*.8}%
+\contentsline {subsubsection}{PR / MWC の切り替え}{15}{subsubsection*.8}%
 \contentsline {subsubsection}{Dashboard タブ}{15}{subsubsection*.9}%
 \contentsline {paragraph}{レベルカード}{15}{paragraph*.10}%
-\contentsline {paragraph}{直近 N 回の判断にわたる移動 PR}{15}{paragraph*.11}%
-\contentsline {paragraph}{Top blunders}{15}{paragraph*.12}%
-\contentsline {subsubsection}{Progression タブ}{15}{subsubsection*.13}%
+\contentsline {paragraph}{直近 N 回の判断にわたる移動 PR}{16}{paragraph*.11}%
+\contentsline {paragraph}{Top blunders}{16}{paragraph*.12}%
+\contentsline {subsubsection}{Progression タブ}{16}{subsubsection*.13}%
 \contentsline {paragraph}{トーナメントごとの曲線}{16}{paragraph*.14}%
 \contentsline {paragraph}{マッチごとの散布図}{16}{paragraph*.15}%
 \contentsline {subsubsection}{Erreurs タブ}{16}{subsubsection*.16}%
 \contentsline {paragraph}{キューブのアクションごとの内訳}{16}{paragraph*.17}%
-\contentsline {paragraph}{Checker / Cube の内訳}{16}{paragraph*.18}%
-\contentsline {paragraph}{エラーの大きさのヒストグラム}{16}{paragraph*.19}%
-\contentsline {subsubsection}{集計ルール}{16}{subsubsection*.20}%
+\contentsline {paragraph}{Checker / Cube の内訳}{17}{paragraph*.18}%
+\contentsline {paragraph}{エラーの大きさのヒストグラム}{17}{paragraph*.19}%
+\contentsline {subsubsection}{集計ルール}{17}{subsubsection*.20}%
 \contentsline {subsubsection}{MWC：制限事項}{17}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.16}EPC パネル}{17}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.16}EPC パネル}{18}{subsection.2.2.16}%
 \contentsline {subsection}{\numberline {2.2.17}Anki パネル}{18}{subsection.2.2.17}%
-\contentsline {subsection}{\numberline {2.2.18}メタデータパネル}{18}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}ログパネル}{18}{subsection.2.2.19}%
-\contentsline {section}{\numberline {2.3}ユーザーガイド}{18}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}新しいデータベースを作成する}{18}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.2.18}メタデータパネル}{19}{subsection.2.2.18}%
+\contentsline {subsection}{\numberline {2.2.19}ログパネル}{19}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}ユーザーガイド}{19}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}新しいデータベースを作成する}{19}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}既存のデータベースを開く}{19}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}データベースをインポートして統合する}{19}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}ポジションを編集する}{19}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}ポジションをデータベースに追加する}{20}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}ポジションにタグを付ける}{20}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}ポジションを削除する}{20}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.4}ポジションを編集する}{20}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}ポジションをデータベースに追加する}{21}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}ポジションにタグを付ける}{21}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}ポジションを削除する}{21}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}XG からポジションをインポートする}{21}{subsection.2.3.8}%
-\contentsline {subsection}{\numberline {2.3.9}マッチをインポートする}{21}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.9}マッチをインポートする}{22}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}マッチのフォルダをインポートする}{22}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}ドラッグ＆ドロップ}{22}{subsection.2.3.11}%
-\contentsline {subsection}{\numberline {2.3.12}マッチ内を移動する}{22}{subsection.2.3.12}%
+\contentsline {subsection}{\numberline {2.3.12}マッチ内を移動する}{23}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}マッチパネルを管理する}{23}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}コレクションを管理する}{23}{subsection.2.3.14}%
-\contentsline {subsection}{\numberline {2.3.15}トーナメントを管理する}{23}{subsection.2.3.15}%
+\contentsline {subsection}{\numberline {2.3.15}トーナメントを管理する}{24}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}パフォーマンス統計を表示する}{24}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}EPCを計算する}{24}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}XGからインポートしたポジションの分析を表示する}{24}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}XGからインポートしたポジションの分析を表示する}{25}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}XGにポジションをエクスポートする}{25}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}様々なポジションを表示する}{25}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}条件に基づいてポジションを検索する}{25}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.21}条件に基づいてポジションを検索する}{26}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}コマンド一覧}{26}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}全体操作}{26}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.1}全体操作}{27}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}局面とナビゲーション}{27}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}編集と検索}{27}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}検索フィルタ}{27}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}その他のコマンド}{31}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}キーボードショートカット}{31}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}データベース}{31}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}ポジション}{32}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}ナビゲーション}{32}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}表示}{32}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}アクション}{32}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}ツール}{33}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}コマンドライン}{33}{subsection.2.5.7}%
-\contentsline {subsection}{\numberline {2.5.8}検索履歴パネル}{33}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}フィルターライブラリパネル}{33}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}分析パネル}{34}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}マッチパネル}{34}{subsection.2.5.11}%
-\contentsline {subsection}{\numberline {2.5.12}Ankiパネル（間隔反復）}{34}{subsection.2.5.12}%
-\contentsline {section}{\numberline {2.6}コマンドラインインターフェース（CLI）}{34}{section.2.6}%
-\contentsline {subsection}{\numberline {2.6.1}はじめに}{34}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}一般的な構文}{35}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}利用可能なコマンド}{35}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}create — データベースを作成する}{35}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — データをインポートする}{36}{subsection.2.6.5}%
-\contentsline {subsubsection}{マッチのインポート}{36}{subsubsection*.23}%
-\contentsline {subsubsection}{ポジションのインポート}{36}{subsubsection*.24}%
-\contentsline {subsubsection}{一括インポート}{36}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.6.6}export — データをエクスポートする}{37}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}search — ポジションを検索する}{38}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — 内容を一覧表示する}{39}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — マッチを表示する}{39}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}info — データベースのメタデータ}{40}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}edit — メタデータを編集する}{40}{subsection.2.6.11}%
-\contentsline {subsection}{\numberline {2.6.12}verify — 整合性を確認する}{41}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}delete — データを削除する}{41}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}ワークフロー例}{42}{subsection.2.6.14}%
-\contentsline {subsubsection}{トーナメントディレクトリのインポート}{42}{subsubsection*.26}%
-\contentsline {subsubsection}{定期バックアップ}{42}{subsubsection*.27}%
-\contentsline {subsubsection}{エラー分析}{42}{subsubsection*.28}%
-\contentsline {subsection}{\numberline {2.6.15}終了コード}{42}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}よくある質問（FAQ）}{43}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}blunderDB の用途は何ですか？}{43}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}blunderDB 作成の動機は何ですか？}{43}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{43}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{43}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{44}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}どのマッチファイル形式がサポートされていますか？}{44}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{44}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{44}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{45}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}blunderDB を変更、コピー、共有できますか？}{45}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}blunderDB はどのデータ形式を使用していますか？}{45}{subsection.2.7.11}%
-\contentsline {subsection}{\numberline {2.7.12}blunderDB の設計原則は何でしたか？}{45}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}blunderDB のソフトウェアアーキテクチャは何ですか？}{45}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}blunderDB はどのプラットフォームで動作しますか？}{45}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}blunderDB のアイコンはどこから来ていますか？}{45}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}ヘッドレスモード（サーバー）}{46}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}概要}{46}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{46}{subsection.2.8.2}%
-\contentsline {subsubsection}{エンドポイント}{47}{subsubsection*.29}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{48}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{48}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{49}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{50}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{50}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{50}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{51}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}例}{51}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{53}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{53}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{54}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}V^^c3^^a9rifier l\textquotesingle {}int^^c3^^a9grit^^c3^^a9 du t^^c3^^a9l^^c3^^a9chargement (SHA256)}{57}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Mac 付録：blunderDB の起動ブロックについて}{60}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}blunderDB のインストール}{62}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}blunderDB の実行を許可する}{63}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}付録: データベーススキーマ}{63}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}バージョン 1.0.0}{63}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}バージョン 1.1.0}{63}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}バージョン 1.2.0}{64}{subsection.2.12.3}%
-\contentsline {subsection}{\numberline {2.12.4}バージョン 1.3.0}{64}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}バージョン 1.4.0}{64}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}バージョン 1.5.0}{64}{subsection.2.12.6}%
-\contentsline {subsection}{\numberline {2.12.7}バージョン 1.6.0}{65}{subsection.2.12.7}%
-\contentsline {subsection}{\numberline {2.12.8}バージョン 1.7.0}{65}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}付録：統計モデル — XG / gnuBG / blunderDB の整合}{65}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}正式な定義}{66}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{66}{subsubsection*.43}%
-\contentsline {subsubsection}{Snowie Error Rate}{66}{subsubsection*.44}%
-\contentsline {subsubsection}{MWC 損失（Match Winning Chance）}{67}{subsubsection*.45}%
-\contentsline {subsection}{\numberline {2.13.2}PR の分母にカウントされる決定}{67}{subsection.2.13.2}%
-\contentsline {subsubsection}{チェッカープレイ — カウントされる決定}{67}{subsubsection*.46}%
-\contentsline {subsubsection}{キューブ決定 — カウントされる決定}{67}{subsubsection*.47}%
-\contentsline {subsubsection}{フィルターの概要}{67}{subsubsection*.48}%
-\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG の対応}{67}{subsection.2.13.3}%
-\contentsline {subsubsection}{XG ↔ blunderDB の比較（同じ解析エンジン）}{68}{subsubsection*.49}%
-\contentsline {subsubsection}{gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）}{68}{subsubsection*.50}%
-\contentsline {subsection}{\numberline {2.13.4}自分の数値を検証する}{68}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}gnuBG 参照}{68}{subsection.2.13.5}%
+\contentsline {subsection}{\numberline {2.4.3}編集と検索}{28}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}検索フィルタ}{28}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}その他のコマンド}{32}{subsection.2.4.5}%
+\contentsline {section}{\numberline {2.5}キーボードショートカット}{32}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}データベース}{32}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}ポジション}{33}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}ナビゲーション}{33}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}表示}{33}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}アクション}{33}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}ツール}{34}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}コマンドライン}{34}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.8}検索履歴パネル}{34}{subsection.2.5.8}%
+\contentsline {subsection}{\numberline {2.5.9}フィルターライブラリパネル}{34}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}分析パネル}{35}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}マッチパネル}{35}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.12}Ankiパネル（間隔反復）}{35}{subsection.2.5.12}%
+\contentsline {section}{\numberline {2.6}コマンドラインインターフェース（CLI）}{35}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}はじめに}{35}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}一般的な構文}{36}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}利用可能なコマンド}{36}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}create — データベースを作成する}{36}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}import — データをインポートする}{37}{subsection.2.6.5}%
+\contentsline {subsubsection}{マッチのインポート}{37}{subsubsection*.23}%
+\contentsline {subsubsection}{ポジションのインポート}{37}{subsubsection*.24}%
+\contentsline {subsubsection}{一括インポート}{37}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {2.6.6}export — データをエクスポートする}{38}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.7}search — ポジションを検索する}{39}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}list — 内容を一覧表示する}{40}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}match — マッチを表示する}{40}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}info — データベースのメタデータ}{41}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}edit — メタデータを編集する}{41}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.12}verify — 整合性を確認する}{42}{subsection.2.6.12}%
+\contentsline {subsection}{\numberline {2.6.13}delete — データを削除する}{42}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.14}ワークフロー例}{43}{subsection.2.6.14}%
+\contentsline {subsubsection}{トーナメントディレクトリのインポート}{43}{subsubsection*.26}%
+\contentsline {subsubsection}{定期バックアップ}{43}{subsubsection*.27}%
+\contentsline {subsubsection}{エラー分析}{43}{subsubsection*.28}%
+\contentsline {subsection}{\numberline {2.6.15}終了コード}{43}{subsection.2.6.15}%
+\contentsline {section}{\numberline {2.7}よくある質問（FAQ）}{44}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}blunderDB の用途は何ですか？}{44}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}blunderDB 作成の動機は何ですか？}{44}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{44}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{44}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{45}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}どのマッチファイル形式がサポートされていますか？}{45}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{45}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{45}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{46}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}blunderDB を変更、コピー、共有できますか？}{46}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}blunderDB はどのデータ形式を使用していますか？}{46}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}blunderDB の設計原則は何でしたか？}{46}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.13}blunderDB のソフトウェアアーキテクチャは何ですか？}{46}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.14}blunderDB はどのプラットフォームで動作しますか？}{46}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}blunderDB のアイコンはどこから来ていますか？}{46}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}ヘッドレスモード（サーバー）}{47}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}概要}{47}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{47}{subsection.2.8.2}%
+\contentsline {subsubsection}{エンドポイント}{48}{subsubsection*.29}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{49}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{49}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{50}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{51}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{51}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{51}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{52}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}例}{52}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{54}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{54}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{55}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}V^^c3^^a9rifier l\textquotesingle {}int^^c3^^a9grit^^c3^^a9 du t^^c3^^a9l^^c3^^a9chargement (SHA256)}{58}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Mac 付録：blunderDB の起動ブロックについて}{61}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}blunderDB のインストール}{63}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}blunderDB の実行を許可する}{64}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}付録: データベーススキーマ}{64}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}バージョン 1.0.0}{64}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}バージョン 1.1.0}{64}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}バージョン 1.2.0}{65}{subsection.2.12.3}%
+\contentsline {subsection}{\numberline {2.12.4}バージョン 1.3.0}{65}{subsection.2.12.4}%
+\contentsline {subsection}{\numberline {2.12.5}バージョン 1.4.0}{65}{subsection.2.12.5}%
+\contentsline {subsection}{\numberline {2.12.6}バージョン 1.5.0}{65}{subsection.2.12.6}%
+\contentsline {subsection}{\numberline {2.12.7}バージョン 1.6.0}{66}{subsection.2.12.7}%
+\contentsline {subsection}{\numberline {2.12.8}バージョン 1.7.0}{66}{subsection.2.12.8}%
+\contentsline {section}{\numberline {2.13}付録：統計モデル — XG / gnuBG / blunderDB の整合}{66}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}正式な定義}{67}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{67}{subsubsection*.43}%
+\contentsline {subsubsection}{Snowie Error Rate}{67}{subsubsection*.44}%
+\contentsline {subsubsection}{MWC 損失（Match Winning Chance）}{68}{subsubsection*.45}%
+\contentsline {subsection}{\numberline {2.13.2}PR の分母にカウントされる決定}{68}{subsection.2.13.2}%
+\contentsline {subsubsection}{チェッカープレイ — カウントされる決定}{68}{subsubsection*.46}%
+\contentsline {subsubsection}{キューブ決定 — カウントされる決定}{68}{subsubsection*.47}%
+\contentsline {subsubsection}{フィルターの概要}{68}{subsubsection*.48}%
+\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG の対応}{68}{subsection.2.13.3}%
+\contentsline {subsubsection}{XG ↔ blunderDB の比較（同じ解析エンジン）}{69}{subsubsection*.49}%
+\contentsline {subsubsection}{gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）}{69}{subsubsection*.50}%
+\contentsline {subsection}{\numberline {2.13.4}自分の数値を検証する}{69}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG 参照}{69}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {第3章}連絡先}{71}{chapter.3}%
 \contentsline {chapter}{\numberline {第4章}寄付する}{73}{chapter.4}%
 \contentsline {chapter}{\numberline {第5章}謝辞}{75}{chapter.5}%

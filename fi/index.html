@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.25.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.26.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c9e87217"></script>
+      <script src="_static/documentation_options.js?v=5b97acfc"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -258,12 +258,16 @@
 <td><p>Lisätty käyttöliittymän opastettuja kierroksia (yleiskierros, haku, ottelut, turnaukset), jotka voi toistaa työkalupalkista tai komennolla <code class="docutils literal notranslate"><span class="pre">tour</span></code>, sekä komennolla <code class="docutils literal notranslate"><span class="pre">demo</span></code> ladattava esimerkkitietokanta työkaluun tutustumiseksi tuomatta omia pelejä. Laudan värien mukauttaminen (tausta, reuna, kärjet, nappulat, nopat, kuutio) asetusikkunasta. Komentorivin automaattitäydennys (<em>TAB</em>-näppäin). Hakupaneeli: nimenomainen päätöstyypin hallinta (Siirto / Tuplaus), kuutiopäätöksille alityyppi Tuplaus / Ei tuplausta tai Hyväksy / Luovuta, synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä hyväksy/luovuta-päätöksissä. Aseman haku sen tunnuksella (suodatin <code class="docutils literal notranslate"><span class="pre">id</span></code>). Korjattu kuutiovirheen kohdistaminen pelaajalle 1. Katso <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Opastetut kierrokset ja esimerkkitietokanta</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.24.0</p></td>
-<td><p>06/06/2026</p></td>
+<td><p>6.6.2026</p></td>
 <td><p>Lisätty konttikuva (Docker) headless-tilaa varten: erillinen <code class="docutils literal notranslate"><span class="pre">serve</span></code>-aloituspiste ja <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, joka tuottaa staattisen binaarin ilman graafista käyttöliittymää, jotta blunderDB-moottori voidaan ottaa käyttöön palveluna käänteisvälityspalvelimen takana. Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>0.25.0</p></td>
-<td><p>07/06/2026</p></td>
+<td><p>7.6.2026</p></td>
 <td><p>Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen tallentamatta sitä — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> purkaa XGID-merkkijonon asemaksi ja <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> lukee yksittäisen aseman <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>-tiedoston. Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.26.0</p></td>
+<td><p>9.6.2026</p></td>
+<td><p>Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko käyttöliittymän suurentamiseksi tai pienentämiseksi sekä paneelien sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden näyttöjen parempaa hyödyntämistä varten. Lisätty laudan yläpuolelle tietopalkki, joka näyttää pelaajat ja ottelun taustatiedot (tapahtuma, paikka, kierros, päivämäärä, pituus). Kun tietokanta avataan, otteluiden paneeli näytetään heti ja tarkastelu alkaa ensimmäisestä asemasta. Näppäimistöoikotiet ovat nyt riippumattomia näppäimistöasettelusta (AZERTY, QWERTY, QWERTZ…). Korjattu XGID-purku (Jacoby/Beaver-liput ja kuution arvo). Katso <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Asetukset</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

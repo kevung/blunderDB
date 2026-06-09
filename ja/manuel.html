@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. マニュアル &mdash; blunderDB 0.25.0 ドキュメント</title>
+  <title>2. マニュアル &mdash; blunderDB 0.26.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=41c7bfbf"></script>
+      <script src="_static/documentation_options.js?v=d3b86154"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -213,6 +213,7 @@
 <p>ツールバーのヘルプボタンの左にある設定ボタン（歯車の形のアイコン）を押すと、blunderDB の設定ウィンドウが開きます。</p>
 <p>このウィンドウでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語の中からインターフェースの言語を選択できます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。</p>
 <p>設定ウィンドウでは、盤面の色をカスタマイズすることもできます。各要素にはそれぞれ独自のカラーピッカーがあります。背景、枠線、明るいポイントと暗いポイント、プレイヤー1とプレイヤー2のチェッカー、ダイス、ダイスの目、そしてダブリングキューブです。 <em>デフォルトに戻す</em> ボタンを押すと、すべての色がデフォルトに戻ります。言語と同様に、選択した色はセッションをまたいで保持されます。</p>
+<p>設定ウィンドウには、インターフェースの表示設定もまとめられています。<strong>インターフェースの拡大率</strong> のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。<strong>パネルの位置</strong> メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： <em>下</em>、<em>横</em> または <a href="#id1"><span class="problematic" id="id2">*</span></a>自動*（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
 <span id="visites-guidees"></span><h2><span class="section-number">2.5. </span>ガイドツアーとサンプルデータベース<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
@@ -284,6 +285,8 @@
 <li><p>分析の中で実際にプレイされた手が強調表示されているのを確認する。</p></li>
 </ul>
 <p>各マッチで最後に閲覧したポジションは記憶され、自動的に復元されます。パネルを表示または非表示にするには、<em>CTRL-Tab</em> を押すか <code class="docutils literal notranslate"><span class="pre">match</span></code> コマンドを実行します。</p>
+<p>マッチを開くと、ボードの上に <strong>情報バー</strong> が表示されます： 対戦している両プレイヤー（<em>プレイヤー 1</em> 対 <em>プレイヤー 2</em>）と、マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）が示されます。</p>
+<p>マッチを含むデータベースを開くと、<strong>マッチ</strong> パネルがすぐに表示され、レビューは直接最初のポジションから始まるため、すぐにナビゲーションを開始できます。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>

@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{09 giu 2026}
-\release{0.25.0}
+\release{0.26.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -656,7 +656,7 @@ Aggiunta di visite guidate dell’interfaccia (visita generale, ricerca, partite
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-06/06/2026
+6 giugno 2026
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -672,12 +672,28 @@ Aggiunta un’immagine container (Docker) per la modalità headless: un punto di
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-07/06/2026
+7 giugno 2026
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Modalità server (headless): due nuovi metodi per ricostruire una posizione senza salvarla — \sphinxcode{\sphinxupquote{positions.fromXGID}} decodifica una stringa XGID in una posizione e \sphinxcode{\sphinxupquote{positions.fromXGP}} legge un file di posizione singola \sphinxcode{\sphinxupquote{.xgp}}. Vedi {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Modalità headless (server)}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.26.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+9 giugno 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Impostazioni di visualizzazione dell’interfaccia nella finestra di configurazione: un cursore di scala per ingrandire o ridurre l’intera interfaccia, e una scelta della posizione dei pannelli (in basso, di lato o automatica) per sfruttare meglio gli schermi larghi. Aggiunta di una barra delle informazioni sopra il tavoliere che ricorda i giocatori e il contesto del match (evento, luogo, turno, data, lunghezza). All’apertura di un database, il pannello dei match viene mostrato subito e la revisione inizia sulla prima posizione. Le scorciatoie da tastiera sono ora indipendenti dal layout della tastiera (AZERTY, QWERTY, QWERTZ…). Correzione della decodifica XGID (indicatori Jacoby/Beaver e valore del videau). Vedere {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configurazione}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -702,15 +718,15 @@ L’ultima versione di blunderDB è disponibile con licenza MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.25.0.exe}
+per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.26.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.25.0}
+per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.26.0}
 
 \item {} 
 \sphinxAtStartPar
-per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.25.0.zip}
+per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.26.0.zip}
 
 \end{itemize}
 
@@ -726,7 +742,7 @@ Su Linux, se blunderDB non è eseguibile dopo il download, eseguire in un termin
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.25.0}
+Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.26.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avvertimento:}
@@ -949,6 +965,9 @@ Essa permette di scegliere la lingua dell’interfaccia tra inglese, francese, t
 \sphinxAtStartPar
 La finestra delle impostazioni permette inoltre di personalizzare i colori del board. Ogni elemento dispone del proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante \sphinxstyleemphasis{Ripristina} riporta tutti i colori ai valori predefiniti. Come la lingua, i colori scelti vengono conservati da una sessione all’altra.
 
+\sphinxAtStartPar
+La finestra di configurazione raggruppa anche alcune impostazioni di visualizzazione dell’interfaccia. Un cursore di \sphinxstylestrong{scala dell’interfaccia} consente di ingrandire o ridurre l’insieme degli elementi, il che è utile sugli schermi ad alta densità o per migliorare la leggibilità. Un menu \sphinxstylestrong{posizione dei pannelli} determina la collocazione dei pannelli (ricerca, match, analisi) rispetto al tavoliere: \sphinxstyleemphasis{in basso}, \sphinxstyleemphasis{di lato} o \sphinxstyleemphasis{automatica} (il lato viene allora scelto sugli schermi larghi per sfruttare meglio lo spazio disponibile). Come le altre impostazioni, queste scelte vengono conservate da una sessione all’altra.
+
 
 \subsection{Visite guidate e database di esempio}
 \label{\detokenize{manuel:visites-guidees-et-base-d-exemple}}\label{\detokenize{manuel:visites-guidees}}
@@ -1079,6 +1098,12 @@ vedere la mossa effettivamente giocata evidenziata nell’analisi.
 
 \sphinxAtStartPar
 L’ultima posizione visitata in ciascun match viene memorizzata e ripristinata automaticamente. Premere \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} o eseguire il comando \sphinxcode{\sphinxupquote{match}} per mostrare o nascondere il pannello.
+
+\sphinxAtStartPar
+Quando un match è aperto, una \sphinxstylestrong{barra delle informazioni} appare sopra il tavoliere: ricorda i giocatori coinvolti (\sphinxstyleemphasis{giocatore 1} contro \sphinxstyleemphasis{giocatore 2}) nonché il contesto del match (evento, luogo, turno, data e lunghezza del match, quando queste informazioni sono disponibili).
+
+\sphinxAtStartPar
+All’apertura di un database contenente match, il pannello \sphinxstylestrong{Match} viene mostrato subito e la revisione inizia direttamente sulla prima posizione, così da cominciare immediatamente la navigazione.
 
 \begin{sphinxadmonition}{tip}{Suggerimento:}
 \sphinxAtStartPar
@@ -3653,6 +3678,11 @@ Le migrazioni del database vengono ora eseguite automaticamente all’apertura d
 
 \section{Scorciatoie da tastiera}
 \label{\detokenize{raccourcis:raccourcis-clavier}}\label{\detokenize{raccourcis:raccourcis}}\label{\detokenize{raccourcis::doc}}
+\begin{sphinxadmonition}{note}{Nota:}
+\sphinxAtStartPar
+Le scorciatoie da tastiera sono indipendenti dal layout della tastiera: restano accessibili allo stesso modo qualunque sia il layout utilizzato (AZERTY, QWERTY, QWERTZ, ecc.).
+\end{sphinxadmonition}
+
 
 \subsection{Database}
 \label{\detokenize{raccourcis:base-de-donnees}}\label{\detokenize{raccourcis:raccourcis-generaux}}
