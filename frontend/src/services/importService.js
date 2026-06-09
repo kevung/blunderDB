@@ -25,7 +25,8 @@ import {
     ImportBGFMatch,
     ImportBGFPosition,
     ImportBGFPositionFromText,
-    ImportXGPPosition
+    ImportXGPPosition,
+    ParsePositionText
 } from '../../wailsjs/go/database/Database.js';
 import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 
@@ -458,7 +459,7 @@ async function importTxtFile(filePath) {
         }
     } else {
         logger.log('File content:', content);
-        const { positionData, parsedAnalysis } = parsePosition(content);
+        const { positionData, parsedAnalysis } = await parsePositionText(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
         analysisStore.set({
             positionId: null,
@@ -542,7 +543,7 @@ async function importTxtFileBatch(filePath) {
         const posID = await ImportBGFPosition(filePath);
         return { type: 'position', id: posID };
     } else {
-        const { positionData, parsedAnalysis } = parsePosition(content);
+        const { positionData, parsedAnalysis } = await parsePositionText(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
         await savePositionAndAnalysis(positionData, parsedAnalysis, '');
         return { type: 'position', id: 0 };
@@ -661,7 +662,7 @@ export async function pastePosition() {
             setStatusBarMessage(tMsg('status.errorPastingBgblitzPos', { error }));
         }
     } else {
-        const { positionData, parsedAnalysis } = parsePosition(result);
+        const { positionData, parsedAnalysis } = await parsePositionText(result);
         await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
     }
     statusBarModeStore.set('NORMAL');
@@ -672,7 +673,7 @@ async function pastePositionToBoard() {
         const clipboardText = await ClipboardGetText();
         if (clipboardText && clipboardText.includes('XGID=')) {
             try {
-                const { positionData } = parsePosition(clipboardText);
+                const { positionData } = await parsePositionText(clipboardText);
                 applyPositionToBoard(positionData);
                 setStatusBarMessage(tMsg('status.positionPastedClipboard'));
                 return;
@@ -811,482 +812,28 @@ export async function handleFileDrop(x, y, paths) {
         setStatusBarMessage(tMsg('status.noImportableDropped'));
     }
 }
-
 // ── Position text parser ────────────────────────────────────────
-
-export function parsePosition(fileContent) {
-    if (!fileContent || fileContent.trim().length === 0) {
-        throw new Error('File is empty or invalid.');
-    }
-
-    let normalizedContent = fileContent.replace(/\r\n|\r/g, '\n').trim();
-    const lines = normalizedContent.split('\n').map((line) => line.trim());
-
-    const isFrench = normalizedContent.includes('Joueur') || normalizedContent.includes('Adversaire') || normalizedContent.includes('Videau');
-    const isJapanese = normalizedContent.includes('プレーヤー') || normalizedContent.includes('対戦相手') || normalizedContent.includes('キューブ');
-    const isInternalCheckerAnalysisFormat = normalizedContent.includes('Analysis:\nChecker Move Analysis:');
-    const isInternalDoublingAnalysisFormat = normalizedContent.includes('Analysis:\nDoubling Cube Analysis:');
-    const isGerman = normalizedContent.includes('Spieler') || normalizedContent.includes('Gegner') || normalizedContent.includes('Dopplerwürfel');
-
-    normalizedContent = normalizedContent.replace(/,/g, '.');
-
-    const xgidLine = lines.find((line) => line.startsWith('XGID='));
-    const xgid = xgidLine ? xgidLine.split('=')[1] : null;
-
-    if (!xgid) {
-        throw new Error('XGID not found in the file content.');
-    }
-
-    const [positionPart, cubeValue, cubeOwner, playerDownOnDiagram, dicePart, score1, score2, isCrawford, matchLength, _dummy] = xgid.split(':');
-
-    const board = { points: Array(26).fill({ checkers: 0, color: -1 }) };
-
-    if (positionPart) {
-        const pointChars = positionPart.split('');
-        let pointIndex = 0;
-        pointChars.forEach((char) => {
-            if (char >= 'A' && char <= 'Z') {
-                const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 0 };
-            } else if (char >= 'a' && char <= 'z') {
-                const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 1 };
-            }
-            pointIndex++;
-        });
-    }
-
-    const diceValues = dicePart ? dicePart.split('').map((num) => parseInt(num)) : [0, 0];
-    const dice = [diceValues[0], diceValues[1]];
-
-    const player1Score = parseInt(score1);
-    const player2Score = parseInt(score2);
-    const matchLengthValue = parseInt(matchLength);
-    const playerOnRoll = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;
-
-    let hasJacoby = 0,
-        hasBeaver = 0,
-        awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
-    if (parseInt(isCrawford) === 0) {
-        awayScores = awayScores.map((score) => (score === 1 ? 0 : score));
-    }
-    if (matchLengthValue === 0) {
-        awayScores = [-1, -1];
-        switch (parseInt(isCrawford)) {
-            case 1:
-                hasJacoby = 1;
-                break;
-            case 2:
-                hasBeaver = 1;
-                break;
-            case 3:
-                hasJacoby = 1;
-                hasBeaver = 1;
-                break;
+//
+// Parsing lives in the Go backend now (pkg/blunderdb/parser, exposed as
+// ParsePositionText over Wails) so the GUI, CLI and server share one
+// implementation and can't drift — see testdata/parse_corpus.json and its
+// dual contract tests. parsePositionText() calls the backend and reshapes the
+// result into the legacy { positionData, parsedAnalysis } shape the callers
+// already consume (parsedAnalysis.checkerAnalysis as a bare array,
+// doublingCubeAnalysis as an object, comment inline).
+export async function parsePositionText(content) {
+    const result = await ParsePositionText(content);
+    const a = result.analysis || {};
+    const moves = a.checkerAnalysis && Array.isArray(a.checkerAnalysis.moves) ? a.checkerAnalysis.moves : [];
+    return {
+        positionData: result.position,
+        parsedAnalysis: {
+            xgid: a.xgid || '',
+            analysisType: a.analysisType || '',
+            analysisEngineVersion: a.analysisEngineVersion || '',
+            checkerAnalysis: moves,
+            doublingCubeAnalysis: a.doublingCubeAnalysis || {},
+            comment: result.comment || ''
         }
-    }
-
-    const player1Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
-    const player2Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
-    board.bearoff = [player1Bearoff, player2Bearoff];
-
-    const decisionLine = lines.find((line) => line.includes(isFrench ? 'jouer' : isJapanese ? 'to play' : isGerman ? 'spielen' : 'to play'));
-    const decisionType = decisionLine || isInternalCheckerAnalysisFormat ? 0 : 1;
-
-    const positionData = {
-        board: board,
-        cube: {
-            owner: parseInt(cubeOwner) === 1 ? 0 : parseInt(cubeOwner) === -1 ? 1 : -1,
-            value: parseInt(cubeValue)
-        },
-        dice: dice,
-        score: awayScores,
-        player_on_roll: playerOnRoll,
-        decision_type: decisionType,
-        has_jacoby: hasJacoby,
-        has_beaver: hasBeaver
     };
-
-    const parsedAnalysis = { xgid, analysisType: '', checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: '' };
-
-    const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: (.+?)(?:\. MET: (.+))?$/m);
-    if (engineVersionMatch) {
-        parsedAnalysis.analysisEngineVersion = `eXtreme Gammon Version: ${engineVersionMatch[1]}`;
-        if (engineVersionMatch[2]) {
-            parsedAnalysis.analysisEngineVersion += `, MET: ${engineVersionMatch[2]}`;
-        }
-    }
-
-    const engineName = engineVersionMatch ? 'XG' : '';
-
-    if (isInternalDoublingAnalysisFormat) {
-        parsedAnalysis.analysisType = 'DoublingCube';
-        const doublingCubeAnalysisRegex =
-            /Doubling Cube Analysis:\nAnalysis Depth: "(.+)"\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
-        const doublingCubeMatch = doublingCubeAnalysisRegex.exec(normalizedContent);
-        if (doublingCubeMatch) {
-            parsedAnalysis.doublingCubeAnalysis = {
-                analysisDepth: doublingCubeMatch[1].trim(),
-                analysisEngine: engineName,
-                playerWinChances: parseFloat(doublingCubeMatch[2]),
-                playerGammonChances: parseFloat(doublingCubeMatch[3]),
-                playerBackgammonChances: parseFloat(doublingCubeMatch[4]),
-                opponentWinChances: parseFloat(doublingCubeMatch[5]),
-                opponentGammonChances: parseFloat(doublingCubeMatch[6]),
-                opponentBackgammonChances: parseFloat(doublingCubeMatch[7]),
-                cubelessNoDoubleEquity: parseFloat(doublingCubeMatch[8]),
-                cubelessDoubleEquity: parseFloat(doublingCubeMatch[9]),
-                cubefulNoDoubleEquity: parseFloat(doublingCubeMatch[10]),
-                cubefulNoDoubleError: parseFloat(doublingCubeMatch[11]),
-                cubefulDoubleTakeEquity: parseFloat(doublingCubeMatch[12]),
-                cubefulDoubleTakeError: parseFloat(doublingCubeMatch[13]),
-                cubefulDoublePassEquity: parseFloat(doublingCubeMatch[14]),
-                cubefulDoublePassError: parseFloat(doublingCubeMatch[15]),
-                bestCubeAction: doublingCubeMatch[16].trim(),
-                wrongPassPercentage: parseFloat(doublingCubeMatch[17]),
-                wrongTakePercentage: parseFloat(doublingCubeMatch[18])
-            };
-        }
-    } else if (isInternalCheckerAnalysisFormat) {
-        parsedAnalysis.analysisType = 'CheckerMove';
-        const moveRegex =
-            /^Move (\d+): (.+)\nAnalysis Depth: "(.+)"\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
-        let moveMatch;
-        while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
-            parsedAnalysis.checkerAnalysis.push({
-                index: parseInt(moveMatch[1], 10),
-                move: moveMatch[2].trim(),
-                analysisDepth: moveMatch[3].trim(),
-                analysisEngine: engineName,
-                equity: parseFloat(moveMatch[4]),
-                equityError: parseFloat(moveMatch[5]),
-                playerWinChance: parseFloat(moveMatch[6]),
-                playerGammonChance: parseFloat(moveMatch[7]),
-                playerBackgammonChance: parseFloat(moveMatch[8]),
-                opponentWinChance: parseFloat(moveMatch[9]),
-                opponentGammonChance: parseFloat(moveMatch[10]),
-                opponentBackgammonChance: parseFloat(moveMatch[11])
-            });
-        }
-    } else if (/^ {4}(\d+)\./gm.test(normalizedContent)) {
-        parsedAnalysis.analysisType = 'CheckerMove';
-        const moveRegex = new RegExp(
-            isFrench
-                ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-                : isJapanese
-                  ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-                  : isGerman
-                    ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-                    : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/,
-            'gm'
-        );
-        let moveMatch;
-        while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
-            const moveDetails = {
-                index: parseInt(moveMatch[1], 10),
-                analysisDepth: moveMatch[2].trim(),
-                analysisEngine: engineName,
-                move: moveMatch[3].trim(),
-                equity: parseFloat(moveMatch[4]),
-                equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0
-            };
-            const lineStart = moveMatch.index + moveMatch[0].length;
-            const remainingContent = normalizedContent.slice(lineStart);
-            const playerRegex = isFrench
-                ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : isJapanese
-                  ? /プレーヤー:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                  : isGerman
-                    ? /Spieler:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
-            const opponentRegex = isFrench
-                ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : isJapanese
-                  ? /対戦相手:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                  : isGerman
-                    ? /Gegner:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
-            const playerMatch = playerRegex.exec(remainingContent);
-            const opponentMatch = opponentRegex.exec(remainingContent);
-            if (playerMatch) {
-                moveDetails.playerWinChance = parseFloat(playerMatch[1]);
-                moveDetails.playerGammonChance = parseFloat(playerMatch[2]);
-                moveDetails.playerBackgammonChance = parseFloat(playerMatch[3]);
-            }
-            if (opponentMatch) {
-                moveDetails.opponentWinChance = parseFloat(opponentMatch[1]);
-                moveDetails.opponentGammonChance = parseFloat(opponentMatch[2]);
-                moveDetails.opponentBackgammonChance = parseFloat(opponentMatch[3]);
-            }
-            parsedAnalysis.checkerAnalysis.push(moveDetails);
-        }
-        if (playerOnRoll === 1) {
-            parsedAnalysis.checkerAnalysis.forEach((move) => {
-                const tempWinChance = move.playerWinChance;
-                const tempGammonChance = move.playerGammonChance;
-                const tempBackgammonChance = move.playerBackgammonChance;
-                move.playerWinChance = move.opponentWinChance;
-                move.playerGammonChance = move.opponentGammonChance;
-                move.playerBackgammonChance = move.opponentBackgammonChance;
-                move.opponentWinChance = tempWinChance;
-                move.opponentGammonChance = tempGammonChance;
-                move.opponentBackgammonChance = tempBackgammonChance;
-            });
-        }
-    } else if (
-        (isFrench && (normalizedContent.includes('Equités sans videau') || normalizedContent.includes('Equités avec videau'))) ||
-        (isJapanese && (normalizedContent.includes('Cubeless Equities') || normalizedContent.includes('Cubeful Equities'))) ||
-        (isGerman && (normalizedContent.includes('Equities ohne Dopplerwürfel') || normalizedContent.includes('Equities mit Dopplerwürfel'))) ||
-        (!isFrench && !isJapanese && !isGerman && (normalizedContent.includes('Cubeless Equities') || normalizedContent.includes('Cubeful Equities')))
-    ) {
-        parsedAnalysis.analysisType = 'DoublingCube';
-
-        const analysisDepthMatch = normalizedContent.match(
-            new RegExp(isFrench ? /Analysé avec\s+([^\n]*)/ : isJapanese ? /Analyzed in\s+([^\n]*)/ : isGerman ? /Analysiert in\s+([^\n]*)/ : /Analyzed in\s+([^\n]*)/)
-        );
-        const playerWinMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                    : isJapanese
-                      ? /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                      : isGerman
-                        ? /Spieler Gewinnchancen:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                        : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-            )
-        );
-        const opponentWinMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                    : isJapanese
-                      ? /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                      : isGerman
-                        ? /Gewinnchancen des Gegners:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                        : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-            )
-        );
-        const cubelessMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Equités sans videau\s*:\s*Pas de double=([+\-\d.]+).\s*Double=([+\-\d.]+)/
-                    : isJapanese
-                      ? /Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+)./
-                      : isGerman
-                        ? /Equities ohne Dopplerwürfel\s*:\s*Nicht Doppeln=([+\-\d.]+).\s*Doppeln=([+\-\d.]+)/
-                        : /Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+)/
-            )
-        );
-        const cubefulNoDoubleMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Pas de double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /ノーダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Nicht Doppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /No double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const cubefulDoubleTakeMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Double\/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /ダブル\/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Doppeln\/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /Double\/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const cubefulDoublePassMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Double\/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /ダブル\/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Doppeln\/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /Double\/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const redoubleNoMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Pas de redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /ノーリダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Nicht Redoppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /No redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const redoubleTakeMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Redouble\/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /リダブル\/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Redoppeln\/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /Redouble\/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const redoublePassMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Redouble\/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /リダブル\/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Redoppeln\/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /Redouble\/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const cubefulDoubleBeaverMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Double\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                    : isJapanese
-                      ? /ダブル\/ビーバー:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                      : isGerman
-                        ? /Doppeln\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-                        : /Double\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
-            )
-        );
-        const bestCubeActionMatch = normalizedContent.match(
-            new RegExp(isFrench ? /Meilleur action du videau:\s*(.*)/ : isJapanese ? /ベストキューブアクション：\s*(.*)/ : isGerman ? /Beste Dopplerwürfel Aktion\s*(.*)/ : /Best Cube action:\s*(.*)/)
-        );
-        const wrongPassPercentageMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/
-                    : isJapanese
-                      ? /ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+\.\d+)%/
-                      : isGerman
-                        ? /Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/
-                        : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/
-            )
-        );
-        const wrongTakePercentageMatch = normalizedContent.match(
-            new RegExp(
-                isFrench
-                    ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/
-                    : isJapanese
-                      ? /ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+\.\d+)%/
-                      : isGerman
-                        ? /Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/
-                        : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/
-            )
-        );
-
-        parsedAnalysis.doublingCubeAnalysis.analysisEngine = engineName;
-        if (analysisDepthMatch) parsedAnalysis.doublingCubeAnalysis.analysisDepth = analysisDepthMatch[1].trim();
-        if (playerWinMatch) {
-            parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.playerGammonChances = parseFloat(playerWinMatch[2]);
-            parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances = parseFloat(playerWinMatch[3]);
-        }
-        if (opponentWinMatch) {
-            parsedAnalysis.doublingCubeAnalysis.opponentWinChances = parseFloat(opponentWinMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.opponentGammonChances = parseFloat(opponentWinMatch[2]);
-            parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances = parseFloat(opponentWinMatch[3]);
-        }
-        if (cubelessMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity = parseFloat(cubelessMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity = parseFloat(cubelessMatch[2]);
-        }
-        if (cubefulNoDoubleMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(cubefulNoDoubleMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = cubefulNoDoubleMatch[2] ? parseFloat(cubefulNoDoubleMatch[2]) : 0;
-        }
-        if (cubefulDoubleTakeMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(cubefulDoubleTakeMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = cubefulDoubleTakeMatch[2] ? parseFloat(cubefulDoubleTakeMatch[2]) : 0;
-        }
-        if (cubefulDoublePassMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(cubefulDoublePassMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = cubefulDoublePassMatch[2] ? parseFloat(cubefulDoublePassMatch[2]) : 0;
-        }
-        if (redoubleNoMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(redoubleNoMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = redoubleNoMatch[2] ? parseFloat(redoubleNoMatch[2]) : 0;
-        }
-        if (redoubleTakeMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = redoubleTakeMatch[2] ? parseFloat(redoubleTakeMatch[2]) : 0;
-        }
-        if (redoublePassMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(redoublePassMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = redoublePassMatch[2] ? parseFloat(redoublePassMatch[2]) : 0;
-        }
-        if (cubefulDoubleBeaverMatch) {
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(cubefulDoubleBeaverMatch[1]);
-            parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = cubefulDoubleBeaverMatch[2] ? parseFloat(cubefulDoubleBeaverMatch[2]) : 0;
-        }
-        if (bestCubeActionMatch) parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
-        if (wrongPassPercentageMatch) parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage = parseFloat(wrongPassPercentageMatch[1]);
-        if (wrongTakePercentageMatch) parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage = parseFloat(wrongTakePercentageMatch[1]);
-
-        if (playerOnRoll === 1) {
-            const tempWinChances = parsedAnalysis.doublingCubeAnalysis.playerWinChances;
-            const tempGammonChances = parsedAnalysis.doublingCubeAnalysis.playerGammonChances;
-            const tempBackgammonChances = parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances;
-            parsedAnalysis.doublingCubeAnalysis.playerWinChances = parsedAnalysis.doublingCubeAnalysis.opponentWinChances;
-            parsedAnalysis.doublingCubeAnalysis.playerGammonChances = parsedAnalysis.doublingCubeAnalysis.opponentGammonChances;
-            parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances = parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances;
-            parsedAnalysis.doublingCubeAnalysis.opponentWinChances = tempWinChances;
-            parsedAnalysis.doublingCubeAnalysis.opponentGammonChances = tempGammonChances;
-            parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances = tempBackgammonChances;
-        }
-    }
-
-    const commentSection = extractCommentSection(normalizedContent, parsedAnalysis.analysisType === 'DoublingCube');
-    parsedAnalysis.comment = commentSection;
-
-    return { positionData, parsedAnalysis };
-}
-
-function extractCommentSection(content, isDoublingCube) {
-    if (isDoublingCube) {
-        const commentRegex = /(?:Best Cube action: .+|Meilleur action du videau: .+|Percentage of wrong .+|Pourcentage de passes incorrectes .+%)\n\n([\s\S]+?)\n\neXtreme Gammon Version:/;
-        let match = commentRegex.exec(content);
-        return match ? match[1].trim() : '';
-    } else {
-        const lines = content.split('\n');
-        let lastOpponentIndex = -1;
-
-        for (let i = lines.length - 1; i >= 0; i--) {
-            if (lines[i].includes('Opponent') || lines[i].includes('Adversaire')) {
-                lastOpponentIndex = i;
-                break;
-            }
-        }
-
-        if (lastOpponentIndex === -1) return '';
-
-        let blankLineCount = 0;
-        let commentStartIndex = -1;
-        for (let i = lastOpponentIndex + 1; i < lines.length; i++) {
-            if (lines[i].trim() === '') blankLineCount++;
-            else blankLineCount = 0;
-            if (blankLineCount === 2) {
-                commentStartIndex = i + 1;
-                break;
-            }
-        }
-
-        if (commentStartIndex === -1) return '';
-
-        let commentEndIndex = -1;
-        for (let i = commentStartIndex; i < lines.length; i++) {
-            if (lines[i].trim() === '' && lines[i + 1] && lines[i + 1].startsWith('eXtreme Gammon Version:')) {
-                commentEndIndex = i;
-                break;
-            }
-        }
-
-        if (commentEndIndex === -1) return '';
-        return lines.slice(commentStartIndex, commentEndIndex).join('\n').trim();
-    }
 }

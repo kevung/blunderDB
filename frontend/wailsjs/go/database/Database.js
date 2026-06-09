@@ -354,6 +354,10 @@ export function OpenDatabase(arg1) {
   return window['go']['database']['Database']['OpenDatabase'](arg1);
 }
 
+export function ParsePositionText(arg1) {
+  return window['go']['database']['Database']['ParsePositionText'](arg1);
+}
+
 export function PositionExists(arg1) {
   return window['go']['database']['Database']['PositionExists'](arg1);
 }

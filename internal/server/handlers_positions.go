@@ -9,6 +9,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/parser"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -22,6 +23,11 @@ type existsReq struct {
 
 type xgidReq struct {
 	XGID string `json:"xgid"`
+}
+
+// parseTextReq carries pasted clipboard / file text to parse into a position.
+type parseTextReq struct {
+	Text string `json:"text"`
 }
 
 // xgpReq carries a base64-encoded .xgp single-position file.
@@ -107,6 +113,17 @@ func (s *Server) positionRoutes() []route {
 				resp.Analysis = graphs[0].Analyses[0]
 			}
 			return resp, nil
+		})},
+		// Parse pasted clipboard / file text (bare XGID, XG human-readable export,
+		// or blunderDB internal export) into a Position + optional analysis +
+		// comment (pure; no storage). Same backend parser the Desktop GUI calls,
+		// so the two share one implementation. Invalid input → 4xx.
+		{http.MethodPost, "/v1/positions.parseText", rpc(func(ctx context.Context, scope string, req parseTextReq) (parser.Result, error) {
+			res, err := parser.ParsePosition(req.Text)
+			if err != nil {
+				return parser.Result{}, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
+			}
+			return res, nil
 		})},
 		// Enumerate every legal complete play for a position's dice (pure; no
 		// storage). Powers interactive "play your move" UIs (énigme answer mode,
