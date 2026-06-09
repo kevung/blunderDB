@@ -837,7 +837,7 @@ msgid ""
 "le nom apparaît le plus souvent dans la base de données — modifiable à "
 "tout moment."
 msgstr ""
-"Η αναπτυσσόμενη λίστα **Joueur** επιτρέπει το φιλτράρισμα των στατιστικών"
+"Η αναπτυσσόμενη λίστα **Παίκτης** επιτρέπει το φιλτράρισμα των στατιστικών"
 " σύμφωνα με τον αναλυόμενο παίκτη. Το blunderDB επιλέγει αυτόματα τον "
 "παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση δεδομένων — "
 "τροποποιήσιμο ανά πάσα στιγμή."
@@ -859,7 +859,7 @@ msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
 msgstr ""
-"**Tournoi(s)** — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να "
+"**Τουρνουά** — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να "
 "επιλεγούν πολλά τουρνουά ταυτόχρονα."
 
 #: ../../source/manuel.rst:407
@@ -867,12 +867,12 @@ msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr ""
-"**Dates** — χρονικό εύρος (*De* … *À*). Αν συμπληρωθεί μόνο η ημερομηνία "
+"**Ημερομηνίες** — χρονικό εύρος (*Από* … *Έως*). Αν συμπληρωθεί μόνο η ημερομηνία "
 "έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις."
 
 #: ../../source/manuel.rst:410
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
-msgstr "**Type de décision** — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου."
+msgstr "**Τύπος απόφασης** — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου."
 
 #: ../../source/manuel.rst:412
 msgid ""
@@ -880,7 +880,7 @@ msgid ""
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr ""
-"**Longueur de match** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, "
+"**Διάρκεια αγώνα** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, "
 "7, 9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη."
 
 #: ../../source/manuel.rst:415

@@ -805,7 +805,7 @@ msgid ""
 "le nom apparaît le plus souvent dans la base de données — modifiable à "
 "tout moment."
 msgstr ""
-"Pudotusvalikko **Joueur** suodattaa tilastot analysoitavan pelaajan "
+"Pudotusvalikko **Pelaaja** suodattaa tilastot analysoitavan pelaajan "
 "mukaan. blunderDB valitsee automaattisesti pelaajan, jonka nimi esiintyy "
 "tietokannassa useimmin — vaihdettavissa milloin tahansa."
 
@@ -826,7 +826,7 @@ msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
 msgstr ""
-"**Tournament(s)** — rajaus yhteen tai useampaan turnaukseen. Useita "
+"**Turnaukset** — rajaus yhteen tai useampaan turnaukseen. Useita "
 "turnauksia voi valita samanaikaisesti."
 
 #: ../../source/manuel.rst:407
@@ -834,12 +834,12 @@ msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr ""
-"**Dates** — aikaväli (*From* … *To*). Jos vain alkupäivä on asetettu, "
+"**Päivämäärät** — aikaväli (*Alkaen* … *Asti*). Jos vain alkupäivä on asetettu, "
 "uudemmat asemat sisällytetään."
 
 #: ../../source/manuel.rst:410
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
-msgstr "**Decision type** — Kaikki / Pelinappulasiirrot / Kuutiopäätökset."
+msgstr "**Päätöstyyppi** — Kaikki / Pelinappulasiirrot / Kuutiopäätökset."
 
 #: ../../source/manuel.rst:412
 msgid ""
@@ -847,7 +847,7 @@ msgid ""
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr ""
-"**Match length** — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11,"
+"**Ottelun pituus** — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11,"
 " 13, 15, 21 pistettä). Useita pituuksia voi yhdistää."
 
 #: ../../source/manuel.rst:415

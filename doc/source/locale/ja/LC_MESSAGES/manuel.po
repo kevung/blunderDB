@@ -711,7 +711,7 @@ msgid ""
 "le nom apparaît le plus souvent dans la base de données — modifiable à "
 "tout moment."
 msgstr ""
-"**Joueur** ドロップダウンリストでは、分析対象のプレイヤーに従って統計をフィルターできます。blunderDB "
+"**プレイヤー** ドロップダウンリストでは、分析対象のプレイヤーに従って統計をフィルターできます。blunderDB "
 "はデータベースで最も頻繁に名前が出てくるプレイヤーを自動的に選択します。これはいつでも変更できます。"
 
 #: ../../source/manuel.rst:398
@@ -728,17 +728,17 @@ msgstr "利用可能なフィルター"
 msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
-msgstr "**Tournoi(s)** — 1 つまたは複数のトーナメントへの限定。複数のトーナメントを同時に選択できます。"
+msgstr "**トーナメント** — 1 つまたは複数のトーナメントへの限定。複数のトーナメントを同時に選択できます。"
 
 #: ../../source/manuel.rst:407
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
-msgstr "**Dates** — 期間の範囲（*De*〔開始〕… *À*〔終了〕）。開始日のみが指定された場合、それ以降のポジションが含まれます。"
+msgstr "**日付** — 期間の範囲（*開始* … *終了*）。開始日のみが指定された場合、それ以降のポジションが含まれます。"
 
 #: ../../source/manuel.rst:410
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
-msgstr "**Type de décision** — すべて／プレイした手／キューブの判断。"
+msgstr "**判断タイプ** — すべて／プレイした手／キューブの判断。"
 
 #: ../../source/manuel.rst:412
 msgid ""
@@ -746,7 +746,7 @@ msgid ""
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr ""
-"**Longueur de match** — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 "
+"**マッチ長** — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 "
 "ポイント）。複数の長さを組み合わせられます。"
 
 #: ../../source/manuel.rst:415
