@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:08+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -714,14 +714,12 @@ msgstr ""
 "player 1. See :ref:`visites_guidees`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.24.0"
-msgstr "0.4.0"
+msgstr "0.24.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "06/06/2026"
-msgstr "March 6, 2026"
+msgstr "June 6, 2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -736,14 +734,12 @@ msgstr ""
 "a reverse proxy. See :ref:`headless`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.25.0"
-msgstr "0.5.0"
+msgstr "0.25.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "07/06/2026"
-msgstr "May 7, 2026"
+msgstr "June 7, 2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -751,17 +747,53 @@ msgid ""
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
 "XGID en position, et ``positions.fromXGP`` lit un fichier de position "
 "unique ``.xgp``. Voir :ref:`headless`."
-msgstr "Server (headless) mode: two new methods to rebuild a position without storing it — ``positions.fromXGID`` decodes an XGID string into a position, and ``positions.fromXGP`` reads a single-position ``.xgp`` file. See :ref:`headless`."
+msgstr ""
+"Server (headless) mode: two new methods to rebuild a position without "
+"storing it — ``positions.fromXGID`` decodes an XGID string into a "
+"position, and ``positions.fromXGP`` reads a single-position ``.xgp`` "
+"file. See :ref:`headless`."
 
-#: ../../source/index.rst:151
+#: ../../source/index.rst:1
+msgid "0.26.0"
+msgstr "0.26.0"
+
+#: ../../source/index.rst:1
+msgid "09/06/2026"
+msgstr "June 9, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
+" curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
+" un choix de position des panneaux (en bas, sur le côté ou automatique) "
+"afin de mieux exploiter les écrans larges. Ajout d'une barre "
+"d'informations au-dessus du plateau rappelant les joueurs et le contexte "
+"du match (événement, lieu, ronde, date, longueur). À l'ouverture d'une "
+"base, le panneau des matchs est affiché d'emblée et la revue débute sur "
+"la première position. Les raccourcis clavier sont désormais indépendants "
+"de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
+":ref:`configuration`."
+msgstr ""
+"Interface display settings in the configuration window: a scale slider to "
+"enlarge or shrink the whole interface, and a panel position choice (bottom,"
+" side or automatic) to make better use of wide screens. Added an "
+"information bar above the board showing the players and the match context "
+"(event, location, round, date, length). When a database is opened, the "
+"matches panel is shown right away and the review starts on the first "
+"position. Keyboard shortcuts are now independent of the keyboard layout "
+"(AZERTY, QWERTY, QWERTZ…). Fixed XGID decoding (Jacoby/Beaver flags and "
+"cube value). See :ref:`configuration`."
+
+#: ../../source/index.rst:152
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:185
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -769,7 +801,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -784,41 +816,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:197
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -826,19 +858,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -846,7 +878,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -857,7 +889,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -866,3 +898,4 @@ msgstr ""
 "*Nicolas Harmand*, a cheerful companion for over a decade in great "
 "adventures, and a fantastic sparring partner since he has caught the "
 "backgammon bug."
+

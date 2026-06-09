@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -23,7 +23,17 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Näppäimistöoikotiet"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:8
+msgid ""
+"Les raccourcis clavier sont indépendants de la disposition du clavier : "
+"ils restent accessibles de la même manière quelle que soit la disposition"
+" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+msgstr ""
+"Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne pysyvät "
+"käytettävissä samalla tavalla riippumatta käytetystä asettelusta (AZERTY, "
+"QWERTY, QWERTZ jne.)."
+
+#: ../../source/raccourcis.rst:15
 msgid "Base de données"
 msgstr "Tietokanta"
 
@@ -83,7 +93,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Muokkaa tietokannan metatietoja."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:32
 msgid "Position"
 msgstr "Asema"
 
@@ -181,7 +191,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Näytä aseman metatiedot."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigointi"
 
@@ -249,7 +259,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Lataa satunnainen asema."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:73
 msgid "Affichage"
 msgstr "Näyttö"
 
@@ -277,7 +287,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Näytä/piilota pip-laskuri."
 
-#: ../../source/raccourcis.rst:81
+#: ../../source/raccourcis.rst:87
 msgid "Actions"
 msgstr "Toiminnot"
 
@@ -297,7 +307,7 @@ msgstr "VÄLILYÖNTI"
 msgid "Ouvrir la ligne de commande."
 msgstr "Avaa komentorivi."
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "Työkalut"
 
@@ -381,7 +391,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:121
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -401,7 +411,7 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:128
+#: ../../source/raccourcis.rst:134
 msgid "Panneau historique de recherche"
 msgstr "Hakuhistoriapaneeli"
 
@@ -437,10 +447,9 @@ msgstr "Esc"
 msgid ""
 "Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
 "panneau."
-msgstr ""
-"Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
+msgstr "Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:144
+#: ../../source/raccourcis.rst:150
 msgid "Panneau bibliothèque de filtres"
 msgstr "Suodatinkirjastopaneeli"
 
@@ -466,7 +475,7 @@ msgstr ""
 "Poista suodattimen valinta. Jos mitään suodatinta ei ole valittu, sulje "
 "paneeli."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:166
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -496,10 +505,9 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr ""
-"Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
+msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:176
+#: ../../source/raccourcis.rst:182
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -535,7 +543,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:200
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -573,5 +581,5 @@ msgstr "Arvioi: Helppo."
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
-msgstr ""
-"Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
+msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
+

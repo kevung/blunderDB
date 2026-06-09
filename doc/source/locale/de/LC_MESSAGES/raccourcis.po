@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -23,7 +23,17 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Tastenkürzel"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:8
+msgid ""
+"Les raccourcis clavier sont indépendants de la disposition du clavier : "
+"ils restent accessibles de la même manière quelle que soit la disposition"
+" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+msgstr ""
+"Die Tastenkürzel sind unabhängig von der Tastaturbelegung: Sie bleiben "
+"unabhängig von der verwendeten Belegung (AZERTY, QWERTY, QWERTZ usw.) auf "
+"die gleiche Weise erreichbar."
+
+#: ../../source/raccourcis.rst:15
 msgid "Base de données"
 msgstr "Datenbank"
 
@@ -83,7 +93,7 @@ msgstr "STRG-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Die Metadaten der Datenbank bearbeiten."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:32
 msgid "Position"
 msgstr "Position"
 
@@ -183,7 +193,7 @@ msgstr "STRG-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Die Metadaten der Position anzeigen."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -251,7 +261,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Eine zufällige Position laden."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:73
 msgid "Affichage"
 msgstr "Anzeige"
 
@@ -279,7 +289,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Pipcount ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:81
+#: ../../source/raccourcis.rst:87
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -299,7 +309,7 @@ msgstr "LEERTASTE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Die Befehlszeile öffnen."
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "Werkzeuge"
 
@@ -383,7 +393,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:121
 msgid "Ligne de commande"
 msgstr "Befehlszeile"
 
@@ -403,7 +413,7 @@ msgstr "UNTEN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Im Befehlsverlauf nach unten blättern."
 
-#: ../../source/raccourcis.rst:128
+#: ../../source/raccourcis.rst:134
 msgid "Panneau historique de recherche"
 msgstr "Suchverlauf-Fenster"
 
@@ -443,7 +453,7 @@ msgstr ""
 "Die Suche abwählen. Wenn keine Suche ausgewählt ist, das Fenster "
 "schließen."
 
-#: ../../source/raccourcis.rst:144
+#: ../../source/raccourcis.rst:150
 msgid "Panneau bibliothèque de filtres"
 msgstr "Filterbibliothek-Fenster"
 
@@ -469,7 +479,7 @@ msgstr ""
 "Den Filter abwählen. Wenn kein Filter ausgewählt ist, das Fenster "
 "schließen."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:166
 msgid "Panneau d'analyse"
 msgstr "Analyse-Fenster"
 
@@ -493,14 +503,13 @@ msgstr "d"
 msgid ""
 "Basculer entre l'analyse des coups et du cube (navigation match "
 "uniquement)."
-msgstr ""
-"Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation)."
+msgstr "Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
-#: ../../source/raccourcis.rst:176
+#: ../../source/raccourcis.rst:182
 msgid "Panneau des matchs"
 msgstr "Match-Fenster"
 
@@ -536,7 +545,7 @@ msgstr "Das ausgewählte Match löschen."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Abwählen/Fenster schließen."
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:200
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-Fenster (verteiltes Wiederholen)"
 
@@ -577,3 +586,4 @@ msgid "Arrêter la révision et revenir à la liste des paquets (reprise possibl
 msgstr ""
 "Die Wiederholung beenden und zur Stapelliste zurückkehren (später "
 "fortsetzbar)."
+

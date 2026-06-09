@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:08+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -653,14 +653,12 @@ msgstr ""
 "を参照してください。"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.24.0"
-msgstr "0.4.0"
+msgstr "0.24.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "06/06/2026"
-msgstr "2026/03/06"
+msgstr "2026/06/06"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -674,14 +672,12 @@ msgstr ""
 "エンジンをリバースプロキシの背後でサービスとしてデプロイできるようにしました。:ref:`headless` を参照してください。"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.25.0"
-msgstr "0.5.0"
+msgstr "0.25.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "07/06/2026"
-msgstr "2026/05/07"
+msgstr "2026/06/07"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -689,17 +685,49 @@ msgid ""
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
 "XGID en position, et ``positions.fromXGP`` lit un fichier de position "
 "unique ``.xgp``. Voir :ref:`headless`."
-msgstr "サーバー（ヘッドレス）モード：局面を保存せずに再構築する2つの新しいメソッド —— ``positions.fromXGID`` は XGID 文字列を局面にデコードし、``positions.fromXGP`` は単一局面ファイル ``.xgp`` を読み込みます。:ref:`headless` を参照。"
+msgstr ""
+"サーバー（ヘッドレス）モード：局面を保存せずに再構築する2つの新しいメソッド —— ``positions.fromXGID`` は XGID "
+"文字列を局面にデコードし、``positions.fromXGP`` は単一局面ファイル ``.xgp`` "
+"を読み込みます。:ref:`headless` を参照。"
 
-#: ../../source/index.rst:151
+#: ../../source/index.rst:1
+msgid "0.26.0"
+msgstr "0.26.0"
+
+#: ../../source/index.rst:1
+msgid "09/06/2026"
+msgstr "2026/06/09"
+
+#: ../../source/index.rst:1
+msgid ""
+"Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
+" curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
+" un choix de position des panneaux (en bas, sur le côté ou automatique) "
+"afin de mieux exploiter les écrans larges. Ajout d'une barre "
+"d'informations au-dessus du plateau rappelant les joueurs et le contexte "
+"du match (événement, lieu, ronde, date, longueur). À l'ouverture d'une "
+"base, le panneau des matchs est affiché d'emblée et la revue débute sur "
+"la première position. Les raccourcis clavier sont désormais indépendants "
+"de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
+":ref:`configuration`."
+msgstr ""
+"設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、"
+"横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。"
+"ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。"
+"データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。"
+"キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。"
+"XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。:ref:`configuration` を参照。"
+
+#: ../../source/index.rst:152
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:185
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -707,7 +735,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -717,59 +745,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:197
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -777,7 +805,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -787,7 +815,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -795,3 +823,4 @@ msgid ""
 msgstr ""
 "*Nicolas Harmand* "
 "には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。"
+

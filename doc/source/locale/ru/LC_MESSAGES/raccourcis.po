@@ -6,24 +6,35 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: ru <LL@li.org>\n"
 "Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
 msgstr "Горячие клавиши"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:8
+msgid ""
+"Les raccourcis clavier sont indépendants de la disposition du clavier : "
+"ils restent accessibles de la même manière quelle que soit la disposition"
+" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+msgstr ""
+"Горячие клавиши не зависят от раскладки клавиатуры: они остаются доступными "
+"одинаковым образом независимо от используемой раскладки (AZERTY, QWERTY, "
+"QWERTZ и т. д.)."
+
+#: ../../source/raccourcis.rst:15
 msgid "Base de données"
 msgstr "База данных"
 
@@ -83,7 +94,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Редактировать метаданные базы данных."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:32
 msgid "Position"
 msgstr "Позиция"
 
@@ -93,11 +104,11 @@ msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
+"mat, txt, bgf)."
 msgstr ""
-"Импортировать одну или несколько позиций/матчей из файла (xg, xgp, sgf, mat,"
-" txt, bgf)."
+"Импортировать одну или несколько позиций/матчей из файла (xg, xgp, sgf, "
+"mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-F"
@@ -139,8 +150,7 @@ msgstr "CTRL-V"
 msgid ""
 "Coller une position depuis le presse-papier (détection automatique du "
 "format)."
-msgstr ""
-"Вставить позицию из буфера обмена (автоматическое определение формата)."
+msgstr "Вставить позицию из буфера обмена (автоматическое определение формата)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-S"
@@ -182,7 +192,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Показать метаданные позиции."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Навигация"
 
@@ -250,7 +260,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Загрузить случайную позицию."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:73
 msgid "Affichage"
 msgstr "Отображение"
 
@@ -278,7 +288,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Показать/скрыть пипкаунт."
 
-#: ../../source/raccourcis.rst:81
+#: ../../source/raccourcis.rst:87
 msgid "Actions"
 msgstr "Действия"
 
@@ -298,7 +308,7 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Открыть командную строку."
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "Инструменты"
 
@@ -382,7 +392,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:121
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -402,7 +412,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Просмотр истории команд вниз."
 
-#: ../../source/raccourcis.rst:128
+#: ../../source/raccourcis.rst:134
 msgid "Panneau historique de recherche"
 msgstr "Панель истории поиска"
 
@@ -440,7 +450,7 @@ msgid ""
 "panneau."
 msgstr "Отменить выбор поиска. Если поиск не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:144
+#: ../../source/raccourcis.rst:150
 msgid "Panneau bibliothèque de filtres"
 msgstr "Панель библиотеки фильтров"
 
@@ -461,11 +471,10 @@ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
 msgstr "Выбрать следующий фильтр (когда фильтр выбран)."
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr "Отменить выбор фильтра. Если фильтр не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:166
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -487,15 +496,15 @@ msgstr "d"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
-msgstr ""
-"Переключить между анализом ходов и куба (только при навигации по матчу)."
+"Basculer entre l'analyse des coups et du cube (navigation match "
+"uniquement)."
+msgstr "Переключить между анализом ходов и куба (только при навигации по матчу)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:176
+#: ../../source/raccourcis.rst:182
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -531,7 +540,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:200
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -568,7 +577,6 @@ msgid "Évaluer : Facile."
 msgstr "Оценить: Легко."
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Arrêter la révision et revenir à la liste des paquets (reprise possible)."
-msgstr ""
-"Остановить повторение и вернуться к списку колод (можно продолжить позже)."
+msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
+

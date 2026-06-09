@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:08+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -721,14 +721,12 @@ msgstr ""
 ":ref:`visites_guidees`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.24.0"
-msgstr "0.4.0"
+msgstr "0.24.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "06/06/2026"
-msgstr "6.3.2026"
+msgstr "6.6.2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -744,14 +742,12 @@ msgstr ""
 ":ref:`headless`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.25.0"
-msgstr "0.5.0"
+msgstr "0.25.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "07/06/2026"
-msgstr "7.5.2026"
+msgstr "7.6.2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -759,17 +755,54 @@ msgid ""
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
 "XGID en position, et ``positions.fromXGP`` lit un fichier de position "
 "unique ``.xgp``. Voir :ref:`headless`."
-msgstr "Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen tallentamatta sitä — ``positions.fromXGID`` purkaa XGID-merkkijonon asemaksi ja ``positions.fromXGP`` lukee yksittäisen aseman ``.xgp``-tiedoston. Katso :ref:`headless`."
+msgstr ""
+"Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen "
+"tallentamatta sitä — ``positions.fromXGID`` purkaa XGID-merkkijonon "
+"asemaksi ja ``positions.fromXGP`` lukee yksittäisen aseman "
+"``.xgp``-tiedoston. Katso :ref:`headless`."
 
-#: ../../source/index.rst:151
+#: ../../source/index.rst:1
+msgid "0.26.0"
+msgstr "0.26.0"
+
+#: ../../source/index.rst:1
+msgid "09/06/2026"
+msgstr "9.6.2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
+" curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
+" un choix de position des panneaux (en bas, sur le côté ou automatique) "
+"afin de mieux exploiter les écrans larges. Ajout d'une barre "
+"d'informations au-dessus du plateau rappelant les joueurs et le contexte "
+"du match (événement, lieu, ronde, date, longueur). À l'ouverture d'une "
+"base, le panneau des matchs est affiché d'emblée et la revue débute sur "
+"la première position. Les raccourcis clavier sont désormais indépendants "
+"de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
+":ref:`configuration`."
+msgstr ""
+"Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko "
+"käyttöliittymän suurentamiseksi tai pienentämiseksi sekä paneelien "
+"sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden näyttöjen "
+"parempaa hyödyntämistä varten. Lisätty laudan yläpuolelle tietopalkki, joka "
+"näyttää pelaajat ja ottelun taustatiedot (tapahtuma, paikka, kierros, "
+"päivämäärä, pituus). Kun tietokanta avataan, otteluiden paneeli näytetään "
+"heti ja tarkastelu alkaa ensimmäisestä asemasta. Näppäimistöoikotiet ovat "
+"nyt riippumattomia näppäimistöasettelusta (AZERTY, QWERTY, QWERTZ…). "
+"Korjattu XGID-purku (Jacoby/Beaver-liput ja kuution arvo). Katso "
+":ref:`configuration`."
+
+#: ../../source/index.rst:152
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:185
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -777,7 +810,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -792,41 +825,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:197
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -834,19 +867,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -855,7 +888,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -867,7 +900,7 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -876,3 +909,4 @@ msgstr ""
 "*Nicolas Harmand*, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa"
 " seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
 "backgammon-tartunnan."
+

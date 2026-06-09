@@ -6,24 +6,33 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: ja <LL@li.org>\n"
 "Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
 msgstr "キーボードショートカット"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:8
+msgid ""
+"Les raccourcis clavier sont indépendants de la disposition du clavier : "
+"ils restent accessibles de la même manière quelle que soit la disposition"
+" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+msgstr ""
+"キーボードショートカットはキーボードレイアウトに依存しません： "
+"使用するレイアウト（AZERTY、QWERTY、QWERTZ など）に関わらず、同じ方法でアクセスできます。"
+
+#: ../../source/raccourcis.rst:15
 msgid "Base de données"
 msgstr "データベース"
 
@@ -83,7 +92,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "データベースのメタデータを編集する。"
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:32
 msgid "Position"
 msgstr "ポジション"
 
@@ -93,8 +102,8 @@ msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
+"mat, txt, bgf)."
 msgstr "1つまたは複数のポジション/マッチをファイル（xg、xgp、sgf、mat、txt、bgf）からインポートする。"
 
 #: ../../source/raccourcis.rst:1
@@ -179,7 +188,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "ポジションのメタデータを表示する。"
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "ナビゲーション"
 
@@ -247,7 +256,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "ランダムなポジションを読み込む。"
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:73
 msgid "Affichage"
 msgstr "表示"
 
@@ -275,7 +284,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "ピップカウントを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:81
+#: ../../source/raccourcis.rst:87
 msgid "Actions"
 msgstr "アクション"
 
@@ -295,7 +304,7 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "コマンドラインを開く。"
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "ツール"
 
@@ -379,7 +388,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:121
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -399,7 +408,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:128
+#: ../../source/raccourcis.rst:134
 msgid "Panneau historique de recherche"
 msgstr "検索履歴パネル"
 
@@ -437,7 +446,7 @@ msgid ""
 "panneau."
 msgstr "検索の選択を解除する。検索が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:144
+#: ../../source/raccourcis.rst:150
 msgid "Panneau bibliothèque de filtres"
 msgstr "フィルターライブラリパネル"
 
@@ -458,11 +467,10 @@ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
 msgstr "次のフィルターを選択する（フィルターが選択されている場合）。"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr "フィルターの選択を解除する。フィルターが選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:166
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -484,14 +492,15 @@ msgstr "d"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
+"Basculer entre l'analyse des coups et du cube (navigation match "
+"uniquement)."
 msgstr "チェッカー分析とキューブ分析を切り替える（マッチナビゲーションのみ）。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:176
+#: ../../source/raccourcis.rst:182
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -527,7 +536,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:200
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -564,6 +573,6 @@ msgid "Évaluer : Facile."
 msgstr "評価：簡単。"
 
 #: ../../source/raccourcis.rst:1
-msgid ""
-"Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
+

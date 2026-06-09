@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:08+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -725,14 +725,12 @@ msgstr ""
 "игроку 1. См. :ref:`visites_guidees`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.24.0"
-msgstr "0.4.0"
+msgstr "0.24.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "06/06/2026"
-msgstr "06/03/2026"
+msgstr "06/06/2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -747,14 +745,12 @@ msgstr ""
 "службы за обратным прокси-сервером. См. :ref:`headless`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.25.0"
-msgstr "0.5.0"
+msgstr "0.25.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "07/06/2026"
-msgstr "07/05/2026"
+msgstr "07/06/2026"
 
 #: ../../source/index.rst:1
 msgid ""
@@ -762,17 +758,53 @@ msgid ""
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
 "XGID en position, et ``positions.fromXGP`` lit un fichier de position "
 "unique ``.xgp``. Voir :ref:`headless`."
-msgstr "Серверный режим (headless): два новых метода для восстановления позиции без её сохранения — ``positions.fromXGID`` декодирует строку XGID в позицию, а ``positions.fromXGP`` читает файл одиночной позиции ``.xgp``. См. :ref:`headless`."
+msgstr ""
+"Серверный режим (headless): два новых метода для восстановления позиции "
+"без её сохранения — ``positions.fromXGID`` декодирует строку XGID в "
+"позицию, а ``positions.fromXGP`` читает файл одиночной позиции ``.xgp``. "
+"См. :ref:`headless`."
 
-#: ../../source/index.rst:151
+#: ../../source/index.rst:1
+msgid "0.26.0"
+msgstr "0.26.0"
+
+#: ../../source/index.rst:1
+msgid "09/06/2026"
+msgstr "09/06/2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
+" curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
+" un choix de position des panneaux (en bas, sur le côté ou automatique) "
+"afin de mieux exploiter les écrans larges. Ajout d'une barre "
+"d'informations au-dessus du plateau rappelant les joueurs et le contexte "
+"du match (événement, lieu, ronde, date, longueur). À l'ouverture d'une "
+"base, le panneau des matchs est affiché d'emblée et la revue débute sur "
+"la première position. Les raccourcis clavier sont désormais indépendants "
+"de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
+":ref:`configuration`."
+msgstr ""
+"Настройки отображения интерфейса в окне конфигурации: ползунок масштаба для "
+"увеличения или уменьшения всего интерфейса и выбор расположения панелей "
+"(снизу, сбоку или автоматически), чтобы лучше использовать широкие экраны. "
+"Добавлена информационная панель над доской, показывающая игроков и контекст "
+"матча (событие, место, раунд, дату, длину). При открытии базы данных панель "
+"матчей отображается сразу же, а разбор начинается с первой позиции. Горячие "
+"клавиши теперь не зависят от раскладки клавиатуры (AZERTY, QWERTY, "
+"QWERTZ…). Исправлено декодирование XGID (индикаторы Jacoby/Beaver и значение"
+" куба). См. :ref:`configuration`."
+
+#: ../../source/index.rst:152
 msgid "Sommaire"
 msgstr "Содержание"
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:185
 msgid "Contacts"
 msgstr "Контакты"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -780,7 +812,7 @@ msgstr ""
 "Автор: Kévin Unger <blunderdb@proton.me>. Вы также можете найти меня на "
 "Heroes под ником postmanpat."
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -796,41 +828,41 @@ msgstr ""
 "поделиться своими впечатлениями. Любые (конструктивные) отзывы "
 "приветствуются."
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:197
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Вот несколько способов связи:"
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Присоединиться к серверу Discord blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Написать мне по адресу blunderdb@proton.me."
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Поговорить со мной, если мы встретимся на турнире."
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "sur Github,"
 msgstr "На GitHub."
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Открыть задачу: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "Для исправления ошибок или предложений по улучшению создать pull request."
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "Faire un don"
 msgstr "Сделать пожертвование"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -838,19 +870,19 @@ msgstr ""
 "Если вам нравится blunderDB и вы хотите поддержать прошлые и будущие "
 "разработки, вы можете"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "угостить меня напитком, если мы имеем удовольствие встретиться!"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "сделать небольшое пожертвование через PayPal на адрес blunderdb@proton.me"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "Remerciements"
 msgstr "Благодарности"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -858,7 +890,7 @@ msgstr ""
 "Я посвящаю эту небольшую программу моей супруге Анн-Клер и нашей дорогой "
 "дочери Перрин. Я хотел бы особо поблагодарить нескольких друзей:"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -870,7 +902,7 @@ msgstr ""
 "за то, что продолжает поддерживать меня, несмотря на мои скромные попытки"
 " играть лучше."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -879,3 +911,4 @@ msgstr ""
 "*Nicolas Harmand* — весёлый товарищ уже более десяти лет в замечательных "
 "приключениях, и фантастический партнёр по игре с тех пор, как он "
 "заразился вирусом нард."
+

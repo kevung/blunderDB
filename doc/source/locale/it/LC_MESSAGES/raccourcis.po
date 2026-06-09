@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-09 02:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -23,7 +23,17 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Scorciatoie da tastiera"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:8
+msgid ""
+"Les raccourcis clavier sont indépendants de la disposition du clavier : "
+"ils restent accessibles de la même manière quelle que soit la disposition"
+" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+msgstr ""
+"Le scorciatoie da tastiera sono indipendenti dal layout della tastiera: "
+"restano accessibili allo stesso modo qualunque sia il layout utilizzato "
+"(AZERTY, QWERTY, QWERTZ, ecc.)."
+
+#: ../../source/raccourcis.rst:15
 msgid "Base de données"
 msgstr "Database"
 
@@ -83,7 +93,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Modifica i metadati del database."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:32
 msgid "Position"
 msgstr "Posizione"
 
@@ -95,8 +105,7 @@ msgstr "CTRL-I"
 msgid ""
 "Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
 "mat, txt, bgf)."
-msgstr ""
-"Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf)."
+msgstr "Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-F"
@@ -138,8 +147,7 @@ msgstr "CTRL-V"
 msgid ""
 "Coller une position depuis le presse-papier (détection automatique du "
 "format)."
-msgstr ""
-"Incolla una posizione dagli appunti (rilevamento automatico del formato)."
+msgstr "Incolla una posizione dagli appunti (rilevamento automatico del formato)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-S"
@@ -181,7 +189,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Mostra i metadati della posizione."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigazione"
 
@@ -249,7 +257,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Carica una posizione casuale."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:73
 msgid "Affichage"
 msgstr "Visualizzazione"
 
@@ -277,7 +285,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Mostra/nascondi il conteggio dei pip."
 
-#: ../../source/raccourcis.rst:81
+#: ../../source/raccourcis.rst:87
 msgid "Actions"
 msgstr "Azioni"
 
@@ -297,7 +305,7 @@ msgstr "SPAZIO"
 msgid "Ouvrir la ligne de commande."
 msgstr "Apri la riga di comando."
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:100
 msgid "Outils"
 msgstr "Strumenti"
 
@@ -381,7 +389,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:121
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -401,7 +409,7 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:128
+#: ../../source/raccourcis.rst:134
 msgid "Panneau historique de recherche"
 msgstr "Pannello cronologia di ricerca"
 
@@ -441,7 +449,7 @@ msgstr ""
 "Deseleziona la ricerca. Se nessuna ricerca è selezionata, chiudi il "
 "pannello."
 
-#: ../../source/raccourcis.rst:144
+#: ../../source/raccourcis.rst:150
 msgid "Panneau bibliothèque de filtres"
 msgstr "Pannello libreria di filtri"
 
@@ -465,7 +473,7 @@ msgstr "Seleziona il filtro successivo (quando un filtro è selezionato)."
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr "Deseleziona il filtro. Se nessun filtro è selezionato, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:160
+#: ../../source/raccourcis.rst:166
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -489,14 +497,13 @@ msgstr "d"
 msgid ""
 "Basculer entre l'analyse des coups et du cube (navigation match "
 "uniquement)."
-msgstr ""
-"Alterna tra l'analisi delle mosse e del cubo (solo navigazione match)."
+msgstr "Alterna tra l'analisi delle mosse e del cubo (solo navigazione match)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:176
+#: ../../source/raccourcis.rst:182
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -532,7 +539,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:200
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -570,6 +577,5 @@ msgstr "Valuta: Facile."
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
-msgstr ""
-"Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
+msgstr "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
 
