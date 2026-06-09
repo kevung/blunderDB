@@ -98,6 +98,13 @@ export async function newDatabase() {
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
             logger.log(`New database created at ${filePath}`);
+
+            // The Matches panel may already be visible (it is the default tab),
+            // so its own open-transition load won't fire against the new DB.
+            // Bump the refresh trigger so it reloads the (now empty) match list
+            // — same mechanism used after open/import. See openDatabaseByPath.
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
+
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } else {
