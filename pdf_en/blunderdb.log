@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.9)  9 JUN 2026 00:43
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.9)  9 JUN 2026 05:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1025,7 +1025,7 @@ Chapter 1.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 630.
 [3]
-Overfull \vbox (1357.11995pt too high) has occurred while \output is active []
+Overfull \vbox (1333.11995pt too high) has occurred while \output is active []
 
 
 [4]
@@ -1041,73 +1041,73 @@ ading, run the command \TU/FreeMono(0)/m/n/10 chmod +x ./
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
 [21] [22] [23] [24] [25] [26] [27] [28]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4807.
+(Font)              scaled to size 4.49997pt on input line 4793.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4808.
+(Font)              scaled to size 8.99994pt on input line 4794.
  [29] [30] [31] [32] [33] [34]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5558.
+(Font)              scaled to size 8.99994pt on input line 5540.
  [35]
 [36] [37]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5819.
+(Font)              scaled to size 10.79993pt on input line 5801.
  [38]
-Underfull \hbox (badness 10000) in paragraph at lines 5903--5905
+Underfull \hbox (badness 10000) in paragraph at lines 5885--5887
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 5906
+Underfull \hbox (badness 10000) detected at line 5888
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5962--5964
+Underfull \hbox (badness 10000) in paragraph at lines 5944--5946
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [39]
-Underfull \hbox (badness 10000) in paragraph at lines 6285--6287
+Underfull \hbox (badness 10000) in paragraph at lines 6267--6269
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6288
+Underfull \hbox (badness 10000) detected at line 6270
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 [40] [41]
-Underfull \hbox (badness 10000) in paragraph at lines 6583--6585
+Underfull \hbox (badness 10000) in paragraph at lines 6565--6567
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6599--6601
+Underfull \hbox (badness 10000) in paragraph at lines 6581--6583
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6615--6617
+Underfull \hbox (badness 10000) in paragraph at lines 6597--6599
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6640--6642
+Underfull \hbox (badness 10000) in paragraph at lines 6622--6624
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6640--6642
+Underfull \hbox (badness 10000) in paragraph at lines 6622--6624
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6643
+Underfull \hbox (badness 10000) detected at line 6625
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6721--6723
+Underfull \hbox (badness 10000) in paragraph at lines 6703--6705
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
@@ -1157,7 +1157,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  19306 strings out of 476443
  394564 string characters out of 5793963
- 2000627 words of memory out of 5000000
+ 1999627 words of memory out of 5000000
  40868 multiletter control sequences out of 15000+600000
  565004 words of font info for 102 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191

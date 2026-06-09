@@ -257,16 +257,16 @@
 <td><p>Added guided tours of the interface (general tour, search, matches, tournaments), replayable from the toolbar or with the <code class="docutils literal notranslate"><span class="pre">tour</span></code> command, and a sample database loadable with the <code class="docutils literal notranslate"><span class="pre">demo</span></code> command to explore the tool without importing your own games. Customisation of the board colours (background, border, points, checkers, dice, doubling cube) from the configuration window. Command-line autocompletion (<em>TAB</em> key). Search panel: explicit control over the decision type (Checker / Cube), with a Double / No double or Take / Pass sub-type for cube decisions, synchronised with the board; the offered cube is shown in the centre of the board for take/pass decisions. Search for a position by its identifier (<code class="docutils literal notranslate"><span class="pre">id</span></code> filter). Fixed the attribution of the cube error to player 1. See <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Guided tours and sample database</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.24.0</p></td>
-<td><p>06/06/2026</p></td>
+<td><p>June 6, 2026</p></td>
 <td><p>Added a container image (Docker) for headless mode: a dedicated <code class="docutils literal notranslate"><span class="pre">serve</span></code> entry point and a <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> producing a static binary with no graphical interface, to deploy the blunderDB engine as a service behind a reverse proxy. See <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p>0.25.0</p></td>
-<td><p>07/06/2026</p></td>
+<td><p>June 7, 2026</p></td>
 <td><p>Server (headless) mode: two new methods to rebuild a position without storing it — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> decodes an XGID string into a position, and <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> reads a single-position <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> file. See <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.26.0</p></td>
-<td><p>09/06/2026</p></td>
-<td><p>Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d’une barre d’informations au-dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
+<td><p>June 9, 2026</p></td>
+<td><p>Interface display settings in the configuration window: a scale slider to enlarge or shrink the whole interface, and a panel position choice (bottom, side or automatic) to make better use of wide screens. Added an information bar above the board showing the players and the match context (event, location, round, date, length). When a database is opened, the matches panel is shown right away and the review starts on the first position. Keyboard shortcuts are now independent of the keyboard layout (AZERTY, QWERTY, QWERTZ…). Fixed XGID decoding (Jacoby/Beaver flags and cube value). See <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
