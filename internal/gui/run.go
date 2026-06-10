@@ -7,6 +7,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 // Run starts the Wails GUI. The caller supplies the embedded frontend assets
@@ -33,6 +34,14 @@ func Run(assets embed.FS, icon []byte, width, height int, extraBinds []interface
 			WindowIsTranslucent: false,
 			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
 			ProgramName:         "blunderDB",
+		},
+		// WebView2 applies the OS DPI scaling itself; pin its own zoom to 1.0 so
+		// it doesn't compound with the CSS `zoom`/`--ui-scale` interface scale and
+		// leave blank space at DPI > 100% on Windows (issue #64).
+		Windows: &windows.Options{
+			WebviewIsTransparent: false,
+			IsZoomControlEnabled: true,
+			ZoomFactor:           1.0,
 		},
 		Debug: options.Debug{
 			OpenInspectorOnStartup: false,
