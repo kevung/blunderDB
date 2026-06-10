@@ -50,6 +50,17 @@
         activeTabStore.set(tabId);
     }
 
+    // The native horizontal scrollbar is hidden (see CSS) so it doesn't eat
+    // into the tab height; translate vertical wheel into horizontal scroll so
+    // overflowing tabs stay reachable without it.
+    function handleTabBarWheel(e) {
+        if (!tabBarEl) return;
+        if (tabBarEl.scrollWidth <= tabBarEl.clientWidth) return;
+        if (e.deltaY === 0) return;
+        e.preventDefault();
+        tabBarEl.scrollLeft += e.deltaY;
+    }
+
     function getTabIndexAtX(clientX) {
         if (!tabBarEl) return null;
         const buttons = tabBarEl.children;
@@ -102,7 +113,7 @@
 </script>
 
 <div class="tabbed-panel">
-    <div class="tab-bar" bind:this={tabBarEl}>
+    <div class="tab-bar" bind:this={tabBarEl} onwheel={handleTabBarWheel}>
         {#each tabs as tab, i (tab.id)}
             <button
                 class="tab-button"
@@ -231,6 +242,15 @@
         height: 28px;
         user-select: none;
         -webkit-user-select: none;
+        /* Hide the native horizontal scrollbar so it doesn't eat into the
+           28px tab height and overlap the tabs (esp. when the panel is docked
+           on the right or is narrow). Tabs stay scrollable via wheel/drag. */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* legacy Edge/IE */
+    }
+
+    .tab-bar::-webkit-scrollbar {
+        display: none; /* WebKit2GTK (Linux), WebView2/Chromium (Windows), WKWebView (macOS) */
     }
 
     .tab-button {
