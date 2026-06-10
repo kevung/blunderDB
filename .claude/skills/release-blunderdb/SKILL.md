@@ -65,6 +65,12 @@ Decide the new version number with semver against the *current* version:
 - Only bug fixes → bump **patch** (X.Y.**Z+1**).
 - Breaking change → bump **major**.
 
+**Patch releases skip the changelog table.** If the bump is a patch (X.Y.Z, Z>0),
+**skip Phase 2 entirely** — the history table in the docs lists only X.Y.0
+(minor/major) releases, never patches. Do Phase 1 (if any doc prose needs fixing),
+then go straight to Phase 3 with `scripts/release.sh <ver>` (no `--changelog`), and
+write the English GitHub release notes in Phase 4.
+
 If the change set touches the SQLite schema, remember `DatabaseVersion` in
 `pkg/blunderdb/domain/` is **independent** of the release version — it is bumped
 in its own commit alongside a migration, not by this skill. Do not conflate them.
@@ -184,6 +190,15 @@ Steps:
 ---
 
 ## Phase 2 — Version history / changelog table (FR source + all translations)
+
+> **MAJOR/MINOR RELEASES ONLY — skip this entire phase for patch releases.**
+> The history table lists only **X.Y.0** (minor/major) releases. A patch/fix
+> release (X.Y.Z with Z>0, e.g. `0.26.1`) gets **no row** — no FR row, no `.po`
+> retranslation, no `make gettext`. The user considers patches too minor for the
+> table; it is a high-level feature history, not an exhaustive log. For a patch
+> release, jump straight from Phase 1 to Phase 3, run `scripts/release.sh <ver>`
+> **without** `--changelog`, and still write the English GitHub release notes in
+> Phase 4. Only do the steps below when cutting an X.Y.0.
 
 The version-history table is the **"Historique des versions"** `csv-table` in
 `doc/source/index.rst` (French source). Its rows look exactly like:
@@ -361,6 +376,8 @@ language left partially untranslated) so the user can follow up.
   GitHub release publish — both are outward-facing.
 - New-features-only in the history table and release notes; exclude refactors,
   CI/build/test/chore commits.
+- The history table is **major/minor (X.Y.0) only** — patch releases (X.Y.Z, Z>0)
+  get no changelog row and skip Phase 2 entirely.
 - GitHub release notes are always written in **English**.
 - Keep all 9 languages in lockstep — every feature documented in the French
   source and translated in every catalog (en, de, el, es, fi, it, ja, ru), or the
