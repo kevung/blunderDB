@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/parser"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -54,6 +55,63 @@ type existsResp struct {
 type listReq struct {
 	Limit  int `json:"limit"`
 	Offset int `json:"offset"`
+}
+
+// epcSide holds the Effective Pip Count data for one player. EPC is only
+// defined once every checker is in the player's home board (bearing-off zone);
+// otherwise EPC is nil but the pip count is still meaningful.
+type epcSide struct {
+	AllInHome    bool              `json:"all_in_home"`
+	CheckerCount int               `json:"checker_count"`
+	EPC          *engine.EPCResult `json:"epc,omitempty"`
+}
+
+type epcResp struct {
+	// Bottom = Black (player index 0), Top = White (player index 1).
+	Bottom epcSide `json:"bottom"`
+	Top    epcSide `json:"top"`
+}
+
+// computeEPCSide extracts a player's home-board checkers and computes EPC when
+// the whole army is home. board indices: WhiteBar=0, points 1..24, BlackBar=25.
+func computeEPCSide(b *domain.Board, color int) epcSide {
+	var home [6]int // home[i] = checkers on this player's (i+1)-point
+	total, allHome := 0, true
+	for i := 1; i <= 24; i++ {
+		pt := b.Points[i]
+		if pt.Color != color || pt.Checkers <= 0 {
+			continue
+		}
+		total += pt.Checkers
+		// Black bears off toward point 1 → home points are 1..6.
+		// White bears off toward point 24 → home points are 24..19.
+		var homeIdx int
+		if color == domain.Black {
+			homeIdx = i - 1 // point 1 → index 0 … point 6 → index 5
+		} else {
+			homeIdx = 24 - i // point 24 → index 0 … point 19 → index 5
+		}
+		if homeIdx < 0 || homeIdx > 5 {
+			allHome = false
+			continue
+		}
+		home[homeIdx] += pt.Checkers
+	}
+	bar := domain.WhiteBar
+	if color == domain.Black {
+		bar = domain.BlackBar
+	}
+	if b.Points[bar].Color == color && b.Points[bar].Checkers > 0 {
+		allHome = false
+		total += b.Points[bar].Checkers
+	}
+	side := epcSide{AllInHome: allHome, CheckerCount: total}
+	if allHome && total > 0 {
+		if r, err := engine.ComputeEPC(home); err == nil {
+			side.EPC = r
+		}
+	}
+	return side
 }
 
 func (s *Server) positionRoutes() []route {
@@ -137,6 +195,17 @@ func (s *Server) positionRoutes() []route {
 				plays = []domain.LegalPlay{}
 			}
 			return plays, nil
+		})},
+		// Effective Pip Count for both players (pure; no storage). Generic race
+		// metric, useful to the Desktop too. EPC is nil until a side is all home.
+		{http.MethodPost, "/v1/positions.epc", rpc(func(ctx context.Context, scope string, req positionReq) (epcResp, error) {
+			if req.Position == nil {
+				return epcResp{}, fmt.Errorf("%w: missing position", storage.ErrInvalid)
+			}
+			return epcResp{
+				Bottom: computeEPCSide(&req.Position.Board, domain.Black),
+				Top:    computeEPCSide(&req.Position.Board, domain.White),
+			}, nil
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)
