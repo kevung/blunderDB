@@ -375,9 +375,7 @@
             }
 
             // If we are currently viewing this match in match mode, update context
-            let currentContext = null;
-            const unsub = matchContextStore.subscribe((v) => (currentContext = v));
-            unsub();
+            const currentContext = get(matchContextStore);
             if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
                 const movePositions = await GetMatchMovePositions(match.id);
                 if (movePositions && movePositions.length > 0) {
@@ -410,9 +408,7 @@
             }
 
             let startIndex = 0;
-            let lastVisitedMatch = null;
-            const unsub = lastVisitedMatchStore.subscribe((v) => (lastVisitedMatch = v));
-            unsub();
+            const lastVisitedMatch = get(lastVisitedMatchStore);
             // First check in-memory store for same session, then check DB-persisted value
             if (lastVisitedMatch && lastVisitedMatch.matchID === match.id) {
                 if (lastVisitedMatch.currentIndex >= 0 && lastVisitedMatch.currentIndex < movePositions.length) {
