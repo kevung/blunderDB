@@ -2,9 +2,9 @@
 // labels + their option/min/max/range state into the backend command tokens
 // (`cube`, `p>12`, `e10,50`, `t"foo"`, `T>2026/01/01`, …).
 //
-// This was duplicated verbatim as a 31-case switch inside both
-// `SearchModal.svelte` and `SearchPanel.svelte`. Extracting it removes the
-// duplication and makes the mapping unit-testable. It is the inverse of
+// This was originally duplicated verbatim as a 31-case switch inside two search
+// components (the now-removed SearchModal and the live SearchPanel). Extracting
+// it removed the duplication and makes the mapping unit-testable. It is the inverse of
 // `parseFilters()` in `commandProcessor.js` (which parses tokens back into
 // filter flags), so the two are covered by a round-trip test.
 //

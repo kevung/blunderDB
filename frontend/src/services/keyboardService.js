@@ -17,7 +17,7 @@ import {
     deletePosition,
     toggleAnalysisPanel,
     toggleCommentPanel,
-    toggleMetadataModal,
+    toggleMetadataPanel,
     toggleAnkiPanel,
     toggleCollectionPanelAction,
     toggleTournamentPanel,
@@ -262,7 +262,7 @@ export function handleKeyDown(event) {
     } else if (!event.ctrlKey && event.key === '?') {
         toggleHelpModal();
     } else if (event.ctrlKey && letter('m')) {
-        toggleMetadataModal();
+        toggleMetadataPanel();
     } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
     } else if (event.ctrlKey && letter('t')) {

@@ -190,7 +190,7 @@
     // Canonical filter/group names stay in English because they double as logic
     // keys (object keys for filterEnabled/params and `{#if filter === '...'}`
     // branches). These maps yield the i18n key slug for the *displayed* label
-    // only. Keep the filter slugs in sync with SearchModal.svelte.
+    // only. The filter→token mapping lives in services/searchFilterService.js.
     const filterKeySlug = {
         'Include Cube': 'includeCube',
         'Include Score': 'includeScore',

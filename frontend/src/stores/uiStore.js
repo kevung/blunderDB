@@ -28,7 +28,6 @@ export const currentPositionIndexStore = writable(0);
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {
-    SEARCH: 'search',
     MET: 'met',
     TAKE_POINT_2_LAST: 'takePoint2Last',
     TAKE_POINT_2_LIVE: 'takePoint2Live',
@@ -38,7 +37,6 @@ export const MODAL = {
     GAMMON_VALUE_2: 'gammonValue2',
     GAMMON_VALUE_4: 'gammonValue4',
     WARNING: 'warning',
-    METADATA: 'metadata',
     GO_TO_POSITION: 'goToPosition',
     EXPORT_DATABASE: 'exportDatabase',
     TAKE_POINT_2: 'takePoint2',
@@ -53,7 +51,6 @@ export const MODAL = {
 export const PANEL = {
     ANALYSIS: 'analysis',
     COMMENT: 'comment',
-    FILTER_LIBRARY: 'filterLibrary',
     SEARCH_HISTORY: 'searchHistory',
     MATCH: 'match',
     COLLECTION: 'collection',

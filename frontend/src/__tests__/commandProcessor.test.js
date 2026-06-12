@@ -357,7 +357,7 @@ describe('processCommand', () => {
             onToggleHelp: vi.fn(),
             onLoadAllPositions: vi.fn(),
             onLoadPositionsByFilters: vi.fn(),
-            toggleFilterLibraryPanel: vi.fn(),
+            toggleMetadataPanel: vi.fn(),
             toggleSearchHistoryPanel: vi.fn(),
             toggleMatchPanel: vi.fn(),
             toggleCollectionPanel: vi.fn(),
@@ -448,8 +448,6 @@ describe('processCommand', () => {
         ['he', 'onToggleHelp'],
         ['h', 'onToggleHelp'],
         ['e', 'onLoadAllPositions'],
-        ['filter', 'toggleFilterLibraryPanel'],
-        ['fl', 'toggleFilterLibraryPanel'],
         ['history', 'toggleSearchHistoryPanel'],
         ['hi', 'toggleSearchHistoryPanel'],
         ['match', 'toggleMatchPanel'],
@@ -519,10 +517,10 @@ describe('processCommand', () => {
     });
 
     // -- meta command --------------------------------------------------------
-    test('meta opens METADATA modal when database loaded', () => {
+    test('meta opens the Metadata tab when database loaded', () => {
         databasePathStore.set('/some/path.db');
         processCommand('meta');
-        expect(get(activeModal)).toBe(MODAL.METADATA);
+        expect(callbacks.toggleMetadataPanel).toHaveBeenCalled();
     });
 
     test('meta shows error when no database loaded', () => {

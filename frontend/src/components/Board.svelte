@@ -17,8 +17,6 @@
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
-    let showSearchModal = $derived($activeModal === MODAL.SEARCH);
-    let showMetadataModal = $derived($activeModal === MODAL.METADATA);
     let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
     let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
     let showComment = $derived($openPanels.has(PANEL.COMMENT));
@@ -829,7 +827,7 @@
     }
 
     function handleKeyDown(event) {
-        if (mode !== 'EDIT' || showSearchModal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when metadata modal, TakePoint2Modal, or TakePoint4Modal is open
+        if (mode !== 'EDIT' || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
 
         if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();

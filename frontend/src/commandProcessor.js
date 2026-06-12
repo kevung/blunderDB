@@ -76,8 +76,6 @@ export function processCommand(command) {
         handleSubSearch(command, positions);
     } else if (command.startsWith('s')) {
         handleSearch(command);
-    } else if (command === 'filter' || command === 'fl') {
-        callbacks.toggleFilterLibraryPanel?.();
     } else if (command === 'history' || command === 'hi') {
         callbacks.toggleSearchHistoryPanel?.();
     } else if (command === 'match' || command === 'ma') {
@@ -106,7 +104,7 @@ export function processCommand(command) {
         openModal(MODAL.GAMMON_VALUE_4);
     } else if (command === 'meta') {
         if (databaseLoaded) {
-            openModal(MODAL.METADATA);
+            callbacks.toggleMetadataPanel?.();
         } else {
             statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         }

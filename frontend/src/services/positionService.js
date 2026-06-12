@@ -1151,7 +1151,9 @@ export function toggleCommentPanel() {
     activeTabStore.set('comments');
 }
 
-export function toggleMetadataModal() {
+// Opens the Metadata tab (not a modal — the standalone MetadataModal was removed).
+// Bound to the `meta` command and Ctrl+M.
+export function toggleMetadataPanel() {
     if (get(databasePathStore)) {
         if (get(statusBarModeStore) === 'EDIT') {
             setStatusBarMessage(tMsg('status.cannotShowMetadataEdit'));
@@ -1159,15 +1161,6 @@ export function toggleMetadataModal() {
             activeTabStore.set('metadata');
         }
     }
-}
-
-export function toggleFilterLibraryPanel() {
-    logger.log('toggleFilterLibraryPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('search');
 }
 
 export function toggleAnkiPanel() {
