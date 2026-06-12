@@ -276,3 +276,59 @@ export function buildSearchCommand(tokens) {
     });
     return commandParts.join(' ');
 }
+
+/**
+ * Pick the individual backend filter arguments back out of a token list.
+ *
+ * `onLoadPositionsByFilters` (in App.svelte) takes ~30 positional filter
+ * arguments, each of which SearchPanel derived from the `buildFilterTokens`
+ * output by prefix-matching the token array. That dense block of `find`/
+ * `includes` calls is pure (it depends only on the tokens), so it lives here
+ * where it can be unit-tested rather than inline in the component. Prefix
+ * collisions are disambiguated exactly as the original inline code did:
+ *   - `b…` is the player-1 backgammon-rate token, but NOT the outfield-blot
+ *     (`bo…`) or jan-blot (`bj…`) tokens; likewise `B…` vs `BO…`/`BJ…`.
+ *   - the double token may be `D` (both rolls) or `D1` (first roll only),
+ *     which also selects `drMode`.
+ * Match/tournament id tokens (`ma…`, `tn…`) are returned with their 2-char
+ * prefix stripped, as the backend expects.
+ *
+ * @param {string[]} tokens - the output of {@link buildFilterTokens}.
+ * @returns {object} the named filter arguments consumed by onLoadPositionsByFilters.
+ */
+export function parseFilterTokens(tokens) {
+    const matchIDToken = tokens.find((f) => f.startsWith('ma'));
+    const tournamentIDToken = tokens.find((f) => f.startsWith('tn'));
+    return {
+        incCube: tokens.includes('cube'),
+        incScore: tokens.includes('score'),
+        ncFilter: tokens.includes('nc'),
+        mirFilter: tokens.includes('M'),
+        pcFilter: tokens.find((f) => f.startsWith('p')),
+        wrFilter: tokens.find((f) => f.startsWith('w')),
+        grFilter: tokens.find((f) => f.startsWith('g')),
+        bgFilter: tokens.find((f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj')),
+        p2wrFilter: tokens.find((f) => f.startsWith('W')),
+        p2grFilter: tokens.find((f) => f.startsWith('G')),
+        p2bgFilter: tokens.find((f) => f.startsWith('B') && !f.startsWith('BO') && !f.startsWith('BJ')),
+        p1coFilter: tokens.find((f) => f.startsWith('o')),
+        p2coFilter: tokens.find((f) => f.startsWith('O')),
+        p1bcFilter: tokens.find((f) => f.startsWith('k')),
+        p2bcFilter: tokens.find((f) => f.startsWith('K')),
+        p1czFilter: tokens.find((f) => f.startsWith('z')),
+        p2czFilter: tokens.find((f) => f.startsWith('Z')),
+        p1apcFilter: tokens.find((f) => f.startsWith('P')),
+        eqFilter: tokens.find((f) => f.startsWith('e')),
+        meFilter: tokens.find((f) => f.startsWith('E')),
+        p1obFilter: tokens.find((f) => f.startsWith('bo')),
+        p2obFilter: tokens.find((f) => f.startsWith('BO')),
+        p1jbFilter: tokens.find((f) => f.startsWith('bj')),
+        p2jbFilter: tokens.find((f) => f.startsWith('BJ')),
+        matchIDs: matchIDToken ? matchIDToken.slice(2) : '',
+        tournamentIDs: tournamentIDToken ? tournamentIDToken.slice(2) : '',
+        dtFilter: tokens.includes('d'),
+        drFilter: tokens.includes('D') || tokens.includes('D1'),
+        drMode: tokens.includes('D1') ? 'first' : 'both',
+        cdFilter: tokens.find((f) => f.startsWith('T'))
+    };
+}

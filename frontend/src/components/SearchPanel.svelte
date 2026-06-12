@@ -6,7 +6,7 @@
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
-    import { buildFilterTokens, buildSearchCommand } from '../services/searchFilterService.js';
+    import { buildFilterTokens, buildSearchCommand, parseFilterTokens } from '../services/searchFilterService.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -560,38 +560,38 @@
             transformedFilters.push(cubeSubType === 'takepass' ? 'dr' : 'dd');
         }
 
-        const incCube = transformedFilters.includes('cube');
-        const incScore = transformedFilters.includes('score');
-        const ncFilter = transformedFilters.includes('nc');
-        const mirFilter = transformedFilters.includes('M');
-        const pcFilter = transformedFilters.find((f) => f.startsWith('p'));
-        const wrFilter = transformedFilters.find((f) => f.startsWith('w'));
-        const grFilter = transformedFilters.find((f) => f.startsWith('g'));
-        const bgFilter = transformedFilters.find((f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj'));
-        const p2wrFilter = transformedFilters.find((f) => f.startsWith('W'));
-        const p2grFilter = transformedFilters.find((f) => f.startsWith('G'));
-        const p2bgFilter = transformedFilters.find((f) => f.startsWith('B') && !f.startsWith('BO') && !f.startsWith('BJ'));
-        const p1coFilter = transformedFilters.find((f) => f.startsWith('o'));
-        const p2coFilter = transformedFilters.find((f) => f.startsWith('O'));
-        const p1bcFilter = transformedFilters.find((f) => f.startsWith('k'));
-        const p2bcFilter = transformedFilters.find((f) => f.startsWith('K'));
-        const p1czFilter = transformedFilters.find((f) => f.startsWith('z'));
-        const p2czFilter = transformedFilters.find((f) => f.startsWith('Z'));
-        const p1apcFilter = transformedFilters.find((f) => f.startsWith('P'));
-        const eqFilter = transformedFilters.find((f) => f.startsWith('e'));
-        const meFilter = transformedFilters.find((f) => f.startsWith('E'));
-        const p1obFilter = transformedFilters.find((f) => f.startsWith('bo'));
-        const p2obFilter = transformedFilters.find((f) => f.startsWith('BO'));
-        const p1jbFilter = transformedFilters.find((f) => f.startsWith('bj'));
-        const p2jbFilter = transformedFilters.find((f) => f.startsWith('BJ'));
-        const matchIDToken = transformedFilters.find((f) => f.startsWith('ma'));
-        const matchIDs = matchIDToken ? matchIDToken.slice(2) : '';
-        const tournamentIDToken = transformedFilters.find((f) => f.startsWith('tn'));
-        const tournamentIDs = tournamentIDToken ? tournamentIDToken.slice(2) : '';
-        const dtFilter = transformedFilters.includes('d');
-        const drFilter = transformedFilters.includes('D') || transformedFilters.includes('D1');
-        const drMode = transformedFilters.includes('D1') ? 'first' : 'both';
-        const cdFilter = transformedFilters.find((f) => f.startsWith('T'));
+        const {
+            incCube,
+            incScore,
+            ncFilter,
+            mirFilter,
+            pcFilter,
+            wrFilter,
+            grFilter,
+            bgFilter,
+            p2wrFilter,
+            p2grFilter,
+            p2bgFilter,
+            p1coFilter,
+            p2coFilter,
+            p1bcFilter,
+            p2bcFilter,
+            p1czFilter,
+            p2czFilter,
+            p1apcFilter,
+            eqFilter,
+            meFilter,
+            p1obFilter,
+            p2obFilter,
+            p1jbFilter,
+            p2jbFilter,
+            matchIDs,
+            tournamentIDs,
+            dtFilter,
+            drFilter,
+            drMode,
+            cdFilter
+        } = parseFilterTokens(transformedFilters);
 
         const searchCommand = buildSearchCommand(excludeActive ? [...transformedFilters, 'x'] : transformedFilters);
 
