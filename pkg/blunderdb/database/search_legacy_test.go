@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"math"
 	"strconv"
@@ -11,9 +12,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
-// The functions below evaluate position filters that need database access
-// (analysis, comments, played moves). Pure board-only predicates live as
-// methods on domain.Position in the domain package.
+// search_legacy_test.go — the legacy full-table-scan search predicates.
+//
+// These are the reference implementation for the search-rewrite equivalence
+// tests (TestSearch_Equivalence_* in search_rewrite_test.go and the
+// MoveErrorFilter tests in move_error_cube_test.go): the new SQL-first search
+// lives in storage/{sqlite,postgres}, and these functions back the oracle that
+// proves the two agree. They are intentionally test-only — not part of the
+// production binary or the public `database` API surface — so this file carries
+// the _test.go suffix. Pure board-only predicates live as methods on
+// domain.Position in the domain package.
 
 func MatchesSearchText(p *Position, searchText string, d *Database) bool {
 	keywords := parseSearchTextKeywords(searchText)
@@ -672,4 +680,89 @@ func MatchesDateFilter(p *Position, filter string, d *Database) bool {
 		return match
 	}
 	return false
+}
+
+// parseFilterIDList parses a match/tournament ID filter string.
+// Supports: "5" (single), "2,7" (range from 2 to 7), or multiple IDs passed
+// as a pre-joined comma-separated list from the frontend.
+func parseFilterIDList(s string) ([]int64, error) {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil, nil
+	}
+	parts := strings.Split(s, ",")
+	if len(parts) == 2 {
+		// Could be a range (e.g., "2,7" means IDs 2 through 7)
+		start, err1 := strconv.ParseInt(strings.TrimSpace(parts[0]), 10, 64)
+		end, err2 := strconv.ParseInt(strings.TrimSpace(parts[1]), 10, 64)
+		if err1 == nil && err2 == nil && end > start {
+			var ids []int64
+			for i := start; i <= end; i++ {
+				ids = append(ids, i)
+			}
+			return ids, nil
+		}
+	}
+	// Otherwise treat as explicit list of IDs separated by ";"
+	parts = strings.Split(s, ";")
+	var ids []int64
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		id, err := strconv.ParseInt(p, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid ID %q: %v", p, err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
+// getPositionIDsForMatch returns all position IDs linked to a given match.
+func (d *Database) getPositionIDsForMatch(matchID int64) ([]int64, error) {
+	d.mu.RLock()
+	rows, err := d.db.Query(`
+		SELECT DISTINCT mv.position_id
+		FROM move mv
+		INNER JOIN game g ON mv.game_id = g.id
+		WHERE g.match_id = ?
+	`, matchID)
+	d.mu.RUnlock()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
+// getMatchIDsForTournament returns all match IDs belonging to a tournament.
+func (d *Database) getMatchIDsForTournament(tournamentID int64) ([]int64, error) {
+	d.mu.RLock()
+	rows, err := d.db.Query(`SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
+	d.mu.RUnlock()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
 }
