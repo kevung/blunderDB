@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -1123,12 +1123,25 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr ""
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
 msgstr ""
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1136,11 +1149,11 @@ msgid ""
 "paquet dans les Paramètres (icône engrenage)."
 msgstr ""
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr ""
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1148,11 +1161,11 @@ msgid ""
 "``meta``."
 msgstr ""
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr ""
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

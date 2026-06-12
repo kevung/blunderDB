@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -343,14 +343,14 @@ msgid ""
 "mieux exploiter l'espace disponible). Comme les autres réglages, ces "
 "choix sont conservés d'une session à l'autre."
 msgstr ""
-"Окно конфигурации также содержит настройки отображения интерфейса. Ползунок"
-" **масштаба интерфейса** позволяет увеличить или уменьшить все элементы "
-"интерфейса, что полезно на экранах высокой плотности или для улучшения "
-"читаемости. Меню **расположения панелей** определяет, где панели (поиск, "
-"матчи, анализ) располагаются относительно доски: *снизу*, *сбоку* или "
-"*автоматически* (тогда на широких экранах выбирается боковое расположение, "
-"чтобы лучше использовать доступное пространство). Как и другие настройки, "
-"эти выборы сохраняются от сеанса к сеансу."
+"Окно конфигурации также содержит настройки отображения интерфейса. "
+"Ползунок **масштаба интерфейса** позволяет увеличить или уменьшить все "
+"элементы интерфейса, что полезно на экранах высокой плотности или для "
+"улучшения читаемости. Меню **расположения панелей** определяет, где "
+"панели (поиск, матчи, анализ) располагаются относительно доски: *снизу*, "
+"*сбоку* или *автоматически* (тогда на широких экранах выбирается боковое "
+"расположение, чтобы лучше использовать доступное пространство). Как и "
+"другие настройки, эти выборы сохраняются от сеанса к сеансу."
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -669,8 +669,8 @@ msgid ""
 "affiché d'emblée et la revue débute directement sur la première position,"
 " afin de commencer immédiatement la navigation."
 msgstr ""
-"При открытии базы данных, содержащей матчи, панель **Матчи** отображается "
-"сразу же, а разбор начинается прямо с первой позиции, чтобы можно было "
+"При открытии базы данных, содержащей матчи, панель **Матчи** отображается"
+" сразу же, а разбор начинается прямо с первой позиции, чтобы можно было "
 "немедленно приступить к навигации."
 
 #: ../../source/manuel.rst:334
@@ -1366,6 +1366,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Свободная тренировка (cram):** Кнопка *Cram* рядом с *Study* запускает сессию свободной тренировки: вам показываются случайные позиции из колоды без учёта расписания FSRS. Этот режим **никогда не изменяет план интервального повторения** — идеально для разминки перед турниром или интенсивного повторения тематической колоды, не нарушая её порядок. Значок *Cram* заменяет состояние карточки, а кнопка *Далее* (клавиши *1*–*4*) перелистывает позиции. *Esc* возвращает к списку, не сохраняя прерванную сессию."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1374,7 +1387,7 @@ msgstr ""
 " с помощью *Esc*. Кнопка меняется на *Resume* и показывает ваш прогресс. "
 "Нажмите её, чтобы продолжить с того места, где остановились."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1386,11 +1399,11 @@ msgstr ""
 "удержание, максимальный интервал, случайный фактор) можно настраивать для"
 " каждой колоды в Настройках (значок шестерёнки)."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Панель метаданных"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1401,11 +1414,11 @@ msgstr ""
 "имя, описание, количество позиций, матчей и партий, версия схемы. "
 "Доступна через команду ``meta``."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Панель журнала"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

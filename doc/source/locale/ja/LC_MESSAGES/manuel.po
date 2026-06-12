@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -306,12 +306,10 @@ msgid ""
 "mieux exploiter l'espace disponible). Comme les autres réglages, ces "
 "choix sont conservés d'une session à l'autre."
 msgstr ""
-"設定ウィンドウには、インターフェースの表示設定もまとめられています。"
-"**インターフェースの拡大率** のスライダーを使うと、すべての要素を拡大または縮小でき、"
-"高密度ディスプレイや読みやすさの向上に役立ちます。**パネルの位置** メニューでは、"
-"パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： "
-"*下*、*横* または *自動*（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。"
-"他の設定と同様に、これらの選択はセッションをまたいで保持されます。"
+"設定ウィンドウには、インターフェースの表示設定もまとめられています。**インターフェースの拡大率** "
+"のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。**パネルの位置** "
+"メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： *下*、*横* または "
+"*自動*（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。"
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -590,9 +588,8 @@ msgid ""
 "ronde, date et longueur du match, lorsque ces informations sont "
 "disponibles)."
 msgstr ""
-"マッチを開くと、ボードの上に **情報バー** が表示されます： "
-"対戦している両プレイヤー（*プレイヤー 1* 対 *プレイヤー 2*）と、"
-"マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）が示されます。"
+"マッチを開くと、ボードの上に **情報バー** が表示されます： 対戦している両プレイヤー（*プレイヤー 1* 対 *プレイヤー "
+"2*）と、マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）が示されます。"
 
 #: ../../source/manuel.rst:325
 msgid ""
@@ -600,8 +597,8 @@ msgid ""
 "affiché d'emblée et la revue débute directement sur la première position,"
 " afin de commencer immédiatement la navigation."
 msgstr ""
-"マッチを含むデータベースを開くと、**マッチ** パネルがすぐに表示され、"
-"レビューは直接最初のポジションから始まるため、すぐにナビゲーションを開始できます。"
+"マッチを含むデータベースを開くと、**マッチ** "
+"パネルがすぐに表示され、レビューは直接最初のポジションから始まるため、すぐにナビゲーションを開始できます。"
 
 #: ../../source/manuel.rst:334
 msgid "Panneau Tournois"
@@ -745,9 +742,7 @@ msgid ""
 "**Longueur de match** — restriction à des longueurs de match précises (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
-msgstr ""
-"**マッチ長** — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 "
-"ポイント）。複数の長さを組み合わせられます。"
+msgstr "**マッチ長** — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 ポイント）。複数の長さを組み合わせられます。"
 
 #: ../../source/manuel.rst:415
 msgid ""
@@ -1235,6 +1230,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**フリー練習（cram）：** *Study* の隣にある *Cram* ボタンは、フリー練習セッションを開始します。FSRS のスケジュールに関係なく、デッキからランダムな局面が表示されます。このモードは**間隔反復の計画を一切変更しません**。トーナメント前のウォームアップや、順序を乱さずにテーマ別デッキを集中的に復習するのに最適です。カードの状態の代わりに *Cram* バッジが表示され、*次へ* ボタン（キー *1*〜*4*）で局面を切り替えます。*Esc* を押すと、中断したセッションを保存せずに一覧に戻ります。"
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1242,7 +1250,7 @@ msgstr ""
 "**停止／再開：** 復習セッションは *Esc* でいつでも中断できます。ボタンが *Resume* "
 "に変わり、進捗状況が表示されます。それをクリックすると、中断した場所から再開できます。"
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1252,11 +1260,11 @@ msgstr ""
 "**デッキの管理：** アクションボタンを使って、デッキの名前変更、同期、リセット、削除ができます。FSRS "
 "のパラメータ（目標保持率、最大間隔、ランダム性）は、設定（歯車アイコン）でデッキごとに構成できます。"
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "メタデータパネル"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1267,11 +1275,11 @@ msgstr ""
 "パネルは、現在のデータベースの一般情報を表示します：名前、説明、ポジション数、マッチ数とゲーム数、スキーマのバージョン。``meta`` "
 "コマンドでアクセスできます。"
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "ログパネル"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

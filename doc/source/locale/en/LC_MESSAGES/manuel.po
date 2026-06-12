@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -349,9 +349,9 @@ msgstr ""
 "elements, which is useful on high-density screens or to improve "
 "readability. A **panel position** menu sets where the panels (search, "
 "matches, analysis) appear relative to the board: *bottom*, *side* or "
-"*automatic* (the side is then chosen on wide screens to make better use of "
-"the available space). Like the other settings, these choices are kept from "
-"one session to the next."
+"*automatic* (the side is then chosen on wide screens to make better use "
+"of the available space). Like the other settings, these choices are kept "
+"from one session to the next."
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -672,8 +672,8 @@ msgid ""
 " afin de commencer immédiatement la navigation."
 msgstr ""
 "When opening a database that contains matches, the **Matches** panel is "
-"shown right away and the review starts directly on the first position, so "
-"you can begin navigating immediately."
+"shown right away and the review starts directly on the first position, so"
+" you can begin navigating immediately."
 
 #: ../../source/manuel.rst:334
 msgid "Panneau Tournois"
@@ -1365,6 +1365,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Free drill (cram):** The *Cram* button, next to *Study*, starts a free-drill session: random positions from the deck are shown to you regardless of the FSRS schedule. This mode **never alters the spaced-repetition plan** — ideal for warming up before a tournament or intensively reviewing a themed deck without disturbing its ordering. A *Cram* badge replaces the card state and a *Next* button (keys *1* to *4*) cycles through the positions. *Esc* returns to the list without saving an interrupted session."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1373,7 +1386,7 @@ msgstr ""
 "*Esc*. The button changes to *Resume* and shows your progress. Click it "
 "to pick up where you left off."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1384,11 +1397,11 @@ msgstr ""
 "delete decks. FSRS parameters (target retention, maximum interval, fuzz "
 "factor) can be configured per deck in the Settings (gear icon)."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Metadata Panel"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1399,11 +1412,11 @@ msgstr ""
 "database: name, description, number of positions, matches and games, "
 "schema version. Accessible via the ``meta`` command."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Log Panel"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "
