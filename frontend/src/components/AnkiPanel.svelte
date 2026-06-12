@@ -20,6 +20,7 @@
         GetAnkiDeckStats,
         GetAnkiDeckPositions,
         GetNextAnkiCard,
+        GetRandomAnkiCard,
         ReviewAnkiCard,
         ResetAnkiDeck,
         GetAllCollections,
@@ -57,6 +58,8 @@
 
     // Review state
     let reviewSessionCount = $state(0);
+    // Cram (free drill): serves random cards without touching the FSRS schedule.
+    let cramMode = $state(false);
 
     // Listen for review key actions routed from App.svelte
     $effect(() => {
@@ -176,6 +179,7 @@
 
     async function startReview() {
         if (!selectedDeck) return;
+        cramMode = false;
         try {
             // Re-sync to pick up new positions
             if (selectedDeck.sourceType === 'search' && selectedDeck.sourceCommand) {
@@ -213,8 +217,69 @@
         }
     }
 
+    // startCram begins a free-drill session: random positions from the deck,
+    // with no effect on the FSRS schedule (no ReviewAnkiCard calls).
+    async function startCram() {
+        if (!selectedDeck) return;
+        cramMode = true;
+        try {
+            // Re-sync to pick up new positions, like a normal review.
+            if (selectedDeck.sourceType === 'search' && selectedDeck.sourceCommand) {
+                const ids = await executeSearchForDeckSync(selectedDeck.sourceCommand);
+                if (ids.length > 0) {
+                    await SyncAnkiDeckWithPositions(selectedDeck.id, ids);
+                }
+            } else {
+                await SyncAnkiDeck(selectedDeck.id);
+            }
+            const deckPositions = await GetAnkiDeckPositions(selectedDeck.id);
+            positionsStore.set(deckPositions || []);
+            const card = await GetRandomAnkiCard(selectedDeck.id, 0);
+            if (!card) {
+                statusBarTextStore.set(tMsg('anki.deckEmpty'));
+                cramMode = false;
+                return;
+            }
+            ankiReviewCardStore.set(card);
+            positionStore.set(JSON.parse(JSON.stringify(card.position)));
+            updatePositionIndex(card.position.id);
+            reviewSessionCount = 0;
+            // Cram never creates a paused FSRS session.
+            ankiPausedSessionStore.set(null);
+            ankiViewModeStore.set('review');
+        } catch (e) {
+            cramMode = false;
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
+        }
+    }
+
+    // advanceCram draws the next random card, avoiding an immediate repeat.
+    async function advanceCram() {
+        if (!selectedDeck || !reviewCard) return;
+        try {
+            const nextCard = await GetRandomAnkiCard(selectedDeck.id, reviewCard.position.id);
+            reviewSessionCount++;
+            if (!nextCard) {
+                ankiReviewCardStore.set(null);
+                ankiViewModeStore.set('list');
+                cramMode = false;
+                return;
+            }
+            ankiReviewCardStore.set(nextCard);
+            positionStore.set(JSON.parse(JSON.stringify(nextCard.position)));
+            updatePositionIndex(nextCard.position.id);
+        } catch (e) {
+            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
+        }
+    }
+
     async function submitReview(rating) {
         if (!reviewCard) return;
+        // In cram mode the rating is ignored — just advance, never schedule.
+        if (cramMode) {
+            await advanceCram();
+            return;
+        }
         try {
             const nextCard = await ReviewAnkiCard(reviewCard.card.id, rating);
             reviewSessionCount++;
@@ -442,10 +507,12 @@
     }
 
     function backToList() {
-        // Save paused session if we were reviewing
-        if (viewMode === 'review' && selectedDeck) {
+        // Save paused session if we were reviewing — but cram never schedules,
+        // so it leaves no resumable session.
+        if (viewMode === 'review' && selectedDeck && !cramMode) {
             ankiPausedSessionStore.set({ deckId: selectedDeck.id, sessionCount: reviewSessionCount });
         }
+        cramMode = false;
         ankiViewModeStore.set('list');
         // Refresh stats when returning to list
         if (selectedDeck) {
@@ -541,29 +608,41 @@
             </button>
             <span class="review-title">{selectedDeck?.name}</span>
             <span class="review-count">#{reviewSessionCount + 1}</span>
-            <span class="card-state state-{reviewCard.card.state}">{getStateLabel(reviewCard.card.state)}</span>
+            {#if cramMode}
+                <span class="card-state state-cram">{$t('anki.cramBadge')}</span>
+            {:else}
+                <span class="card-state state-{reviewCard.card.state}">{getStateLabel(reviewCard.card.state)}</span>
+            {/if}
         </div>
 
         <div class="review-body">
             <div class="review-position-id">{$t('anki.positionNumber', { id: reviewCard.position.id })}</div>
-            <div class="review-buttons">
-                <button class="btn-rating btn-again" onclick={() => submitReview(1)} title={$t('anki.again') + ' (1)'}>
-                    <span class="rating-label">{$t('anki.again')}</span>
-                    <span class="rating-key">1</span>
-                </button>
-                <button class="btn-rating btn-hard" onclick={() => submitReview(2)} title={$t('anki.hard') + ' (2)'}>
-                    <span class="rating-label">{$t('anki.hard')}</span>
-                    <span class="rating-key">2</span>
-                </button>
-                <button class="btn-rating btn-good" onclick={() => submitReview(3)} title={$t('anki.good') + ' (3)'}>
-                    <span class="rating-label">{$t('anki.good')}</span>
-                    <span class="rating-key">3</span>
-                </button>
-                <button class="btn-rating btn-easy" onclick={() => submitReview(4)} title={$t('anki.easy') + ' (4)'}>
-                    <span class="rating-label">{$t('anki.easy')}</span>
-                    <span class="rating-key">4</span>
-                </button>
-            </div>
+            {#if cramMode}
+                <div class="review-buttons">
+                    <button class="btn-rating btn-good" onclick={advanceCram} title={$t('anki.next') + ' (1-4)'}>
+                        <span class="rating-label">{$t('anki.next')}</span>
+                    </button>
+                </div>
+            {:else}
+                <div class="review-buttons">
+                    <button class="btn-rating btn-again" onclick={() => submitReview(1)} title={$t('anki.again') + ' (1)'}>
+                        <span class="rating-label">{$t('anki.again')}</span>
+                        <span class="rating-key">1</span>
+                    </button>
+                    <button class="btn-rating btn-hard" onclick={() => submitReview(2)} title={$t('anki.hard') + ' (2)'}>
+                        <span class="rating-label">{$t('anki.hard')}</span>
+                        <span class="rating-key">2</span>
+                    </button>
+                    <button class="btn-rating btn-good" onclick={() => submitReview(3)} title={$t('anki.good') + ' (3)'}>
+                        <span class="rating-label">{$t('anki.good')}</span>
+                        <span class="rating-key">3</span>
+                    </button>
+                    <button class="btn-rating btn-easy" onclick={() => submitReview(4)} title={$t('anki.easy') + ' (4)'}>
+                        <span class="rating-label">{$t('anki.easy')}</span>
+                        <span class="rating-key">4</span>
+                    </button>
+                </div>
+            {/if}
         </div>
     {:else if viewMode === 'settings' && selectedDeck}
         <!-- Settings Mode -->
@@ -795,6 +874,16 @@
                         {:else}
                             {$t('anki.study', { due: stats.dueCount })}
                         {/if}
+                    </button>
+                    <button class="btn-cram" onclick={startCram} disabled={stats.totalCount === 0} title={$t('anki.cramTooltip')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
+                            />
+                        </svg>
+                        {$t('anki.cram')}
                     </button>
                     <button class="btn-settings" onclick={openSettings} title={$t('anki.deckSettingsTooltip')}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
@@ -1111,6 +1200,28 @@
         cursor: default;
     }
 
+    .btn-cram {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border: 1px solid #17a2b8;
+        border-radius: 3px;
+        background: #fff;
+        color: #17a2b8;
+        cursor: pointer;
+        font-size: 12px;
+        justify-content: center;
+    }
+    .btn-cram:hover {
+        background: #e8f7fa;
+    }
+    .btn-cram:disabled {
+        border-color: #ccc;
+        color: #ccc;
+        cursor: default;
+    }
+
     .btn-settings {
         display: flex;
         align-items: center;
@@ -1173,6 +1284,10 @@
         font-weight: 500;
         background: #f0f0f0;
         color: #555;
+    }
+    .state-cram {
+        background: #17a2b8;
+        color: #fff;
     }
 
     .review-body {
