@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand } from '../services/searchFilterService.js';
+import { buildFilterTokens, buildSearchCommand, parseFilterTokens } from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -273,5 +273,74 @@ describe('round-trip against parseFilters', () => {
         expect(parsed.player1OutfieldBlotFilter).toBe('bo>1');
         expect(parsed.player1JanBlotFilter).toBe('bj>1');
         expect(parsed.player2BackgammonRateFilter).toBe('B>3');
+    });
+});
+
+describe('parseFilterTokens', () => {
+    test('extracts includes-based boolean flags', () => {
+        const p = parseFilterTokens(['cube', 'score', 'nc', 'M', 'd']);
+        expect(p.incCube).toBe(true);
+        expect(p.incScore).toBe(true);
+        expect(p.ncFilter).toBe(true);
+        expect(p.mirFilter).toBe(true);
+        expect(p.dtFilter).toBe(true);
+    });
+
+    test('defaults are false / undefined when no tokens match', () => {
+        const p = parseFilterTokens([]);
+        expect(p.incCube).toBe(false);
+        expect(p.ncFilter).toBe(false);
+        expect(p.pcFilter).toBeUndefined();
+        expect(p.cdFilter).toBeUndefined();
+        expect(p.matchIDs).toBe('');
+        expect(p.tournamentIDs).toBe('');
+        expect(p.drFilter).toBe(false);
+        expect(p.drMode).toBe('both');
+    });
+
+    test('disambiguates b-prefixed tokens: backgammon-rate vs outfield-blot vs jan-blot', () => {
+        const p = parseFilterTokens(['b>2', 'bo>1', 'bj>1', 'B>3', 'BO>1', 'BJ>1']);
+        expect(p.bgFilter).toBe('b>2'); // not bo>1 / bj>1
+        expect(p.p1obFilter).toBe('bo>1');
+        expect(p.p1jbFilter).toBe('bj>1');
+        expect(p.p2bgFilter).toBe('B>3'); // not BO>1 / BJ>1
+        expect(p.p2obFilter).toBe('BO>1');
+        expect(p.p2jbFilter).toBe('BJ>1');
+    });
+
+    test('distinguishes lowercase pip-count (p) from uppercase absolute-pip (P)', () => {
+        const p = parseFilterTokens(['p>12', 'P>50']);
+        expect(p.pcFilter).toBe('p>12');
+        expect(p.p1apcFilter).toBe('P>50');
+    });
+
+    test('double token D selects both rolls, D1 selects first roll', () => {
+        expect(parseFilterTokens(['D']).drFilter).toBe(true);
+        expect(parseFilterTokens(['D']).drMode).toBe('both');
+        const first = parseFilterTokens(['D1']);
+        expect(first.drFilter).toBe(true);
+        expect(first.drMode).toBe('first');
+    });
+
+    test('strips the 2-char prefix from match (ma) and tournament (tn) id tokens', () => {
+        const p = parseFilterTokens(['ma3,4,5', 'tn7']);
+        expect(p.matchIDs).toBe('3,4,5');
+        expect(p.tournamentIDs).toBe('7');
+    });
+
+    test('round-trips with buildFilterTokens for a representative filter set', () => {
+        const tokens = buildFilterTokens(['Equity (millipoints)', 'Move Error (millipoints, Player 1)', 'Player Checker-Off'], {
+            equityOption: 'range',
+            equityRangeMin: 10,
+            equityRangeMax: 50,
+            moveErrorOption: 'min',
+            moveErrorMin: 5,
+            player1CheckerOffOption: 'min',
+            player1CheckerOffMin: 2
+        });
+        const p = parseFilterTokens(tokens);
+        expect(p.eqFilter).toBe('e10,50');
+        expect(p.meFilter).toBe('E>5');
+        expect(p.p1coFilter).toBe('o>2');
     });
 });
