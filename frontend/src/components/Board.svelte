@@ -4,6 +4,7 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
+    import { parseMoveNotation, mirrorPosition, computePipCount } from '../utils/boardGeometry.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -354,33 +355,6 @@
     }
 
     // Parse move notation like "24/23 13/11" or "8/5 6/5(2)" into array of moves with counts
-    function parseMoveNotation(moveString) {
-        if (!moveString || moveString === 'bar' || moveString.toLowerCase().includes('cannot move')) {
-            return [];
-        }
-
-        const moves = [];
-        // Split by spaces to get individual moves like "24/23" or "13/11(2)"
-        const parts = moveString.trim().split(/\s+/);
-
-        for (const part of parts) {
-            // Match pattern like "24/23" or "24/23(2)" or "bar/23" or "6/off(4)"
-            const match = part.match(/(\d+|bar)\/(\d+|off)(?:\((\d+)\))?/i);
-            if (match) {
-                const from = match[1].toLowerCase() === 'bar' ? 0 : parseInt(match[1]);
-                const to = match[2].toLowerCase() === 'off' ? -1 : parseInt(match[2]);
-                const count = match[3] ? parseInt(match[3]) : 1;
-
-                // Add multiple moves if count > 1
-                for (let i = 0; i < count; i++) {
-                    moves.push({ from, to, index: i });
-                }
-            }
-        }
-
-        return moves;
-    }
-
     // Draw arrows for a move — arrows start from the top checker being picked up
     // and end where the checker will land on the destination stack.
     // displayPosition is the already-mirrored position used by drawCheckers().
@@ -1000,35 +974,6 @@
     }
 
     // Mirror a position (swap players)
-    function mirrorPosition(pos) {
-        const mirrored = JSON.parse(JSON.stringify(pos)); // Deep copy
-
-        // Mirror the board points
-        const tempPoints = [...mirrored.board.points];
-        for (let i = 0; i < 26; i++) {
-            mirrored.board.points[25 - i] = {
-                color: tempPoints[i].color === -1 ? -1 : 1 - tempPoints[i].color,
-                checkers: tempPoints[i].checkers
-            };
-        }
-
-        // Swap bearoff
-        [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] = [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
-
-        // Swap player on roll
-        mirrored.player_on_roll = 1 - mirrored.player_on_roll;
-
-        // Swap scores
-        [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
-
-        // Swap cube owner if owned
-        if (mirrored.cube.owner !== -1) {
-            mirrored.cube.owner = 1 - mirrored.cube.owner;
-        }
-
-        return mirrored;
-    }
-
     export function drawBoard() {
         if (!two) return; // Safety check
 
@@ -1388,24 +1333,8 @@
             doublingCubeText.translation.set(cubePosition.x, cubePosition.y + 0.05 * doublingCubeSize); // Center the text
         }
 
-        function computePipCount() {
-            // Use the already-calculated display position
-            let pipCount1 = 0;
-            let pipCount2 = 0;
-
-            position.board.points.forEach((point, index) => {
-                if (point.color === 0) {
-                    pipCount1 += point.checkers * index;
-                } else if (point.color === 1) {
-                    pipCount2 += point.checkers * (25 - index);
-                }
-            });
-
-            return { pipCount1, pipCount2 };
-        }
-
         function drawPipCounts() {
-            const { pipCount1, pipCount2 } = computePipCount();
+            const { pipCount1, pipCount2 } = computePipCount(position);
 
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
