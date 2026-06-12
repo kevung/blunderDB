@@ -688,15 +688,6 @@ export function gotoPosition() {
     openModal(MODAL.GO_TO_POSITION);
 }
 
-export function findPosition() {
-    logger.log('findPosition');
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    activeTabStore.set('search');
-}
-
 export async function deletePosition() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));

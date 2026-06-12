@@ -7,8 +7,6 @@ export const commandTextStore = writable('');
 
 export const commentTextStore = writable('');
 
-export const analysisDataStore = writable('This is where your analysis data will be displayed.');
-
 // Active tab in the bottom panel ('log', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments')
 export const activeTabStore = writable('matches');
 
@@ -106,8 +104,6 @@ export function togglePanel(name) {
 
 // ── Derived stores (automatic — no manual enumeration) ──
 export const isAnyModalOpen = derived(activeModal, ($m) => $m !== null);
-export const isAnyPanelOpen = derived(openPanels, ($p) => $p.size > 0);
-export const isAnyModalOrPanelOpen = derived([activeModal, openPanels], ([$m, $p]) => $m !== null || $p.size > 0);
 
 export const matchPanelRefreshTriggerStore = writable(0);
 

@@ -207,4 +207,4 @@ export function closeWarningModal() {
     closeModal();
 }
 
-export { getFilenameFromPath, setStatusBarMessage, resetAnkiStores, resetAnalysisAndCommentStores, getMajorVersion };
+export { setStatusBarMessage };

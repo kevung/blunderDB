@@ -59,11 +59,6 @@ export function startTour(tourId) {
     d.drive();
 }
 
-/** Open the catalog of available tours. */
-export function openTourCatalog() {
-    openModal(MODAL.TOUR);
-}
-
 /**
  * On first launch, show the tour catalog once and remember it so it never
  * auto-opens again. Failures (e.g. config read) are swallowed — the tour is
