@@ -62,8 +62,9 @@ Use `scripts/release.sh <version>` — it updates the version string in three pl
 
 The backend is split into importable packages under `pkg/blunderdb/` and
 `internal/`, plus a thin `package main` at the repo root. (The split is the
-result of the `tasks/headless/` P1 refactor; the `aliases.go` shims noted
-below are transitional re-exports.)
+result of the `tasks/headless/` P1 refactor; the `aliases.go` files noted
+below are convenience re-exports kept intentionally so the `database`/`cli`
+packages can use unqualified `domain` names — not a pending migration.)
 
 - **Repo root (`package main`)** — `main.go` dispatches CLI vs GUI and holds
   the Wails `//go:embed` directives (`frontend/dist`, app icon); `config.go`

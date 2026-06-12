@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-22 15:25+0100\n"
+"POT-Creation-Date: 2026-06-12 23:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,17 +17,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: ../../source/annexe_windows_securite.rst:2
+#: ../../source/annexe_windows_securite.rst:4
 msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:4
+#: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:6
+#: ../../source/annexe_windows_securite.rst:8
 msgid ""
 "Windows requiert aujourd'hui de la part de sociétés d'édition logicielle "
 "ou d'éditeurs logiciel indépendants de certifier numériquement leurs "
@@ -39,81 +39,85 @@ msgid ""
 "smartscreen )."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:14
+#: ../../source/annexe_windows_securite.rst:16
 msgid ""
 "Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces"
-" possibilités onéreuses. Par conséquent, il est fort probable que Windows"
+" possibilités onéreuses. Une piste **gratuite** réservée aux logiciels "
+"libres (la *SignPath Foundation*, https://signpath.org/) a été explorée, "
+"mais la candidature n'a pas abouti ; les binaires Windows ne sont donc "
+"pas signés numériquement. Il est par conséquent fort probable que Windows"
 " vous avertisse d'un potentiel danger, voire bloque complètement "
 "l'exécution de blunderDB. Les sections suivantes expliquent les "
-"opérations à réaliser pour passer outre les réticences de Windows."
+"opérations à réaliser pour passer outre les réticences de Windows, et "
+"comment vérifier l'intégrité du binaire téléchargé."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:21
+#: ../../source/annexe_windows_securite.rst:26
 msgid "Avertissement Windows SmartScreen"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:23
+#: ../../source/annexe_windows_securite.rst:28
 msgid ""
 "Après téléchargement de blunderDB, lors de son exécution, il est possible"
 " que Windows affiche un avertissement du type"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:28
+#: ../../source/annexe_windows_securite.rst:33
 msgid ""
 "Si vous souhaitez autoriser un exécutable spécifique bloqué par "
 "SmartScreen :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:30
+#: ../../source/annexe_windows_securite.rst:35
 msgid "**Essayer d’exécuter l'exécutable** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:32
+#: ../../source/annexe_windows_securite.rst:37
 msgid ""
 "Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer "
 "et afficher un avertissement."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:35
+#: ../../source/annexe_windows_securite.rst:40
 msgid "**Cliquer sur \"Informations supplémentaires\"** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:37
+#: ../../source/annexe_windows_securite.rst:42
 msgid ""
 "Dans la fenêtre d'avertissement de SmartScreen, cliquez sur "
 "**Informations supplémentaires**."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:40
+#: ../../source/annexe_windows_securite.rst:45
 msgid "**Sélectionner \"Exécuter quand même\"** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:42
+#: ../../source/annexe_windows_securite.rst:47
 msgid ""
 "Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand "
 "même** pour contourner l'avertissement SmartScreen pour cette instance."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:46
+#: ../../source/annexe_windows_securite.rst:51
 msgid "Blocage Windows Defender"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:48
+#: ../../source/annexe_windows_securite.rst:53
 msgid ""
 "Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
 "déblocage de SmartScreen (voir section plus précédente), Windows Defender"
 " puisse empêcher l'exécution de blunderDB avec des messages du type"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:55
+#: ../../source/annexe_windows_securite.rst:60
 msgid "ou encore"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:60
+#: ../../source/annexe_windows_securite.rst:65
 msgid "voire le placer en quarantaine."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:62
+#: ../../source/annexe_windows_securite.rst:67
 msgid ""
 "Windows Defender est connu pour déclencher des faux positifs. Ce problème"
 " est explicitement mentionné dans la FAQ du site officiel de Golang ( "
@@ -122,55 +126,82 @@ msgid ""
 "go/issues/3182 )."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:67
+#: ../../source/annexe_windows_securite.rst:72
 msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:69
+#: ../../source/annexe_windows_securite.rst:74
 msgid "**Ouvrir la Sécurité Windows** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:71
+#: ../../source/annexe_windows_securite.rst:76
 msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:76
+#: ../../source/annexe_windows_securite.rst:81
 msgid "**Aller à \"Protection contre les virus et menaces\"** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:78
+#: ../../source/annexe_windows_securite.rst:83
 msgid "Cliquez sur **Protection contre les virus et menaces**."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:83
+#: ../../source/annexe_windows_securite.rst:88
 msgid "**Gérer les paramètres** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:85
+#: ../../source/annexe_windows_securite.rst:90
 msgid ""
 "Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
 "Paramètres de protection contre les virus et menaces."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:90
+#: ../../source/annexe_windows_securite.rst:95
 msgid "**Ajouter ou supprimer des exclusions** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:92
+#: ../../source/annexe_windows_securite.rst:97
 msgid ""
 "Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter"
 " ou supprimer des exclusions**."
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:97
+#: ../../source/annexe_windows_securite.rst:102
 msgid "**Ajouter une exclusion** :"
 msgstr ""
 
-#: ../../source/annexe_windows_securite.rst:99
+#: ../../source/annexe_windows_securite.rst:104
 msgid ""
 "Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. "
 "Naviguez ensuite jusqu’à l’exécutable que vous souhaitez exclure et "
 "sélectionnez-le."
+msgstr ""
+
+#: ../../source/annexe_windows_securite.rst:118
+msgid "Vérifier l'intégrité du téléchargement (SHA256)"
+msgstr ""
+
+#: ../../source/annexe_windows_securite.rst:120
+msgid ""
+"Chaque binaire publié sur la page des *releases* est accompagné d'un "
+"fichier ``.sha256`` contenant son empreinte cryptographique. Vérifier "
+"cette empreinte permet de s'assurer que le fichier téléchargé est "
+"authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
+" l'absence de signature de code."
+msgstr ""
+
+#: ../../source/annexe_windows_securite.rst:125
+msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
+msgstr ""
+
+#: ../../source/annexe_windows_securite.rst:131
+msgid ""
+"Comparez la valeur affichée avec celle du fichier ``blunderDB-"
+"windows-<version>.exe.sha256``. Les deux doivent être identiques."
+msgstr ""
+
+#: ../../source/annexe_windows_securite.rst:134
+msgid "Sous Linux ou macOS :"
 msgstr ""
 
 #~ msgid ""
@@ -209,5 +240,17 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "l’exécutable que vous souhaitez exclure et sélectionnez-le."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Partageant blunderDB gratuitement, je ne "
+#~ "souhaite pas m'orienter vers ces "
+#~ "possibilités onéreuses. Par conséquent, il "
+#~ "est fort probable que Windows vous "
+#~ "avertisse d'un potentiel danger, voire "
+#~ "bloque complètement l'exécution de blunderDB."
+#~ " Les sections suivantes expliquent les "
+#~ "opérations à réaliser pour passer outre"
+#~ " les réticences de Windows."
 #~ msgstr ""
 

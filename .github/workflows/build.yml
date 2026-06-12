@@ -274,32 +274,11 @@ jobs:
         run: wails build --platform 'windows' -o blunderDB-windows-${{ steps.vars.outputs.version }}.exe -upx -clean -tags webkit2_41
         shell: bash
 
-      # Optional Authenticode signing via SignPath.io — FREE for open-source
-      # projects through the SignPath Foundation (https://signpath.org/). This
-      # removes the "unknown publisher" warning and accelerates Windows
-      # SmartScreen reputation (an OV certificate builds reputation over time;
-      # only an expensive EV cert clears SmartScreen instantly).
-      #
-      # Disabled by default so CI stays green without configuration. To enable:
-      #   1. Apply to the SignPath Foundation OSS program and create a project.
-      #   2. Add secret  SIGNPATH_API_TOKEN  and variable  SIGNPATH_ORGANIZATION_ID.
-      #   3. Set repository variable  ENABLE_SIGNPATH = true.
-      #   4. Replace the *-slug values below with the ones from your SignPath
-      #      project (the SignPath setup wizard generates the exact block,
-      #      including how the unsigned artifact is submitted and the signed one
-      #      downloaded back into build/bin/ before checksums are computed).
-      - name: Sign Windows binary (SignPath, free for OSS)
-        if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && vars.ENABLE_SIGNPATH == 'true'
-        uses: signpath/github-action-submit-signing-request@v1
-        with:
-          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
-          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
-          project-slug: blunderdb
-          signing-policy-slug: release-signing
-          artifact-configuration-slug: windows-exe
-          local-artifact-directory: build/bin
-          output-artifact-directory: build/bin
-          wait-for-completion: true
+      # Note: Windows binaries are not code-signed. Free OSS Authenticode signing
+      # via the SignPath Foundation was applied for but the application was
+      # declined, and paid EV certificates are out of scope for this free project.
+      # Users mitigate the SmartScreen warning manually (see the Windows security
+      # appendix in the docs) and can verify the published .sha256 checksum.
 
       - name: Build App MacOS
         if: runner.os == 'macOS'
