@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.11)  11 JUN 2026 21:58
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  12 JUN 2026 21:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1434,9 +1434,9 @@ File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
 File: win1.png Graphic file (type bmp)
 <win1.png>
+ [49] [50]
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [49] [50] [51]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1447,14 +1447,14 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [52] [53] [54] [55] [56] [57] [58] [59] [60]
-[61]
-Underfull \hbox (badness 7522) in paragraph at lines 7749--7751
+ [51] [52] [53] [54] [55] [56] [57] [58] [59] [60]
+[61] [62]
+Underfull \hbox (badness 7522) in paragraph at lines 7743--7745
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
 
-[62] [63] [64
+[63] [64
 
 ]
 Κεφάλαιο 3.
@@ -1481,6 +1481,6 @@ Here is how much of TeX's memory you used:
  41057 multiletter control sequences out of 15000+600000
  568875 words of font info for 194 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,599s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (73 pages).

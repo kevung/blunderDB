@@ -15,11 +15,12 @@ https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-d
 
 Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces
 possibilités onéreuses. Une piste **gratuite** réservée aux logiciels libres
-(la *SignPath Foundation*, https://signpath.org/) est à l'étude pour signer les
-binaires Windows sans frais ; tant qu'elle n'est pas en place, il est fort
-probable que Windows vous avertisse d'un potentiel danger, voire bloque
-complètement l'exécution de blunderDB. Les sections suivantes expliquent les
-opérations à réaliser pour passer outre les réticences de Windows.
+(la *SignPath Foundation*, https://signpath.org/) a été explorée, mais la
+candidature n'a pas abouti ; les binaires Windows ne sont donc pas signés
+numériquement. Il est par conséquent fort probable que Windows vous avertisse
+d'un potentiel danger, voire bloque complètement l'exécution de blunderDB. Les
+sections suivantes expliquent les opérations à réaliser pour passer outre les
+réticences de Windows, et comment vérifier l'intégrité du binaire téléchargé.
 
 Avertissement Windows SmartScreen
 ---------------------------------

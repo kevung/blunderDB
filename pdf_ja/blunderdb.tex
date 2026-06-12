@@ -54,7 +54,7 @@
 
 
 \title{blunderDB}
-\date{2026年06月11日}
+\date{2026年06月12日}
 \release{0.26.1}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -6833,13 +6833,7 @@ ss d
 Windows は現在、ソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証すること、または Windows Store 経由で配布することを要求しています。そのため、外部企業を通じてデジタル証明書を取得することが推奨されており、その費用は数百ユーロにのぼります（例：\sphinxurl{https://learn.microsoft.com/en-us/archive/blogs/ie\_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen} を参照）。
 
 \sphinxAtStartPar
-Partageant blunderDB gratuitement, je ne souhaite pas m\textquotesingle{}orienter vers ces
-possibilités onéreuses. Une piste \sphinxstylestrong{gratuite} réservée aux logiciels libres
-(la \sphinxstyleemphasis{SignPath Foundation}, \sphinxurl{https://signpath.org/}) est à l\textquotesingle{}étude pour signer les
-binaires Windows sans frais ; tant qu\textquotesingle{}elle n\textquotesingle{}est pas en place, il est fort
-probable que Windows vous avertisse d\textquotesingle{}un potentiel danger, voire bloque
-complètement l\textquotesingle{}exécution de blunderDB. Les sections suivantes expliquent les
-opérations à réaliser pour passer outre les réticences de Windows.
+blunderDB を無料で提供しているため、これらの費用のかかる選択肢を追求するつもりはありません。オープンソースソフトウェア向けの**無料**の手段（\sphinxstyleemphasis{SignPath Foundation}、\sphinxurl{https://signpath.org/}）を検討しましたが、申請は通りませんでした。そのため、Windows のバイナリはデジタル署名されていません。したがって、Windows が潜在的な脅威について警告したり、blunderDB の実行を完全にブロックしたりする可能性が高いです。以下のセクションでは、Windows の警告を回避するために行う操作と、ダウンロードしたバイナリの整合性を確認する方法を説明します。
 
 
 \subsection{Windows SmartScreen の警告}

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.11)  11 JUN 2026 21:58
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  12 JUN 2026 21:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1468,18 +1468,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 6859--6861
 [43]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+ [44]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [44] [45]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [46] [47]
 File: win3.png Graphic file (type bmp)
 <win3.png>
+ [45] [46] [47] [48]
 File: win4.png Graphic file (type bmp)
 <win4.png>
 File: win5.png Graphic file (type bmp)
@@ -1488,26 +1488,26 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [48] [49] [50] [51] [52] [53]
-Underfull \hbox (badness 10000) in paragraph at lines 7190--7192
+ [49] [50] [51] [52] [53]
+Underfull \hbox (badness 10000) in paragraph at lines 7184--7186
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.0.0 versioon 
 1.1.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_0_to_1_1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7208--7210
+Underfull \hbox (badness 10000) in paragraph at lines 7202--7204
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.1.0 versioon 
 1.2.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_1_to_1_2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7226--7228
+Underfull \hbox (badness 10000) in paragraph at lines 7220--7222
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.2.0 versioon 
 1.3.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_2_to_1_3
  []
 
 [54] [55]
-Underfull \hbox (badness 10000) in paragraph at lines 7432--7434
+Underfull \hbox (badness 10000) in paragraph at lines 7426--7428
 \TU/FreeSerif(0)/m/n/10 MWC-tappio ilmaisee ottelun voittotodennäköisyyden pros
 enttiyksikköinä pelaajan virheiden kumulatiivisen
  []

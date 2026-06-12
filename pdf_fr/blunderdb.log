@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.11)  11 JUN 2026 21:57
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  12 JUN 2026 21:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1132,19 +1132,19 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [48] [49] [50] [51] [52] [53] [54]
-Underfull \hbox (badness 10000) in paragraph at lines 7696--7698
+Underfull \hbox (badness 10000) in paragraph at lines 7697--7699
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.0.0 à 
 la version 1.1.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7714--7716
+Underfull \hbox (badness 10000) in paragraph at lines 7715--7717
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.1.0 à 
 la version 1.2.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7732--7734
+Underfull \hbox (badness 10000) in paragraph at lines 7733--7735
 []\TU/FreeSerif(0)/m/n/10 Pour migrer la base de données de la version 1.2.0 à 
 la version 1.3.0, exécutez la commande
  []

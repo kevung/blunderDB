@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.11)  11 JUN 2026 21:59
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  12 JUN 2026 21:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1428,35 +1428,36 @@ File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
+ [46] [47]
 File: win1.png Graphic file (type bmp)
 <win1.png>
- [46] [47] [48]
 File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
+ [48] [49] [50] [51]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [49] [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
-[60] [61] [62
-
-]
+ [52] [53] [54] [55] [56] [57] [58] [59]
+[60]
 Глава 3.
-[63] [64
+[61
+
+] [62
 
 ]
 Глава 4.
-[65] [66
+[63] [64
 
 ]
 Глава 5.
-(./blunderdb.ind) [67] (./blunderdb.aux)
+(./blunderdb.ind) [65] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1471,6 +1472,6 @@ Here is how much of TeX's memory you used:
  41148 multiletter control sequences out of 15000+600000
  567715 words of font info for 163 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,585s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,577s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (71 pages).
+Output written on blunderdb.pdf (69 pages).
