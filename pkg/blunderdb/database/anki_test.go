@@ -221,6 +221,101 @@ func TestGetNextAnkiCard_Empty(t *testing.T) {
 	}
 }
 
+func TestGetRandomAnkiCard(t *testing.T) {
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, err := db.GetRandomAnkiCard(deckID, 0)
+	if err != nil {
+		t.Fatalf("GetRandomAnkiCard: %v", err)
+	}
+	if card == nil {
+		t.Fatal("expected a card, got nil")
+	}
+	if card.Card.ID <= 0 || card.Position.ID <= 0 {
+		t.Errorf("expected positive ids, got card=%d position=%d", card.Card.ID, card.Position.ID)
+	}
+}
+
+func TestGetRandomAnkiCard_Empty(t *testing.T) {
+	db := newTestDB(t)
+
+	colID, _ := db.CreateCollection("Empty", "")
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+
+	card, err := db.GetRandomAnkiCard(deckID, 0)
+	if err != nil {
+		t.Fatalf("GetRandomAnkiCard: %v", err)
+	}
+	if card != nil {
+		t.Error("expected nil for empty deck")
+	}
+}
+
+// TestGetRandomAnkiCard_DoesNotMutateSchedule is the defining property of cram
+// mode: drawing cards must never touch the FSRS schedule, unlike ReviewAnkiCard.
+func TestGetRandomAnkiCard_DoesNotMutateSchedule(t *testing.T) {
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	before, err := db.GetAnkiDeckStats(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckStats: %v", err)
+	}
+
+	for i := 0; i < 12; i++ {
+		if _, err := db.GetRandomAnkiCard(deckID, 0); err != nil {
+			t.Fatalf("GetRandomAnkiCard draw %d: %v", i, err)
+		}
+	}
+
+	after, err := db.GetAnkiDeckStats(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckStats: %v", err)
+	}
+	if before != after {
+		t.Errorf("cram mutated the schedule: before=%+v after=%+v", before, after)
+	}
+	// All cards must still be New (a real review would graduate them out).
+	if after.NewCount != after.TotalCount {
+		t.Errorf("expected all %d cards to stay New, got NewCount=%d", after.TotalCount, after.NewCount)
+	}
+}
+
+// TestGetRandomAnkiCard_ExcludePosition checks that the exclusion avoids
+// repeats but still serves a single-card deck.
+func TestGetRandomAnkiCard_ExcludePosition(t *testing.T) {
+	// Two-card deck: excluding one must return the other (deterministic).
+	db, colID, ids := setupAnkiCollectionWithPositions(t, 2)
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	got, err := db.GetRandomAnkiCard(deckID, ids[0])
+	if err != nil {
+		t.Fatalf("GetRandomAnkiCard: %v", err)
+	}
+	if got == nil || got.Position.ID == ids[0] {
+		t.Errorf("exclusion failed: expected a position other than %d, got %+v", ids[0], got)
+	}
+
+	// Single-card deck: excluding the only card falls back to serving it.
+	db1, col1, ids1 := setupAnkiCollectionWithPositions(t, 1)
+	deck1, _ := db1.CreateAnkiDeck("D", "", "collection", col1, "")
+	_ = db1.SyncAnkiDeck(deck1)
+
+	only, err := db1.GetRandomAnkiCard(deck1, ids1[0])
+	if err != nil {
+		t.Fatalf("GetRandomAnkiCard single: %v", err)
+	}
+	if only == nil || only.Position.ID != ids1[0] {
+		t.Errorf("single-card fallback failed: expected position %d, got %+v", ids1[0], only)
+	}
+}
+
 func TestReviewAnkiCard_Again(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
