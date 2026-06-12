@@ -63,6 +63,12 @@ type MatchStore interface {
 	// Moves streams the moves of a game in order.
 	Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error]
 
+	// MovesByMatch streams every move of a match in one pass, ordered by game
+	// then move number. It lets a caller render a whole match detail without the
+	// 1+N round-trips of calling Moves once per game (each move carries GameID so
+	// the caller regroups by game). Mirrors MovePositions' match-scoped shape.
+	MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error]
+
 	// MovePositions streams the positions of a match together with their
 	// game/move context.
 	MovePositions(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MatchMovePosition, error]

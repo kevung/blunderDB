@@ -98,6 +98,9 @@ func (s *Server) matchRoutes() []route {
 		{http.MethodPost, "/v1/matches.moves", rpcStream(func(ctx context.Context, scope string, req gameIDReq) iterMoves {
 			return ms().Moves(ctx, scope, req.GameID)
 		})},
+		{http.MethodPost, "/v1/matches.movesByMatch", rpcStream(func(ctx context.Context, scope string, req matchIDReq) iterMoves {
+			return ms().MovesByMatch(ctx, scope, req.MatchID)
+		})},
 		{http.MethodPost, "/v1/matches.movePositions", rpcStream(func(ctx context.Context, scope string, req matchIDReq) iterMovePos {
 			return ms().MovePositions(ctx, scope, req.MatchID)
 		})},

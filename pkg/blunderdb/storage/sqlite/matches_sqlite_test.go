@@ -172,3 +172,62 @@ func TestMatchLastVisited(t *testing.T) {
 		t.Errorf("LastVisited: got match %d pos %d, want %d pos 4", lv.ID, lv.LastVisitedPosition, id1)
 	}
 }
+
+// TestMatchMovesByMatch checks the one-pass, game-then-move ordered stream of a
+// multi-game match (single-tenant SQLite backend, Desktop path).
+func TestMatchMovesByMatch(t *testing.T) {
+	ctx := context.Background()
+	s := openMem(t)
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob"}
+	matchID, _ := s.Matches().Save(ctx, "", &m)
+	g1 := domain.Game{MatchID: matchID, GameNumber: 1}
+	g1ID, _ := s.Matches().CreateGame(ctx, "", &g1)
+	g2 := domain.Game{MatchID: matchID, GameNumber: 2}
+	g2ID, _ := s.Matches().CreateGame(ctx, "", &g2)
+
+	// Insert across games and out of move order to prove the ORDER BY.
+	for _, mv := range []domain.Move{
+		{GameID: g2ID, MoveNumber: 1, MoveType: "checker", CheckerMove: "g2m1"},
+		{GameID: g1ID, MoveNumber: 2, MoveType: "checker", CheckerMove: "g1m2"},
+		{GameID: g1ID, MoveNumber: 1, MoveType: "checker", CheckerMove: "g1m1"},
+	} {
+		mv := mv
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+	}
+
+	var moves []domain.Move
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		moves = append(moves, *mv)
+	}
+	if len(moves) != 3 {
+		t.Fatalf("MovesByMatch count: got %d, want 3", len(moves))
+	}
+	want := []struct {
+		game int64
+		cm   string
+	}{{g1ID, "g1m1"}, {g1ID, "g1m2"}, {g2ID, "g2m1"}}
+	for i, w := range want {
+		if moves[i].GameID != w.game || moves[i].CheckerMove != w.cm {
+			t.Errorf("move %d: got game=%d cm=%q, want game=%d cm=%q",
+				i, moves[i].GameID, moves[i].CheckerMove, w.game, w.cm)
+		}
+	}
+
+	// Unknown match → empty stream, no error.
+	n := 0
+	for _, err := range s.Matches().MovesByMatch(ctx, "", 9999) {
+		if err != nil {
+			t.Fatalf("MovesByMatch missing: %v", err)
+		}
+		n++
+	}
+	if n != 0 {
+		t.Errorf("MovesByMatch on missing match: got %d moves, want 0", n)
+	}
+}

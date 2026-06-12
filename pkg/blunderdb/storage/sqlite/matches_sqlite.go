@@ -500,6 +500,47 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 	}
 }
 
+// MovesByMatch streams every move of a match in chronological order (by game,
+// then move). One query instead of Games + a Moves call per game: callers
+// regroup by Move.GameID. Single-tenant store, so scope is ignored (as in Moves).
+func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
+	return func(yield func(*domain.Move, error) bool) {
+		rows, err := s.db.QueryContext(ctx,
+			`SELECT mv.id, COALESCE(mv.game_id,0), COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
+			        mv.position_id, COALESCE(mv.player,0),
+			        COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
+			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = ?
+			 ORDER BY g.game_number, mv.move_number`, matchID)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var mv domain.Move
+			var d1, d2 int32
+			var positionID sql.NullInt64
+			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
+				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction); err != nil {
+				yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
+				return
+			}
+			mv.Dice = [2]int32{d1, d2}
+			if positionID.Valid {
+				mv.PositionID = positionID.Int64
+			}
+			if !yield(&mv, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
+		}
+	}
+}
+
 // xgPlayerToBlunderDB maps the XG move-player encoding (1 / -1) stored in the
 // move table to the blunderDB encoding (0 = player 1, 1 = player 2). GnuBG
 // imports are stored already converted to the XG encoding.
