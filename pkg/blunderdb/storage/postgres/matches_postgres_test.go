@@ -41,6 +41,16 @@ func savePos(t *testing.T, s *pg.Storage, decision int) int64 {
 	return id
 }
 
+// mustMove stores a move, failing the test on error.
+func mustMove(t *testing.T, s *pg.Storage, mv domain.Move) int64 {
+	t.Helper()
+	id, err := s.Matches().CreateMove(context.Background(), "", &mv)
+	if err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+	return id
+}
+
 // TestMatchSaveGetList exercises the header CRUD path.
 func TestMatchSaveGetList(t *testing.T) {
 	ctx := context.Background()
@@ -186,6 +196,47 @@ func TestMatchGamesAndMoves(t *testing.T) {
 	}
 	if moves[0].CheckerMove != "8/5 6/5" || moves[0].Dice != [2]int32{3, 1} || moves[0].PositionID != posID {
 		t.Errorf("Moves content: %+v", moves[0])
+	}
+}
+
+// TestMatchMovesByMatch verifies the one-pass move stream of a multi-game match
+// is ordered by game then move and tags each move with its game.
+func TestMatchMovesByMatch(t *testing.T) {
+	ctx := context.Background()
+	s, _ := openMatchStore(t)
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob"}
+	matchID, _ := s.Matches().Save(ctx, "", &m)
+
+	g1 := domain.Game{MatchID: matchID, GameNumber: 1}
+	g1ID, _ := s.Matches().CreateGame(ctx, "", &g1)
+	g2 := domain.Game{MatchID: matchID, GameNumber: 2}
+	g2ID, _ := s.Matches().CreateGame(ctx, "", &g2)
+
+	// Insert across games and out of move order to prove the ORDER BY.
+	mustMove(t, s, domain.Move{GameID: g2ID, MoveNumber: 1, MoveType: "checker", CheckerMove: "g2m1"})
+	mustMove(t, s, domain.Move{GameID: g1ID, MoveNumber: 2, MoveType: "checker", CheckerMove: "g1m2"})
+	mustMove(t, s, domain.Move{GameID: g1ID, MoveNumber: 1, MoveType: "checker", CheckerMove: "g1m1"})
+
+	moves := collect(t, s.Matches().MovesByMatch(ctx, "", matchID))
+	if len(moves) != 3 {
+		t.Fatalf("MovesByMatch count: got %d, want 3", len(moves))
+	}
+	// game 1 (moves 1,2) before game 2 (move 1).
+	want := []struct {
+		game int64
+		cm   string
+	}{{g1ID, "g1m1"}, {g1ID, "g1m2"}, {g2ID, "g2m1"}}
+	for i, w := range want {
+		if moves[i].GameID != w.game || moves[i].CheckerMove != w.cm {
+			t.Errorf("move %d: got game=%d cm=%q, want game=%d cm=%q",
+				i, moves[i].GameID, moves[i].CheckerMove, w.game, w.cm)
+		}
+	}
+
+	// Unknown match → empty stream, no error.
+	if got := collect(t, s.Matches().MovesByMatch(ctx, "", 9999)); len(got) != 0 {
+		t.Errorf("MovesByMatch on missing match: got %d moves, want 0", len(got))
 	}
 }
 
