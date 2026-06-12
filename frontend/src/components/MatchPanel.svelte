@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { sortMatches, toDateInputValue, formatDate, formatDiceShort } from '../utils/matchTable.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -228,17 +229,6 @@
         }
     }
 
-    function toDateInputValue(dateStr) {
-        if (!dateStr) return '';
-        try {
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return '';
-            return date.toISOString().split('T')[0];
-        } catch {
-            return '';
-        }
-    }
-
     function startEditMatch(match, ev) {
         ev.stopPropagation();
         editingMatchId = match.id;
@@ -333,45 +323,7 @@
         }
     }
 
-    function compareValues(a, b) {
-        if (a == null && b == null) return 0;
-        if (a == null) return 1;
-        if (b == null) return -1;
-        if (typeof a === 'string') return a.localeCompare(b, undefined, { sensitivity: 'base' });
-        return a - b;
-    }
-
-    function getSortValue(match, column) {
-        switch (column) {
-            case 'player1':
-                return match.player1_name || '';
-            case 'player2':
-                return match.player2_name || '';
-            case 'date':
-                return match.match_date || '';
-            case 'length':
-                return match.match_length || 0;
-            case 'tournament':
-                return match.tournament_name || match.event || '';
-            case 'pr':
-                return match.pr || 0;
-            case 'mwc':
-                return match.mwc_loss || 0;
-            default:
-                return '';
-        }
-    }
-
-    let sortedMatches = $derived.by(() => {
-        if (!sortColumn) return matches;
-        const sorted = [...matches].sort((a, b) => {
-            const valA = getSortValue(a, sortColumn);
-            const valB = getSortValue(b, sortColumn);
-            const cmp = compareValues(valA, valB);
-            return sortDirection === 'asc' ? cmp : -cmp;
-        });
-        return sorted;
-    });
+    let sortedMatches = $derived.by(() => sortMatches(matches, sortColumn, sortDirection));
 
     function selectMatch(match) {
         if (selectedMatch && selectedMatch.id === match.id) {
@@ -617,11 +569,6 @@
         }
     }
 
-    function formatDiceShort(dice) {
-        if (!dice || (!dice[0] && !dice[1])) return '';
-        return `${dice[0]}${dice[1]}`;
-    }
-
     function _formatMoveText(mp) {
         if (mp.move_type === 'cube') {
             return mp.cube_action || get(t)('match.cubeAction');
@@ -631,16 +578,6 @@
 
     function getPlayerName(mp) {
         return mp.player_on_roll === 0 ? mp.player1_name || get(t)('match.player1') : mp.player2_name || get(t)('match.player2');
-    }
-
-    function formatDate(dateStr) {
-        if (!dateStr) return '-';
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return '-';
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}/${m}/${d}`;
     }
 
     function closeMatchPanel() {
