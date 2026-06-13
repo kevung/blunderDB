@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"math"
 	"strings"
@@ -863,166 +862,41 @@ func legacyGetAllPlayerNames(d *Database) ([]PlayerFrequency, error) {
 	return result, rows.Err()
 }
 
-// matchPRMWCAcc accumulates error millipoints and MWC losses for one match.
-type matchPRMWCAcc struct {
-	sumErr int64
-	cnt    int
-	mwc    float64
-}
-
-// matchPlayerPRMWCAcc tracks per-player accumulators for a match.
-type matchPlayerPRMWCAcc struct {
-	p1 matchPRMWCAcc
-	p2 matchPRMWCAcc
-}
-
-// populateMatchStats computes PR and total MWC loss for each match in the slice
-// and sets the PR/PR2 and MWCLoss/MWCLoss2 fields in-place, split by player.
-// Must be called while the caller holds at least the read lock on the database.
-func populateMatchStats(db *sql.DB, matches []Match) error {
+// applyMatchBadges fills the per-player PR/MWC badge fields of every match in
+// the slice from the storage backend. Callers already hold the read lock.
+func (d *Database) applyMatchBadges(matches []Match) error {
 	if len(matches) == 0 {
 		return nil
 	}
-
-	matchByID := make(map[int64]*Match, len(matches))
-	for i := range matches {
-		matchByID[matches[i].ID] = &matches[i]
-	}
-
-	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
-		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
-		statsBaseJoin +
-		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
-
-	rows, err := db.Query(query)
+	badges, err := d.store.Stats().MatchBadges(context.Background(), "")
 	if err != nil {
 		return err
 	}
-	defer rows.Close()
-
-	acc := make(map[int64]*matchPlayerPRMWCAcc)
-	for rows.Next() {
-		var matchID int64
-		var errMP int64
-		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
-		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
-			continue
-		}
-		if _, ok := matchByID[matchID]; !ok {
-			continue
-		}
-		a, ok := acc[matchID]
-		if !ok {
-			a = &matchPlayerPRMWCAcc{}
-			acc[matchID] = a
-		}
-		fMove := 0
-		if rawPlayer == -1 {
-			fMove = 1
-		}
-		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss expects current scores.
-		currentScore0 := matchLength - awayScore0
-		currentScore1 := matchLength - awayScore1
-		mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
-		if rawPlayer == 1 { // player1 on roll
-			a.p1.sumErr += errMP
-			a.p1.cnt++
-			if !math.IsNaN(mwcLoss) {
-				a.p1.mwc += mwcLoss
-			}
-		} else { // player2 on roll (rawPlayer == -1)
-			a.p2.sumErr += errMP
-			a.p2.cnt++
-			if !math.IsNaN(mwcLoss) {
-				a.p2.mwc += mwcLoss
-			}
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	for matchID, a := range acc {
-		if m, ok := matchByID[matchID]; ok {
-			m.PR = pr(a.p1.sumErr, a.p1.cnt)
-			m.MWCLoss = a.p1.mwc
-			m.PR2 = pr(a.p2.sumErr, a.p2.cnt)
-			m.MWCLoss2 = a.p2.mwc
+	for i := range matches {
+		if b, ok := badges[matches[i].ID]; ok {
+			matches[i].PR = b.PR
+			matches[i].MWCLoss = b.MWCLoss
+			matches[i].PR2 = b.PR2
+			matches[i].MWCLoss2 = b.MWCLoss2
 		}
 	}
 	return nil
 }
 
-// populateTournamentStats computes PR and total MWC loss for each tournament
-// (aggregated across all matches in the tournament) and sets the fields in-place.
-// Must be called while the caller holds at least the read lock on the database.
-func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
+// applyTournamentBadges fills the aggregate PR/MWC badge fields of every
+// tournament in the slice from the storage backend.
+func (d *Database) applyTournamentBadges(tournaments []Tournament) error {
 	if len(tournaments) == 0 {
 		return nil
 	}
-
-	tournByID := make(map[int64]*Tournament, len(tournaments))
-	for i := range tournaments {
-		tournByID[tournaments[i].ID] = &tournaments[i]
-	}
-
-	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
-		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
-		statsBaseJoin +
-		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
-		AND m.tournament_id IS NOT NULL AND ` + statsCountedExpr
-
-	rows, err := db.Query(query)
+	badges, err := d.store.Stats().TournamentBadges(context.Background(), "")
 	if err != nil {
 		return err
 	}
-	defer rows.Close()
-
-	type tournAcc struct {
-		sumErr int64
-		cnt    int
-		mwc    float64
-	}
-	acc := make(map[int64]*tournAcc)
-	for rows.Next() {
-		var tournamentID int64
-		var errMP int64
-		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
-		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
-			continue
-		}
-		if _, ok := tournByID[tournamentID]; !ok {
-			continue
-		}
-		a, ok := acc[tournamentID]
-		if !ok {
-			a = &tournAcc{}
-			acc[tournamentID] = a
-		}
-		a.sumErr += errMP
-		a.cnt++
-		// Convert XG player encoding (1/-1) to gnuBG fMove (0/1).
-		// Convert away scores to current scores for ConvertEMGLossToMWCLoss.
-		fMove := 0
-		if rawPlayer == -1 {
-			fMove = 1
-		}
-		currentScore0 := matchLength - awayScore0
-		currentScore1 := matchLength - awayScore1
-		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
-			a.mwc += mwcLoss
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	for tournamentID, a := range acc {
-		if t, ok := tournByID[tournamentID]; ok {
-			t.PR = pr(a.sumErr, a.cnt)
-			t.MWCLoss = a.mwc
+	for i := range tournaments {
+		if b, ok := badges[tournaments[i].ID]; ok {
+			tournaments[i].PR = b.PR
+			tournaments[i].MWCLoss = b.MWCLoss
 		}
 	}
 	return nil

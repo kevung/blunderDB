@@ -156,6 +156,23 @@ type MatchDetailStats struct {
 	Player2 MatchPlayerDetailStats `json:"player2"`
 }
 
+// MatchBadge is the per-player PR/MWC summary shown on each match-list row.
+// PR/MWCLoss are player 1's, PR2/MWCLoss2 player 2's. It is the list-row
+// projection of MatchDetailStats (badge.PR == detail.Player1.PR for a match).
+type MatchBadge struct {
+	PR       float64 `json:"pr"`
+	MWCLoss  float64 `json:"mwc_loss"`
+	PR2      float64 `json:"pr2"`
+	MWCLoss2 float64 `json:"mwc_loss2"`
+}
+
+// TournamentBadge is the aggregate PR/MWC (across all of a tournament's
+// matches, both players pooled) shown on each tournament-list row.
+type TournamentBadge struct {
+	PR      float64 `json:"pr"`
+	MWCLoss float64 `json:"mwc_loss"`
+}
+
 // StatsStore computes aggregate statistics over stored decisions.
 type StatsStore interface {
 	// DateRange returns the span of match dates present in the database.
@@ -179,4 +196,14 @@ type StatsStore interface {
 
 	// MatchDetail computes per-player statistics for a single match.
 	MatchDetail(ctx context.Context, scope string, matchID int64) (*MatchDetailStats, error)
+
+	// MatchBadges returns the per-player PR/MWC badge for every match in scope,
+	// keyed by match id. Matches with no counted decisions are absent from the
+	// map (their badge stays zero-valued).
+	MatchBadges(ctx context.Context, scope string) (map[int64]MatchBadge, error)
+
+	// TournamentBadges returns the aggregate PR/MWC badge for every tournament in
+	// scope, keyed by tournament id. Tournaments with no counted decisions are
+	// absent from the map.
+	TournamentBadges(ctx context.Context, scope string) (map[int64]TournamentBadge, error)
 }
