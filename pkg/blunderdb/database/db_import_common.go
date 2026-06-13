@@ -5,12 +5,9 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -44,107 +41,34 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 	return res.MatchID, nil
 }
 
-// importCache is a per-import Zobrist-hash → position-ID lookup table.
-// It prevents redundant SQL round-trips for positions that appear more than once
-// inside a single match (common in bearoff analyses and canonical-duplicate imports).
-type importCache struct {
-	m map[uint64]int64 // zobristHash → positionID
-}
-
-func newImportCache() *importCache {
-	return &importCache{m: make(map[uint64]int64)}
-}
-
-// savePositionInTxWithCache saves a position within a transaction using a Zobrist-hash
-// based cache for deduplication.  Positions are normalized before storage
-// (player_on_roll = 0) to prevent storing duplicates.
-//
-// Algorithm:
-//  1. Local cache hit  → return immediately (no SQL).
-//  2. INSERT OR IGNORE → no-ops silently if zobrist_hash already exists (UNIQUE index).
-//  3. SELECT id+state  → fetches the id whether we just inserted or it already existed.
-//  4. Dedup hit        → verify the stored board matches the incoming position to detect
-//     the ~2⁻⁴⁴ Zobrist-collision corner case; log a warning if they differ.
-//  5. New row          → UPDATE state to embed the assigned ID (backwards-compat readers).
-func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
-	// Normalize: always store from the perspective of player on roll (player_on_roll == 0).
-	normalizedPosition := position.NormalizeForStorage()
-	normalizedPosition.ID = 0
-
-	cols := populatePositionColumns(&normalizedPosition)
-	hash := cols.ZobristHash
-
-	// 1. Local cache hit — no SQL needed.
-	if id, ok := cache.m[hash]; ok {
-		return id, nil
+// writeImportedPosition persists the positions of a single-position import
+// (XGP / BGF text) through the storage backend and returns the id of the first
+// stored position. Positions dedup by Zobrist hash, so re-importing the same
+// position returns its existing id. Callers must hold d.mu.
+func (d *Database) writeImportedPosition(graphs []ingest.PositionGraph) (int64, error) {
+	if len(graphs) == 0 {
+		return 0, fmt.Errorf("no position to import")
 	}
-
-	compactState := encodeBoardCompact(normalizedPosition.Board)
-
-	noContactInt := 0
-	if cols.NoContact {
-		noContactInt = 1
-	}
-
-	// 2. INSERT OR IGNORE — idempotent thanks to the UNIQUE index on zobrist_hash.
-	res, err := tx.Exec(`
-		INSERT OR IGNORE INTO position (
-			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
-			cube_value, cube_owner, score_1, score_2,
-			has_jacoby, has_beaver,
-			pip_1, pip_2, pip_diff, off_1, off_2,
-			back_checkers_1, back_checkers_2, no_contact,
-			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-			state
-		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
-		int64(hash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
-		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby, cols.HasBeaver,
-		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
-		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		compactState)
+	ctx := context.Background()
+	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
 		return 0, err
 	}
-	rowsAffected, _ := res.RowsAffected()
-
-	// 3. Fetch the id (state not needed — board is compared via compact string).
-	var positionID int64
-	var storedState string
-	err = tx.QueryRow(`SELECT id, state FROM position WHERE zobrist_hash = ?`, int64(hash)).Scan(&positionID, &storedState)
-	if err != nil {
-		return 0, fmt.Errorf("failed to fetch position by zobrist_hash: %w", err)
-	}
-
-	if rowsAffected == 0 {
-		// 4. Dedup hit: structural collision guard.
-		// Compare compact board strings — if they differ we have a genuine Zobrist
-		// collision (probability ≈ 2⁻⁴⁴). For legacy JSON state, decode and
-		// re-encode to compact for a fair comparison.
-		storedBoard := storedState
-		if !isCompactState(storedState) {
-			var storedPos Position
-			if jsonErr := json.Unmarshal([]byte(storedState), &storedPos); jsonErr == nil {
-				storedBoard = encodeBoardCompact(storedPos.Board)
-			}
+	var firstID int64
+	for i := range graphs {
+		id, err := ingest.WritePosition(ctx, tx, "", &graphs[i])
+		if err != nil {
+			_ = tx.Rollback()
+			return 0, err
 		}
-		if storedBoard != compactState {
-			fmt.Fprintf(os.Stderr,
-				"WARNING: Zobrist collision for hash %d — stored board differs from incoming; returning existing id %d\n",
-				hash, positionID)
+		if i == 0 {
+			firstID = id
 		}
 	}
-
-	cache.m[hash] = positionID
-	return positionID, nil
-}
-
-// savePositionInTx saves a position within a transaction checking for duplicates via
-// the Zobrist-hash unique index (no external cache — one INSERT+SELECT roundtrip each call).
-func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, error) {
-	cache := newImportCache()
-	return d.savePositionInTxWithCache(tx, position, cache)
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+	return firstID, nil
 }
 
 // enginePriority returns a sort priority for analysis engines.
@@ -253,312 +177,8 @@ func mergePlayedMoves(existing, incoming []string) []string {
 // normalizeMove is re-exported from package engine (see analysiscodec.go).
 var normalizeMove = engine.NormalizeMove
 
-// saveAnalysisInTx saves a PositionAnalysis within a transaction, merging with existing analysis if present
-func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis PositionAnalysis) error {
-	// Ensure the positionID is set in the analysis
-	analysis.PositionID = int(positionID)
-
-	// Update last modified date
-	analysis.LastModifiedDate = time.Now()
-
-	// Check if an analysis already exists for the given position ID
-	var existingID int64
-	var existingAnalysisData []byte
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
-	if err != nil && err != sql.ErrNoRows {
-		return err
-	}
-
-	if existingID > 0 {
-		// Parse existing analysis
-		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
-		if err != nil {
-			return err
-		}
-
-		// Preserve the existing creation date
-		analysis.CreationDate = existingAnalysis.CreationDate
-
-		// Merge checker analysis if both exist
-		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
-			analysis.CheckerAnalysis.Moves = mergeCheckerMoves(
-				existingAnalysis.CheckerAnalysis.Moves,
-				analysis.CheckerAnalysis.Moves,
-			)
-		} else if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis == nil {
-			// Keep existing checker analysis if new one is nil
-			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
-		}
-
-		// Merge doubling cube analysis - keep all engine analyses in AllCubeAnalyses
-		if existingAnalysis.DoublingCubeAnalysis != nil && analysis.DoublingCubeAnalysis != nil {
-			// Both have cube analysis - check if they're from different engines
-			existingEngine := existingAnalysis.DoublingCubeAnalysis.AnalysisEngine
-			incomingEngine := analysis.DoublingCubeAnalysis.AnalysisEngine
-
-			if existingEngine != incomingEngine && existingEngine != "" && incomingEngine != "" {
-				// Different engines: build AllCubeAnalyses array with both
-				allCube := make([]DoublingCubeAnalysis, 0)
-				// Add existing engine's cube analyses
-				if len(existingAnalysis.AllCubeAnalyses) > 0 {
-					allCube = append(allCube, existingAnalysis.AllCubeAnalyses...)
-				} else {
-					allCube = append(allCube, *existingAnalysis.DoublingCubeAnalysis)
-				}
-				// Add incoming if not already present for this engine
-				hasIncoming := false
-				for _, ca := range allCube {
-					if ca.AnalysisEngine == incomingEngine {
-						hasIncoming = true
-						break
-					}
-				}
-				if !hasIncoming {
-					allCube = append(allCube, *analysis.DoublingCubeAnalysis)
-				}
-				sortCubeAnalysesByEngine(allCube)
-				analysis.AllCubeAnalyses = allCube
-				// Primary DoublingCubeAnalysis stays as the incoming one
-			} else {
-				// Same engine or empty engine - keep incoming, preserve AllCubeAnalyses
-				if len(existingAnalysis.AllCubeAnalyses) > 0 {
-					analysis.AllCubeAnalyses = existingAnalysis.AllCubeAnalyses
-				}
-			}
-		} else if existingAnalysis.DoublingCubeAnalysis != nil && analysis.DoublingCubeAnalysis == nil {
-			analysis.DoublingCubeAnalysis = existingAnalysis.DoublingCubeAnalysis
-			analysis.AllCubeAnalyses = existingAnalysis.AllCubeAnalyses
-		}
-
-		// Merge played moves (support both old single field and new array field)
-		existingPlayedMoves := existingAnalysis.PlayedMoves
-		if existingAnalysis.PlayedMove != "" && len(existingPlayedMoves) == 0 {
-			existingPlayedMoves = []string{existingAnalysis.PlayedMove}
-		}
-		incomingPlayedMoves := analysis.PlayedMoves
-		if analysis.PlayedMove != "" && len(incomingPlayedMoves) == 0 {
-			incomingPlayedMoves = []string{analysis.PlayedMove}
-		}
-		analysis.PlayedMoves = mergePlayedMoves(existingPlayedMoves, incomingPlayedMoves)
-
-		// Merge played cube actions
-		existingCubeActions := existingAnalysis.PlayedCubeActions
-		if existingAnalysis.PlayedCubeAction != "" && len(existingCubeActions) == 0 {
-			existingCubeActions = []string{existingAnalysis.PlayedCubeAction}
-		}
-		incomingCubeActions := analysis.PlayedCubeActions
-		if analysis.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
-			incomingCubeActions = []string{analysis.PlayedCubeAction}
-		}
-		analysis.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
-
-		// Clear deprecated single fields after merging
-		analysis.PlayedMove = ""
-		analysis.PlayedCubeAction = ""
-
-		// Sort checker moves by equity after merging
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
-		}
-
-		// Update the existing analysis
-		roundAnalysisForStorage(&analysis)
-		analysisData, err := encodeAnalysisForStorage(&analysis)
-		if err != nil {
-			return err
-		}
-		playedMove := ""
-		if len(analysis.PlayedMoves) > 0 {
-			playedMove = analysis.PlayedMoves[0]
-		}
-		playedCubeAction := ""
-		if len(analysis.PlayedCubeActions) > 0 {
-			playedCubeAction = analysis.PlayedCubeActions[0]
-		}
-		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
-		_, err = tx.Exec(`UPDATE analysis SET
-			data=?, best_cube_action=?, cube_error=?,
-			best_move_equity_error=?,
-			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
-			is_forced=?, is_close_cube=?
-			WHERE id=?`,
-			analysisData,
-			aCols.BestCubeAction, aCols.CubeError,
-			aCols.BestMoveEquityError,
-			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced, aCols.IsCloseCube,
-			existingID)
-		if err != nil {
-			return err
-		}
-	} else {
-		// Set creation date if not already set
-		if analysis.CreationDate.IsZero() {
-			analysis.CreationDate = time.Now()
-		}
-
-		// Convert single played move to array if needed
-		if analysis.PlayedMove != "" && len(analysis.PlayedMoves) == 0 {
-			analysis.PlayedMoves = []string{analysis.PlayedMove}
-			analysis.PlayedMove = ""
-		}
-		if analysis.PlayedCubeAction != "" && len(analysis.PlayedCubeActions) == 0 {
-			analysis.PlayedCubeActions = []string{analysis.PlayedCubeAction}
-			analysis.PlayedCubeAction = ""
-		}
-
-		// Sort checker moves by equity
-		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
-				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
-			})
-			// Recalculate indices and equity errors
-			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
-			for i := range analysis.CheckerAnalysis.Moves {
-				analysis.CheckerAnalysis.Moves[i].Index = i
-				if i == 0 {
-					analysis.CheckerAnalysis.Moves[i].EquityError = nil
-				} else {
-					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
-					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
-				}
-			}
-		}
-
-		// Insert a new analysis
-		roundAnalysisForStorage(&analysis)
-		analysisData, err := encodeAnalysisForStorage(&analysis)
-		if err != nil {
-			return err
-		}
-		playedMove := ""
-		if len(analysis.PlayedMoves) > 0 {
-			playedMove = analysis.PlayedMoves[0]
-		}
-		playedCubeAction := ""
-		if len(analysis.PlayedCubeActions) > 0 {
-			playedCubeAction = analysis.PlayedCubeActions[0]
-		}
-		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
-		_, err = tx.Exec(`INSERT INTO analysis (
-			position_id, data,
-			best_cube_action, cube_error, best_move_equity_error,
-			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
-			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
-			is_forced, is_close_cube
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`,
-			positionID, analysisData,
-			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
-			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced, aCols.IsCloseCube)
-		if err != nil {
-			return err
-		}
-	}
-
-	// Flag the position as a take/pass cube response if any recorded played cube
-	// action is a response (Take/Pass/Drop) rather than a doubling decision. This
-	// lets search distinguish "double/no-double" from "take/pass" cube decisions.
-	// OR semantics across matches for a deduped position: only ever set to 1,
-	// never reset to 0.
-	for _, action := range analysis.PlayedCubeActions {
-		if engine.IsResponseCubeAction(action) {
-			if _, err := tx.Exec(`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
-				return err
-			}
-			break
-		}
-	}
-
-	return nil
-}
-
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
-
-// computeBestCubeAction determines the best cube action and equity from the three
-// cubeful equities. Returns (bestEquity, bestAction).
-func computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass float64) (float64, string) {
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
-	return bestEquity, bestAction
-}
-
-// cubeAnalysisParams holds the format-independent cube analysis values needed to build
-// a DoublingCubeAnalysis struct. Each importer extracts these from its format-specific types.
-type cubeAnalysisParams struct {
-	Depth                     string
-	Engine                    string
-	PlayerWinChances          float64
-	PlayerGammonChances       float64
-	PlayerBackgammonChances   float64
-	OpponentWinChances        float64
-	OpponentGammonChances     float64
-	OpponentBackgammonChances float64
-	CubelessNoDoubleEquity    float64
-	CubelessDoubleEquity      float64
-	CubefulNoDoubleEquity     float64
-	CubefulDoubleTakeEquity   float64
-	CubefulDoublePassEquity   float64
-	WrongPassPercentage       float64
-	WrongTakePercentage       float64
-}
-
-// buildDoublingCubeAnalysis creates a DoublingCubeAnalysis from the given params,
-// computing best action and error deltas automatically.
-func buildDoublingCubeAnalysis(p cubeAnalysisParams) DoublingCubeAnalysis {
-	bestEquity, bestAction := computeBestCubeAction(p.CubefulNoDoubleEquity, p.CubefulDoubleTakeEquity, p.CubefulDoublePassEquity)
-	return DoublingCubeAnalysis{
-		AnalysisDepth:             p.Depth,
-		AnalysisEngine:            p.Engine,
-		PlayerWinChances:          p.PlayerWinChances,
-		PlayerGammonChances:       p.PlayerGammonChances,
-		PlayerBackgammonChances:   p.PlayerBackgammonChances,
-		OpponentWinChances:        p.OpponentWinChances,
-		OpponentGammonChances:     p.OpponentGammonChances,
-		OpponentBackgammonChances: p.OpponentBackgammonChances,
-		CubelessNoDoubleEquity:    p.CubelessNoDoubleEquity,
-		CubelessDoubleEquity:      p.CubelessDoubleEquity,
-		CubefulNoDoubleEquity:     p.CubefulNoDoubleEquity,
-		CubefulNoDoubleError:      p.CubefulNoDoubleEquity - bestEquity,
-		CubefulDoubleTakeEquity:   p.CubefulDoubleTakeEquity,
-		CubefulDoubleTakeError:    p.CubefulDoubleTakeEquity - bestEquity,
-		CubefulDoublePassEquity:   p.CubefulDoublePassEquity,
-		CubefulDoublePassError:    p.CubefulDoublePassEquity - bestEquity,
-		BestCubeAction:            bestAction,
-		WrongPassPercentage:       p.WrongPassPercentage,
-		WrongTakePercentage:       p.WrongTakePercentage,
-	}
-}
 
 // ComputeMatchHash generates a unique hash for a match based on full match transcription
 // This is used to detect duplicate imports - includes all moves and decisions
