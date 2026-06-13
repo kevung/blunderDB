@@ -3634,7 +3634,7 @@ Hae asemia, joiden tunnukset ovat välillä x–y (esim. id5,10).
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-pl’nom’
+pl’nimi’
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -7093,27 +7093,23 @@ Napsauta \sphinxstylestrong{Lisää poikkeus} ja valitse \sphinxstylestrong{Tied
 \end{figure}
 
 
-\subsection{Vérifier l’intégrité du téléchargement (SHA256)}
+\subsection{Latauksen eheyden tarkistus (SHA256)}
 \label{\detokenize{annexe_windows_securite:verifier-l-integrite-du-telechargement-sha256}}
 \sphinxAtStartPar
-Chaque binaire publié sur la page des \sphinxstyleemphasis{releases} est accompagné d’un fichier
-\sphinxcode{\sphinxupquote{.sha256}} contenant son empreinte cryptographique. Vérifier cette empreinte
-permet de s’assurer que le fichier téléchargé est authentique et n’a pas été
-altéré, ce qui constitue une garantie utile en l’absence de signature de code.
+Jokaisen \sphinxstyleemphasis{releases}\sphinxhyphen{}sivulla julkaistun binaaritiedoston mukana on \sphinxcode{\sphinxupquote{.sha256}}\sphinxhyphen{}tiedosto, joka sisältää sen kryptografisen tarkisteen. Tämän tarkisteen vertaaminen varmistaa, että ladattu tiedosto on aito eikä sitä ole muutettu, mikä on hyödyllinen takuu silloin, kun koodiallekirjoitusta ei ole.
 
 \sphinxAtStartPar
-Sous Windows (PowerShell), dans le dossier de téléchargement :
+Windowsissa (PowerShell), latauskansiossa:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{n+nb}{Get\PYGZhy{}FileHash} \PYG{p}{.}\PYG{p}{\PYGZbs{}}\PYG{n}{blunderDB}\PYG{n}{\PYGZhy{}windows}\PYG{p}{\PYGZhy{}}\PYG{p}{\PYGZlt{}}\PYG{n}{version}\PYG{p}{\PYGZgt{}}\PYG{p}{.}\PYG{n}{exe} \PYG{n}{\PYGZhy{}Algorithm} \PYG{n}{SHA256}
 \end{sphinxVerbatim}
 
 \sphinxAtStartPar
-Comparez la valeur affichée avec celle du fichier
-\sphinxcode{\sphinxupquote{blunderDB\sphinxhyphen{}windows\sphinxhyphen{}<version>.exe.sha256}}. Les deux doivent être identiques.
+Vertaa näytettyä arvoa tiedoston \sphinxcode{\sphinxupquote{blunderDB\sphinxhyphen{}windows\sphinxhyphen{}<version>.exe.sha256}} arvoon. Niiden on oltava identtiset.
 
 \sphinxAtStartPar
-Sous Linux ou macOS :
+Linuxissa tai macOS:ssä:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 sha256sum\PYG{+w}{ }\PYGZhy{}c\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}\PYGZlt{}version\PYGZgt{}.sha256\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} Linux}

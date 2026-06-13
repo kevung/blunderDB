@@ -134,7 +134,7 @@
 \contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{54}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{54}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{55}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}V^^c3^^a9rifier l\textquotesingle {}int^^c3^^a9grit^^c3^^a9 du t^^c3^^a9l^^c3^^a9chargement (SHA256)}{57}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}ダウンロードの整合性を確認する（SHA256）}{57}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Mac 付録：blunderDB の起動ブロックについて}{61}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}blunderDB のインストール}{63}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}blunderDB の実行を許可する}{63}{subsection.2.11.2}%

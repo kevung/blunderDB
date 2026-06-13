@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:24
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1247,7 +1247,7 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: D879D36A5F24ABEA35BAD9EADFC1A2E6;33760.
+(rerunfilecheck)             Checksum: 8085AFC01C0ABD49C98B0BC8E3666154;33748.
  ) 
 Here is how much of TeX's memory you used:
  19418 strings out of 476443

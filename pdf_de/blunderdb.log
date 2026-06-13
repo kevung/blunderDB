@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:24
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1429,25 +1429,25 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [50] [51] [52] [53] [54] [55]
-Underfull \hbox (badness 10000) in paragraph at lines 7225--7227
+Underfull \hbox (badness 10000) in paragraph at lines 7221--7223
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.0.0 auf Version 1.1.0 
 zu migrieren, führen Sie den Befehl
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7243--7245
+Underfull \hbox (badness 10000) in paragraph at lines 7239--7241
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.1.0 auf Version 1.2.0 
 zu migrieren, führen Sie den Befehl
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7261--7263
+Underfull \hbox (badness 10000) in paragraph at lines 7257--7259
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.2.0 auf Version 1.3.0 
 zu migrieren, führen Sie den Befehl
  []
 
 [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7283--7285
+Underfull \hbox (badness 10000) in paragraph at lines 7279--7281
 []\TU/FreeSerif(1)/b/n/10 move_analysis\TU/FreeSerif(1)/m/n/10 : Speichert die 
 Analyse jedes Zuges mit den Spalten \TU/FreeSerif(1)/m/it/10 id \TU/FreeSerif(1
 )/m/n/10 (Primärschlüssel), \TU/FreeSerif(1)/m/it/10 move_id
@@ -1471,7 +1471,7 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: F92885634D4988D071A06EE0F05F5AEA;32377.
+(rerunfilecheck)             Checksum: 79B7D302BD46041E10F0E9DB23DA74E4;32353.
  ) 
 Here is how much of TeX's memory you used:
  19617 strings out of 476443

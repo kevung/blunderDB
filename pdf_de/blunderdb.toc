@@ -136,7 +136,7 @@
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware}{45}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows\sphinxhyphen {}SmartScreen\sphinxhyphen {}Warnung}{46}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Blockierung durch Windows Defender}{47}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{50}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Integrität des Downloads überprüfen (SHA256)}{50}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}Anhang: Mögliche Blockierung von blunderDB}{55}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Installation von blunderDB}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Erlauben der Ausführung von blunderDB}{55}{subsection.2.11.2}%

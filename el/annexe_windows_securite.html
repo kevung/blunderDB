@@ -60,7 +60,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">10. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">10.1. Προειδοποίηση Windows SmartScreen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">10.2. Μπλοκάρισμα από το Windows Defender</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">10.3. Vérifier l’intégrité du téléchargement (SHA256)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">10.3. Επαλήθευση της ακεραιότητας της λήψης (SHA256)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
@@ -195,18 +195,14 @@
 </figure>
 </section>
 <section id="verifier-l-integrite-du-telechargement-sha256">
-<h2><span class="section-number">10.3. </span>Vérifier l’intégrité du téléchargement (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Link to this heading"></a></h2>
-<p>Chaque binaire publié sur la page des <em>releases</em> est accompagné d’un fichier
-<code class="docutils literal notranslate"><span class="pre">.sha256</span></code> contenant son empreinte cryptographique. Vérifier cette empreinte
-permet de s’assurer que le fichier téléchargé est authentique et n’a pas été
-altéré, ce qui constitue une garantie utile en l’absence de signature de code.</p>
-<p>Sous Windows (PowerShell), dans le dossier de téléchargement :</p>
+<h2><span class="section-number">10.3. </span>Επαλήθευση της ακεραιότητας της λήψης (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Link to this heading"></a></h2>
+<p>Κάθε εκτελέσιμο αρχείο που δημοσιεύεται στη σελίδα <em>releases</em> συνοδεύεται από ένα αρχείο <code class="docutils literal notranslate"><span class="pre">.sha256</span></code> που περιέχει το κρυπτογραφικό του αποτύπωμα. Ο έλεγχος αυτού του αποτυπώματος επιβεβαιώνει ότι το αρχείο που κατεβάσατε είναι αυθεντικό και δεν έχει αλλοιωθεί, κάτι που αποτελεί χρήσιμη εγγύηση όταν δεν υπάρχει υπογραφή κώδικα.</p>
+<p>Στα Windows (PowerShell), στον φάκελο λήψεων:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows</span><span class="p">-&lt;</span><span class="n">version</span><span class="p">&gt;.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
 </pre></div>
 </div>
-<p>Comparez la valeur affichée avec celle du fichier
-<code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Les deux doivent être identiques.</p>
-<p>Sous Linux ou macOS :</p>
+<p>Συγκρίνετε την εμφανιζόμενη τιμή με εκείνη του αρχείου <code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Οι δύο πρέπει να είναι πανομοιότυπες.</p>
+<p>Σε Linux ή macOS:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderDB-linux-&lt;version&gt;.sha256<span class="w">      </span><span class="c1"># Linux</span>
 shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-&lt;version&gt;.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
 </pre></div>

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:24
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1510,7 +1510,7 @@ File: win7.png Graphic file (type bmp)
 <win7.png>
  [51] [52] [53] [54] [55] [56] [57] [58] [59] [60]
 [61] [62]
-Underfull \hbox (badness 7522) in paragraph at lines 7784--7786
+Underfull \hbox (badness 7522) in paragraph at lines 7780--7782
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
@@ -1533,7 +1533,7 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 74F939EDD87B7788F0480AEE80708A85;42421.
+(rerunfilecheck)             Checksum: DF6E68499D7627438C5D07A2DD992AE3;42500.
  ) 
 Here is how much of TeX's memory you used:
  19596 strings out of 476443

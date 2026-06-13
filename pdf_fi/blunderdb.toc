@@ -136,7 +136,7 @@
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{44}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{45}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{46}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{50}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Latauksen eheyden tarkistus (SHA256)}{50}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{54}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}blunderDB:n asennus}{54}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Luvan antaminen blunderDB:n suorittamiseen}{54}{subsection.2.11.2}%

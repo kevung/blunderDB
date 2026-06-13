@@ -136,7 +136,7 @@
 \contentsline {section}{\numberline {2.10}Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού}{48}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Προειδοποίηση Windows SmartScreen}{48}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Μπλοκάρισμα από το Windows Defender}{49}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{51}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Επαλήθευση της ακεραιότητας της λήψης (SHA256)}{51}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB}{57}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Εγκατάσταση του blunderDB}{57}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Εξουσιοδότηση εκτέλεσης του blunderDB}{57}{subsection.2.11.2}%

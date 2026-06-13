@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:25
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 03:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1536,25 +1536,25 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [50] [51] [52] [53] [54]
-Underfull \hbox (badness 10000) in paragraph at lines 7225--7227
+Underfull \hbox (badness 10000) in paragraph at lines 7221--7223
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.0.0 versioon 
 1.1.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_0_to_1_1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7243--7245
+Underfull \hbox (badness 10000) in paragraph at lines 7239--7241
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.1.0 versioon 
 1.2.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_1_to_1_2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7261--7263
+Underfull \hbox (badness 10000) in paragraph at lines 7257--7259
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.2.0 versioon 
 1.3.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_2_to_1_3
  []
 
 [55] [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7467--7469
+Underfull \hbox (badness 10000) in paragraph at lines 7463--7465
 \TU/FreeSerif(0)/m/n/10 MWC-tappio ilmaisee ottelun voittotodennäköisyyden pros
 enttiyksikköinä pelaajan virheiden kumulatiivisen
  []
@@ -1577,7 +1577,7 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: FC5A40F39BE5645079167552902EAFB0;30058.
+(rerunfilecheck)             Checksum: A362095FF1FAA5010D61768E208FD67B;29982.
  ) 
 Here is how much of TeX's memory you used:
  19367 strings out of 476443

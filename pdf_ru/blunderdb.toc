@@ -136,7 +136,7 @@
 \contentsline {section}{\numberline {2.10}Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения}{46}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Предупреждение Windows SmartScreen}{47}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Блокировка Windows Defender}{47}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{53}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Проверка целостности загрузки (SHA256)}{53}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Приложение Mac: возможная блокировка blunderDB}{56}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Установка blunderDB}{56}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Разрешение на запуск blunderDB}{56}{subsection.2.11.2}%
