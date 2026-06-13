@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"log/slog"
 	"sync"
 
 	_ "modernc.org/sqlite"
@@ -528,6 +529,31 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
+	d.ensureSearchStats()
+
 	d.rebuildStore()
 	return nil
+}
+
+// ensureSearchStats runs a one-time ANALYZE when the opened database has no
+// query-planner statistics yet (sqlite_stat1 absent or empty). Without stats
+// SQLite mis-estimates selectivity for non-selective search filters — e.g. a
+// "win rate > 55% AND gammon > 20%" search that matches most rows is planned as
+// a single-column analysis-index scan followed by a TEMP B-TREE sort on p.id,
+// instead of scanning position in primary-key order (no sort). A full ANALYZE
+// fixes the plan (~4x on that case in the tournois benchmark); the stats persist
+// in the file, so later opens — and migrated databases, which already ANALYZE —
+// skip this. Non-fatal: search still works with stale/absent stats.
+func (d *Database) ensureSearchStats() {
+	if d.db == nil {
+		return
+	}
+	var n int
+	// Errors (e.g. sqlite_stat1 does not exist yet) count as "no stats".
+	if err := d.db.QueryRow(`SELECT count(*) FROM sqlite_stat1`).Scan(&n); err == nil && n > 0 {
+		return
+	}
+	if _, err := d.db.Exec(`ANALYZE`); err != nil {
+		slog.Warn("ANALYZE for search statistics failed", "err", err)
+	}
 }
