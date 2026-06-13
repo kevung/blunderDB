@@ -311,7 +311,7 @@ msgstr "Carica tutte le posizioni del database."
 
 #: ../../source/cmd_mode.rst:1
 msgid "blunders, bl [n]"
-msgstr ""
+msgstr "blunders, bl [n]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -1109,7 +1109,7 @@ msgstr "Cercare le posizioni con identificativi da x a y (es. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "pl'nom'"
-msgstr ""
+msgstr "pl'nome'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""

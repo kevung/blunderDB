@@ -218,7 +218,7 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:118
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
-msgstr ""
+msgstr "Verificare l'integrità del download (SHA256)"
 
 #: ../../source/annexe_windows_securite.rst:120
 msgid ""
@@ -227,19 +227,19 @@ msgid ""
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr ""
+msgstr "Ogni binario pubblicato nella pagina delle *releases* è accompagnato da un file ``.sha256`` che ne contiene l'impronta crittografica. Verificare questa impronta permette di assicurarsi che il file scaricato sia autentico e non sia stato alterato, il che costituisce una garanzia utile in assenza di firma del codice."
 
 #: ../../source/annexe_windows_securite.rst:125
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
-msgstr ""
+msgstr "Su Windows (PowerShell), nella cartella dei download:"
 
 #: ../../source/annexe_windows_securite.rst:131
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr ""
+msgstr "Confronta il valore visualizzato con quello del file ``blunderDB-windows-<version>.exe.sha256``. I due devono essere identici."
 
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
-msgstr ""
+msgstr "Su Linux o macOS:"
 

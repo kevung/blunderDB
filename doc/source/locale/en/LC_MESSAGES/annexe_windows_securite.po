@@ -212,7 +212,7 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:118
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
-msgstr ""
+msgstr "Verify the download integrity (SHA256)"
 
 #: ../../source/annexe_windows_securite.rst:120
 msgid ""
@@ -221,21 +221,21 @@ msgid ""
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr ""
+msgstr "Each binary published on the *releases* page comes with a ``.sha256`` file containing its cryptographic fingerprint. Checking this fingerprint ensures that the downloaded file is authentic and has not been tampered with, which is a useful guarantee in the absence of code signing."
 
 #: ../../source/annexe_windows_securite.rst:125
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
-msgstr ""
+msgstr "On Windows (PowerShell), in the download folder:"
 
 #: ../../source/annexe_windows_securite.rst:131
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr ""
+msgstr "Compare the displayed value with the one in the ``blunderDB-windows-<version>.exe.sha256`` file. The two must be identical."
 
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
-msgstr ""
+msgstr "On Linux or macOS:"
 
 #~ msgid "l’exécutable que vous souhaitez exclure et sélectionnez-le."
 #~ msgstr "the executable you want to exclude and select it."

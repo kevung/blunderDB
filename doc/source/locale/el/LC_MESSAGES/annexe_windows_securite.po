@@ -224,7 +224,7 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:118
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
-msgstr ""
+msgstr "Επαλήθευση της ακεραιότητας της λήψης (SHA256)"
 
 #: ../../source/annexe_windows_securite.rst:120
 msgid ""
@@ -233,19 +233,19 @@ msgid ""
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr ""
+msgstr "Κάθε εκτελέσιμο αρχείο που δημοσιεύεται στη σελίδα *releases* συνοδεύεται από ένα αρχείο ``.sha256`` που περιέχει το κρυπτογραφικό του αποτύπωμα. Ο έλεγχος αυτού του αποτυπώματος επιβεβαιώνει ότι το αρχείο που κατεβάσατε είναι αυθεντικό και δεν έχει αλλοιωθεί, κάτι που αποτελεί χρήσιμη εγγύηση όταν δεν υπάρχει υπογραφή κώδικα."
 
 #: ../../source/annexe_windows_securite.rst:125
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
-msgstr ""
+msgstr "Στα Windows (PowerShell), στον φάκελο λήψεων:"
 
 #: ../../source/annexe_windows_securite.rst:131
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr ""
+msgstr "Συγκρίνετε την εμφανιζόμενη τιμή με εκείνη του αρχείου ``blunderDB-windows-<version>.exe.sha256``. Οι δύο πρέπει να είναι πανομοιότυπες."
 
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
-msgstr ""
+msgstr "Σε Linux ή macOS:"
 

@@ -313,7 +313,7 @@ msgstr "Lataa kaikki tietokannan asemat."
 
 #: ../../source/cmd_mode.rst:1
 msgid "blunders, bl [n]"
-msgstr ""
+msgstr "blunders, bl [n]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -1100,7 +1100,7 @@ msgstr "Hae asemia, joiden tunnukset ovat välillä x–y (esim. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "pl'nom'"
-msgstr ""
+msgstr "pl'nimi'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""

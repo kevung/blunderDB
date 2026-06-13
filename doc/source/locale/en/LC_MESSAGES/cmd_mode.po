@@ -312,7 +312,7 @@ msgstr "Load all positions from the database."
 
 #: ../../source/cmd_mode.rst:1
 msgid "blunders, bl [n]"
-msgstr ""
+msgstr "blunders, bl [n]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -1102,7 +1102,7 @@ msgstr "Search for the positions with identifiers x to y (e.g. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "pl'nom'"
-msgstr ""
+msgstr "pl'name'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
