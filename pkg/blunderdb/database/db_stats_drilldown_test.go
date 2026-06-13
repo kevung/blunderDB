@@ -325,6 +325,15 @@ func TestDrilldown_TournamentShortcut(t *testing.T) {
 	if len(all) != 4 {
 		t.Errorf("tournament shortcut should return 4 positions regardless of filter, got %d", len(all))
 	}
+
+	// Parity: the delegating method (storage) must match the legacy reference.
+	legacyAll, err := legacyGetPositionIDsByTournament(db, tid)
+	if err != nil {
+		t.Fatalf("legacyGetPositionIDsByTournament: %v", err)
+	}
+	if len(legacyAll) != len(all) {
+		t.Errorf("tournament drilldown parity: legacy=%d storage=%d", len(legacyAll), len(all))
+	}
 }
 
 // TestDrilldown_MatchShortcut verifies that GetPositionIDsByMatch ignores any

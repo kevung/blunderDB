@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"math"
@@ -15,7 +16,16 @@ type StatsDateRange struct {
 
 // GetStatsDateRange returns the minimum and maximum match dates present in the
 // database. Both fields are empty when no matches with a date exist.
+// GetStatsDateRange delegates to the storage StatsStore. legacyGetStatsDateRange
+// keeps the original SQL as the parity-test reference.
 func (d *Database) GetStatsDateRange() StatsDateRange {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	r, _ := d.store.Stats().DateRange(context.Background(), "")
+	return fromStorageDateRange(r)
+}
+
+func legacyGetStatsDateRange(d *Database) StatsDateRange {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	if d.db == nil {
@@ -237,7 +247,20 @@ func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
 }
 
 // ComputeStats aggregates performance metrics for the given filter.
+// ComputeStats delegates to the storage StatsStore (the single production
+// implementation, shared with the headless server). legacyComputeStats keeps
+// the original SQL as the parity-test reference.
 func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	r, err := d.store.Stats().Compute(context.Background(), "", toStorageStatsFilter(filter))
+	if err != nil {
+		return nil, err
+	}
+	return fromStorageStatsResult(r), nil
+}
+
+func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -702,7 +725,14 @@ func scanPositionIDs(rows interface {
 // panel into a deduplicated list of position IDs. The StatsFilter is always
 // applied so that the IDs correspond exactly to what is displayed in the panel
 // (invariant: "ce qu'on clique = ce qu'on voit").
+// GetPositionIDsByStatsSelection delegates to the storage StatsStore.
 func (d *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel SelectionSpec) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().PositionIDsBySelection(context.Background(), "", toStorageStatsFilter(filter), toStorageSelectionSpec(sel))
+}
+
+func legacyGetPositionIDsByStatsSelection(d *Database, filter StatsFilter, sel SelectionSpec) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -729,7 +759,14 @@ func (d *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel Select
 // GetPositionIDsByTournament returns all position IDs belonging to the given
 // tournament, regardless of any stats filter. Used when the user explicitly
 // reopens a tournament (Open tournament action).
+// GetPositionIDsByTournament delegates to the storage StatsStore.
 func (d *Database) GetPositionIDsByTournament(tournamentID int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().PositionIDsByTournament(context.Background(), "", tournamentID)
+}
+
+func legacyGetPositionIDsByTournament(d *Database, tournamentID int64) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -748,7 +785,14 @@ func (d *Database) GetPositionIDsByTournament(tournamentID int64) ([]int64, erro
 
 // GetPositionIDsByMatch returns all position IDs belonging to the given match,
 // regardless of any stats filter. Used when the user explicitly reopens a match.
+// GetPositionIDsByMatch delegates to the storage StatsStore.
 func (d *Database) GetPositionIDsByMatch(matchID int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().PositionIDsByMatch(context.Background(), "", matchID)
+}
+
+func legacyGetPositionIDsByMatch(d *Database, matchID int64) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -774,7 +818,18 @@ type PlayerFrequency struct {
 // GetAllPlayerNames returns all player names found in the match table, ranked by
 // the total number of matches (player1 + player2 appearances) descending.
 // Names that are equal in frequency are sorted alphabetically.
+// GetAllPlayerNames delegates to the storage StatsStore.
 func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	p, err := d.store.Stats().PlayerNames(context.Background(), "")
+	if err != nil {
+		return nil, err
+	}
+	return fromStoragePlayerFreq(p), nil
+}
+
+func legacyGetAllPlayerNames(d *Database) ([]PlayerFrequency, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -1023,7 +1078,20 @@ type MatchDetailStats struct {
 }
 
 // GetMatchDetailStats computes per-player statistics for the given match.
+// GetMatchDetailStats delegates to the storage StatsStore. legacyGetMatchDetailStats
+// keeps the original SQL as the parity-test reference (pinned against eXtreme
+// Gammon reference values in TestStatsParity).
 func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	m, err := d.store.Stats().MatchDetail(context.Background(), "", matchID)
+	if err != nil {
+		return nil, err
+	}
+	return fromStorageMatchDetail(m), nil
+}
+
+func legacyGetMatchDetailStats(d *Database, matchID int64) (*MatchDetailStats, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
