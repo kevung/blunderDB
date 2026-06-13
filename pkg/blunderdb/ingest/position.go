@@ -109,6 +109,20 @@ func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
+	return mapBGFTextPosition(bgfPos), nil
+}
+
+// MapBGFTextPositionText maps a BGBlitz text position from string content (e.g.
+// a clipboard paste) into a PositionGraph, mirroring MapBGFTextPosition.
+func MapBGFTextPositionText(content string) ([]PositionGraph, error) {
+	bgfPos, err := bgfparser.ParseTXTFromReader(strings.NewReader(content))
+	if err != nil {
+		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
+	}
+	return mapBGFTextPosition(bgfPos), nil
+}
+
+func mapBGFTextPosition(bgfPos *bgfparser.Position) []PositionGraph {
 	pos := convertBGFTextPosition(bgfPos)
 
 	var an []*domain.PositionAnalysis
@@ -118,7 +132,18 @@ func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 	if a := buildBGFTextCubeAnalysis(bgfPos); a != nil {
 		an = append(an, a)
 	}
-	return []PositionGraph{{Position: pos, Analyses: an}}, nil
+	return []PositionGraph{{Position: pos, Analyses: an}}
+}
+
+// WritePosition persists a single mapped position (with its analysis fragments)
+// through tx and returns the stored position id. Positions dedup by Zobrist
+// hash inside the store, so re-importing the same position returns its existing
+// id rather than creating a duplicate.
+func WritePosition(ctx context.Context, tx storage.Tx, scope string, g *PositionGraph) (int64, error) {
+	if g == nil || g.Position == nil {
+		return 0, fmt.Errorf("ingest: nil position graph")
+	}
+	return savePositionWithAnalyses(ctx, tx, scope, g.Position, g.Analyses, nil)
 }
 
 // PositionImporter implements Importer for single-position files. It dispatches
