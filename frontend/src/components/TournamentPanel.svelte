@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { nextSort } from '../utils/tableSort.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import {
@@ -140,17 +141,9 @@
     }
 
     function handleSort(column) {
-        if (sortBy === column) {
-            if (sortOrder === 'asc') {
-                sortOrder = 'desc';
-            } else {
-                sortBy = null;
-                sortOrder = 'asc';
-            }
-        } else {
-            sortBy = column;
-            sortOrder = 'asc';
-        }
+        const next = nextSort(sortBy, sortOrder, column, { tristate: true });
+        sortBy = next.column;
+        sortOrder = next.direction;
         tournamentsStore.set(sortTournaments(tournaments));
     }
 
