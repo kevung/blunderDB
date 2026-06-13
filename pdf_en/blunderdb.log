@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 00:10
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 00:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1041,73 +1041,73 @@ ading, run the command \TU/FreeMono(0)/m/n/10 chmod +x ./
 ] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
 [21] [22] [23] [24] [25] [26] [27] [28] [29]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4796.
+(Font)              scaled to size 4.49997pt on input line 4807.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4797.
+(Font)              scaled to size 8.99994pt on input line 4808.
  [30] [31] [32] [33] [34] [35]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5543.
+(Font)              scaled to size 8.99994pt on input line 5554.
 
 [36] [37] [38]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5804.
+(Font)              scaled to size 10.79993pt on input line 5815.
 
-Underfull \hbox (badness 10000) in paragraph at lines 5888--5890
+Underfull \hbox (badness 10000) in paragraph at lines 5899--5901
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 5891
+Underfull \hbox (badness 10000) detected at line 5902
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5947--5949
+Underfull \hbox (badness 10000) in paragraph at lines 5958--5960
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [39] [40]
-Underfull \hbox (badness 10000) in paragraph at lines 6270--6272
+Underfull \hbox (badness 10000) in paragraph at lines 6281--6283
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6273
+Underfull \hbox (badness 10000) detected at line 6284
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 [41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 6568--6570
+Underfull \hbox (badness 10000) in paragraph at lines 6579--6581
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6584--6586
+Underfull \hbox (badness 10000) in paragraph at lines 6595--6597
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6600--6602
+Underfull \hbox (badness 10000) in paragraph at lines 6611--6613
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6625--6627
+Underfull \hbox (badness 10000) in paragraph at lines 6636--6638
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6625--6627
+Underfull \hbox (badness 10000) in paragraph at lines 6636--6638
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6628
+Underfull \hbox (badness 10000) detected at line 6639
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6706--6708
+Underfull \hbox (badness 10000) in paragraph at lines 6717--6719
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 

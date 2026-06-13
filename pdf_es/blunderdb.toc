@@ -67,19 +67,19 @@
 \contentsline {section}{\numberline {2.4}Lista de comandos}{22}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operaciones globales}{23}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posiciones y navegación}{23}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Edición y búsqueda}{23}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Edición y búsqueda}{24}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Filtros de búsqueda}{24}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Comandos diversos}{27}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Atajos de teclado}{27}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Base de datos}{27}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.1}Base de datos}{28}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Posición}{28}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navegación}{28}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Visualización}{28}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Acciones}{28}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.4}Visualización}{29}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Acciones}{29}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Herramientas}{29}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Línea de comandos}{29}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Panel del historial de búsqueda}{29}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Panel de biblioteca de filtros}{29}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.9}Panel de biblioteca de filtros}{30}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Panel de análisis}{30}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Panel de partidas}{30}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Panel Anki (repetición espaciada)}{30}{subsection.2.5.12}%
@@ -95,7 +95,7 @@
 \contentsline {subsection}{\numberline {2.6.6}export — Exportar datos}{32}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Buscar posiciones}{33}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Listar el contenido}{34}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Mostrar una partida}{34}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.9}match — Mostrar una partida}{35}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Metadatos de la base de datos}{35}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}edit — Modificar los metadatos}{35}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Verificar la integridad}{36}{subsection.2.6.12}%
@@ -105,8 +105,8 @@
 \contentsline {subsubsection}{Copia de seguridad periódica}{37}{subsubsection*.27}%
 \contentsline {subsubsection}{Análisis de errores}{37}{subsubsection*.28}%
 \contentsline {subsection}{\numberline {2.6.15}Códigos de salida}{37}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Preguntas frecuentes (FAQ)}{37}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}¿Cuál es la utilidad de blunderDB?}{37}{subsection.2.7.1}%
+\contentsline {section}{\numberline {2.7}Preguntas frecuentes (FAQ)}{38}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}¿Cuál es la utilidad de blunderDB?}{38}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}¿Qué motivó la creación de blunderDB?}{38}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}¿Cómo guardar el estado de la base de datos actual?}{38}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}¿Debo crear distintas bases de datos para distintas categorías de posiciones?}{38}{subsection.2.7.4}%

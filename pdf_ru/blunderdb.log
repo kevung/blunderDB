@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 00:11
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 00:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1326,109 +1326,112 @@ Underfull \hbox (badness 10000) in paragraph at lines 2248--2250
 ) для знакомства с
  []
 
-[22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36]
-[37] [38] [39]
-Underfull \hbox (badness 8056) in paragraph at lines 5784--5786
+[22] [23] [24] [25]
+Underfull \vbox (badness 7168) detected at line 3615
+ []
+
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40]
+Underfull \hbox (badness 8056) in paragraph at lines 5795--5797
 []\TU/FreeSerif(1)/m/n/10 Эти три варианта использования опираются на общий \TU
 /FreeSerif(1)/b/n/10 слой хранения\TU/FreeSerif(1)/m/n/10 , который умеет работ
 ать с
  []
 
-[40]
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 5872--5874
+
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 5883--5885
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 5875
+Overfull \hbox (19.82352pt too wide) detected at line 5886
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5931--5933
+Underfull \hbox (badness 10000) in paragraph at lines 5942--5944
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5963--5965
+Underfull \hbox (badness 10000) in paragraph at lines 5974--5976
 [][][]\TU/FreeMono(1)/m/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5999--6001
+Underfull \hbox (badness 10000) in paragraph at lines 6010--6012
 []\TU/FreeSerif(1)/m/n/10 Большинство опций можно также задать через переменные
  окружения (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(1)/m/n/10 ,
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 6025--6027
+[41]
+Underfull \hbox (badness 10000) in paragraph at lines 6036--6038
 []\TU/FreeSerif(1)/m/n/10 Два метода семейства \TU/FreeMono(1)/m/n/10 positions
  \TU/FreeSerif(1)/m/n/10 декодируют позицию, не сохраняя её: \TU/FreeMono(1)/m/
 n/10 positions.fromXGID
  []
 
-[41]
-Underfull \hbox (badness 10000) in paragraph at lines 6069--6071
+
+Underfull \hbox (badness 10000) in paragraph at lines 6080--6082
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6072
+Underfull \hbox (badness 10000) detected at line 6083
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6091--6093
+Underfull \hbox (badness 10000) in paragraph at lines 6102--6104
 []\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
 //chemin \TU/FreeSerif(1)/m/n/10 или
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6123--6125
+Underfull \hbox (badness 6412) in paragraph at lines 6134--6136
 []\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6145--6147
+Underfull \hbox (badness 10000) in paragraph at lines 6156--6158
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 [42]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6254--6256
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6265--6267
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6257
+Overfull \hbox (9.46619pt too wide) detected at line 6268
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6323--6325
+Underfull \hbox (badness 10000) in paragraph at lines 6334--6336
 []\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
 .<метод> \TU/FreeSerif(1)/m/n/10 и
  []
 
 [43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6609--6611
+Underfull \hbox (badness 10000) in paragraph at lines 6620--6622
 []\TU/FreeSerif(1)/m/n/10 Позиция турнира
  []
 
 [45]
-Underfull \hbox (badness 10000) in paragraph at lines 6844--6846
+Underfull \hbox (badness 10000) in paragraph at lines 6855--6857
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
+[46]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
-[46]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [47]
+ [47] [48]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1437,26 +1440,27 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [48] [49] [50] [51]
+ [49] [50] [51] [52]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [52] [53] [54] [55] [56] [57] [58] [59] [60]
-Глава 3.
-[61
-
-] [62
+ [53] [54] [55] [56] [57] [58] [59] [60]
+[61] [62
 
 ]
-Глава 4.
+Глава 3.
 [63] [64
 
 ]
+Глава 4.
+[65] [66
+
+]
 Глава 5.
-(./blunderdb.ind) [65] (./blunderdb.aux)
+(./blunderdb.ind) [67] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1465,12 +1469,12 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: 68189AD363B9AA1D167415AC6CF8499B;39375.
  ) 
 Here is how much of TeX's memory you used:
- 19660 strings out of 476443
- 401844 string characters out of 5793962
- 2001627 words of memory out of 5000000
- 41149 multiletter control sequences out of 15000+600000
- 567780 words of font info for 164 fonts, out of 8000000 for 9000
+ 19658 strings out of 476443
+ 401784 string characters out of 5793962
+ 1996627 words of memory out of 5000000
+ 41148 multiletter control sequences out of 15000+600000
+ 567715 words of font info for 163 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1198b,596s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1198b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (69 pages).
+Output written on blunderdb.pdf (71 pages).
