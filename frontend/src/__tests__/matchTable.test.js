@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { compareValues, getSortValue, sortMatches, toDateInputValue, formatDate, formatDiceShort } from '../utils/matchTable.js';
+import { compareValues, getSortValue, sortMatches, toDateInputValue, formatDate, formatDiceShort, fmtPR, fmtEquityError, fmtMwcLoss, fmtErrorsBlunders, MATCH_STAT_ROWS } from '../utils/matchTable.js';
 
 describe('compareValues', () => {
     test('nulls sort last regardless of order', () => {
@@ -122,5 +122,79 @@ describe('formatDiceShort', () => {
         expect(formatDiceShort(null)).toBe('');
         expect(formatDiceShort([0, 0])).toBe('');
         expect(formatDiceShort(undefined)).toBe('');
+    });
+});
+
+describe('match stats cell formatters', () => {
+    test('fmtPR shows 2 decimals when there are decisions, em-dash otherwise', () => {
+        expect(fmtPR(5.456, 10)).toBe('5.46');
+        expect(fmtPR(0, 0)).toBe('—');
+        expect(fmtPR(3.1, 0)).toBe('—'); // no decisions → N/A regardless of value
+    });
+
+    test('fmtEquityError prefixes a minus and 3 decimals, em-dash at zero', () => {
+        expect(fmtEquityError(0.1234)).toBe('-0.123');
+        expect(fmtEquityError(0)).toBe('—');
+    });
+
+    test('fmtMwcLoss renders a negative percentage with 2 decimals, em-dash at zero', () => {
+        expect(fmtMwcLoss(0.0512)).toBe('-5.12%');
+        expect(fmtMwcLoss(0)).toBe('—');
+    });
+
+    test('fmtErrorsBlunders is "errors (blunders)"', () => {
+        expect(fmtErrorsBlunders(7, 2)).toBe('7 (2)');
+    });
+});
+
+describe('MATCH_STAT_ROWS', () => {
+    const sample = {
+        pr: 4.5,
+        pr_checker: 3.2,
+        pr_cube: 6.1,
+        total_decisions: 100,
+        checker_decisions: 80,
+        double_decisions: 12,
+        take_decisions: 8,
+        total_errors: 20,
+        total_blunders: 5,
+        total_equity_error: 1.234,
+        mwc_loss: 0.042,
+        checker_errors: 12,
+        checker_blunders: 3,
+        checker_equity_error: 0.8,
+        checker_mwc_loss: 0.03,
+        double_errors: 4,
+        double_blunders: 1,
+        double_equity_error: 0.3,
+        double_mwc_loss: 0.01,
+        take_errors: 4,
+        take_blunders: 1,
+        take_equity_error: 0.13,
+        take_mwc_loss: 0.011
+    };
+
+    test('every metric row has a label + fmt; sections have just a section key', () => {
+        for (const row of MATCH_STAT_ROWS) {
+            if (row.section) {
+                expect(typeof row.section).toBe('string');
+            } else {
+                expect(typeof row.label).toBe('string');
+                expect(typeof row.fmt).toBe('function');
+                expect(typeof row.fmt(sample)).toBe('string');
+            }
+        }
+    });
+
+    test('the four section headers are present in order', () => {
+        const sections = MATCH_STAT_ROWS.filter((r) => r.section).map((r) => r.section);
+        expect(sections).toEqual(['match.performanceRating', 'match.totalErrors', 'match.checkerPlay', 'match.cubePlay']);
+    });
+
+    test('overall PR row formats the sample correctly', () => {
+        const overall = MATCH_STAT_ROWS.find((r) => r.label === 'match.overallPr');
+        expect(overall.fmt(sample)).toBe('4.50');
+        expect(overall.valClass).toBe('pr-val');
+        expect(overall.bullet).toBe(true);
     });
 });

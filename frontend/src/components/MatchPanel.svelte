@@ -1,6 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { sortMatches, toDateInputValue, formatDate, formatDiceShort } from '../utils/matchTable.js';
+    import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -1072,116 +1072,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="stats-section-header">
-                                        <td colspan="3">{$t('match.performanceRating')}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.overallPr')}</td>
-                                        <td class="stats-val pr-val">{p1.total_decisions > 0 ? p1.pr.toFixed(2) : '—'}</td>
-                                        <td class="stats-val pr-val">{p2.total_decisions > 0 ? p2.pr.toFixed(2) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.checkerPlayPr')}</td>
-                                        <td class="stats-val">{p1.checker_decisions > 0 ? p1.pr_checker.toFixed(2) : '—'}</td>
-                                        <td class="stats-val">{p2.checker_decisions > 0 ? p2.pr_checker.toFixed(2) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.cubePlayPr')}</td>
-                                        <td class="stats-val">{p1.double_decisions + p1.take_decisions > 0 ? p1.pr_cube.toFixed(2) : '—'}</td>
-                                        <td class="stats-val">{p2.double_decisions + p2.take_decisions > 0 ? p2.pr_cube.toFixed(2) : '—'}</td>
-                                    </tr>
-
-                                    <tr class="stats-section-header">
-                                        <td colspan="3">{$t('match.totalErrors')}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.errorsBlunders')}</td>
-                                        <td class="stats-val">{p1.total_errors} ({p1.total_blunders})</td>
-                                        <td class="stats-val">{p2.total_errors} ({p2.total_blunders})</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
-                                        <td class="stats-val sub-val">{p1.total_equity_error > 0 ? '-' + p1.total_equity_error.toFixed(3) : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.total_equity_error > 0 ? '-' + p2.total_equity_error.toFixed(3) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
-                                        <td class="stats-val sub-val">{p1.mwc_loss > 0 ? '-' + (p1.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.mwc_loss > 0 ? '-' + (p2.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.decisions')}</td>
-                                        <td class="stats-val sub-val">{p1.total_decisions}</td>
-                                        <td class="stats-val sub-val">{p2.total_decisions}</td>
-                                    </tr>
-
-                                    <tr class="stats-section-header">
-                                        <td colspan="3">{$t('match.checkerPlay')}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.checkerErrorsBlunders')}</td>
-                                        <td class="stats-val">{p1.checker_errors} ({p1.checker_blunders})</td>
-                                        <td class="stats-val">{p2.checker_errors} ({p2.checker_blunders})</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
-                                        <td class="stats-val sub-val">{p1.checker_equity_error > 0 ? '-' + p1.checker_equity_error.toFixed(3) : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.checker_equity_error > 0 ? '-' + p2.checker_equity_error.toFixed(3) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
-                                        <td class="stats-val sub-val">{p1.checker_mwc_loss > 0 ? '-' + (p1.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.checker_mwc_loss > 0 ? '-' + (p2.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.unforcedMoves')}</td>
-                                        <td class="stats-val sub-val">{p1.checker_decisions}</td>
-                                        <td class="stats-val sub-val">{p2.checker_decisions}</td>
-                                    </tr>
-
-                                    <tr class="stats-section-header">
-                                        <td colspan="3">{$t('match.cubePlay')}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.doublesBlunders')}</td>
-                                        <td class="stats-val">{p1.double_errors} ({p1.double_blunders})</td>
-                                        <td class="stats-val">{p2.double_errors} ({p2.double_blunders})</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
-                                        <td class="stats-val sub-val">{p1.double_equity_error > 0 ? '-' + p1.double_equity_error.toFixed(3) : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.double_equity_error > 0 ? '-' + p2.double_equity_error.toFixed(3) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
-                                        <td class="stats-val sub-val">{p1.double_mwc_loss > 0 ? '-' + (p1.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.double_mwc_loss > 0 ? '-' + (p2.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.cubeDecisions')}</td>
-                                        <td class="stats-val sub-val">{p1.double_decisions}</td>
-                                        <td class="stats-val sub-val">{p2.double_decisions}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label">• {$t('match.takesBlunders')}</td>
-                                        <td class="stats-val">{p1.take_errors} ({p1.take_blunders})</td>
-                                        <td class="stats-val">{p2.take_errors} ({p2.take_blunders})</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.equityErrorEmg')}</td>
-                                        <td class="stats-val sub-val">{p1.take_equity_error > 0 ? '-' + p1.take_equity_error.toFixed(3) : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.take_equity_error > 0 ? '-' + p2.take_equity_error.toFixed(3) : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.mwcLoss')}</td>
-                                        <td class="stats-val sub-val">{p1.take_mwc_loss > 0 ? '-' + (p1.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                        <td class="stats-val sub-val">{p2.take_mwc_loss > 0 ? '-' + (p2.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="stats-label sub-label">{$t('match.takeDecisions')}</td>
-                                        <td class="stats-val sub-val">{p1.take_decisions}</td>
-                                        <td class="stats-val sub-val">{p2.take_decisions}</td>
-                                    </tr>
+                                    {#each MATCH_STAT_ROWS as row, i (i)}
+                                        {#if row.section}
+                                            <tr class="stats-section-header"><td colspan="3">{$t(row.section)}</td></tr>
+                                        {:else}
+                                            <tr>
+                                                <td class="stats-label{row.sub ? ' sub-label' : ''}">{row.bullet ? '• ' : ''}{$t(row.label)}</td>
+                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p1)}</td>
+                                                <td class="stats-val{row.valClass ? ' ' + row.valClass : ''}{row.sub ? ' sub-val' : ''}">{row.fmt(p2)}</td>
+                                            </tr>
+                                        {/if}
+                                    {/each}
                                 </tbody>
                             </table>
                         {/if}

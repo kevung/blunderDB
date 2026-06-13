@@ -81,3 +81,46 @@ export function formatDiceShort(dice) {
     if (!dice || (!dice[0] && !dice[1])) return '';
     return `${dice[0]}${dice[1]}`;
 }
+
+// --- Match-detail per-player stats table -------------------------------------
+
+// Cell formatters for the MatchPanel "stats" tab. A player's MatchPlayerDetailStats
+// maps to a displayed string; em-dash ("—") marks "not applicable / no data".
+export const fmtPR = (val, decisions) => (decisions > 0 ? val.toFixed(2) : '—');
+export const fmtEquityError = (v) => (v > 0 ? '-' + v.toFixed(3) : '—');
+export const fmtMwcLoss = (v) => (v > 0 ? '-' + (v * 100).toFixed(2) + '%' : '—');
+export const fmtErrorsBlunders = (errors, blunders) => `${errors} (${blunders})`;
+
+// MATCH_STAT_ROWS describes the per-player match stats table row by row. Each
+// entry is either a section header ({ section }) or a metric ({ label, fmt, … });
+// fmt maps one player's stats to its cell. Rendered by MatchPanel; labels are
+// i18n keys translated at render time. bullet = leading "•"; sub = indented
+// sub-metric; valClass = extra value-cell class.
+export const MATCH_STAT_ROWS = [
+    { section: 'match.performanceRating' },
+    { label: 'match.overallPr', bullet: true, valClass: 'pr-val', fmt: (p) => fmtPR(p.pr, p.total_decisions) },
+    { label: 'match.checkerPlayPr', bullet: true, fmt: (p) => fmtPR(p.pr_checker, p.checker_decisions) },
+    { label: 'match.cubePlayPr', bullet: true, fmt: (p) => fmtPR(p.pr_cube, p.double_decisions + p.take_decisions) },
+
+    { section: 'match.totalErrors' },
+    { label: 'match.errorsBlunders', bullet: true, fmt: (p) => fmtErrorsBlunders(p.total_errors, p.total_blunders) },
+    { label: 'match.equityErrorEmg', sub: true, fmt: (p) => fmtEquityError(p.total_equity_error) },
+    { label: 'match.mwcLoss', sub: true, fmt: (p) => fmtMwcLoss(p.mwc_loss) },
+    { label: 'match.decisions', sub: true, fmt: (p) => String(p.total_decisions) },
+
+    { section: 'match.checkerPlay' },
+    { label: 'match.checkerErrorsBlunders', bullet: true, fmt: (p) => fmtErrorsBlunders(p.checker_errors, p.checker_blunders) },
+    { label: 'match.equityErrorEmg', sub: true, fmt: (p) => fmtEquityError(p.checker_equity_error) },
+    { label: 'match.mwcLoss', sub: true, fmt: (p) => fmtMwcLoss(p.checker_mwc_loss) },
+    { label: 'match.unforcedMoves', sub: true, fmt: (p) => String(p.checker_decisions) },
+
+    { section: 'match.cubePlay' },
+    { label: 'match.doublesBlunders', bullet: true, fmt: (p) => fmtErrorsBlunders(p.double_errors, p.double_blunders) },
+    { label: 'match.equityErrorEmg', sub: true, fmt: (p) => fmtEquityError(p.double_equity_error) },
+    { label: 'match.mwcLoss', sub: true, fmt: (p) => fmtMwcLoss(p.double_mwc_loss) },
+    { label: 'match.cubeDecisions', sub: true, fmt: (p) => String(p.double_decisions) },
+    { label: 'match.takesBlunders', bullet: true, fmt: (p) => fmtErrorsBlunders(p.take_errors, p.take_blunders) },
+    { label: 'match.equityErrorEmg', sub: true, fmt: (p) => fmtEquityError(p.take_equity_error) },
+    { label: 'match.mwcLoss', sub: true, fmt: (p) => fmtMwcLoss(p.take_mwc_loss) },
+    { label: 'match.takeDecisions', sub: true, fmt: (p) => String(p.take_decisions) }
+];
