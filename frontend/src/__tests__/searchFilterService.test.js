@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand, parseFilterTokens, filterTokenHint } from '../services/searchFilterService.js';
+import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -407,5 +407,82 @@ describe('Player filter token', () => {
 
     test('buildSearchCommand drops an empty pl"" token', () => {
         expect(buildSearchCommand(['cube', 'pl""'])).toBe('s cube');
+    });
+});
+
+describe('parseSearchCommand — restore path (verbatim from executeSearch)', () => {
+    test('bare "s" yields no filters and all flags off', () => {
+        const f = parseSearchCommand('s');
+        expect(f.cmdFilters).toEqual([]);
+        expect(f.nc).toBe(false);
+        expect(f.dt).toBe(false);
+        expect(f.dr).toBe(false);
+        expect(f.mp).toBe(false);
+        expect(f.pc).toBeUndefined();
+        expect(f.matchIDs).toBe('');
+        expect(f.tournamentIDs).toBe('');
+    });
+
+    test('flag tokens set their booleans', () => {
+        const f = parseSearchCommand('s cube score nc d M');
+        expect(f.ic).toBe(true);
+        expect(f.is).toBe(true);
+        expect(f.nc).toBe(true);
+        expect(f.dt).toBe(true);
+        expect(f.mp).toBe(true);
+    });
+
+    test('range tokens are captured for both players', () => {
+        const f = parseSearchCommand('s p>5 w<70 e10,20 W>30 P12');
+        expect(f.pc).toBe('p>5');
+        expect(f.wr).toBe('w<70');
+        expect(f.eq).toBe('e10,20');
+        expect(f.p2wr).toBe('W>30');
+        expect(f.p1apc).toBe('P12');
+    });
+
+    test('single-value checker tokens expand to a min,max pair', () => {
+        expect(parseSearchCommand('s o5').p1co).toBe('o5,5');
+        expect(parseSearchCommand('s K3').p2bc).toBe('K3,3');
+        expect(parseSearchCommand('s z2').p1cz).toBe('z2,2');
+    });
+
+    test('checker tokens already carrying a range or operator are left intact', () => {
+        expect(parseSearchCommand('s o3,4').p1co).toBe('o3,4');
+        expect(parseSearchCommand('s o>5').p1co).toBe('o>5');
+        expect(parseSearchCommand('s O<2').p2co).toBe('O<2');
+    });
+
+    test('quoted free-text filters survive embedded spaces', () => {
+        const f = parseSearchCommand('s m"Best move here" t"some text" pl"John Doe"');
+        expect(f.mpf).toBe('m"Best move here"');
+        expect(f.st).toBe('t"some text"');
+        expect(f.plf).toBe('pl"John Doe"');
+    });
+
+    test('pipcount p is not confused with the pl player filter', () => {
+        const f = parseSearchCommand('s pl"Jane" p<60');
+        expect(f.pc).toBe('p<60');
+        expect(f.plf).toBe('pl"Jane"');
+    });
+
+    test('match and tournament id tokens join on ";"', () => {
+        const f = parseSearchCommand('s ma1 ma2 ma7 tn3 tn4');
+        expect(f.matchIDs).toBe('1;2;7');
+        expect(f.tournamentIDs).toBe('3;4');
+    });
+
+    test('dice roll mode: D1 is first-only, D is both', () => {
+        expect(parseSearchCommand('s D1').drMode).toBe('first');
+        expect(parseSearchCommand('s D1').dr).toBe(true);
+        expect(parseSearchCommand('s D').drMode).toBe('both');
+        expect(parseSearchCommand('s D').dr).toBe(true);
+    });
+
+    test('backgammon b is distinguished from bo/bj outfield/jan blot tokens', () => {
+        const f = parseSearchCommand('s b>10 bo5 bj2');
+        expect(f.bg).toBe('b>10');
+        expect(f.p1ob).toBe('bo5');
+        expect(f.p1jb).toBe('bj2');
     });
 });
