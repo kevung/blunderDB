@@ -6,26 +6,26 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // makeSourceDB builds a populated native .db file by importing an XG fixture
-// (which exercises positions, analyses and comments) via the legacy Database,
-// and returns its path.
+// (which exercises positions, analyses and comments) through the ingest XG
+// importer, and returns its path.
 func makeSourceDB(t *testing.T) string {
 	t.Helper()
+	ctx := context.Background()
 	dbPath := filepath.Join(t.TempDir(), "source.db")
-	db := database.NewDatabase()
-	if err := db.SetupDatabase(dbPath); err != nil {
-		t.Fatalf("SetupDatabase: %v", err)
+	s, err := sqlite.Open(ctx, dbPath, nil)
+	if err != nil {
+		t.Fatalf("open source db: %v", err)
 	}
 	xg := filepath.Join("..", "..", "..", "testdata", "match_with_comment.xg")
-	if _, err := db.ImportXGMatch(xg); err != nil {
-		db.Close()
-		t.Fatalf("seed ImportXGMatch: %v", err)
+	if _, err := (XGImporter{S: s}).Import(ctx, "", Source{Format: FormatXG, Path: xg}, nil); err != nil {
+		s.Close()
+		t.Fatalf("seed XG import: %v", err)
 	}
-	db.Close()
+	s.Close()
 	return dbPath
 }
 
