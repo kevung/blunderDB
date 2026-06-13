@@ -337,6 +337,90 @@ export function parseFilterTokens(tokens) {
     };
 }
 
+/**
+ * Parse a persisted `s …` search command string back into the flat set of
+ * filter values SearchPanel hands to its `onLoadPositionsByFilters` callback
+ * when replaying a saved/library search.
+ *
+ * This is the inverse of buildSearchCommand for the *restore* path and is
+ * deliberately more complete than parseFilterTokens (which parses freshly built
+ * tokens at save time): it
+ *   - expands the shorthand single-value checker tokens (`o5` → `o5,5`) for the
+ *     two-sided range filters, and
+ *   - pulls the quoted free-text filters (`m"…"`, `t"…"`, `pl"…"`) straight from
+ *     the raw command so embedded spaces survive the whitespace split.
+ *
+ * Logic is lifted verbatim from SearchPanel.executeSearch; unifying it with
+ * parseFilterTokens is left as a follow-up because their predicates differ.
+ *
+ * @param {string} command - a command starting with `s ` (or the bare `s`).
+ * @returns {object} the parsed filter values, keyed by short name.
+ */
+export function parseSearchCommand(command) {
+    const cmdFilters =
+        command === 's'
+            ? []
+            : command
+                  .slice(2)
+                  .trim()
+                  .split(' ')
+                  .map((f) => f.trim());
+
+    // Single-value checker tokens (e.g. `o5`) restore as a `min,max` pair.
+    const expandPair = (tok) => {
+        if (tok && !tok.includes(',') && !tok.includes('>') && !tok.includes('<')) {
+            return `${tok},${tok.slice(1)}`;
+        }
+        return tok;
+    };
+
+    const matchTokens = (re) => cmdFilters.filter((f) => typeof f === 'string' && re.test(f));
+    const quoted = (prefix) => {
+        const m = command.match(new RegExp(`${prefix}["'][^"']*["']`));
+        return m ? m[0] : '';
+    };
+
+    const maTokens = matchTokens(/^ma\d/);
+    const tnTokens = matchTokens(/^tn\d/);
+
+    return {
+        cmdFilters,
+        ic: cmdFilters.includes('cube') || cmdFilters.includes('cu') || cmdFilters.includes('c') || cmdFilters.includes('cub'),
+        is: cmdFilters.includes('score') || cmdFilters.includes('sco') || cmdFilters.includes('sc') || cmdFilters.includes('s'),
+        nc: cmdFilters.includes('nc'),
+        dt: cmdFilters.includes('d'),
+        dr: cmdFilters.includes('D') || cmdFilters.includes('D1'),
+        drMode: cmdFilters.includes('D1') ? 'first' : 'both',
+        mp: cmdFilters.includes('M'),
+        pc: cmdFilters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p'))),
+        wr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w'))),
+        gr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g'))),
+        bg: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj')),
+        p2wr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W'))),
+        p2gr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G'))),
+        p2bg: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ')),
+        p1co: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')))),
+        p2co: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')))),
+        p1bc: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')))),
+        p2bc: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')))),
+        p1cz: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')))),
+        p2cz: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')))),
+        p1apc: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P'))),
+        eq: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e'))),
+        cd: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T'))),
+        mpf: quoted('m'),
+        st: quoted('t'),
+        plf: quoted('pl'),
+        p1ob: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo'))),
+        p2ob: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO'))),
+        p1jb: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj'))),
+        p2jb: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ'))),
+        me: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f)))),
+        matchIDs: maTokens.length > 0 ? maTokens.map((t) => t.slice(2)).join(';') : '',
+        tournamentIDs: tnTokens.length > 0 ? tnTokens.map((t) => t.slice(2)).join(';') : ''
+    };
+}
+
 // Command-line token for each search filter, keyed by its canonical (English)
 // label — the same labels SearchPanel's filterGroups use. Single source of
 // truth for the in-UI token hint shown on hover; the prefixes mirror the

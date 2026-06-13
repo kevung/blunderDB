@@ -6,7 +6,7 @@
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
-    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, filterTokenHint } from '../services/searchFilterService.js';
+    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -815,97 +815,46 @@
         restoreExcludeStructure(search.excludePosition);
         const command = search.command;
         if (command.startsWith('s ') || command === 's') {
-            const cmdFilters =
-                command === 's'
-                    ? []
-                    : command
-                          .slice(2)
-                          .trim()
-                          .split(' ')
-                          .map((f) => f.trim());
-            const ic = cmdFilters.includes('cube') || cmdFilters.includes('cu') || cmdFilters.includes('c') || cmdFilters.includes('cub');
-            const is = cmdFilters.includes('score') || cmdFilters.includes('sco') || cmdFilters.includes('sc') || cmdFilters.includes('s');
-            const nc = cmdFilters.includes('nc');
-            const dt = cmdFilters.includes('d');
-            const dr = cmdFilters.includes('D') || cmdFilters.includes('D1');
-            const drMode = cmdFilters.includes('D1') ? 'first' : 'both';
-            const mp = cmdFilters.includes('M');
-            const pc = cmdFilters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
-            const wr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
-            const gr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
-            const bg = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
-            const p2wr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
-            const p2gr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));
-            const p2bg = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ'));
-            let p1co = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')));
-            if (p1co && !p1co.includes(',') && !p1co.includes('>') && !p1co.includes('<')) p1co = `${p1co},${p1co.slice(1)}`;
-            let p2co = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')));
-            if (p2co && !p2co.includes(',') && !p2co.includes('>') && !p2co.includes('<')) p2co = `${p2co},${p2co.slice(1)}`;
-            let p1bc = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')));
-            if (p1bc && !p1bc.includes(',') && !p1bc.includes('>') && !p1bc.includes('<')) p1bc = `${p1bc},${p1bc.slice(1)}`;
-            let p2bc = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')));
-            if (p2bc && !p2bc.includes(',') && !p2bc.includes('>') && !p2bc.includes('<')) p2bc = `${p2bc},${p2bc.slice(1)}`;
-            let p1cz = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')));
-            if (p1cz && !p1cz.includes(',') && !p1cz.includes('>') && !p1cz.includes('<')) p1cz = `${p1cz},${p1cz.slice(1)}`;
-            let p2cz = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')));
-            if (p2cz && !p2cz.includes(',') && !p2cz.includes('>') && !p2cz.includes('<')) p2cz = `${p2cz},${p2cz.slice(1)}`;
-            const p1apc = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
-            const eq = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
-            const cd = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
-            const mpm = command.match(/m["'][^"']*["']/);
-            const mpf = mpm ? mpm[0] : '';
-            const stm = command.match(/t["'][^"']*["']/);
-            const st = stm ? stm[0] : '';
-            const plm = command.match(/pl["'][^"']*["']/);
-            const plf = plm ? plm[0] : '';
-            const p1ob = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
-            const p2ob = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
-            const p1jb = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
-            const p2jb = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
-            const me = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
-            const maTokens = cmdFilters.filter((f) => typeof f === 'string' && /^ma\d/.test(f));
-            const matchIDs = maTokens.length > 0 ? maTokens.map((t) => t.slice(2)).join(';') : '';
-            const tnTokens = cmdFilters.filter((f) => typeof f === 'string' && /^tn\d/.test(f));
-            const tournamentIDs = tnTokens.length > 0 ? tnTokens.map((t) => t.slice(2)).join(';') : '';
+            const f = parseSearchCommand(command);
             onLoadPositionsByFilters(
-                cmdFilters,
-                ic,
-                is,
-                pc,
-                wr,
-                gr,
-                bg,
-                p2wr,
-                p2gr,
-                p2bg,
-                p1co,
-                p2co,
-                p1bc,
-                p2bc,
-                p1cz,
-                p2cz,
-                st,
-                p1apc,
-                eq,
-                dt,
-                dr,
-                mpf,
-                cd,
-                p1ob,
-                p2ob,
-                p1jb,
-                p2jb,
-                nc,
-                mp,
-                me,
+                f.cmdFilters,
+                f.ic,
+                f.is,
+                f.pc,
+                f.wr,
+                f.gr,
+                f.bg,
+                f.p2wr,
+                f.p2gr,
+                f.p2bg,
+                f.p1co,
+                f.p2co,
+                f.p1bc,
+                f.p2bc,
+                f.p1cz,
+                f.p2cz,
+                f.st,
+                f.p1apc,
+                f.eq,
+                f.dt,
+                f.dr,
+                f.mpf,
+                f.cd,
+                f.p1ob,
+                f.p2ob,
+                f.p1jb,
+                f.p2jb,
+                f.nc,
+                f.mp,
+                f.me,
                 command,
-                matchIDs,
-                tournamentIDs,
+                f.matchIDs,
+                f.tournamentIDs,
                 '',
                 false,
-                drMode,
+                f.drMode,
                 '',
-                plf
+                f.plf
             );
         }
     }
