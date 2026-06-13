@@ -486,3 +486,39 @@ describe('parseSearchCommand — restore path (verbatim from executeSearch)', ()
         expect(f.p1jb).toBe('bj2');
     });
 });
+
+describe('shared token classification (parseFilterTokens ↔ parseSearchCommand)', () => {
+    test('both parsers pick the same token for every shared range/checker filter', () => {
+        // Canonical tokens (operator/range form, so no comma-expansion divergence)
+        // covering all 20 filters classified by the shared FILTER_TOKEN_MATCHERS.
+        const toks = ['p<60', 'w>5', 'g3,8', 'b2,4', 'W>10', 'G1,5', 'B1,3', 'o3,4', 'O2,5', 'k1,2', 'K2,3', 'z2,3', 'Z1,4', 'P12', 'e10,20', 'T>2026/01/01', 'bo1,2', 'BO2,3', 'bj1,2', 'BJ1,2'];
+        const ft = parseFilterTokens(toks);
+        const sc = parseSearchCommand('s ' + toks.join(' '));
+        const pairs = [
+            ['pcFilter', 'pc'],
+            ['wrFilter', 'wr'],
+            ['grFilter', 'gr'],
+            ['bgFilter', 'bg'],
+            ['p2wrFilter', 'p2wr'],
+            ['p2grFilter', 'p2gr'],
+            ['p2bgFilter', 'p2bg'],
+            ['p1coFilter', 'p1co'],
+            ['p2coFilter', 'p2co'],
+            ['p1bcFilter', 'p1bc'],
+            ['p2bcFilter', 'p2bc'],
+            ['p1czFilter', 'p1cz'],
+            ['p2czFilter', 'p2cz'],
+            ['p1apcFilter', 'p1apc'],
+            ['eqFilter', 'eq'],
+            ['cdFilter', 'cd'],
+            ['p1obFilter', 'p1ob'],
+            ['p2obFilter', 'p2ob'],
+            ['p1jbFilter', 'p1jb'],
+            ['p2jbFilter', 'p2jb']
+        ];
+        for (const [a, b] of pairs) {
+            expect(sc[b]).toBe(ft[a]);
+            expect(sc[b]).toBeTruthy(); // each token was actually classified
+        }
+    });
+});
