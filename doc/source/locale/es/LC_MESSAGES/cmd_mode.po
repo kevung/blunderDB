@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 02:18+0200\n"
+"POT-Creation-Date: 2026-06-13 02:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -312,14 +312,17 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "Cargar todas las posiciones de la base de datos."
 
 #: ../../source/cmd_mode.rst:1
-msgid "blunders, bl"
+msgid "blunders, bl [n]"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
-"filtre courant des statistiques."
-msgstr "Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual."
+"filtre courant des statistiques. Un nombre optionnel choisit combien en "
+"charger (``bl 50``) ; par défaut 10."
+msgstr "Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual. Un número opcional elige cuántos cargar (``bl 50``); 10 por defecto."
+"Carga los peores errores (equity/MWC) en la vista de análisis, según el "
+"filtro de estadísticas actual."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -1191,4 +1194,7 @@ msgid ""
 msgstr ""
 "Las migraciones de la base de datos se realizan ahora automáticamente al "
 "abrir una base de datos."
+
+#~ msgid "blunders, bl"
+#~ msgstr ""
 

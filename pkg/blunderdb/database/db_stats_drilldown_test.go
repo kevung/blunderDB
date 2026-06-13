@@ -119,18 +119,27 @@ func TestBuildSelectionWhereClause_LastN(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_TopBlunders(t *testing.T) {
+	// Default (LastN unset) keeps the historical limit of 10.
 	whereAdd, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "top_blunders"})
 	if whereAdd != "" {
 		t.Errorf("expected empty whereAdd for top_blunders, got %q", whereAdd)
 	}
-	if !containsStr(orderLimit, "LIMIT 10") {
-		t.Errorf("missing LIMIT 10 in orderLimit: %q", orderLimit)
+	if !containsStr(orderLimit, "LIMIT ?") || !containsStr(orderLimit, "DESC") {
+		t.Errorf("expected DESC ... LIMIT ? in orderLimit: %q", orderLimit)
 	}
-	if !containsStr(orderLimit, "DESC") {
-		t.Errorf("missing DESC in orderLimit: %q", orderLimit)
+	if len(args) != 1 || args[0] != 10 {
+		t.Errorf("expected args=[10] (default limit), got %v", args)
 	}
-	if len(args) != 0 {
-		t.Errorf("expected no args for top_blunders, got %v", args)
+}
+
+func TestBuildSelectionWhereClause_TopBlundersLastN(t *testing.T) {
+	// LastN overrides the limit so `bl 50` can review the 50 worst decisions.
+	_, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "top_blunders", LastN: 50})
+	if !containsStr(orderLimit, "LIMIT ?") {
+		t.Errorf("missing LIMIT ? in orderLimit: %q", orderLimit)
+	}
+	if len(args) != 1 || args[0] != 50 {
+		t.Errorf("expected args=[50], got %v", args)
 	}
 }
 

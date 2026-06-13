@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 02:18+0200\n"
+"POT-Creation-Date: 2026-06-13 02:53+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -311,14 +311,17 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "Load all positions from the database."
 
 #: ../../source/cmd_mode.rst:1
-msgid "blunders, bl"
+msgid "blunders, bl [n]"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
-"filtre courant des statistiques."
-msgstr "Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter."
+"filtre courant des statistiques. Un nombre optionnel choisit combien en "
+"charger (``bl 50``) ; par défaut 10."
+msgstr "Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter. An optional number chooses how many to load (``bl 50``); 10 by default."
+"Load the worst mistakes (equity/MWC) into the analysis view, according to"
+" the current statistics filter."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -1562,4 +1565,7 @@ msgstr ""
 
 #~ msgid "Mode EDIT"
 #~ msgstr "EDIT Mode"
+
+#~ msgid "blunders, bl"
+#~ msgstr ""
 

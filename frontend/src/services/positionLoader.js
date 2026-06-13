@@ -73,14 +73,21 @@ export async function loadPositionsFromStatsSelection(filter, selection) {
  * Load the worst blunders (the decisions with the largest equity/MWC error)
  * into the analysis view, newest-mistake-first review made one keystroke away.
  *
- * Reuses the Stats panel's "top_blunders" selection (its top-10 by error
- * magnitude) under the current stats filter — which defaults to all decisions,
- * but honours any player/date/decision-type scope the user has set in the Stats
- * panel. This is the `blunders`/`bl` command's backing action.
+ * Reuses the Stats panel's "top_blunders" selection (worst by error magnitude)
+ * under the current stats filter — which defaults to all decisions, but honours
+ * any player/date/decision-type scope the user has set in the Stats panel. This
+ * is the `blunders`/`bl` command's backing action.
+ *
+ * @param {number} [count] - how many to load (the `bl 50` argument). Omitted /
+ *   non-positive falls back to the backend default of 10.
  */
-export async function loadWorstBlunders() {
+export async function loadWorstBlunders(count) {
     const filter = get(statsFilterStore);
-    return loadPositionsFromStatsSelection(filter, { Kind: 'top_blunders' });
+    const selection = { Kind: 'top_blunders' };
+    if (Number.isInteger(count) && count > 0) {
+        selection.LastN = count;
+    }
+    return loadPositionsFromStatsSelection(filter, selection);
 }
 
 /**

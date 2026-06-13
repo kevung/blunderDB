@@ -124,6 +124,25 @@ describe('loadWorstBlunders', () => {
         expect(get(positionsStore)).toEqual([{ id: 7 }, { id: 8 }]);
         expect(get(activeTabStore)).toBe('analysis');
     });
+
+    test('passes a positive count through as LastN', async () => {
+        statsFilterStore.set({ decisionType: -1 });
+        GetPositionIDsByStatsSelection.mockResolvedValue([1]);
+        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }]);
+
+        await loadWorstBlunders(50);
+
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith({ decisionType: -1 }, { Kind: 'top_blunders', LastN: 50 });
+    });
+
+    test('ignores a non-positive / non-integer count (backend default applies)', async () => {
+        statsFilterStore.set({ decisionType: -1 });
+        GetPositionIDsByStatsSelection.mockResolvedValue([1]);
+        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }]);
+
+        await loadWorstBlunders(0);
+        expect(GetPositionIDsByStatsSelection).toHaveBeenLastCalledWith({ decisionType: -1 }, { Kind: 'top_blunders' });
+    });
 });
 
 describe('loadPositionsFromTournament', () => {
