@@ -6,7 +6,7 @@
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
-    import { buildFilterTokens, buildSearchCommand, parseFilterTokens } from '../services/searchFilterService.js';
+    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, filterTokenHint } from '../services/searchFilterService.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -1325,8 +1325,10 @@
                                             bind:checked={filterEnabled[filter]}
                                             disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
                                         />
-                                        <span class="filter-label" class:label-disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
-                                            >{filterLabel(filter)}</span
+                                        <span
+                                            class="filter-label"
+                                            class:label-disabled={filter === 'Include Dice Roll' && filterEnabled['Include Decision Type'] && decisionMode === 'cube'}
+                                            title={filterTokenHint(filter)}>{filterLabel(filter)}</span
                                         >
                                     </label>
                                     {#if filterEnabled[filter]}

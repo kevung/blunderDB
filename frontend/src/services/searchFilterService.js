@@ -332,3 +332,74 @@ export function parseFilterTokens(tokens) {
         cdFilter: tokens.find((f) => f.startsWith('T'))
     };
 }
+
+// Command-line token for each search filter, keyed by its canonical (English)
+// label — the same labels SearchPanel's filterGroups use. Single source of
+// truth for the in-UI token hint shown on hover; the prefixes mirror the
+// buildFilterTokens switch above. `type` drives how filterTokenHint renders the
+// usage forms:
+//   flag  — the bare token (cube, nc, M, d)
+//   range — three forms: X>n, X<n, Xn,m
+//   text  — quoted free text: t"…"
+//   date  — T>YYYY/MM/DD …
+//   dice  — D (both rolls) / D1 (first roll only)
+const FILTER_TOKENS = {
+    'Include Cube': { token: 'cube', type: 'flag' },
+    'Include Score': { token: 'score', type: 'flag' },
+    'Include Decision Type': { token: 'd', type: 'flag' },
+    'Include Dice Roll': { token: 'D', type: 'dice' },
+    'No Contact': { token: 'nc', type: 'flag' },
+    'Mirror Position': { token: 'M', type: 'flag' },
+    'Pipcount Difference': { token: 'p', type: 'range' },
+    'Player Absolute Pipcount': { token: 'P', type: 'range' },
+    'Equity (millipoints)': { token: 'e', type: 'range' },
+    'Move Error (millipoints, Player 1)': { token: 'E', type: 'range' },
+    'Win Rate': { token: 'w', type: 'range' },
+    'Gammon Rate': { token: 'g', type: 'range' },
+    'Backgammon Rate': { token: 'b', type: 'range' },
+    'Opponent Win Rate': { token: 'W', type: 'range' },
+    'Opponent Gammon Rate': { token: 'G', type: 'range' },
+    'Opponent Backgammon Rate': { token: 'B', type: 'range' },
+    'Player Checker-Off': { token: 'o', type: 'range' },
+    'Opponent Checker-Off': { token: 'O', type: 'range' },
+    'Player Back Checker': { token: 'k', type: 'range' },
+    'Opponent Back Checker': { token: 'K', type: 'range' },
+    'Player Checker in the Zone': { token: 'z', type: 'range' },
+    'Opponent Checker in the Zone': { token: 'Z', type: 'range' },
+    'Player Outfield Blot': { token: 'bo', type: 'range' },
+    'Opponent Outfield Blot': { token: 'BO', type: 'range' },
+    'Player Jan Blot': { token: 'bj', type: 'range' },
+    'Opponent Jan Blot': { token: 'BJ', type: 'range' },
+    'Search Text': { token: 't', type: 'text' },
+    'Best Move or Cube Decision': { token: 'm', type: 'text' },
+    'Creation Date': { token: 'T', type: 'date' }
+};
+
+/**
+ * The command-line token hint for a filter label, shown as the filter's `title`
+ * (hover tooltip) in SearchPanel so the cryptic `s` tokens are discoverable
+ * without leaving the UI. Returns '' for unknown labels. The string is
+ * deliberately word-free — only the token and its operator forms — so it needs
+ * no translation.
+ *
+ * @param {string} label - the canonical (English) filter label.
+ * @returns {string}
+ */
+export function filterTokenHint(label) {
+    const entry = FILTER_TOKENS[label];
+    if (!entry) return '';
+    const { token, type } = entry;
+    switch (type) {
+        case 'range':
+            return `${token}>n · ${token}<n · ${token}n,m`;
+        case 'text':
+            return `${token}"…"`;
+        case 'date':
+            return `${token}>YYYY/MM/DD · ${token}<YYYY/MM/DD`;
+        case 'dice':
+            return `${token} · ${token}1`;
+        case 'flag':
+        default:
+            return token;
+    }
+}
