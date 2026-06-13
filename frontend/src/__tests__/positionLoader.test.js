@@ -50,16 +50,27 @@ vi.mock('../stores/positionStore.js', () => {
     };
 });
 
+// Mock statsStore (real module imports Wails bindings); expose only the filter.
+vi.mock('../stores/statsStore.js', () => {
+    const { writable } = require('svelte/store');
+    return {
+        statsFilterStore: writable({ decisionType: -1, playerName: '', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] })
+    };
+});
+
 import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
 
 import {
     loadPositionsFromSelection,
     loadPositionsFromStatsSelection,
+    loadWorstBlunders,
     loadPositionsFromTournament,
     loadPositionsFromMatch,
     openTournamentInPanel,
     openMatchInPanel
 } from '../services/positionLoader.js';
+
+import { statsFilterStore } from '../stores/statsStore.js';
 
 import { activeTabStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';
@@ -90,6 +101,27 @@ describe('loadPositionsFromStatsSelection', () => {
         await loadPositionsFromStatsSelection({}, { kind: 'all' });
 
         expect(get(positionsStore)).toEqual([{ id: 10 }, { id: 20 }]);
+        expect(get(activeTabStore)).toBe('analysis');
+    });
+});
+
+describe('loadWorstBlunders', () => {
+    beforeEach(() => {
+        vi.resetAllMocks();
+        positionsStore.set([]);
+        activeTabStore.set('something');
+    });
+
+    test('requests the top_blunders selection under the current stats filter', async () => {
+        const filter = { decisionType: 1, playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] };
+        statsFilterStore.set(filter);
+        GetPositionIDsByStatsSelection.mockResolvedValue([7, 8]);
+        LoadPositionsByFilters.mockResolvedValue([{ id: 7 }, { id: 8 }]);
+
+        await loadWorstBlunders();
+
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'top_blunders' });
+        expect(get(positionsStore)).toEqual([{ id: 7 }, { id: 8 }]);
         expect(get(activeTabStore)).toBe('analysis');
     });
 });
