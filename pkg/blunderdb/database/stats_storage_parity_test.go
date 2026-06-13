@@ -61,30 +61,32 @@ func TestStatsStorageParity(t *testing.T) {
 				t.Fatalf("select match id: %v", err)
 			}
 
-			// 2. Legacy results.
-			legacyDR := d.GetStatsDateRange()
-			legacyAll, err := d.ComputeStats(StatsFilter{DecisionType: -1})
+			// 2. Legacy results. These call the legacy* reference implementations
+			// directly (the production Database methods now delegate to storage, so
+			// calling them here would compare storage against itself).
+			legacyDR := legacyGetStatsDateRange(d)
+			legacyAll, err := legacyComputeStats(d, StatsFilter{DecisionType: -1})
 			if err != nil {
 				t.Fatalf("legacy ComputeStats: %v", err)
 			}
-			legacyChecker, err := d.ComputeStats(StatsFilter{DecisionType: 0})
+			legacyChecker, err := legacyComputeStats(d, StatsFilter{DecisionType: 0})
 			if err != nil {
 				t.Fatalf("legacy ComputeStats(checker): %v", err)
 			}
-			legacyPlayers, err := d.GetAllPlayerNames()
+			legacyPlayers, err := legacyGetAllPlayerNames(d)
 			if err != nil {
 				t.Fatalf("legacy GetAllPlayerNames: %v", err)
 			}
-			legacyMatchIDs, err := d.GetPositionIDsByMatch(matchID)
+			legacyMatchIDs, err := legacyGetPositionIDsByMatch(d, matchID)
 			if err != nil {
 				t.Fatalf("legacy GetPositionIDsByMatch: %v", err)
 			}
-			legacySel, err := d.GetPositionIDsByStatsSelection(
+			legacySel, err := legacyGetPositionIDsByStatsSelection(d,
 				StatsFilter{DecisionType: -1}, SelectionSpec{Kind: "checker", OnlyWithError: true})
 			if err != nil {
 				t.Fatalf("legacy GetPositionIDsByStatsSelection: %v", err)
 			}
-			legacyDetail, err := d.GetMatchDetailStats(matchID)
+			legacyDetail, err := legacyGetMatchDetailStats(d, matchID)
 			if err != nil {
 				t.Fatalf("legacy GetMatchDetailStats: %v", err)
 			}
