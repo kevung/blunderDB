@@ -90,6 +90,7 @@
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
+    import { loadWorstBlunders } from './services/positionLoader.js';
 
     // Components
     import Toolbar from './components/Toolbar.svelte';
@@ -357,7 +358,8 @@
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
             toggleMatchMode,
-            onToggleStats: () => toggleStatsPanel()
+            onToggleStats: () => toggleStatsPanel(),
+            onLoadBlunders: loadWorstBlunders
         });
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);

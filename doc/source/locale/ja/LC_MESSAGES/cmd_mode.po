@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-05 04:08+0200\n"
+"POT-Creation-Date: 2026-06-13 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -31,7 +31,10 @@ msgid ""
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
 "referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
 "touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
-msgstr "コマンドラインはステータスバーにあり、 *スペース* キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 *TAB* キー（または *Shift-TAB* ）は候補を順に巡回してコマンドを補完し、 *ESC* はリストを閉じます（2回目の *ESC* でコマンドラインが閉じます）。 *上* キーと *下* キーは引き続きコマンド履歴用に予約されています。"
+msgstr ""
+"コマンドラインはステータスバーにあり、 *スペース* キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 *TAB*"
+" キー（または *Shift-TAB* ）は候補を順に巡回してコマンドを補完し、 *ESC* はリストを閉じます（2回目の *ESC* "
+"でコマンドラインが閉じます）。 *上* キーと *下* キーは引き続きコマンド履歴用に予約されています。"
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -302,6 +305,16 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "データベースのすべての局面を読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "blunders, bl"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
+"filtre courant des statistiques."
+msgstr "現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。"
+
+#: ../../source/cmd_mode.rst:1
 msgid "m"
 msgstr "m"
 
@@ -309,7 +322,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -345,17 +358,17 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "現在フィルタされている局面の中から検索します。"
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:89
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:90
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr "以下のフィルタは検索時、すなわちコマンドの先頭 ``s`` の後に並べて指定する必要があります。"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -365,7 +378,7 @@ msgstr ""
 "局面検索では、デフォルトで blunderDB "
 "は現在の駒の配置を考慮し、キューブ、スコア、ダイスの状態は無視します。キューブ、スコア、ダイスを考慮させるには、検索時に明示的に指定する必要があります。"
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "La commande de recherche ``s`` est disponible dans le panneau de "
 "recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
@@ -374,29 +387,29 @@ msgstr ""
 "検索コマンド ``s`` は検索パネル（``TAB`` キー）で利用できます。コマンド ``ss`` "
 "を使うと、現在フィルタされている結果の中から検索できます。"
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
 msgstr "blunderDB は、後方の駒（バックチェッカー）を 24 ポイントから 19 ポイントの間にある駒とみなします。"
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr "blunderDB は、ゾーン内の駒数を 12 ポイントから 1 ポイントの間にある駒数とみなします。"
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
 msgstr "blunderDB は、アウトフィールドが 18 ポイントから 7 ポイントに及ぶとみなします。"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr "blunderDB は、内盤（jan）が 1 ポイントから 6 ポイントに及ぶとみなします。"
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -1060,7 +1073,7 @@ msgstr "idx,y"
 msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "識別子 x から y までのポジションを検索します（例: id5,10）。"
 
-#: ../../source/cmd_mode.rst:210
+#: ../../source/cmd_mode.rst:211
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1072,7 +1085,7 @@ msgstr ""
 " `D1` は 2 つ目のダイスの値を無視します。局面のマッチには 1 つ目のダイスの値のみが使われます（出目の 2 "
 "つのダイスのいずれかに対して）。"
 
-#: ../../source/cmd_mode.rst:216
+#: ../../source/cmd_mode.rst:217
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1084,15 +1097,18 @@ msgstr ""
 "のとき進んでいます。例: `p<-10` : プレイヤーがレースで少なくとも 10 ピップ進んでいます。`p50,70` : プレイヤーがレースで"
 " 50 から 70 ピップ遅れています。"
 
-#: ../../source/cmd_mode.rst:222
+#: ../../source/cmd_mode.rst:223
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
 "même principe s'applique pour les tournois avec ``tn`` et pour les "
 "positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
-msgstr "連続していない複数のマッチ内を検索するには、フィルタ ``ma`` を複数回並べて指定します（例: マッチ 23 と 43 の場合は ``s ma23 ma43`` ）。同じ原則がトーナメントの ``tn`` にも、ポジションの ``id`` にも適用されます（例: ポジション 5 と 10 の場合は ``s id5 id10`` ）。"
+msgstr ""
+"連続していない複数のマッチ内を検索するには、フィルタ ``ma`` を複数回並べて指定します（例: マッチ 23 と 43 の場合は ``s "
+"ma23 ma43`` ）。同じ原則がトーナメントの ``tn`` にも、ポジションの ``id`` にも適用されます（例: ポジション 5 と "
+"10 の場合は ``s id5 id10`` ）。"
 
-#: ../../source/cmd_mode.rst:227
+#: ../../source/cmd_mode.rst:228
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1101,7 +1117,7 @@ msgstr ""
 "トーナメント（``tn``）内を検索することは、該当トーナメントのすべてのマッチ内を検索することと同じです。マッチとトーナメントの識別子は、対応するパネルの"
 " ID 列で確認できます。"
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:232
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1114,7 +1130,7 @@ msgstr ""
 "は、編集中の局面の駒の配置、スコア、キューブを考慮し、プレイヤーがレースで 20 から 5 ピップ進んでおり、勝率が少なくとも "
 "60%、ゾーン内に少なくとも 10 個の駒があり、相手が 2 から 3 個の後方の駒を持つすべての局面をフィルタします。"
 
-#: ../../source/cmd_mode.rst:241
+#: ../../source/cmd_mode.rst:242
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -1126,8 +1142,9 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "コマンド履歴を消去します。"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr "データベースのマイグレーションは、データベースを開く際に自動的に実行されるようになりました。"
+

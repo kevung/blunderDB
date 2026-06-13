@@ -26,6 +26,7 @@ export const COMMANDS = [
     { name: 's', aliases: [] },
     { name: 'ss', aliases: [] },
     { name: 'stats', aliases: ['st'] },
+    { name: 'blunders', aliases: ['bl'] },
     { name: 'filter', aliases: ['fl'] },
     { name: 'history', aliases: ['hi'] },
     { name: 'match', aliases: ['ma'] },
