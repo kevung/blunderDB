@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 02:18+0200\n"
+"POT-Creation-Date: 2026-06-13 02:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -305,13 +305,14 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "データベースのすべての局面を読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "blunders, bl"
+msgid "blunders, bl [n]"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
-"filtre courant des statistiques."
+"filtre courant des statistiques. Un nombre optionnel choisit combien en "
+"charger (``bl 50``) ; par défaut 10."
 msgstr "現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
@@ -374,7 +375,7 @@ msgid ""
 "structure de pions courante, ignore la position du videau, du score et "
 "des dés. Pour prendre en compte la position du videau, du score, des dés,"
 " il faut le mentionner explicitement dans la recherche."
-msgstr ""
+msgstr "現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。オプションの数値で読み込む件数を指定できます（``bl 50``）。既定値は10です。"
 "局面検索では、デフォルトで blunderDB "
 "は現在の駒の配置を考慮し、キューブ、スコア、ダイスの状態は無視します。キューブ、スコア、ダイスを考慮させるには、検索時に明示的に指定する必要があります。"
 
@@ -1147,4 +1148,7 @@ msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr "データベースのマイグレーションは、データベースを開く際に自動的に実行されるようになりました。"
+
+#~ msgid "blunders, bl"
+#~ msgstr ""
 

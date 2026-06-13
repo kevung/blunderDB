@@ -468,6 +468,27 @@ describe('processCommand', () => {
         expect(callbacks[cb]).toHaveBeenCalledOnce();
     });
 
+    // -- blunders command count argument -------------------------------------
+    test('"bl" with no argument calls onLoadBlunders with undefined', () => {
+        processCommand('bl');
+        expect(callbacks.onLoadBlunders).toHaveBeenCalledWith(undefined);
+    });
+
+    test('"bl 50" passes the count to onLoadBlunders', () => {
+        processCommand('bl 50');
+        expect(callbacks.onLoadBlunders).toHaveBeenCalledWith(50);
+    });
+
+    test('"blunders 25" passes the count to onLoadBlunders', () => {
+        processCommand('blunders 25');
+        expect(callbacks.onLoadBlunders).toHaveBeenCalledWith(25);
+    });
+
+    test('"bl abc" (non-numeric) falls back to undefined', () => {
+        processCommand('bl abc');
+        expect(callbacks.onLoadBlunders).toHaveBeenCalledWith(undefined);
+    });
+
     // -- modal commands ------------------------------------------------------
     test('met opens MET modal', () => {
         processCommand('met');

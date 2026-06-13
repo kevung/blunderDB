@@ -72,8 +72,10 @@ export function processCommand(command) {
         callbacks.onLoadAllPositions?.();
     } else if (command === 'stats' || command === 'st') {
         callbacks.onToggleStats?.();
-    } else if (command === 'blunders' || command === 'bl') {
-        callbacks.onLoadBlunders?.();
+    } else if (command === 'blunders' || command === 'bl' || command.startsWith('blunders ') || command.startsWith('bl ')) {
+        // Optional count: `bl 50` loads the 50 worst; bare `bl` keeps the default.
+        const n = parseInt(command.split(/\s+/)[1], 10);
+        callbacks.onLoadBlunders?.(Number.isInteger(n) && n > 0 ? n : undefined);
     } else if (command.startsWith('ss')) {
         handleSubSearch(command, positions);
     } else if (command.startsWith('s')) {

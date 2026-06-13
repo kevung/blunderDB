@@ -667,7 +667,12 @@ func buildSelectionWhereClause(sel SelectionSpec) (whereAdd string, orderLimit s
 		whereAdd = " AND p.id = ?"
 		args = append(args, sel.PositionID)
 	case "top_blunders":
-		orderLimit = "ORDER BY (" + statsErrExpr + ") DESC LIMIT 10"
+		limit := 10
+		if sel.LastN > 0 {
+			limit = sel.LastN
+		}
+		orderLimit = "ORDER BY (" + statsErrExpr + ") DESC LIMIT ?"
+		args = append(args, limit)
 		// "all" → no extra clauses
 	}
 	return whereAdd, orderLimit, args

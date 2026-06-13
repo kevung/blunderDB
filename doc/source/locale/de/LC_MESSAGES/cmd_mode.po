@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 02:18+0200\n"
+"POT-Creation-Date: 2026-06-13 02:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -312,14 +312,17 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "Lädt alle Positionen aus der Datenbank."
 
 #: ../../source/cmd_mode.rst:1
-msgid "blunders, bl"
+msgid "blunders, bl [n]"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
-"filtre courant des statistiques."
-msgstr "Lädt die größten Fehler (Equity/MWC) in die Analyseansicht, gemäß dem aktuellen Statistikfilter."
+"filtre courant des statistiques. Un nombre optionnel choisit combien en "
+"charger (``bl 50``) ; par défaut 10."
+msgstr "Lädt die größten Fehler (Equity/MWC) in die Analyseansicht, gemäß dem aktuellen Statistikfilter. Eine optionale Zahl wählt, wie viele geladen werden (``bl 50``); standardmäßig 10."
+"Lädt die größten Fehler (Equity/MWC) in die Analyseansicht, gemäß dem "
+"aktuellen Statistikfilter."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -1195,4 +1198,7 @@ msgid ""
 msgstr ""
 "Datenbankmigrationen werden jetzt beim Öffnen einer Datenbank automatisch"
 " durchgeführt."
+
+#~ msgid "blunders, bl"
+#~ msgstr ""
 
