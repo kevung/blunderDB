@@ -43,6 +43,13 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
+	// The decoded analysis is consumed only by the move-pattern filter and the
+	// Go-side analysis re-checks of mirror search; every other analysis filter
+	// runs on the denormalised SQL columns. So decode the (zlib-compressed) blob
+	// per row only when one of those paths needs it — a no-move-pattern,
+	// non-mirror search skips the decompress+unmarshal of every result row.
+	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter
+
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
 	effInclude := domain.EffectiveIncludeFilter(f.Filter, f.ExcludeFilter)
@@ -297,7 +304,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			int(pHJ.Int64), int(pHB.Int64))
 
 		var ana *domain.PositionAnalysis
-		if anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
+		if needAnalysis && anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
 			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage),
 			// so it must be decompressed before unmarshalling — a plain
 			// json.Unmarshal of the raw bytes silently fails (leaving ana nil),
