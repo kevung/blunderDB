@@ -1122,6 +1122,7 @@ export namespace domain {
 	    moveErrorFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
+	    playerFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
 	
@@ -1166,6 +1167,7 @@ export namespace domain {
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
+	        this.playerFilter = source["playerFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
 	    }
