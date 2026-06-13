@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -345,13 +345,14 @@ msgid ""
 "choix sont conservés d'une session à l'autre."
 msgstr ""
 "Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. "
-"**Käyttöliittymän skaalaus** -liukusäätimellä voi suurentaa tai pienentää "
-"kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden "
-"näytöillä tai luettavuuden parantamiseksi. **Paneelien sijainti** -valikko "
-"määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa "
-"lautaan: *alhaalla*, *sivulla* tai *automaattinen* (sivu valitaan tällöin "
-"leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä "
-"varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen."
+"**Käyttöliittymän skaalaus** -liukusäätimellä voi suurentaa tai pienentää"
+" kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden "
+"näytöillä tai luettavuuden parantamiseksi. **Paneelien sijainti** "
+"-valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät "
+"suhteessa lautaan: *alhaalla*, *sivulla* tai *automaattinen* (sivu "
+"valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa "
+"hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät "
+"istunnosta toiseen."
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -676,9 +677,9 @@ msgid ""
 "affiché d'emblée et la revue débute directement sur la première position,"
 " afin de commencer immédiatement la navigation."
 msgstr ""
-"Avattaessa otteluita sisältävää tietokantaa **Ottelut**-paneeli näytetään "
-"heti ja tarkastelu alkaa suoraan ensimmäisestä asemasta, jotta navigoinnin "
-"voi aloittaa välittömästi."
+"Avattaessa otteluita sisältävää tietokantaa **Ottelut**-paneeli näytetään"
+" heti ja tarkastelu alkaa suoraan ensimmäisestä asemasta, jotta "
+"navigoinnin voi aloittaa välittömästi."
 
 #: ../../source/manuel.rst:334
 msgid "Panneau Tournois"
@@ -834,8 +835,8 @@ msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr ""
-"**Päivämäärät** — aikaväli (*Alkaen* … *Asti*). Jos vain alkupäivä on asetettu, "
-"uudemmat asemat sisällytetään."
+"**Päivämäärät** — aikaväli (*Alkaen* … *Asti*). Jos vain alkupäivä on "
+"asetettu, uudemmat asemat sisällytetään."
 
 #: ../../source/manuel.rst:410
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
@@ -847,8 +848,8 @@ msgid ""
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr ""
-"**Ottelun pituus** — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11,"
-" 13, 15, 21 pistettä). Useita pituuksia voi yhdistää."
+"**Ottelun pituus** — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, "
+"11, 13, 15, 21 pistettä). Useita pituuksia voi yhdistää."
 
 #: ../../source/manuel.rst:415
 msgid ""
@@ -1380,6 +1381,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Vapaa harjoittelu (cram):** *Cram*-painike *Study*-painikkeen vieressä aloittaa vapaan harjoittelusession: sinulle näytetään satunnaisia asemia pakasta FSRS-aikataulusta riippumatta. Tämä tila **ei koskaan muuta kertausaikataulua** — ihanteellinen lämmittelyyn ennen turnausta tai teemapakan tehokkaaseen kertaamiseen ilman, että sen järjestys häiriintyy. *Cram*-merkki korvaa kortin tilan, ja *Seuraava*-painike (näppäimet *1*–*4*) selaa asemia. *Esc* palaa luetteloon tallentamatta keskeytettyä sessiota."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1388,7 +1402,7 @@ msgstr ""
 " näppäimellä *Esc*. Painike muuttuu muotoon *Resume* ja näyttää "
 "edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1400,11 +1414,11 @@ msgstr ""
 "FSRS-parametrit (tavoiteretentio, enimmäisväli, satunnaiskerroin) voidaan"
 " määrittää pakkakohtaisesti Asetuksissa (hammasrataskuvake)."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Metatietopaneeli"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1415,11 +1429,11 @@ msgstr ""
 "kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. "
 "Käytettävissä komennolla ``meta``."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Lokipaneeli"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -359,8 +359,8 @@ msgstr ""
 "La ventana de configuración también incluye ajustes de visualización de "
 "la interfaz. Un control deslizante de **escala de la interfaz** permite "
 "agrandar o reducir todos los elementos, lo que resulta útil en pantallas "
-"de alta densidad o para mejorar la legibilidad. Un menú **posición de los "
-"paneles** determina la ubicación de los paneles (búsqueda, partidas, "
+"de alta densidad o para mejorar la legibilidad. Un menú **posición de los"
+" paneles** determina la ubicación de los paneles (búsqueda, partidas, "
 "análisis) con respecto al tablero: *abajo*, *al lado* o *automática* (en "
 "este caso el lado se elige en las pantallas anchas para aprovechar mejor "
 "el espacio disponible). Como los demás ajustes, estas opciones se "
@@ -684,10 +684,10 @@ msgid ""
 "ronde, date et longueur du match, lorsque ces informations sont "
 "disponibles)."
 msgstr ""
-"Cuando hay una partida abierta, aparece una **barra de información** sobre "
-"el tablero: indica los jugadores presentes (*jugador 1* contra *jugador "
-"2*) así como el contexto de la partida (evento, lugar, ronda, fecha y "
-"longitud de la partida, cuando esta información está disponible)."
+"Cuando hay una partida abierta, aparece una **barra de información** "
+"sobre el tablero: indica los jugadores presentes (*jugador 1* contra "
+"*jugador 2*) así como el contexto de la partida (evento, lugar, ronda, "
+"fecha y longitud de la partida, cuando esta información está disponible)."
 
 #: ../../source/manuel.rst:325
 msgid ""
@@ -695,9 +695,9 @@ msgid ""
 "affiché d'emblée et la revue débute directement sur la première position,"
 " afin de commencer immédiatement la navigation."
 msgstr ""
-"Al abrir una base que contiene partidas, el panel **Partidas** se muestra "
-"de inmediato y la revisión comienza directamente en la primera posición, "
-"para empezar a navegar de inmediato."
+"Al abrir una base que contiene partidas, el panel **Partidas** se muestra"
+" de inmediato y la revisión comienza directamente en la primera posición,"
+" para empezar a navegar de inmediato."
 
 #: ../../source/manuel.rst:334
 msgid "Panneau Tournois"
@@ -1410,6 +1410,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Práctica libre (cram):** El botón *Cram*, junto a *Study*, inicia una sesión de práctica libre: se le muestran posiciones aleatorias del mazo sin tener en cuenta el calendario FSRS. Este modo **nunca modifica el plan de repetición espaciada** — ideal para calentar antes de un torneo o repasar intensamente un mazo temático sin alterar su orden. Una etiqueta *Cram* reemplaza el estado de la carta y un botón *Siguiente* (teclas *1* a *4*) recorre las posiciones. *Esc* vuelve a la lista sin guardar una sesión interrumpida."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1418,7 +1431,7 @@ msgstr ""
 "cualquier momento con *Esc*. El botón cambia a *Resume* y muestra su "
 "progreso. Haga clic en él para retomar donde lo dejó."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1430,11 +1443,11 @@ msgstr ""
 "objetivo, intervalo máximo, factor de aleatoriedad) pueden configurarse "
 "por mazo en los Ajustes (icono de engranaje)."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Panel de Metadatos"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1445,11 +1458,11 @@ msgstr ""
 " actual: nombre, descripción, número de posiciones, número de partidas y "
 "juegos, versión del esquema. Accesible mediante el comando ``meta``."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Panel de Registro"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

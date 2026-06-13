@@ -218,6 +218,10 @@ export function GetNextAnkiCard(arg1) {
   return window['go']['database']['Database']['GetNextAnkiCard'](arg1);
 }
 
+export function GetRandomAnkiCard(arg1, arg2) {
+  return window['go']['database']['Database']['GetRandomAnkiCard'](arg1, arg2);
+}
+
 export function GetPositionCollections(arg1) {
   return window['go']['database']['Database']['GetPositionCollections'](arg1);
 }

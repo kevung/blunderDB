@@ -332,6 +332,72 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 	}, nil
 }
 
+// GetRandomAnkiCard returns a random card from the deck for a "cram" (free
+// drill) session: it ignores the FSRS schedule — both the due date and the card
+// state — so the user can practise any position on demand (e.g. a warm-up
+// before a tournament). Unlike GetNextAnkiCard paired with ReviewAnkiCard, cram
+// never mutates scheduling, so it can't disturb the real review plan.
+//
+// excludePositionID, when non-zero, is skipped so two consecutive draws don't
+// repeat the same position; for a single-card deck it falls back to the full
+// deck so the lone card is still served. Returns nil when the deck has no cards.
+func (d *Database) GetRandomAnkiCard(deckID int64, excludePositionID int64) (*AnkiReviewCard, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	card, err := d.queryRandomAnkiCard(deckID, excludePositionID)
+	if err == sql.ErrNoRows && excludePositionID != 0 {
+		// Only the excluded card remains (single-card deck): draw again
+		// without the exclusion so cram still serves it.
+		card, err = d.queryRandomAnkiCard(deckID, 0)
+	}
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	pos, err := d.loadPositionByIDUnlocked(card.PositionID)
+	if err != nil {
+		return nil, fmt.Errorf("error loading position for card: %w", err)
+	}
+
+	return &AnkiReviewCard{
+		Card:     card,
+		Position: pos,
+	}, nil
+}
+
+// queryRandomAnkiCard fetches one random card from the deck, optionally skipping
+// excludePositionID (0 = no exclusion). The caller must hold d.mu.
+func (d *Database) queryRandomAnkiCard(deckID int64, excludePositionID int64) (AnkiCard, error) {
+	var card AnkiCard
+	query := `
+		SELECT id, deck_id, position_id,
+			COALESCE(due, ''), stability, difficulty,
+			elapsed_days, scheduled_days, reps, lapses, state,
+			COALESCE(last_review, '')
+		FROM anki_card
+		WHERE deck_id = ?`
+	args := []any{deckID}
+	if excludePositionID != 0 {
+		query += ` AND position_id != ?`
+		args = append(args, excludePositionID)
+	}
+	query += ` ORDER BY RANDOM() LIMIT 1`
+
+	err := d.db.QueryRow(query, args...).Scan(&card.ID, &card.DeckID, &card.PositionID,
+		&card.Due, &card.Stability, &card.Difficulty,
+		&card.ElapsedDays, &card.ScheduledDays, &card.Reps, &card.Lapses, &card.State,
+		&card.LastReview)
+	return card, err
+}
+
 // loadPositionByIDUnlocked loads a position without locking (caller must hold lock)
 func (d *Database) loadPositionByIDUnlocked(positionID int64) (Position, error) {
 	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, positionID)

@@ -113,6 +113,8 @@ export function GetMovesByGame(arg1:number):Promise<Array<domain.Move>>;
 
 export function GetNextAnkiCard(arg1:number):Promise<domain.AnkiReviewCard>;
 
+export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
+
 export function GetPositionCollections(arg1:number):Promise<Array<database.Collection>>;
 
 export function GetPositionIDsByMatch(arg1:number):Promise<Array<number>>;

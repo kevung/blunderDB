@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -359,15 +359,15 @@ msgid ""
 "choix sont conservés d'une session à l'autre."
 msgstr ""
 "Das Konfigurationsfenster enthält außerdem Anzeigeeinstellungen für die "
-"Oberfläche. Ein Schieberegler für die **Oberflächenskalierung** ermöglicht"
-" es, alle Oberflächenelemente zu vergrößern oder zu verkleinern, was auf "
-"hochauflösenden Bildschirmen oder zur Verbesserung der Lesbarkeit "
-"nützlich ist. Ein Menü **Panel-Position** legt fest, wo die Panels (Suche,"
-" Matchs, Analyse) relativ zum Brett angezeigt werden: *unten*, *seitlich* "
-"oder *automatisch* (auf breiten Bildschirmen wird dann die seitliche "
-"Anordnung gewählt, um den verfügbaren Platz besser auszunutzen). Wie die "
-"anderen Einstellungen werden auch diese Festlegungen von einer Sitzung zur"
-" nächsten beibehalten."
+"Oberfläche. Ein Schieberegler für die **Oberflächenskalierung** "
+"ermöglicht es, alle Oberflächenelemente zu vergrößern oder zu "
+"verkleinern, was auf hochauflösenden Bildschirmen oder zur Verbesserung "
+"der Lesbarkeit nützlich ist. Ein Menü **Panel-Position** legt fest, wo "
+"die Panels (Suche, Matchs, Analyse) relativ zum Brett angezeigt werden: "
+"*unten*, *seitlich* oder *automatisch* (auf breiten Bildschirmen wird "
+"dann die seitliche Anordnung gewählt, um den verfügbaren Platz besser "
+"auszunutzen). Wie die anderen Einstellungen werden auch diese "
+"Festlegungen von einer Sitzung zur nächsten beibehalten."
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -1426,6 +1426,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Freies Üben (Cram):** Die Schaltfläche *Cram* neben *Study* startet eine freie Übungssitzung: Es werden Ihnen zufällige Stellungen aus dem Deck angezeigt, unabhängig vom FSRS-Zeitplan. Dieser Modus **verändert niemals den Plan der verteilten Wiederholung** — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines thematischen Decks, ohne dessen Reihenfolge zu stören. Eine *Cram*-Plakette ersetzt den Kartenstatus, und eine Schaltfläche *Weiter* (Tasten *1* bis *4*) blättert durch die Stellungen. *Esc* kehrt zur Liste zurück, ohne eine unterbrochene Sitzung zu speichern."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1435,7 +1448,7 @@ msgstr ""
 "Ihren Fortschritt an. Klicken Sie darauf, um dort fortzufahren, wo Sie "
 "aufgehört haben."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1447,11 +1460,11 @@ msgstr ""
 "FSRS-Parameter (Zielretention, maximales Intervall, Streuung) können pro "
 "Stapel in den Einstellungen (Zahnradsymbol) konfiguriert werden."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Metadaten-Panel"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1462,11 +1475,11 @@ msgstr ""
 " Datenbank an: Name, Beschreibung, Anzahl der Stellungen, Anzahl der "
 "Matches und Partien, Schemaversion. Erreichbar über den Befehl ``meta``."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Protokoll-Panel"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -360,15 +360,15 @@ msgid ""
 "mieux exploiter l'espace disponible). Comme les autres réglages, ces "
 "choix sont conservés d'une session à l'autre."
 msgstr ""
-"Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα"
-" ρυθμιστικό **κλίμακας διεπαφής** σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε"
-" όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής "
-"πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού **θέσης των "
-"πλαισίων** καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) "
-"σε σχέση με το ταμπλό: *κάτω*, *στο πλάι* ή *αυτόματα* (το πλάι επιλέγεται "
-"τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). "
-"Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία "
-"συνεδρία στην άλλη."
+"Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. "
+"Ένα ρυθμιστικό **κλίμακας διεπαφής** σας επιτρέπει να μεγεθύνετε ή να "
+"σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες"
+" υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού "
+"**θέσης των πλαισίων** καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, "
+"ματς, ανάλυση) σε σχέση με το ταμπλό: *κάτω*, *στο πλάι* ή *αυτόματα* (το"
+" πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του "
+"διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές "
+"διατηρούνται από τη μία συνεδρία στην άλλη."
 
 #: ../../source/manuel.rst:160
 msgid "Visites guidées et base d'exemple"
@@ -697,10 +697,10 @@ msgid ""
 "ronde, date et longueur du match, lorsque ces informations sont "
 "disponibles)."
 msgstr ""
-"Όταν ένα ματς είναι ανοιχτό, μια **γραμμή πληροφοριών** εμφανίζεται πάνω από "
-"το ταμπλό: δείχνει τους εμπλεκόμενους παίκτες (*παίκτης 1* εναντίον *παίκτη "
-"2*) μαζί με το πλαίσιο του ματς (διοργάνωση, τόπος, γύρος, ημερομηνία και "
-"μήκος ματς, όταν αυτές οι πληροφορίες είναι διαθέσιμες)."
+"Όταν ένα ματς είναι ανοιχτό, μια **γραμμή πληροφοριών** εμφανίζεται πάνω "
+"από το ταμπλό: δείχνει τους εμπλεκόμενους παίκτες (*παίκτης 1* εναντίον "
+"*παίκτη 2*) μαζί με το πλαίσιο του ματς (διοργάνωση, τόπος, γύρος, "
+"ημερομηνία και μήκος ματς, όταν αυτές οι πληροφορίες είναι διαθέσιμες)."
 
 #: ../../source/manuel.rst:325
 msgid ""
@@ -837,10 +837,10 @@ msgid ""
 "le nom apparaît le plus souvent dans la base de données — modifiable à "
 "tout moment."
 msgstr ""
-"Η αναπτυσσόμενη λίστα **Παίκτης** επιτρέπει το φιλτράρισμα των στατιστικών"
-" σύμφωνα με τον αναλυόμενο παίκτη. Το blunderDB επιλέγει αυτόματα τον "
-"παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση δεδομένων — "
-"τροποποιήσιμο ανά πάσα στιγμή."
+"Η αναπτυσσόμενη λίστα **Παίκτης** επιτρέπει το φιλτράρισμα των "
+"στατιστικών σύμφωνα με τον αναλυόμενο παίκτη. Το blunderDB επιλέγει "
+"αυτόματα τον παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση "
+"δεδομένων — τροποποιήσιμο ανά πάσα στιγμή."
 
 #: ../../source/manuel.rst:398
 msgid ""
@@ -867,8 +867,8 @@ msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr ""
-"**Ημερομηνίες** — χρονικό εύρος (*Από* … *Έως*). Αν συμπληρωθεί μόνο η ημερομηνία "
-"έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις."
+"**Ημερομηνίες** — χρονικό εύρος (*Από* … *Έως*). Αν συμπληρωθεί μόνο η "
+"ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις."
 
 #: ../../source/manuel.rst:410
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
@@ -880,8 +880,8 @@ msgid ""
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
 "combinées."
 msgstr ""
-"**Διάρκεια αγώνα** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, "
-"7, 9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη."
+"**Διάρκεια αγώνα** — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, "
+"9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη."
 
 #: ../../source/manuel.rst:415
 msgid ""
@@ -1427,6 +1427,19 @@ msgstr ""
 
 #: ../../source/manuel.rst:648
 msgid ""
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
+msgstr "**Ελεύθερη εξάσκηση (cram):** Το κουμπί *Cram*, δίπλα στο *Study*, ξεκινά μια συνεδρία ελεύθερης εξάσκησης: σας παρουσιάζονται τυχαίες θέσεις από την τράπουλα χωρίς να λαμβάνεται υπόψη το πρόγραμμα FSRS. Αυτή η λειτουργία **δεν τροποποιεί ποτέ το πρόγραμμα επαναλαμβανόμενης μελέτης** — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας θεματικής τράπουλας χωρίς να διαταράσσεται η σειρά της. Μια ένδειξη *Cram* αντικαθιστά την κατάσταση της κάρτας και ένα κουμπί *Επόμενο* (πλήκτρα *1* έως *4*) μετακινείται στις θέσεις. Το *Esc* επιστρέφει στη λίστα χωρίς να αποθηκεύει διακοπείσα συνεδρία."
+
+#: ../../source/manuel.rst:657
+msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
@@ -1436,7 +1449,7 @@ msgstr ""
 "πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που "
 "σταματήσατε."
 
-#: ../../source/manuel.rst:652
+#: ../../source/manuel.rst:661
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1449,11 +1462,11 @@ msgstr ""
 "τυχαιότητας) μπορούν να ρυθμιστούν ανά πακέτο στις Ρυθμίσεις (εικονίδιο "
 "γραναζιού)."
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:669
 msgid "Panneau Métadonnées"
 msgstr "Πίνακας Μεταδεδομένων"
 
-#: ../../source/manuel.rst:662
+#: ../../source/manuel.rst:671
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1465,11 +1478,11 @@ msgstr ""
 " και παρτίδων, έκδοση του σχήματος. Προσβάσιμος μέσω της εντολής "
 "``meta``."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Journal"
 msgstr "Πίνακας Καταγραφής"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "
