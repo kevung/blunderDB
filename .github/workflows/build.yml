@@ -353,6 +353,12 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    # Serialize Pages deploys so bursts of merges (or a merge racing a tag
+    # push) queue instead of colliding on the gh-pages branch. cancel-in-progress
+    # stays false: every push should publish, none should be dropped.
+    concurrency:
+      group: gh-pages-deploy
+      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -395,6 +401,10 @@ jobs:
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
 
       - name: Deploy to GitHub Pages
+        # Only publish on push (main / tags); pull_request runs still build the
+        # docs above to catch breakage, but must not push to gh-pages — doing so
+        # both pollutes the published site and races the real push deploys.
+        if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
