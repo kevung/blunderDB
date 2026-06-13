@@ -1,0 +1,58 @@
+name: Fuzz
+
+# Continuous fuzzing of the untrusted-input decoders/mappers. Runs on a weekly
+# schedule and on demand — never on push/PR, so it can't flake or block normal
+# CI. The seed corpora (incl. regression seeds) still run on every PR via the
+# `go test -race ./...` step in build.yml; this job is the open-ended search for
+# *new* crashes. A crash fails the job and uploads the minimised input.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      fuzztime:
+        description: "Duration per fuzz target (Go duration, e.g. 120s, 5m)"
+        required: false
+        default: "120s"
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { pkg: ./pkg/blunderdb/parser, target: FuzzParsePosition }
+          - { pkg: ./pkg/blunderdb/domain, target: FuzzDecodeXGID }
+          - { pkg: ./pkg/blunderdb/engine, target: FuzzDecodeBoardCompact }
+          - { pkg: ./pkg/blunderdb/engine, target: FuzzDecodeAnalysisFromStorage }
+          - { pkg: ./pkg/blunderdb/ingest, target: FuzzBGFApplyCheckerMove }
+    name: ${{ matrix.target }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version: 1.25.11
+          cache: true
+
+      - name: Fuzz ${{ matrix.target }}
+        run: |
+          go test -run '^$' -fuzz "^${{ matrix.target }}$" \
+            -fuzztime "${{ github.event.inputs.fuzztime || '120s' }}" \
+            ${{ matrix.pkg }}
+
+      - name: Upload crashing input
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-crash-${{ matrix.target }}
+          path: ${{ matrix.pkg }}/testdata/fuzz/${{ matrix.target }}/
+          if-no-files-found: ignore
