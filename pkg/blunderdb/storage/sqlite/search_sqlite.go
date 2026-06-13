@@ -82,6 +82,18 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 	}
 
+	// Player filter: keep positions that occur in any match where the named
+	// player sat at either seat. LIKE (no wildcards) gives case-insensitive
+	// exact matching for ASCII names, mirroring the match-id subquery shape.
+	if f.PlayerFilter != "" {
+		where.WriteString(
+			" AND p.id IN (SELECT mv.position_id FROM move mv" +
+				" JOIN game g ON mv.game_id = g.id" +
+				" JOIN match mt ON g.match_id = mt.id" +
+				" WHERE mt.player1_name LIKE ? OR mt.player2_name LIKE ?)")
+		args = append(args, f.PlayerFilter, f.PlayerFilter)
+	}
+
 	if f.RestrictToPositionIDs != "" {
 		var ids []int64
 		for _, idStr := range strings.Split(f.RestrictToPositionIDs, ",") {

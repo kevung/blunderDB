@@ -185,8 +185,10 @@ type SearchFilters struct {
 	MoveErrorFilter               string   `json:"moveErrorFilter"`
 	MatchIDsFilter                string   `json:"matchIDsFilter"`
 	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`
-	PositionIDsFilter             string   `json:"positionIDsFilter"`
-	RestrictToPositionIDs         string   `json:"restrictToPositionIDs"`
+	PlayerFilter                  string   `json:"playerFilter"` // exact player name (either seat); empty = no filter
+
+	PositionIDsFilter     string `json:"positionIDsFilter"`
+	RestrictToPositionIDs string `json:"restrictToPositionIDs"`
 }
 
 // ExportOptions bundles all parameters for ExportDatabase.
