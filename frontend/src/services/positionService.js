@@ -357,7 +357,8 @@ export async function loadPositionsByFilters(
     restrictToPositionIDs = '',
     openInNewTab = false,
     diceRollMode = 'both',
-    positionIDsFilter = ''
+    positionIDsFilter = '',
+    playerFilter = ''
 ) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
@@ -442,6 +443,7 @@ export async function loadPositionsByFilters(
             moveErrorFilter,
             matchIDsFilter,
             tournamentIDsFilter,
+            playerFilter,
             positionIDsFilter,
             restrictToPositionIDs
         });

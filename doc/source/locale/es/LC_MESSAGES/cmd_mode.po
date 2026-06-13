@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 02:53+0200\n"
+"POT-Creation-Date: 2026-06-13 03:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -320,9 +320,11 @@ msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
 "filtre courant des statistiques. Un nombre optionnel choisit combien en "
 "charger (``bl 50``) ; par défaut 10."
-msgstr "Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual. Un número opcional elige cuántos cargar (``bl 50``); 10 por defecto."
+msgstr ""
 "Carga los peores errores (equity/MWC) en la vista de análisis, según el "
-"filtro de estadísticas actual."
+"filtro de estadísticas actual. Un número opcional elige cuántos cargar "
+"(``bl 50``); 10 por defecto.Carga los peores errores (equity/MWC) en la "
+"vista de análisis, según el filtro de estadísticas actual."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -1109,7 +1111,17 @@ msgstr "idx,y"
 msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "Buscar las posiciones con identificadores de x a y (p. ej. id5,10)."
 
-#: ../../source/cmd_mode.rst:211
+#: ../../source/cmd_mode.rst:1
+msgid "pl'nom'"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
+"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+msgstr "Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (p. ej. pl'Alice'). No distingue mayúsculas y minúsculas."
+
+#: ../../source/cmd_mode.rst:212
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1123,7 +1135,7 @@ msgstr ""
 "del primer dado para emparejar las posiciones (sobre cualquiera de los "
 "dos dados de la tirada)."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:218
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1137,7 +1149,7 @@ msgstr ""
 "menos 10 pips de ventaja en la carrera. `p50,70` : el jugador tiene entre"
 " 50 y 70 pips de desventaja en la carrera."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1149,7 +1161,7 @@ msgstr ""
 " principio se aplica a los torneos con ``tn`` y a las posiciones con "
 "``id`` (p. ej. ``s id5 id10`` para las posiciones 5 y 10)."
 
-#: ../../source/cmd_mode.rst:228
+#: ../../source/cmd_mode.rst:229
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1159,7 +1171,7 @@ msgstr ""
 "matches de dicho torneo. Los identificadores de los matches y de los "
 "torneos son visibles en las columnas ID de los paneles correspondientes."
 
-#: ../../source/cmd_mode.rst:232
+#: ../../source/cmd_mode.rst:233
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1175,7 +1187,7 @@ msgstr ""
 " al menos 10 fichas en la zona, y el adversario tiene entre 2 y 3 fichas "
 "rezagadas."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -1187,7 +1199,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Borra el historial de comandos."
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:252
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."

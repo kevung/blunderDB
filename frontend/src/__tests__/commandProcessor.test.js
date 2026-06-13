@@ -41,6 +41,23 @@ describe('parseFilters', () => {
         expect(result.winRateFilter).toBeUndefined();
         expect(result.matchIDsFilter).toBe('');
         expect(result.tournamentIDsFilter).toBe('');
+        expect(result.playerFilter).toBe('');
+    });
+
+    // -- player filter -------------------------------------------------------
+    test('extracts playerFilter from pl"Name"', () => {
+        expect(parseFilters(['pl"Alice"'], 's pl"Alice"').playerFilter).toBe('pl"Alice"');
+    });
+
+    test('playerFilter keeps names with spaces (matched on the raw command)', () => {
+        const r = parseFilters(['pl"Kévin', 'Unger"'], 's pl"Kévin Unger"');
+        expect(r.playerFilter).toBe('pl"Kévin Unger"');
+    });
+
+    test('pl"…" does not corrupt the pipcount filter', () => {
+        const r = parseFilters(['pl"Bob"', 'p>120'], 's pl"Bob" p>120');
+        expect(r.playerFilter).toBe('pl"Bob"');
+        expect(r.pipCountFilter).toBe('p>120');
     });
 
     // -- boolean flags -------------------------------------------------------

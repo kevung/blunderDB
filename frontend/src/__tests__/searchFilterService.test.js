@@ -382,3 +382,30 @@ describe('filterTokenHint', () => {
         }
     });
 });
+
+describe('Player filter token', () => {
+    test('buildFilterTokens emits pl"Name" for the Player filter', () => {
+        expect(buildFilterTokens(['Player'], { playerName: 'Alice' })).toEqual(['pl"Alice"']);
+        expect(buildFilterTokens(['Player'], { playerName: 'Kévin Unger' })).toEqual(['pl"Kévin Unger"']);
+    });
+
+    test('parseFilterTokens extracts plFilter without stealing the pipcount token', () => {
+        const p = parseFilterTokens(['pl"Bob"', 'p>120']);
+        expect(p.plFilter).toBe('pl"Bob"');
+        expect(p.pcFilter).toBe('p>120'); // pl"…" must NOT be picked as the pipcount
+    });
+
+    test('parseFilterTokens: pl absent leaves plFilter undefined and pipcount intact', () => {
+        const p = parseFilterTokens(['p<60']);
+        expect(p.plFilter).toBeUndefined();
+        expect(p.pcFilter).toBe('p<60');
+    });
+
+    test('filterTokenHint shows the quoted-text form for Player', () => {
+        expect(filterTokenHint('Player')).toBe('pl"…"');
+    });
+
+    test('buildSearchCommand drops an empty pl"" token', () => {
+        expect(buildSearchCommand(['cube', 'pl""'])).toBe('s cube');
+    });
+});

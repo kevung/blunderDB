@@ -230,6 +230,7 @@
         "searchTextHint": "Текст поиска",
         "selectFilter": "Выберите фильтр",
         "tournamentIdsHint": "ID турниров",
+        "playerHint": "Имя игрока (любая сторона)",
         "decision": {
             "checker": "Шашки",
             "cube": "Куб",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Лучший ход или решение по кубу",
             "creationDate": "Дата создания",
             "matchIDs": "ID матчей",
-            "tournamentIDs": "ID турниров"
+            "tournamentIDs": "ID турниров",
+            "player": "Игрок"
         },
         "filterGroups": {
             "display": "Отображение",

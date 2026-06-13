@@ -26,6 +26,7 @@
     let movePattern = $state('');
     let matchIDsInput = $state('');
     let tournamentIDsInput = $state('');
+    let playerName = $state('');
 
     let pipCountOption = $state('min');
     let pipCountMin = $state(-375);
@@ -184,7 +185,8 @@
         'Best Move or Cube Decision',
         'Creation Date',
         'Match IDs',
-        'Tournament IDs'
+        'Tournament IDs',
+        'Player'
     ];
 
     // Canonical filter/group names stay in English because they double as logic
@@ -222,7 +224,8 @@
         'Best Move or Cube Decision': 'bestMoveOrCubeDecision',
         'Creation Date': 'creationDate',
         'Match IDs': 'matchIDs',
-        'Tournament IDs': 'tournamentIDs'
+        'Tournament IDs': 'tournamentIDs',
+        Player: 'player'
     };
     const groupKeySlug = {
         Display: 'display',
@@ -255,7 +258,7 @@
         { name: 'Checkers', filters: ['Player Checker-Off', 'Opponent Checker-Off', 'Player Back Checker', 'Opponent Back Checker', 'Player Checker in the Zone', 'Opponent Checker in the Zone'] },
         { name: 'Blots', filters: ['Player Outfield Blot', 'Opponent Outfield Blot', 'Player Jan Blot', 'Opponent Jan Blot'] },
         { name: 'Text / Pattern', filters: ['Search Text', 'Best Move or Cube Decision'] },
-        { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs'] }
+        { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs', 'Player'] }
     ];
 
     // Which structure the main board is currently editing: 'include' (au moins)
@@ -550,7 +553,8 @@
             player2JanBlotRangeMin,
             player2JanBlotRangeMax,
             matchIDsInput,
-            tournamentIDsInput
+            tournamentIDsInput,
+            playerName
         });
 
         // Cube sub-type: when the decision-type filter constrains to a cube
@@ -645,7 +649,9 @@
             tournamentIDs,
             restrictToPositionIDs,
             openInNewTab,
-            drMode
+            drMode,
+            '',
+            playerName ? `pl"${playerName}"` : ''
         );
 
         saveSearchState();
@@ -762,6 +768,7 @@
         searchOfferedCubeStore.set(false);
         matchIDsInput = '';
         tournamentIDsInput = '';
+        playerName = '';
         creationDateOption = 'min';
         creationDateMin = '';
         creationDateMax = '';
@@ -823,7 +830,7 @@
             const dr = cmdFilters.includes('D') || cmdFilters.includes('D1');
             const drMode = cmdFilters.includes('D1') ? 'first' : 'both';
             const mp = cmdFilters.includes('M');
-            const pc = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+            const pc = cmdFilters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
             const wr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
             const gr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
             const bg = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
@@ -849,6 +856,8 @@
             const mpf = mpm ? mpm[0] : '';
             const stm = command.match(/t["'][^"']*["']/);
             const st = stm ? stm[0] : '';
+            const plm = command.match(/pl["'][^"']*["']/);
+            const plf = plm ? plm[0] : '';
             const p1ob = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
             const p2ob = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
             const p1jb = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
@@ -894,7 +903,9 @@
                 tournamentIDs,
                 '',
                 false,
-                drMode
+                drMode,
+                '',
+                plf
             );
         }
     }
@@ -1019,6 +1030,7 @@
             movePattern,
             matchIDsInput,
             tournamentIDsInput,
+            playerName,
             pipCountOption,
             pipCountMin,
             pipCountMax,
@@ -1157,6 +1169,7 @@
         movePattern = saved.movePattern;
         matchIDsInput = saved.matchIDsInput;
         tournamentIDsInput = saved.tournamentIDsInput;
+        playerName = saved.playerName ?? '';
         pipCountOption = saved.pipCountOption;
         pipCountMin = saved.pipCountMin;
         pipCountMax = saved.pipCountMax;
@@ -2039,6 +2052,10 @@
                                                         class="text-input"
                                                         placeholder={$t('search.idOrRange')}
                                                     />
+                                                </div>
+                                            {:else if filter === 'Player'}
+                                                <div class="text-control">
+                                                    <span class="hint">{$t('search.playerHint')}</span><input type="text" bind:value={playerName} class="text-input" />
                                                 </div>
                                             {/if}
                                         </div>

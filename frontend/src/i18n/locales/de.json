@@ -230,6 +230,7 @@
         "searchTextHint": "Suchtext",
         "selectFilter": "Filter auswählen",
         "tournamentIdsHint": "Turnier-IDs",
+        "playerHint": "Spielername (beide Seiten)",
         "decision": {
             "checker": "Zug",
             "cube": "Dopplung",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Bester Zug oder Dopplerentscheidung",
             "creationDate": "Erstellungsdatum",
             "matchIDs": "Match-IDs",
-            "tournamentIDs": "Turnier-IDs"
+            "tournamentIDs": "Turnier-IDs",
+            "player": "Spieler"
         },
         "filterGroups": {
             "display": "Anzeige",
