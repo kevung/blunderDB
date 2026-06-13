@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 00:52
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.13)  13 JUN 2026 01:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1313,33 +1313,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 2556--2558
 nykyisen
  []
 
-[22] [23] [24] [25] [26] [27]
+[22] [23] [24] [25] [26] [27] [28]
 Underfull \hbox (badness 5667) in paragraph at lines 4779--4781
 \TU/FreeSerif(0)/m/n/10 blunderDB sisältää täydellisen komentoriviliittymän (CL
 I) samassa suoritettavassa tiedostossa kuin graafinen
  []
 
-[28]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 (Font)              scaled to size 4.49997pt on input line 4809.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
 (Font)              scaled to size 8.99994pt on input line 4810.
- [29] [30] [31] [32] [33] [34]
+[29] [30] [31] [32] [33] [34] [35]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 (Font)              scaled to size 8.99994pt on input line 5556.
- [35]
+
 Underfull \hbox (badness 10000) in paragraph at lines 5603--5605
 \TU/FreeSerif(0)/m/n/10 blunderDB:n avulla käyttäjät voivat luoda henkilökohtai
 sen tietokannan asemista. Sen vahvuus on siinä,
  []
 
-[36]
+[36] [37]
 Underfull \hbox (badness 6477) in paragraph at lines 5755--5757
 []\TU/FreeSerif(0)/m/n/10 Käyttöliittymä on koodattu [][]Svelte[][]-kielellä. S
 e vastaa graafisen käyttöliittymän ja backgammon-laudan
  []
 
-[37]
+[38]
 Underfull \hbox (badness 10000) in paragraph at lines 5808--5810
 []\TU/FreeMono(0)/m/n/10 migrate\TU/FreeSerif(0)/m/n/10 -komento — siirtää yhde
 n käyttäjän SQLite-tietokannan monikäyttäjäiseen PostgreSQL-
@@ -1347,7 +1346,7 @@ n käyttäjän SQLite-tietokannan monikäyttäjäiseen PostgreSQL-
 
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 (Font)              scaled to size 10.79993pt on input line 5817.
-[38]
+[39]
 Overfull \hbox (11.423pt too wide) in paragraph at lines 5901--5903
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
@@ -1369,7 +1368,7 @@ alla (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(0)/m/n/10 , \TU/Fre
 eMono(0)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(0)/m/n/10 ,
  []
 
-[39] [40]
+[40]
 Overfull \hbox (1.06567pt too wide) in paragraph at lines 6283--6285
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
@@ -1379,7 +1378,7 @@ Overfull \hbox (1.06567pt too wide) detected at line 6286
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[41]
+[41] [42]
 Underfull \hbox (badness 10000) in paragraph at lines 6576--6578
 []\TU/FreeSerif(0)/m/n/10 Take/Pass-päätös
  []
@@ -1434,7 +1433,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 6719--6721
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat alemman
  []
 
-[42]
+[43]
 Underfull \hbox (badness 10000) in paragraph at lines 6826--6828
 []\TU/FreeSerif(0)/m/n/10 Komennon \TU/FreeMono(0)/m/n/10 s nc \TU/FreeSerif(0)
 /m/n/10 jälkeen hae lyhyitä
@@ -1471,10 +1470,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 6873--6875
 [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
-[43]
+[44]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
- [44]
+ [45]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
@@ -1485,7 +1484,7 @@ File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
 <win3.png>
- [45] [46] [47] [48]
+ [46] [47] [48] [49]
 File: win4.png Graphic file (type bmp)
 <win4.png>
 File: win5.png Graphic file (type bmp)
@@ -1494,7 +1493,7 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [49] [50] [51] [52] [53]
+ [50] [51] [52] [53] [54]
 Underfull \hbox (badness 10000) in paragraph at lines 7198--7200
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.0.0 versioon 
 1.1.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_0_to_1_1
@@ -1512,25 +1511,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 7234--7236
 1.3.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_2_to_1_3
  []
 
-[54] [55]
+[55] [56]
 Underfull \hbox (badness 10000) in paragraph at lines 7440--7442
 \TU/FreeSerif(0)/m/n/10 MWC-tappio ilmaisee ottelun voittotodennäköisyyden pros
 enttiyksikköinä pelaajan virheiden kumulatiivisen
  []
 
-[56] [57] [58]
-Luku 3.
-[59
-
-] [60
+[57] [58] [59] [60
 
 ]
-Luku 4.
+Luku 3.
 [61] [62
 
 ]
+Luku 4.
+[63] [64
+
+]
 Luku 5.
-(./blunderdb.ind) [63] (./blunderdb.aux)
+(./blunderdb.ind) [65] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1539,12 +1538,12 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: FC5A40F39BE5645079167552902EAFB0;30058.
  ) 
 Here is how much of TeX's memory you used:
- 19365 strings out of 476443
- 395145 string characters out of 5793962
+ 19367 strings out of 476443
+ 395211 string characters out of 5793962
  1996627 words of memory out of 5000000
- 40923 multiletter control sequences out of 15000+600000
- 565069 words of font info for 103 fonts, out of 8000000 for 9000
+ 40924 multiletter control sequences out of 15000+600000
+ 565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,1357b,567s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,1357b,580s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (67 pages).
+Output written on blunderdb.pdf (69 pages).

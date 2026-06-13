@@ -62,7 +62,7 @@ Positions et navigation
    "collection, coll", "Afficher/cacher le panneau des collections."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
-   "blunders, bl", "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le filtre courant des statistiques."
+   "blunders, bl [n]", "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le filtre courant des statistiques. Un nombre optionnel choisit combien en charger (``bl 50``) ; par défaut 10."
    "m", "Naviguer dans le dernier match visité."
 
 
