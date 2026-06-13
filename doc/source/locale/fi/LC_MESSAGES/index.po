@@ -795,14 +795,12 @@ msgstr ""
 "kuution arvo). Katso :ref:`configuration`."
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.27.0"
-msgstr "0.7.0"
+msgstr "0.27.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "13/06/2026"
-msgstr "1.6.2026"
+msgstr "13.6.2026"
 
 #: ../../source/index.rst:1
 msgid ""

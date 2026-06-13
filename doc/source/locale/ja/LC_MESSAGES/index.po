@@ -716,14 +716,12 @@ msgstr ""
 " のデコードを修正（Jacoby/Beaver フラグとキューブの値）。:ref:`configuration` を参照。"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "0.27.0"
-msgstr "0.7.0"
+msgstr "0.27.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "13/06/2026"
-msgstr "2026/06/01"
+msgstr "2026/06/13"
 
 #: ../../source/index.rst:1
 msgid ""
