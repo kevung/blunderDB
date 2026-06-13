@@ -215,7 +215,7 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:118
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
-msgstr ""
+msgstr "Latauksen eheyden tarkistus (SHA256)"
 
 #: ../../source/annexe_windows_securite.rst:120
 msgid ""
@@ -224,19 +224,19 @@ msgid ""
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr ""
+msgstr "Jokaisen *releases*-sivulla julkaistun binaaritiedoston mukana on ``.sha256``-tiedosto, joka sisältää sen kryptografisen tarkisteen. Tämän tarkisteen vertaaminen varmistaa, että ladattu tiedosto on aito eikä sitä ole muutettu, mikä on hyödyllinen takuu silloin, kun koodiallekirjoitusta ei ole."
 
 #: ../../source/annexe_windows_securite.rst:125
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
-msgstr ""
+msgstr "Windowsissa (PowerShell), latauskansiossa:"
 
 #: ../../source/annexe_windows_securite.rst:131
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr ""
+msgstr "Vertaa näytettyä arvoa tiedoston ``blunderDB-windows-<version>.exe.sha256`` arvoon. Niiden on oltava identtiset."
 
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
-msgstr ""
+msgstr "Linuxissa tai macOS:ssä:"
 

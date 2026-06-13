@@ -306,7 +306,7 @@ msgstr "データベースのすべての局面を読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "blunders, bl [n]"
-msgstr ""
+msgstr "blunders, bl [n]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
@@ -1077,7 +1077,7 @@ msgstr "識別子 x から y までのポジションを検索します（例: i
 
 #: ../../source/cmd_mode.rst:1
 msgid "pl'nom'"
-msgstr ""
+msgstr "pl'名前'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
