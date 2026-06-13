@@ -44,7 +44,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		return nil, err
 	}
 
-	if err := populateMatchStats(d.db, matches); err != nil {
+	if err := d.applyMatchBadges(matches); err != nil {
 		slog.Warn("computing match stats", "err", err)
 	}
 

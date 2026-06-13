@@ -844,3 +844,123 @@ func (s *statsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
 	return stats, nil
 }
+
+// MatchBadges computes the per-player PR and total MWC loss for every match,
+// keyed by match id. It is the list-row projection of MatchDetail; both share
+// statsBaseJoin + statsCountedExpr so a match's badge PR equals its detail PR.
+func (s *statsStore) MatchBadges(ctx context.Context, scope string) (map[int64]storage.MatchBadge, error) {
+	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("MatchBadges query: %w", err)
+	}
+	defer rows.Close()
+
+	type playerAcc struct {
+		sumErr int64
+		cnt    int
+		mwc    float64
+	}
+	type matchAcc struct{ p1, p2 playerAcc }
+	acc := make(map[int64]*matchAcc)
+	for rows.Next() {
+		var matchID, errMP int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+		a := acc[matchID]
+		if a == nil {
+			a = &matchAcc{}
+			acc[matchID] = a
+		}
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss wants current scores.
+		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength)
+		pa := &a.p1
+		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
+			pa = &a.p2
+		}
+		pa.sumErr += errMP
+		pa.cnt++
+		if !math.IsNaN(mwcLoss) {
+			pa.mwc += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	out := make(map[int64]storage.MatchBadge, len(acc))
+	for matchID, a := range acc {
+		out[matchID] = storage.MatchBadge{
+			PR:       pr(a.p1.sumErr, a.p1.cnt),
+			MWCLoss:  a.p1.mwc,
+			PR2:      pr(a.p2.sumErr, a.p2.cnt),
+			MWCLoss2: a.p2.mwc,
+		}
+	}
+	return out, nil
+}
+
+// TournamentBadges computes the aggregate PR and total MWC loss for every
+// tournament (all matches pooled, both players), keyed by tournament id.
+func (s *statsStore) TournamentBadges(ctx context.Context, scope string) (map[int64]storage.TournamentBadge, error) {
+	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
+		AND m.tournament_id IS NOT NULL AND ` + statsCountedExpr
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("TournamentBadges query: %w", err)
+	}
+	defer rows.Close()
+
+	type tournAcc struct {
+		sumErr int64
+		cnt    int
+		mwc    float64
+	}
+	acc := make(map[int64]*tournAcc)
+	for rows.Next() {
+		var tournamentID, errMP int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+		a := acc[tournamentID]
+		if a == nil {
+			a = &tournAcc{}
+			acc[tournamentID] = a
+		}
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		a.sumErr += errMP
+		a.cnt++
+		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+			a.mwc += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	out := make(map[int64]storage.TournamentBadge, len(acc))
+	for tournamentID, a := range acc {
+		out[tournamentID] = storage.TournamentBadge{PR: pr(a.sumErr, a.cnt), MWCLoss: a.mwc}
+	}
+	return out, nil
+}

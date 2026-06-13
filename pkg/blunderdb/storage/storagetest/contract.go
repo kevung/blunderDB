@@ -1085,4 +1085,20 @@ func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
 	if len(ids) != 0 {
 		t.Errorf("empty selection: got %v, want none", ids)
 	}
+
+	mb, err := ss.MatchBadges(ctx, "")
+	if err != nil {
+		t.Fatalf("MatchBadges: %v", err)
+	}
+	if len(mb) != 0 {
+		t.Errorf("empty MatchBadges: got %v, want none", mb)
+	}
+
+	tb, err := ss.TournamentBadges(ctx, "")
+	if err != nil {
+		t.Fatalf("TournamentBadges: %v", err)
+	}
+	if len(tb) != 0 {
+		t.Errorf("empty TournamentBadges: got %v, want none", tb)
+	}
 }

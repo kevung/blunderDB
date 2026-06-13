@@ -84,7 +84,7 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 		return nil, err
 	}
 
-	if err := populateTournamentStats(d.db, tournaments); err != nil {
+	if err := d.applyTournamentBadges(tournaments); err != nil {
 		// Non-fatal
 		_ = err
 	}
@@ -342,7 +342,7 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 		return nil, err
 	}
 
-	if err := populateMatchStats(d.db, matches); err != nil {
+	if err := d.applyMatchBadges(matches); err != nil {
 		// Non-fatal: log but continue without stats
 		_ = err
 	}
