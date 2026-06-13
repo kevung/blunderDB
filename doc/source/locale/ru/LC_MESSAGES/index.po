@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 03:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -786,25 +786,55 @@ msgid ""
 "décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
 ":ref:`configuration`."
 msgstr ""
-"Настройки отображения интерфейса в окне конфигурации: ползунок масштаба для "
-"увеличения или уменьшения всего интерфейса и выбор расположения панелей "
-"(снизу, сбоку или автоматически), чтобы лучше использовать широкие экраны. "
-"Добавлена информационная панель над доской, показывающая игроков и контекст "
-"матча (событие, место, раунд, дату, длину). При открытии базы данных панель "
-"матчей отображается сразу же, а разбор начинается с первой позиции. Горячие "
-"клавиши теперь не зависят от раскладки клавиатуры (AZERTY, QWERTY, "
-"QWERTZ…). Исправлено декодирование XGID (индикаторы Jacoby/Beaver и значение"
-" куба). См. :ref:`configuration`."
+"Настройки отображения интерфейса в окне конфигурации: ползунок масштаба "
+"для увеличения или уменьшения всего интерфейса и выбор расположения "
+"панелей (снизу, сбоку или автоматически), чтобы лучше использовать "
+"широкие экраны. Добавлена информационная панель над доской, показывающая "
+"игроков и контекст матча (событие, место, раунд, дату, длину). При "
+"открытии базы данных панель матчей отображается сразу же, а разбор "
+"начинается с первой позиции. Горячие клавиши теперь не зависят от "
+"раскладки клавиатуры (AZERTY, QWERTY, QWERTZ…). Исправлено декодирование "
+"XGID (индикаторы Jacoby/Beaver и значение куба). См. "
+":ref:`configuration`."
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "0.27.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "13/06/2026"
+msgstr "01/06/2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement. Recherche : nouvelle "
+"commande ``blunders`` (alias ``bl``) qui charge directement les pires "
+"erreurs (équité/MWC) dans la vue d'analyse, avec un nombre optionnel pour"
+" en choisir la quantité (``bl 50``) ; nouveau filtre par joueur "
+"``pl'nom'`` qui retrouve toutes les positions issues d'un match "
+"impliquant un joueur donné, sur l'un ou l'autre camp ; et des info-"
+"bulles, au survol de chaque filtre du panneau de recherche, indiquant le "
+"jeton de commande correspondant. Mode serveur (headless) : nouvelles "
+"méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
+"appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
+":ref:`mode_anki` et :ref:`cmd_mode`."
+msgstr "Панель Anki: новый режим свободной тренировки (*cram*), доступный по кнопке *Cram* рядом с *Study*, который показывает случайные позиции из колоды, не изменяя график интервального повторения — идеально для разминки перед турниром или интенсивного повторения колоды без нарушения её порядка. Поиск: новая команда ``blunders`` (псевдоним ``bl``), загружающая худшие ошибки (equity/MWC) прямо в представление анализа, с необязательным числом для выбора количества (``bl 50``); новый фильтр по игроку ``pl'имя'``, находящий все позиции из матча с участием заданного игрока на любой стороне; и всплывающие подсказки, показывающие при наведении на каждый фильтр панели поиска соответствующий командный токен. Серверный (headless) режим: новые методы ``matches.movesByMatch`` (все ходы матча за один вызов) и ``positions.epc`` (Effective Pip Count для обоих игроков). См. :ref:`mode_anki` и :ref:`cmd_mode`."
+
+#: ../../source/index.rst:153
 msgid "Sommaire"
 msgstr "Содержание"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:186
 msgid "Contacts"
 msgstr "Контакты"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -812,7 +842,7 @@ msgstr ""
 "Автор: Kévin Unger <blunderdb@proton.me>. Вы также можете найти меня на "
 "Heroes под ником postmanpat."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -828,41 +858,41 @@ msgstr ""
 "поделиться своими впечатлениями. Любые (конструктивные) отзывы "
 "приветствуются."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Вот несколько способов связи:"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Присоединиться к серверу Discord blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Написать мне по адресу blunderdb@proton.me."
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Поговорить со мной, если мы встретимся на турнире."
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "sur Github,"
 msgstr "На GitHub."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Открыть задачу: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "Для исправления ошибок или предложений по улучшению создать pull request."
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "Faire un don"
 msgstr "Сделать пожертвование"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -870,19 +900,19 @@ msgstr ""
 "Если вам нравится blunderDB и вы хотите поддержать прошлые и будущие "
 "разработки, вы можете"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "угостить меня напитком, если мы имеем удовольствие встретиться!"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "сделать небольшое пожертвование через PayPal на адрес blunderdb@proton.me"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "Remerciements"
 msgstr "Благодарности"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -890,7 +920,7 @@ msgstr ""
 "Я посвящаю эту небольшую программу моей супруге Анн-Клер и нашей дорогой "
 "дочери Перрин. Я хотел бы особо поблагодарить нескольких друзей:"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -902,7 +932,7 @@ msgstr ""
 "за то, что продолжает поддерживать меня, несмотря на мои скромные попытки"
 " играть лучше."
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

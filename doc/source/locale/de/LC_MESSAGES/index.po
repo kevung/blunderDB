@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 03:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -795,26 +795,55 @@ msgid ""
 ":ref:`configuration`."
 msgstr ""
 "Anzeigeeinstellungen für die Oberfläche im Konfigurationsfenster: ein "
-"Schieberegler zur Skalierung, um die gesamte Oberfläche zu vergrößern oder"
-" zu verkleinern, sowie eine Auswahl der Panel-Position (unten, seitlich "
-"oder automatisch), um breite Bildschirme besser auszunutzen. Hinzugefügt: "
-"eine Informationsleiste über dem Brett, die die Spieler und den "
-"Match-Kontext anzeigt (Ereignis, Ort, Runde, Datum, Länge). Beim Öffnen "
-"einer Datenbank wird das Matchs-Panel sofort angezeigt und die Durchsicht "
-"beginnt bei der ersten Stellung. Die Tastenkürzel sind nun unabhängig von "
-"der Tastaturbelegung (AZERTY, QWERTY, QWERTZ…). Behebung der "
-"XGID-Dekodierung (Jacoby/Beaver-Indikatoren und Doppler-Wert). Siehe "
+"Schieberegler zur Skalierung, um die gesamte Oberfläche zu vergrößern "
+"oder zu verkleinern, sowie eine Auswahl der Panel-Position (unten, "
+"seitlich oder automatisch), um breite Bildschirme besser auszunutzen. "
+"Hinzugefügt: eine Informationsleiste über dem Brett, die die Spieler und "
+"den Match-Kontext anzeigt (Ereignis, Ort, Runde, Datum, Länge). Beim "
+"Öffnen einer Datenbank wird das Matchs-Panel sofort angezeigt und die "
+"Durchsicht beginnt bei der ersten Stellung. Die Tastenkürzel sind nun "
+"unabhängig von der Tastaturbelegung (AZERTY, QWERTY, QWERTZ…). Behebung "
+"der XGID-Dekodierung (Jacoby/Beaver-Indikatoren und Doppler-Wert). Siehe "
 ":ref:`configuration`."
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "0.27.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "13/06/2026"
+msgstr "1. Juni 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement. Recherche : nouvelle "
+"commande ``blunders`` (alias ``bl``) qui charge directement les pires "
+"erreurs (équité/MWC) dans la vue d'analyse, avec un nombre optionnel pour"
+" en choisir la quantité (``bl 50``) ; nouveau filtre par joueur "
+"``pl'nom'`` qui retrouve toutes les positions issues d'un match "
+"impliquant un joueur donné, sur l'un ou l'autre camp ; et des info-"
+"bulles, au survol de chaque filtre du panneau de recherche, indiquant le "
+"jeton de commande correspondant. Mode serveur (headless) : nouvelles "
+"méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
+"appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
+":ref:`mode_anki` et :ref:`cmd_mode`."
+msgstr "Anki-Panel: ein neuer Modus für freies Üben (*cram*), erreichbar über die Schaltfläche *Cram* neben *Study*, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl ``blunders`` (Alias ``bl``), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (``bl 50``); ein neuer Spielerfilter ``pl'Name'``, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server-Modus (headless): neue Methoden ``matches.movesByMatch`` (alle Züge einer Partie in einem einzigen Aufruf) und ``positions.epc`` (Effective Pip Count für beide Spieler). Siehe :ref:`mode_anki` und :ref:`cmd_mode`."
+
+#: ../../source/index.rst:153
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:186
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -822,7 +851,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes"
 " unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -838,31 +867,31 @@ msgstr ""
 "Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -870,11 +899,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -882,19 +911,19 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -903,7 +932,7 @@ msgstr ""
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
 "danken:"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -915,7 +944,7 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

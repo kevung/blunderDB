@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 03:48+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -775,25 +775,54 @@ msgid ""
 "décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
 ":ref:`configuration`."
 msgstr ""
-"Interface display settings in the configuration window: a scale slider to "
-"enlarge or shrink the whole interface, and a panel position choice (bottom,"
-" side or automatic) to make better use of wide screens. Added an "
-"information bar above the board showing the players and the match context "
-"(event, location, round, date, length). When a database is opened, the "
+"Interface display settings in the configuration window: a scale slider to"
+" enlarge or shrink the whole interface, and a panel position choice "
+"(bottom, side or automatic) to make better use of wide screens. Added an "
+"information bar above the board showing the players and the match context"
+" (event, location, round, date, length). When a database is opened, the "
 "matches panel is shown right away and the review starts on the first "
 "position. Keyboard shortcuts are now independent of the keyboard layout "
 "(AZERTY, QWERTY, QWERTZ…). Fixed XGID decoding (Jacoby/Beaver flags and "
 "cube value). See :ref:`configuration`."
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "0.27.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "13/06/2026"
+msgstr "June 1, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement. Recherche : nouvelle "
+"commande ``blunders`` (alias ``bl``) qui charge directement les pires "
+"erreurs (équité/MWC) dans la vue d'analyse, avec un nombre optionnel pour"
+" en choisir la quantité (``bl 50``) ; nouveau filtre par joueur "
+"``pl'nom'`` qui retrouve toutes les positions issues d'un match "
+"impliquant un joueur donné, sur l'un ou l'autre camp ; et des info-"
+"bulles, au survol de chaque filtre du panneau de recherche, indiquant le "
+"jeton de commande correspondant. Mode serveur (headless) : nouvelles "
+"méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
+"appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
+":ref:`mode_anki` et :ref:`cmd_mode`."
+msgstr "Anki panel: a new free-drill (*cram*) mode, available from the *Cram* button next to *Study*, which serves random positions from the deck without altering the spaced-repetition schedule — ideal for warming up before a tournament or intensively reviewing a deck without disturbing its ordering. Search: a new ``blunders`` command (alias ``bl``) that loads your worst mistakes (equity/MWC) straight into the analysis view, with an optional number to choose how many (``bl 50``); a new player filter ``pl'name'`` that finds every position from a match involving a given player, on either side; and tooltips that, on hovering each search-panel filter, show the corresponding command token. Server (headless) mode: new ``matches.movesByMatch`` (all the moves of a match in a single call) and ``positions.epc`` (Effective Pip Count for both players) methods. See :ref:`mode_anki` and :ref:`cmd_mode`."
+
+#: ../../source/index.rst:153
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:186
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -801,7 +830,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -816,41 +845,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -858,19 +887,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -878,7 +907,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -889,7 +918,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

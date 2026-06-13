@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 03:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -712,22 +712,47 @@ msgid ""
 "décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
 ":ref:`configuration`."
 msgstr ""
-"設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、"
-"横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。"
-"ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。"
-"データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。"
-"キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。"
-"XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。:ref:`configuration` を参照。"
+"設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。XGID"
+" のデコードを修正（Jacoby/Beaver フラグとキューブの値）。:ref:`configuration` を参照。"
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "0.27.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "13/06/2026"
+msgstr "2026/06/01"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement. Recherche : nouvelle "
+"commande ``blunders`` (alias ``bl``) qui charge directement les pires "
+"erreurs (équité/MWC) dans la vue d'analyse, avec un nombre optionnel pour"
+" en choisir la quantité (``bl 50``) ; nouveau filtre par joueur "
+"``pl'nom'`` qui retrouve toutes les positions issues d'un match "
+"impliquant un joueur donné, sur l'un ou l'autre camp ; et des info-"
+"bulles, au survol de chaque filtre du panneau de recherche, indiquant le "
+"jeton de commande correspondant. Mode serveur (headless) : nouvelles "
+"méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
+"appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
+":ref:`mode_anki` et :ref:`cmd_mode`."
+msgstr "Anki パネル：*Study* の隣の *Cram* ボタンから利用できる新しいフリー練習（*cram*）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。検索：最悪のミス（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド ``blunders``（エイリアス ``bl``）。オプションの数値で件数を選べます（``bl 50``）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター ``pl'名前'``。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド ``matches.movesByMatch``（対局の全手を1回の呼び出しで取得）と ``positions.epc``（両プレイヤーの Effective Pip Count）。:ref:`mode_anki` および :ref:`cmd_mode` を参照。"
+
+#: ../../source/index.rst:153
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:186
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -735,7 +760,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -745,59 +770,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -805,7 +830,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -815,7 +840,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

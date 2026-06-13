@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-06-13 03:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -783,26 +783,55 @@ msgid ""
 "décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
 ":ref:`configuration`."
 msgstr ""
-"Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko "
-"käyttöliittymän suurentamiseksi tai pienentämiseksi sekä paneelien "
-"sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden näyttöjen "
-"parempaa hyödyntämistä varten. Lisätty laudan yläpuolelle tietopalkki, joka "
-"näyttää pelaajat ja ottelun taustatiedot (tapahtuma, paikka, kierros, "
-"päivämäärä, pituus). Kun tietokanta avataan, otteluiden paneeli näytetään "
-"heti ja tarkastelu alkaa ensimmäisestä asemasta. Näppäimistöoikotiet ovat "
-"nyt riippumattomia näppäimistöasettelusta (AZERTY, QWERTY, QWERTZ…). "
-"Korjattu XGID-purku (Jacoby/Beaver-liput ja kuution arvo). Katso "
-":ref:`configuration`."
+"Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko"
+" käyttöliittymän suurentamiseksi tai pienentämiseksi sekä paneelien "
+"sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden "
+"näyttöjen parempaa hyödyntämistä varten. Lisätty laudan yläpuolelle "
+"tietopalkki, joka näyttää pelaajat ja ottelun taustatiedot (tapahtuma, "
+"paikka, kierros, päivämäärä, pituus). Kun tietokanta avataan, otteluiden "
+"paneeli näytetään heti ja tarkastelu alkaa ensimmäisestä asemasta. "
+"Näppäimistöoikotiet ovat nyt riippumattomia näppäimistöasettelusta "
+"(AZERTY, QWERTY, QWERTZ…). Korjattu XGID-purku (Jacoby/Beaver-liput ja "
+"kuution arvo). Katso :ref:`configuration`."
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "0.27.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+#, fuzzy
+msgid "13/06/2026"
+msgstr "1.6.2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement. Recherche : nouvelle "
+"commande ``blunders`` (alias ``bl``) qui charge directement les pires "
+"erreurs (équité/MWC) dans la vue d'analyse, avec un nombre optionnel pour"
+" en choisir la quantité (``bl 50``) ; nouveau filtre par joueur "
+"``pl'nom'`` qui retrouve toutes les positions issues d'un match "
+"impliquant un joueur donné, sur l'un ou l'autre camp ; et des info-"
+"bulles, au survol de chaque filtre du panneau de recherche, indiquant le "
+"jeton de commande correspondant. Mode serveur (headless) : nouvelles "
+"méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
+"appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
+":ref:`mode_anki` et :ref:`cmd_mode`."
+msgstr "Anki-paneeli: uusi vapaan harjoittelun (*cram*) tila, käytettävissä *Cram*-painikkeesta *Study*-painikkeen vierestä, joka näyttää satunnaisia asemia pakasta muuttamatta kertausaikataulua — ihanteellinen lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen järjestystä häiritsemättä. Haku: uusi komento ``blunders`` (alias ``bl``), joka lataa pahimmat virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (``bl 50``); uusi pelaajasuodatin ``pl'nimi'``, joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen. Palvelintila (headless): uudet metodit ``matches.movesByMatch`` (ottelun kaikki siirrot yhdellä kutsulla) ja ``positions.epc`` (molempien pelaajien Effective Pip Count). Katso :ref:`mode_anki` ja :ref:`cmd_mode`."
+
+#: ../../source/index.rst:153
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:186
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -810,7 +839,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -825,41 +854,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:198
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -867,19 +896,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -888,7 +917,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -900,7 +929,7 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
