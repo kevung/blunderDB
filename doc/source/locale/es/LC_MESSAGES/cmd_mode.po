@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-05 04:08+0200\n"
+"POT-Creation-Date: 2026-06-13 02:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -31,7 +31,13 @@ msgid ""
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
 "referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
 "touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
-msgstr "La línea de comandos, situada en la barra de estado, se abre pulsando la tecla *ESPACIO*. Al escribir un comando, aparece automáticamente una lista de sugerencias: la tecla *TAB* (o *MAYÚS-TAB*) recorre las propuestas y completa el comando, mientras que *ESC* cierra la lista (un segundo *ESC* cierra la línea de comandos). Las teclas *ARRIBA* y *ABAJO* siguen reservadas al historial de comandos."
+msgstr ""
+"La línea de comandos, situada en la barra de estado, se abre pulsando la "
+"tecla *ESPACIO*. Al escribir un comando, aparece automáticamente una "
+"lista de sugerencias: la tecla *TAB* (o *MAYÚS-TAB*) recorre las "
+"propuestas y completa el comando, mientras que *ESC* cierra la lista (un "
+"segundo *ESC* cierra la línea de comandos). Las teclas *ARRIBA* y *ABAJO*"
+" siguen reservadas al historial de comandos."
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -109,7 +115,9 @@ msgstr "demo"
 msgid ""
 "Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
 "l'outil."
-msgstr "Carga una base de ejemplo (partidas, torneo, análisis) para descubrir la herramienta."
+msgstr ""
+"Carga una base de ejemplo (partidas, torneo, análisis) para descubrir la "
+"herramienta."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -304,6 +312,16 @@ msgid "Charger toutes les positions de la base de données."
 msgstr "Cargar todas las posiciones de la base de datos."
 
 #: ../../source/cmd_mode.rst:1
+msgid "blunders, bl"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
+"filtre courant des statistiques."
+msgstr "Carga los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual."
+
+#: ../../source/cmd_mode.rst:1
 msgid "m"
 msgstr "m"
 
@@ -311,7 +329,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -347,11 +365,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Buscar entre las posiciones actualmente filtradas."
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:89
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:90
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
@@ -359,7 +377,7 @@ msgstr ""
 "Los filtros siguientes deben yuxtaponerse durante una búsqueda, es decir,"
 " después del inicio del comando ``s``."
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -371,7 +389,7 @@ msgstr ""
 "los dados. Para tener en cuenta la posición del cubo, el marcador y los "
 "dados, hay que mencionarlo explícitamente en la búsqueda."
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "La commande de recherche ``s`` est disponible dans le panneau de "
 "recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
@@ -381,7 +399,7 @@ msgstr ""
 "(tecla ``TAB``). El comando ``ss`` permite buscar entre los resultados "
 "actualmente filtrados."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
@@ -389,7 +407,7 @@ msgstr ""
 "blunderDB considera que una ficha rezagada (backchecker) es una ficha "
 "situada entre el punto 24 y el punto 19."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
@@ -397,7 +415,7 @@ msgstr ""
 "blunderDB considera que el número de fichas en la zona es el número de "
 "fichas situadas entre el punto 12 y el punto 1."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
@@ -405,11 +423,11 @@ msgstr ""
 "blunderDB considera que el outfield se extiende entre el punto 18 y el "
 "punto 7."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr "blunderDB considera que el jan se extiende entre el punto 1 y el punto 6."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -1088,7 +1106,7 @@ msgstr "idx,y"
 msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "Buscar las posiciones con identificadores de x a y (p. ej. id5,10)."
 
-#: ../../source/cmd_mode.rst:210
+#: ../../source/cmd_mode.rst:211
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1102,7 +1120,7 @@ msgstr ""
 "del primer dado para emparejar las posiciones (sobre cualquiera de los "
 "dos dados de la tirada)."
 
-#: ../../source/cmd_mode.rst:216
+#: ../../source/cmd_mode.rst:217
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1116,15 +1134,19 @@ msgstr ""
 "menos 10 pips de ventaja en la carrera. `p50,70` : el jugador tiene entre"
 " 50 y 70 pips de desventaja en la carrera."
 
-#: ../../source/cmd_mode.rst:222
+#: ../../source/cmd_mode.rst:223
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
 "même principe s'applique pour les tournois avec ``tn`` et pour les "
 "positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
-msgstr "Para buscar en varias partidas no contiguas, repetir el filtro ``ma`` varias veces (p. ej. ``s ma23 ma43`` para las partidas 23 y 43). El mismo principio se aplica a los torneos con ``tn`` y a las posiciones con ``id`` (p. ej. ``s id5 id10`` para las posiciones 5 y 10)."
+msgstr ""
+"Para buscar en varias partidas no contiguas, repetir el filtro ``ma`` "
+"varias veces (p. ej. ``s ma23 ma43`` para las partidas 23 y 43). El mismo"
+" principio se aplica a los torneos con ``tn`` y a las posiciones con "
+"``id`` (p. ej. ``s id5 id10`` para las posiciones 5 y 10)."
 
-#: ../../source/cmd_mode.rst:227
+#: ../../source/cmd_mode.rst:228
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1134,7 +1156,7 @@ msgstr ""
 "matches de dicho torneo. Los identificadores de los matches y de los "
 "torneos son visibles en las columnas ID de los paneles correspondientes."
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:232
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1150,7 +1172,7 @@ msgstr ""
 " al menos 10 fichas en la zona, y el adversario tiene entre 2 y 3 fichas "
 "rezagadas."
 
-#: ../../source/cmd_mode.rst:241
+#: ../../source/cmd_mode.rst:242
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -1162,10 +1184,11 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Borra el historial de comandos."
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr ""
 "Las migraciones de la base de datos se realizan ahora automáticamente al "
 "abrir una base de datos."
+
