@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"os"
 	"sort"
 	"strings"
@@ -139,14 +138,6 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cac
 
 	cache.m[hash] = positionID
 	return positionID, nil
-}
-
-// findOrCreatePositionForCanonicalDuplicate looks up or creates a position during
-// canonical-duplicate imports (same match re-imported from a different format).
-// Delegates to savePositionInTxWithCache which uses the Zobrist hash index and the
-// per-import cache for efficient deduplication.
-func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
-	return d.savePositionInTxWithCache(tx, position, cache)
 }
 
 // savePositionInTx saves a position within a transaction checking for duplicates via
@@ -501,78 +492,6 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
 
-// parseMatchDate tries multiple date formats and returns the parsed time.
-// Returns time.Now() if dateStr is empty or no format matches.
-func parseMatchDate(dateStr string) time.Time {
-	if dateStr == "" {
-		return time.Now()
-	}
-	for _, layout := range []string{
-		"Jan 2, 2006",
-		"2006-01-02 15:04:05",
-		"2006-01-02",
-		"2006/01/02",
-		"01/02/2006",
-		"January 2, 2006",
-		time.RFC3339,
-	} {
-		if t, err := time.Parse(layout, dateStr); err == nil {
-			return t
-		}
-	}
-	return time.Now()
-}
-
-// checkDuplicateMatchLocked checks both format-specific and canonical hash
-// for duplicate matches. Must be called with d.mu held.
-// Returns (canonicalMatchID, isCanonicalDuplicate, error).
-// Returns ErrDuplicateMatch if the exact same-format hash already exists.
-func (d *Database) checkDuplicateMatchLocked(matchHash, canonicalHash string) (int64, bool, error) {
-	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
-	if err != nil {
-		return 0, false, fmt.Errorf("failed to check for duplicate match: %w", err)
-	}
-	if existingMatchID > 0 {
-		return 0, false, ErrDuplicateMatch
-	}
-
-	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
-	if err != nil {
-		return 0, false, fmt.Errorf("failed to check for canonical duplicate: %w", err)
-	}
-	return canonicalMatchID, canonicalMatchID > 0, nil
-}
-
-// moveAnalysisRow holds the pre-extracted values for a move_analysis INSERT.
-// Each importer converts its format-specific data into this struct, then
-// calls insertMoveAnalysisRow for the actual INSERT.
-type moveAnalysisRow struct {
-	MoveID                 int64
-	AnalysisType           string // "checker" or "cube"
-	Depth                  string
-	Equity                 int64
-	WinRate                int64
-	GammonRate             int64
-	BackgammonRate         int64
-	OpponentWinRate        int64
-	OpponentGammonRate     int64
-	OpponentBackgammonRate int64
-}
-
-// insertMoveAnalysisRow inserts a single row into the move_analysis table.
-func insertMoveAnalysisRow(tx *sql.Tx, row moveAnalysisRow) error {
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, row.MoveID, row.AnalysisType, row.Depth,
-		row.Equity, int64(0),
-		row.WinRate, row.GammonRate, row.BackgammonRate,
-		row.OpponentWinRate, row.OpponentGammonRate, row.OpponentBackgammonRate)
-	return err
-}
-
 // computeBestCubeAction determines the best cube action and equity from the three
 // cubeful equities. Returns (bestEquity, bestAction).
 func computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass float64) (float64, string) {
@@ -592,29 +511,6 @@ func computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass
 		}
 	}
 	return bestEquity, bestAction
-}
-
-// autoLinkTournament finds or creates a tournament by name and links it to the given match.
-// Does nothing if eventName is empty.
-func autoLinkTournament(tx *sql.Tx, matchID int64, eventName string) {
-	eventName = strings.TrimSpace(eventName)
-	if eventName == "" {
-		return
-	}
-	var tournamentID int64
-	err := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
-	if err != nil {
-		// Tournament doesn't exist yet — create it
-		res, err2 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
-		if err2 == nil {
-			tournamentID, _ = res.LastInsertId()
-		}
-	}
-	if tournamentID > 0 {
-		if _, err := tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID); err != nil {
-			slog.Warn("failed to link match to tournament", "err", err)
-		}
-	}
 }
 
 // cubeAnalysisParams holds the format-independent cube analysis values needed to build
@@ -788,20 +684,6 @@ func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
 	return existingID, nil
 }
 
-// CheckMatchExistsLocked is the same as CheckMatchExists but doesn't acquire the lock
-// Use this when you already hold the database lock
-func (d *Database) checkMatchExistsLocked(matchHash string) (int64, error) {
-	var existingID int64
-	err := d.db.QueryRow(`SELECT id FROM match WHERE match_hash = ?`, matchHash).Scan(&existingID)
-	if err == sql.ErrNoRows {
-		return 0, nil
-	}
-	if err != nil {
-		return 0, fmt.Errorf("error checking for duplicate match: %w", err)
-	}
-	return existingID, nil
-}
-
 // maxCanonicalDicePerGame limits how many dice per game are included in the canonical hash.
 // Different file formats (XG, SGF, MAT) handle end-of-game dice differently:
 // XG records game-ending rolls that SGF/MAT may omit, and MAT can diverge
@@ -882,18 +764,4 @@ func ComputeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
 
 	hash := sha256.Sum256([]byte(hashBuilder.String()))
 	return hex.EncodeToString(hash[:])
-}
-
-// checkCanonicalMatchExistsLocked checks if a match with the given canonical hash already exists
-// Returns the existing match ID if found, 0 otherwise
-func (d *Database) checkCanonicalMatchExistsLocked(canonicalHash string) (int64, error) {
-	var existingID int64
-	err := d.db.QueryRow(`SELECT id FROM match WHERE canonical_hash = ?`, canonicalHash).Scan(&existingID)
-	if err == sql.ErrNoRows {
-		return 0, nil
-	}
-	if err != nil {
-		return 0, fmt.Errorf("error checking for canonical match: %w", err)
-	}
-	return existingID, nil
 }
