@@ -645,6 +645,15 @@ la position correspondante sur le plateau. Évaluez votre rappel avec les touche
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, lance une
+session d'entraînement libre : des positions aléatoires du paquet vous sont
+présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais
+le planning de révision espacée** — idéal pour s'échauffer avant un tournoi ou
+réviser intensément un paquet thématique sans perturber son ordonnancement. Une
+pastille *Cram* remplace l'état de la carte et un bouton *Suivant* (touches *1*
+à *4*) fait défiler les positions. *Esc* revient à la liste sans enregistrer de
+session interrompue.
+
 **Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
 avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
 Cliquez dessus pour reprendre là où vous vous êtes arrêté.

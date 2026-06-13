@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  12 JUN 2026 23:37
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.12)  13 JUN 2026 00:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1288,178 +1288,178 @@ urnauksiin järjestelmällistä seurantaa ja
  []
 
 [10] [11] [12] [13] [14]
-Underfull \hbox (badness 5374) in paragraph at lines 1568--1570
+Underfull \hbox (badness 5374) in paragraph at lines 1571--1573
 \TU/FreeSerif(0)/b/n/10 Lokipaneeli \TU/FreeSerif(0)/m/n/10 näyttää viimeaikais
 ten toimintojen lokin: tuonnit, viennit ja tietokantatoiminnot tuloksineen ja
  []
 
 [15] [16] [17] [18] [19]
-Underfull \hbox (badness 10000) in paragraph at lines 2093--2095
+Underfull \hbox (badness 10000) in paragraph at lines 2096--2098
 []\TU/FreeSerif(0)/m/n/10 muokkaa haettavan aseman rakennetta. blunderDB suodat
 taa asemat, joilla on \TU/FreeSerif(0)/m/it/10 vähintään \TU/FreeSerif(0)/m/n/1
 0 syötetty
  []
 
 [20]
-Underfull \hbox (badness 10000) in paragraph at lines 2156--2158
+Underfull \hbox (badness 10000) in paragraph at lines 2159--2161
 \TU/FreeSerif(0)/m/n/10 Komentorivi, joka sijaitsee tilarivillä, avataan painam
 alla \TU/FreeSerif(0)/m/it/10 VÄLILYÖNTI\TU/FreeSerif(0)/m/n/10 -näppäintä. Kom
 entoa kirjoitettaessa
  []
 
 [21] [22] [23] [24] [25] [26] [27]
-Underfull \hbox (badness 5667) in paragraph at lines 4765--4767
+Underfull \hbox (badness 5667) in paragraph at lines 4768--4770
 \TU/FreeSerif(0)/m/n/10 blunderDB sisältää täydellisen komentoriviliittymän (CL
 I) samassa suoritettavassa tiedostossa kuin graafinen
  []
 
 [28]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 4795.
+(Font)              scaled to size 4.49997pt on input line 4798.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 4796.
+(Font)              scaled to size 8.99994pt on input line 4799.
  [29] [30] [31] [32] [33] [34]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5542.
+(Font)              scaled to size 8.99994pt on input line 5545.
  [35]
-Underfull \hbox (badness 10000) in paragraph at lines 5589--5591
+Underfull \hbox (badness 10000) in paragraph at lines 5592--5594
 \TU/FreeSerif(0)/m/n/10 blunderDB:n avulla käyttäjät voivat luoda henkilökohtai
 sen tietokannan asemista. Sen vahvuus on siinä,
  []
 
 [36]
-Underfull \hbox (badness 6477) in paragraph at lines 5741--5743
+Underfull \hbox (badness 6477) in paragraph at lines 5744--5746
 []\TU/FreeSerif(0)/m/n/10 Käyttöliittymä on koodattu [][]Svelte[][]-kielellä. S
 e vastaa graafisen käyttöliittymän ja backgammon-laudan
  []
 
 [37]
-Underfull \hbox (badness 10000) in paragraph at lines 5794--5796
+Underfull \hbox (badness 10000) in paragraph at lines 5797--5799
 []\TU/FreeMono(0)/m/n/10 migrate\TU/FreeSerif(0)/m/n/10 -komento — siirtää yhde
 n käyttäjän SQLite-tietokannan monikäyttäjäiseen PostgreSQL-
  []
 
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5803.
+(Font)              scaled to size 10.79993pt on input line 5806.
 [38]
-Overfull \hbox (11.423pt too wide) in paragraph at lines 5887--5889
+Overfull \hbox (11.423pt too wide) in paragraph at lines 5890--5892
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 5890
+Overfull \hbox (11.423pt too wide) detected at line 5893
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 5946--5948
+Underfull \hbox (badness 10000) in paragraph at lines 5949--5951
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6014--6016
+Underfull \hbox (badness 10000) in paragraph at lines 6017--6019
 []\TU/FreeSerif(0)/m/n/10 Useimmat valinnat voidaan antaa myös ympäristömuuttuj
 alla (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(0)/m/n/10 , \TU/Fre
 eMono(0)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(0)/m/n/10 ,
  []
 
 [39] [40]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6269--6271
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6272--6274
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6272
+Overfull \hbox (1.06567pt too wide) detected at line 6275
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [41]
-Underfull \hbox (badness 10000) in paragraph at lines 6562--6564
+Underfull \hbox (badness 10000) in paragraph at lines 6565--6567
 []\TU/FreeSerif(0)/m/n/10 Take/Pass-päätös
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6567--6569
+Underfull \hbox (badness 10000) in paragraph at lines 6570--6572
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat ylemmän
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6567--6569
+Underfull \hbox (badness 10000) in paragraph at lines 6570--6572
 \TU/FreeSerif(0)/m/n/10 pelaajan puolella,
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6570
+Underfull \hbox (badness 10000) detected at line 6573
 \TU/FreeSerif(0)/m/n/10 pelaajan puolella,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6583--6585
+Underfull \hbox (badness 10000) in paragraph at lines 6586--6588
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat alemman
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6599--6601
+Underfull \hbox (badness 10000) in paragraph at lines 6602--6604
 []\TU/FreeSerif(0)/m/n/10 pisteitä muodostettu
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6599--6601
+Underfull \hbox (badness 10000) in paragraph at lines 6602--6604
 \TU/FreeSerif(0)/m/n/10 kotialueella, nappuloita
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6602
+Underfull \hbox (badness 10000) detected at line 6605
 []\TU/FreeSerif(0)/m/n/10 pisteitä muodostettu
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6624--6626
+Underfull \hbox (badness 10000) in paragraph at lines 6627--6629
 []\TU/FreeSerif(0)/m/n/10 Asema turnauksesta
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6689--6691
+Underfull \hbox (badness 10000) in paragraph at lines 6692--6694
 []\TU/FreeSerif(0)/m/n/10 vastustajan ässäpiste
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6705--6707
+Underfull \hbox (badness 10000) in paragraph at lines 6708--6710
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat alemman
  []
 
 [42]
-Underfull \hbox (badness 10000) in paragraph at lines 6812--6814
+Underfull \hbox (badness 10000) in paragraph at lines 6815--6817
 []\TU/FreeSerif(0)/m/n/10 Komennon \TU/FreeMono(0)/m/n/10 s nc \TU/FreeSerif(0)
 /m/n/10 jälkeen hae lyhyitä
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6852--6852
+Underfull \hbox (badness 10000) in paragraph at lines 6855--6855
 |[][]\TU/FreeSans(0)/b/n/14.4 Windows-liite: blunderDB:n virheellinen tunnistus
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6859--6861
+Underfull \hbox (badness 10000) in paragraph at lines 6862--6864
 \TU/FreeSerif(0)/m/n/10 Windows edellyttää nykyään, että ohjelmistoja julkaisev
 at yritykset tai itsenäiset ohjelmistokehittäjät
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6859--6861
+Underfull \hbox (badness 10000) in paragraph at lines 6862--6864
 \TU/FreeSerif(0)/m/n/10 varmentavat sovelluksensa digitaalisesti tai jopa jakel
 evat ne Windows Storen kautta. Tällöin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6859--6861
+Underfull \hbox (badness 10000) in paragraph at lines 6862--6864
 \TU/FreeSerif(0)/m/n/10 suositellaan kääntymään ulkopuolisten yritysten puoleen
  digitaalisen varmenteen hankkimiseksi, mikä
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6859--6861
+Underfull \hbox (badness 10000) in paragraph at lines 6862--6864
 \TU/FreeSerif(0)/m/n/10 maksaa useita satoja euroja (katso esimerkiksi [][]$[][
 ][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] [] 
 [][][][][][][] [] [][][][][] [] [][] [] [][] []
@@ -1489,25 +1489,25 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [49] [50] [51] [52] [53]
-Underfull \hbox (badness 10000) in paragraph at lines 7184--7186
+Underfull \hbox (badness 10000) in paragraph at lines 7187--7189
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.0.0 versioon 
 1.1.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_0_to_1_1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7202--7204
+Underfull \hbox (badness 10000) in paragraph at lines 7205--7207
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.1.0 versioon 
 1.2.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_1_to_1_2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7220--7222
+Underfull \hbox (badness 10000) in paragraph at lines 7223--7225
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.2.0 versioon 
 1.3.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_2_to_1_3
  []
 
 [54] [55]
-Underfull \hbox (badness 10000) in paragraph at lines 7426--7428
+Underfull \hbox (badness 10000) in paragraph at lines 7429--7431
 \TU/FreeSerif(0)/m/n/10 MWC-tappio ilmaisee ottelun voittotodennäköisyyden pros
 enttiyksikköinä pelaajan virheiden kumulatiivisen
  []
@@ -1535,7 +1535,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  19365 strings out of 476443
  395145 string characters out of 5793962
- 1996627 words of memory out of 5000000
+ 1995627 words of memory out of 5000000
  40923 multiletter control sequences out of 15000+600000
  565069 words of font info for 103 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
