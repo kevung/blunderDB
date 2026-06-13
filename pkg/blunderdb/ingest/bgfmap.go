@@ -143,18 +143,26 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 			break
 		}
 
+		// from/to come from an untrusted .bgf file. Compute the board indices
+		// and skip the whole sub-move if either falls outside the 28-point
+		// board, so a malformed file can't panic. Legal BGF values (0..25)
+		// always map in range, so valid imports are unaffected.
 		if player == -1 {
-			var fromIdx int
-			if from == 25 {
-				fromIdx = 24
-			} else {
+			fromIdx := 24
+			if from != 25 {
 				fromIdx = 24 - from
+			}
+			toIdx := 26 // bear-off slot used when to == 0
+			if to != 0 {
+				toIdx = 24 - to
+			}
+			if fromIdx < 0 || fromIdx >= 28 || toIdx < 0 || toIdx >= 28 {
+				continue
 			}
 			boardState[fromIdx]--
 			if to == 0 {
 				boardState[26]++
 			} else {
-				toIdx := 24 - to
 				if boardState[toIdx] < 0 {
 					boardState[25] += boardState[toIdx]
 					boardState[toIdx] = 0
@@ -162,17 +170,21 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				boardState[toIdx]++
 			}
 		} else {
-			var fromIdx int
-			if from == 25 {
-				fromIdx = 25
-			} else {
+			fromIdx := 25
+			if from != 25 {
 				fromIdx = from - 1
+			}
+			toIdx := 27 // bear-off slot used when to == 0
+			if to != 0 {
+				toIdx = to - 1
+			}
+			if fromIdx < 0 || fromIdx >= 28 || toIdx < 0 || toIdx >= 28 {
+				continue
 			}
 			boardState[fromIdx]++
 			if to == 0 {
 				boardState[27]--
 			} else {
-				toIdx := to - 1
 				if boardState[toIdx] > 0 {
 					boardState[24] += boardState[toIdx]
 					boardState[toIdx] = 0
