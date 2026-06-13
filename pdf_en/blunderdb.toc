@@ -67,7 +67,7 @@
 \contentsline {section}{\numberline {2.4}List of commands}{21}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Global operations}{22}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Positions and navigation}{22}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Editing and search}{23}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Editing and search}{22}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Search Filters}{23}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Various commands}{26}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Keyboard shortcuts}{26}{section.2.5}%

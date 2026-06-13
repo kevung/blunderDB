@@ -67,7 +67,7 @@
 \contentsline {section}{\numberline {2.4}Elenco dei comandi}{22}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operazioni globali}{23}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posizioni e navigazione}{23}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Modifica e ricerca}{24}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Modifica e ricerca}{23}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Filtri di ricerca}{24}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Comandi vari}{27}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Scorciatoie da tastiera}{27}{section.2.5}%
