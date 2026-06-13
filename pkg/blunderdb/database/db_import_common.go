@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -13,9 +14,36 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/gnubgparser"
 	"github.com/kevung/xgparser/xgparser"
 )
+
+// writeImportedMatch persists a mapped MatchGraph through the storage backend,
+// shared by the format-specific Import* methods that delegate to the ingest
+// pipeline. It preserves the GUI/CLI duplicate contract: an exact same-format
+// re-import returns ErrDuplicateMatch (the ingest layer reports it as a silent
+// skip), while a cross-format canonical duplicate is enriched in place and
+// returns the existing match id without error. Callers must hold d.mu.
+func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGraph) (int64, error) {
+	tx, err := d.store.BeginTx(ctx)
+	if err != nil {
+		return 0, err
+	}
+	res, err := ingest.WriteMatch(ctx, tx, "", graph, nil)
+	if err != nil {
+		_ = tx.Rollback()
+		return 0, err
+	}
+	if res.Skipped {
+		_ = tx.Rollback()
+		return 0, ErrDuplicateMatch
+	}
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+	return res.MatchID, nil
+}
 
 // importCache is a per-import Zobrist-hash → position-ID lookup table.
 // It prevents redundant SQL round-trips for positions that appear more than once

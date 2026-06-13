@@ -37,6 +37,25 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 		return nil, fmt.Errorf("ingest: parse gnubg file: %w", err)
 	}
 
+	return mapGnuBGMatch(match, isSGF, path), nil
+}
+
+// MapGnuBGText maps GnuBG .mat match text (e.g. a clipboard paste) into a
+// backend-independent MatchGraph. It mirrors MapGnuBG for the no-file path: the
+// text is always MAT (player-relative coords, isSGF=false) and the source name
+// is "clipboard".
+func MapGnuBGText(content string) (*MatchGraph, error) {
+	match, err := gnubgparser.ParseMAT(strings.NewReader(content))
+	if err != nil {
+		return nil, fmt.Errorf("ingest: parse gnubg text: %w", err)
+	}
+	return mapGnuBGMatch(match, false, "clipboard"), nil
+}
+
+// mapGnuBGMatch builds the MatchGraph from an already-parsed gnubgparser.Match.
+// isSGF selects the move-coordinate system; filePath is recorded as the match's
+// source.
+func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) *MatchGraph {
 	graph := &MatchGraph{
 		Match: domain.Match{
 			Player1Name:   match.Metadata.Player1,
@@ -46,7 +65,7 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 			Round:         match.Metadata.Round,
 			MatchLength:   int32(match.Metadata.MatchLength),
 			MatchDate:     parseMatchDate(match.Metadata.Date),
-			FilePath:      path,
+			FilePath:      filePath,
 			GameCount:     len(match.Games),
 			MatchHash:     computeGnuBGMatchHash(match),
 			CanonicalHash: computeCanonicalMatchHashFromGnuBG(match),
@@ -68,7 +87,7 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 		})
 	}
 
-	return graph, nil
+	return graph
 }
 
 // mapGnuBGGameMoves replays one game's move records, reconstructing the board

@@ -30,28 +30,12 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	tx, err := d.store.BeginTx(ctx)
+	matchID, err := d.writeImportedMatch(ctx, graph)
 	if err != nil {
 		return 0, err
 	}
-	res, err := ingest.WriteMatch(ctx, tx, "", graph, nil)
-	if err != nil {
-		_ = tx.Rollback()
-		return 0, err
-	}
-	// Preserve the legacy GUI/CLI contract: an exact same-format re-import is a
-	// duplicate error (the ingest layer instead reports it as a silent skip). A
-	// cross-format canonical duplicate is still enriched in place and returns
-	// the existing match id without error, as before.
-	if res.Skipped {
-		_ = tx.Rollback()
-		return 0, ErrDuplicateMatch
-	}
-	if err := tx.Commit(); err != nil {
-		return 0, err
-	}
-	slog.Info("imported match", "matchID", res.MatchID, "file", filePath)
-	return res.MatchID, nil
+	slog.Info("imported match", "matchID", matchID, "file", filePath)
+	return matchID, nil
 }
 
 // RawCubeAction stores raw cube action data from XG file
