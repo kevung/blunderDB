@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{13 juin 2026}
-\release{0.26.1}
+\release{0.27.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -710,6 +710,22 @@ Réglages d’affichage de l’interface dans la fenêtre de configuration : un 
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.27.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+13/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Panneau Anki : ajout d’un mode « entraînement libre » (\sphinxstyleemphasis{cram}), accessible par le bouton \sphinxstyleemphasis{Cram} à côté de \sphinxstyleemphasis{Study}, qui présente des positions aléatoires du paquet sans modifier le planning de révision espacée — idéal pour s’échauffer avant un tournoi ou réviser intensément un paquet sans en perturber l’ordonnancement. Recherche : nouvelle commande \sphinxcode{\sphinxupquote{blunders}} (alias \sphinxcode{\sphinxupquote{bl}}) qui charge directement les pires erreurs (équité/MWC) dans la vue d’analyse, avec un nombre optionnel pour en choisir la quantité (\sphinxcode{\sphinxupquote{bl 50}}) ; nouveau filtre par joueur \sphinxcode{\sphinxupquote{pl'nom'}} qui retrouve toutes les positions issues d’un match impliquant un joueur donné, sur l’un ou l’autre camp ; et des info\sphinxhyphen{}bulles, au survol de chaque filtre du panneau de recherche, indiquant le jeton de commande correspondant. Mode serveur (headless) : nouvelles méthodes \sphinxcode{\sphinxupquote{matches.movesByMatch}} (tous les coups d’un match en un seul appel) et \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count des deux joueurs). Voir {\hyperref[\detokenize{manuel:mode-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Panneau Anki}}}}} et {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste des commandes}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -731,15 +747,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.26.1.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.26.1}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.26.1.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.0.zip}
 
 \end{itemize}
 
@@ -764,7 +780,7 @@ téléchargement, exécuter dans un terminal la commande \sphinxcode{\sphinxupqu
 Sous Linux, si vous obtenez l’erreur \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37:
 cannot open shared object file}}, votre distribution utilise
 webkit2gtk\sphinxhyphen{}4.1 au lieu de webkit2gtk\sphinxhyphen{}4.0. Téléchargez la version
-dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.26.1}
+dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avertissement:}

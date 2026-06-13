@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.26.1 Dokumentation</title>
+  <title>blunderDB &mdash; blunderDB 0.27.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=93a585e9"></script>
+      <script src="_static/documentation_options.js?v=46084ba9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -268,6 +268,10 @@
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>09/06/2026</p></td>
 <td><p>Anzeigeeinstellungen für die Oberfläche im Konfigurationsfenster: ein Schieberegler zur Skalierung, um die gesamte Oberfläche zu vergrößern oder zu verkleinern, sowie eine Auswahl der Panel-Position (unten, seitlich oder automatisch), um breite Bildschirme besser auszunutzen. Hinzugefügt: eine Informationsleiste über dem Brett, die die Spieler und den Match-Kontext anzeigt (Ereignis, Ort, Runde, Datum, Länge). Beim Öffnen einer Datenbank wird das Matchs-Panel sofort angezeigt und die Durchsicht beginnt bei der ersten Stellung. Die Tastenkürzel sind nun unabhängig von der Tastaturbelegung (AZERTY, QWERTY, QWERTZ…). Behebung der XGID-Dekodierung (Jacoby/Beaver-Indikatoren und Doppler-Wert). Siehe <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Konfiguration</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.27.0</p></td>
+<td><p>13/06/2026</p></td>
+<td><p>Anki-Panel: ein neuer Modus für freies Üben (<em>cram</em>), erreichbar über die Schaltfläche <em>Cram</em> neben <em>Study</em>, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (Alias <code class="docutils literal notranslate"><span class="pre">bl</span></code>), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); ein neuer Spielerfilter <code class="docutils literal notranslate"><span class="pre">pl'Name'</span></code>, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server-Modus (headless): neue Methoden <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (alle Züge einer Partie in einem einzigen Aufruf) und <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count für beide Spieler). Siehe <a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Anki-Panel</span></a> und <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste der Befehle</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

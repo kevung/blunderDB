@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{13.06.2026}
-\release{0.26.1}
+\release{0.27.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -697,6 +697,22 @@ Anzeigeeinstellungen für die Oberfläche im Konfigurationsfenster: ein Schieber
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.27.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+13/06/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Anki\sphinxhyphen{}Panel: ein neuer Modus für freies Üben (\sphinxstyleemphasis{cram}), erreichbar über die Schaltfläche \sphinxstyleemphasis{Cram} neben \sphinxstyleemphasis{Study}, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl \sphinxcode{\sphinxupquote{blunders}} (Alias \sphinxcode{\sphinxupquote{bl}}), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (\sphinxcode{\sphinxupquote{bl 50}}); ein neuer Spielerfilter \sphinxcode{\sphinxupquote{pl'Name'}}, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server\sphinxhyphen{}Modus (headless): neue Methoden \sphinxcode{\sphinxupquote{matches.movesByMatch}} (alle Züge einer Partie in einem einzigen Aufruf) und \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count für beide Spieler). Siehe {\hyperref[\detokenize{manuel:mode-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki\sphinxhyphen{}Panel}}}}} und {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste der Befehle}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -718,15 +734,15 @@ Die neueste Version von blunderDB ist unter der MIT\sphinxhyphen{}Lizenz verfüg
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.26.1.exe}
+für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.26.1}
+für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.0}
 
 \item {} 
 \sphinxAtStartPar
-für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.26.1.zip}
+für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.0.zip}
 
 \end{itemize}
 
@@ -742,7 +758,7 @@ Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, führe
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.26.1}
+Falls Sie unter Linux den Fehler \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1 anstelle von webkit2gtk\sphinxhyphen{}4.0. Laden Sie die dedizierte Version herunter: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Warnung:}

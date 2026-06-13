@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.26.1</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.27.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6656b2e1"></script>
+      <script src="_static/documentation_options.js?v=b3fb7ca1"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -277,6 +277,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>09/06/2026</p></td>
 <td><p>Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d’une barre d’informations au-dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.27.0</p></td>
+<td><p>13/06/2026</p></td>
+<td><p>Panneau Anki : ajout d’un mode « entraînement libre » (<em>cram</em>), accessible par le bouton <em>Cram</em> à côté de <em>Study</em>, qui présente des positions aléatoires du paquet sans modifier le planning de révision espacée — idéal pour s’échauffer avant un tournoi ou réviser intensément un paquet sans en perturber l’ordonnancement. Recherche : nouvelle commande <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (alias <code class="docutils literal notranslate"><span class="pre">bl</span></code>) qui charge directement les pires erreurs (équité/MWC) dans la vue d’analyse, avec un nombre optionnel pour en choisir la quantité (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>) ; nouveau filtre par joueur <code class="docutils literal notranslate"><span class="pre">pl'nom'</span></code> qui retrouve toutes les positions issues d’un match impliquant un joueur donné, sur l’un ou l’autre camp ; et des info-bulles, au survol de chaque filtre du panneau de recherche, indiquant le jeton de commande correspondant. Mode serveur (headless) : nouvelles méthodes <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (tous les coups d’un match en un seul appel) et <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count des deux joueurs). Voir <a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Panneau Anki</span></a> et <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

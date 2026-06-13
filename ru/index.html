@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.26.1</title>
+  <title>blunderDB &mdash; документация blunderDB 0.27.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=80dc7c2c"></script>
+      <script src="_static/documentation_options.js?v=5571b26c"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -268,6 +268,10 @@
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>09/06/2026</p></td>
 <td><p>Настройки отображения интерфейса в окне конфигурации: ползунок масштаба для увеличения или уменьшения всего интерфейса и выбор расположения панелей (снизу, сбоку или автоматически), чтобы лучше использовать широкие экраны. Добавлена информационная панель над доской, показывающая игроков и контекст матча (событие, место, раунд, дату, длину). При открытии базы данных панель матчей отображается сразу же, а разбор начинается с первой позиции. Горячие клавиши теперь не зависят от раскладки клавиатуры (AZERTY, QWERTY, QWERTZ…). Исправлено декодирование XGID (индикаторы Jacoby/Beaver и значение куба). См. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Конфигурация</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.27.0</p></td>
+<td><p>13/06/2026</p></td>
+<td><p>Панель Anki: новый режим свободной тренировки (<em>cram</em>), доступный по кнопке <em>Cram</em> рядом с <em>Study</em>, который показывает случайные позиции из колоды, не изменяя график интервального повторения — идеально для разминки перед турниром или интенсивного повторения колоды без нарушения её порядка. Поиск: новая команда <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">bl</span></code>), загружающая худшие ошибки (equity/MWC) прямо в представление анализа, с необязательным числом для выбора количества (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); новый фильтр по игроку <code class="docutils literal notranslate"><span class="pre">pl'имя'</span></code>, находящий все позиции из матча с участием заданного игрока на любой стороне; и всплывающие подсказки, показывающие при наведении на каждый фильтр панели поиска соответствующий командный токен. Серверный (headless) режим: новые методы <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (все ходы матча за один вызов) и <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count для обоих игроков). См. <a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Панель Anki</span></a> и <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

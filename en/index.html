@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.26.1 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.27.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=eeda5ee3"></script>
+      <script src="_static/documentation_options.js?v=3b7790a3"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -267,6 +267,10 @@
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>June 9, 2026</p></td>
 <td><p>Interface display settings in the configuration window: a scale slider to enlarge or shrink the whole interface, and a panel position choice (bottom, side or automatic) to make better use of wide screens. Added an information bar above the board showing the players and the match context (event, location, round, date, length). When a database is opened, the matches panel is shown right away and the review starts on the first position. Keyboard shortcuts are now independent of the keyboard layout (AZERTY, QWERTY, QWERTZ…). Fixed XGID decoding (Jacoby/Beaver flags and cube value). See <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.27.0</p></td>
+<td><p>13/06/2026</p></td>
+<td><p>Anki panel: a new free-drill (<em>cram</em>) mode, available from the <em>Cram</em> button next to <em>Study</em>, which serves random positions from the deck without altering the spaced-repetition schedule — ideal for warming up before a tournament or intensively reviewing a deck without disturbing its ordering. Search: a new <code class="docutils literal notranslate"><span class="pre">blunders</span></code> command (alias <code class="docutils literal notranslate"><span class="pre">bl</span></code>) that loads your worst mistakes (equity/MWC) straight into the analysis view, with an optional number to choose how many (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); a new player filter <code class="docutils literal notranslate"><span class="pre">pl'name'</span></code> that finds every position from a match involving a given player, on either side; and tooltips that, on hovering each search-panel filter, show the corresponding command token. Server (headless) mode: new <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (all the moves of a match in a single call) and <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count for both players) methods. See <a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Anki Panel</span></a> and <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">List of commands</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

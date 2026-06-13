@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.26.1 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.27.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=77c0e54d"></script>
+      <script src="_static/documentation_options.js?v=a26d2b0d"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -268,6 +268,10 @@
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>2026/06/09</p></td>
 <td><p>設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。<a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> を参照。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.27.0</p></td>
+<td><p>13/06/2026</p></td>
+<td><p>Anki パネル：<em>Study</em> の隣の <em>Cram</em> ボタンから利用できる新しいフリー練習（<em>cram</em>）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。検索：最悪のミス（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド <code class="docutils literal notranslate"><span class="pre">blunders``（エイリアス</span> <span class="pre">``bl</span></code>）。オプションの数値で件数を選べます（<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター <code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code>。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド <a href="#id1"><span class="problematic" id="id2">``</span></a>matches.movesByMatch``（対局の全手を1回の呼び出しで取得）と <a href="#id3"><span class="problematic" id="id4">``</span></a>positions.epc``（両プレイヤーの Effective Pip Count）。<a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Anki パネル</span></a> および <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照。</p></td>
 </tr>
 </tbody>
 </table>
