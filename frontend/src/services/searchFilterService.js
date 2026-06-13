@@ -299,41 +299,73 @@ export function buildSearchCommand(tokens) {
  * @param {string[]} tokens - the output of {@link buildFilterTokens}.
  * @returns {object} the named filter arguments consumed by onLoadPositionsByFilters.
  */
+// Single source of truth for classifying a search token into a range/checker
+// filter, keyed by canonical short name. Shared by both parseFilterTokens (save
+// path) and parseSearchCommand (restore path) so adding a filter only touches
+// one place. Predicates are operator-agnostic — `w`, `w>5`, `w<5`, `w3,8` all
+// match `wr` — and order-independent (the exclusions on bg/p2bg/pc keep the
+// prefix-overlapping filters, e.g. b vs bo/bj, mutually exclusive).
+const FILTER_TOKEN_MATCHERS = {
+    pc: (f) => f.startsWith('p') && !f.startsWith('pl'),
+    wr: (f) => f.startsWith('w'),
+    gr: (f) => f.startsWith('g'),
+    bg: (f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj'),
+    p2wr: (f) => f.startsWith('W'),
+    p2gr: (f) => f.startsWith('G'),
+    p2bg: (f) => f.startsWith('B') && !f.startsWith('BO') && !f.startsWith('BJ'),
+    p1co: (f) => f.startsWith('o'),
+    p2co: (f) => f.startsWith('O'),
+    p1bc: (f) => f.startsWith('k'),
+    p2bc: (f) => f.startsWith('K'),
+    p1cz: (f) => f.startsWith('z'),
+    p2cz: (f) => f.startsWith('Z'),
+    p1apc: (f) => f.startsWith('P'),
+    eq: (f) => f.startsWith('e'),
+    cd: (f) => f.startsWith('T'),
+    p1ob: (f) => f.startsWith('bo'),
+    p2ob: (f) => f.startsWith('BO'),
+    p1jb: (f) => f.startsWith('bj'),
+    p2jb: (f) => f.startsWith('BJ')
+};
+
 export function parseFilterTokens(tokens) {
     const matchIDToken = tokens.find((f) => f.startsWith('ma'));
     const tournamentIDToken = tokens.find((f) => f.startsWith('tn'));
+    const find = (key) => tokens.find(FILTER_TOKEN_MATCHERS[key]);
     return {
         incCube: tokens.includes('cube'),
         incScore: tokens.includes('score'),
         ncFilter: tokens.includes('nc'),
         mirFilter: tokens.includes('M'),
-        pcFilter: tokens.find((f) => f.startsWith('p') && !f.startsWith('pl')),
+        pcFilter: find('pc'),
         plFilter: tokens.find((f) => f.startsWith('pl')),
-        wrFilter: tokens.find((f) => f.startsWith('w')),
-        grFilter: tokens.find((f) => f.startsWith('g')),
-        bgFilter: tokens.find((f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj')),
-        p2wrFilter: tokens.find((f) => f.startsWith('W')),
-        p2grFilter: tokens.find((f) => f.startsWith('G')),
-        p2bgFilter: tokens.find((f) => f.startsWith('B') && !f.startsWith('BO') && !f.startsWith('BJ')),
-        p1coFilter: tokens.find((f) => f.startsWith('o')),
-        p2coFilter: tokens.find((f) => f.startsWith('O')),
-        p1bcFilter: tokens.find((f) => f.startsWith('k')),
-        p2bcFilter: tokens.find((f) => f.startsWith('K')),
-        p1czFilter: tokens.find((f) => f.startsWith('z')),
-        p2czFilter: tokens.find((f) => f.startsWith('Z')),
-        p1apcFilter: tokens.find((f) => f.startsWith('P')),
-        eqFilter: tokens.find((f) => f.startsWith('e')),
+        wrFilter: find('wr'),
+        grFilter: find('gr'),
+        bgFilter: find('bg'),
+        p2wrFilter: find('p2wr'),
+        p2grFilter: find('p2gr'),
+        p2bgFilter: find('p2bg'),
+        p1coFilter: find('p1co'),
+        p2coFilter: find('p2co'),
+        p1bcFilter: find('p1bc'),
+        p2bcFilter: find('p2bc'),
+        p1czFilter: find('p1cz'),
+        p2czFilter: find('p2cz'),
+        p1apcFilter: find('p1apc'),
+        eqFilter: find('eq'),
+        // meFilter is intentionally looser than parseSearchCommand's `me`: at
+        // save time the token is canonical, so a bare `startsWith('E')` is safe.
         meFilter: tokens.find((f) => f.startsWith('E')),
-        p1obFilter: tokens.find((f) => f.startsWith('bo')),
-        p2obFilter: tokens.find((f) => f.startsWith('BO')),
-        p1jbFilter: tokens.find((f) => f.startsWith('bj')),
-        p2jbFilter: tokens.find((f) => f.startsWith('BJ')),
+        p1obFilter: find('p1ob'),
+        p2obFilter: find('p2ob'),
+        p1jbFilter: find('p1jb'),
+        p2jbFilter: find('p2jb'),
         matchIDs: matchIDToken ? matchIDToken.slice(2) : '',
         tournamentIDs: tournamentIDToken ? tournamentIDToken.slice(2) : '',
         dtFilter: tokens.includes('d'),
         drFilter: tokens.includes('D') || tokens.includes('D1'),
         drMode: tokens.includes('D1') ? 'first' : 'both',
-        cdFilter: tokens.find((f) => f.startsWith('T'))
+        cdFilter: find('cd')
     };
 }
 
@@ -350,8 +382,10 @@ export function parseFilterTokens(tokens) {
  *   - pulls the quoted free-text filters (`m"…"`, `t"…"`, `pl"…"`) straight from
  *     the raw command so embedded spaces survive the whitespace split.
  *
- * Logic is lifted verbatim from SearchPanel.executeSearch; unifying it with
- * parseFilterTokens is left as a follow-up because their predicates differ.
+ * The range/checker token classification is shared with parseFilterTokens via
+ * FILTER_TOKEN_MATCHERS; only the genuinely restore-specific bits live here
+ * (abbreviated cube/score flags a user may type, multi-id `ma`/`tn` tokens, the
+ * stricter `me` predicate, and the comma/quote post-processing above).
  *
  * @param {string} command - a command starting with `s ` (or the bare `s`).
  * @returns {object} the parsed filter values, keyed by short name.
@@ -365,6 +399,8 @@ export function parseSearchCommand(command) {
                   .trim()
                   .split(' ')
                   .map((f) => f.trim());
+
+    const find = (key) => cmdFilters.find((f) => typeof f === 'string' && FILTER_TOKEN_MATCHERS[key](f));
 
     // Single-value checker tokens (e.g. `o5`) restore as a `min,max` pair.
     const expandPair = (tok) => {
@@ -392,29 +428,31 @@ export function parseSearchCommand(command) {
         dr: cmdFilters.includes('D') || cmdFilters.includes('D1'),
         drMode: cmdFilters.includes('D1') ? 'first' : 'both',
         mp: cmdFilters.includes('M'),
-        pc: cmdFilters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p'))),
-        wr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w'))),
-        gr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g'))),
-        bg: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj')),
-        p2wr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W'))),
-        p2gr: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G'))),
-        p2bg: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ')),
-        p1co: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')))),
-        p2co: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')))),
-        p1bc: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')))),
-        p2bc: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')))),
-        p1cz: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')))),
-        p2cz: expandPair(cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')))),
-        p1apc: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P'))),
-        eq: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e'))),
-        cd: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T'))),
+        pc: find('pc'),
+        wr: find('wr'),
+        gr: find('gr'),
+        bg: find('bg'),
+        p2wr: find('p2wr'),
+        p2gr: find('p2gr'),
+        p2bg: find('p2bg'),
+        p1co: expandPair(find('p1co')),
+        p2co: expandPair(find('p2co')),
+        p1bc: expandPair(find('p1bc')),
+        p2bc: expandPair(find('p2bc')),
+        p1cz: expandPair(find('p1cz')),
+        p2cz: expandPair(find('p2cz')),
+        p1apc: find('p1apc'),
+        eq: find('eq'),
+        cd: find('cd'),
         mpf: quoted('m'),
         st: quoted('t'),
         plf: quoted('pl'),
-        p1ob: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo'))),
-        p2ob: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO'))),
-        p1jb: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj'))),
-        p2jb: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ'))),
+        p1ob: find('p1ob'),
+        p2ob: find('p2ob'),
+        p1jb: find('p1jb'),
+        p2jb: find('p2jb'),
+        // Stricter than parseFilterTokens' meFilter: a restored command may
+        // contain other E-prefixed noise, so require an operator or a digit.
         me: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f)))),
         matchIDs: maTokens.length > 0 ? maTokens.map((t) => t.slice(2)).join(';') : '',
         tournamentIDs: tnTokens.length > 0 ? tnTokens.map((t) => t.slice(2)).join(';') : ''
