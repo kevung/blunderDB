@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand, parseFilterTokens } from '../services/searchFilterService.js';
+import { buildFilterTokens, buildSearchCommand, parseFilterTokens, filterTokenHint } from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -342,5 +342,43 @@ describe('parseFilterTokens', () => {
         expect(p.eqFilter).toBe('e10,50');
         expect(p.meFilter).toBe('E>5');
         expect(p.p1coFilter).toBe('o>2');
+    });
+});
+
+describe('filterTokenHint', () => {
+    test('range filters show the three operator forms', () => {
+        expect(filterTokenHint('Player Back Checker')).toBe('k>n · k<n · kn,m');
+        expect(filterTokenHint('Equity (millipoints)')).toBe('e>n · e<n · en,m');
+        expect(filterTokenHint('Opponent Jan Blot')).toBe('BJ>n · BJ<n · BJn,m');
+    });
+
+    test('flag filters show the bare token', () => {
+        expect(filterTokenHint('No Contact')).toBe('nc');
+        expect(filterTokenHint('Include Cube')).toBe('cube');
+        expect(filterTokenHint('Mirror Position')).toBe('M');
+    });
+
+    test('dice, text and date filters show their special forms', () => {
+        expect(filterTokenHint('Include Dice Roll')).toBe('D · D1');
+        expect(filterTokenHint('Search Text')).toBe('t"…"');
+        expect(filterTokenHint('Creation Date')).toBe('T>YYYY/MM/DD · T<YYYY/MM/DD');
+    });
+
+    test('unknown labels return empty string (no tooltip)', () => {
+        expect(filterTokenHint('Not A Filter')).toBe('');
+        expect(filterTokenHint('')).toBe('');
+    });
+
+    test('every hint begins with its declared token', () => {
+        // Guards against a prefix/typo drift between the hint and buildFilterTokens.
+        const cases = [
+            ['Win Rate', 'w'],
+            ['Opponent Win Rate', 'W'],
+            ['Player Checker in the Zone', 'z'],
+            ['Player Outfield Blot', 'bo']
+        ];
+        for (const [label, tok] of cases) {
+            expect(filterTokenHint(label).startsWith(tok)).toBe(true);
+        }
     });
 });
