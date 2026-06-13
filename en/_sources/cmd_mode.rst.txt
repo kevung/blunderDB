@@ -206,6 +206,7 @@ c'est-à-dire après le début de commande ``s``.
    "tnx,y", "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
    "idx", "Rechercher la position d'identifiant x (ex: id12)."
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
+   "pl'nom'", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D` ou `D1`)

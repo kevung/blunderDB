@@ -71,15 +71,15 @@
 \contentsline {subsection}{\numberline {2.4.4}Filtri di ricerca}{24}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Comandi vari}{27}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Scorciatoie da tastiera}{27}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Database}{27}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.1}Database}{28}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Posizione}{28}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigazione}{28}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Visualizzazione}{28}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Azioni}{28}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.4}Visualizzazione}{29}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Azioni}{29}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Strumenti}{29}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Riga di comando}{29}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Pannello cronologia di ricerca}{29}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Pannello libreria di filtri}{29}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.9}Pannello libreria di filtri}{30}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Pannello di analisi}{30}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Pannello dei match}{30}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Pannello Anki (ripetizione dilazionata)}{30}{subsection.2.5.12}%
@@ -95,7 +95,7 @@
 \contentsline {subsection}{\numberline {2.6.6}export — Esportare dati}{32}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Cercare posizioni}{33}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Elencare il contenuto}{34}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Visualizzare un match}{34}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.9}match — Visualizzare un match}{35}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Metadati del database}{35}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}edit — Modificare i metadati}{35}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Verificare l’integrità}{36}{subsection.2.6.12}%
@@ -105,20 +105,20 @@
 \contentsline {subsubsection}{Backup periodico}{37}{subsubsection*.27}%
 \contentsline {subsubsection}{Analisi degli errori}{37}{subsubsection*.28}%
 \contentsline {subsection}{\numberline {2.6.15}Codici di uscita}{37}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Domande frequenti (FAQ)}{37}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}A cosa serve blunderDB?}{37}{subsection.2.7.1}%
+\contentsline {section}{\numberline {2.7}Domande frequenti (FAQ)}{38}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}A cosa serve blunderDB?}{38}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Cosa ha motivato la creazione di blunderDB?}{38}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Come salvare lo stato del database corrente?}{38}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Devo creare database diversi per categorie diverse di posizioni?}{38}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}Come unire più database?}{38}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Quali formati di file di match sono supportati?}{38}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.6}Quali formati di file di match sono supportati?}{39}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Che cos’è una collezione?}{39}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Che cos’è l’EPC?}{39}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}blunderDB dispone di un’interfaccia a riga di comando?}{39}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}Posso modificare, copiare, condividere blunderDB?}{39}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Quale formato di dati utilizza blunderDB?}{39}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Quali sono stati i principi di progettazione di blunderDB?}{39}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Qual è l’architettura software di blunderDB?}{39}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.13}Qual è l’architettura software di blunderDB?}{40}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Su quali piattaforme funziona blunderDB?}{40}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Da dove proviene l’icona di blunderDB?}{40}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Modalità headless (server)}{40}{section.2.8}%
@@ -126,7 +126,7 @@
 \contentsline {subsection}{\numberline {2.8.2}Il demone \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{40}{subsection.2.8.2}%
 \contentsline {subsubsection}{Punti di accesso}{41}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL e multiutente}{41}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Migrare un database SQLite verso PostgreSQL}{41}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.4}Migrare un database SQLite verso PostgreSQL}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Il dispatcher generico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{42}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Appendice: Utilizzo avanzato dei filtri}{43}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Ricerca di posizioni da riga di comando}{43}{subsection.2.9.1}%
