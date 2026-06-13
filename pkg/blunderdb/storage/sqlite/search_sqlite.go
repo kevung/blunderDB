@@ -3,7 +3,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"iter"
 	"math"
@@ -299,8 +298,12 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 
 		var ana *domain.PositionAnalysis
 		if anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
-			var a domain.PositionAnalysis
-			if jsonErr := json.Unmarshal([]byte(anaJSON.String), &a); jsonErr == nil {
+			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage),
+			// so it must be decompressed before unmarshalling — a plain
+			// json.Unmarshal of the raw bytes silently fails (leaving ana nil),
+			// which broke the analysis-dependent Go-side filters (move pattern,
+			// and the win/gammon/equity fallbacks used by mirror search).
+			if a, decErr := engine.DecodeAnalysisFromStorage([]byte(anaJSON.String)); decErr == nil {
 				ana = &a
 			}
 		}
