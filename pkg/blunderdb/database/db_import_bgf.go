@@ -792,15 +792,24 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 			break // No more submoves
 		}
 
+		// from/to come from an untrusted .bgf file. Compute the board indices
+		// and skip the whole sub-move if either falls outside the 28-point
+		// board, so a malformed file can't panic. Legal BGF values (0..25)
+		// always map in range, so valid imports are unaffected.
 		if player == -1 {
 			// Green moves: Green's point N maps to board index (24-N)
 			// BGF board: index 0 = Green's 24-point, index 23 = Green's 1-point
 			// Green moves in decreasing direction (24→1→off)
-			var fromIdx int
-			if from == 25 {
-				fromIdx = 24 // Green's bar
-			} else {
+			fromIdx := 24 // Green's bar
+			if from != 25 {
 				fromIdx = 24 - from // Green's point N → board index (24-N)
+			}
+			toIdx := 26 // bear-off slot used when to == 0
+			if to != 0 {
+				toIdx = 24 - to // Green's point N → board index (24-N)
+			}
+			if fromIdx < 0 || fromIdx >= 28 || toIdx < 0 || toIdx >= 28 {
+				continue
 			}
 
 			// Remove checker from source
@@ -810,7 +819,6 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				// Bear off
 				boardState[26]++
 			} else {
-				toIdx := 24 - to // Green's point N → board index (24-N)
 				// Check for hit
 				if boardState[toIdx] < 0 {
 					// Hit Red checker - move it to Red's bar
@@ -823,11 +831,16 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 			// Red moves: Red's point N maps to board index (N-1)
 			// Red's point N = Green's point (25-N) = board index 24-(25-N) = N-1
 			// Red moves in increasing direction (from Green's perspective)
-			var fromIdx int
-			if from == 25 {
-				fromIdx = 25 // Red's bar
-			} else {
+			fromIdx := 25 // Red's bar
+			if from != 25 {
 				fromIdx = from - 1 // Red's point N → board index (N-1)
+			}
+			toIdx := 27 // bear-off slot used when to == 0
+			if to != 0 {
+				toIdx = to - 1 // Red's point N → board index (N-1)
+			}
+			if fromIdx < 0 || fromIdx >= 28 || toIdx < 0 || toIdx >= 28 {
+				continue
 			}
 
 			// Remove checker from source (Red checkers are negative)
@@ -837,7 +850,6 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				// Bear off
 				boardState[27]--
 			} else {
-				toIdx := to - 1 // Red's point N → board index (N-1)
 				// Check for hit
 				if boardState[toIdx] > 0 {
 					// Hit Green checker - move it to Green's bar
