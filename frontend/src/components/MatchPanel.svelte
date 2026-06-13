@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
+    import { nextSort } from '../utils/tableSort.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -309,18 +310,9 @@
 
     // --- Sorting helpers ---
     function handleSort(column) {
-        if (sortColumn === column) {
-            if (sortDirection === 'asc') {
-                sortDirection = 'desc';
-            } else {
-                // Reset sorting
-                sortColumn = null;
-                sortDirection = 'asc';
-            }
-        } else {
-            sortColumn = column;
-            sortDirection = 'asc';
-        }
+        const next = nextSort(sortColumn, sortDirection, column, { tristate: true });
+        sortColumn = next.column;
+        sortDirection = next.direction;
     }
 
     let sortedMatches = $derived.by(() => sortMatches(matches, sortColumn, sortDirection));

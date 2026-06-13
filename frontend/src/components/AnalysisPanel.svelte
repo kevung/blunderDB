@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { nextSort } from '../utils/tableSort.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
@@ -146,13 +147,12 @@
     });
 
     function handleSort(column) {
-        if (sortColumn === column) {
-            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortColumn = column;
+        const next = nextSort(sortColumn, sortDirection, column, {
             // Default direction: desc for numeric, asc for string
-            sortDirection = sortableColumns[column].type === 'string' ? 'asc' : 'desc';
-        }
+            defaultDir: sortableColumns[column].type === 'string' ? 'asc' : 'desc'
+        });
+        sortColumn = next.column;
+        sortDirection = next.direction;
     }
 
     // Reactive sorted moves array
