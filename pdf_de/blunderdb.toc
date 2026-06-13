@@ -43,10 +43,10 @@
 \contentsline {subsection}{\numberline {2.2.18}Metadaten\sphinxhyphen {}Panel}{15}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Protokoll\sphinxhyphen {}Panel}{15}{subsection.2.2.19}%
 \contentsline {section}{\numberline {2.3}Benutzerhandbuch}{15}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{16}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{15}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Eine Datenbank importieren und zusammenführen}{16}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{17}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{16}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Eine Position zur Datenbank hinzufügen}{17}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Eine Position mit einem Tag versehen}{17}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Eine Position löschen}{17}{subsection.2.3.7}%
