@@ -230,6 +230,7 @@
         "searchTextHint": "検索テキスト",
         "selectFilter": "フィルターを選択",
         "tournamentIdsHint": "トーナメント ID",
+        "playerHint": "プレイヤー名（どちらの席でも）",
         "decision": {
             "checker": "チェッカー",
             "cube": "キューブ",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "最善手またはキューブ判断",
             "creationDate": "作成日",
             "matchIDs": "マッチID",
-            "tournamentIDs": "トーナメントID"
+            "tournamentIDs": "トーナメントID",
+            "player": "プレイヤー"
         },
         "filterGroups": {
             "display": "表示",

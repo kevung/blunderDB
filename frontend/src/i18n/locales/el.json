@@ -230,6 +230,7 @@
         "searchTextHint": "Κείμενο αναζήτησης",
         "selectFilter": "Επιλέξτε ένα φίλτρο",
         "tournamentIdsHint": "ID τουρνουά",
+        "playerHint": "Όνομα παίκτη (οποιαδήποτε πλευρά)",
         "decision": {
             "checker": "Πιόνια",
             "cube": "Κύβος",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Καλύτερη κίνηση ή απόφαση κύβου",
             "creationDate": "Ημερομηνία δημιουργίας",
             "matchIDs": "Αναγνωριστικά αγώνα",
-            "tournamentIDs": "Αναγνωριστικά τουρνουά"
+            "tournamentIDs": "Αναγνωριστικά τουρνουά",
+            "player": "Παίκτης"
         },
         "filterGroups": {
             "display": "Εμφάνιση",

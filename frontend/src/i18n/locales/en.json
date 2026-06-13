@@ -230,6 +230,7 @@
         "searchTextHint": "Search text",
         "selectFilter": "Select a filter",
         "tournamentIdsHint": "Tournament IDs",
+        "playerHint": "Player name (either side)",
         "decision": {
             "checker": "Checker",
             "cube": "Cube",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Best Move or Cube Decision",
             "creationDate": "Creation Date",
             "matchIDs": "Match IDs",
-            "tournamentIDs": "Tournament IDs"
+            "tournamentIDs": "Tournament IDs",
+            "player": "Player"
         },
         "filterGroups": {
             "display": "Display",

@@ -262,7 +262,8 @@ function handleSubSearch(command, positions) {
                 currentIDs,
                 false,
                 parsedFilters.diceRollMode,
-                parsedFilters.positionIDsFilter
+                parsedFilters.positionIDsFilter,
+                parsedFilters.playerFilter
             );
         }
     } else {
@@ -366,7 +367,8 @@ function handleSearch(command) {
                 '',
                 false,
                 parsedFilters.diceRollMode,
-                parsedFilters.positionIDsFilter
+                parsedFilters.positionIDsFilter,
+                parsedFilters.playerFilter
             );
         }
     } else {
@@ -385,7 +387,8 @@ export function parseFilters(filters, command) {
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
-    const pipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+    // Exclude `pl"…"` (player filter) — it starts with 'p' but is not a pipcount.
+    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
     const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
@@ -423,6 +426,10 @@ export function parseFilters(filters, command) {
     const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
     const searchTextMatch = command.match(/t["'][^"']*["']/);
     const searchText = searchTextMatch ? searchTextMatch[0] : '';
+    // Player filter `pl"Name"` — matched on the raw command so names with spaces
+    // survive (the space-split `filters` array would break them).
+    const playerMatch = command.match(/pl["'][^"']*["']/);
+    const playerFilter = playerMatch ? playerMatch[0] : '';
     const player1OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
     const player2OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
     const player1JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
@@ -486,6 +493,7 @@ export function parseFilters(filters, command) {
         moveErrorFilter,
         matchIDsFilter,
         tournamentIDsFilter,
+        playerFilter,
         positionIDsFilter
     };
 }

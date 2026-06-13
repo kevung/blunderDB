@@ -130,7 +130,8 @@ export function buildFilterTokens(activeFilters, options) {
         player2JanBlotRangeMin,
         player2JanBlotRangeMax,
         matchIDsInput,
-        tournamentIDsInput
+        tournamentIDsInput,
+        playerName
     } = options;
 
     return activeFilters.map((filter) => {
@@ -217,6 +218,8 @@ export function buildFilterTokens(activeFilters, options) {
                       : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
             case 'Search Text':
                 return `t"${searchText}"`;
+            case 'Player':
+                return `pl"${playerName}"`;
             case 'Best Move or Cube Decision':
                 return `m"${movePattern}"`;
             case 'Creation Date': {
@@ -270,7 +273,7 @@ export function buildFilterTokens(activeFilters, options) {
 export function buildSearchCommand(tokens) {
     const commandParts = ['s'];
     tokens.forEach((token) => {
-        if (token !== 't""' && token !== 'm""') {
+        if (token !== 't""' && token !== 'm""' && token !== 'pl""') {
             commandParts.push(token);
         }
     });
@@ -304,7 +307,8 @@ export function parseFilterTokens(tokens) {
         incScore: tokens.includes('score'),
         ncFilter: tokens.includes('nc'),
         mirFilter: tokens.includes('M'),
-        pcFilter: tokens.find((f) => f.startsWith('p')),
+        pcFilter: tokens.find((f) => f.startsWith('p') && !f.startsWith('pl')),
+        plFilter: tokens.find((f) => f.startsWith('pl')),
         wrFilter: tokens.find((f) => f.startsWith('w')),
         grFilter: tokens.find((f) => f.startsWith('g')),
         bgFilter: tokens.find((f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj')),
@@ -372,6 +376,7 @@ const FILTER_TOKENS = {
     'Opponent Jan Blot': { token: 'BJ', type: 'range' },
     'Search Text': { token: 't', type: 'text' },
     'Best Move or Cube Decision': { token: 'm', type: 'text' },
+    Player: { token: 'pl', type: 'text' },
     'Creation Date': { token: 'T', type: 'date' }
 };
 

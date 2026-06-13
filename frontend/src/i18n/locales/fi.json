@@ -230,6 +230,7 @@
         "searchTextHint": "Hakuteksti",
         "selectFilter": "Valitse suodatin",
         "tournamentIdsHint": "Turnaustunnukset",
+        "playerHint": "Pelaajan nimi (kumpi tahansa)",
         "decision": {
             "checker": "Siirto",
             "cube": "Tuplaus",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Paras siirto tai kuutiopäätös",
             "creationDate": "Luontipäivä",
             "matchIDs": "Ottelun tunnukset",
-            "tournamentIDs": "Turnauksen tunnukset"
+            "tournamentIDs": "Turnauksen tunnukset",
+            "player": "Pelaaja"
         },
         "filterGroups": {
             "display": "Näyttö",

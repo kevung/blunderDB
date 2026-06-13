@@ -230,6 +230,7 @@
         "searchTextHint": "Texte de recherche",
         "selectFilter": "Sélectionner un filtre",
         "tournamentIdsHint": "ID de tournoi",
+        "playerHint": "Nom du joueur (l'un ou l'autre camp)",
         "decision": {
             "checker": "Pions",
             "cube": "Videau",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Meilleur coup ou décision de videau",
             "creationDate": "Date de création",
             "matchIDs": "ID de match",
-            "tournamentIDs": "ID de tournoi"
+            "tournamentIDs": "ID de tournoi",
+            "player": "Joueur"
         },
         "filterGroups": {
             "display": "Affichage",

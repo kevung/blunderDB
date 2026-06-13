@@ -230,6 +230,7 @@
         "searchTextHint": "Texto de búsqueda",
         "selectFilter": "Selecciona un filtro",
         "tournamentIdsHint": "ID de torneos",
+        "playerHint": "Nombre del jugador (cualquier lado)",
         "decision": {
             "checker": "Fichas",
             "cube": "Cubo",
@@ -268,7 +269,8 @@
             "bestMoveOrCubeDecision": "Mejor jugada o decisión de cubo",
             "creationDate": "Fecha de creación",
             "matchIDs": "ID de partida",
-            "tournamentIDs": "ID de torneo"
+            "tournamentIDs": "ID de torneo",
+            "player": "Jugador"
         },
         "filterGroups": {
             "display": "Visualización",
