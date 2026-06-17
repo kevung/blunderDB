@@ -21,9 +21,9 @@ var _ storage.PositionStore = (*positionStore)(nil)
 // scanner is satisfied by both pgx.Row and pgx.Rows.
 type scanner interface{ Scan(dest ...any) error }
 
-// tenantID maps a scope string to the tenant_id column value. Scope is empty
-// today (single-tenant) and maps to tenant 0; once multi-tenancy lands it
-// carries the numeric tenant identifier.
+// tenantID maps a scope string to the tenant_id column value. An empty scope
+// maps to tenant 0 (the reserved public tenant). gammonGo sends the numeric
+// tenant identifier via the X-Tenant-ID header for every call.
 func tenantID(scope string) int64 {
 	if scope == "" {
 		return 0
