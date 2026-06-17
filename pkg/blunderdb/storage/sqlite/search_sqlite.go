@@ -265,7 +265,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		a.best_cube_action
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + where.String() + ` ORDER BY p.id`
+	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {

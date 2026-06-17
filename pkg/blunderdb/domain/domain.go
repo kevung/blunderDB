@@ -189,6 +189,30 @@ type SearchFilters struct {
 
 	PositionIDsFilter     string `json:"positionIDsFilter"`
 	RestrictToPositionIDs string `json:"restrictToPositionIDs"`
+
+	// Sort orders the result set. "" keeps the stable engine order (position id).
+	// Analysis-backed keys ("error", "winrate", "close") order by the denormalised
+	// analysis columns; positions without an analysis sort last (NULLS LAST), so
+	// they are relegated, never hidden. See SearchOrderByClause.
+	Sort string `json:"sort"`
+}
+
+// SearchOrderByClause returns the ORDER BY body (column list, without the
+// "ORDER BY" keyword) for a search sort key. The search query aliases the
+// position as `p` and LEFT JOINs the analysis as `a`. An unknown/empty key keeps
+// the stable engine order. Used by every storage backend so the order cannot
+// drift between SQLite (Desktop) and Postgres (server).
+func SearchOrderByClause(sort string) string {
+	switch sort {
+	case "error": // biggest blunders first (largest played-move equity error)
+		return "a.best_move_equity_error DESC NULLS LAST, p.id"
+	case "winrate": // strongest for the player on roll
+		return "a.player1_win_rate DESC NULLS LAST, p.id"
+	case "close": // close cube decisions first
+		return "a.is_close_cube DESC NULLS LAST, p.id"
+	default:
+		return "p.id"
+	}
 }
 
 // ExportOptions bundles all parameters for ExportDatabase.

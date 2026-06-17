@@ -256,7 +256,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		a.id, a.data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + where.String() + ` ORDER BY p.id`
+	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort)
 
 	rows, err := s.db.Query(ctx, rebind(query), args...)
 	if err != nil {
