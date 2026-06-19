@@ -3,46 +3,52 @@
 \contentsline {chapter}{\numberline {1}История версий}{3}{chapter.1}%
 \contentsline {chapter}{\numberline {2}Содержание}{5}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Загрузка и установка}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Установка в Linux}{5}{subsection.2.1.1}%
+\contentsline {subsubsection}{Нативные пакеты (.deb / .rpm)}{5}{subsubsection*.3}%
+\contentsline {subsubsection}{Arch Linux (AUR)}{6}{subsubsection*.4}%
+\contentsline {subsubsection}{Архив .tar.gz}{6}{subsubsection*.5}%
+\contentsline {subsubsection}{Необработанный двоичный файл (продвинутый способ)}{6}{subsubsection*.6}%
+\contentsline {subsection}{\numberline {2.1.2}Предупреждения для Windows и Mac}{6}{subsection.2.1.2}%
 \contentsline {section}{\numberline {2.2}Руководство}{6}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}Введение}{6}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Основные взаимодействия}{6}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Описание интерфейса}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.2}Основные взаимодействия}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Описание интерфейса}{7}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4}Конфигурация}{8}{subsection.2.2.4}%
 \contentsline {subsection}{\numberline {2.2.5}Обучающие туры и образец базы данных}{8}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}Навигация по позициям}{8}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Редактирование позиций}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.6}Навигация по позициям}{9}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Редактирование позиций}{9}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}Командная строка}{9}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}Панель анализа}{9}{subsection.2.2.9}%
-\contentsline {subsection}{\numberline {2.2.10}Панель комментариев}{9}{subsection.2.2.10}%
-\contentsline {subsection}{\numberline {2.2.11}Панель поиска}{9}{subsection.2.2.11}%
+\contentsline {subsection}{\numberline {2.2.10}Панель комментариев}{10}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.11}Панель поиска}{10}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Панель коллекций}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Панель матчей}{10}{subsection.2.2.13}%
-\contentsline {subsection}{\numberline {2.2.14}Панель турниров}{10}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Панель Stats}{10}{subsection.2.2.15}%
-\contentsline {subsubsection}{Введение}{10}{subsubsection*.3}%
-\contentsline {subsubsection}{Открытие панели}{11}{subsubsection*.4}%
-\contentsline {subsubsection}{Панель фильтров}{11}{subsubsection*.5}%
-\contentsline {paragraph}{Перспектива игрока}{11}{paragraph*.6}%
-\contentsline {paragraph}{Доступные фильтры}{11}{paragraph*.7}%
-\contentsline {subsubsection}{Переключение PR / MWC}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Вкладка Dashboard}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Карточки уровня}{12}{paragraph*.10}%
-\contentsline {paragraph}{Скользящий PR за последние N решений}{13}{paragraph*.11}%
-\contentsline {paragraph}{Топ грубых ошибок}{13}{paragraph*.12}%
-\contentsline {subsubsection}{Вкладка Progression}{13}{subsubsection*.13}%
-\contentsline {paragraph}{График по турнирам}{13}{paragraph*.14}%
-\contentsline {paragraph}{Диаграмма рассеяния по матчам}{13}{paragraph*.15}%
-\contentsline {subsubsection}{Вкладка Erreurs}{13}{subsubsection*.16}%
-\contentsline {paragraph}{Разбивка по действиям куба}{13}{paragraph*.17}%
-\contentsline {paragraph}{Сравнение Checker / Cube}{14}{paragraph*.18}%
-\contentsline {paragraph}{Гистограмма величин ошибок}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Правило агрегации}{14}{subsubsection*.20}%
-\contentsline {subsubsection}{MWC: ограничения}{14}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.16}Панель EPC}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.14}Панель турниров}{11}{subsection.2.2.14}%
+\contentsline {subsection}{\numberline {2.2.15}Панель Stats}{11}{subsection.2.2.15}%
+\contentsline {subsubsection}{Введение}{11}{subsubsection*.7}%
+\contentsline {subsubsection}{Открытие панели}{11}{subsubsection*.8}%
+\contentsline {subsubsection}{Панель фильтров}{11}{subsubsection*.9}%
+\contentsline {paragraph}{Перспектива игрока}{11}{paragraph*.10}%
+\contentsline {paragraph}{Доступные фильтры}{12}{paragraph*.11}%
+\contentsline {subsubsection}{Переключение PR / MWC}{12}{subsubsection*.12}%
+\contentsline {subsubsection}{Вкладка Dashboard}{13}{subsubsection*.13}%
+\contentsline {paragraph}{Карточки уровня}{13}{paragraph*.14}%
+\contentsline {paragraph}{Скользящий PR за последние N решений}{13}{paragraph*.15}%
+\contentsline {paragraph}{Топ грубых ошибок}{13}{paragraph*.16}%
+\contentsline {subsubsection}{Вкладка Progression}{13}{subsubsection*.17}%
+\contentsline {paragraph}{График по турнирам}{13}{paragraph*.18}%
+\contentsline {paragraph}{Диаграмма рассеяния по матчам}{13}{paragraph*.19}%
+\contentsline {subsubsection}{Вкладка Erreurs}{14}{subsubsection*.20}%
+\contentsline {paragraph}{Разбивка по действиям куба}{14}{paragraph*.21}%
+\contentsline {paragraph}{Сравнение Checker / Cube}{14}{paragraph*.22}%
+\contentsline {paragraph}{Гистограмма величин ошибок}{14}{paragraph*.23}%
+\contentsline {subsubsection}{Правило агрегации}{14}{subsubsection*.24}%
+\contentsline {subsubsection}{MWC: ограничения}{14}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {2.2.16}Панель EPC}{15}{subsection.2.2.16}%
 \contentsline {subsection}{\numberline {2.2.17}Панель Anki}{15}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Панель метаданных}{15}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Панель журнала}{15}{subsection.2.2.19}%
-\contentsline {section}{\numberline {2.3}Руководство пользователя}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.19}Панель журнала}{16}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}Руководство пользователя}{16}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Импорт и слияние базы данных}{16}{subsection.2.3.3}%
@@ -89,9 +95,9 @@
 \contentsline {subsection}{\numberline {2.6.3}Доступные команды}{31}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Создать базу данных}{31}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}import — Импорт данных}{32}{subsection.2.6.5}%
-\contentsline {subsubsection}{Импорт матча}{32}{subsubsection*.23}%
-\contentsline {subsubsection}{Импорт позиций}{32}{subsubsection*.24}%
-\contentsline {subsubsection}{Пакетный импорт}{32}{subsubsection*.25}%
+\contentsline {subsubsection}{Импорт матча}{32}{subsubsection*.27}%
+\contentsline {subsubsection}{Импорт позиций}{32}{subsubsection*.28}%
+\contentsline {subsubsection}{Пакетный импорт}{32}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.6.6}export — Экспорт данных}{33}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Поиск позиций}{33}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Список содержимого}{34}{subsection.2.6.8}%
@@ -101,9 +107,9 @@
 \contentsline {subsection}{\numberline {2.6.12}verify — Проверка целостности}{36}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Удалить данные}{37}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}Примеры рабочих процессов}{37}{subsection.2.6.14}%
-\contentsline {subsubsection}{Импорт каталога турнира}{37}{subsubsection*.26}%
-\contentsline {subsubsection}{Регулярное резервное копирование}{37}{subsubsection*.27}%
-\contentsline {subsubsection}{Анализ ошибок}{37}{subsubsection*.28}%
+\contentsline {subsubsection}{Импорт каталога турнира}{37}{subsubsection*.30}%
+\contentsline {subsubsection}{Регулярное резервное копирование}{37}{subsubsection*.31}%
+\contentsline {subsubsection}{Анализ ошибок}{37}{subsubsection*.32}%
 \contentsline {subsection}{\numberline {2.6.15}Коды возврата}{38}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Часто задаваемые вопросы}{38}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Для чего нужен blunderDB?}{38}{subsection.2.7.1}%
@@ -124,7 +130,7 @@
 \contentsline {section}{\numberline {2.8}Безголовый режим (сервер)}{40}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Обзор}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Демон \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{41}{subsection.2.8.2}%
-\contentsline {subsubsection}{Точки доступа}{42}{subsubsection*.29}%
+\contentsline {subsubsection}{Точки доступа}{42}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{42}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{43}{subsection.2.8.5}%
@@ -151,16 +157,16 @@
 \contentsline {subsection}{\numberline {2.12.8}Version 1.7.0}{58}{subsection.2.12.8}%
 \contentsline {section}{\numberline {2.13}Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB}{58}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Формальные определения}{59}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{59}{subsubsection*.43}%
-\contentsline {subsubsection}{Snowie Error Rate}{59}{subsubsection*.44}%
-\contentsline {subsubsection}{Потеря MWC (Match Winning Chance)}{59}{subsubsection*.45}%
+\contentsline {subsubsection}{PR (Performance Rate)}{59}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{59}{subsubsection*.48}%
+\contentsline {subsubsection}{Потеря MWC (Match Winning Chance)}{59}{subsubsection*.49}%
 \contentsline {subsection}{\numberline {2.13.2}Засчитанные решения в знаменателе PR}{60}{subsection.2.13.2}%
-\contentsline {subsubsection}{Ходы шашками — засчитанные решения}{60}{subsubsection*.46}%
-\contentsline {subsubsection}{Решения по кубу — засчитанные решения}{60}{subsubsection*.47}%
-\contentsline {subsubsection}{Сводка фильтра}{60}{subsubsection*.48}%
+\contentsline {subsubsection}{Ходы шашками — засчитанные решения}{60}{subsubsection*.50}%
+\contentsline {subsubsection}{Решения по кубу — засчитанные решения}{60}{subsubsection*.51}%
+\contentsline {subsubsection}{Сводка фильтра}{60}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}Соответствие blunderDB ↔ XG ↔ gnuBG}{60}{subsection.2.13.3}%
-\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{60}{subsubsection*.49}%
-\contentsline {subsubsection}{Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)}{60}{subsubsection*.50}%
+\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{60}{subsubsection*.53}%
+\contentsline {subsubsection}{Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)}{60}{subsubsection*.54}%
 \contentsline {subsection}{\numberline {2.13.4}Проверка собственных данных}{61}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}Ссылки gnuBG}{61}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Контакты}{63}{chapter.3}%

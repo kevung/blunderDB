@@ -3,46 +3,52 @@
 \contentsline {chapter}{\numberline {1}Cronologia delle versioni}{3}{chapter.1}%
 \contentsline {chapter}{\numberline {2}Indice}{5}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Download e installazione}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Installazione su Linux}{5}{subsection.2.1.1}%
+\contentsline {subsubsection}{Pacchetti nativi (.deb / .rpm)}{5}{subsubsection*.3}%
+\contentsline {subsubsection}{Arch Linux (AUR)}{6}{subsubsection*.4}%
+\contentsline {subsubsection}{Archivio .tar.gz}{6}{subsubsection*.5}%
+\contentsline {subsubsection}{Binario grezzo (metodo avanzato)}{6}{subsubsection*.6}%
+\contentsline {subsection}{\numberline {2.1.2}Avvertenze per Windows e Mac}{6}{subsection.2.1.2}%
 \contentsline {section}{\numberline {2.2}Manuale}{6}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}Introduzione}{6}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Interazioni principali}{6}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Descrizione dell’interfaccia}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.2}Interazioni principali}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Descrizione dell’interfaccia}{7}{subsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.2.4}Configurazione}{8}{subsection.2.2.4}%
 \contentsline {subsection}{\numberline {2.2.5}Visite guidate e database di esempio}{8}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}Navigazione tra le posizioni}{8}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Modifica delle posizioni}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.6}Navigazione tra le posizioni}{9}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Modifica delle posizioni}{9}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}La riga di comando}{9}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}Pannello Analisi}{9}{subsection.2.2.9}%
-\contentsline {subsection}{\numberline {2.2.10}Pannello Commenti}{9}{subsection.2.2.10}%
-\contentsline {subsection}{\numberline {2.2.11}Pannello Ricerca}{9}{subsection.2.2.11}%
+\contentsline {subsection}{\numberline {2.2.10}Pannello Commenti}{10}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.11}Pannello Ricerca}{10}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Pannello Raccolte}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Pannello Match}{10}{subsection.2.2.13}%
-\contentsline {subsection}{\numberline {2.2.14}Pannello Tornei}{10}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Pannello Stats}{10}{subsection.2.2.15}%
-\contentsline {subsubsection}{Introduzione}{10}{subsubsection*.3}%
-\contentsline {subsubsection}{Apertura del pannello}{11}{subsubsection*.4}%
-\contentsline {subsubsection}{Barra dei filtri}{11}{subsubsection*.5}%
-\contentsline {paragraph}{Prospettiva del giocatore}{11}{paragraph*.6}%
-\contentsline {paragraph}{Filtri disponibili}{11}{paragraph*.7}%
-\contentsline {subsubsection}{Commutazione PR / MWC}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Scheda Dashboard}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Schede di livello}{12}{paragraph*.10}%
-\contentsline {paragraph}{PR mobile sulle ultime N decisioni}{13}{paragraph*.11}%
-\contentsline {paragraph}{Top blunder}{13}{paragraph*.12}%
-\contentsline {subsubsection}{Scheda Progressione}{13}{subsubsection*.13}%
-\contentsline {paragraph}{Grafico a linee per torneo}{13}{paragraph*.14}%
-\contentsline {paragraph}{Scatter plot per match}{13}{paragraph*.15}%
-\contentsline {subsubsection}{Scheda Errori}{13}{subsubsection*.16}%
-\contentsline {paragraph}{Ripartizione per azione di cubo}{13}{paragraph*.17}%
-\contentsline {paragraph}{Confronto Checker / Cube}{14}{paragraph*.18}%
-\contentsline {paragraph}{Istogramma delle magnitudo d’errore}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Regola di aggregazione}{14}{subsubsection*.20}%
-\contentsline {subsubsection}{MWC: limitazioni}{14}{subsubsection*.21}%
-\contentsline {subsection}{\numberline {2.2.16}Pannello EPC}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.14}Pannello Tornei}{11}{subsection.2.2.14}%
+\contentsline {subsection}{\numberline {2.2.15}Pannello Stats}{11}{subsection.2.2.15}%
+\contentsline {subsubsection}{Introduzione}{11}{subsubsection*.7}%
+\contentsline {subsubsection}{Apertura del pannello}{11}{subsubsection*.8}%
+\contentsline {subsubsection}{Barra dei filtri}{11}{subsubsection*.9}%
+\contentsline {paragraph}{Prospettiva del giocatore}{11}{paragraph*.10}%
+\contentsline {paragraph}{Filtri disponibili}{12}{paragraph*.11}%
+\contentsline {subsubsection}{Commutazione PR / MWC}{12}{subsubsection*.12}%
+\contentsline {subsubsection}{Scheda Dashboard}{12}{subsubsection*.13}%
+\contentsline {paragraph}{Schede di livello}{13}{paragraph*.14}%
+\contentsline {paragraph}{PR mobile sulle ultime N decisioni}{13}{paragraph*.15}%
+\contentsline {paragraph}{Top blunder}{13}{paragraph*.16}%
+\contentsline {subsubsection}{Scheda Progressione}{13}{subsubsection*.17}%
+\contentsline {paragraph}{Grafico a linee per torneo}{13}{paragraph*.18}%
+\contentsline {paragraph}{Scatter plot per match}{13}{paragraph*.19}%
+\contentsline {subsubsection}{Scheda Errori}{14}{subsubsection*.20}%
+\contentsline {paragraph}{Ripartizione per azione di cubo}{14}{paragraph*.21}%
+\contentsline {paragraph}{Confronto Checker / Cube}{14}{paragraph*.22}%
+\contentsline {paragraph}{Istogramma delle magnitudo d’errore}{14}{paragraph*.23}%
+\contentsline {subsubsection}{Regola di aggregazione}{14}{subsubsection*.24}%
+\contentsline {subsubsection}{MWC: limitazioni}{14}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {2.2.16}Pannello EPC}{15}{subsection.2.2.16}%
 \contentsline {subsection}{\numberline {2.2.17}Pannello Anki}{15}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Pannello Metadati}{15}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Pannello Registro}{15}{subsection.2.2.19}%
-\contentsline {section}{\numberline {2.3}Guida utente}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.19}Pannello Registro}{16}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}Guida utente}{16}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{16}{subsection.2.3.3}%
@@ -89,9 +95,9 @@
 \contentsline {subsection}{\numberline {2.6.3}Comandi disponibili}{31}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Creare un database}{31}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}import — Importare dati}{32}{subsection.2.6.5}%
-\contentsline {subsubsection}{Import di un match}{32}{subsubsection*.23}%
-\contentsline {subsubsection}{Import di posizioni}{32}{subsubsection*.24}%
-\contentsline {subsubsection}{Import in lotto}{32}{subsubsection*.25}%
+\contentsline {subsubsection}{Import di un match}{32}{subsubsection*.27}%
+\contentsline {subsubsection}{Import di posizioni}{32}{subsubsection*.28}%
+\contentsline {subsubsection}{Import in lotto}{32}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.6.6}export — Esportare dati}{32}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Cercare posizioni}{33}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Elencare il contenuto}{34}{subsection.2.6.8}%
@@ -101,9 +107,9 @@
 \contentsline {subsection}{\numberline {2.6.12}verify — Verificare l’integrità}{36}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Eliminare dati}{36}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}Esempi di flusso di lavoro}{37}{subsection.2.6.14}%
-\contentsline {subsubsection}{Import di una cartella di torneo}{37}{subsubsection*.26}%
-\contentsline {subsubsection}{Backup periodico}{37}{subsubsection*.27}%
-\contentsline {subsubsection}{Analisi degli errori}{37}{subsubsection*.28}%
+\contentsline {subsubsection}{Import di una cartella di torneo}{37}{subsubsection*.30}%
+\contentsline {subsubsection}{Backup periodico}{37}{subsubsection*.31}%
+\contentsline {subsubsection}{Analisi degli errori}{37}{subsubsection*.32}%
 \contentsline {subsection}{\numberline {2.6.15}Codici di uscita}{37}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Domande frequenti (FAQ)}{38}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}A cosa serve blunderDB?}{38}{subsection.2.7.1}%
@@ -124,7 +130,7 @@
 \contentsline {section}{\numberline {2.8}Modalità headless (server)}{40}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Panoramica}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Il demone \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{40}{subsection.2.8.2}%
-\contentsline {subsubsection}{Punti di accesso}{41}{subsubsection*.29}%
+\contentsline {subsubsection}{Punti di accesso}{41}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL e multiutente}{41}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Migrare un database SQLite verso PostgreSQL}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Il dispatcher generico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{42}{subsection.2.8.5}%
@@ -151,16 +157,16 @@
 \contentsline {subsection}{\numberline {2.12.8}Versione 1.7.0}{57}{subsection.2.12.8}%
 \contentsline {section}{\numberline {2.13}Appendice: modello statistico — allineamento XG / gnuBG / blunderDB}{57}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Definizioni formali}{58}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.43}%
-\contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.44}%
-\contentsline {subsubsection}{Perdita di MWC (Match Winning Chance)}{58}{subsubsection*.45}%
+\contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.48}%
+\contentsline {subsubsection}{Perdita di MWC (Match Winning Chance)}{58}{subsubsection*.49}%
 \contentsline {subsection}{\numberline {2.13.2}Decisioni conteggiate nel denominatore del PR}{59}{subsection.2.13.2}%
-\contentsline {subsubsection}{Mosse di pedine — decisioni conteggiate}{59}{subsubsection*.46}%
-\contentsline {subsubsection}{Decisioni di cubo — decisioni conteggiate}{59}{subsubsection*.47}%
-\contentsline {subsubsection}{Riepilogo del filtro}{59}{subsubsection*.48}%
+\contentsline {subsubsection}{Mosse di pedine — decisioni conteggiate}{59}{subsubsection*.50}%
+\contentsline {subsubsection}{Decisioni di cubo — decisioni conteggiate}{59}{subsubsection*.51}%
+\contentsline {subsubsection}{Riepilogo del filtro}{59}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}Corrispondenza blunderDB ↔ XG ↔ gnuBG}{59}{subsection.2.13.3}%
-\contentsline {subsubsection}{Confronto XG ↔ blunderDB (stesso motore di analisi)}{59}{subsubsection*.49}%
-\contentsline {subsubsection}{Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)}{59}{subsubsection*.50}%
+\contentsline {subsubsection}{Confronto XG ↔ blunderDB (stesso motore di analisi)}{59}{subsubsection*.53}%
+\contentsline {subsubsection}{Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)}{59}{subsubsection*.54}%
 \contentsline {subsection}{\numberline {2.13.4}Convalidare i propri valori}{60}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}Riferimento gnuBG}{60}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Contatti}{61}{chapter.3}%

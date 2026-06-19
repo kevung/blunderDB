@@ -48,7 +48,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Λήψη και εγκατάσταση</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-sous-linux">1.1. Εγκατάσταση σε Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paquets-natifs-deb-rpm">1.1.1. Εγγενή πακέτα (.deb / .rpm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arch-linux-aur">1.1.2. Arch Linux (AUR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-tar-gz">1.1.3. Αρχείο .tar.gz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#binaire-brut-methode-avancee">1.1.4. Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#avertissements-windows-et-mac">1.2. Προειδοποιήσεις για Windows και Mac</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
@@ -100,14 +110,47 @@
 <p class="admonition-title">Σημείωση</p>
 <p>Το blunderDB χρησιμοποιεί το Webview2 για την απόδοση του γραφικού περιβάλλοντος. Είναι πολύ πιθανό το Webview2 να είναι ήδη εγκατεστημένο εγγενώς στο λειτουργικό σας σύστημα. Σε αντίθετη περίπτωση, η πρώτη εκτέλεση του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν απαιτείται καμία ενέργεια από τον χρήστη.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Σημείωση</p>
-<p>Στο Linux, εάν το blunderDB δεν είναι εκτελέσιμο μετά τη λήψη, εκτελέστε σε ένα τερματικό την εντολή <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">./blunderDB-linux-x.y.z</span></code> όπου x, y, z αντιστοιχούν στην έκδοση που κατεβάσατε.</p>
+<section id="installation-sous-linux">
+<h2><span class="section-number">1.1. </span>Εγκατάσταση σε Linux<a class="headerlink" href="#installation-sous-linux" title="Link to this heading"></a></h2>
+<p>Για το Linux προσφέρονται διάφορες μορφές. Τα παρακάτω πακέτα και αρχεία <strong>καθιστούν το blunderDB αυτόματα εκτελέσιμο</strong>: σε αντίθεση με το ακατέργαστο εκτελέσιμο που λαμβάνεται μέσω προγράμματος περιήγησης, αποφεύγουν την εκτέλεση της εντολής <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span></code> σε κάθε λήψη ή ενημέρωση. Δημιουργούν επίσης μια καταχώριση στο μενού εφαρμογών.</p>
+<section id="paquets-natifs-deb-rpm">
+<h3><span class="section-number">1.1.1. </span>Εγγενή πακέτα (.deb / .rpm)<a class="headerlink" href="#paquets-natifs-deb-rpm" title="Link to this heading"></a></h3>
+<p>Συνιστώμενη μέθοδος σε Debian, Ubuntu και Linux Mint (<code class="docutils literal notranslate"><span class="pre">.deb</span></code>) καθώς και σε Fedora και openSUSE (<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). Ο διαχειριστής πακέτων εγκαθιστά αυτόματα την κατάλληλη εξάρτηση webkit2gtk. Αντικαταστήστε το <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> με την έκδοση που λάβατε:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./blunderdb_x.y.z_amd64.deb<span class="w">     </span><span class="c1"># Debian / Ubuntu / Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./blunderdb-x.y.z.x86_64.rpm<span class="w">    </span><span class="c1"># Fedora / openSUSE</span>
+</pre></div>
+</div>
+</section>
+<section id="arch-linux-aur">
+<h3><span class="section-number">1.1.2. </span>Arch Linux (AUR)<a class="headerlink" href="#arch-linux-aur" title="Link to this heading"></a></h3>
+<p>Το πακέτο <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> είναι διαθέσιμο στο AUR και ενημερώνεται αυτόματα από τους βοηθούς AUR:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yay<span class="w"> </span>-S<span class="w"> </span>blunderdb-bin<span class="w">      </span><span class="c1"># ou : paru -S blunderdb-bin</span>
+</pre></div>
+</div>
+</section>
+<section id="archive-tar-gz">
+<h3><span class="section-number">1.1.3. </span>Αρχείο .tar.gz<a class="headerlink" href="#archive-tar-gz" title="Link to this heading"></a></h3>
+<p>Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, οπότε δεν χρειάζεται <code class="docutils literal notranslate"><span class="pre">chmod</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar<span class="w"> </span>xzf<span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+<span class="nb">cd</span><span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z
+./blunderdb
+</pre></div>
+</div>
+</section>
+<section id="binaire-brut-methode-avancee">
+<h3><span class="section-number">1.1.4. </span>Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
+<p>Το ακατέργαστο εκτελέσιμο <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1</a> παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Σημείωση</p>
-<p>Στο Linux, εάν λάβετε το σφάλμα <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, η διανομή σας χρησιμοποιεί το webkit2gtk-4.1 αντί του webkit2gtk-4.0. Κατεβάστε την ειδική έκδοση: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a></p>
+<p>Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, η διανομή σας χρησιμοποιεί webkit2gtk-4.1: χρησιμοποιήστε το πακέτο <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, το πακέτο AUR ή κατεβάστε την ειδική έκδοση <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a>. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.</p>
 </div>
+</section>
+</section>
+<section id="avertissements-windows-et-mac">
+<h2><span class="section-number">1.2. </span>Προειδοποιήσεις για Windows και Mac<a class="headerlink" href="#avertissements-windows-et-mac" title="Link to this heading"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Προειδοποίηση</p>
 <p>Στα Windows, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του blunderDB. Δείτε <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Τομέας 10</span></a> για να κατανοήσετε γιατί και πώς να παρακάμψετε τυχόν εμπόδια.</p>
@@ -116,6 +159,7 @@
 <p class="admonition-title">Προειδοποίηση</p>
 <p>Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του blunderDB. Δείτε <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Τομέας 11</span></a> για να κατανοήσετε γιατί και πώς να παρακάμψετε τυχόν εμπόδια.</p>
 </div>
+</section>
 </section>
 
 

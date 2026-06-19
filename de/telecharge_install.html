@@ -48,7 +48,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Download und Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Download und Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-sous-linux">1.1. Installation unter Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paquets-natifs-deb-rpm">1.1.1. Native Pakete (.deb / .rpm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arch-linux-aur">1.1.2. Arch Linux (AUR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-tar-gz">1.1.3. .tar.gz-Archiv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#binaire-brut-methode-avancee">1.1.4. Rohbinärdatei (fortgeschrittene Methode)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#avertissements-windows-et-mac">1.2. Hinweise für Windows und Mac</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Handbuch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Benutzerhandbuch</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste der Befehle</a></li>
@@ -100,14 +110,47 @@
 <p class="admonition-title">Bemerkung</p>
 <p>blunderDB verwendet Webview2 für die Darstellung der grafischen Benutzeroberfläche. Sehr wahrscheinlich ist Webview2 bereits nativ auf Ihrem Betriebssystem vorhanden. Andernfalls bietet der erste Start von blunderDB an, es herunterzuladen und zu installieren. Ein Eingreifen des Benutzers ist nicht erforderlich.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Bemerkung</p>
-<p>Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, führen Sie in einem Terminal den Befehl <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">./blunderDB-linux-x.y.z</span></code> aus, wobei x, y, z der heruntergeladenen Version entspricht.</p>
+<section id="installation-sous-linux">
+<h2><span class="section-number">1.1. </span>Installation unter Linux<a class="headerlink" href="#installation-sous-linux" title="Link to this heading"></a></h2>
+<p>Für Linux werden mehrere Formate angeboten. Die untenstehenden Pakete und Archive <strong>machen blunderDB automatisch ausführbar</strong>: Im Gegensatz zur über einen Browser heruntergeladenen Rohdatei entfällt das Ausführen von <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span></code> bei jedem Download oder Update. Sie legen außerdem einen Eintrag im Anwendungsmenü an.</p>
+<section id="paquets-natifs-deb-rpm">
+<h3><span class="section-number">1.1.1. </span>Native Pakete (.deb / .rpm)<a class="headerlink" href="#paquets-natifs-deb-rpm" title="Link to this heading"></a></h3>
+<p>Empfohlene Methode unter Debian, Ubuntu und Linux Mint (<code class="docutils literal notranslate"><span class="pre">.deb</span></code>) sowie Fedora und openSUSE (<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). Der Paketmanager installiert automatisch die passende webkit2gtk-Abhängigkeit. Ersetzen Sie <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> durch die heruntergeladene Version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./blunderdb_x.y.z_amd64.deb<span class="w">     </span><span class="c1"># Debian / Ubuntu / Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./blunderdb-x.y.z.x86_64.rpm<span class="w">    </span><span class="c1"># Fedora / openSUSE</span>
+</pre></div>
+</div>
+</section>
+<section id="arch-linux-aur">
+<h3><span class="section-number">1.1.2. </span>Arch Linux (AUR)<a class="headerlink" href="#arch-linux-aur" title="Link to this heading"></a></h3>
+<p>Das Paket <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> ist im AUR verfügbar und wird von AUR-Helfern automatisch aktualisiert:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yay<span class="w"> </span>-S<span class="w"> </span>blunderdb-bin<span class="w">      </span><span class="c1"># ou : paru -S blunderdb-bin</span>
+</pre></div>
+</div>
+</section>
+<section id="archive-tar-gz">
+<h3><span class="section-number">1.1.3. </span>.tar.gz-Archiv<a class="headerlink" href="#archive-tar-gz" title="Link to this heading"></a></h3>
+<p>Für andere Distributionen. Das Entpacken eines Archivs bewahrt das Ausführbar-Bit, sodass kein <code class="docutils literal notranslate"><span class="pre">chmod</span></code> nötig ist:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar<span class="w"> </span>xzf<span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+<span class="nb">cd</span><span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z
+./blunderdb
+</pre></div>
+</div>
+</section>
+<section id="binaire-brut-methode-avancee">
+<h3><span class="section-number">1.1.4. </span>Rohbinärdatei (fortgeschrittene Methode)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
+<p>Die Rohbinärdatei <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1</a> bleibt verfügbar. Da ein Browser beim Herunterladen das Ausführbar-Bit entfernt, müssen Sie es vor dem ersten Start wiederherstellen:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Falls Sie unter Linux den Fehler <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code> erhalten, verwendet Ihre Distribution webkit2gtk-4.1 anstelle von webkit2gtk-4.0. Laden Sie die dedizierte Version herunter: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a></p>
+<p>Es werden zwei Linux-Varianten je nach Version der webkit2gtk-Bibliothek veröffentlicht. Wenn Sie die Fehlermeldung <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code> erhalten, verwendet Ihre Distribution webkit2gtk-4.1: Verwenden Sie das <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-Paket, das AUR-Paket oder laden Sie die dedizierte Version <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a> herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus.</p>
 </div>
+</section>
+</section>
+<section id="avertissements-windows-et-mac">
+<h2><span class="section-number">1.2. </span>Hinweise für Windows und Mac<a class="headerlink" href="#avertissements-windows-et-mac" title="Link to this heading"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warnung</p>
 <p>Unter Windows kann es vorkommen, dass das Betriebssystem Bedenken hat, blunderDB auszuführen. Siehe <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Abschnitt 10</span></a>, um zu verstehen, warum, und um etwaige Blockaden zu umgehen.</p>
@@ -116,6 +159,7 @@
 <p class="admonition-title">Warnung</p>
 <p>Unter Mac kann es vorkommen, dass das Betriebssystem Bedenken hat, blunderDB auszuführen. Siehe <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Abschnitt 11</span></a>, um zu verstehen, warum, und um etwaige Blockaden zu umgehen.</p>
 </div>
+</section>
 </section>
 
 

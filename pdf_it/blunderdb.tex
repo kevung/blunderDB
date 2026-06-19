@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{17 giu 2026}
+\date{19 giu 2026}
 \release{0.27.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -751,16 +751,63 @@ per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download
 blunderDB utilizza Webview2 per il rendering dell’interfaccia grafica. È molto probabile che Webview2 sia già presente nativamente nel vostro sistema operativo. In caso contrario, la prima esecuzione di blunderDB proporrà di scaricarlo e installarlo. Non è richiesta alcuna azione da parte dell’utente.
 \end{sphinxadmonition}
 
-\begin{sphinxadmonition}{note}{Nota:}
+
+\subsection{Installazione su Linux}
+\label{\detokenize{telecharge_install:installation-sous-linux}}
 \sphinxAtStartPar
-Su Linux, se blunderDB non è eseguibile dopo il download, eseguire in un terminale il comando \sphinxcode{\sphinxupquote{chmod +x ./blunderDB\sphinxhyphen{}linux\sphinxhyphen{}x.y.z}} dove x, y, z corrisponde alla versione scaricata.
-\end{sphinxadmonition}
+Per Linux sono disponibili diversi formati. I pacchetti e gli archivi seguenti \sphinxstylestrong{rendono blunderDB eseguibile automaticamente}: a differenza del binario grezzo scaricato tramite un browser, evitano di dover eseguire \sphinxcode{\sphinxupquote{chmod +x}} a ogni download o aggiornamento. Creano inoltre una voce nel menu delle applicazioni.
+
+
+\subsubsection{Pacchetti nativi (.deb / .rpm)}
+\label{\detokenize{telecharge_install:paquets-natifs-deb-rpm}}
+\sphinxAtStartPar
+Metodo consigliato su Debian, Ubuntu e Linux Mint (\sphinxcode{\sphinxupquote{.deb}}) nonché su Fedora e openSUSE (\sphinxcode{\sphinxupquote{.rpm}}). Il gestore di pacchetti installa automaticamente la dipendenza webkit2gtk appropriata. Sostituire \sphinxcode{\sphinxupquote{x.y.z}} con la versione scaricata:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }apt\PYG{+w}{ }install\PYG{+w}{ }./blunderdb\PYGZus{}x.y.z\PYGZus{}amd64.deb\PYG{+w}{     }\PYG{c+c1}{\PYGZsh{} Debian / Ubuntu / Mint}
+sudo\PYG{+w}{ }dnf\PYG{+w}{ }install\PYG{+w}{ }./blunderdb\PYGZhy{}x.y.z.x86\PYGZus{}64.rpm\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} Fedora / openSUSE}
+\end{sphinxVerbatim}
+
+
+\subsubsection{Arch Linux (AUR)}
+\label{\detokenize{telecharge_install:arch-linux-aur}}
+\sphinxAtStartPar
+Il pacchetto \sphinxcode{\sphinxupquote{blunderdb\sphinxhyphen{}bin}} è disponibile sull’AUR e viene aggiornato automaticamente dagli assistenti AUR:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+yay\PYG{+w}{ }\PYGZhy{}S\PYG{+w}{ }blunderdb\PYGZhy{}bin\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} ou : paru \PYGZhy{}S blunderdb\PYGZhy{}bin}
+\end{sphinxVerbatim}
+
+
+\subsubsection{Archivio .tar.gz}
+\label{\detokenize{telecharge_install:archive-tar-gz}}
+\sphinxAtStartPar
+Per le altre distribuzioni. L’estrazione di un archivio conserva il bit di esecuzione, quindi non è necessario \sphinxcode{\sphinxupquote{chmod}}:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4.1\PYGZhy{}x.y.z.tar.gz
+\PYG{n+nb}{cd}\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4.1\PYGZhy{}x.y.z
+./blunderdb
+\end{sphinxVerbatim}
+
+
+\subsubsection{Binario grezzo (metodo avanzato)}
+\label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
+\sphinxAtStartPar
+Il binario grezzo \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} rimane disponibile. Poiché un browser rimuove il bit di esecuzione durante il download, è necessario ripristinarlo prima della prima esecuzione:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
+\end{sphinxVerbatim}
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Su Linux, se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la vostra distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1 invece di webkit2gtk\sphinxhyphen{}4.0. Scaricate la versione dedicata: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}
+Vengono pubblicate due varianti Linux a seconda della versione della libreria webkit2gtk. Se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1: utilizzare il pacchetto \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, il pacchetto AUR oppure scaricare la versione dedicata \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}. I pacchetti nativi selezionano automaticamente la dipendenza corretta.
 \end{sphinxadmonition}
 
+
+\subsection{Avvertenze per Windows e Mac}
+\label{\detokenize{telecharge_install:avertissements-windows-et-mac}}
 \begin{sphinxadmonition}{warning}{Avvertimento:}
 \sphinxAtStartPar
 Su Windows, è possibile che quest’ultimo sia restio a eseguire blunderDB. Vedere \hyperref[\detokenize{annexe_windows_securite:annexe-windows-malware}]{Sezione \ref{\detokenize{annexe_windows_securite:annexe-windows-malware}}} per capire il motivo e aggirare gli eventuali blocchi.

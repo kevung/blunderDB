@@ -54,7 +54,7 @@
 
 
 \title{blunderDB}
-\date{2026年06月17日}
+\date{2026年06月19日}
 \release{0.27.1}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -724,16 +724,63 @@ Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/downloa
 blunderDB はグラフィカルインターフェースのレンダリングに Webview2 を使用します。Webview2 はすでにオペレーティングシステムにネイティブに存在している可能性が高いです。そうでない場合、blunderDB の初回実行時にダウンロードとインストールが提案されます。ユーザーによる操作は不要です。
 \end{sphinxadmonition}
 
-\begin{sphinxadmonition}{note}{注釈:}
+
+\subsection{Linux へのインストール}
+\label{\detokenize{telecharge_install:installation-sous-linux}}
 \sphinxAtStartPar
-Linux では、ダウンロード後に blunderDB が実行可能でない場合、ターミナルでコマンド \sphinxcode{\sphinxupquote{chmod +x ./blunderDB\sphinxhyphen{}linux\sphinxhyphen{}x.y.z}} を実行してください。ここで x、y、z はダウンロードしたバージョンに対応します。
-\end{sphinxadmonition}
+Linux 向けには複数の形式が提供されています。以下のパッケージとアーカイブは \sphinxstylestrong{blunderDB を自動的に実行可能にします}。ブラウザ経由でダウンロードした生のバイナリとは異なり、ダウンロードや更新のたびに \sphinxcode{\sphinxupquote{chmod +x}} を実行する必要がありません。アプリケーションメニューにエントリも作成されます。
+
+
+\subsubsection{ネイティブパッケージ (.deb / .rpm)}
+\label{\detokenize{telecharge_install:paquets-natifs-deb-rpm}}
+\sphinxAtStartPar
+Debian、Ubuntu、Linux Mint (\sphinxcode{\sphinxupquote{.deb}})、および Fedora、openSUSE (\sphinxcode{\sphinxupquote{.rpm}}) で推奨される方法です。パッケージマネージャが適切な webkit2gtk 依存関係を自動的にインストールします。\sphinxcode{\sphinxupquote{x.y.z}} をダウンロードしたバージョンに置き換えてください:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }apt\PYG{+w}{ }install\PYG{+w}{ }./blunderdb\PYGZus{}x.y.z\PYGZus{}amd64.deb\PYG{+w}{     }\PYG{c+c1}{\PYGZsh{} Debian / Ubuntu / Mint}
+sudo\PYG{+w}{ }dnf\PYG{+w}{ }install\PYG{+w}{ }./blunderdb\PYGZhy{}x.y.z.x86\PYGZus{}64.rpm\PYG{+w}{    }\PYG{c+c1}{\PYGZsh{} Fedora / openSUSE}
+\end{sphinxVerbatim}
+
+
+\subsubsection{Arch Linux (AUR)}
+\label{\detokenize{telecharge_install:arch-linux-aur}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{blunderdb\sphinxhyphen{}bin}} パッケージは AUR で利用でき、AUR ヘルパーによって自動的に更新されます:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+yay\PYG{+w}{ }\PYGZhy{}S\PYG{+w}{ }blunderdb\PYGZhy{}bin\PYG{+w}{      }\PYG{c+c1}{\PYGZsh{} ou : paru \PYGZhy{}S blunderdb\PYGZhy{}bin}
+\end{sphinxVerbatim}
+
+
+\subsubsection{.tar.gz アーカイブ}
+\label{\detokenize{telecharge_install:archive-tar-gz}}
+\sphinxAtStartPar
+その他のディストリビューション向け。アーカイブを展開すると実行ビットが保持されるため、\sphinxcode{\sphinxupquote{chmod}} は不要です:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4.1\PYGZhy{}x.y.z.tar.gz
+\PYG{n+nb}{cd}\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4.1\PYGZhy{}x.y.z
+./blunderdb
+\end{sphinxVerbatim}
+
+
+\subsubsection{生のバイナリ (上級者向けの方法)}
+\label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
+\sphinxAtStartPar
+生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
+\end{sphinxVerbatim}
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Linux でエラー \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} が発生する場合、ディストリビューションが webkit2gtk\sphinxhyphen{}4.0 の代わりに webkit2gtk\sphinxhyphen{}4.1 を使用しています。専用ビルドをダウンロードしてください：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}
+webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
 \end{sphinxadmonition}
 
+
+\subsection{Windows と Mac に関する警告}
+\label{\detokenize{telecharge_install:avertissements-windows-et-mac}}
 \begin{sphinxadmonition}{warning}{警告:}
 \sphinxAtStartPar
 Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については \hyperref[\detokenize{annexe_windows_securite:annexe-windows-malware}]{\ref{\detokenize{annexe_windows_securite:annexe-windows-malware}} 章} を参照してください。

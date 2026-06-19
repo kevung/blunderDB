@@ -48,7 +48,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Lataaminen ja asentaminen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-sous-linux">1.1. Asentaminen Linuxiin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paquets-natifs-deb-rpm">1.1.1. Natiivipaketit (.deb / .rpm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arch-linux-aur">1.1.2. Arch Linux (AUR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-tar-gz">1.1.3. .tar.gz-arkisto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#binaire-brut-methode-avancee">1.1.4. Raaka binääri (edistynyt menetelmä)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#avertissements-windows-et-mac">1.2. Windows- ja Mac-varoitukset</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
@@ -100,14 +110,47 @@
 <p class="admonition-title">Muista</p>
 <p>blunderDB käyttää Webview2:ta graafisen käyttöliittymän piirtämiseen. On todennäköistä, että Webview2 on jo valmiiksi asennettuna käyttöjärjestelmässäsi. Jos näin ei ole, blunderDB:n ensimmäinen suorituskerta tarjoaa sen lataamista ja asentamista. Käyttäjältä ei odoteta mitään toimenpiteitä.</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Muista</p>
-<p>Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita terminaalissa komento <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span> <span class="pre">./blunderDB-linux-x.y.z</span></code>, jossa x, y, z vastaa ladattua versiota.</p>
+<section id="installation-sous-linux">
+<h2><span class="section-number">1.1. </span>Asentaminen Linuxiin<a class="headerlink" href="#installation-sous-linux" title="Link to this heading"></a></h2>
+<p>Linuxille tarjotaan useita muotoja. Alla olevat paketit ja arkistot <strong>tekevät blunderDB:stä automaattisesti suoritettavan</strong>: toisin kuin selaimella ladattu raaka binääri, ne välttävät komennon <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span></code> suorittamisen jokaisen latauksen tai päivityksen yhteydessä. Ne luovat myös merkinnän sovellusvalikkoon.</p>
+<section id="paquets-natifs-deb-rpm">
+<h3><span class="section-number">1.1.1. </span>Natiivipaketit (.deb / .rpm)<a class="headerlink" href="#paquets-natifs-deb-rpm" title="Link to this heading"></a></h3>
+<p>Suositeltu menetelmä Debianissa, Ubuntussa ja Linux Mintissä (<code class="docutils literal notranslate"><span class="pre">.deb</span></code>) sekä Fedorassa ja openSUSEssa (<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). Paketinhallinta asentaa automaattisesti sopivan webkit2gtk-riippuvuuden. Korvaa <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> ladatulla versiolla:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./blunderdb_x.y.z_amd64.deb<span class="w">     </span><span class="c1"># Debian / Ubuntu / Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./blunderdb-x.y.z.x86_64.rpm<span class="w">    </span><span class="c1"># Fedora / openSUSE</span>
+</pre></div>
+</div>
+</section>
+<section id="arch-linux-aur">
+<h3><span class="section-number">1.1.2. </span>Arch Linux (AUR)<a class="headerlink" href="#arch-linux-aur" title="Link to this heading"></a></h3>
+<p>Paketti <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> on saatavilla AUR:sta, ja AUR-apuohjelmat päivittävät sen automaattisesti:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yay<span class="w"> </span>-S<span class="w"> </span>blunderdb-bin<span class="w">      </span><span class="c1"># ou : paru -S blunderdb-bin</span>
+</pre></div>
+</div>
+</section>
+<section id="archive-tar-gz">
+<h3><span class="section-number">1.1.3. </span>.tar.gz-arkisto<a class="headerlink" href="#archive-tar-gz" title="Link to this heading"></a></h3>
+<p>Muille jakeluille. Arkiston purkaminen säilyttää suoritusbitin, joten <code class="docutils literal notranslate"><span class="pre">chmod</span></code> ei ole tarpeen:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar<span class="w"> </span>xzf<span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+<span class="nb">cd</span><span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z
+./blunderdb
+</pre></div>
+</div>
+</section>
+<section id="binaire-brut-methode-avancee">
+<h3><span class="section-number">1.1.4. </span>Raaka binääri (edistynyt menetelmä)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
+<p>Raaka binääri <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1</a> on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Linuxissa, jos saat virheen <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, jakelusi käyttää webkit2gtk-4.1:tä webkit2gtk-4.0:n sijaan. Lataa sille tarkoitettu versio: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a></p>
+<p>Julkaistaan kaksi Linux-versiota webkit2gtk-kirjaston version mukaan. Jos saat virheen <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, jakelusi käyttää webkit2gtk-4.1:tä: käytä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-pakettia, AUR-pakettia tai lataa erillinen versio <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1</a>. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.</p>
 </div>
+</section>
+</section>
+<section id="avertissements-windows-et-mac">
+<h2><span class="section-number">1.2. </span>Windows- ja Mac-varoitukset<a class="headerlink" href="#avertissements-windows-et-mac" title="Link to this heading"></a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Varoitus</p>
 <p>Windowsissa se saattaa epäröidä blunderDB:n suorittamista. Katso <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Section 10</span></a> ymmärtääksesi miksi ja ohittaaksesi mahdolliset estot.</p>
@@ -116,6 +159,7 @@
 <p class="admonition-title">Varoitus</p>
 <p>Macissa se saattaa epäröidä blunderDB:n suorittamista. Katso <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Section 11</span></a> ymmärtääksesi miksi ja ohittaaksesi mahdolliset estot.</p>
 </div>
+</section>
 </section>
 
 
