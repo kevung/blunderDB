@@ -30,12 +30,18 @@ that cwd.
 2. **Version history table** — add a new row mentioning **only the new
    user-facing features** (not refactors, CI fixes, internal plumbing), updated in
    the **French source and every translation**.
-3. **Cut the version** via `scripts/release.sh`.
-4. **GitHub release notes** — write a changelog-style description (**in English**)
+3. **Linux packaging metadata** — add the new version to the AppStream
+   `<releases>` list (shown in software centers for the `.deb`/`.rpm`/Flatpak).
+   Applies to **every** release, patches included.
+4. **Cut the version** via `scripts/release.sh`.
+5. **GitHub release notes** — write a changelog-style description (**in English**)
    and publish it with `gh`.
 
-Do them in this order. Steps 1–2 are committed *before* the release commit so the
-tag captures up-to-date docs.
+Then, **after** the release is published, the AUR package republishes
+automatically (Phase 5) and the Flatpak manifest can be bumped (follow-up).
+
+Do them in this order. Steps 1–3 are committed *before* the release commit so the
+tag captures up-to-date docs and packaging metadata.
 
 ---
 
@@ -269,6 +275,36 @@ Steps:
 
 ---
 
+## Phase 2b — Linux packaging metadata (every release, incl. patches)
+
+The Linux packages (`.deb`/`.rpm` built by `nfpm` in CI, the AUR package, and the
+Flatpak) ship an **AppStream metainfo** file,
+`build/linux/io.github.kevung.blunderDB.metainfo.xml`. Its `<releases>` list is
+what GNOME Software / KDE Discover show as the version history. Add the new
+version at the **top** of the list (newest first), dated with the release day:
+
+```xml
+  <releases>
+    <release version="<version>" date="<YYYY-MM-DD>" />
+    ...existing entries...
+  </releases>
+```
+
+Unlike the Phase 2 changelog table, this is **not** feature-gated — add an entry
+for **every** release, patches included (it's a version list, not a feature log).
+A bare `version`/`date` entry is enough; validate if `appstreamcli` is available:
+
+```bash
+appstreamcli validate --no-net build/linux/io.github.kevung.blunderDB.metainfo.xml
+```
+
+Commit this with the doc/changelog work (Phase 1–2), before cutting the release,
+so the tag captures it. This is the only per-release edit the packaging needs —
+the `.deb`/`.rpm` names, the AUR PKGBUILD and the tarballs all derive their
+version from the tag automatically in CI.
+
+---
+
 ## Phase 3 — Cut the version with release.sh
 
 `scripts/release.sh` updates the version string in three places
@@ -362,13 +398,42 @@ doesn't touch assets).
 
 ---
 
+## Phase 5 — Downstream packages (after the release is published)
+
+Once the GitHub release exists with its assets (CI uploads the raw binaries,
+`.tar.gz`, `.deb`, `.rpm` and `.sha256`), two downstream packages follow.
+
+**AUR (`blunderdb-bin`) — automatic.** `.github/workflows/aur.yml` triggers on
+`release: published`, waits for the 4.1 tarball, and pushes an updated PKGBUILD to
+the AUR. It only runs if the `AUR_SSH_PRIVATE_KEY` secret is set (otherwise it
+no-ops — see `packaging/aur/README.md` for the one-time account/SSH setup). Verify
+after the release:
+
+```bash
+gh run list --workflow=aur.yml --limit 3      # did it run / succeed?
+# then check https://aur.archlinux.org/packages/blunderdb-bin shows the new version
+```
+
+If the secret isn't configured (or the run failed), publish manually from an Arch
+box: `scripts/aur-publish.sh <version> --push`.
+
+**Flatpak — manual follow-up.** `packaging/flatpak/io.github.kevung.blunderDB.yml`
+pins the tarball `url` + `sha256`. It is **not** wired into CI (Flathub builds on
+its own infra). If/when maintaining a Flatpak, bump those two fields to the new
+release (the `flathub-external-data-checker` bot can automate this once on
+Flathub). Skip unless the user is actively shipping the Flatpak.
+
+---
+
 ## Final report to the user
 
 Summarize: version released, the doc files touched (French source + which
 translation catalogs), the per-language translation-freshness counts, the
-changelog rows added, the tag pushed, the GitHub release URL, and the CI run
-status/URL. Flag anything skipped (e.g. a PDF build that needed LaTeX, or a
-language left partially untranslated) so the user can follow up.
+changelog rows added, the AppStream `<releases>` entry, the tag pushed, the
+GitHub release URL, the CI run status/URL, and the AUR publish status (workflow
+run + package page, or "skipped — secret not set"). Flag anything skipped (e.g. a
+PDF build that needed LaTeX, or a language left partially untranslated) so the
+user can follow up.
 
 ## Guardrails
 
@@ -377,7 +442,8 @@ language left partially untranslated) so the user can follow up.
 - New-features-only in the history table and release notes; exclude refactors,
   CI/build/test/chore commits.
 - The history table is **major/minor (X.Y.0) only** — patch releases (X.Y.Z, Z>0)
-  get no changelog row and skip Phase 2 entirely.
+  get no changelog row and skip Phase 2 entirely. But the AppStream `<releases>`
+  entry (Phase 2b) is added for **every** release, patches included.
 - GitHub release notes are always written in **English**.
 - Keep all 9 languages in lockstep — every feature documented in the French
   source and translated in every catalog (en, de, el, es, fi, it, ja, ru), or the

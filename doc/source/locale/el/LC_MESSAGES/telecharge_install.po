@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB \n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-19 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: el\n"
 "Language-Team: el <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/telecharge_install.rst:4
@@ -49,65 +49,143 @@ msgstr "για Mac: |latest_mac_exe|"
 
 #: ../../source/telecharge_install.rst:18
 msgid ""
-"Pour une consultation hors ligne, vous pouvez également télécharger cette"
-" documentation au format PDF  : |latest_fr_pdf|"
+"Pour une consultation hors ligne, vous pouvez également télécharger cette "
+"documentation au format PDF  : |latest_fr_pdf|"
 msgstr ""
 "Για ανάγνωση εκτός σύνδεσης, μπορείτε επίσης να κατεβάσετε αυτή την "
 "τεκμηρίωση σε μορφή PDF: |latest_el_pdf|"
 
 #: ../../source/telecharge_install.rst:20
 msgid ""
-"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
-" de fortes chances que Webview2 soit déjà présent nativement sur votre "
-"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
-"blunderDB proposera de le télécharger et de l'installer. Aucune "
-"manipulation de la part de l'utilisateur n'est attendue."
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a de"
+" fortes chances que Webview2 soit déjà présent nativement sur votre système "
+"d'exploitation. Si ce n'est pas le cas, la première exécution de blunderDB "
+"proposera de le télécharger et de l'installer. Aucune manipulation de la "
+"part de l'utilisateur n'est attendue."
 msgstr ""
 "Το blunderDB χρησιμοποιεί το Webview2 για την απόδοση του γραφικού "
 "περιβάλλοντος. Είναι πολύ πιθανό το Webview2 να είναι ήδη εγκατεστημένο "
-"εγγενώς στο λειτουργικό σας σύστημα. Σε αντίθετη περίπτωση, η πρώτη "
-"εκτέλεση του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν "
-"απαιτείται καμία ενέργεια από τον χρήστη."
+"εγγενώς στο λειτουργικό σας σύστημα. Σε αντίθετη περίπτωση, η πρώτη εκτέλεση"
+" του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν απαιτείται "
+"καμία ενέργεια από τον χρήστη."
 
-#: ../../source/telecharge_install.rst:26
+#: ../../source/telecharge_install.rst:27
+msgid "Installation sous Linux"
+msgstr "Εγκατάσταση σε Linux"
+
+#: ../../source/telecharge_install.rst:29
 msgid ""
-"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
-"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
-"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+"Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
+"dessous **rendent blunderDB exécutable automatiquement** : contrairement au "
+"binaire brut téléchargé via un navigateur, ils évitent d'avoir à lancer "
+"``chmod +x`` à chaque téléchargement ou mise à jour. Ils créent également "
+"une entrée dans le menu des applications."
 msgstr ""
-"Στο Linux, εάν το blunderDB δεν είναι εκτελέσιμο μετά τη λήψη, εκτελέστε "
-"σε ένα τερματικό την εντολή ``chmod +x ./blunderDB-linux-x.y.z`` όπου x, "
-"y, z αντιστοιχούν στην έκδοση που κατεβάσατε."
+"Για το Linux προσφέρονται διάφορες μορφές. Τα παρακάτω πακέτα και αρχεία "
+"**καθιστούν το blunderDB αυτόματα εκτελέσιμο**: σε αντίθεση με το "
+"ακατέργαστο εκτελέσιμο που λαμβάνεται μέσω προγράμματος περιήγησης, "
+"αποφεύγουν την εκτέλεση της εντολής ``chmod +x`` σε κάθε λήψη ή ενημέρωση. "
+"Δημιουργούν επίσης μια καταχώριση στο μενού εφαρμογών."
 
-#: ../../source/telecharge_install.rst:30
+#: ../../source/telecharge_install.rst:36
+msgid "Paquets natifs (.deb / .rpm)"
+msgstr "Εγγενή πακέτα (.deb / .rpm)"
+
+#: ../../source/telecharge_install.rst:38
 msgid ""
-"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
-"open shared object file``, votre distribution utilise webkit2gtk-4.1 au "
-"lieu de webkit2gtk-4.0. Téléchargez la version dédiée : "
-"|latest_linux_webkit2gtk41_exe|"
+"Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que "
+"sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
+"automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par"
+" la version téléchargée :"
 msgstr ""
-"Στο Linux, εάν λάβετε το σφάλμα ``libwebkit2gtk-4.0.so.37: cannot open "
-"shared object file``, η διανομή σας χρησιμοποιεί το webkit2gtk-4.1 αντί "
-"του webkit2gtk-4.0. Κατεβάστε την ειδική έκδοση: "
-"|latest_linux_webkit2gtk41_exe|"
+"Συνιστώμενη μέθοδος σε Debian, Ubuntu και Linux Mint (``.deb``) καθώς και σε"
+" Fedora και openSUSE (``.rpm``). Ο διαχειριστής πακέτων εγκαθιστά αυτόματα "
+"την κατάλληλη εξάρτηση webkit2gtk. Αντικαταστήστε το ``x.y.z`` με την έκδοση"
+" που λάβατε:"
 
-#: ../../source/telecharge_install.rst:35
+#: ../../source/telecharge_install.rst:49
+msgid "Arch Linux (AUR)"
+msgstr "Arch Linux (AUR)"
+
+#: ../../source/telecharge_install.rst:51
+msgid ""
+"Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
+"automatiquement par les assistants AUR :"
+msgstr ""
+"Το πακέτο ``blunderdb-bin`` είναι διαθέσιμο στο AUR και ενημερώνεται "
+"αυτόματα από τους βοηθούς AUR:"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Archive .tar.gz"
+msgstr "Αρχείο .tar.gz"
+
+#: ../../source/telecharge_install.rst:61
+msgid ""
+"Pour les autres distributions. L'extraction d'une archive conserve le bit "
+"exécutable, aucun ``chmod`` n'est donc nécessaire :"
+msgstr ""
+"Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, οπότε "
+"δεν χρειάζεται ``chmod``:"
+
+#: ../../source/telecharge_install.rst:71
+msgid "Binaire brut (méthode avancée)"
+msgstr "Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)"
+
+#: ../../source/telecharge_install.rst:73
+msgid ""
+"Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
+"retire le bit exécutable au téléchargement, il faut le rétablir avant la "
+"première exécution :"
+msgstr ""
+"Το ακατέργαστο εκτελέσιμο |latest_linux_exe| παραμένει διαθέσιμο. Επειδή ένα"
+" πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το "
+"αποκαταστήσετε πριν από την πρώτη εκτέλεση:"
+
+#: ../../source/telecharge_install.rst:81
+msgid ""
+"Deux variantes Linux sont publiées selon la version de la bibliothèque "
+"webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 : utilisez "
+"le paquet ``.deb``/``.rpm``, le paquet AUR, ou téléchargez la version dédiée"
+" |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent "
+"automatiquement la bonne dépendance."
+msgstr ""
+"Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης "
+"webkit2gtk. Εάν λάβετε το σφάλμα ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, η διανομή σας χρησιμοποιεί webkit2gtk-4.1: "
+"χρησιμοποιήστε το πακέτο ``.deb``/``.rpm``, το πακέτο AUR ή κατεβάστε την "
+"ειδική έκδοση |latest_linux_webkit2gtk41_exe|. Τα εγγενή πακέτα επιλέγουν "
+"αυτόματα τη σωστή εξάρτηση."
+
+#: ../../source/telecharge_install.rst:90
+msgid "Avertissements Windows et Mac"
+msgstr "Προειδοποιήσεις για Windows και Mac"
+
+#: ../../source/telecharge_install.rst:92
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
-"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
-" pourquoi et contourner les éventuels blocages."
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
+"pourquoi et contourner les éventuels blocages."
 msgstr ""
 "Στα Windows, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
-"blunderDB. Δείτε :numref:`annexe_windows_malware` για να κατανοήσετε γιατί"
-" και πώς να παρακάμψετε τυχόν εμπόδια."
+"blunderDB. Δείτε :numref:`annexe_windows_malware` για να κατανοήσετε γιατί "
+"και πώς να παρακάμψετε τυχόν εμπόδια."
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:96
 msgid ""
-"Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
-" blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"
-" contourner les éventuels blocages."
+"Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
+"blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
+"contourner les éventuels blocages."
 msgstr ""
-"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
-"blunderDB. Δείτε :numref:`annexe_mac_malware` για να κατανοήσετε γιατί και"
-" πώς να παρακάμψετε τυχόν εμπόδια."
+"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του blunderDB."
+" Δείτε :numref:`annexe_mac_malware` για να κατανοήσετε γιατί και πώς να "
+"παρακάμψετε τυχόν εμπόδια."
 
+#~ msgid ""
+#~ "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+#~ "exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+#~ "où x, y, z correspond à la version téléchargée."
+#~ msgstr ""
+#~ "Στο Linux, εάν το blunderDB δεν είναι εκτελέσιμο μετά τη λήψη, εκτελέστε σε "
+#~ "ένα τερματικό την εντολή ``chmod +x ./blunderDB-linux-x.y.z`` όπου x, y, z "
+#~ "αντιστοιχούν στην έκδοση που κατεβάσατε."

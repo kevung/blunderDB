@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-19 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -67,28 +67,98 @@ msgstr ""
 "Если нет, при первом запуске blunderDB предложит скачать и установить его. "
 "Никаких действий со стороны пользователя не потребуется."
 
-#: ../../source/telecharge_install.rst:26
-msgid ""
-"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
-"exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
-"où x, y, z correspond à la version téléchargée."
-msgstr ""
-"В Linux, если blunderDB не является исполняемым после загрузки, выполните в "
-"терминале команду ``chmod +x ./blunderDB-linux-x.y.z``, где x, y, z "
-"соответствует загруженной версии."
+#: ../../source/telecharge_install.rst:27
+msgid "Installation sous Linux"
+msgstr "Установка в Linux"
 
-#: ../../source/telecharge_install.rst:30
+#: ../../source/telecharge_install.rst:29
 msgid ""
-"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
-"shared object file``, votre distribution utilise webkit2gtk-4.1 au lieu de "
-"webkit2gtk-4.0. Téléchargez la version dédiée : "
-"|latest_linux_webkit2gtk41_exe|"
+"Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
+"dessous **rendent blunderDB exécutable automatiquement** : contrairement au "
+"binaire brut téléchargé via un navigateur, ils évitent d'avoir à lancer "
+"``chmod +x`` à chaque téléchargement ou mise à jour. Ils créent également "
+"une entrée dans le menu des applications."
 msgstr ""
-"В Linux, если вы получаете ошибку ``libwebkit2gtk-4.0.so.37: cannot open "
-"shared object file``, ваш дистрибутив использует webkit2gtk-4.1 вместо "
-"webkit2gtk-4.0. Скачайте специальную сборку: |latest_linux_webkit2gtk41_exe|"
+"Для Linux предлагается несколько форматов. Приведённые ниже пакеты и архивы "
+"**делают blunderDB исполняемым автоматически**: в отличие от необработанного"
+" двоичного файла, загруженного через браузер, они избавляют от необходимости"
+" выполнять ``chmod +x`` при каждой загрузке или обновлении. Они также "
+"создают пункт в меню приложений."
 
-#: ../../source/telecharge_install.rst:35
+#: ../../source/telecharge_install.rst:36
+msgid "Paquets natifs (.deb / .rpm)"
+msgstr "Нативные пакеты (.deb / .rpm)"
+
+#: ../../source/telecharge_install.rst:38
+msgid ""
+"Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que "
+"sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
+"automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par"
+" la version téléchargée :"
+msgstr ""
+"Рекомендуемый способ в Debian, Ubuntu и Linux Mint (``.deb``), а также в "
+"Fedora и openSUSE (``.rpm``). Менеджер пакетов автоматически устанавливает "
+"подходящую зависимость webkit2gtk. Замените ``x.y.z`` на загруженную версию:"
+
+#: ../../source/telecharge_install.rst:49
+msgid "Arch Linux (AUR)"
+msgstr "Arch Linux (AUR)"
+
+#: ../../source/telecharge_install.rst:51
+msgid ""
+"Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
+"automatiquement par les assistants AUR :"
+msgstr ""
+"Пакет ``blunderdb-bin`` доступен в AUR и автоматически обновляется "
+"помощниками AUR:"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Archive .tar.gz"
+msgstr "Архив .tar.gz"
+
+#: ../../source/telecharge_install.rst:61
+msgid ""
+"Pour les autres distributions. L'extraction d'une archive conserve le bit "
+"exécutable, aucun ``chmod`` n'est donc nécessaire :"
+msgstr ""
+"Для других дистрибутивов. При извлечении архива сохраняется бит исполнения, "
+"поэтому ``chmod`` не требуется:"
+
+#: ../../source/telecharge_install.rst:71
+msgid "Binaire brut (méthode avancée)"
+msgstr "Необработанный двоичный файл (продвинутый способ)"
+
+#: ../../source/telecharge_install.rst:73
+msgid ""
+"Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
+"retire le bit exécutable au téléchargement, il faut le rétablir avant la "
+"première exécution :"
+msgstr ""
+"Необработанный двоичный файл |latest_linux_exe| остаётся доступным. "
+"Поскольку браузер удаляет бит исполнения при загрузке, его необходимо "
+"восстановить перед первым запуском:"
+
+#: ../../source/telecharge_install.rst:81
+msgid ""
+"Deux variantes Linux sont publiées selon la version de la bibliothèque "
+"webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 : utilisez "
+"le paquet ``.deb``/``.rpm``, le paquet AUR, ou téléchargez la version dédiée"
+" |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent "
+"automatiquement la bonne dépendance."
+msgstr ""
+"Публикуются два варианта Linux в зависимости от версии библиотеки "
+"webkit2gtk. Если вы получаете ошибку ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, ваш дистрибутив использует webkit2gtk-4.1: используйте"
+" пакет ``.deb``/``.rpm``, пакет AUR или загрузите специальную сборку "
+"|latest_linux_webkit2gtk41_exe|. Нативные пакеты выбирают правильную "
+"зависимость автоматически."
+
+#: ../../source/telecharge_install.rst:90
+msgid "Avertissements Windows et Mac"
+msgstr "Предупреждения для Windows и Mac"
+
+#: ../../source/telecharge_install.rst:92
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
@@ -98,7 +168,7 @@ msgstr ""
 ":numref:`annexe_windows_malware` для понимания причин и обхода возможных "
 "блокировок."
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:96
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
 "blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
@@ -107,3 +177,12 @@ msgstr ""
 "На Mac система может проявлять нежелание запускать blunderDB. Смотрите "
 ":numref:`annexe_mac_malware` для понимания причин и обхода возможных "
 "блокировок."
+
+#~ msgid ""
+#~ "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+#~ "exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+#~ "où x, y, z correspond à la version téléchargée."
+#~ msgstr ""
+#~ "В Linux, если blunderDB не является исполняемым после загрузки, выполните в "
+#~ "терминале команду ``chmod +x ./blunderDB-linux-x.y.z``, где x, y, z "
+#~ "соответствует загруженной версии."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-19 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ja <LL@li.org>\n"
@@ -63,27 +63,89 @@ msgstr ""
 "はすでにオペレーティングシステムにネイティブに存在している可能性が高いです。そうでない場合、blunderDB "
 "の初回実行時にダウンロードとインストールが提案されます。ユーザーによる操作は不要です。"
 
-#: ../../source/telecharge_install.rst:26
-msgid ""
-"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
-"exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
-"où x, y, z correspond à la version téléchargée."
-msgstr ""
-"Linux では、ダウンロード後に blunderDB が実行可能でない場合、ターミナルでコマンド ``chmod +x ./blunderDB-"
-"linux-x.y.z`` を実行してください。ここで x、y、z はダウンロードしたバージョンに対応します。"
+#: ../../source/telecharge_install.rst:27
+msgid "Installation sous Linux"
+msgstr "Linux へのインストール"
 
-#: ../../source/telecharge_install.rst:30
+#: ../../source/telecharge_install.rst:29
 msgid ""
-"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
-"shared object file``, votre distribution utilise webkit2gtk-4.1 au lieu de "
-"webkit2gtk-4.0. Téléchargez la version dédiée : "
-"|latest_linux_webkit2gtk41_exe|"
+"Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
+"dessous **rendent blunderDB exécutable automatiquement** : contrairement au "
+"binaire brut téléchargé via un navigateur, ils évitent d'avoir à lancer "
+"``chmod +x`` à chaque téléchargement ou mise à jour. Ils créent également "
+"une entrée dans le menu des applications."
 msgstr ""
-"Linux でエラー ``libwebkit2gtk-4.0.so.37: cannot open shared object file`` "
-"が発生する場合、ディストリビューションが webkit2gtk-4.0 の代わりに webkit2gtk-4.1 "
-"を使用しています。専用ビルドをダウンロードしてください：|latest_linux_webkit2gtk41_exe|"
+"Linux 向けには複数の形式が提供されています。以下のパッケージとアーカイブは **blunderDB "
+"を自動的に実行可能にします**。ブラウザ経由でダウンロードした生のバイナリとは異なり、ダウンロードや更新のたびに ``chmod +x`` "
+"を実行する必要がありません。アプリケーションメニューにエントリも作成されます。"
 
-#: ../../source/telecharge_install.rst:35
+#: ../../source/telecharge_install.rst:36
+msgid "Paquets natifs (.deb / .rpm)"
+msgstr "ネイティブパッケージ (.deb / .rpm)"
+
+#: ../../source/telecharge_install.rst:38
+msgid ""
+"Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que "
+"sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
+"automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par"
+" la version téléchargée :"
+msgstr ""
+"Debian、Ubuntu、Linux Mint (``.deb``)、および Fedora、openSUSE (``.rpm``) "
+"で推奨される方法です。パッケージマネージャが適切な webkit2gtk 依存関係を自動的にインストールします。``x.y.z`` "
+"をダウンロードしたバージョンに置き換えてください:"
+
+#: ../../source/telecharge_install.rst:49
+msgid "Arch Linux (AUR)"
+msgstr "Arch Linux (AUR)"
+
+#: ../../source/telecharge_install.rst:51
+msgid ""
+"Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
+"automatiquement par les assistants AUR :"
+msgstr "``blunderdb-bin`` パッケージは AUR で利用でき、AUR ヘルパーによって自動的に更新されます:"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Archive .tar.gz"
+msgstr ".tar.gz アーカイブ"
+
+#: ../../source/telecharge_install.rst:61
+msgid ""
+"Pour les autres distributions. L'extraction d'une archive conserve le bit "
+"exécutable, aucun ``chmod`` n'est donc nécessaire :"
+msgstr "その他のディストリビューション向け。アーカイブを展開すると実行ビットが保持されるため、``chmod`` は不要です:"
+
+#: ../../source/telecharge_install.rst:71
+msgid "Binaire brut (méthode avancée)"
+msgstr "生のバイナリ (上級者向けの方法)"
+
+#: ../../source/telecharge_install.rst:73
+msgid ""
+"Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
+"retire le bit exécutable au téléchargement, il faut le rétablir avant la "
+"première exécution :"
+msgstr ""
+"生のバイナリ |latest_linux_exe| "
+"も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:"
+
+#: ../../source/telecharge_install.rst:81
+msgid ""
+"Deux variantes Linux sont publiées selon la version de la bibliothèque "
+"webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 : utilisez "
+"le paquet ``.deb``/``.rpm``, le paquet AUR, ou téléchargez la version dédiée"
+" |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent "
+"automatiquement la bonne dépendance."
+msgstr ""
+"webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。``libwebkit2gtk-4.0.so.37: "
+"cannot open shared object file`` というエラーが表示される場合、お使いのディストリビューションは "
+"webkit2gtk-4.1 を使用しています。``.deb``/``.rpm`` パッケージ、AUR パッケージを使用するか、専用版 "
+"|latest_linux_webkit2gtk41_exe| をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。"
+
+#: ../../source/telecharge_install.rst:90
+msgid "Avertissements Windows et Mac"
+msgstr "Windows と Mac に関する警告"
+
+#: ../../source/telecharge_install.rst:92
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
@@ -92,7 +154,7 @@ msgstr ""
 "Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については "
 ":numref:`annexe_windows_malware` を参照してください。"
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:96
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
 "blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
@@ -100,3 +162,11 @@ msgid ""
 msgstr ""
 "Mac では、blunderDB の実行を拒否する場合があります。理由と回避方法については :numref:`annexe_mac_malware` "
 "を参照してください。"
+
+#~ msgid ""
+#~ "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+#~ "exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+#~ "où x, y, z correspond à la version téléchargée."
+#~ msgstr ""
+#~ "Linux では、ダウンロード後に blunderDB が実行可能でない場合、ターミナルでコマンド ``chmod +x ./blunderDB-"
+#~ "linux-x.y.z`` を実行してください。ここで x、y、z はダウンロードしたバージョンに対応します。"

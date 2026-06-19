@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.kevung.blunderDB</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>blunderDB</name>
+  <summary>Backgammon blunder analysis tool</summary>
+
+  <description>
+    <p>
+      blunderDB is a desktop application (GUI and CLI) for importing, storing,
+      searching and studying backgammon positions from eXtreme Gammon, GnuBG,
+      BGBlitz and Jellyfish.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Import matches from eXtreme Gammon (.xg/.xgp), GnuBG (.sgf), BGBlitz (.bgf) and Jellyfish (.mat)</li>
+      <li>Search positions by checker structure, pip count, equity, error threshold, dice and contact</li>
+      <li>Spaced-repetition (FSRS/Anki-style) flash cards for position review</li>
+      <li>Effective Pip Count calculator with embedded GnuBG one-sided bearoff database</li>
+      <li>Collections, tournaments and Match Equity Tables</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">blunderdb.desktop</launchable>
+
+  <url type="homepage">https://github.com/kevung/blunderDB</url>
+  <url type="help">https://kevung.github.io/blunderDB/</url>
+  <url type="bugtracker">https://github.com/kevung/blunderDB/issues</url>
+
+  <developer id="io.github.kevung">
+    <name>Kévin Unger</name>
+  </developer>
+
+  <content_rating type="oars-1.1" />
+
+  <categories>
+    <category>Game</category>
+    <category>BoardGame</category>
+  </categories>
+
+  <releases>
+    <release version="0.27.1" date="2026-06-18" />
+  </releases>
+</component>

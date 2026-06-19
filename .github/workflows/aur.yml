@@ -1,0 +1,88 @@
+name: Publish to AUR
+
+# Publishes/updates the blunderdb-bin AUR package after a GitHub release.
+# OPT-IN: requires repo secrets AUR_SSH_PRIVATE_KEY, AUR_USERNAME, AUR_EMAIL,
+# and an AUR account whose SSH key is registered. Without the secret the job
+# runs but no-ops (see the "guard" step), so it never fails a release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Released tag to publish (e.g. 0.27.1)
+        required: true
+
+jobs:
+  aur:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard on AUR secret
+        id: guard
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "${AUR_SSH_PRIVATE_KEY}" ]; then
+            echo "AUR_SSH_PRIVATE_KEY not set — skipping AUR publish."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Determine version
+        id: v
+        if: steps.guard.outputs.enabled == 'true'
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download the webkit2gtk-4.1 tarball and compute checksum
+        id: dl
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          set -euo pipefail
+          asset="blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz"
+          # The release event can fire before every matrix job has uploaded its
+          # asset, so poll until the 4.1 tarball is available.
+          for i in $(seq 1 40); do
+            if gh release download "$VERSION" -R "$GITHUB_REPOSITORY" -p "$asset" -D dl --clobber 2>/dev/null; then
+              break
+            fi
+            echo "asset $asset not ready yet (attempt $i); waiting..."
+            sleep 30
+          done
+          test -f "dl/$asset"
+          echo "sha=$(sha256sum "dl/$asset" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Render PKGBUILD
+        if: steps.guard.outputs.enabled == 'true'
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+          SHA: ${{ steps.dl.outputs.sha }}
+        run: |
+          set -euo pipefail
+          sed -e "s/@PKGVER@/${VERSION}/g" -e "s/@SHA256@/${SHA}/g" \
+            packaging/aur/PKGBUILD.in > PKGBUILD
+          cat PKGBUILD
+
+      - name: Publish to the AUR
+        if: steps.guard.outputs.enabled == 'true'
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        with:
+          pkgname: blunderdb-bin
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to ${{ steps.v.outputs.version }}"
+          updpkgsums: false

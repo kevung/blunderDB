@@ -1,0 +1,26 @@
+blunderDB — Linux
+=================
+
+This archive contains the blunderDB executable with its execute bit already
+set (extracting a .tar.gz preserves it — no `chmod +x` needed).
+
+Run it directly:
+
+    ./blunderdb            # GUI
+    ./blunderdb help       # CLI usage
+
+Optional — install a menu entry for the current user:
+
+    install -Dm755 blunderdb            ~/.local/bin/blunderdb
+    install -Dm644 blunderdb.desktop    ~/.local/share/applications/blunderdb.desktop
+    install -Dm644 blunderdb-256.png    ~/.local/share/icons/hicolor/256x256/apps/blunderdb.png
+    sed -i 's|^Exec=blunderdb|Exec='"$HOME"'/.local/bin/blunderdb|' \
+        ~/.local/share/applications/blunderdb.desktop
+
+For system-wide installation prefer the .deb / .rpm packages, the AUR package
+(blunderdb-bin) on Arch, or Flatpak — see the documentation:
+https://kevung.github.io/blunderDB/
+
+Two webkit2gtk variants are published:
+  * blunderDB-linux-webkit2gtk-4.1-<version>  → modern distros (webkit2gtk 4.1)
+  * blunderDB-linux-<version>                 → older distros (webkit2gtk 4.0)

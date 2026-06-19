@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=blunderDB
+GenericName=Backgammon Blunder Analysis
+Comment=Import, store, search and study backgammon positions
+Exec=blunderdb %f
+Icon=blunderdb
+Terminal=false
+Categories=Game;BoardGame;
+Keywords=backgammon;blunder;analysis;xg;gnubg;
+StartupNotify=true
+StartupWMClass=blunderdb
