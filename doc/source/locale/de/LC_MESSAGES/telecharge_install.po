@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB \n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-19 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: de\n"
 "Language-Team: de <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/telecharge_install.rst:4
@@ -49,65 +49,143 @@ msgstr "für Mac: |latest_mac_exe|"
 
 #: ../../source/telecharge_install.rst:18
 msgid ""
-"Pour une consultation hors ligne, vous pouvez également télécharger cette"
-" documentation au format PDF  : |latest_fr_pdf|"
+"Pour une consultation hors ligne, vous pouvez également télécharger cette "
+"documentation au format PDF  : |latest_fr_pdf|"
 msgstr ""
 "Für die Offline-Nutzung können Sie diese Dokumentation auch im PDF-Format "
 "herunterladen: |latest_de_pdf|"
 
 #: ../../source/telecharge_install.rst:20
 msgid ""
-"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
-" de fortes chances que Webview2 soit déjà présent nativement sur votre "
-"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
-"blunderDB proposera de le télécharger et de l'installer. Aucune "
-"manipulation de la part de l'utilisateur n'est attendue."
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a de"
+" fortes chances que Webview2 soit déjà présent nativement sur votre système "
+"d'exploitation. Si ce n'est pas le cas, la première exécution de blunderDB "
+"proposera de le télécharger et de l'installer. Aucune manipulation de la "
+"part de l'utilisateur n'est attendue."
 msgstr ""
 "blunderDB verwendet Webview2 für die Darstellung der grafischen "
-"Benutzeroberfläche. Sehr wahrscheinlich ist Webview2 bereits nativ auf "
-"Ihrem Betriebssystem vorhanden. Andernfalls bietet der erste Start von "
-"blunderDB an, es herunterzuladen und zu installieren. Ein Eingreifen des "
-"Benutzers ist nicht erforderlich."
+"Benutzeroberfläche. Sehr wahrscheinlich ist Webview2 bereits nativ auf Ihrem"
+" Betriebssystem vorhanden. Andernfalls bietet der erste Start von blunderDB "
+"an, es herunterzuladen und zu installieren. Ein Eingreifen des Benutzers ist"
+" nicht erforderlich."
 
-#: ../../source/telecharge_install.rst:26
+#: ../../source/telecharge_install.rst:27
+msgid "Installation sous Linux"
+msgstr "Installation unter Linux"
+
+#: ../../source/telecharge_install.rst:29
 msgid ""
-"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
-"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
-"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+"Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
+"dessous **rendent blunderDB exécutable automatiquement** : contrairement au "
+"binaire brut téléchargé via un navigateur, ils évitent d'avoir à lancer "
+"``chmod +x`` à chaque téléchargement ou mise à jour. Ils créent également "
+"une entrée dans le menu des applications."
 msgstr ""
-"Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, "
-"führen Sie in einem Terminal den Befehl ``chmod +x ./blunderDB-"
-"linux-x.y.z`` aus, wobei x, y, z der heruntergeladenen Version entspricht."
+"Für Linux werden mehrere Formate angeboten. Die untenstehenden Pakete und "
+"Archive **machen blunderDB automatisch ausführbar**: Im Gegensatz zur über "
+"einen Browser heruntergeladenen Rohdatei entfällt das Ausführen von ``chmod "
+"+x`` bei jedem Download oder Update. Sie legen außerdem einen Eintrag im "
+"Anwendungsmenü an."
 
-#: ../../source/telecharge_install.rst:30
+#: ../../source/telecharge_install.rst:36
+msgid "Paquets natifs (.deb / .rpm)"
+msgstr "Native Pakete (.deb / .rpm)"
+
+#: ../../source/telecharge_install.rst:38
 msgid ""
-"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
-"open shared object file``, votre distribution utilise webkit2gtk-4.1 au "
-"lieu de webkit2gtk-4.0. Téléchargez la version dédiée : "
-"|latest_linux_webkit2gtk41_exe|"
+"Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que "
+"sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
+"automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par"
+" la version téléchargée :"
 msgstr ""
-"Falls Sie unter Linux den Fehler ``libwebkit2gtk-4.0.so.37: cannot "
-"open shared object file`` erhalten, verwendet Ihre Distribution "
-"webkit2gtk-4.1 anstelle von webkit2gtk-4.0. Laden Sie die dedizierte "
-"Version herunter: |latest_linux_webkit2gtk41_exe|"
+"Empfohlene Methode unter Debian, Ubuntu und Linux Mint (``.deb``) sowie "
+"Fedora und openSUSE (``.rpm``). Der Paketmanager installiert automatisch die"
+" passende webkit2gtk-Abhängigkeit. Ersetzen Sie ``x.y.z`` durch die "
+"heruntergeladene Version:"
 
-#: ../../source/telecharge_install.rst:35
+#: ../../source/telecharge_install.rst:49
+msgid "Arch Linux (AUR)"
+msgstr "Arch Linux (AUR)"
+
+#: ../../source/telecharge_install.rst:51
+msgid ""
+"Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
+"automatiquement par les assistants AUR :"
+msgstr ""
+"Das Paket ``blunderdb-bin`` ist im AUR verfügbar und wird von AUR-Helfern "
+"automatisch aktualisiert:"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Archive .tar.gz"
+msgstr ".tar.gz-Archiv"
+
+#: ../../source/telecharge_install.rst:61
+msgid ""
+"Pour les autres distributions. L'extraction d'une archive conserve le bit "
+"exécutable, aucun ``chmod`` n'est donc nécessaire :"
+msgstr ""
+"Für andere Distributionen. Das Entpacken eines Archivs bewahrt das "
+"Ausführbar-Bit, sodass kein ``chmod`` nötig ist:"
+
+#: ../../source/telecharge_install.rst:71
+msgid "Binaire brut (méthode avancée)"
+msgstr "Rohbinärdatei (fortgeschrittene Methode)"
+
+#: ../../source/telecharge_install.rst:73
+msgid ""
+"Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
+"retire le bit exécutable au téléchargement, il faut le rétablir avant la "
+"première exécution :"
+msgstr ""
+"Die Rohbinärdatei |latest_linux_exe| bleibt verfügbar. Da ein Browser beim "
+"Herunterladen das Ausführbar-Bit entfernt, müssen Sie es vor dem ersten "
+"Start wiederherstellen:"
+
+#: ../../source/telecharge_install.rst:81
+msgid ""
+"Deux variantes Linux sont publiées selon la version de la bibliothèque "
+"webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 : utilisez "
+"le paquet ``.deb``/``.rpm``, le paquet AUR, ou téléchargez la version dédiée"
+" |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent "
+"automatiquement la bonne dépendance."
+msgstr ""
+"Es werden zwei Linux-Varianten je nach Version der webkit2gtk-Bibliothek "
+"veröffentlicht. Wenn Sie die Fehlermeldung ``libwebkit2gtk-4.0.so.37: cannot"
+" open shared object file`` erhalten, verwendet Ihre Distribution "
+"webkit2gtk-4.1: Verwenden Sie das ``.deb``/``.rpm``-Paket, das AUR-Paket "
+"oder laden Sie die dedizierte Version |latest_linux_webkit2gtk41_exe| "
+"herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus."
+
+#: ../../source/telecharge_install.rst:90
+msgid "Avertissements Windows et Mac"
+msgstr "Hinweise für Windows und Mac"
+
+#: ../../source/telecharge_install.rst:92
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
-"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
-" pourquoi et contourner les éventuels blocages."
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
+"pourquoi et contourner les éventuels blocages."
 msgstr ""
 "Unter Windows kann es vorkommen, dass das Betriebssystem Bedenken hat, "
 "blunderDB auszuführen. Siehe :numref:`annexe_windows_malware`, um zu "
 "verstehen, warum, und um etwaige Blockaden zu umgehen."
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:96
 msgid ""
-"Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
-" blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"
-" contourner les éventuels blocages."
+"Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
+"blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
+"contourner les éventuels blocages."
 msgstr ""
-"Unter Mac kann es vorkommen, dass das Betriebssystem Bedenken hat, "
-"blunderDB auszuführen. Siehe :numref:`annexe_mac_malware`, um zu "
-"verstehen, warum, und um etwaige Blockaden zu umgehen."
+"Unter Mac kann es vorkommen, dass das Betriebssystem Bedenken hat, blunderDB"
+" auszuführen. Siehe :numref:`annexe_mac_malware`, um zu verstehen, warum, "
+"und um etwaige Blockaden zu umgehen."
 
+#~ msgid ""
+#~ "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+#~ "exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+#~ "où x, y, z correspond à la version téléchargée."
+#~ msgstr ""
+#~ "Falls blunderDB unter Linux nach dem Herunterladen nicht ausführbar ist, "
+#~ "führen Sie in einem Terminal den Befehl ``chmod +x ./blunderDB-linux-x.y.z``"
+#~ " aus, wobei x, y, z der heruntergeladenen Version entspricht."

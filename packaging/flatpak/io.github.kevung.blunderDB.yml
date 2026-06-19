@@ -1,0 +1,59 @@
+# Flatpak manifest for blunderDB.
+#
+# This packages the prebuilt webkit2gtk-4.1 release tarball (the same artifact
+# the GitHub release publishes). It is the simplest route and is enough to build
+# a local .flatpak / self-hosted repo. For a Flathub submission you may instead
+# need a from-source build (Go + Node, offline) — that is the open decision in
+# Phase 4 of the packaging plan.
+#
+# Build & install locally (once a release with the new CI tarball exists):
+#   flatpak install -y flathub org.gnome.Platform//47 org.gnome.Sdk//47
+#   flatpak-builder --user --install --force-clean build-dir \
+#     packaging/flatpak/io.github.kevung.blunderDB.yml
+#   flatpak run io.github.kevung.blunderDB
+#
+# IMPORTANT — test before trusting the sandbox: open and SAVE a .db file located
+# outside the sandbox. If Wails' GTK file dialog does not route through the XDG
+# portal, the --filesystem grant below is what makes arbitrary .db paths work.
+
+app-id: io.github.kevung.blunderDB
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+command: blunderdb
+
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+  # blunderDB opens/saves user-chosen .db files anywhere. Prefer portals, but
+  # Wails' native GTK dialogs may not route through them; --filesystem=home
+  # keeps arbitrary paths working. Narrow this if portal access proves enough.
+  - --filesystem=home
+
+modules:
+  - name: blunderdb
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 blunderdb /app/bin/blunderdb
+      # Flathub requires desktop/icon/metainfo to be named after the app-id.
+      - install -Dm644 blunderdb-256.png /app/share/icons/hicolor/256x256/apps/io.github.kevung.blunderDB.png
+      - |
+        sed -e 's/^Icon=blunderdb/Icon=io.github.kevung.blunderDB/' \
+            blunderdb.desktop > io.github.kevung.blunderDB.desktop
+        install -Dm644 io.github.kevung.blunderDB.desktop \
+            /app/share/applications/io.github.kevung.blunderDB.desktop
+      - |
+        sed -e 's#<launchable type="desktop-id">blunderdb.desktop#<launchable type="desktop-id">io.github.kevung.blunderDB.desktop#' \
+            io.github.kevung.blunderDB.metainfo.xml > metainfo.fixed.xml
+        install -Dm644 metainfo.fixed.xml \
+            /app/share/metainfo/io.github.kevung.blunderDB.metainfo.xml
+    sources:
+      - type: archive
+        # Updated per release (the flathub-external-data-checker bot can automate
+        # this). The tarball unpacks to blunderDB-linux-webkit2gtk-4.1-<ver>/,
+        # flattened by strip-components.
+        url: https://github.com/kevung/blunderDB/releases/download/0.27.1/blunderDB-linux-webkit2gtk-4.1-0.27.1.tar.gz
+        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+        strip-components: 1

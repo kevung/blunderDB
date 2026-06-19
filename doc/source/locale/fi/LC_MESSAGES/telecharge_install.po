@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB \n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-06-19 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fi\n"
 "Language-Team: fi <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/telecharge_install.rst:4
@@ -27,7 +27,8 @@ msgstr "Lataaminen ja asentaminen"
 msgid ""
 "blunderDB se présente comme un unique exécutable ne nécessitant aucune "
 "installation."
-msgstr "blunderDB on yksittäinen suoritettava tiedosto, joka ei vaadi asennusta."
+msgstr ""
+"blunderDB on yksittäinen suoritettava tiedosto, joka ei vaadi asennusta."
 
 #: ../../source/telecharge_install.rst:8
 msgid "La dernière version de blunderDB est disponible en licence MIT:"
@@ -47,64 +48,142 @@ msgstr "Macille: |latest_mac_exe|"
 
 #: ../../source/telecharge_install.rst:18
 msgid ""
-"Pour une consultation hors ligne, vous pouvez également télécharger cette"
-" documentation au format PDF  : |latest_fr_pdf|"
+"Pour une consultation hors ligne, vous pouvez également télécharger cette "
+"documentation au format PDF  : |latest_fr_pdf|"
 msgstr ""
 "Voit myös ladata tämän dokumentaation PDF-muodossa offline-käyttöä varten: "
 "|latest_fi_pdf|"
 
 #: ../../source/telecharge_install.rst:20
 msgid ""
-"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
-" de fortes chances que Webview2 soit déjà présent nativement sur votre "
-"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
-"blunderDB proposera de le télécharger et de l'installer. Aucune "
-"manipulation de la part de l'utilisateur n'est attendue."
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a de"
+" fortes chances que Webview2 soit déjà présent nativement sur votre système "
+"d'exploitation. Si ce n'est pas le cas, la première exécution de blunderDB "
+"proposera de le télécharger et de l'installer. Aucune manipulation de la "
+"part de l'utilisateur n'est attendue."
 msgstr ""
 "blunderDB käyttää Webview2:ta graafisen käyttöliittymän piirtämiseen. On "
 "todennäköistä, että Webview2 on jo valmiiksi asennettuna "
 "käyttöjärjestelmässäsi. Jos näin ei ole, blunderDB:n ensimmäinen "
-"suorituskerta tarjoaa sen lataamista ja asentamista. Käyttäjältä ei "
-"odoteta mitään toimenpiteitä."
+"suorituskerta tarjoaa sen lataamista ja asentamista. Käyttäjältä ei odoteta "
+"mitään toimenpiteitä."
 
-#: ../../source/telecharge_install.rst:26
+#: ../../source/telecharge_install.rst:27
+msgid "Installation sous Linux"
+msgstr "Asentaminen Linuxiin"
+
+#: ../../source/telecharge_install.rst:29
 msgid ""
-"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
-"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
-"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+"Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
+"dessous **rendent blunderDB exécutable automatiquement** : contrairement au "
+"binaire brut téléchargé via un navigateur, ils évitent d'avoir à lancer "
+"``chmod +x`` à chaque téléchargement ou mise à jour. Ils créent également "
+"une entrée dans le menu des applications."
 msgstr ""
-"Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita "
-"terminaalissa komento ``chmod +x ./blunderDB-linux-x.y.z``, jossa x, y, z "
-"vastaa ladattua versiota."
+"Linuxille tarjotaan useita muotoja. Alla olevat paketit ja arkistot "
+"**tekevät blunderDB:stä automaattisesti suoritettavan**: toisin kuin "
+"selaimella ladattu raaka binääri, ne välttävät komennon ``chmod +x`` "
+"suorittamisen jokaisen latauksen tai päivityksen yhteydessä. Ne luovat myös "
+"merkinnän sovellusvalikkoon."
 
-#: ../../source/telecharge_install.rst:30
+#: ../../source/telecharge_install.rst:36
+msgid "Paquets natifs (.deb / .rpm)"
+msgstr "Natiivipaketit (.deb / .rpm)"
+
+#: ../../source/telecharge_install.rst:38
 msgid ""
-"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
-"open shared object file``, votre distribution utilise webkit2gtk-4.1 au "
-"lieu de webkit2gtk-4.0. Téléchargez la version dédiée : "
-"|latest_linux_webkit2gtk41_exe|"
+"Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que "
+"sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
+"automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par"
+" la version téléchargée :"
 msgstr ""
-"Linuxissa, jos saat virheen ``libwebkit2gtk-4.0.so.37: cannot open shared "
-"object file``, jakelusi käyttää webkit2gtk-4.1:tä webkit2gtk-4.0:n sijaan. "
-"Lataa sille tarkoitettu versio: |latest_linux_webkit2gtk41_exe|"
+"Suositeltu menetelmä Debianissa, Ubuntussa ja Linux Mintissä (``.deb``) sekä"
+" Fedorassa ja openSUSEssa (``.rpm``). Paketinhallinta asentaa "
+"automaattisesti sopivan webkit2gtk-riippuvuuden. Korvaa ``x.y.z`` ladatulla "
+"versiolla:"
 
-#: ../../source/telecharge_install.rst:35
+#: ../../source/telecharge_install.rst:49
+msgid "Arch Linux (AUR)"
+msgstr "Arch Linux (AUR)"
+
+#: ../../source/telecharge_install.rst:51
+msgid ""
+"Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
+"automatiquement par les assistants AUR :"
+msgstr ""
+"Paketti ``blunderdb-bin`` on saatavilla AUR:sta, ja AUR-apuohjelmat "
+"päivittävät sen automaattisesti:"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Archive .tar.gz"
+msgstr ".tar.gz-arkisto"
+
+#: ../../source/telecharge_install.rst:61
+msgid ""
+"Pour les autres distributions. L'extraction d'une archive conserve le bit "
+"exécutable, aucun ``chmod`` n'est donc nécessaire :"
+msgstr ""
+"Muille jakeluille. Arkiston purkaminen säilyttää suoritusbitin, joten "
+"``chmod`` ei ole tarpeen:"
+
+#: ../../source/telecharge_install.rst:71
+msgid "Binaire brut (méthode avancée)"
+msgstr "Raaka binääri (edistynyt menetelmä)"
+
+#: ../../source/telecharge_install.rst:73
+msgid ""
+"Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
+"retire le bit exécutable au téléchargement, il faut le rétablir avant la "
+"première exécution :"
+msgstr ""
+"Raaka binääri |latest_linux_exe| on edelleen saatavilla. Koska selain "
+"poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen "
+"ensimmäistä suoritusta:"
+
+#: ../../source/telecharge_install.rst:81
+msgid ""
+"Deux variantes Linux sont publiées selon la version de la bibliothèque "
+"webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 : utilisez "
+"le paquet ``.deb``/``.rpm``, le paquet AUR, ou téléchargez la version dédiée"
+" |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent "
+"automatiquement la bonne dépendance."
+msgstr ""
+"Julkaistaan kaksi Linux-versiota webkit2gtk-kirjaston version mukaan. Jos "
+"saat virheen ``libwebkit2gtk-4.0.so.37: cannot open shared object file``, "
+"jakelusi käyttää webkit2gtk-4.1:tä: käytä ``.deb``/``.rpm``-pakettia, AUR-"
+"pakettia tai lataa erillinen versio |latest_linux_webkit2gtk41_exe|. "
+"Natiivipaketit valitsevat oikean riippuvuuden automaattisesti."
+
+#: ../../source/telecharge_install.rst:90
+msgid "Avertissements Windows et Mac"
+msgstr "Windows- ja Mac-varoitukset"
+
+#: ../../source/telecharge_install.rst:92
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
-"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
-" pourquoi et contourner les éventuels blocages."
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
+"pourquoi et contourner les éventuels blocages."
 msgstr ""
 "Windowsissa se saattaa epäröidä blunderDB:n suorittamista. Katso "
 ":numref:`annexe_windows_malware` ymmärtääksesi miksi ja ohittaaksesi "
 "mahdolliset estot."
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:96
 msgid ""
-"Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
-" blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"
-" contourner les éventuels blocages."
+"Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
+"blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
+"contourner les éventuels blocages."
 msgstr ""
 "Macissa se saattaa epäröidä blunderDB:n suorittamista. Katso "
-":numref:`annexe_mac_malware` ymmärtääksesi miksi ja ohittaaksesi "
-"mahdolliset estot."
+":numref:`annexe_mac_malware` ymmärtääksesi miksi ja ohittaaksesi mahdolliset"
+" estot."
 
+#~ msgid ""
+#~ "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+#~ "exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+#~ "où x, y, z correspond à la version téléchargée."
+#~ msgstr ""
+#~ "Linuxissa, jos blunderDB ei ole suoritettavissa lataamisen jälkeen, suorita "
+#~ "terminaalissa komento ``chmod +x ./blunderDB-linux-x.y.z``, jossa x, y, z "
+#~ "vastaa ladattua versiota."

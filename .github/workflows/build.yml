@@ -304,6 +304,51 @@ jobs:
         run: chmod +x build/bin/*
         shell: bash
 
+      # Ship a .tar.gz alongside each raw Linux binary: extracting a tarball
+      # preserves the execute bit, so novices no longer need `chmod +x`. The
+      # binary is renamed to `blunderdb` inside the archive and bundled with the
+      # .desktop entry, icon and INSTALL notes.
+      - name: Package Linux tar.gz
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for bin in build/bin/blunderDB-linux-*; do
+            [ -f "$bin" ] || continue
+            base="$(basename "$bin")"
+            tmp="$(mktemp -d)"
+            stage="$tmp/$base"
+            mkdir -p "$stage"
+            cp "$bin" "$stage/blunderdb"
+            chmod +x "$stage/blunderdb"
+            cp build/linux/blunderdb.desktop build/linux/blunderdb-256.png \
+               build/linux/io.github.kevung.blunderDB.metainfo.xml \
+               build/linux/INSTALL.txt LICENSE "$stage/"
+            tar -czf "build/bin/${base}.tar.gz" -C "$tmp" "$base"
+            rm -rf "$tmp"
+          done
+
+      # Build native .deb and .rpm from the webkit2gtk-4.1 binary via nfpm (a
+      # single spec, no dpkg-deb/rpmbuild). Installs the bit +x, menu entry,
+      # icon and the right webkit dependency per distro. Only the 4.1 variant is
+      # packaged; older distros keep the raw binary + tar.gz.
+      - name: Build .deb and .rpm (webkit2gtk-4.1)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
+        run: |
+          set -euo pipefail
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.46.3
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          # nfpm does not expand env vars in the `src` glob, so stage the binary
+          # at the fixed path nfpm.yaml expects, then remove the bare copy so it
+          # is not uploaded to the release.
+          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderdb
+          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
+          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
+          rm -f build/bin/blunderdb
+
       - name: Add macOS perms
         if: runner.os == 'macOS'
         run: chmod +x build/bin/*/Contents/MacOS/*

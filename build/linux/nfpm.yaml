@@ -1,0 +1,50 @@
+# nfpm config — generates .deb and .rpm from a single spec.
+# The webkit2gtk-4.1 binary must be placed at build/bin/blunderdb first
+# (nfpm expands ${VERSION} in fields but NOT in the `src` glob, so the binary
+# path is fixed rather than an env var). VERSION is read from the environment.
+# Build:
+#   cp build/bin/blunderDB-linux-webkit2gtk-4.1-<ver> build/bin/blunderdb
+#   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p deb
+#   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p rpm
+#
+# Only the webkit2gtk-4.1 variant is packaged (Ubuntu 22.04+/Debian 12+/
+# Fedora 36+/openSUSE recent). Older distros keep the raw binary + tar.gz.
+name: blunderdb
+arch: amd64
+platform: linux
+version: ${VERSION}
+version_schema: none
+section: games
+priority: optional
+maintainer: Kévin Unger <kevin.unger@proton.me>
+description: |
+  Backgammon blunder analysis tool.
+  Import, store, search and study backgammon positions from eXtreme Gammon,
+  GnuBG, BGBlitz and Jellyfish. GUI and CLI in a single binary.
+vendor: Kévin Unger
+homepage: https://github.com/kevung/blunderDB
+license: MIT
+
+contents:
+  - src: build/bin/blunderdb
+    dst: /usr/bin/blunderdb
+    file_info:
+      mode: 0755
+  - src: build/linux/blunderdb.desktop
+    dst: /usr/share/applications/blunderdb.desktop
+  - src: build/linux/io.github.kevung.blunderDB.metainfo.xml
+    dst: /usr/share/metainfo/io.github.kevung.blunderDB.metainfo.xml
+  - src: build/linux/blunderdb-256.png
+    dst: /usr/share/icons/hicolor/256x256/apps/blunderdb.png
+  - src: build/linux/blunderdb-256.png
+    dst: /usr/share/pixmaps/blunderdb.png
+
+overrides:
+  deb:
+    depends:
+      - libwebkit2gtk-4.1-0
+      - libgtk-3-0
+  rpm:
+    depends:
+      - webkit2gtk4.1
+      - gtk3

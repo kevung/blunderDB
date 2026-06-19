@@ -23,14 +23,71 @@ La dernière version de blunderDB est disponible en licence MIT:
    blunderDB proposera de le télécharger et de l'installer. Aucune manipulation
    de la part de l'utilisateur n'est attendue.
 
-.. note:: Sous Linux, si blunderDB n'est pas exécutable après le
-   téléchargement, exécuter dans un terminal la commande ``chmod +x
-   ./blunderDB-linux-x.y.z`` où x, y, z correspond à la version téléchargée.
+Installation sous Linux
+-----------------------
 
-.. note:: Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37:
-   cannot open shared object file``, votre distribution utilise
-   webkit2gtk-4.1 au lieu de webkit2gtk-4.0. Téléchargez la version
-   dédiée : |latest_linux_webkit2gtk41_exe|
+Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-dessous
+**rendent blunderDB exécutable automatiquement** : contrairement au binaire brut
+téléchargé via un navigateur, ils évitent d'avoir à lancer ``chmod +x`` à chaque
+téléchargement ou mise à jour. Ils créent également une entrée dans le menu des
+applications.
+
+Paquets natifs (.deb / .rpm)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que sur
+Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe
+automatiquement la dépendance webkit2gtk appropriée. Remplacez ``x.y.z`` par la
+version téléchargée :
+
+.. code-block:: bash
+
+   sudo apt install ./blunderdb_x.y.z_amd64.deb     # Debian / Ubuntu / Mint
+   sudo dnf install ./blunderdb-x.y.z.x86_64.rpm    # Fedora / openSUSE
+
+Arch Linux (AUR)
+~~~~~~~~~~~~~~~~~
+
+Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour
+automatiquement par les assistants AUR :
+
+.. code-block:: bash
+
+   yay -S blunderdb-bin      # ou : paru -S blunderdb-bin
+
+Archive .tar.gz
+~~~~~~~~~~~~~~~~
+
+Pour les autres distributions. L'extraction d'une archive conserve le bit
+exécutable, aucun ``chmod`` n'est donc nécessaire :
+
+.. code-block:: bash
+
+   tar xzf blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+   cd blunderDB-linux-webkit2gtk-4.1-x.y.z
+   ./blunderdb
+
+Binaire brut (méthode avancée)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur retire
+le bit exécutable au téléchargement, il faut le rétablir avant la première
+exécution :
+
+.. code-block:: bash
+
+   chmod +x ./blunderDB-linux-x.y.z
+
+.. note:: Deux variantes Linux sont publiées selon la version de la
+   bibliothèque webkit2gtk. Si vous obtenez l'erreur
+   ``libwebkit2gtk-4.0.so.37: cannot open shared object file``, votre
+   distribution utilise webkit2gtk-4.1 : utilisez le paquet ``.deb``/``.rpm``,
+   le paquet AUR, ou téléchargez la version dédiée
+   |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent
+   automatiquement la bonne dépendance.
+
+Avertissements Windows et Mac
+-----------------------------
 
 .. warning:: Sous Windows, il est possible que ce dernier émette des réticences
    à exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre
