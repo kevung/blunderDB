@@ -63,7 +63,7 @@ func RunServe(args []string) error {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	st, err := openStorage(ctx, *backend, *dsn, *enableRLS)
+	st, err := OpenStorage(ctx, *backend, *dsn, *enableRLS)
 	if err != nil {
 		return err
 	}
@@ -106,10 +106,9 @@ func RunServe(args []string) error {
 	return srv.Run(ctx)
 }
 
-// openStorage opens the requested backend. enableRLS turns on PostgreSQL
-// Row-Level Security enforcement (per-connection app.tenant_id); it is ignored
-// by the SQLite backend.
-func openStorage(ctx context.Context, backend, dsn string, enableRLS bool) (storage.Storage, error) {
+// OpenStorage opens the requested backend. enableRLS turns on PostgreSQL
+// Row-Level Security enforcement (per-connection app.tenant_id); ignored by SQLite.
+func OpenStorage(ctx context.Context, backend, dsn string, enableRLS bool) (storage.Storage, error) {
 	opts := &storage.Options{EnableRLS: enableRLS}
 	switch strings.ToLower(backend) {
 	case "sqlite", "":
