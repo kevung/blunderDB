@@ -43,6 +43,30 @@ type reviewCardReq struct {
 	Rating int   `json:"rating"`
 }
 
+type reviewLogReq struct {
+	DeckID int64 `json:"deckId"`
+	Limit  int   `json:"limit"`
+}
+
+type forecastReq struct {
+	DeckID int64 `json:"deckId"`
+	Days   int   `json:"days"`
+}
+
+type optimizeReq struct {
+	DeckID int64 `json:"deckId"`
+	Apply  bool  `json:"apply"`
+}
+
+type cardIDReq struct {
+	CardID int64 `json:"cardId"`
+}
+
+type suspendCardReq struct {
+	CardID    int64 `json:"cardId"`
+	Suspended bool  `json:"suspended"`
+}
+
 func (s *Server) ankiRoutes() []route {
 	as := func() storage.AnkiStore { return s.opts.Storage.Anki() }
 	return []route{
@@ -82,6 +106,24 @@ func (s *Server) ankiRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/anki.reviewCard", rpc(func(ctx context.Context, scope string, req reviewCardReq) (*domain.AnkiReviewCard, error) {
 			return as().ReviewCard(ctx, scope, req.CardID, req.Rating)
+		})},
+		{http.MethodPost, "/v1/anki.reviewLog", rpcStream(func(ctx context.Context, scope string, req reviewLogReq) iterReviewLog {
+			return as().ReviewLog(ctx, scope, req.DeckID, req.Limit)
+		})},
+		{http.MethodPost, "/v1/anki.forecast", rpc(func(ctx context.Context, scope string, req forecastReq) ([]domain.AnkiForecastDay, error) {
+			return as().Forecast(ctx, scope, req.DeckID, req.Days)
+		})},
+		{http.MethodPost, "/v1/anki.suspendCard", rpcVoid(func(ctx context.Context, scope string, req suspendCardReq) error {
+			return as().SetCardSuspended(ctx, scope, req.CardID, req.Suspended)
+		})},
+		{http.MethodPost, "/v1/anki.buryCard", rpcVoid(func(ctx context.Context, scope string, req cardIDReq) error {
+			return as().BuryCard(ctx, scope, req.CardID)
+		})},
+		{http.MethodPost, "/v1/anki.removeCard", rpcVoid(func(ctx context.Context, scope string, req cardIDReq) error {
+			return as().RemoveCard(ctx, scope, req.CardID)
+		})},
+		{http.MethodPost, "/v1/anki.optimizeParams", rpc(func(ctx context.Context, scope string, req optimizeReq) (*domain.AnkiOptimizeResult, error) {
+			return as().OptimizeParams(ctx, scope, req.DeckID, req.Apply)
 		})},
 	}
 }

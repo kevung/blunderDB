@@ -126,7 +126,8 @@ func (s *ankiStore) DeleteDeck(ctx context.Context, scope string, id int64) erro
 func (s *ankiStore) ResetDeck(ctx context.Context, scope string, deckID int64) error {
 	if _, err := s.db.ExecContext(ctx,
 		`UPDATE anki_card SET due = ?, stability = 0, difficulty = 0,
-		 elapsed_days = 0, scheduled_days = 0, reps = 0, lapses = 0, state = 0, last_review = ''
+		 elapsed_days = 0, scheduled_days = 0, reps = 0, lapses = 0, state = 0, last_review = '',
+		 suspended = 0, buried_until = NULL
 		 WHERE deck_id = ?`, ankiNow(), deckID); err != nil {
 		return fmt.Errorf("sqlite: reset anki deck %d: %w", deckID, err)
 	}
@@ -235,20 +236,64 @@ func (s *ankiStore) DeckPositions(ctx context.Context, scope string, deckID int6
 // DeckStats returns the review counters for a deck.
 func (s *ankiStore) DeckStats(ctx context.Context, scope string, deckID int64) (*domain.AnkiDeckStats, error) {
 	now := ankiNow()
+	// Queue counters exclude suspended/buried cards; TotalCount counts the
+	// whole deck regardless of availability. `avail` is the availability
+	// predicate inlined per counter (each binds its own current-time param).
+	const avail = `suspended = 0 AND (buried_until IS NULL OR buried_until <= ?)`
 	var st domain.AnkiDeckStats
 	err := s.db.QueryRowContext(ctx,
 		`SELECT
-			COALESCE(SUM(CASE WHEN state = 0 THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN state = 1 OR state = 3 THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN state = 2 AND due <= ? THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN due <= ? THEN 1 ELSE 0 END), 0),
+			COALESCE(SUM(CASE WHEN state = 0 AND `+avail+` THEN 1 ELSE 0 END), 0),
+			COALESCE(SUM(CASE WHEN (state = 1 OR state = 3) AND `+avail+` THEN 1 ELSE 0 END), 0),
+			COALESCE(SUM(CASE WHEN state = 2 AND due <= ? AND `+avail+` THEN 1 ELSE 0 END), 0),
+			COALESCE(SUM(CASE WHEN due <= ? AND `+avail+` THEN 1 ELSE 0 END), 0),
 			COUNT(*)
 		 FROM anki_card WHERE deck_id = ?`,
-		now, now, deckID).Scan(&st.NewCount, &st.LearningCount, &st.ReviewCount, &st.DueCount, &st.TotalCount)
+		now, now, now, now, now, now, deckID).Scan(&st.NewCount, &st.LearningCount, &st.ReviewCount, &st.DueCount, &st.TotalCount)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: anki deck %d stats: %w", deckID, err)
 	}
 	return &st, nil
+}
+
+// Forecast projects how many cards come due over the next `days` calendar days,
+// offset 0 absorbing every overdue card. (The sqlite backend is the
+// single-tenant Desktop store, so scope is unused.)
+func (s *ankiStore) Forecast(ctx context.Context, scope string, deckID int64, days int) ([]domain.AnkiForecastDay, error) {
+	switch {
+	case days <= 0:
+		days = 30
+	case days > 365:
+		days = 365
+	}
+
+	query := `SELECT MAX(0, CAST(julianday(date(due)) - julianday(date('now')) AS INTEGER)) AS day_offset, COUNT(*)
+		FROM anki_card
+		WHERE suspended = 0 AND date(due) < date('now', '+' || ? || ' days')`
+	args := []any{days}
+	if deckID != 0 {
+		query += ` AND deck_id = ?`
+		args = append(args, deckID)
+	}
+	query += ` GROUP BY day_offset`
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: anki forecast: %w", err)
+	}
+	defer rows.Close()
+	counts := make(map[int]int, days)
+	for rows.Next() {
+		var off, n int
+		if err := rows.Scan(&off, &n); err != nil {
+			return nil, fmt.Errorf("sqlite: anki forecast: %w", err)
+		}
+		counts[off] = n
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: anki forecast: %w", err)
+	}
+	return storage.BuildForecast(time.Now().UTC(), days, counts), nil
 }
 
 // ankiCardCols reads a domain.AnkiCard.
@@ -266,10 +311,15 @@ func scanAnkiCard(sc interface{ Scan(...any) error }) (domain.AnkiCard, error) {
 	return c, nil
 }
 
+// ankiAvailableSQL is the predicate that excludes suspended and still-buried
+// cards from the review queue. It binds the current time as its single
+// parameter (the buried_until comparison).
+const ankiAvailableSQL = `suspended = 0 AND (buried_until IS NULL OR buried_until <= ?)`
+
 // nextDueCardSQL orders due cards so learning/relearning come first, then
 // review, then new; ties break on the due date.
 const nextDueCardSQL = `SELECT ` + ankiCardCols + ` FROM anki_card
-	WHERE deck_id = ? AND due <= ?
+	WHERE deck_id = ? AND due <= ? AND ` + ankiAvailableSQL + `
 	ORDER BY
 		CASE WHEN state = 1 OR state = 3 THEN 0
 		     WHEN state = 2 THEN 1
@@ -279,7 +329,8 @@ const nextDueCardSQL = `SELECT ` + ankiCardCols + ` FROM anki_card
 
 // nextDueCard returns the highest-priority card due in a deck, or ErrNotFound.
 func (s *ankiStore) nextDueCard(ctx context.Context, deckID int64) (domain.AnkiCard, error) {
-	row := s.db.QueryRowContext(ctx, nextDueCardSQL, deckID, ankiNow())
+	now := ankiNow()
+	row := s.db.QueryRowContext(ctx, nextDueCardSQL, deckID, now, now)
 	c, err := scanAnkiCard(row)
 	if errors.Is(err, sql.ErrNoRows) {
 		return domain.AnkiCard{}, storage.ErrNotFound
@@ -362,7 +413,8 @@ func (s *ankiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 	params.RequestRetention = requestRetention
 	params.MaximumInterval = maximumInterval
 	params.EnableFuzz = enableFuzz != 0
-	next := fsrs.NewFSRS(params).Next(fsrsCard, now, fsrs.Rating(rating)).Card
+	info := fsrs.NewFSRS(params).Next(fsrsCard, now, fsrs.Rating(rating))
+	next := info.Card
 
 	if _, err := s.db.ExecContext(ctx,
 		`UPDATE anki_card SET due = ?, stability = ?, difficulty = ?,
@@ -372,6 +424,21 @@ func (s *ankiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 		next.ElapsedDays, next.ScheduledDays, next.Reps, next.Lapses, int(next.State),
 		now.Format(ankiTimeLayout), cardID); err != nil {
 		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, err)
+	}
+
+	// Append the review to the immutable log. The recorded state is the one the
+	// card was in *before* this review (info.ReviewLog.State); stability and
+	// difficulty are the post-review values.
+	if _, err := s.db.ExecContext(ctx,
+		`INSERT INTO anki_review_log
+		 (card_id, deck_id, position_id, rating, state,
+		  stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		cardID, card.DeckID, card.PositionID, rating, int(info.ReviewLog.State),
+		next.Stability, next.Difficulty,
+		int(info.ReviewLog.ElapsedDays), int(next.ScheduledDays),
+		now.Format(ankiTimeLayout)); err != nil {
+		return nil, fmt.Errorf("sqlite: review anki card %d: log: %w", cardID, err)
 	}
 
 	nextCard, err := s.nextDueCard(ctx, card.DeckID)
@@ -386,4 +453,134 @@ func (s *ankiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, err)
 	}
 	return &domain.AnkiReviewCard{Card: nextCard, Position: pos}, nil
+}
+
+// SetCardSuspended suspends or unsuspends a card.
+func (s *ankiStore) SetCardSuspended(ctx context.Context, scope string, cardID int64, suspended bool) error {
+	res, err := s.db.ExecContext(ctx,
+		`UPDATE anki_card SET suspended = ? WHERE id = ?`, boolToInt(suspended), cardID)
+	if err != nil {
+		return fmt.Errorf("sqlite: suspend anki card %d: %w", cardID, err)
+	}
+	return checkAnkiRowAffected(res, cardID, "suspend")
+}
+
+// BuryCard hides a card until the start of the next day (UTC).
+func (s *ankiStore) BuryCard(ctx context.Context, scope string, cardID int64) error {
+	res, err := s.db.ExecContext(ctx,
+		`UPDATE anki_card SET buried_until = datetime(date('now', '+1 day')) WHERE id = ?`, cardID)
+	if err != nil {
+		return fmt.Errorf("sqlite: bury anki card %d: %w", cardID, err)
+	}
+	return checkAnkiRowAffected(res, cardID, "bury")
+}
+
+// RemoveCard deletes a single card from its deck.
+func (s *ankiStore) RemoveCard(ctx context.Context, scope string, cardID int64) error {
+	res, err := s.db.ExecContext(ctx, `DELETE FROM anki_card WHERE id = ?`, cardID)
+	if err != nil {
+		return fmt.Errorf("sqlite: remove anki card %d: %w", cardID, err)
+	}
+	return checkAnkiRowAffected(res, cardID, "remove")
+}
+
+// checkAnkiRowAffected maps a no-op update/delete to ErrNotFound.
+func checkAnkiRowAffected(res sql.Result, cardID int64, op string) error {
+	n, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("sqlite: %s anki card %d: %w", op, cardID, err)
+	}
+	if n == 0 {
+		return fmt.Errorf("sqlite: %s anki card %d: %w", op, cardID, storage.ErrNotFound)
+	}
+	return nil
+}
+
+// reviewLogCols reads a domain.AnkiReviewLog.
+const reviewLogCols = `id, card_id, deck_id, position_id, rating, state,
+	stability, difficulty, elapsed_days, scheduled_days, COALESCE(reviewed_at,'')`
+
+func scanReviewLog(sc interface{ Scan(...any) error }) (domain.AnkiReviewLog, error) {
+	var l domain.AnkiReviewLog
+	if err := sc.Scan(&l.ID, &l.CardID, &l.DeckID, &l.PositionID, &l.Rating, &l.State,
+		&l.Stability, &l.Difficulty, &l.ElapsedDays, &l.ScheduledDays, &l.ReviewedAt); err != nil {
+		return domain.AnkiReviewLog{}, err
+	}
+	return l, nil
+}
+
+// ReviewLog streams the recorded review events, most recent first. A deckID of
+// 0 spans every deck; limit <= 0 means no limit. (The sqlite backend is the
+// single-tenant Desktop store, so scope is unused.)
+func (s *ankiStore) ReviewLog(ctx context.Context, scope string, deckID int64, limit int) iter.Seq2[*domain.AnkiReviewLog, error] {
+	return func(yield func(*domain.AnkiReviewLog, error) bool) {
+		query := `SELECT ` + reviewLogCols + ` FROM anki_review_log`
+		args := []any{}
+		if deckID != 0 {
+			query += ` WHERE deck_id = ?`
+			args = append(args, deckID)
+		}
+		query += ` ORDER BY reviewed_at DESC, id DESC`
+		if limit > 0 {
+			query += fmt.Sprintf(` LIMIT %d`, limit)
+		}
+		rows, err := s.db.QueryContext(ctx, query, args...)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: anki review log: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			l, err := scanReviewLog(rows)
+			if err != nil {
+				yield(nil, fmt.Errorf("sqlite: anki review log: %w", err))
+				return
+			}
+			if !yield(&l, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: anki review log: %w", err))
+		}
+	}
+}
+
+// OptimizeParams suggests (and optionally applies) a tuned request_retention for
+// a deck, derived from the pass rate on its review-state reviews (ANK-E2/B10).
+// The Go FSRS port has no weight trainer, so this is a request-retention nudge,
+// not a full weight re-fit. (scope is unused: single-tenant Desktop store.)
+func (s *ankiStore) OptimizeParams(ctx context.Context, scope string, deckID int64, apply bool) (*domain.AnkiOptimizeResult, error) {
+	var current float64
+	err := s.db.QueryRowContext(ctx,
+		`SELECT request_retention FROM anki_deck WHERE id = ?`, deckID).Scan(&current)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, storage.ErrNotFound)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
+	}
+
+	var total, passed int
+	if err := s.db.QueryRowContext(ctx,
+		`SELECT COUNT(*), COALESCE(SUM(CASE WHEN rating >= 2 THEN 1 ELSE 0 END), 0)
+		 FROM anki_review_log WHERE deck_id = ? AND state = 2`, deckID).Scan(&total, &passed); err != nil {
+		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
+	}
+
+	res := &domain.AnkiOptimizeResult{SampleSize: total, CurrentRetention: current}
+	if total > 0 {
+		res.ObservedRetention = float64(passed) / float64(total)
+	}
+	res.SuggestedRetention = domain.SuggestRetention(current, res.ObservedRetention, total)
+
+	if apply && res.SuggestedRetention != current {
+		if _, err := s.db.ExecContext(ctx,
+			`UPDATE anki_deck SET request_retention = ?, updated_at = datetime('now') WHERE id = ?`,
+			res.SuggestedRetention, deckID); err != nil {
+			return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
+		}
+		res.Applied = true
+	}
+	return res, nil
 }

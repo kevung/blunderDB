@@ -48,7 +48,8 @@ func startPostgres(t *testing.T) string {
 // wantTables is the full table set, sorted (the v2.7.0 baseline plus the
 // schema_migrations bookkeeping table created by the forward-migration runner).
 var wantTables = []string{
-	"analysis", "anki_card", "anki_deck", "collection", "collection_position",
+	"analysis", "anki_card", "anki_deck", "anki_review_log",
+	"collection", "collection_position",
 	"command_history", "comment", "filter_library", "game", "match",
 	"metadata", "move", "move_analysis", "position", "schema_migrations",
 	"search_history", "tournament",
@@ -60,6 +61,7 @@ var wantIndexes = []string{
 	"idx_analysis_is_forced", "idx_analysis_move_error",
 	"idx_analysis_position", "idx_analysis_win1", "idx_analysis_win_gammon",
 	"idx_anki_card_deck", "idx_anki_card_due",
+	"idx_anki_review_log_card", "idx_anki_review_log_deck",
 	"idx_collection_position_collection", "idx_game_match", "idx_match_canonical",
 	"idx_match_hash", "idx_move_game", "idx_move_position",
 	"idx_position_cube_response",
@@ -69,7 +71,7 @@ var wantIndexes = []string{
 }
 
 // TestMigratePostgres opens a fresh database, runs Migrate, and confirms the
-// schema landed: all 17 tables, every named index, the database_version row,
+// schema landed: all 18 tables, every named index, the database_version row,
 // and a tenant_id column on every domain table.
 func TestMigratePostgres(t *testing.T) {
 	ctx := context.Background()
