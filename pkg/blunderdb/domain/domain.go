@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.10.0"
+	DatabaseVersion = "2.12.0"
 )
 
 // Anki deck source types
@@ -86,6 +86,67 @@ type AnkiCard struct {
 type AnkiReviewCard struct {
 	Card     AnkiCard `json:"card"`
 	Position Position `json:"position"`
+}
+
+// AnkiReviewLog is one recorded review event: the rating given to a card and
+// the FSRS scheduling outcome. It is append-only and powers retention/streak
+// statistics, the review heatmap and a faithful undo of the last review.
+type AnkiReviewLog struct {
+	ID            int64   `json:"id"`
+	CardID        int64   `json:"cardId"`
+	DeckID        int64   `json:"deckId"`
+	PositionID    int64   `json:"positionId"`
+	Rating        int     `json:"rating"`        // 1=Again, 2=Hard, 3=Good, 4=Easy
+	State         int     `json:"state"`         // FSRS state recorded at review time
+	Stability     float64 `json:"stability"`     // stability after the review
+	Difficulty    float64 `json:"difficulty"`    // difficulty after the review
+	ElapsedDays   int     `json:"elapsedDays"`   // days since the previous review
+	ScheduledDays int     `json:"scheduledDays"` // interval granted by this review
+	ReviewedAt    string  `json:"reviewedAt"`
+}
+
+// AnkiForecastDay is one day of the due-cards forecast: how many cards come due
+// on that calendar day. The first day (offset 0) also absorbs every overdue
+// card, so a study planner can show the immediate backlog plus the load ahead.
+type AnkiForecastDay struct {
+	Day string `json:"day"` // calendar day in UTC, formatted YYYY-MM-DD
+	Due int    `json:"due"` // cards due on that day
+}
+
+// AnkiOptimizeResult reports a deck-parameter tuning suggestion derived from the
+// review log. The Go FSRS port ships only the scheduler (no weight trainer), so
+// this is a pragmatic request-retention adjustment rather than a full re-fit of
+// the 19 model weights: it compares the measured pass rate on review-state cards
+// to the deck's target and nudges request_retention to close the gap.
+type AnkiOptimizeResult struct {
+	SampleSize         int     `json:"sampleSize"`         // review-state reviews considered
+	ObservedRetention  float64 `json:"observedRetention"`  // measured pass rate (rating >= Hard)
+	CurrentRetention   float64 `json:"currentRetention"`   // the deck's request_retention before tuning
+	SuggestedRetention float64 `json:"suggestedRetention"` // recommended request_retention
+	Applied            bool    `json:"applied"`            // whether the suggestion was written back
+}
+
+// AnkiOptimizeMinSample is the smallest review-state sample for which a tuning
+// suggestion is trusted; below it OptimizeParams returns the current value.
+const AnkiOptimizeMinSample = 20
+
+// SuggestRetention nudges a deck's request_retention toward closing the gap
+// between the observed pass rate and the current target, clamped to a sane band.
+// Below AnkiOptimizeMinSample reviews it returns current unchanged (not enough
+// signal). When the user under-retains (observed < target) it raises retention
+// (shorter intervals, more reviews); when they over-retain it lowers it.
+func SuggestRetention(current, observed float64, sample int) float64 {
+	if sample < AnkiOptimizeMinSample {
+		return current
+	}
+	s := current + (current - observed)
+	if s < 0.80 {
+		s = 0.80
+	}
+	if s > 0.97 {
+		s = 0.97
+	}
+	return s
 }
 
 // AnkiDeckStats holds review statistics

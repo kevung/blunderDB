@@ -1367,6 +1367,62 @@ func (d *Database) migrate_2_8_0_to_2_9_0() error {
 	return nil
 }
 
+// migrate_2_10_0_to_2_11_0 adds the anki_review_log table, an append-only
+// journal of every spaced-repetition review (rating + FSRS outcome). It powers
+// retention/streak statistics, the review heatmap and a faithful undo of the
+// last review. The table is also (re)created by ensureAllTablesExist, so a
+// missing table here is not fatal; this step exists so the version bump is
+// recorded on an existing user database.
+func (d *Database) migrate_2_10_0_to_2_11_0() error {
+	if _, err := d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS anki_review_log (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			card_id INTEGER NOT NULL,
+			deck_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			rating INTEGER NOT NULL,
+			state INTEGER NOT NULL DEFAULT 0,
+			stability REAL DEFAULT 0,
+			difficulty REAL DEFAULT 0,
+			elapsed_days INTEGER DEFAULT 0,
+			scheduled_days INTEGER DEFAULT 0,
+			reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE
+		)
+	`); err != nil {
+		return fmt.Errorf("migrate 2.11.0 create anki_review_log: %w", err)
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.11.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.11.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.10.0", "to", "2.11.0")
+	return nil
+}
+
+// migrate_2_11_0_to_2_12_0 extends anki_card with suspend/bury state. A
+// suspended card is excluded from review indefinitely; a buried card is hidden
+// until buried_until passes (typically the next day). The columns are also
+// (re)added by ensureAllTablesExist, so a column that already exists here is
+// not fatal; this step exists so the version bump is recorded on an existing
+// user database.
+func (d *Database) migrate_2_11_0_to_2_12_0() error {
+	for _, stmt := range []string{
+		`ALTER TABLE anki_card ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE anki_card ADD COLUMN buried_until DATETIME`,
+	} {
+		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.12.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.12.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.11.0", "to", "2.12.0")
+	return nil
+}
+
 // runMigrationChain reads the recorded schema version and applies the
 // sequential upgrade steps up to the current DatabaseVersion, then verifies
 // the expected tables and metadata keys exist. It is shared by the GUI/CLI
@@ -1831,6 +1887,24 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			return fmt.Errorf("migration 2.9.0→2.10.0 failed: %w", err)
 		}
 		dbVersion = "2.10.0"
+	}
+
+	// Auto-migrate from 2.10.0 to 2.11.0
+	// Adds the anki_review_log table (append-only review journal).
+	if dbVersion == "2.10.0" {
+		if err := d.migrate_2_10_0_to_2_11_0(); err != nil {
+			return fmt.Errorf("migration 2.10.0→2.11.0 failed: %w", err)
+		}
+		dbVersion = "2.11.0"
+	}
+
+	// Auto-migrate from 2.11.0 to 2.12.0
+	// Adds anki_card suspend/bury columns.
+	if dbVersion == "2.11.0" {
+		if err := d.migrate_2_11_0_to_2_12_0(); err != nil {
+			return fmt.Errorf("migration 2.11.0→2.12.0 failed: %w", err)
+		}
+		dbVersion = "2.12.0"
 	}
 
 	// Ensure all required tables and columns exist.

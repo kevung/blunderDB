@@ -224,7 +224,24 @@ CREATE TABLE IF NOT EXISTS anki_card (
     lapses          BIGINT DEFAULT 0,
     state           BIGINT DEFAULT 0,
     last_review     TIMESTAMPTZ,
+    suspended       BOOLEAN NOT NULL DEFAULT FALSE,
+    buried_until    TIMESTAMPTZ,
     UNIQUE (deck_id, position_id)
+);
+
+CREATE TABLE IF NOT EXISTS anki_review_log (
+    id              BIGSERIAL PRIMARY KEY,
+    tenant_id       BIGINT NOT NULL,
+    card_id         BIGINT NOT NULL REFERENCES anki_card(id) ON DELETE CASCADE,
+    deck_id         BIGINT NOT NULL,
+    position_id     BIGINT NOT NULL,
+    rating          BIGINT NOT NULL,
+    state           BIGINT NOT NULL DEFAULT 0,
+    stability       DOUBLE PRECISION DEFAULT 0,
+    difficulty      DOUBLE PRECISION DEFAULT 0,
+    elapsed_days    BIGINT DEFAULT 0,
+    scheduled_days  BIGINT DEFAULT 0,
+    reviewed_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Indexes. Multi-tenant filter columns lead every composite index so the
@@ -253,3 +270,5 @@ CREATE        INDEX IF NOT EXISTS idx_game_match              ON game (match_id)
 CREATE        INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position (collection_id);
 CREATE        INDEX IF NOT EXISTS idx_anki_card_deck          ON anki_card (deck_id);
 CREATE        INDEX IF NOT EXISTS idx_anki_card_due           ON anki_card (deck_id, due);
+CREATE        INDEX IF NOT EXISTS idx_anki_review_log_card    ON anki_review_log (tenant_id, card_id, reviewed_at);
+CREATE        INDEX IF NOT EXISTS idx_anki_review_log_deck    ON anki_review_log (tenant_id, deck_id, reviewed_at);

@@ -247,6 +247,8 @@ func (d *Database) ensureAllTablesExist() error {
 			lapses INTEGER DEFAULT 0,
 			state INTEGER DEFAULT 0,
 			last_review DATETIME DEFAULT '',
+			suspended INTEGER NOT NULL DEFAULT 0,
+			buried_until DATETIME,
 			FOREIGN KEY(deck_id) REFERENCES anki_deck(id) ON DELETE CASCADE,
 			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
 			UNIQUE(deck_id, position_id)
@@ -254,6 +256,15 @@ func (d *Database) ensureAllTablesExist() error {
 	`)
 	if err != nil {
 		return fmt.Errorf("error ensuring anki_card table: %w", err)
+	}
+
+	// v2.12.0: ensure anki_card suspend/bury columns exist on databases created
+	// before they were added (ALTER TABLE is a no-op if the column exists).
+	for _, stmt := range []string{
+		`ALTER TABLE anki_card ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE anki_card ADD COLUMN buried_until DATETIME`,
+	} {
+		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
 	}
 
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_card_deck ON anki_card(deck_id)`)
@@ -264,6 +275,37 @@ func (d *Database) ensureAllTablesExist() error {
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`)
 	if err != nil {
 		return fmt.Errorf("error ensuring anki_card due index: %w", err)
+	}
+
+	// v2.11.0: anki_review_log (append-only review journal)
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS anki_review_log (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			card_id INTEGER NOT NULL,
+			deck_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			rating INTEGER NOT NULL,
+			state INTEGER NOT NULL DEFAULT 0,
+			stability REAL DEFAULT 0,
+			difficulty REAL DEFAULT 0,
+			elapsed_days INTEGER DEFAULT 0,
+			scheduled_days INTEGER DEFAULT 0,
+			reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring anki_review_log table: %w", err)
+	}
+
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`)
+	if err != nil {
+		return fmt.Errorf("error ensuring anki_review_log card index: %w", err)
+	}
+
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`)
+	if err != nil {
+		return fmt.Errorf("error ensuring anki_review_log deck index: %w", err)
 	}
 
 	// v2.0.0: ensure new position/analysis columns exist (ALTER TABLE is a no-op if column already exists)

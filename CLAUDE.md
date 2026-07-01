@@ -38,6 +38,28 @@ Full CLI reference lives in `CLI_USAGE.md`. Example:
 ./blunderdb list --db mymatches.db --type stats
 ```
 
+## Development Workflow
+
+For **every new modification**, work in an isolated git worktree to avoid conflicts — never edit directly on the shared checkout. The cycle is: create a worktree, do the work and commit there, merge the branch back, then remove the worktree to clean up.
+
+```bash
+# 1. Create a worktree on a fresh branch for the change
+git worktree add ../blunderDB-<feature> -b feat/<feature>
+
+# 2. Work + commit inside that worktree
+cd ../blunderDB-<feature>
+# … edit, test …
+git add -A && git commit -m "feat: <feature>"
+
+# 3. Merge the branch back into the base branch
+cd /home/unger/src/blunderDB
+git merge feat/<feature>
+
+# 4. Clean up the worktree (and the branch once merged)
+git worktree remove ../blunderDB-<feature>
+git branch -d feat/<feature>
+```
+
 ## Tests
 
 ```bash

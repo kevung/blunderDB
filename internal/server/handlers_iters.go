@@ -19,6 +19,7 @@ type (
 	iterColls     = iter.Seq2[*storage.Collection, error]
 	iterTours     = iter.Seq2[*domain.Tournament, error]
 	iterDecks     = iter.Seq2[*domain.AnkiDeck, error]
+	iterReviewLog = iter.Seq2[*domain.AnkiReviewLog, error]
 	iterFilters   = iter.Seq2[*storage.Filter, error]
 	iterSearchHis = iter.Seq2[*storage.SearchHistory, error]
 )
