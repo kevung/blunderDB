@@ -6,20 +6,20 @@
 //
 //	go test -tags postgres ./pkg/blunderdb/storage/postgres/... -run TestPurgeTenant -v
 //
-// This file is `package postgres` (white-box), not `postgres_test`, because
-// TestPurgeOrderMatchesRLSTables needs direct access to the two unexported
-// package-level variables it guards (purgeOrder in purge_postgres.go,
-// rlsTables in rls_postgres.go). That means the usual startPostgres/
-// resetPublicSchema helpers from postgres_test.go (a different package,
-// even though compiled into the same test binary) are not reachable from
-// here, so purgeTestDB/purgeResetSchema below are self-contained local
+// This file is `package postgres` (white-box) because purgeSeedRows below
+// needs direct access to s.pool. The one test that instead needed direct
+// access to the unexported purgeOrder/rlsTables variables and no database,
+// TestPurgeOrderMatchesRLSTables, lives in purge_order_test.go (untagged, so
+// it runs on the default CI path) rather than here. That means the usual
+// startPostgres/resetPublicSchema helpers from postgres_test.go (a different
+// package, even though compiled into the same test binary) are not reachable
+// from here, so purgeTestDB/purgeResetSchema below are self-contained local
 // equivalents rather than reuses.
 package postgres
 
 import (
 	"context"
 	"fmt"
-	"slices"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -218,19 +218,5 @@ func TestPurgeTenantEmpty(t *testing.T) {
 
 	if err := s.PurgeTenant(ctx, "999"); err != nil {
 		t.Fatalf("PurgeTenant on a tenant with no data: %v", err)
-	}
-}
-
-// TestPurgeOrderMatchesRLSTables guards against purgeOrder (purge_postgres.go)
-// and rlsTables (rls_postgres.go) silently drifting apart: sorting both and
-// comparing catches a table added to one list but not the other, in either
-// direction. This test needs no database.
-func TestPurgeOrderMatchesRLSTables(t *testing.T) {
-	got := slices.Clone(purgeOrder)
-	want := slices.Clone(rlsTables)
-	slices.Sort(got)
-	slices.Sort(want)
-	if !slices.Equal(got, want) {
-		t.Fatalf("purgeOrder and rlsTables have drifted apart:\n purgeOrder (sorted) = %v\n rlsTables  (sorted) = %v", got, want)
 	}
 }

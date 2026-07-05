@@ -291,3 +291,14 @@ commits above):
    for the purged tenant and a control tenant, and asserts the purged
    tenant's session is gone while the control tenant's session and the
    global schema-version row survive.
+2. **The `purgeOrder`/`rlsTables` parity guard never ran in CI.**
+   `TestPurgeOrderMatchesRLSTables` touches no database (a pure in-memory
+   slice comparison) but lived in `purge_postgres_test.go`, entirely tagged
+   `//go:build postgres` — so `go test ./...` (the only CI job,
+   `.github/workflows/build.yml`) never exercised it. Fixed by following the
+   exact same pattern already used for
+   `TestTenantPurgeSQLiteNotSupported`/`handlers_tenant_sqlite_test.go`
+   (commit `0f233592`): the test moved, unchanged, into its own untagged
+   file, `pkg/blunderdb/storage/postgres/purge_order_test.go`, still
+   `package postgres` (white-box — it needs simultaneous access to the two
+   unexported package-level `purgeOrder`/`rlsTables` variables).
