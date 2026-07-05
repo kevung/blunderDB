@@ -1,20 +1,15 @@
 //go:build postgres
 
-// TestTenantPurge* provision a real PostgreSQL via testcontainers-go and
-// therefore need Docker, exactly like every other postgres-tagged test in
-// this module (see pkg/blunderdb/storage/postgres/purge_postgres_test.go):
+// TestTenantPurgeEndpoint provisions a real PostgreSQL via testcontainers-go
+// and therefore needs Docker, exactly like every other postgres-tagged test
+// in this module (see pkg/blunderdb/storage/postgres/purge_postgres_test.go):
 //
 //	go test -tags postgres ./internal/server/... -run TestTenantPurge -v
 //
-// The whole file carries the tag, including TestTenantPurgeSQLiteNotSupported
-// (which never touches Postgres) rather than splitting it into its own
-// untagged file: the brief for this task names a single test file
-// (handlers_tenant_test.go), and every other file in this codebase that
-// imports testcontainers-go is tagged in full — mixing a tagged and an
-// untagged file for one handler would be the odd one out here. The trade-off
-// is that the SQLite "not supported" case only runs under `-tags postgres`
-// instead of in the default `go test ./...`; it is still covered, just not
-// on the fast/no-Docker path.
+// The SQLite "not supported" counterpart, TestTenantPurgeSQLiteNotSupported,
+// never touches Postgres and lives in its own untagged file
+// (handlers_tenant_sqlite_test.go) so it still runs on the default,
+// no-Docker `go test ./...` path.
 package server
 
 import (
@@ -138,44 +133,5 @@ func TestTenantPurgeEndpoint(t *testing.T) {
 	defer loadResp.Body.Close()
 	if loadResp.StatusCode != http.StatusNotFound {
 		t.Fatalf("post-purge load status = %d, want 404 (position should be gone)", loadResp.StatusCode)
-	}
-}
-
-// TestTenantPurgeSQLiteNotSupported confirms the endpoint refuses to run
-// against a SQLite-backed server: SQLite has no tenant concept to purge, so
-// the handler must 400 with CodeInvalid rather than silently no-op — and the
-// (untouched) SQLite data must still be there afterwards.
-func TestTenantPurgeSQLiteNotSupported(t *testing.T) {
-	ts := newTestServer(t)
-
-	p := domain.InitializePosition()
-	saveResp := post(t, ts, "/v1/positions.save", positionReq{Position: &p})
-	defer saveResp.Body.Close()
-	var saved idResp
-	if err := json.NewDecoder(saveResp.Body).Decode(&saved); err != nil {
-		t.Fatal(err)
-	}
-
-	purgeResp := post(t, ts, "/v1/tenant.purge", nil)
-	defer purgeResp.Body.Close()
-	if purgeResp.StatusCode != http.StatusBadRequest {
-		t.Fatalf("status = %d, want 400", purgeResp.StatusCode)
-	}
-	var env errorEnvelope
-	if err := json.NewDecoder(purgeResp.Body).Decode(&env); err != nil {
-		t.Fatal(err)
-	}
-	if env.Error.Code != CodeInvalid {
-		t.Fatalf("code = %q, want %q", env.Error.Code, CodeInvalid)
-	}
-	if !strings.Contains(env.Error.Message, "not supported") {
-		t.Fatalf("message = %q, want it to mention %q", env.Error.Message, "not supported")
-	}
-
-	// The SQLite data must be untouched by the rejected purge attempt.
-	loadResp := post(t, ts, "/v1/positions.load", idReq{ID: saved.ID})
-	defer loadResp.Body.Close()
-	if loadResp.StatusCode != http.StatusOK {
-		t.Fatalf("post-attempted-purge load status = %d, want 200 (SQLite data must be untouched)", loadResp.StatusCode)
 	}
 }
