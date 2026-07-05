@@ -145,6 +145,14 @@ Security** de PostgreSQL : des politiques d'isolation par tenant sont
 installées et ``app.tenant_id`` est fixé par connexion. C'est une défense en
 profondeur facultative, désactivée par défaut.
 
+Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``) : l'opération
+s'exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant. Elle
+n'est disponible qu'avec le backend PostgreSQL — elle renvoie une erreur
+``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant.
+
 .. _headless_migrate:
 
 Migrer une base SQLite vers PostgreSQL

@@ -87,7 +87,12 @@ than requiring daemon restart/CLI access. `internal/server/handlers_tenant.go`:
 ```go
 package server
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
 
 // tenantPurger is satisfied only by the PostgreSQL backend (see
 // postgres.Storage.PurgeTenant) — duck-typed the same way serve.go checks for
@@ -109,11 +114,16 @@ func (s *Server) tenantRoutes() []route {
 				writeErrorCode(w, CodeInternal, "purge failed: "+err.Error())
 				return
 			}
-			writeJSON(w, okResp{OK: true})
+			writeJSONResp(w, okResp{OK: true})
 		}},
 	}
 }
 ```
+
+(Verify `s.opts.Storage`'s exact field name/type and `writeJSONResp`'s exact
+signature against the current `internal/server/server.go`/`handlers_rpc.go`
+before implementing — this sketch was checked against them once but re-verify,
+don't trust it blindly.)
 
 Add `rs = append(rs, s.tenantRoutes()...)` to `domainRoutes()`
 (`internal/server/routes.go`). No request body — the tenant is the caller's
@@ -195,4 +205,50 @@ Single PR: `feat(server): tenant purge endpoint (postgres only)`.
 
 ## Done — implementation notes
 
-_(filled in after implementation)_
+- **`PurgeTenant`.** Shipped as designed in `pkg/blunderdb/storage/postgres/purge_postgres.go`:
+  a `purgeOrder` slice (children before parents) walked inside a single
+  `pool.Begin`/`Commit` transaction, `DELETE FROM <table> WHERE tenant_id = $1`
+  per table. Filters by `tenant_id` explicitly rather than relying on RLS/the
+  `app.tenant_id` GUC, so it purges the requested tenant correctly whether or
+  not `Options.EnableRLS` is on.
+- **Endpoint.** `internal/server/handlers_tenant.go` matches the sketch:
+  a `tenantPurger` anonymous interface, duck-typed off `s.opts.Storage`
+  exactly like the existing `ApplyRLS`/`DropRLS` check in `serve.go`; 400
+  `CodeInvalid` ("tenant purge not supported on this backend (postgres
+  only)") on SQLite, `{"ok":true}` (`writeJSONResp`) on success. Wired into
+  `domainRoutes()` (`internal/server/routes.go`) via `s.tenantRoutes()`. One
+  sketch fix made ahead of implementation: `writeJSON` → `writeJSONResp`
+  (the actual helper name in `handlers_rpc.go`).
+- **`order`/`rlsTables` parity guard.** `purgeOrder` (renamed from the
+  sketch's `order` for package-level visibility) is checked against
+  `rlsTables` by `TestPurgeOrderMatchesRLSTables`
+  (`purge_postgres_test.go`) — a set-equality check, not just a length
+  check, so a table added to one list and not the other fails loudly.
+- **Tests, Task 1 (`purge_postgres_test.go`, postgres-tagged).**
+  `TestPurgeTenant` seeds two tenants across every family in `purgeOrder`,
+  purges tenant A, asserts tenant A's rows are gone (via each family's
+  `Get`/`Counts`) and tenant B's rows of the same families are untouched,
+  then purges tenant A a second time to confirm idempotency (no error, zero
+  rows affected). `TestPurgeTenantEmpty` purges a tenant with no data at all
+  — no error. `TestPurgeOrderMatchesRLSTables` is the parity guard above.
+- **Tests, Task 2 — split across two files, a deviation from the sketch's
+  single `handlers_tenant_test.go`.** `TestTenantPurgeEndpoint`
+  (`handlers_tenant_test.go`, `//go:build postgres`, testcontainers-backed)
+  covers the real purge path: `POST /v1/tenant.purge` against a Postgres
+  server returns `{"ok":true}` and the tenant's data is actually gone.
+  `TestTenantPurgeSQLiteNotSupported` was pulled out into its own untagged
+  `handlers_tenant_sqlite_test.go` in a follow-up commit (`0f233592`): it
+  never touches Postgres, but living inside the `postgres`-tagged file meant
+  it never ran under the default `go test ./...` (no `-tags postgres`) in
+  CI. Split out, it reuses the untagged `newTestServer`/`post` helpers
+  (`server_test.go`, `handlers_domain_test.go`) and request/response/error
+  types, so no new helper was needed. It asserts the SQLite server 400s with
+  `CodeInvalid` (message contains "not supported") and that the SQLite data
+  saved before the purge attempt is still readable afterwards.
+- **No CLI/SQLite changes**, as scoped: no new `internal/cli/` subcommand, no
+  SQLite method — only the guarded 400 on the HTTP endpoint.
+- **Docs.** `doc/source/mode_headless.rst` (`.. _headless_postgres:` section)
+  gained one generic paragraph on `POST /v1/tenant.purge` right after the RLS
+  paragraph. The `.po` translation files under
+  `doc/source/locale/*/LC_MESSAGES/mode_headless.po` are now stale for this
+  file; translation is a separate follow-up, not blocking.
