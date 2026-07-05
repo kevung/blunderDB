@@ -147,11 +147,14 @@ profondeur facultative, désactivée par défaut.
 
 Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime
 définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``) : l'opération
+etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``), **ainsi que son
+état de session** (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes ``metadata`` préfixées par ce scope) : l'opération
 s'exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant. Elle
-n'est disponible qu'avec le backend PostgreSQL — elle renvoie une erreur
-``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant.
+un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
+PostgreSQL — elle renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a
+pas de notion de tenant.
 
 .. _headless_migrate:
 

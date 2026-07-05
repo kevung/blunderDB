@@ -3,15 +3,13 @@ package server
 import (
 	"context"
 	"net/http"
-
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // tenantPurger is satisfied only by the PostgreSQL backend (see
 // postgres.Storage.PurgeTenant) — duck-typed the same way serve.go checks for
 // ApplyRLS, so the SQLite backend needs no stub method.
 type tenantPurger interface {
-	PurgeTenant(ctx context.Context, tenantID int64) error
+	PurgeTenant(ctx context.Context, scope string) error
 }
 
 // tenantRoutes returns the tenant-lifecycle route family: currently just
@@ -24,8 +22,7 @@ func (s *Server) tenantRoutes() []route {
 				writeErrorCode(w, CodeInvalid, "tenant purge not supported on this backend (postgres only)")
 				return
 			}
-			scope := scopeOf(r)
-			if err := purger.PurgeTenant(r.Context(), storage.ParseTenant(scope)); err != nil {
+			if err := purger.PurgeTenant(r.Context(), scopeOf(r)); err != nil {
 				writeErrorCode(w, CodeInternal, "purge failed: "+err.Error())
 				return
 			}

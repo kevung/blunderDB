@@ -26,6 +26,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/testcontainers/testcontainers-go"
 	tcpg "github.com/testcontainers/testcontainers-go/modules/postgres"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // purgeTestDB boots a throwaway PostgreSQL 16 container and returns its DSN.
@@ -120,10 +122,13 @@ func purgeCountRows(t *testing.T, pool *pgxpool.Pool, table string, tenantID int
 	return n
 }
 
-// TestPurgeTenant seeds one row per rlsTables-covered table for two tenants,
-// purges tenant A, and asserts every one of tenant A's rows is gone while
-// tenant B's rows of the same tables are untouched. It also purges tenant A
-// a second time (idempotency: no error, zero rows affected either time).
+// TestPurgeTenant seeds one row per rlsTables-covered table plus a scoped
+// session (metadata rows, P4/session_postgres.go) for two tenants, purges
+// tenant A, and asserts every one of tenant A's rows — domain tables and
+// session metadata alike — is gone, while tenant B's rows of the same tables
+// and the global schema-version metadata row are untouched. It also purges
+// tenant A a second time (idempotency: no error, zero rows affected either
+// time).
 func TestPurgeTenant(t *testing.T) {
 	ctx := context.Background()
 	dsn := purgeTestDB(t)
@@ -134,9 +139,19 @@ func TestPurgeTenant(t *testing.T) {
 	}
 	defer s.Close()
 
-	const tenantA, tenantB int64 = 101, 202
+	const scopeA, scopeB = "101", "202"
+	tenantA, tenantB := storage.ParseTenant(scopeA), storage.ParseTenant(scopeB)
 	purgeSeedRows(t, s.pool, tenantA)
 	purgeSeedRows(t, s.pool, tenantB)
+
+	sessionA := storage.SessionState{LastSearchCommand: "search-A", LastSearchPosition: "pos-A"}
+	sessionB := storage.SessionState{LastSearchCommand: "search-B", LastSearchPosition: "pos-B"}
+	if err := s.Session().Save(ctx, scopeA, sessionA); err != nil {
+		t.Fatalf("seed session A: %v", err)
+	}
+	if err := s.Session().Save(ctx, scopeB, sessionB); err != nil {
+		t.Fatalf("seed session B: %v", err)
+	}
 
 	for _, tbl := range rlsTables {
 		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
@@ -147,7 +162,7 @@ func TestPurgeTenant(t *testing.T) {
 		}
 	}
 
-	if err := s.PurgeTenant(ctx, tenantA); err != nil {
+	if err := s.PurgeTenant(ctx, scopeA); err != nil {
 		t.Fatalf("PurgeTenant: %v", err)
 	}
 
@@ -160,8 +175,26 @@ func TestPurgeTenant(t *testing.T) {
 		}
 	}
 
+	loadedA, err := s.Session().Load(ctx, scopeA)
+	if err != nil {
+		t.Fatalf("load session A after purge: %v", err)
+	}
+	if loadedA.LastSearchCommand != "" || loadedA.LastSearchPosition != "" {
+		t.Errorf("after purge: session A = %+v, want zero value (metadata rows purged)", *loadedA)
+	}
+	loadedB, err := s.Session().Load(ctx, scopeB)
+	if err != nil {
+		t.Fatalf("load session B after purge: %v", err)
+	}
+	if loadedB.LastSearchCommand != sessionB.LastSearchCommand || loadedB.LastSearchPosition != sessionB.LastSearchPosition {
+		t.Errorf("after purge: session B = %+v, want untouched %+v", *loadedB, sessionB)
+	}
+	if _, err := s.Version(ctx); err != nil {
+		t.Errorf("after purge: global schema-version metadata row missing/unreadable: %v", err)
+	}
+
 	// Idempotency: purging an already-purged tenant is a harmless no-op.
-	if err := s.PurgeTenant(ctx, tenantA); err != nil {
+	if err := s.PurgeTenant(ctx, scopeA); err != nil {
 		t.Fatalf("second PurgeTenant (idempotency): %v", err)
 	}
 	for _, tbl := range rlsTables {
@@ -183,7 +216,7 @@ func TestPurgeTenantEmpty(t *testing.T) {
 	}
 	defer s.Close()
 
-	if err := s.PurgeTenant(ctx, 999); err != nil {
+	if err := s.PurgeTenant(ctx, "999"); err != nil {
 		t.Fatalf("PurgeTenant on a tenant with no data: %v", err)
 	}
 }

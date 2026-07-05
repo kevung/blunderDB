@@ -78,6 +78,16 @@ func (s *Storage) PurgeTenant(ctx context.Context, tenantID int64) error {
 `order` must stay a permutation of `rlsTables` (`rls_postgres.go`) — cover
 this with a test (see Tests) so the two lists can't silently drift apart.
 
+> **Post-final-review correction (see "Done" below).** This sketch's
+> `PurgeTenant(ctx, tenantID int64)` signature turned out to be wrong: the
+> `metadata` table has no `tenant_id` column at all (it also holds the global
+> schema version), so a numeric tenant id can't address the session-state
+> rows namespaced by scope (P4, `sessionScopedKey`). The shipped signature is
+> `PurgeTenant(ctx context.Context, scope string) error` — it derives
+> `tenantID` internally via `storage.ParseTenant(scope)` for the `tenant_id`
+> tables, and uses `scope` directly (via `sessionScopedKey`) to also delete
+> that tenant's session-state `metadata` rows.
+
 **D2 — Exposed as a new HTTP endpoint**, `POST /v1/tenant.purge`, not a
 CLI-only tool: the whole point is a running `serve` daemon deleting a
 tenant's data on request (an operator or an upstream admin panel calling in),
@@ -252,3 +262,32 @@ Single PR: `feat(server): tenant purge endpoint (postgres only)`.
   paragraph. The `.po` translation files under
   `doc/source/locale/*/LC_MESSAGES/mode_headless.po` are now stale for this
   file; translation is a separate follow-up, not blocking.
+
+## Post-final-review fixes
+
+A final branch review after the three tasks above turned up two "Important"
+findings, each fixed in its own follow-up commit (not folded into the task
+commits above):
+
+1. **`metadata` session rows were orphaned by the purge.** `PurgeTenant`
+   never touched the `metadata` table, so a decommissioned tenant's ~6
+   session-state rows (`<scope>:session_last_search_command` and friends,
+   P4/`session_postgres.go`'s `sessionScopedKey`) persisted forever —
+   harmless but contradicting the "purge deletes everything" promise.
+   Fixed by changing `PurgeTenant`'s signature from
+   `PurgeTenant(ctx, tenantID int64)` to `PurgeTenant(ctx, scope string)`
+   (see the D1 correction note above): it now also deletes
+   `sessionScopedKey(scope, k)` for every `k` in `sessionKeys`
+   (`DELETE FROM metadata WHERE key = ANY($1)`), reusing
+   `session_postgres.go`'s own key-namespacing rather than re-deriving the
+   `"<scope>:"` prefix format, and matching an exact key set rather than a
+   `LIKE` prefix pattern so an unusual scope value can't over-match via SQL
+   `LIKE` wildcards. The global `database_version` metadata row is never in
+   that set, so it is never touched. `handlers_tenant.go`'s `tenantPurger`
+   interface and call site were updated to match (`purger.PurgeTenant(ctx,
+   scopeOf(r))`, no more `storage.ParseTenant` in the handler — it now
+   happens inside `PurgeTenant` itself). `TestPurgeTenant`
+   (`purge_postgres_test.go`) now also seeds a session (via `s.Session()`)
+   for the purged tenant and a control tenant, and asserts the purged
+   tenant's session is gone while the control tenant's session and the
+   global schema-version row survive.
