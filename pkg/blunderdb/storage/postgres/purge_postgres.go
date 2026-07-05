@@ -14,7 +14,7 @@ import (
 // than relying on cascade ordering.
 //
 // purgeOrder must stay a permutation of rlsTables (rls_postgres.go);
-// TestPurgeOrderMatchesRLSTables (purge_postgres_test.go) fails loudly if a
+// TestPurgeOrderMatchesRLSTables (purge_order_test.go) fails loudly if a
 // table is added to one list and not the other.
 var purgeOrder = []string{
 	"move_analysis", "anki_review_log", "collection_position",
