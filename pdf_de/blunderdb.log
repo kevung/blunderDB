@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:47
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1317,99 +1317,99 @@ len bereitgestellt werden (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSeri
 f(1)/m/n/10 ,
  []
 
-[41]
-Underfull \hbox (badness 5817) in paragraph at lines 6194--6196
+[41] [42]
+Underfull \hbox (badness 5817) in paragraph at lines 6206--6208
 []\TU/FreeSerif(1)/m/n/10 SQLite-Quelldatenbank (\TU/FreeMono(1)/m/n/10 sqlite:
 ///chemin \TU/FreeSerif(1)/m/n/10 oder ein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6248--6250
+Underfull \hbox (badness 10000) in paragraph at lines 6260--6262
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
-[42]
-Underfull \hbox (badness 7256) in paragraph at lines 6269--6271
+
+Underfull \hbox (badness 7256) in paragraph at lines 6281--6283
 []\TU/FreeSerif(1)/m/n/10 Noch nicht migriert werden die Anwendungszustände: An
 ki-Decks/-Karten, Filterbibliothek, Such- und
  []
 
 
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6357--6359
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6369--6371
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6360
+Overfull \hbox (1.06567pt too wide) detected at line 6372
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 5592) in paragraph at lines 6426--6428
+Underfull \hbox (badness 5592) in paragraph at lines 6438--6440
 []\TU/FreeSerif(1)/m/n/10 zeigt alle Methoden \TU/FreeMono(1)/m/n/10 <famille>.
 <méthode> \TU/FreeSerif(1)/m/n/10 an und
  []
 
 [43] [44]
-Underfull \hbox (badness 6316) in paragraph at lines 6620--6622
+Underfull \hbox (badness 6316) in paragraph at lines 6632--6634
 []\TU/FreeSerif(1)/m/n/10 Schlagen auf dem Ass-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6650--6652
+Underfull \hbox (badness 10000) in paragraph at lines 6662--6664
 []\TU/FreeSerif(1)/m/n/10 Take/Pass-Entscheidung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+Underfull \hbox (badness 10000) in paragraph at lines 6699--6701
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6690
+Underfull \hbox (badness 10000) detected at line 6702
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6726--6728
+Underfull \hbox (badness 10000) in paragraph at lines 6738--6740
 []\TU/FreeSerif(1)/m/n/10 Ein rückständiger Stein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6777--6779
+Underfull \hbox (badness 10000) in paragraph at lines 6789--6791
 []\TU/FreeSerif(1)/m/n/10 Ass-Punkt des Gegners
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6818--6820
+Underfull \hbox (badness 10000) in paragraph at lines 6830--6832
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6832--6834
+Underfull \hbox (badness 10000) in paragraph at lines 6844--6846
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 [45]
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(1)/m/n/10 Windows verlangt heutzutage von Softwareherstellern ode
 r unabhängigen Softwareentwicklern, ihre
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(1)/m/n/10 Anwendungen digital zu zertifizieren oder sie sogar übe
 r den Windows Store zu vertreiben. Es wird
  []
 
 
-Underfull \hbox (badness 6125) in paragraph at lines 6947--6949
+Underfull \hbox (badness 6125) in paragraph at lines 6959--6961
 \TU/FreeSerif(1)/m/n/10 daher empfohlen, sich an externe Unternehmen zu wenden,
  um ein digitales Zertifikat zu erhalten, das
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(1)/m/n/10 mehrere hundert Euro kostet (siehe zum Beispiel [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
@@ -1439,25 +1439,25 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [51] [52] [53] [54] [55] [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7268--7270
+Underfull \hbox (badness 10000) in paragraph at lines 7280--7282
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.0.0 auf Version 1.1.0 
 zu migrieren, führen Sie den Befehl
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7286--7288
+Underfull \hbox (badness 10000) in paragraph at lines 7298--7300
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.1.0 auf Version 1.2.0 
 zu migrieren, führen Sie den Befehl
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7304--7306
+Underfull \hbox (badness 10000) in paragraph at lines 7316--7318
 []\TU/FreeSerif(1)/m/n/10 Um die Datenbank von Version 1.2.0 auf Version 1.3.0 
 zu migrieren, führen Sie den Befehl
  []
 
 [57]
-Underfull \hbox (badness 10000) in paragraph at lines 7326--7328
+Underfull \hbox (badness 10000) in paragraph at lines 7338--7340
 []\TU/FreeSerif(1)/b/n/10 move_analysis\TU/FreeSerif(1)/m/n/10 : Speichert die 
 Analyse jedes Zuges mit den Spalten \TU/FreeSerif(1)/m/it/10 id \TU/FreeSerif(1
 )/m/n/10 (Primärschlüssel), \TU/FreeSerif(1)/m/it/10 move_id

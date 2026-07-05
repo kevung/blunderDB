@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{01.07.2026}
+\date{05.07.2026}
 \release{0.27.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -6136,6 +6136,18 @@ Für eine gemeinsame Bereitstellung kann blunderDB die Daten in \sphinxstylestro
 
 \sphinxAtStartPar
 Die Daten sind \sphinxstylestrong{nach Tenant (Mandant) abgeschottet}: jede Anfrage trägt eine Scope\sphinxhyphen{}Kennung (Header \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, standardmäßig \sphinxcode{\sphinxupquote{default}}), was es mehreren Benutzern ermöglicht, dieselbe Instanz zu teilen, ohne die Daten der anderen zu sehen. Die Option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} aktiviert zusätzlich die \sphinxstylestrong{Row\sphinxhyphen{}Level Security} von PostgreSQL: Es werden Isolationsrichtlinien pro Tenant installiert und \sphinxcode{\sphinxupquote{app.tenant\_id}} wird pro Verbindung gesetzt. Dies ist eine optionale Verteidigung in der Tiefe, die standardmäßig deaktiviert ist.
+
+\sphinxAtStartPar
+Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
+état de session} (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
+s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
+PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
+pas de notion de tenant.
 
 
 \subsection{Eine SQLite\sphinxhyphen{}Datenbank nach PostgreSQL migrieren}

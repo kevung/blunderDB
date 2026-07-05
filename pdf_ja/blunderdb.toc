@@ -134,9 +134,9 @@
 \contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{51}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{52}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{52}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{52}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{53}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{53}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}例}{53}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.4}例}{54}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{55}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{55}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{56}{subsection.2.10.2}%

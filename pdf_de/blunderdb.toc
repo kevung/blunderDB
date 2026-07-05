@@ -137,7 +137,7 @@
 \contentsline {section}{\numberline {2.9}Anhang: Fortgeschrittene Nutzung der Filter}{44}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Positionssuche über die Befehlszeile}{44}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Suche in den aktuellen Ergebnissen}{44}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Filterbibliothek}{44}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.3}Filterbibliothek}{45}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Beispiele}{45}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware}{46}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows\sphinxhyphen {}SmartScreen\sphinxhyphen {}Warnung}{47}{subsection.2.10.1}%

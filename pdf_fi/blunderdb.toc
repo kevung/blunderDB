@@ -132,7 +132,7 @@
 \contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{40}{subsection.2.8.2}%
 \contentsline {subsubsection}{Päätepisteet}{41}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{41}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{41}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{42}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{43}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{43}{subsection.2.9.1}%

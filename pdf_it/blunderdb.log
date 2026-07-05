@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1101,56 +1101,56 @@ Underfull \hbox (badness 10000) in paragraph at lines 6034--6036
  []
 
 [41] [42]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6357--6359
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6369--6371
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6360
+Overfull \hbox (1.06567pt too wide) detected at line 6372
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[43]
-Underfull \hbox (badness 6412) in paragraph at lines 6655--6657
+[43] [44]
+Underfull \hbox (badness 6412) in paragraph at lines 6667--6669
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 6658
+Underfull \hbox (badness 6412) detected at line 6670
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6671--6673
+Underfull \hbox (badness 6412) in paragraph at lines 6683--6685
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+Underfull \hbox (badness 10000) in paragraph at lines 6699--6701
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6698--6700
+Underfull \hbox (badness 10000) in paragraph at lines 6710--6712
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6712--6714
+Underfull \hbox (badness 10000) in paragraph at lines 6724--6726
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6777--6779
+Underfull \hbox (badness 10000) in paragraph at lines 6789--6791
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6793--6795
+Underfull \hbox (badness 6412) in paragraph at lines 6805--6807
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
-[44] [45]
+[45]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
@@ -1162,19 +1162,19 @@ File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
+ [48] [49]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [48] [49] [50] [51]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [52] [53] [54] [55] [56] [57] [58]
-[59] [60]
+ [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
+[60]
 Capitolo 3.
 [61
 

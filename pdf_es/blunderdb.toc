@@ -133,16 +133,16 @@
 \contentsline {subsubsection}{Puntos de acceso}{41}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL y multiusuario}{42}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Migrar una base SQLite a PostgreSQL}{42}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}El despachador genérico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{42}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.5}El despachador genérico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{43}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Anexo: Uso avanzado de los filtros}{43}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Búsqueda de posiciones en la línea de comandos}{43}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Búsqueda de posiciones en la línea de comandos}{44}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Búsqueda dentro de los resultados actuales}{44}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Biblioteca de filtros}{44}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Ejemplos}{45}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Anexo Windows: detección errónea de blunderDB como software malicioso}{45}{section.2.10}%
+\contentsline {section}{\numberline {2.10}Anexo Windows: detección errónea de blunderDB como software malicioso}{46}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Advertencia de Windows SmartScreen}{46}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Bloqueo de Windows Defender}{46}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Verificar la integridad de la descarga (SHA256)}{50}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.2}Bloqueo de Windows Defender}{47}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Verificar la integridad de la descarga (SHA256)}{52}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Anexo Mac: posible bloqueo de blunderDB}{55}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Instalación de blunderDB}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorización para ejecutar blunderDB}{55}{subsection.2.11.2}%
@@ -159,14 +159,14 @@
 \contentsline {subsection}{\numberline {2.13.1}Definiciones formales}{58}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.47}%
 \contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.48}%
-\contentsline {subsubsection}{Pérdida de MWC (Match Winning Chance)}{59}{subsubsection*.49}%
+\contentsline {subsubsection}{Pérdida de MWC (Match Winning Chance)}{58}{subsubsection*.49}%
 \contentsline {subsection}{\numberline {2.13.2}Decisiones contabilizadas en el denominador del PR}{59}{subsection.2.13.2}%
 \contentsline {subsubsection}{Jugadas de fichas — decisiones contabilizadas}{59}{subsubsection*.50}%
 \contentsline {subsubsection}{Decisiones de cubo — decisiones contabilizadas}{59}{subsubsection*.51}%
 \contentsline {subsubsection}{Resumen del filtro}{59}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}Correspondencia blunderDB ↔ XG ↔ gnuBG}{59}{subsection.2.13.3}%
 \contentsline {subsubsection}{Comparación XG ↔ blunderDB (mismo motor de análisis)}{59}{subsubsection*.53}%
-\contentsline {subsubsection}{Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)}{60}{subsubsection*.54}%
+\contentsline {subsubsection}{Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)}{59}{subsubsection*.54}%
 \contentsline {subsection}{\numberline {2.13.4}Validar sus propias cifras}{60}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}Referencia gnuBG}{60}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Contacto}{61}{chapter.3}%

@@ -136,7 +136,7 @@
 \contentsline {subsection}{\numberline {2.8.5}Ο γενικός dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{45}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Παράρτημα: Προχωρημένη χρήση των φίλτρων}{46}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Αναζήτηση θέσεων από τη γραμμή εντολών}{46}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{46}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.2}Αναζήτηση μέσα στα τρέχοντα αποτελέσματα}{47}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Βιβλιοθήκη φίλτρων}{47}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Παραδείγματα}{47}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού}{49}{section.2.10}%

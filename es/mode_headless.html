@@ -201,6 +201,16 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Backend PostgreSQL y multiusuario<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>Para un despliegue compartido, blunderDB puede almacenar los datos en <strong>PostgreSQL</strong> en lugar de en un archivo SQLite. El backend se selecciona mediante <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> y la cadena de conexión <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. El esquema se crea y se migra automáticamente al arrancar.</p>
 <p>Los datos están <strong>compartimentados por tenant</strong> (inquilino): cada petición lleva un identificador de scope (cabecera <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, por defecto <code class="docutils literal notranslate"><span class="pre">default</span></code>), lo que permite que varios usuarios compartan la misma instancia sin ver los datos de los demás. La opción <code class="docutils literal notranslate"><span class="pre">--rls</span></code> activa además la <strong>Row-Level Security</strong> de PostgreSQL: se instalan políticas de aislamiento por tenant y <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> se fija por conexión. Es una defensa en profundidad opcional, desactivada por defecto.</p>
+<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
+état de session</strong> (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l’opération
+s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
+PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n’a
+pas de notion de tenant.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Migrar una base SQLite a PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

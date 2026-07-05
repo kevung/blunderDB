@@ -201,6 +201,16 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Backend PostgreSQL και πολλαπλοί χρήστες<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>Για μια κοινόχρηστη ανάπτυξη, το blunderDB μπορεί να αποθηκεύει τα δεδομένα στο <strong>PostgreSQL</strong> αντί σε ένα αρχείο SQLite. Το backend επιλέγεται μέσω του <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> και της συμβολοσειράς σύνδεσης <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την εκκίνηση.</p>
 <p>Τα δεδομένα είναι <strong>διαχωρισμένα ανά tenant</strong> (μισθωτή): κάθε αίτημα φέρει ένα αναγνωριστικό scope (κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, εξ ορισμού <code class="docutils literal notranslate"><span class="pre">default</span></code>), πράγμα που επιτρέπει σε πολλούς χρήστες να μοιράζονται το ίδιο instance χωρίς να βλέπουν τα δεδομένα των άλλων. Η επιλογή <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ενεργοποιεί επιπλέον το <strong>Row-Level Security</strong> του PostgreSQL: εγκαθίστανται πολιτικές απομόνωσης ανά tenant και το <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> ορίζεται ανά σύνδεση. Πρόκειται για μια προαιρετική άμυνα σε βάθος, απενεργοποιημένη εξ ορισμού.</p>
+<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
+état de session</strong> (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l’opération
+s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
+PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n’a
+pas de notion de tenant.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Μετανάστευση μιας βάσης SQLite προς PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

@@ -201,6 +201,16 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQLバックエンドとマルチユーザー<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>共有デプロイの場合、blunderDBはSQLiteファイルではなく <strong>PostgreSQL</strong> にデータを保存できます。バックエンドは <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> と接続文字列 <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。</p>
 <p>データは**テナント（利用者）ごとに分離**されています：各リクエストにはスコープ識別子（ヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>、デフォルトは <code class="docutils literal notranslate"><span class="pre">default</span></code>）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。<code class="docutils literal notranslate"><span class="pre">--rls</span></code> オプションは、補完的にPostgreSQLの <strong>Row-Level Security</strong> を有効にします：テナントごとの分離ポリシーがインストールされ、<code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。</p>
+<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
+état de session</strong> (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l'opération
+s'exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
+PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n'a
+pas de notion de tenant.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>SQLiteデータベースをPostgreSQLへ移行する<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

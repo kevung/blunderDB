@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1418,78 +1418,78 @@ reeMono(2)/m/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(2)/m/n/1
 0 BLUNDERDB_LOG_LEVEL\TU/FreeSerif(2)/m/n/10 ,
  []
 
-[43]
-Underfull \hbox (badness 7595) in paragraph at lines 6208--6210
+[43] [44]
+Underfull \hbox (badness 7595) in paragraph at lines 6220--6222
 []\TU/FreeSerif(2)/m/n/10 scope tenant προορισμού (υποχρεωτικό εκτός από
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6230--6232
+Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
 [][][]\TU/FreeMono(2)/m/n/10 on[]conflict
  []
 
-[44]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6339--6341
+
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6351--6353
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6342
+Overfull \hbox (9.46619pt too wide) detected at line 6354
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [45] [46]
-Underfull \hbox (badness 10000) in paragraph at lines 6648--6650
+Underfull \hbox (badness 10000) in paragraph at lines 6660--6662
 []\TU/FreeSerif(2)/m/n/10 Πολύ καλό για
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6669--6671
+Underfull \hbox (badness 10000) in paragraph at lines 6681--6683
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6672
+Underfull \hbox (badness 10000) detected at line 6684
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6680--6682
+Underfull \hbox (badness 10000) in paragraph at lines 6692--6694
 []\TU/FreeSerif(2)/m/n/10 Λάθη του παίκτη 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6680--6682
+Underfull \hbox (badness 10000) in paragraph at lines 6692--6694
 \TU/FreeSerif(2)/m/n/10 μεγαλύτερα από 40
  []
 
 
-Underfull \hbox (badness 5288) in paragraph at lines 6708--6710
+Underfull \hbox (badness 5288) in paragraph at lines 6720--6722
 []\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6738--6740
+Underfull \hbox (badness 10000) in paragraph at lines 6750--6752
 []\TU/FreeSerif(2)/m/n/10 Φράγμα εναντίον
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6770--6772
+Underfull \hbox (badness 10000) in paragraph at lines 6782--6784
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6770--6772
+Underfull \hbox (badness 10000) in paragraph at lines 6782--6784
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6773
+Underfull \hbox (badness 10000) detected at line 6785
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6773
+Underfull \hbox (badness 10000) detected at line 6785
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
@@ -1518,7 +1518,7 @@ File: win7.png Graphic file (type bmp)
 <win7.png>
  [52] [53] [54] [55] [56] [57] [58] [59] [60] [61]
 [62] [63]
-Underfull \hbox (badness 7522) in paragraph at lines 7827--7829
+Underfull \hbox (badness 7522) in paragraph at lines 7839--7841
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []

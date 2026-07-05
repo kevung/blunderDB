@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1171,64 +1171,65 @@ Underfull \hbox (badness 10000) in paragraph at lines 6034--6036
  []
 
 [41] [42]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6357--6359
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6369--6371
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6360
+Overfull \hbox (1.06567pt too wide) detected at line 6372
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6666--6668
+Underfull \hbox (badness 10000) in paragraph at lines 6678--6680
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6712--6714
+Underfull \hbox (badness 10000) in paragraph at lines 6724--6726
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 6726--6728
+Underfull \hbox (badness 6876) in paragraph at lines 6738--6740
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6777--6779
+Underfull \hbox (badness 10000) in paragraph at lines 6789--6791
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
 [45]
-Underfull \hbox (badness 7221) in paragraph at lines 6947--6949
+Underfull \hbox (badness 7221) in paragraph at lines 6959--6961
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
 
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+[46]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
-[46] [47]
+ [47]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [48] [49]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
+ [48] [49] [50] [51]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60]
+ [52] [53] [54] [55] [56] [57] [58] [59] [60]
 Capítulo 3.
 [61
 

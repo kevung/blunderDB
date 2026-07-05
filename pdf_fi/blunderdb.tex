@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{01.07.2026}
+\date{05.07.2026}
 \release{0.27.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -6136,6 +6136,18 @@ Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot \sphinxstylestron
 
 \sphinxAtStartPar
 Tiedot on \sphinxstylestrong{eristetty vuokralaisittain}: jokainen pyyntö sisältää scope\sphinxhyphen{}tunnisteen (otsake \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, oletuksena \sphinxcode{\sphinxupquote{default}}), mikä sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. Valinta \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} ottaa lisäksi käyttöön PostgreSQL:n \sphinxstylestrong{Row\sphinxhyphen{}Level Securityn}: vuokralaiskohtaiset eristyskäytännöt asennetaan ja \sphinxcode{\sphinxupquote{app.tenant\_id}} asetetaan yhteyskohtaisesti. Tämä on valinnainen syvyyspuolustus, joka on oletuksena pois käytöstä.
+
+\sphinxAtStartPar
+Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
+définitivement toutes ses données (positions, matchs, collections, historique,
+etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
+état de session} (dernière recherche, dernière position, onglets ouverts —
+les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
+s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
+un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
+ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
+PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
+pas de notion de tenant.
 
 
 \subsection{SQLite\sphinxhyphen{}tietokannan siirtäminen PostgreSQL:ään}

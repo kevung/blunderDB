@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1410,103 +1410,103 @@ alla (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(0)/m/n/10 , \TU/Fre
 eMono(0)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(0)/m/n/10 ,
  []
 
-[41]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6357--6359
+[41] [42]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6369--6371
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6360
+Overfull \hbox (1.06567pt too wide) detected at line 6372
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[42] [43]
-Underfull \hbox (badness 10000) in paragraph at lines 6650--6652
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 6662--6664
 []\TU/FreeSerif(0)/m/n/10 Take/Pass-päätös
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6655--6657
+Underfull \hbox (badness 10000) in paragraph at lines 6667--6669
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat ylemmän
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6655--6657
+Underfull \hbox (badness 10000) in paragraph at lines 6667--6669
 \TU/FreeSerif(0)/m/n/10 pelaajan puolella,
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6658
+Underfull \hbox (badness 10000) detected at line 6670
 \TU/FreeSerif(0)/m/n/10 pelaajan puolella,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6671--6673
+Underfull \hbox (badness 10000) in paragraph at lines 6683--6685
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat alemman
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+Underfull \hbox (badness 10000) in paragraph at lines 6699--6701
 []\TU/FreeSerif(0)/m/n/10 pisteitä muodostettu
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6687--6689
+Underfull \hbox (badness 10000) in paragraph at lines 6699--6701
 \TU/FreeSerif(0)/m/n/10 kotialueella, nappuloita
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6690
+Underfull \hbox (badness 10000) detected at line 6702
 []\TU/FreeSerif(0)/m/n/10 pisteitä muodostettu
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6712--6714
+Underfull \hbox (badness 10000) in paragraph at lines 6724--6726
 []\TU/FreeSerif(0)/m/n/10 Asema turnauksesta
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6777--6779
+Underfull \hbox (badness 10000) in paragraph at lines 6789--6791
 []\TU/FreeSerif(0)/m/n/10 vastustajan ässäpiste
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6793--6795
+Underfull \hbox (badness 10000) in paragraph at lines 6805--6807
 []\TU/FreeSerif(0)/m/n/10 tyhjät nopat alemman
  []
 
 [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6900--6902
+Underfull \hbox (badness 10000) in paragraph at lines 6912--6914
 []\TU/FreeSerif(0)/m/n/10 Komennon \TU/FreeMono(0)/m/n/10 s nc \TU/FreeSerif(0)
 /m/n/10 jälkeen hae lyhyitä
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6940--6940
+Underfull \hbox (badness 10000) in paragraph at lines 6952--6952
 |[][]\TU/FreeSans(0)/b/n/14.4 Windows-liite: blunderDB:n virheellinen tunnistus
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(0)/m/n/10 Windows edellyttää nykyään, että ohjelmistoja julkaisev
 at yritykset tai itsenäiset ohjelmistokehittäjät
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(0)/m/n/10 varmentavat sovelluksensa digitaalisesti tai jopa jakel
 evat ne Windows Storen kautta. Tällöin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(0)/m/n/10 suositellaan kääntymään ulkopuolisten yritysten puoleen
  digitaalisen varmenteen hankkimiseksi, mikä
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6947--6949
+Underfull \hbox (badness 10000) in paragraph at lines 6959--6961
 \TU/FreeSerif(0)/m/n/10 maksaa useita satoja euroja (katso esimerkiksi [][]$[][
 ][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] [] 
 [][][][][][][] [] [][][][][] [] [][] [] [][] []
@@ -1536,25 +1536,25 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [51] [52] [53] [54] [55]
-Underfull \hbox (badness 10000) in paragraph at lines 7268--7270
+Underfull \hbox (badness 10000) in paragraph at lines 7280--7282
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.0.0 versioon 
 1.1.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_0_to_1_1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7286--7288
+Underfull \hbox (badness 10000) in paragraph at lines 7298--7300
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.1.0 versioon 
 1.2.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_1_to_1_2
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7304--7306
+Underfull \hbox (badness 10000) in paragraph at lines 7316--7318
 []\TU/FreeSerif(0)/m/n/10 Migratoidaksesi tietokannan versiosta 1.2.0 versioon 
 1.3.0 suorita komento \TU/FreeMono(0)/m/n/10 migrate_from_1_2_to_1_3
  []
 
 [56] [57]
-Underfull \hbox (badness 10000) in paragraph at lines 7510--7512
+Underfull \hbox (badness 10000) in paragraph at lines 7522--7524
 \TU/FreeSerif(0)/m/n/10 MWC-tappio ilmaisee ottelun voittotodennäköisyyden pros
 enttiyksikköinä pelaajan virheiden kumulatiivisen
  []

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.1)  1 JUL 2026 20:48
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1412,54 +1412,54 @@ n/10 positions.fromXGID
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6154--6156
+Underfull \hbox (badness 10000) in paragraph at lines 6166--6168
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6157
+Underfull \hbox (badness 10000) detected at line 6169
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6176--6178
+Underfull \hbox (badness 10000) in paragraph at lines 6188--6190
 []\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
 //chemin \TU/FreeSerif(1)/m/n/10 или
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6208--6210
+Underfull \hbox (badness 6412) in paragraph at lines 6220--6222
 []\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6230--6232
+Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 [42]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6339--6341
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6351--6353
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6342
+Overfull \hbox (9.46619pt too wide) detected at line 6354
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6408--6410
+Underfull \hbox (badness 10000) in paragraph at lines 6420--6422
 []\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
 .<метод> \TU/FreeSerif(1)/m/n/10 и
  []
 
 [43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6694--6696
+Underfull \hbox (badness 10000) in paragraph at lines 6706--6708
 []\TU/FreeSerif(1)/m/n/10 Позиция турнира
  []
 
 [45]
-Underfull \hbox (badness 10000) in paragraph at lines 6929--6931
+Underfull \hbox (badness 10000) in paragraph at lines 6941--6943
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
