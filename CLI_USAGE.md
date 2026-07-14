@@ -251,8 +251,8 @@ Search for positions in the database using filters.
 - `--has-analysis` - Only positions with analysis
 - `--off1-min` / `--off2-min` - Minimum checkers off for player 1/2
 - `--individual` - Only positions imported on their own — the ones you added yourself, not the ones a match import brought in
-- `--match-ids` - Filter by match IDs (comma-separated, e.g. `1,3,5` or range `2,7`)
-- `--tournament-ids` - Filter by tournament IDs (comma-separated, e.g. `1,3` or range `1,5`)
+- `--match-ids` - Filter by match IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
+- `--tournament-ids` - Filter by tournament IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
 
 ### Examples
 
@@ -263,8 +263,8 @@ Search for positions in the database using filters.
 # Search positions with errors >= 0.1
 ./blunderdb search --db database.db --error-min 0.1
 
-# Search in specific matches
-./blunderdb search --db database.db --match-ids 2,5
+# Search in specific matches (2, 5, and 9)
+./blunderdb search --db database.db --match-ids 2,5,9
 
 # Search in a tournament
 ./blunderdb search --db database.db --tournament-ids 1
@@ -321,6 +321,35 @@ ID: 2
   Games: 12
   Imported: 2025-11-03 15:45:00
   File: /path/to/match2.xg
+```
+
+### List Tournaments
+
+```bash
+./blunderdb list --db database.db --type tournaments
+```
+
+Shows all tournaments with details:
+- Tournament ID
+- Name
+- Date
+- Location
+- Number of matches
+
+**Example output:**
+```
+Found 2 tournament(s):
+
+ID: 1
+  Name: World Championship
+  Date: 2026-01-01
+  Location: Monte Carlo
+  Matches: 5
+
+ID: 2
+  Name: Marseille Open
+  Date: 2026-03-15
+  Matches: 3
 ```
 
 ### List Positions

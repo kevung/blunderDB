@@ -215,16 +215,19 @@ func analysisMatchesMovePattern(filter string, ana *domain.PositionAnalysis) boo
 	return false
 }
 
-// parseFilterIDList parses a match/tournament ID filter string.
+// parseFilterIDList parses a match/tournament ID filter string. It accepts a
+// two-value comma range ("2,7" -> 2..7 inclusive), a semicolon-separated
+// explicit list ("2;5;9"), a comma-separated explicit list ("2,5,9"), or any
+// mix of comma and semicolon separators.
 func parseFilterIDList(s string) ([]int64, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return nil, nil
 	}
-	parts := strings.Split(s, ",")
-	if len(parts) == 2 {
-		start, err1 := strconv.ParseInt(strings.TrimSpace(parts[0]), 10, 64)
-		end, err2 := strconv.ParseInt(strings.TrimSpace(parts[1]), 10, 64)
+	commaParts := strings.Split(s, ",")
+	if len(commaParts) == 2 {
+		start, err1 := strconv.ParseInt(strings.TrimSpace(commaParts[0]), 10, 64)
+		end, err2 := strconv.ParseInt(strings.TrimSpace(commaParts[1]), 10, 64)
 		if err1 == nil && err2 == nil && end > start {
 			var ids []int64
 			for i := start; i <= end; i++ {
@@ -233,18 +236,21 @@ func parseFilterIDList(s string) ([]int64, error) {
 			return ids, nil
 		}
 	}
-	parts = strings.Split(s, ";")
+	// Not a two-value range: treat every comma-separated part as its own
+	// semicolon-list parse, so "1,3,5", "1;3;5", and mixes of both work.
 	var ids []int64
-	for _, p := range parts {
-		p = strings.TrimSpace(p)
-		if p == "" {
-			continue
+	for _, commaPart := range commaParts {
+		for _, p := range strings.Split(commaPart, ";") {
+			p = strings.TrimSpace(p)
+			if p == "" {
+				continue
+			}
+			id, err := strconv.ParseInt(p, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			ids = append(ids, id)
 		}
-		id, err := strconv.ParseInt(p, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, id)
 	}
 	return ids, nil
 }

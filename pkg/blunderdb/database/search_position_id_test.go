@@ -47,6 +47,7 @@ func TestSearchPositionIDFilter(t *testing.T) {
 		{"single", fmt.Sprintf("%d", id2), []int64{id2}},
 		{"range", fmt.Sprintf("%d,%d", id1, id3), []int64{id1, id2, id3}},
 		{"explicit list", fmt.Sprintf("%d;%d", id1, id3), []int64{id1, id3}},
+		{"three-item comma list", fmt.Sprintf("%d,%d,%d", id1, id2, id3), []int64{id1, id2, id3}},
 		{"empty matches all", "", []int64{id1, id2, id3}},
 		{"unknown id", "99999", nil},
 	}

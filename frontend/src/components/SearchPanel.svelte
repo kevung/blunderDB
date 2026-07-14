@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import MinMaxFilterRow from './MinMaxFilterRow.svelte';
+    import MatchTournamentPickerModal from './MatchTournamentPickerModal.svelte';
     import { t, tMsg } from '../i18n';
     import { onMount, onDestroy, tick, untrack } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
@@ -25,8 +26,9 @@
 
     let searchText = $state('');
     let movePattern = $state('');
-    let matchIDsInput = $state('');
-    let tournamentIDsInput = $state('');
+    let matchIDsSelected = $state([]);
+    let tournamentIDsSelected = $state([]);
+    let showPickerModal = $state(false);
     let playerName = $state('');
 
     let pipCountOption = $state('min');
@@ -226,8 +228,7 @@
         'Search Text': 'searchText',
         'Best Move or Cube Decision': 'bestMoveOrCubeDecision',
         'Creation Date': 'creationDate',
-        'Match IDs': 'matchIDs',
-        'Tournament IDs': 'tournamentIDs',
+        'Matches & Tournaments': 'matchesTournaments',
         Player: 'player'
     };
     const groupKeySlug = {
@@ -261,7 +262,7 @@
         { name: 'Checkers', filters: ['Player Checker-Off', 'Opponent Checker-Off', 'Player Back Checker', 'Opponent Back Checker', 'Player Checker in the Zone', 'Opponent Checker in the Zone'] },
         { name: 'Blots', filters: ['Player Outfield Blot', 'Opponent Outfield Blot', 'Player Jan Blot', 'Opponent Jan Blot'] },
         { name: 'Text / Pattern', filters: ['Search Text', 'Best Move or Cube Decision'] },
-        { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs', 'Player', 'Individually Imported'] }
+        { name: 'Other', filters: ['Creation Date', 'Matches & Tournaments', 'Player', 'Individually Imported'] }
     ];
 
     // Which structure the main board is currently editing: 'include' (au moins)
@@ -272,9 +273,10 @@
 
     // Initialize all filters as disabled, then restore previous search state if available
     availableFilters.forEach((f) => (filterEnabled[f] = false));
+    filterEnabled['Matches & Tournaments'] = false;
     restoreSearchState();
 
-    let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length);
+    let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length + (filterEnabled['Matches & Tournaments'] ? 1 : 0));
     // Track board position only while the search tab is active.
     // When the user switches away, App.svelte's exitEditMode() fires synchronously
     // and updates positionStore to a DB position before onDestroy runs.
@@ -445,7 +447,7 @@
         if (structureMode === 'exclude') switchStructureMode('include');
         const excludeActive = boardHasCheckers($searchExcludePositionStore);
 
-        const activeFilters = availableFilters.filter((f) => filterEnabled[f]);
+        const activeFilters = availableFilters.filter((f) => filterEnabled[f] || (filterEnabled['Matches & Tournaments'] && (f === 'Match IDs' || f === 'Tournament IDs')));
         const transformedFilters = buildFilterTokens(activeFilters, {
             diceRollOption,
             pipCountOption,
@@ -555,8 +557,8 @@
             player2JanBlotMax,
             player2JanBlotRangeMin,
             player2JanBlotRangeMax,
-            matchIDsInput,
-            tournamentIDsInput,
+            matchIDsSelected,
+            tournamentIDsSelected,
             playerName
         });
 
@@ -663,6 +665,7 @@
 
     function clearFilters() {
         availableFilters.forEach((f) => (filterEnabled[f] = false));
+        filterEnabled['Matches & Tournaments'] = false;
         filterEnabled = filterEnabled;
         pipCountOption = 'min';
         pipCountMin = -375;
@@ -770,8 +773,8 @@
         decisionMode = 'checker';
         cubeSubType = 'all';
         searchOfferedCubeStore.set(false);
-        matchIDsInput = '';
-        tournamentIDsInput = '';
+        matchIDsSelected = [];
+        tournamentIDsSelected = [];
         playerName = '';
         creationDateOption = 'min';
         creationDateMin = '';
@@ -979,8 +982,8 @@
             searchInCurrentResults,
             searchText,
             movePattern,
-            matchIDsInput,
-            tournamentIDsInput,
+            matchIDsSelected,
+            tournamentIDsSelected,
             playerName,
             pipCountOption,
             pipCountMin,
@@ -1118,8 +1121,8 @@
         searchInCurrentResults = saved.searchInCurrentResults;
         searchText = saved.searchText;
         movePattern = saved.movePattern;
-        matchIDsInput = saved.matchIDsInput;
-        tournamentIDsInput = saved.tournamentIDsInput;
+        matchIDsSelected = Array.isArray(saved.matchIDsSelected) ? saved.matchIDsSelected : [];
+        tournamentIDsSelected = Array.isArray(saved.tournamentIDsSelected) ? saved.tournamentIDsSelected : [];
         playerName = saved.playerName ?? '';
         pipCountOption = saved.pipCountOption;
         pipCountMin = saved.pipCountMin;
@@ -1556,23 +1559,12 @@
                                                         <input type="date" bind:value={creationDateRangeMax} class="date-input" disabled={creationDateOption !== 'range'} /></label
                                                     >
                                                 </div>
-                                            {:else if filter === 'Match IDs'}
+                                            {:else if filter === 'Matches & Tournaments'}
                                                 <div class="text-control">
-                                                    <span class="hint">{$t('search.matchIdsHint')}</span><input
-                                                        type="text"
-                                                        bind:value={matchIDsInput}
-                                                        class="text-input"
-                                                        placeholder={$t('search.idOrRange')}
-                                                    />
-                                                </div>
-                                            {:else if filter === 'Tournament IDs'}
-                                                <div class="text-control">
-                                                    <span class="hint">{$t('search.tournamentIdsHint')}</span><input
-                                                        type="text"
-                                                        bind:value={tournamentIDsInput}
-                                                        class="text-input"
-                                                        placeholder={$t('search.idOrRange')}
-                                                    />
+                                                    <span class="hint">
+                                                        {$t('search.matchesTournamentsCount', { matches: matchIDsSelected.length, tournaments: tournamentIDsSelected.length })}
+                                                    </span>
+                                                    <button type="button" class="small-btn" onclick={() => (showPickerModal = true)}>{$t('search.openPicker')}</button>
                                                 </div>
                                             {:else if filter === 'Player'}
                                                 <div class="text-control">
@@ -1682,6 +1674,18 @@
         {/if}
     </div>
 </div>
+
+<MatchTournamentPickerModal
+    visible={showPickerModal}
+    {matchIDsSelected}
+    {tournamentIDsSelected}
+    onApply={(matches, tournaments) => {
+        matchIDsSelected = matches;
+        tournamentIDsSelected = tournaments;
+        showPickerModal = false;
+    }}
+    onCancel={() => (showPickerModal = false)}
+/>
 
 {#if showSaveDialog}
     <div
@@ -1987,6 +1991,18 @@
         font-size: 12px;
         padding: 3px 4px;
         max-width: 200px;
+    }
+    .small-btn {
+        padding: 3px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 11px;
+        background: #ccc;
+        color: #333;
+    }
+    .small-btn:hover {
+        background: #999;
     }
 
     .history-section {

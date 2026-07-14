@@ -15,7 +15,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, positions, stats (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, stats (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -39,6 +39,9 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  # List all matches")
 		fmt.Println("  blunderdb list --db database.db --type matches")
+		fmt.Println()
+		fmt.Println("  # List all tournaments")
+		fmt.Println("  blunderdb list --db database.db --type tournaments")
 		fmt.Println()
 		fmt.Println("  # List first 20 positions")
 		fmt.Println("  blunderdb list --db database.db --type positions --limit 20")
@@ -77,6 +80,8 @@ func (cli *CLI) runList(args []string) error {
 	switch strings.ToLower(*listType) {
 	case "matches":
 		return cli.listMatches(*limit)
+	case "tournaments":
+		return cli.listTournaments(*limit)
 	case "positions":
 		return cli.listPositions(*limit)
 	case "stats":
@@ -102,7 +107,7 @@ func (cli *CLI) runList(args []string) error {
 		}
 		return cli.showStats(filter, *statsMetric, *statsFormat, *statsTopBlunders)
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'positions', or 'stats')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', or 'stats')", *listType)
 	}
 }
 
@@ -146,6 +151,46 @@ func (cli *CLI) listMatches(limit int) error {
 
 	if limit > 0 && len(matches) > limit {
 		fmt.Printf("(Showing %d of %d matches, use --limit to see more)\n", displayCount, len(matches))
+	}
+
+	return nil
+}
+
+// listTournaments lists all tournaments in the database
+func (cli *CLI) listTournaments(limit int) error {
+	tournaments, err := cli.db.GetAllTournaments()
+	if err != nil {
+		return fmt.Errorf("failed to get tournaments: %v", err)
+	}
+
+	if len(tournaments) == 0 {
+		fmt.Println("No tournaments found in database")
+		return nil
+	}
+
+	fmt.Printf("Found %d tournament(s):\n\n", len(tournaments))
+
+	displayCount := len(tournaments)
+	if limit > 0 && limit < len(tournaments) {
+		displayCount = limit
+	}
+
+	for i := 0; i < displayCount; i++ {
+		tour := tournaments[i]
+		fmt.Printf("ID: %d\n", tour.ID)
+		fmt.Printf("  Name: %s\n", tour.Name)
+		if tour.Date != "" {
+			fmt.Printf("  Date: %s\n", tour.Date)
+		}
+		if tour.Location != "" {
+			fmt.Printf("  Location: %s\n", tour.Location)
+		}
+		fmt.Printf("  Matches: %d\n", tour.MatchCount)
+		fmt.Println()
+	}
+
+	if limit > 0 && len(tournaments) > limit {
+		fmt.Printf("(Showing %d of %d tournaments, use --limit to see more)\n", displayCount, len(tournaments))
 	}
 
 	return nil
