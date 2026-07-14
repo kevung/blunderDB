@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-07-14 23:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -221,8 +221,8 @@ msgid ""
 msgstr "Crea un nuovo file di database con metadati opzionali."
 
 #: ../../source/cli.rst:75 ../../source/cli.rst:100 ../../source/cli.rst:153
-#: ../../source/cli.rst:276 ../../source/cli.rst:305 ../../source/cli.rst:329
-#: ../../source/cli.rst:359 ../../source/cli.rst:391
+#: ../../source/cli.rst:282 ../../source/cli.rst:311 ../../source/cli.rst:335
+#: ../../source/cli.rst:365 ../../source/cli.rst:397
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
@@ -287,8 +287,8 @@ msgid ""
 "``--recursive`` — Scanner récursivement les sous-répertoires (défaut: "
 "oui)."
 msgstr ""
-"``--recursive`` — Scansionare ricorsivamente le sottocartelle (predefinito: "
-"sì)."
+"``--recursive`` — Scansionare ricorsivamente le sottocartelle "
+"(predefinito: sì)."
 
 #: ../../source/cli.rst:109
 msgid "Import d'un match"
@@ -299,8 +299,8 @@ msgid ""
 "Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
 "Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``)."
 msgstr ""
-"Formati supportati: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
-"Jellyfish (``.mat``, ``.txt``) e BGBlitz (``.bgf``)."
+"Formati supportati: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``),"
+" Jellyfish (``.mat``, ``.txt``) e BGBlitz (``.bgf``)."
 
 #: ../../source/cli.rst:119
 msgid "Import de positions"
@@ -310,8 +310,7 @@ msgstr "Import di posizioni"
 msgid ""
 "Importe des positions depuis un fichier texte (une position JSON par "
 "ligne):"
-msgstr ""
-"Importa posizioni da un file di testo (una posizione JSON per riga):"
+msgstr "Importa posizioni da un file di testo (una posizione JSON per riga):"
 
 #: ../../source/cli.rst:128
 msgid "Import par lot"
@@ -395,19 +394,18 @@ msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
 msgstr ""
-"``--match-ids`` — ID dei match da esportare (separati da virgole, vuoto = "
-"tutti)."
+"``--match-ids`` — ID dei match da esportare (separati da virgole, vuoto ="
+" tutti)."
 
 #: ../../source/cli.rst:166
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules)."
-msgstr ""
-"``--tournament-ids`` — ID dei tornei da esportare (separati da virgole)."
+msgstr "``--tournament-ids`` — ID dei tornei da esportare (separati da virgole)."
 
-#: ../../source/cli.rst:168 ../../source/cli.rst:217 ../../source/cli.rst:254
-#: ../../source/cli.rst:283 ../../source/cli.rst:310 ../../source/cli.rst:339
-#: ../../source/cli.rst:369 ../../source/cli.rst:398
+#: ../../source/cli.rst:168 ../../source/cli.rst:220 ../../source/cli.rst:260
+#: ../../source/cli.rst:289 ../../source/cli.rst:316 ../../source/cli.rst:345
+#: ../../source/cli.rst:375 ../../source/cli.rst:404
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
@@ -423,8 +421,8 @@ msgstr "Cerca posizioni nel database secondo criteri combinabili."
 msgid "**Options principales:**"
 msgstr "**Opzioni principali:**"
 
-#: ../../source/cli.rst:192 ../../source/cli.rst:278 ../../source/cli.rst:307
-#: ../../source/cli.rst:331 ../../source/cli.rst:361 ../../source/cli.rst:393
+#: ../../source/cli.rst:192 ../../source/cli.rst:284 ../../source/cli.rst:313
+#: ../../source/cli.rst:337 ../../source/cli.rst:367 ../../source/cli.rst:399
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (obbligatorio)."
 
@@ -468,8 +466,7 @@ msgstr ""
 
 #: ../../source/cli.rst:205
 msgid "``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count."
-msgstr ""
-"``--pip-min`` / ``--pip-max`` — Intervallo di differenza del pip count."
+msgstr "``--pip-min`` / ``--pip-max`` — Intervallo di differenza del pip count."
 
 #: ../../source/cli.rst:206
 msgid ""
@@ -509,8 +506,7 @@ msgstr "``--has-analysis`` — Solo le posizioni con analisi."
 
 #: ../../source/cli.rst:213
 msgid "``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2)."
-msgstr ""
-"``--off1-min`` / ``--off2-min`` — Pedine uscite minime (giocatore 1/2)."
+msgstr "``--off1-min`` / ``--off2-min`` — Pedine uscite minime (giocatore 1/2)."
 
 #: ../../source/cli.rst:214
 msgid "``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules)."
@@ -520,30 +516,38 @@ msgstr "``--match-ids`` — Filtrare per ID dei match (separati da virgole)."
 msgid ""
 "``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des "
 "virgules)."
-msgstr ""
-"``--tournament-ids`` — Filtrare per ID dei tornei (separati da virgole)."
+msgstr "``--tournament-ids`` — Filtrare per ID dei tornei (separati da virgole)."
 
-#: ../../source/cli.rst:240
+#: ../../source/cli.rst:216
+msgid ""
+"``--individual`` — Uniquement les positions importées seules, "
+"c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
+"import de match a apportées."
+msgstr "``--individual`` — Solo le posizioni importate singolarmente, cioè quelle che hai aggiunto tu e non quelle portate da un import di partita."
+
+#: ../../source/cli.rst:246
 msgid "list — Lister le contenu"
 msgstr "list — Elencare il contenuto"
 
-#: ../../source/cli.rst:242
+#: ../../source/cli.rst:248
 msgid "Affiche le contenu de la base de données."
 msgstr "Mostra il contenuto del database."
 
-#: ../../source/cli.rst:248
+#: ../../source/cli.rst:254
 msgid "**Types:**"
 msgstr "**Tipi:**"
 
-#: ../../source/cli.rst:250
+#: ../../source/cli.rst:256
 msgid "``matches`` — Liste des matchs importés."
 msgstr "``matches`` — Elenco dei match importati."
 
-#: ../../source/cli.rst:251
+#: ../../source/cli.rst:257
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
-msgstr "``positions`` — Elenco delle posizioni (limitato a 10 per impostazione predefinita)."
+msgstr ""
+"``positions`` — Elenco delle posizioni (limitato a 10 per impostazione "
+"predefinita)."
 
-#: ../../source/cli.rst:252
+#: ../../source/cli.rst:258
 msgid ""
 "``stats`` — Statistiques globales (positions, analyses, matchs, parties, "
 "coups)."
@@ -551,19 +555,19 @@ msgstr ""
 "``stats`` — Statistiche globali (posizioni, analisi, match, partite, "
 "mosse)."
 
-#: ../../source/cli.rst:268
+#: ../../source/cli.rst:274
 msgid "match — Afficher un match"
 msgstr "match — Visualizzare un match"
 
-#: ../../source/cli.rst:270
+#: ../../source/cli.rst:276
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr "Mostra le posizioni e le analisi di un match importato."
 
-#: ../../source/cli.rst:279
+#: ../../source/cli.rst:285
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — ID del match da visualizzare (obbligatorio)."
 
-#: ../../source/cli.rst:280
+#: ../../source/cli.rst:286
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -571,73 +575,73 @@ msgstr ""
 "``--format`` — Formato di output: ``json``, ``text`` o ``summary`` "
 "(predefinito: ``json``)."
 
-#: ../../source/cli.rst:281
+#: ../../source/cli.rst:287
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — File di output (predefinito: output standard)."
 
-#: ../../source/cli.rst:297
+#: ../../source/cli.rst:303
 msgid "info — Métadonnées de la base"
 msgstr "info — Metadati del database"
 
-#: ../../source/cli.rst:299
+#: ../../source/cli.rst:305
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Mostra i metadati e le statistiche di un database."
 
-#: ../../source/cli.rst:308
+#: ../../source/cli.rst:314
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 "``--format`` — Formato di output: ``text`` o ``json`` (predefinito: "
 "``text``)."
 
-#: ../../source/cli.rst:321
+#: ../../source/cli.rst:327
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Modificare i metadati"
 
-#: ../../source/cli.rst:323
+#: ../../source/cli.rst:329
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Modifica il nome utente o la descrizione di un database."
 
-#: ../../source/cli.rst:332
+#: ../../source/cli.rst:338
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Nuovo nome utente."
 
-#: ../../source/cli.rst:333
+#: ../../source/cli.rst:339
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Nuova descrizione."
 
-#: ../../source/cli.rst:334
+#: ../../source/cli.rst:340
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Cancellare il nome utente."
 
-#: ../../source/cli.rst:335
+#: ../../source/cli.rst:341
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Cancellare la descrizione."
 
-#: ../../source/cli.rst:337
+#: ../../source/cli.rst:343
 msgid "Au moins une option de modification est requise."
 msgstr "È richiesta almeno un'opzione di modifica."
 
-#: ../../source/cli.rst:350
+#: ../../source/cli.rst:356
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Verificare l'integrità"
 
-#: ../../source/cli.rst:352
+#: ../../source/cli.rst:358
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
 msgstr ""
-"Verifica l'integrità del database e, facoltativamente, confronta un match "
-"con il suo file di origine."
+"Verifica l'integrità del database e, facoltativamente, confronta un match"
+" con il suo file di origine."
 
-#: ../../source/cli.rst:362
+#: ../../source/cli.rst:368
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — ID del match da verificare."
 
-#: ../../source/cli.rst:363
+#: ../../source/cli.rst:369
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — File MAT da confrontare (usato con ``--match``)."
 
-#: ../../source/cli.rst:365
+#: ../../source/cli.rst:371
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -647,58 +651,57 @@ msgstr ""
 "del database. Con ``--match``, verifica i dati del match e può "
 "confrontarli con il file di origine originale."
 
-#: ../../source/cli.rst:383
+#: ../../source/cli.rst:389
 msgid "delete — Supprimer des données"
 msgstr "delete — Eliminare dati"
 
-#: ../../source/cli.rst:385
+#: ../../source/cli.rst:391
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
-msgstr ""
-"Elimina un match e tutti i dati associati (partite, mosse, analisi)."
+msgstr "Elimina un match e tutti i dati associati (partite, mosse, analisi)."
 
-#: ../../source/cli.rst:394
+#: ../../source/cli.rst:400
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Tipo di eliminazione: ``match`` (obbligatorio)."
 
-#: ../../source/cli.rst:395
+#: ../../source/cli.rst:401
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID dell'elemento da eliminare (obbligatorio)."
 
-#: ../../source/cli.rst:396
+#: ../../source/cli.rst:402
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Eliminare senza chiedere conferma."
 
-#: ../../source/cli.rst:409
+#: ../../source/cli.rst:415
 msgid "Exemples de flux de travail"
 msgstr "Esempi di flusso di lavoro"
 
-#: ../../source/cli.rst:412
+#: ../../source/cli.rst:418
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import di una cartella di torneo"
 
-#: ../../source/cli.rst:426
+#: ../../source/cli.rst:432
 msgid "Sauvegarde régulière"
 msgstr "Backup periodico"
 
-#: ../../source/cli.rst:434
+#: ../../source/cli.rst:440
 msgid "Analyse des erreurs"
 msgstr "Analisi degli errori"
 
-#: ../../source/cli.rst:445
+#: ../../source/cli.rst:451
 msgid "Codes de retour"
 msgstr "Codici di uscita"
 
-#: ../../source/cli.rst:447
+#: ../../source/cli.rst:453
 msgid "``0`` — Succès."
 msgstr "``0`` — Successo."
 
-#: ../../source/cli.rst:448
+#: ../../source/cli.rst:454
 msgid "``1`` — Erreur."
 msgstr "``1`` — Errore."
 
-#: ../../source/cli.rst:450
+#: ../../source/cli.rst:456
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
-msgstr ""
-"Questo permette di utilizzare la CLI in script con gestione degli errori:"
+msgstr "Questo permette di utilizzare la CLI in script con gestione degli errori:"
+

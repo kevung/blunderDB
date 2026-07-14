@@ -250,6 +250,7 @@ Search for positions in the database using filters.
 - `--move-error-min` / `--move-error-max` - Played move error range (millipoints)
 - `--has-analysis` - Only positions with analysis
 - `--off1-min` / `--off2-min` - Minimum checkers off for player 1/2
+- `--individual` - Only positions imported on their own — the ones you added yourself, not the ones a match import brought in
 - `--match-ids` - Filter by match IDs (comma-separated, e.g. `1,3,5` or range `2,7`)
 - `--tournament-ids` - Filter by tournament IDs (comma-separated, e.g. `1,3` or range `1,5`)
 
