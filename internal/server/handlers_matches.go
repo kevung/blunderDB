@@ -46,6 +46,19 @@ type matchIDReq struct {
 	MatchID int64 `json:"matchId"`
 }
 
+// matchListReq mirrors storage.MatchListOpts over the wire. An all-zero body
+// streams every match, most recent first.
+type matchListReq struct {
+	PlayerName    string  `json:"playerName"`
+	TournamentIDs []int64 `json:"tournamentIds"`
+	DateFrom      string  `json:"dateFrom"`
+	DateTo        string  `json:"dateTo"`
+	MatchLength   []int   `json:"matchLength"`
+	Sort          string  `json:"sort"`
+	Limit         int     `json:"limit"`
+	Offset        int     `json:"offset"`
+}
+
 type gameIDReq struct {
 	GameID int64 `json:"gameId"`
 }
@@ -60,8 +73,17 @@ func (s *Server) matchRoutes() []route {
 		{http.MethodPost, "/v1/matches.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Match, error) {
 			return ms().Get(ctx, scope, req.ID)
 		})},
-		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterMatches {
-			return ms().List(ctx, scope, storage.MatchListOpts{})
+		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
+			return ms().List(ctx, scope, storage.MatchListOpts{
+				PlayerName:    req.PlayerName,
+				TournamentIDs: req.TournamentIDs,
+				DateFrom:      req.DateFrom,
+				DateTo:        req.DateTo,
+				MatchLength:   req.MatchLength,
+				Sort:          req.Sort,
+				Limit:         req.Limit,
+				Offset:        req.Offset,
+			})
 		})},
 		{http.MethodPost, "/v1/matches.update", rpcVoid(func(ctx context.Context, scope string, req matchUpdateReq) error {
 			return ms().Update(ctx, scope, req.ID, req.Player1Name, req.Player2Name, req.MatchDate)

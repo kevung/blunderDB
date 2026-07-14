@@ -20,6 +20,18 @@ type idsResp struct {
 	PositionIDs []int64 `json:"positionIds"`
 }
 
+// matchBadgesReq scopes a badge computation to the given match ids. An empty
+// list falls back to the whole-database scan.
+type matchBadgesReq struct {
+	MatchIDs []int64 `json:"matchIds"`
+}
+
+// matchBadgesResp keys each badge by its match id (JSON object keys are the
+// stringified ids).
+type matchBadgesResp struct {
+	Badges map[int64]storage.MatchBadge `json:"badges"`
+}
+
 func (s *Server) statsRoutes() []route {
 	ss := func() storage.StatsStore { return s.opts.Storage.Stats() }
 	return []route{
@@ -46,6 +58,10 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.matchDetail", rpc(func(ctx context.Context, scope string, req matchIDReq) (*storage.MatchDetailStats, error) {
 			return ss().MatchDetail(ctx, scope, req.MatchID)
+		})},
+		{http.MethodPost, "/v1/stats.matchBadges", rpc(func(ctx context.Context, scope string, req matchBadgesReq) (matchBadgesResp, error) {
+			badges, err := ss().MatchBadges(ctx, scope, req.MatchIDs)
+			return matchBadgesResp{Badges: badges}, err
 		})},
 	}
 }
