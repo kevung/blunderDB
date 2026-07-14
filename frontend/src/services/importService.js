@@ -33,7 +33,7 @@ import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
-import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, activeTabStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import {
     showImportProgressModalStore,
     importModalModeStore,
@@ -196,6 +196,29 @@ export async function importDatabaseByPath(importFilePath) {
     }
 }
 
+// Show a freshly imported position on the board with its analysis tab open.
+// (Match imports keep opening the match list instead — that is where a match is
+// read.) loadAllPositions() always selects the matches tab, so this has to run
+// after every reload an import performs, not before.
+export async function showImportedPosition(positionID) {
+    if (positionID) {
+        let index = get(positionsStore).findIndex((pos) => pos.id === positionID);
+        if (index < 0) {
+            // The position is not in the current view (search subset, match mode,
+            // or a brand-new row): reload the full list so we can point at it.
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
+            index = get(positionsStore).findIndex((pos) => pos.id === positionID);
+        }
+        if (index >= 0) {
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(index);
+        }
+    }
+    activeTabStore.set('analysis');
+}
+
+// Returns the ID of the saved (or merged) position, or null on failure.
 export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage) {
     if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
         parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
@@ -236,8 +259,9 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         } catch (error) {
             logger.error('Error updating analysis and comment:', error);
             setStatusBarMessage(tMsg('status.errorUpdatingAnalysisComment'));
+            return null;
         }
-        return;
+        return positionExistsResult.id;
     }
 
     try {
@@ -253,9 +277,11 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         const { loadAllPositions } = await import('./positionService.js');
         await loadAllPositions();
         setStatusBarMessage(successMessage);
+        return positionID;
     } catch (error) {
         logger.error('Error saving position, analysis, and comment:', error);
         setStatusBarMessage(tMsg('status.errorSavingPosition'));
+        return null;
     }
 }
 
@@ -265,14 +291,15 @@ export async function importPosition() {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
+    let outcome = null;
     try {
         const files = await OpenPositionFilesDialog();
         if (!files || files.length === 0) return;
 
         if (files.length === 1) {
-            await importSingleFile(files[0]);
+            outcome = await importSingleFile(files[0]);
         } else {
-            await importMultipleFiles(files);
+            outcome = await importMultipleFiles(files);
         }
     } catch (error) {
         logger.error('Error importing position:', error);
@@ -287,9 +314,14 @@ export async function importPosition() {
                 player2Name: ''
             });
             const { loadAllPositions } = await import('./positionService.js');
-            loadAllPositions();
+            await loadAllPositions();
         }
         statusBarModeStore.set('NORMAL');
+        // Re-apply the analysis view: leaving match mode reloads every position,
+        // which resets the tab back to matches.
+        if (outcome && outcome.type === 'position') {
+            await showImportedPosition(outcome.id);
+        }
     }
 }
 
@@ -299,6 +331,7 @@ export async function importFolder() {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
+    let outcome = null;
     try {
         const dirPath = await OpenPositionFolderDialog();
         if (!dirPath) return;
@@ -309,7 +342,7 @@ export async function importFolder() {
             return;
         }
 
-        await importMultipleFiles(files);
+        outcome = await importMultipleFiles(files);
     } catch (error) {
         logger.error('Error importing folder:', error);
     } finally {
@@ -323,12 +356,16 @@ export async function importFolder() {
                 player2Name: ''
             });
             const { loadAllPositions } = await import('./positionService.js');
-            loadAllPositions();
+            await loadAllPositions();
         }
         statusBarModeStore.set('NORMAL');
+        if (outcome && outcome.type === 'position') {
+            await showImportedPosition(outcome.id);
+        }
     }
 }
 
+// Returns { type: 'position' | 'match', id } on success, null on failure.
 export async function importSingleFile(filePath) {
     const lowerPath = filePath.toLowerCase();
     const isXGFile = lowerPath.endsWith('.xg');
@@ -345,6 +382,8 @@ export async function importSingleFile(filePath) {
             setStatusBarMessage(tMsg('status.xgpPosImported', { posID }));
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
+            await showImportedPosition(posID);
+            return { type: 'position', id: posID };
         } catch (error) {
             logger.error('Error importing XGP position:', error);
             setStatusBarMessage(tMsg('status.errorImportingXgpPos', { error }));
@@ -358,6 +397,7 @@ export async function importSingleFile(filePath) {
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
+            return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing XG match:', error);
             const errorStr = String(error);
@@ -376,6 +416,7 @@ export async function importSingleFile(filePath) {
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
+            return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing BGF match:', error);
             const errorStr = String(error);
@@ -395,6 +436,7 @@ export async function importSingleFile(filePath) {
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
+            return { type: 'match', id: matchID };
         } catch (error) {
             logger.error(`Error importing ${formatName} match:`, error);
             const errorStr = String(error);
@@ -406,8 +448,9 @@ export async function importSingleFile(filePath) {
             }
         }
     } else if (isTXTFile) {
-        await importTxtFile(filePath);
+        return await importTxtFile(filePath);
     }
+    return null;
 }
 
 async function importTxtFile(filePath) {
@@ -415,7 +458,7 @@ async function importTxtFile(filePath) {
     if (response.error) {
         logger.error('Error reading file:', response.error);
         setStatusBarMessage(tMsg('status.errorReadingFile', { error: response.error }));
-        return;
+        return null;
     }
     const content = response.content;
 
@@ -430,6 +473,7 @@ async function importTxtFile(filePath) {
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
+            return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing Jellyfish TXT match:', error);
             const errorStr = String(error);
@@ -447,6 +491,8 @@ async function importTxtFile(filePath) {
             setStatusBarMessage(tMsg('status.bgblitzPosImported', { posID }));
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
+            await showImportedPosition(posID);
+            return { type: 'position', id: posID };
         } catch (error) {
             logger.error('Error importing BGBlitz position:', error);
             const errorStr = String(error);
@@ -497,8 +543,13 @@ async function importTxtFile(filePath) {
             creationDate: '',
             lastModifiedDate: ''
         });
-        await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.importedPositionSaved'));
+        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.importedPositionSaved'));
+        if (posID) {
+            await showImportedPosition(posID);
+            return { type: 'position', id: posID };
+        }
     }
+    return null;
 }
 
 async function importSingleFileBatch(filePath) {
@@ -545,11 +596,13 @@ async function importTxtFileBatch(filePath) {
     } else {
         const { positionData, parsedAnalysis } = await parsePositionText(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
-        await savePositionAndAnalysis(positionData, parsedAnalysis, '');
-        return { type: 'position', id: 0 };
+        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, '');
+        return { type: 'position', id: posID };
     }
 }
 
+// Returns { type: 'position', id } when only positions were imported (so the
+// caller can show the last one), null when the batch contained any match.
 export async function importMultipleFiles(files) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
@@ -560,6 +613,7 @@ export async function importMultipleFiles(files) {
     showFileImportModalStore.set(true);
 
     let hadMatches = false;
+    let lastPositionID = null;
 
     for (let i = 0; i < files.length; i++) {
         if (fileImportCancelled) break;
@@ -571,6 +625,7 @@ export async function importMultipleFiles(files) {
             const result = await importSingleFileBatch(filePath);
             fileImportResultsStore.update((r) => ({ ...r, succeeded: r.succeeded + 1 }));
             if (result && result.type === 'match') hadMatches = true;
+            if (result && result.type === 'position' && result.id) lastPositionID = result.id;
         } catch (error) {
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') || errorStr.includes('duplicate') || errorStr.includes('already exists')) {
@@ -596,6 +651,13 @@ export async function importMultipleFiles(files) {
 
     const results = get(fileImportResultsStore);
     setStatusBarMessage(tMsg('status.importDone', { succeeded: results.succeeded, skipped: results.skipped, failed: results.failed }));
+
+    // A batch of positions only (no match): land on the last one with its analysis.
+    if (!hadMatches && lastPositionID) {
+        await showImportedPosition(lastPositionID);
+        return { type: 'position', id: lastPositionID };
+    }
+    return null;
 }
 
 export function handleFileImportCancel() {
@@ -657,13 +719,15 @@ export async function pastePosition() {
             setStatusBarMessage(tMsg('status.bgblitzPosPasted', { posID }));
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
+            await showImportedPosition(posID);
         } catch (error) {
             logger.error('Error pasting BGBlitz position:', error);
             setStatusBarMessage(tMsg('status.errorPastingBgblitzPos', { error }));
         }
     } else {
         const { positionData, parsedAnalysis } = await parsePositionText(result);
-        await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
+        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
+        if (posID) await showImportedPosition(posID);
     }
     statusBarModeStore.set('NORMAL');
 }
