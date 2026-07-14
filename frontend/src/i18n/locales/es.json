@@ -270,7 +270,8 @@
             "creationDate": "Fecha de creación",
             "matchIDs": "ID de partida",
             "tournamentIDs": "ID de torneo",
-            "player": "Jugador"
+            "player": "Jugador",
+            "individuallyImported": "Importada por separado"
         },
         "filterGroups": {
             "display": "Visualización",

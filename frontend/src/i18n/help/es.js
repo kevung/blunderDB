@@ -853,6 +853,10 @@ export default {
                                 <td>Incluir posiciones reflejadas</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Solo posiciones importadas por separado, no traídas por la importación de una partida</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Excluir las posiciones que contengan <em>cualquier</em> ficha de la estructura dibujada en la pestaña "Except" (p. ej. dibujar fichas en 1, 3 y 5 conserva solo las posiciones que no tengan ninguna de

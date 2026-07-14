@@ -270,7 +270,8 @@
             "creationDate": "Creation Date",
             "matchIDs": "Match IDs",
             "tournamentIDs": "Tournament IDs",
-            "player": "Player"
+            "player": "Player",
+            "individuallyImported": "Individually Imported"
         },
         "filterGroups": {
             "display": "Display",

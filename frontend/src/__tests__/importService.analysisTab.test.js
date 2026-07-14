@@ -21,9 +21,8 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     IsDirectory: vi.fn()
 }));
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    SavePosition: vi.fn(),
+    SaveIndividualPosition: vi.fn(),
     SaveAnalysis: vi.fn(),
-    PositionExists: vi.fn(),
     LoadComment: vi.fn(),
     SaveComment: vi.fn(),
     AnalyzeImportDatabase: vi.fn(),

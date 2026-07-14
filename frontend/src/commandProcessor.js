@@ -250,6 +250,9 @@ export function parseFilters(filters, command) {
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
     const mirrorPositionFilter = filters.includes('M');
+    // Positions the user imported on their own rather than inside a match.
+    // An exact match, so it does not collide with the id<ids> token.
+    const individuallyImportedFilter = filters.includes('i');
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
@@ -333,6 +336,7 @@ export function parseFilters(filters, command) {
         diceRollFilter,
         diceRollMode,
         mirrorPositionFilter,
+        individuallyImportedFilter,
         excludeStructure,
         pipCountFilter,
         winRateFilter,

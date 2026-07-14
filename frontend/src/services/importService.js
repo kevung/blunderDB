@@ -11,9 +11,8 @@ import {
     IsDirectory
 } from '../../wailsjs/go/gui/App.js';
 import {
-    SavePosition,
+    SaveIndividualPosition,
     SaveAnalysis,
-    PositionExists,
     LoadComment,
     SaveComment,
     AnalyzeImportDatabase,
@@ -227,14 +226,33 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
     delete parsedAnalysis.creationDate;
     delete parsedAnalysis.lastModifiedDate;
 
-    const positionExistsResult = await PositionExists(positionData);
-    if (positionExistsResult.exists) {
-        logger.log('Position already exists with ID:', positionExistsResult.id);
-        try {
-            parsedAnalysis.positionId = positionExistsResult.id;
-            await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
+    // One backend call decides existence AND writes: SaveIndividualPosition
+    // deduplicates on the Zobrist hash (the same notion of "same position" the
+    // rest of the app uses) and records that the user brought this position in
+    // on its own rather than inside a match — see docs/adr/0002.
+    //
+    // The previous code called PositionExists first and, when the position was
+    // already stored, skipped the write entirely. That skipped the provenance
+    // flag in exactly the case it exists for: importing a match, then saving one
+    // of its positions from the board. It also compared marshalled JSON in an
+    // O(n) scan of the whole table, a second, divergent notion of identity.
+    let saveResult;
+    try {
+        saveResult = await SaveIndividualPosition(positionData);
+    } catch (error) {
+        logger.error('Error saving position:', error);
+        setStatusBarMessage(tMsg('status.errorSavingPosition'));
+        return null;
+    }
+    const positionID = saveResult.id;
 
-            let existingComment = await LoadComment(positionExistsResult.id);
+    if (saveResult.existed) {
+        logger.log('Position already exists with ID:', positionID);
+        try {
+            parsedAnalysis.positionId = positionID;
+            await SaveAnalysis(positionID, parsedAnalysis);
+
+            let existingComment = await LoadComment(positionID);
             const newComment = parsedAnalysis.comment || '';
             const trimmedExisting = (existingComment || '').trim();
             const trimmedNew = newComment.trim();
@@ -248,24 +266,23 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
                 }
             }
 
-            await SaveComment(positionExistsResult.id, mergedComment);
-            logger.log('Analysis and comment updated for position ID:', positionExistsResult.id);
+            await SaveComment(positionID, mergedComment);
+            logger.log('Analysis and comment updated for position ID:', positionID);
             setStatusBarMessage(tMsg('status.positionMerged'));
 
             const positions = get(positionsStore);
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positions.findIndex((pos) => pos.id === positionExistsResult.id));
+            currentPositionIndexStore.set(positions.findIndex((pos) => pos.id === positionID));
             commentTextStore.set(mergedComment);
         } catch (error) {
             logger.error('Error updating analysis and comment:', error);
             setStatusBarMessage(tMsg('status.errorUpdatingAnalysisComment'));
             return null;
         }
-        return positionExistsResult.id;
+        return positionID;
     }
 
     try {
-        const positionID = await SavePosition(positionData);
         logger.log('Position saved with ID:', positionID);
 
         positionData.id = positionID;

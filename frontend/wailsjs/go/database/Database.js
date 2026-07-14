@@ -422,6 +422,10 @@ export function SaveFilter(arg1, arg2) {
   return window['go']['database']['Database']['SaveFilter'](arg1, arg2);
 }
 
+export function SaveIndividualPosition(arg1) {
+  return window['go']['database']['Database']['SaveIndividualPosition'](arg1);
+}
+
 export function SaveLastVisitedPosition(arg1, arg2) {
   return window['go']['database']['Database']['SaveLastVisitedPosition'](arg1, arg2);
 }

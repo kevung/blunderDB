@@ -854,6 +854,10 @@ export default {
                                 <td>Inclure les positions miroir</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Uniquement les positions importées seules, non apportées par l'import d'un match</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Exclure les positions qui contiennent <em>n'importe quel</em> pion de la structure dessinée dans l'onglet « Except » (par ex. dessiner des pions sur 1, 3 et 5 ne conserve que les positions qui n'en ont aucun
