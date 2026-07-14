@@ -36,7 +36,7 @@ func approxEqual(t *testing.T, label string, a, b float64) {
 
 func firstMatchID(t *testing.T, s storage.Storage, scope string) int64 {
 	t.Helper()
-	for m, err := range s.Matches().List(context.Background(), scope) {
+	for m, err := range s.Matches().List(context.Background(), scope, storage.MatchListOpts{}) {
 		if err != nil {
 			t.Fatalf("Matches().List: %v", err)
 		}

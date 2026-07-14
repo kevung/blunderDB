@@ -291,6 +291,26 @@ func SearchOrderByClause(sort string) string {
 	}
 }
 
+// MatchOrderByClause returns the ORDER BY body for a match list query, using the
+// match alias `m`. Shared by every storage backend so the order cannot drift
+// between SQLite (Desktop) and Postgres (server). An unknown/empty key keeps the
+// default most-recent-first order (play date, falling back to import date);
+// m.id is the stable tiebreaker so pagination is deterministic.
+func MatchOrderByClause(sort string) string {
+	switch sort {
+	case "date_asc": // oldest first
+		return "COALESCE(m.match_date, m.import_date) ASC, m.id ASC"
+	case "length_desc": // longest matches first
+		return "m.match_length DESC, m.id DESC"
+	case "length_asc":
+		return "m.match_length ASC, m.id ASC"
+	case "opponent": // by player names, case-insensitive
+		return "LOWER(m.player1_name) ASC, LOWER(m.player2_name) ASC, m.id ASC"
+	default: // "date" / "" — most recent first
+		return "COALESCE(m.match_date, m.import_date) DESC, m.id DESC"
+	}
+}
+
 // ExportOptions bundles all parameters for ExportDatabase.
 type ExportOptions struct {
 	ExportPath           string            `json:"exportPath"`

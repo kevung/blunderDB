@@ -61,7 +61,7 @@ func (s *Server) matchRoutes() []route {
 			return ms().Get(ctx, scope, req.ID)
 		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterMatches {
-			return ms().List(ctx, scope)
+			return ms().List(ctx, scope, storage.MatchListOpts{})
 		})},
 		{http.MethodPost, "/v1/matches.update", rpcVoid(func(ctx context.Context, scope string, req matchUpdateReq) error {
 			return ms().Update(ctx, scope, req.ID, req.Player1Name, req.Player2Name, req.MatchDate)

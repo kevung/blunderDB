@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -133,8 +134,50 @@ func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonic
 }
 
 // matchOrderClause sorts matches by play date, falling back to import date
-// when the match date is unset.
+// when the match date is unset. Used by LastVisited; List builds its ORDER BY
+// from domain.MatchOrderByClause so the key is configurable.
 const matchOrderClause = ` ORDER BY COALESCE(m.match_date, m.import_date) DESC`
+
+// buildMatchListWhere turns opts filters into a WHERE fragment (empty when no
+// filter applies) and its positional args. Mirrors the Postgres builder; the
+// two must stay in sync.
+func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []any) {
+	var clauses []string
+	if opts.PlayerName != "" {
+		clauses = append(clauses, "(m.player1_name = ? OR m.player2_name = ?)")
+		args = append(args, opts.PlayerName, opts.PlayerName)
+	}
+	if len(opts.TournamentIDs) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(opts.TournamentIDs)), ",")
+		clauses = append(clauses, "m.tournament_id IN ("+ph+")")
+		for _, id := range opts.TournamentIDs {
+			args = append(args, id)
+		}
+	}
+	// Compare on the date part (first 10 chars "YYYY-MM-DD") so an inclusive
+	// DateTo (e.g. a whole-year filter "…-12-31") still matches a match
+	// timestamped later that same day. substr, not date(), because match_date is
+	// stored with a timezone suffix that SQLite's date() refuses to parse.
+	if opts.DateFrom != "" {
+		clauses = append(clauses, "substr(m.match_date,1,10) >= ?")
+		args = append(args, opts.DateFrom)
+	}
+	if opts.DateTo != "" {
+		clauses = append(clauses, "substr(m.match_date,1,10) <= ?")
+		args = append(args, opts.DateTo)
+	}
+	if len(opts.MatchLength) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(opts.MatchLength)), ",")
+		clauses = append(clauses, "m.match_length IN ("+ph+")")
+		for _, ml := range opts.MatchLength {
+			args = append(args, ml)
+		}
+	}
+	if len(clauses) == 0 {
+		return "", nil
+	}
+	return " WHERE " + strings.Join(clauses, " AND "), args
+}
 
 // Get returns the match with the given id, or ErrNotFound.
 func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.Match, error) {
@@ -152,12 +195,27 @@ func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.M
 	return &m, nil
 }
 
-// List streams every stored match, most recent first.
-func (s *matchStore) List(ctx context.Context, scope string) iter.Seq2[*domain.Match, error] {
+// List streams stored matches, filtered/ordered/paginated per opts. A zero
+// MatchListOpts streams every match, most recent first.
+func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchListOpts) iter.Seq2[*domain.Match, error] {
 	return func(yield func(*domain.Match, error) bool) {
-		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+matchSelectCols+` FROM match m
-			 LEFT JOIN tournament t ON m.tournament_id = t.id`+matchOrderClause)
+		whereSQL, args := buildMatchListWhere(opts)
+		query := `SELECT ` + matchSelectCols + ` FROM match m
+			 LEFT JOIN tournament t ON m.tournament_id = t.id` + whereSQL +
+			` ORDER BY ` + domain.MatchOrderByClause(opts.Sort)
+		switch {
+		case opts.Limit > 0:
+			query += ` LIMIT ?`
+			args = append(args, opts.Limit)
+			if opts.Offset > 0 {
+				query += ` OFFSET ?`
+				args = append(args, opts.Offset)
+			}
+		case opts.Offset > 0:
+			query += ` LIMIT -1 OFFSET ?`
+			args = append(args, opts.Offset)
+		}
+		rows, err := s.db.QueryContext(ctx, query, args...)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list matches: %w", err))
 			return

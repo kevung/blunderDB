@@ -7,6 +7,26 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
+// MatchListOpts filters, orders and paginates a match List query. Zero values
+// mean "no filter" / "default order" / "no limit" / "from the start", so a zero
+// MatchListOpts reproduces the historical stream-everything-by-date behaviour.
+type MatchListOpts struct {
+	// PlayerName keeps only matches where this exact name is player 1 or
+	// player 2. It is the match-level "my matches" filter — distinct from
+	// StatsFilter.PlayerName, which selects a player's decisions by joining moves.
+	PlayerName    string
+	TournamentIDs []int64
+	DateFrom      string // ISO "YYYY-MM-DD", inclusive
+	DateTo        string // ISO "YYYY-MM-DD", inclusive
+	MatchLength   []int
+	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
+	// first). PR/MWC are not match columns (they are computed badges), so they
+	// are not sortable here.
+	Sort   string
+	Limit  int
+	Offset int
+}
+
 // MatchStore persists matches and their games, moves and move analyses.
 type MatchStore interface {
 	// Save stores a new match and returns its id. m.MatchHash and
@@ -23,8 +43,10 @@ type MatchStore interface {
 	// Get returns the match with the given id, or ErrNotFound.
 	Get(ctx context.Context, scope string, id int64) (*domain.Match, error)
 
-	// List streams every stored match.
-	List(ctx context.Context, scope string) iter.Seq2[*domain.Match, error]
+	// List streams stored matches, filtered, ordered and paginated per opts. A
+	// zero MatchListOpts streams every match, most recent first (the historical
+	// behaviour).
+	List(ctx context.Context, scope string, opts MatchListOpts) iter.Seq2[*domain.Match, error]
 
 	// Update changes the editable header fields of a match.
 	Update(ctx context.Context, scope string, id int64, player1Name, player2Name, matchDate string) error

@@ -119,7 +119,7 @@ func TestMatchMergePlayers(t *testing.T) {
 		t.Fatalf("MergePlayers: %v", err)
 	}
 
-	for got, err := range s.Matches().List(ctx, "") {
+	for got, err := range s.Matches().List(ctx, "", storage.MatchListOpts{}) {
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}

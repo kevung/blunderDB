@@ -213,7 +213,7 @@ func (m *mover) copyTournaments(rep *Report) error {
 // (already-remapped) tournament.
 func (m *mover) copyMatches(rep *Report) error {
 	var matches []*domain.Match
-	for mt, err := range m.src.Matches().List(m.ctx, "") {
+	for mt, err := range m.src.Matches().List(m.ctx, "", storage.MatchListOpts{}) {
 		if err != nil {
 			return fmt.Errorf("migrate: list matches: %w", err)
 		}
@@ -379,7 +379,7 @@ func dryRun(ctx context.Context, src storage.Storage, scope string) (Report, err
 		rep.Tournaments++
 	}
 	matchIDs := []int64{}
-	for mt, err := range src.Matches().List(ctx, "") {
+	for mt, err := range src.Matches().List(ctx, "", storage.MatchListOpts{}) {
 		if err != nil {
 			return rep, err
 		}

@@ -119,7 +119,7 @@ func countByIteration(t *testing.T, s storage.Storage, scope string) scopeCounts
 		c.Positions++
 	}
 	var matchIDs []int64
-	for m, err := range s.Matches().List(ctx, scope) {
+	for m, err := range s.Matches().List(ctx, scope, storage.MatchListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}

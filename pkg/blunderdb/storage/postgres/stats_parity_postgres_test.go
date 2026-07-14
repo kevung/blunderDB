@@ -296,7 +296,7 @@ func TestStatsPostgresParity(t *testing.T) {
 
 			// The migration remaps ids; fetch the destination match id.
 			var pgMatchID int64
-			for m, err := range dst.Matches().List(ctx, scope) {
+			for m, err := range dst.Matches().List(ctx, scope, storage.MatchListOpts{}) {
 				if err != nil {
 					t.Fatalf("list pg matches: %v", err)
 				}

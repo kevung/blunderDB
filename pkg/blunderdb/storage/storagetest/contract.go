@@ -22,6 +22,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -46,6 +47,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/DeleteCascade", testMatchDeleteCascade},
 		{"Match/DeleteCascadeRetention", testMatchDeleteCascadeRetention},
 		{"Match/FindByHash", testMatchFindByHash},
+		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
@@ -244,6 +246,95 @@ func testMatchFindByHash(t *testing.T, s storage.Storage) {
 			t.Fatalf("Save hash-less match %d: %v", i, err)
 		}
 	}
+}
+
+// testMatchListFilterSortPaginate pins the filter/sort/pagination contract of
+// MatchStore.List across backends. Data: three matches with distinct dates,
+// lengths and players; Alice plays two of them, one of which is in a tournament.
+func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ms := s.Matches()
+
+	date := func(iso string) time.Time {
+		tm, err := time.Parse("2006-01-02", iso)
+		if err != nil {
+			t.Fatalf("parse date %q: %v", iso, err)
+		}
+		return tm
+	}
+	// Save oldest→newest so ids and dates disagree with default (date-desc) order.
+	old := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchDate: date("2023-06-15")}
+	mid := domain.Match{Player1Name: "Carol", Player2Name: "Dave", MatchLength: 3, MatchDate: date("2024-06-15")}
+	// A late-in-the-day timestamp guards the inclusive DateTo boundary.
+	recent := domain.Match{Player1Name: "Eve", Player2Name: "Alice", MatchLength: 11, MatchDate: date("2025-06-15").Add(23 * time.Hour)}
+	oldID, err := ms.Save(ctx, "", &old)
+	if err != nil {
+		t.Fatalf("Save old: %v", err)
+	}
+	midID, err := ms.Save(ctx, "", &mid)
+	if err != nil {
+		t.Fatalf("Save mid: %v", err)
+	}
+	recentID, err := ms.Save(ctx, "", &recent)
+	if err != nil {
+		t.Fatalf("Save recent: %v", err)
+	}
+
+	tID, err := s.Tournaments().Create(ctx, "", "Cup", "2024-01-01", "Paris")
+	if err != nil {
+		t.Fatalf("Create tournament: %v", err)
+	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID, midID); err != nil {
+		t.Fatalf("AddMatch: %v", err)
+	}
+
+	ids := func(opts storage.MatchListOpts) []int64 {
+		t.Helper()
+		var out []int64
+		for m, err := range ms.List(ctx, "", opts) {
+			if err != nil {
+				t.Fatalf("List(%+v): %v", opts, err)
+			}
+			out = append(out, m.ID)
+		}
+		return out
+	}
+	eq := func(name string, got, want []int64) {
+		t.Helper()
+		if len(got) != len(want) {
+			t.Errorf("%s: got %v, want %v", name, got, want)
+			return
+		}
+		for i := range want {
+			if got[i] != want[i] {
+				t.Errorf("%s: got %v, want %v", name, got, want)
+				return
+			}
+		}
+	}
+
+	// Default: every match, most recent first.
+	eq("default order", ids(storage.MatchListOpts{}), []int64{recentID, midID, oldID})
+	// Sort keys.
+	eq("date_asc", ids(storage.MatchListOpts{Sort: "date_asc"}), []int64{oldID, midID, recentID})
+	eq("length_desc", ids(storage.MatchListOpts{Sort: "length_desc"}), []int64{recentID, oldID, midID})
+	eq("length_asc", ids(storage.MatchListOpts{Sort: "length_asc"}), []int64{midID, oldID, recentID})
+	// Player filter: Alice is player 1 of `old` and player 2 of `recent`.
+	eq("player Alice", ids(storage.MatchListOpts{PlayerName: "Alice"}), []int64{recentID, oldID})
+	// Date filters, inclusive on the day (recent is at 23:00 on the DateTo day).
+	eq("from 2024-01-01", ids(storage.MatchListOpts{DateFrom: "2024-01-01"}), []int64{recentID, midID})
+	eq("to 2024-12-31", ids(storage.MatchListOpts{DateTo: "2024-12-31"}), []int64{midID, oldID})
+	eq("year 2025", ids(storage.MatchListOpts{DateFrom: "2025-01-01", DateTo: "2025-12-31"}), []int64{recentID})
+	// Match length.
+	eq("length 3 or 7", ids(storage.MatchListOpts{MatchLength: []int{3, 7}, Sort: "date_asc"}), []int64{oldID, midID})
+	// Tournament.
+	eq("tournament", ids(storage.MatchListOpts{TournamentIDs: []int64{tID}}), []int64{midID})
+	// Pagination over the default order.
+	eq("limit 2", ids(storage.MatchListOpts{Limit: 2}), []int64{recentID, midID})
+	eq("limit 2 offset 1", ids(storage.MatchListOpts{Limit: 2, Offset: 1}), []int64{midID, oldID})
+	eq("offset 2", ids(storage.MatchListOpts{Offset: 2}), []int64{oldID})
+	// Combined: Alice's matches, oldest first, first one only.
+	eq("combined", ids(storage.MatchListOpts{PlayerName: "Alice", Sort: "date_asc", Limit: 1}), []int64{oldID})
 }
 
 func testMatchCreateGameMove(t *testing.T, s storage.Storage) {
