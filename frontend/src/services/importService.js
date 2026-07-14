@@ -413,7 +413,10 @@ export async function importSingleFile(filePath) {
             setStatusBarMessage(tMsg('status.xgMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
             openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
             return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing XG match:', error);
@@ -432,7 +435,10 @@ export async function importSingleFile(filePath) {
             setStatusBarMessage(tMsg('status.bgblitzMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
             openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
             return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing BGF match:', error);
@@ -452,7 +458,10 @@ export async function importSingleFile(filePath) {
             setStatusBarMessage(tMsg('status.matchImported', { formatName, matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
             openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
             return { type: 'match', id: matchID };
         } catch (error) {
             logger.error(`Error importing ${formatName} match:`, error);
@@ -489,7 +498,10 @@ async function importTxtFile(filePath) {
             setStatusBarMessage(tMsg('status.jellyfishMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
             openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
             return { type: 'match', id: matchID };
         } catch (error) {
             logger.error('Error importing Jellyfish TXT match:', error);
@@ -720,7 +732,10 @@ export async function pastePosition() {
             setStatusBarMessage(tMsg('status.clipboardMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
+            const { loadAllPositions } = await import('./positionService.js');
+            await loadAllPositions();
             openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
         } catch (error) {
             logger.error('Error pasting GnuBG match:', error);
             const errorStr = String(error);
