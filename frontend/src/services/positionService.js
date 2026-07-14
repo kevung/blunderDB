@@ -319,37 +319,42 @@ export async function loadAllPositions() {
     }
 }
 
-export async function loadPositionsByFilters(
-    filters,
-    includeCube,
-    includeScore,
-    pipCountFilter,
-    winRateFilter,
-    gammonRateFilter,
-    backgammonRateFilter,
-    player2WinRateFilter,
-    player2GammonRateFilter,
-    player2BackgammonRateFilter,
-    player1CheckerOffFilter,
-    player2CheckerOffFilter,
-    player1BackCheckerFilter,
-    player2BackCheckerFilter,
-    player1CheckerInZoneFilter,
-    player2CheckerInZoneFilter,
-    searchText,
-    player1AbsolutePipCountFilter,
-    equityFilter,
-    decisionTypeFilter,
-    diceRollFilter,
-    movePatternFilter,
-    dateFilter,
-    player1OutfieldBlotFilter,
-    player2OutfieldBlotFilter,
-    player1JanBlotFilter,
-    player2JanBlotFilter,
-    noContactFilter,
-    mirrorPositionFilter,
-    moveErrorFilter,
+// loadPositionsByFilters takes one options object rather than the ~38 positional
+// arguments it used to. The list had grown long enough that adding a filter meant
+// inserting an argument at the same index in six call sites, and getting an index
+// wrong shifts every later filter silently: the search still runs, it just answers
+// a different question.
+export async function loadPositionsByFilters({
+    filters = [],
+    includeCube = false,
+    includeScore = false,
+    pipCountFilter = '',
+    winRateFilter = '',
+    gammonRateFilter = '',
+    backgammonRateFilter = '',
+    player2WinRateFilter = '',
+    player2GammonRateFilter = '',
+    player2BackgammonRateFilter = '',
+    player1CheckerOffFilter = '',
+    player2CheckerOffFilter = '',
+    player1BackCheckerFilter = '',
+    player2BackCheckerFilter = '',
+    player1CheckerInZoneFilter = '',
+    player2CheckerInZoneFilter = '',
+    searchText = '',
+    player1AbsolutePipCountFilter = '',
+    equityFilter = '',
+    decisionTypeFilter = false,
+    diceRollFilter = false,
+    movePatternFilter = '',
+    dateFilter = '',
+    player1OutfieldBlotFilter = '',
+    player2OutfieldBlotFilter = '',
+    player1JanBlotFilter = '',
+    player2JanBlotFilter = '',
+    noContactFilter = false,
+    mirrorPositionFilter = false,
+    moveErrorFilter = '',
     searchCommand = '',
     matchIDsFilter = '',
     tournamentIDsFilter = '',
@@ -358,7 +363,7 @@ export async function loadPositionsByFilters(
     diceRollMode = 'both',
     positionIDsFilter = '',
     playerFilter = ''
-) {
+} = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
