@@ -250,6 +250,14 @@ type SearchFilters struct {
 	Player2JanBlotFilter          string   `json:"player2JanBlotFilter"`
 	NoContactFilter               bool     `json:"noContactFilter"`
 	MirrorFilter                  bool     `json:"mirrorFilter"`
+
+	// IndividuallyImportedFilter keeps only positions the user brought into the
+	// database on their own rather than inside a match (ADR-0001) — the answer
+	// to "where did the position I saved go?" after a match import buried it
+	// among thousands. Unlike every other filter here it is a property of the
+	// stored row, not of the board, so mirror search does not re-evaluate it.
+	IndividuallyImportedFilter bool `json:"individuallyImportedFilter"`
+
 	MoveErrorFilter               string   `json:"moveErrorFilter"`
 	MatchIDsFilter                string   `json:"matchIDsFilter"`
 	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`

@@ -40,6 +40,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/DedupByZobrist", testPositionDedup},
 		{"Position/UpdatePreservesId", testPositionUpdatePreservesId},
 		{"Position/ProvenanceIsSticky", testPositionProvenanceSticky},
+		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
@@ -1253,5 +1254,48 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		case !tc.kept && !errors.Is(err, storage.ErrNotFound):
 			t.Errorf("position %s survived the match: got %v, want ErrNotFound", tc.name, err)
 		}
+	}
+}
+
+// testSearchFilterByIndividuallyImported is the point of the whole feature: a
+// user who saved a position and then imported matches can find it again.
+func testSearchFilterByIndividuallyImported(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	save := func(n int, individual bool) int64 {
+		p := provenancePos(n)
+		p.IndividuallyImported = individual
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	mine := save(1, true)
+	save(2, false)
+	save(3, false)
+
+	var got []int64
+	for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{IndividuallyImportedFilter: true}) {
+		if err != nil {
+			t.Fatalf("Find: %v", err)
+		}
+		got = append(got, pos.ID)
+	}
+	if len(got) != 1 || got[0] != mine {
+		t.Errorf("filtered search returned %v, want exactly [%d]", got, mine)
+	}
+
+	// Without the filter, the match positions are back — and they are the noise
+	// the filter exists to cut through.
+	var all int
+	for _, err := range s.Search().Find(ctx, "", domain.SearchFilters{}) {
+		if err != nil {
+			t.Fatalf("Find (unfiltered): %v", err)
+		}
+		all++
+	}
+	if all != 3 {
+		t.Errorf("unfiltered search returned %d positions, want 3", all)
 	}
 }
