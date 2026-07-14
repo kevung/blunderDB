@@ -183,7 +183,6 @@
     }
 
     function handleMoveRowClick(move) {
-        logger.error('[BUG-TRACE] handleMoveRowClick move=' + move.move + ' isMatchMode=' + $matchContextStore.isMatchMode + ' currentIndex=' + $matchContextStore.currentIndex);
         // Toggle selection: if clicking the same move, deselect it
         if ($selectedMoveStore === move.move) {
             selectedMoveStore.set(null);

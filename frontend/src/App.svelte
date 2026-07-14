@@ -220,7 +220,6 @@
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
-        logger.error('[BUG-TRACE] App effect currentPositionIndexStore=' + value + ' positions.length=' + positions.length + '\n' + new Error().stack);
         if (positions.length > 0 && value >= 0 && value < positions.length) {
             showPosition(positions[value]).then(() => {
                 if (cancelled) return;
