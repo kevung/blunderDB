@@ -195,7 +195,7 @@ func (d *Database) applyMatchBadges(matches []Match) error {
 	if len(matches) == 0 {
 		return nil
 	}
-	badges, err := d.store.Stats().MatchBadges(context.Background(), "")
+	badges, err := d.store.Stats().MatchBadges(context.Background(), "", nil)
 	if err != nil {
 		return err
 	}

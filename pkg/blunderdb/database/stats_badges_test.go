@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"math"
 	"testing"
 )
@@ -54,6 +55,50 @@ func TestMatchBadgesEqualDetail(t *testing.T) {
 	// Sanity: player1 PR (error 10) must be lower than player2 PR (error 25).
 	if !(badge.PR > 0 && badge.PR2 > badge.PR) {
 		t.Errorf("unexpected PR ordering: p1=%.3f p2=%.3f", badge.PR, badge.PR2)
+	}
+}
+
+// TestMatchBadgesScopedByIDs pins that passing matchIDs to MatchBadges returns
+// exactly the same badge as the full-database scan for the requested match, and
+// excludes the others — the property that lets a list page compute PR without
+// scanning every decision in the library.
+func TestMatchBadgesScopedByIDs(t *testing.T) {
+	db := newTestDB(t)
+	ctx := context.Background()
+	ss := db.store.Stats()
+
+	tid := createTournament(t, db, "T", "2025-07-01")
+	m1 := createMatch(t, db, "P1", "P2", "2025-07-02", 7, tid)
+	g1 := createGame(t, db, m1)
+	for i := range 40 {
+		insertStatsFixtureRow(t, db, m1, g1, 10, 0, 0, i+1)
+	}
+	m2 := createMatch(t, db, "Q1", "Q2", "2025-07-03", 7, tid)
+	g2 := createGame(t, db, m2)
+	for i := range 20 {
+		insertStatsFixtureRow(t, db, m2, g2, 25, 0, 0, i+1)
+	}
+
+	full, err := ss.MatchBadges(ctx, "", nil)
+	if err != nil {
+		t.Fatalf("MatchBadges(nil): %v", err)
+	}
+	if len(full) != 2 {
+		t.Fatalf("full scan: got %d matches, want 2", len(full))
+	}
+
+	scoped, err := ss.MatchBadges(ctx, "", []int64{m1})
+	if err != nil {
+		t.Fatalf("MatchBadges([m1]): %v", err)
+	}
+	if len(scoped) != 1 {
+		t.Fatalf("scoped: got %d matches, want 1 (only m1)", len(scoped))
+	}
+	if _, ok := scoped[m2]; ok {
+		t.Errorf("scoped result leaked m2")
+	}
+	if scoped[m1] != full[m1] {
+		t.Errorf("scoped badge for m1 %+v != full-scan badge %+v", scoped[m1], full[m1])
 	}
 }
 

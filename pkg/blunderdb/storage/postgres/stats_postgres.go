@@ -846,15 +846,23 @@ func (s *statsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 
 // MatchBadges computes the per-player PR and total MWC loss for every match in
 // the tenant, keyed by match id. List-row projection of MatchDetail.
-func (s *statsStore) MatchBadges(ctx context.Context, scope string) (map[int64]storage.MatchBadge, error) {
+func (s *statsStore) MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
 	tenant := tenantID(scope)
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
 		(1 << COALESCE(p.cube_value, 0)::int), COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE p.tenant_id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
+	args := []any{tenant}
+	if len(matchIDs) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(matchIDs)), ",")
+		query += ` AND g.match_id IN (` + ph + `)`
+		for _, id := range matchIDs {
+			args = append(args, id)
+		}
+	}
 
-	rows, err := s.db.Query(ctx, rebind(query), tenant)
+	rows, err := s.db.Query(ctx, rebind(query), args...)
 	if err != nil {
 		return nil, fmt.Errorf("MatchBadges query: %w", err)
 	}

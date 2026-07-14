@@ -1180,7 +1180,7 @@ func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
 		t.Errorf("empty selection: got %v, want none", ids)
 	}
 
-	mb, err := ss.MatchBadges(ctx, "")
+	mb, err := ss.MatchBadges(ctx, "", nil)
 	if err != nil {
 		t.Fatalf("MatchBadges: %v", err)
 	}

@@ -197,10 +197,12 @@ type StatsStore interface {
 	// MatchDetail computes per-player statistics for a single match.
 	MatchDetail(ctx context.Context, scope string, matchID int64) (*MatchDetailStats, error)
 
-	// MatchBadges returns the per-player PR/MWC badge for every match in scope,
-	// keyed by match id. Matches with no counted decisions are absent from the
-	// map (their badge stays zero-valued).
-	MatchBadges(ctx context.Context, scope string) (map[int64]MatchBadge, error)
+	// MatchBadges returns the per-player PR/MWC badge for the given matches,
+	// keyed by match id. A nil/empty matchIDs computes badges for every match in
+	// scope (a whole-database scan); pass the ids of the page being displayed to
+	// bound the work. Matches with no counted decisions are absent from the map
+	// (their badge stays zero-valued).
+	MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]MatchBadge, error)
 
 	// TournamentBadges returns the aggregate PR/MWC badge for every tournament in
 	// scope, keyed by tournament id. Tournaments with no counted decisions are
