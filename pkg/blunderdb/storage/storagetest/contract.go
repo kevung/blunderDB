@@ -39,9 +39,11 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/Save+Load", testPositionSaveLoad},
 		{"Position/DedupByZobrist", testPositionDedup},
 		{"Position/UpdatePreservesId", testPositionUpdatePreservesId},
+		{"Position/ProvenanceIsSticky", testPositionProvenanceSticky},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
+		{"Match/DeleteCascadeRetention", testMatchDeleteCascadeRetention},
 		{"Match/FindByHash", testMatchFindByHash},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
@@ -1100,5 +1102,156 @@ func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
 	}
 	if len(tb) != 0 {
 		t.Errorf("empty TournamentBadges: got %v, want none", tb)
+	}
+}
+
+// provenancePos returns a position unique to n (the score is part of a
+// position's identity, so each n hashes to its own row).
+func provenancePos(n int) domain.Position {
+	p := domain.InitializePosition()
+	p.DecisionType = domain.CheckerAction
+	p.Score = [2]int{n, 0}
+	return p
+}
+
+// testPositionProvenanceSticky pins the rule that makes the individually
+// imported flag usable: it is ORed into the stored value, never assigned.
+// Both orderings below are ordinary user behaviour, and the flag must mean the
+// same thing in each — see docs/adr/0001.
+func testPositionProvenanceSticky(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	flag := func(id int64) bool {
+		p, err := s.Positions().Load(ctx, "", id)
+		if err != nil {
+			t.Fatalf("Load position %d: %v", id, err)
+		}
+		return p.IndividuallyImported
+	}
+	save := func(p domain.Position, individual bool) int64 {
+		p.IndividuallyImported = individual
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position: %v", err)
+		}
+		return id
+	}
+
+	// S1 — the user imports a position on its own, then imports the match it
+	// came from. The match import must not clear the flag.
+	solo := save(provenancePos(1), true)
+	if got := save(provenancePos(1), false); got != solo {
+		t.Fatalf("dedup failed: match import created id %d, want %d", got, solo)
+	}
+	if !flag(solo) {
+		t.Error("S1: importing the match cleared individually_imported")
+	}
+
+	// S2 — the match is imported first, then the user imports one of its
+	// positions on its own. The insert is a no-op, so the flag has to be raised
+	// on the row that is already there.
+	fromMatch := save(provenancePos(2), false)
+	if flag(fromMatch) {
+		t.Error("a match-sourced position came back individually imported")
+	}
+	if got := save(provenancePos(2), true); got != fromMatch {
+		t.Fatalf("dedup failed: individual import created id %d, want %d", got, fromMatch)
+	}
+	if !flag(fromMatch) {
+		t.Error("S2: individually importing an already-stored position did not mark it")
+	}
+
+	// A position only ever seen inside a match stays unmarked.
+	if only := save(provenancePos(3), false); flag(only) {
+		t.Error("a position seen only in a match was marked individually imported")
+	}
+}
+
+// testMatchDeleteCascadeRetention pins what survives deleting a match. Every
+// position below occurs in the match; they differ only in what else holds them.
+// Before the individually-imported flag existed, a position the user had
+// imported on its own was purged here as an orphan, silently, along with its
+// comment and its Anki card.
+func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob"}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+
+	// Every position is reached by one of the match's moves.
+	inMatch := func(n int, individual bool) int64 {
+		p := provenancePos(n)
+		p.IndividuallyImported = individual
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(n), MoveType: "checker", PositionID: id, Player: 1}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove %d: %v", n, err)
+		}
+		return id
+	}
+
+	purged := inMatch(1, false)     // held by nothing but the match…
+	individual := inMatch(2, true)  // …the user brought this one in themselves
+	inCollection := inMatch(3, false)
+	commented := inMatch(4, false)
+	inDeck := inMatch(5, false)
+
+	// An analysis must NOT hold a position: every match position has one, so
+	// counting it would mean never purging anything.
+	if err := s.Analyses().Save(ctx, "", purged, &domain.PositionAnalysis{}); err != nil {
+		t.Fatalf("Save analysis: %v", err)
+	}
+
+	coll, err := s.Collections().Create(ctx, "", "keep", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	if err := s.Collections().AddPosition(ctx, "", coll, inCollection); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+	if _, err := s.Comments().Add(ctx, "", commented, "why did I play this"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+	deck, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{inDeck}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+
+	if err := s.Matches().DeleteCascade(ctx, "", matchID); err != nil {
+		t.Fatalf("DeleteCascade: %v", err)
+	}
+
+	for _, tc := range []struct {
+		name string
+		id   int64
+		kept bool
+	}{
+		{"held by nothing (analysis only)", purged, false},
+		{"individually imported", individual, true},
+		{"in a collection", inCollection, true},
+		{"commented", commented, true},
+		{"in an Anki deck", inDeck, true},
+	} {
+		_, err := s.Positions().Load(ctx, "", tc.id)
+		switch {
+		case tc.kept && err != nil:
+			t.Errorf("position %s was purged with the match: %v", tc.name, err)
+		case !tc.kept && !errors.Is(err, storage.ErrNotFound):
+			t.Errorf("position %s survived the match: got %v, want ErrNotFound", tc.name, err)
+		}
 	}
 }

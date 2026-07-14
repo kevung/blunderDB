@@ -207,9 +207,27 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 	return nil
 }
 
+// positionIsHeldSQL reports whether anything still holds a position once the
+// match that referenced it is gone. Deleting a match must not destroy work the
+// user did on a position that merely happened to occur in it.
+//
+// A position is held by: another match's move; membership in a collection; a
+// comment the user wrote; an Anki card built from it; or having been imported
+// individually, which says the user brought it in deliberately (ADR-0001).
+//
+// An analysis deliberately does NOT hold a position: it arrives with the match
+// rather than from the user, and every match position has one, so counting it
+// would mean never purging anything.
+const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)`
+
 // DeleteCascade removes a match and all of its games, moves and move analyses
-// (via ON DELETE CASCADE), then deletes any position left referenced by no
-// move and no collection. The cascade and the orphan cleanup run atomically.
+// (via ON DELETE CASCADE), then deletes any position the match referenced that
+// nothing else holds (see positionIsHeldSQL). The cascade and the orphan
+// cleanup run atomically.
 func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
 		rows, err := tx.QueryContext(ctx,
@@ -239,16 +257,11 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 		}
 
 		for _, pid := range positionIDs {
-			var refs int
-			if err := tx.QueryRowContext(ctx,
-				`SELECT count(*) FROM (
-					SELECT position_id FROM move WHERE position_id = ?
-					UNION ALL
-					SELECT position_id FROM collection_position WHERE position_id = ?
-				 )`, pid, pid).Scan(&refs); err != nil {
+			var held bool
+			if err := tx.QueryRowContext(ctx, positionIsHeldSQL, pid).Scan(&held); err != nil {
 				return fmt.Errorf("ref check position %d: %w", pid, err)
 			}
-			if refs == 0 {
+			if !held {
 				if _, err := tx.ExecContext(ctx, `DELETE FROM position WHERE id = ?`, pid); err != nil {
 					return fmt.Errorf("delete orphan position %d: %w", pid, err)
 				}
