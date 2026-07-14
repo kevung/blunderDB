@@ -113,6 +113,12 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 		if b.Position == nil {
 			continue
 		}
+		// NDJSON is a faithful interchange of a whole position library, not a
+		// hand-picked position file: provenance is carried in the record and
+		// honoured as-is (ADR-0001), exactly like a database-to-database copy.
+		// Forcing the flag here would mark every position of a restored backup
+		// as individually imported. Records written before the flag existed
+		// simply decode to false.
 		id, err := tx.Positions().Save(ctx, scope, b.Position)
 		if err != nil {
 			return sum, err

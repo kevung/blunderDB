@@ -8,6 +8,40 @@ import (
 	"strings"
 )
 
+// sourcePositionQuery selects (id, state, individually_imported) from the
+// database being imported.
+//
+// Databases older than 2.13.0 have no individually_imported column, so the flag
+// is derived there the same way the 2.12.0→2.13.0 migration derives it: a
+// position reachable from no move never came from a match. Using the same rule
+// in both places is what keeps the two routes consistent — migrating a database
+// in place and importing it into another must not disagree about which of its
+// positions were individually imported.
+func sourcePositionQuery(importDB *sql.DB) string {
+	if queryable(importDB, `SELECT individually_imported FROM position LIMIT 1`) {
+		return `SELECT id, state, individually_imported FROM position`
+	}
+	if queryable(importDB, `SELECT 1 FROM move LIMIT 1`) {
+		slog.Debug("import database predates individually_imported; deriving it from the move graph")
+		return `SELECT p.id, p.state,
+			       NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id)
+			FROM position p`
+	}
+	// No move table at all: the database holds no matches, so every position in
+	// it stands on its own. This is the same rule as the derivation above, taken
+	// to its limit.
+	slog.Debug("import database has no move table; all its positions are individually imported")
+	return `SELECT id, state, 1 FROM position`
+}
+
+// queryable reports whether q runs against db — used to probe for a column or a
+// table that older schema versions may not have.
+func queryable(db *sql.DB, q string) bool {
+	var dummy int
+	err := db.QueryRow(q).Scan(&dummy)
+	return err == nil || err == sql.ErrNoRows
+}
+
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	d.mu.RLock()
@@ -69,13 +103,11 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		}
 		positionID := currentPosition.ID
 
-		// Reset ID for comparison
-		currentPosition.ID = 0
-		currentPositionJSON, err := json.Marshal(currentPosition)
+		currentPositionJSON, err := positionIdentityJSON(currentPosition)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+			return nil, err
 		}
-		currentPositionsMap[string(currentPositionJSON)] = positionID
+		currentPositionsMap[currentPositionJSON] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -113,15 +145,13 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			continue
 		}
 
-		// Reset ID for existence check
-		importPosition.ID = 0
-		importPositionJSON, err := json.Marshal(importPosition)
+		importPositionJSON, err := positionIdentityJSON(importPosition)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+			return nil, err
 		}
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
-		existingPositionID, existsInCurrent := currentPositionsMap[string(importPositionJSON)]
+		existingPositionID, existsInCurrent := currentPositionsMap[importPositionJSON]
 
 		if existsInCurrent {
 			// Check if there's actually something to merge
@@ -274,13 +304,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 		positionID := currentPosition.ID
 
-		// Reset ID for comparison
-		currentPosition.ID = 0
-		currentPositionJSON, err := json.Marshal(currentPosition)
+		currentPositionJSON, err := positionIdentityJSON(currentPosition)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+			return nil, err
 		}
-		currentPositionsMap[string(currentPositionJSON)] = positionID
+		currentPositionsMap[currentPositionJSON] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -289,8 +317,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	slog.Debug("built position index for commit", "count", len(currentPositionsMap))
 
-	// Load all positions from the import database
-	rows, err := importDB.Query(`SELECT id, state FROM position`)
+	// Load all positions from the import database, carrying their provenance.
+	rows, err := importDB.Query(sourcePositionQuery(importDB))
 	if err != nil {
 		return nil, err
 	}
@@ -309,7 +337,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		var id int64
 		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
+		var sourceIndividual bool
+		if err = rows.Scan(&id, &stateJSON, &sourceIndividual); err != nil {
 			slog.Warn("scanning position", "err", err)
 			continue
 		}
@@ -322,19 +351,28 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			continue
 		}
 
-		// Reset ID for existence check
-		importPosition.ID = 0
-		importPositionJSON, err := json.Marshal(importPosition)
+		importPositionJSON, err := positionIdentityJSON(importPosition)
 		if err != nil {
-			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+			return nil, err
 		}
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
-		existingPositionID, existsInCurrent := currentPositionsMap[string(importPositionJSON)]
+		existingPositionID, existsInCurrent := currentPositionsMap[importPositionJSON]
 
 		if existsInCurrent {
 			// Track if we actually merge anything
 			hasMerged := false
+
+			// Provenance is sticky (ADR-0001): an individually-imported source
+			// position raises the flag on the position we already hold, and a
+			// source position that was not individually imported never lowers it.
+			if sourceIndividual {
+				if _, err := tx.Exec(
+					`UPDATE position SET individually_imported = 1
+					 WHERE id = ? AND individually_imported = 0`, existingPositionID); err != nil {
+					slog.Warn("marking position individually imported", "positionID", existingPositionID, "err", err)
+				}
+			}
 
 			// Merge analysis if it exists
 			var importAnalysisData []byte
@@ -425,7 +463,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			// Position doesn't exist, add it (using transaction)
 			// Store as full JSON (import DB may not have denormalized columns)
 			fullJSON := fullPositionJSON(importPosition)
-			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, fullJSON)
+			result, err := tx.Exec(
+				`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
+				fullJSON, sourceIndividual)
 			if err != nil {
 				slog.Warn("inserting position", "err", err)
 				positionsSkipped++

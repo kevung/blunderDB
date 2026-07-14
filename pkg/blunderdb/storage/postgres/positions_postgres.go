@@ -32,10 +32,12 @@ func tenantID(scope string) int64 {
 	return n
 }
 
-// positionSelectCols is the column list read back into a Position; the order
-// matches engine.ReconstructPosition's parameters.
+// positionSelectCols is the column list read back into a Position; the first
+// twelve match engine.ReconstructPosition's parameters, and
+// individually_imported is applied on top (provenance, not identity — see
+// docs/adr/0001).
 const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, ` +
-	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver`
+	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported`
 
 // scanPosition reconstructs a Position from a row selected with
 // positionSelectCols. The denormalised integer columns are nullable, so they
@@ -45,13 +47,16 @@ func scanPosition(sc scanner) (domain.Position, error) {
 	var state string
 	var dt, por, d1, d2, cv, co, s1, s2 *int64
 	var hj, hb *bool
-	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb); err != nil {
+	var individual *bool
+	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual); err != nil {
 		return domain.Position{}, err
 	}
-	return engine.ReconstructPosition(id, state,
+	p := engine.ReconstructPosition(id, state,
 		derefInt(dt), derefInt(por), derefInt(d1), derefInt(d2),
 		derefInt(cv), derefInt(co), derefInt(s1), derefInt(s2),
-		boolToIntPtr(hj), boolToIntPtr(hb)), nil
+		boolToIntPtr(hj), boolToIntPtr(hb))
+	p.IndividuallyImported = individual != nil && *individual
+	return p, nil
 }
 
 func derefInt(p *int64) int {
@@ -75,15 +80,26 @@ const positionInsertSQL = `INSERT INTO position (
 	pip_1, pip_2, pip_diff, off_1, off_2,
 	back_checkers_1, back_checkers_2, no_contact,
 	occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-	state
-) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20, $21,$22,$23,$24, $25)
+	state, individually_imported
+) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20, $21,$22,$23,$24, $25,$26)
 ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING
 RETURNING id`
+
+// markIndividualSQL raises the provenance flag on an already-stored position.
+// It only ever sets, never clears — that is what makes the flag sticky.
+const markIndividualSQL = `UPDATE position SET individually_imported = TRUE
+	WHERE tenant_id = $1 AND zobrist_hash = $2 AND NOT individually_imported`
 
 // Save stores p, deduplicated per tenant by Zobrist hash: a position whose
 // (tenant_id, zobrist_hash) is already present is not re-inserted and Save
 // returns the existing id. p is updated in place with the storage-normalised
 // board and the resulting id.
+//
+// p.IndividuallyImported is ORed into the stored value rather than assigned
+// (docs/adr/0001): a match import (which never sets it) cannot clear the flag on
+// a position the user had already imported on its own, and an individual import
+// of a position a match had already brought in still marks it. The flag is
+// therefore independent of the order the user imports their files in.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
 	tenant := tenantID(scope)
 	norm := p.NormalizeForStorage()
@@ -97,10 +113,17 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact,
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board)).Scan(&id)
+		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported).Scan(&id)
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
-		// Hash already present for this tenant: return the existing row's id.
+		// Hash already present for this tenant: keep the existing row, but let
+		// an individual import raise the flag on it. Skipped entirely for match
+		// imports, so they stay a pure no-op on a duplicate position.
+		if norm.IndividuallyImported {
+			if _, err := s.db.Exec(ctx, markIndividualSQL, tenant, int64(cols.ZobristHash)); err != nil {
+				return 0, fmt.Errorf("postgres: mark position individually imported: %w", err)
+			}
+		}
 		if err = s.db.QueryRow(ctx,
 			`SELECT id FROM position WHERE tenant_id = $1 AND zobrist_hash = $2`,
 			tenant, int64(cols.ZobristHash)).Scan(&id); err != nil {

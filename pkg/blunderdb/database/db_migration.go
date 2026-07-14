@@ -1423,6 +1423,43 @@ func (d *Database) migrate_2_11_0_to_2_12_0() error {
 	return nil
 }
 
+// migrate_2_12_0_to_2_13_0 adds position.individually_imported (ADR-0001) and
+// backfills it from the only signal an existing database carries: a position
+// reachable from no move never came from a match.
+//
+// The backfill is a one-shot reconstruction of history, not a definition. It
+// has two known error classes, both accepted deliberately:
+//   - False positives: positions created by a cross-format "enrich" import
+//     (ingest.WriteMatch skips move creation when enriching) are match-sourced
+//     yet have no move row, so they are marked individual here.
+//   - False negatives: a position that was individually imported *before* a
+//     match that also contained it is indistinguishable from a plain match
+//     position. That information does not exist in the database and cannot be
+//     recovered.
+//
+// From here on the flag is written at import time and is exact.
+func (d *Database) migrate_2_12_0_to_2_13_0() error {
+	_, _ = d.db.Exec(`ALTER TABLE position ADD COLUMN individually_imported INTEGER NOT NULL DEFAULT 0`) // may already exist
+
+	if _, err := d.db.Exec(`
+		UPDATE position SET individually_imported = 1
+		WHERE NOT EXISTS (SELECT 1 FROM move WHERE move.position_id = position.id)`); err != nil {
+		return fmt.Errorf("migrate 2.13.0 backfill individually_imported: %w", err)
+	}
+
+	if _, err := d.db.Exec(
+		`CREATE INDEX IF NOT EXISTS idx_position_individual ON position(individually_imported) WHERE individually_imported = 1`); err != nil {
+		return fmt.Errorf("migrate 2.13.0 create index: %w", err)
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.13.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.13.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.12.0", "to", "2.13.0")
+	return nil
+}
+
 // runMigrationChain reads the recorded schema version and applies the
 // sequential upgrade steps up to the current DatabaseVersion, then verifies
 // the expected tables and metadata keys exist. It is shared by the GUI/CLI
@@ -1905,6 +1942,15 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			return fmt.Errorf("migration 2.11.0→2.12.0 failed: %w", err)
 		}
 		dbVersion = "2.12.0"
+	}
+
+	// Auto-migrate from 2.12.0 to 2.13.0
+	// Adds position.individually_imported and backfills it from the move graph.
+	if dbVersion == "2.12.0" {
+		if err := d.migrate_2_12_0_to_2_13_0(); err != nil {
+			return fmt.Errorf("migration 2.12.0→2.13.0 failed: %w", err)
+		}
+		dbVersion = "2.13.0"
 	}
 
 	// Ensure all required tables and columns exist.

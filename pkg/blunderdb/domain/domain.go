@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.12.0"
+	DatabaseVersion = "2.13.0"
 )
 
 // Anki deck source types
@@ -207,6 +207,13 @@ type Position struct {
 	DecisionType int    `json:"decision_type"`
 	HasJacoby    int    `json:"has_jacoby"` // Add HasJacoby field
 	HasBeaver    int    `json:"has_beaver"` // Add HasBeaver field
+
+	// IndividuallyImported records that the position entered the database on
+	// its own rather than as part of a match (ADR-0001). It is NOT part of the
+	// position's identity: it must never be folded into the Zobrist hash, and
+	// PositionStore.Save ORs it into the stored value, so a match import can
+	// never clear it. See CONTEXT.md.
+	IndividuallyImported bool `json:"individually_imported"`
 }
 
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.

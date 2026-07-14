@@ -85,7 +85,12 @@ func cubeOwnerIndex(owner int) int {
 // ZobristHash computes a Zobrist hash for position identity.
 // The position is normalized to player_on_roll=0 before hashing, so a
 // position and its PlayerOnRoll=1 mirror always produce the same hash.
-// Position.ID is excluded from the hash.
+//
+// Only fields that are part of a position's identity are folded in.
+// Position.ID and Position.IndividuallyImported are excluded: the latter is
+// provenance metadata, and hashing it would split one position into two rows
+// depending on how it was imported, defeating deduplication (ADR-0001).
+// TestZobristIgnoresIndividuallyImported guards this.
 func ZobristHash(p *domain.Position) uint64 {
 	norm := p.NormalizeForStorage()
 	norm.ID = 0

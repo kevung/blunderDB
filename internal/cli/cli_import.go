@@ -205,6 +205,11 @@ func (cli *CLI) importPosition(filePath string) error {
 			continue
 		}
 
+		// A position file delivers positions on their own, with no match to
+		// attach them to, so they are individually imported (ADR-0001). The
+		// flag is sticky, so a position a match already brought in gains it.
+		pos.IndividuallyImported = true
+
 		// Save position
 		_, err := cli.db.SavePosition(&pos)
 		if err != nil {
