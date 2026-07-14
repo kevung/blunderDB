@@ -20,6 +20,8 @@ import (
 	"strconv"
 	"strings"
 
+	"golang.org/x/text/unicode/norm"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -44,6 +46,15 @@ func ParsePosition(text string) (Result, error) {
 	if strings.TrimSpace(text) == "" {
 		return Result{}, errEmpty
 	}
+
+	// Normalize accented characters to NFC (precomposed). macOS's pasteboard
+	// hands us NFD (decomposed, e.g. "e"+combining-acute) for text copied from
+	// some sources (observed with XG run under Sikarugir/Wine on Mac); every
+	// accent-bearing literal below (e.g. "éq:", "Equités") is written in NFC,
+	// so decomposed input silently fails every match and the analysis comes
+	// back empty. Linux/Windows clipboards don't exhibit this, which is why it
+	// doesn't reproduce there.
+	text = norm.NFC.String(text)
 
 	// Normalize newlines + trim, exactly like the JS (importService.js:822-823).
 	raw := strings.TrimSpace(strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n"))
