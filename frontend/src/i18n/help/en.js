@@ -854,6 +854,10 @@ export default {
                                 <td>Include mirrored positions</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Only positions imported on their own, not brought in by a match import</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Exclude positions that contain <em>any</em> checker of the structure drawn in the "Except" tab (e.g. drawing checkers on 1, 3 and 5 keeps only positions with none of

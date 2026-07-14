@@ -58,6 +58,13 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	var args []any
 	where.WriteString("1=1")
 
+	// Provenance is a property of the row, not of the board, so mirroring a
+	// position cannot change it: this one filter stays in SQL even in mirror
+	// search, where every board filter falls back to the Go phase.
+	if f.IndividuallyImportedFilter {
+		where.WriteString(" AND p.individually_imported = 1")
+	}
+
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
 		var allMatchIDs []int64
 		if f.MatchIDsFilter != "" {

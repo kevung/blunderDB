@@ -290,3 +290,17 @@ func TestZobristPrintHashes(t *testing.T) {
 		t.Logf(`{"%s", ..., 0x%016x},`, tc.name, h)
 	}
 }
+
+// TestZobristIgnoresIndividuallyImported guards the invariant that provenance
+// is not part of a position's identity (ADR-0001). If the flag were folded into
+// the hash, the same position imported on its own and inside a match would land
+// on two different rows and deduplication would silently stop working.
+func TestZobristIgnoresIndividuallyImported(t *testing.T) {
+	plain := initialPosition()
+	marked := initialPosition()
+	marked.IndividuallyImported = true
+
+	if got, want := ZobristHash(&marked), ZobristHash(&plain); got != want {
+		t.Fatalf("IndividuallyImported changed the Zobrist hash: got %#x, want %#x", got, want)
+	}
+}

@@ -270,7 +270,8 @@
             "creationDate": "Дата создания",
             "matchIDs": "ID матчей",
             "tournamentIDs": "ID турниров",
-            "player": "Игрок"
+            "player": "Игрок",
+            "individuallyImported": "Импортирована отдельно"
         },
         "filterGroups": {
             "display": "Отображение",

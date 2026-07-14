@@ -853,6 +853,10 @@ export default {
                                 <td>Sisällytä peilatut asemat</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Vain erikseen tuodut asemat, ei ottelun tuonnin mukanaan tuomat</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Sulje pois asemat, joissa on <em>mikä tahansa</em> nappula "Except"-välilehdellä piirretystä rakenteesta (esim. nappuloiden piirtäminen pisteille 1, 3 ja 5 pitää vain asemat, joissa ei ole yhtäkään

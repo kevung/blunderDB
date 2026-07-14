@@ -582,9 +582,13 @@ describe('processCommand', () => {
         statusBarModeStore.set('NORMAL');
         processCommand('s p>30 w>50');
         expect(callbacks.onLoadPositionsByFilters).toHaveBeenCalled();
-        const args = callbacks.onLoadPositionsByFilters.mock.calls[0];
-        // First arg is the filters array
-        expect(args[0]).toEqual(['p>30', 'w>50']);
+        const [opts] = callbacks.onLoadPositionsByFilters.mock.calls[0];
+        expect(opts.filters).toEqual(['p>30', 'w>50']);
+        // Named, not positional: each parsed filter reaches the loader under its
+        // own name, so adding one cannot silently shift the others.
+        expect(opts.pipCountFilter).toBe('p>30');
+        expect(opts.winRateFilter).toBe('w>50');
+        expect(opts.searchCommand).toBe('s p>30 w>50');
     });
 
     test('s command blocked outside NORMAL/EDIT mode', () => {

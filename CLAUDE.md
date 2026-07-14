@@ -106,9 +106,10 @@ packages can use unqualified `domain` names — not a pending migration.)
   and the whole persistence layer:
   - `db.go` — connection lifecycle (`NewDatabase`, `SetupDatabase`,
     `OpenDatabase`, `applyPragmas`, `Conn`, `Close`). Uses
-    `modernc.org/sqlite` (pure-Go SQLite, no CGO). In GUI mode the DB is
-    opened in-memory (`:memory:`) and loaded from / saved to a user-chosen
-    `.db` file.
+    `modernc.org/sqlite` (pure-Go SQLite, no CGO). The GUI opens the user's
+    `.db` file directly; `:memory:` is only used by tests (which is why
+    `ConfigurePool` pins it to a single connection — each pooled connection
+    would otherwise be a separate empty database).
   - `db_schema.go` — table/index DDL. `db_migration.go` — `CheckVersion`
     and per-version upgrade paths.
   - `db_position.go`, `db_analysis.go`, `db_match.go`, `db_tournament.go`,
@@ -130,8 +131,11 @@ packages can use unqualified `domain` names — not a pending migration.)
 
 Match/position import parsers are **external modules** (own repos under `github.com/kevung/…`): `xgparser` (eXtreme Gammon `.xg`/`.xgp`), `gnubgparser` (GnuBG `.sgf`), `bgfparser` (BGBlitz `.bgf`). Jellyfish `.mat` parsing is handled in this repo. Position text files are a JSON-per-line format produced by the app itself.
 
+Domain vocabulary and the decisions behind it live in `CONTEXT.md` (glossary) and `docs/adr/` — read those before changing how positions are identified, where they came from, or what survives a match deletion.
+
 Key backend invariants worth knowing before editing:
-- Positions are stored with a canonical hash (Zobrist; see `pkg/blunderdb/database/canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup.
+- Positions are stored with a canonical hash (Zobrist; see `pkg/blunderdb/database/canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup. Provenance (`Position.IndividuallyImported`) is deliberately **not** part of that hash: hashing it would split one position into two rows. Use `SaveIndividualPosition` when the user brings a position in on its own.
+- Deleting a match purges the positions it referenced that nothing else holds. The retention predicate (`positionIsHeldSQL`) is stated in **three** places — `database/db_match.go` (the copy the GUI and CLI run), `storage/sqlite/matches_sqlite.go` and `storage/postgres/matches_postgres.go`. Keep them identical.
 - A single mutex (`Database.mu`) serializes writes; import cancellation uses an atomic flag (`importCancelled`).
 - Schema changes require incrementing `DatabaseVersion` in `pkg/blunderdb/domain/` **and** adding a migration path (`CheckVersion` in `db_migration.go`, table/index DDL in `db_schema.go`). Cover the migration with a test in `pkg/blunderdb/database/migration_test.go`.
 

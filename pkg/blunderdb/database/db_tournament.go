@@ -457,7 +457,8 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	_, err = exportDB.Exec(`
 		CREATE TABLE IF NOT EXISTS position (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			state TEXT
+			state TEXT,
+			individually_imported INTEGER NOT NULL DEFAULT 0
 		)
 	`)
 	if err != nil {
@@ -601,7 +602,10 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, fullPositionJSON(pos))
+		// Carry provenance so the export round-trips (ADR-0001).
+		result, err := exportDB.Exec(
+			`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
+			fullPositionJSON(pos), pos.IndividuallyImported)
 		if err != nil {
 			continue
 		}

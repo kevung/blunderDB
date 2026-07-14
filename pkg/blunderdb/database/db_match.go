@@ -264,24 +264,15 @@ func (d *Database) DeleteMatch(matchID int64) error {
 		return fmt.Errorf("error deleting match: %w", err)
 	}
 
-	// Delete orphaned positions that are no longer referenced by any move
-	// and not part of any collection
+	// Drop the positions nothing holds any more (see positionIsHeldSQL); their
+	// analyses and comments cascade off the position delete.
 	for _, pid := range positionIDs {
-		var refCount int
-		err := tx.QueryRow(`
-			SELECT COUNT(*) FROM (
-				SELECT position_id FROM move WHERE position_id = ?
-				UNION ALL
-				SELECT position_id FROM collection_position WHERE position_id = ?
-			)
-		`, pid, pid).Scan(&refCount)
-		if err != nil {
+		var held bool
+		if err := tx.QueryRow(positionIsHeldSQL, pid).Scan(&held); err != nil {
 			return fmt.Errorf("error checking position references for ID %d: %w", pid, err)
 		}
-		if refCount == 0 {
-			// Position is orphaned — delete it (cascades to analysis and comment)
-			_, err = tx.Exec(`DELETE FROM position WHERE id = ?`, pid)
-			if err != nil {
+		if !held {
+			if _, err = tx.Exec(`DELETE FROM position WHERE id = ?`, pid); err != nil {
 				return fmt.Errorf("error deleting orphaned position %d: %w", pid, err)
 			}
 		}
@@ -289,6 +280,32 @@ func (d *Database) DeleteMatch(matchID int64) error {
 
 	return tx.Commit()
 }
+
+// positionIsHeldSQL reports whether anything still holds a position once the
+// match that referenced it is gone. Deleting a match must not destroy work the
+// user did on a position that merely happened to occur in it.
+//
+// A position is held by: another match's move; membership in a collection; an
+// Anki card built from it; or having been imported individually, which says the
+// user brought it in deliberately (ADR-0001).
+//
+// Two things deliberately do NOT hold a position, because neither is evidence
+// the user did anything with it:
+//   - an analysis: it arrives with the match, and every match position has one,
+//     so counting it would mean never purging anything;
+//   - a comment: match importers attach the source file's per-move notes as
+//     comments (see ingest/xg.go), so a comment is not necessarily the user's.
+//     A note the user wrote on a match position is therefore still lost when the
+//     match is deleted — to keep such a position, put it in a collection or save
+//     it, which marks it individually imported.
+//
+// This mirrors the identical predicate in the SQLite and Postgres stores. The
+// GUI and the CLI both delete matches through this wrapper rather than through
+// the store, so the rule has to be stated here too — the three must not drift.
+const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)`
 
 // GetMatchMovePositions returns all positions from a match in chronological order
 // Positions are returned as they were stored (from player on roll POV)

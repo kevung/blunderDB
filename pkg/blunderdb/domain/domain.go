@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.12.0"
+	DatabaseVersion = "2.13.0"
 )
 
 // Anki deck source types
@@ -207,6 +207,13 @@ type Position struct {
 	DecisionType int    `json:"decision_type"`
 	HasJacoby    int    `json:"has_jacoby"` // Add HasJacoby field
 	HasBeaver    int    `json:"has_beaver"` // Add HasBeaver field
+
+	// IndividuallyImported records that the position entered the database on
+	// its own rather than as part of a match (ADR-0001). It is NOT part of the
+	// position's identity: it must never be folded into the Zobrist hash, and
+	// PositionStore.Save ORs it into the stored value, so a match import can
+	// never clear it. See CONTEXT.md.
+	IndividuallyImported bool `json:"individually_imported"`
 }
 
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
@@ -243,6 +250,14 @@ type SearchFilters struct {
 	Player2JanBlotFilter          string   `json:"player2JanBlotFilter"`
 	NoContactFilter               bool     `json:"noContactFilter"`
 	MirrorFilter                  bool     `json:"mirrorFilter"`
+
+	// IndividuallyImportedFilter keeps only positions the user brought into the
+	// database on their own rather than inside a match (ADR-0001) — the answer
+	// to "where did the position I saved go?" after a match import buried it
+	// among thousands. Unlike every other filter here it is a property of the
+	// stored row, not of the board, so mirror search does not re-evaluate it.
+	IndividuallyImportedFilter bool `json:"individuallyImportedFilter"`
+
 	MoveErrorFilter               string   `json:"moveErrorFilter"`
 	MatchIDsFilter                string   `json:"matchIDsFilter"`
 	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`

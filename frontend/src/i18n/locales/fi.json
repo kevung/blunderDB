@@ -270,7 +270,8 @@
             "creationDate": "Luontipäivä",
             "matchIDs": "Ottelun tunnukset",
             "tournamentIDs": "Turnauksen tunnukset",
-            "player": "Pelaaja"
+            "player": "Pelaaja",
+            "individuallyImported": "Erikseen tuotu"
         },
         "filterGroups": {
             "display": "Näyttö",

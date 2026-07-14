@@ -313,3 +313,74 @@ func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
 
 // countRows is already defined in export_test.go (same package)
 // assertTableCount uses countRows + fmt from this file's imports
+
+// TestDeleteMatchKeepsIndividuallyImportedPosition covers the path the GUI and
+// the CLI actually take. Database.DeleteMatch has its own copy of the orphan
+// purge — the Storage contract test exercises a different one — and this is the
+// copy that used to silently destroy the user's own positions: import a match,
+// then delete it, and any position the user had saved on their own that happened
+// to occur in it went with it.
+func TestDeleteMatchKeepsIndividuallyImportedPosition(t *testing.T) {
+	dir := t.TempDir()
+	db := NewDatabase()
+	if err := db.SetupDatabase(filepath.Join(dir, "keep.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.db.Close()
+
+	// Two positions, both occurring in the match. The user saved one of them on
+	// their own (the GUI's :w goes through SaveIndividualPosition).
+	fromMatch := InitializePosition()
+	fromMatch.Dice = [2]int{6, 5}
+	matchOnlyID, err := db.SavePosition(&fromMatch)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	saved := InitializePosition()
+	saved.Dice = [2]int{3, 1}
+	res, err := db.SaveIndividualPosition(&saved)
+	if err != nil {
+		t.Fatalf("SaveIndividualPosition: %v", err)
+	}
+	savedID := res.ID
+
+	matchRes, err := db.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, match_date, import_date, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, "Alice", "Bob", 7, time.Now(), time.Now(), 1, "hash-keep-test")
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := matchRes.LastInsertId()
+	gameRes, err := db.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, matchID, 1, 0, 0, 1, 1, 2)
+	if err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	gameID, _ := gameRes.LastInsertId()
+	for i, pid := range []int64{matchOnlyID, savedID} {
+		if _, err := db.db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, gameID, i+1, "checker", pid, 0, 3, 1); err != nil {
+			t.Fatalf("insert move %d: %v", i, err)
+		}
+	}
+
+	if err := db.DeleteMatch(matchID); err != nil {
+		t.Fatalf("DeleteMatch: %v", err)
+	}
+
+	var stillThere int
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, savedID).Scan(&stillThere); err != nil {
+		t.Fatalf("count saved position: %v", err)
+	}
+	if stillThere != 1 {
+		t.Error("deleting the match destroyed the position the user had saved on their own")
+	}
+
+	// The purge still works: a position the match alone brought in goes with it.
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, matchOnlyID).Scan(&stillThere); err != nil {
+		t.Fatalf("count match-only position: %v", err)
+	}
+	if stillThere != 0 {
+		t.Error("a position only the match held survived its deletion; the orphan purge is not running")
+	}
+}

@@ -187,7 +187,8 @@
         'Creation Date',
         'Match IDs',
         'Tournament IDs',
-        'Player'
+        'Player',
+        'Individually Imported'
     ];
 
     // Canonical filter/group names stay in English because they double as logic
@@ -201,6 +202,7 @@
         'Include Dice Roll': 'includeDiceRoll',
         'No Contact': 'noContact',
         'Mirror Position': 'mirrorPosition',
+        'Individually Imported': 'individuallyImported',
         'Pipcount Difference': 'pipcountDifference',
         'Player Absolute Pipcount': 'playerAbsolutePipcount',
         'Equity (millipoints)': 'equity',
@@ -259,7 +261,7 @@
         { name: 'Checkers', filters: ['Player Checker-Off', 'Opponent Checker-Off', 'Player Back Checker', 'Opponent Back Checker', 'Player Checker in the Zone', 'Opponent Checker in the Zone'] },
         { name: 'Blots', filters: ['Player Outfield Blot', 'Opponent Outfield Blot', 'Player Jan Blot', 'Opponent Jan Blot'] },
         { name: 'Text / Pattern', filters: ['Search Text', 'Best Move or Cube Decision'] },
-        { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs', 'Player'] }
+        { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs', 'Player', 'Individually Imported'] }
     ];
 
     // Which structure the main board is currently editing: 'include' (au moins)
@@ -570,6 +572,7 @@
             incScore,
             ncFilter,
             mirFilter,
+            iiFilter,
             pcFilter,
             wrFilter,
             grFilter,
@@ -614,46 +617,46 @@
                 .join(',');
         }
 
-        onLoadPositionsByFilters(
-            activeFilters.length > 0 ? transformedFilters : [],
-            incCube,
-            incScore,
-            pcFilter,
-            wrFilter,
-            grFilter,
-            bgFilter,
-            p2wrFilter,
-            p2grFilter,
-            p2bgFilter,
-            p1coFilter,
-            p2coFilter,
-            p1bcFilter,
-            p2bcFilter,
-            p1czFilter,
-            p2czFilter,
-            searchText ? `t"${searchText}"` : '',
-            p1apcFilter,
-            eqFilter,
-            dtFilter,
-            drFilter,
-            movePattern ? `m"${movePattern}"` : '',
-            cdFilter,
-            p1obFilter,
-            p2obFilter,
-            p1jbFilter,
-            p2jbFilter,
-            ncFilter,
-            mirFilter,
-            meFilter,
+        onLoadPositionsByFilters({
+            filters: activeFilters.length > 0 ? transformedFilters : [],
+            includeCube: incCube,
+            includeScore: incScore,
+            pipCountFilter: pcFilter,
+            winRateFilter: wrFilter,
+            gammonRateFilter: grFilter,
+            backgammonRateFilter: bgFilter,
+            player2WinRateFilter: p2wrFilter,
+            player2GammonRateFilter: p2grFilter,
+            player2BackgammonRateFilter: p2bgFilter,
+            player1CheckerOffFilter: p1coFilter,
+            player2CheckerOffFilter: p2coFilter,
+            player1BackCheckerFilter: p1bcFilter,
+            player2BackCheckerFilter: p2bcFilter,
+            player1CheckerInZoneFilter: p1czFilter,
+            player2CheckerInZoneFilter: p2czFilter,
+            searchText: searchText ? `t"${searchText}"` : '',
+            player1AbsolutePipCountFilter: p1apcFilter,
+            equityFilter: eqFilter,
+            decisionTypeFilter: dtFilter,
+            diceRollFilter: drFilter,
+            movePatternFilter: movePattern ? `m"${movePattern}"` : '',
+            dateFilter: cdFilter,
+            player1OutfieldBlotFilter: p1obFilter,
+            player2OutfieldBlotFilter: p2obFilter,
+            player1JanBlotFilter: p1jbFilter,
+            player2JanBlotFilter: p2jbFilter,
+            noContactFilter: ncFilter,
+            mirrorPositionFilter: mirFilter,
+            individuallyImportedFilter: iiFilter,
+            moveErrorFilter: meFilter,
             searchCommand,
-            matchIDs,
-            tournamentIDs,
+            matchIDsFilter: matchIDs,
+            tournamentIDsFilter: tournamentIDs,
             restrictToPositionIDs,
             openInNewTab,
-            drMode,
-            '',
-            playerName ? `pl"${playerName}"` : ''
-        );
+            diceRollMode: drMode,
+            playerFilter: playerName ? `pl"${playerName}"` : ''
+        });
 
         saveSearchState();
     }
@@ -817,46 +820,44 @@
         const command = search.command;
         if (command.startsWith('s ') || command === 's') {
             const f = parseSearchCommand(command);
-            onLoadPositionsByFilters(
-                f.cmdFilters,
-                f.ic,
-                f.is,
-                f.pc,
-                f.wr,
-                f.gr,
-                f.bg,
-                f.p2wr,
-                f.p2gr,
-                f.p2bg,
-                f.p1co,
-                f.p2co,
-                f.p1bc,
-                f.p2bc,
-                f.p1cz,
-                f.p2cz,
-                f.st,
-                f.p1apc,
-                f.eq,
-                f.dt,
-                f.dr,
-                f.mpf,
-                f.cd,
-                f.p1ob,
-                f.p2ob,
-                f.p1jb,
-                f.p2jb,
-                f.nc,
-                f.mp,
-                f.me,
-                command,
-                f.matchIDs,
-                f.tournamentIDs,
-                '',
-                false,
-                f.drMode,
-                '',
-                f.plf
-            );
+            onLoadPositionsByFilters({
+                filters: f.cmdFilters,
+                includeCube: f.ic,
+                includeScore: f.is,
+                pipCountFilter: f.pc,
+                winRateFilter: f.wr,
+                gammonRateFilter: f.gr,
+                backgammonRateFilter: f.bg,
+                player2WinRateFilter: f.p2wr,
+                player2GammonRateFilter: f.p2gr,
+                player2BackgammonRateFilter: f.p2bg,
+                player1CheckerOffFilter: f.p1co,
+                player2CheckerOffFilter: f.p2co,
+                player1BackCheckerFilter: f.p1bc,
+                player2BackCheckerFilter: f.p2bc,
+                player1CheckerInZoneFilter: f.p1cz,
+                player2CheckerInZoneFilter: f.p2cz,
+                searchText: f.st,
+                player1AbsolutePipCountFilter: f.p1apc,
+                equityFilter: f.eq,
+                decisionTypeFilter: f.dt,
+                diceRollFilter: f.dr,
+                movePatternFilter: f.mpf,
+                dateFilter: f.cd,
+                player1OutfieldBlotFilter: f.p1ob,
+                player2OutfieldBlotFilter: f.p2ob,
+                player1JanBlotFilter: f.p1jb,
+                player2JanBlotFilter: f.p2jb,
+                noContactFilter: f.nc,
+                mirrorPositionFilter: f.mp,
+                individuallyImportedFilter: f.ii,
+                moveErrorFilter: f.me,
+                searchCommand: command,
+                matchIDsFilter: f.matchIDs,
+                tournamentIDsFilter: f.tournamentIDs,
+                diceRollMode: f.drMode,
+                playerFilter: f.plf
+            });
         }
     }
 

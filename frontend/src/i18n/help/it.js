@@ -853,6 +853,10 @@ export default {
                                 <td>Includi posizioni speculari</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Solo posizioni importate singolarmente, non portate da un import di partita</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Escludi le posizioni che contengono <em>una qualsiasi</em> pedina della struttura disegnata nella scheda "Except" (es. disegnare pedine su 1, 3 e 5 conserva solo le posizioni che non ne hanno nessuna

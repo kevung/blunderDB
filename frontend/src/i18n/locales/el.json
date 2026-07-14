@@ -270,7 +270,8 @@
             "creationDate": "Ημερομηνία δημιουργίας",
             "matchIDs": "Αναγνωριστικά αγώνα",
             "tournamentIDs": "Αναγνωριστικά τουρνουά",
-            "player": "Παίκτης"
+            "player": "Παίκτης",
+            "individuallyImported": "Μεμονωμένη εισαγωγή"
         },
         "filterGroups": {
             "display": "Εμφάνιση",

@@ -139,10 +139,16 @@ func mapBGFTextPosition(bgfPos *bgfparser.Position) []PositionGraph {
 // through tx and returns the stored position id. Positions dedup by Zobrist
 // hash inside the store, so re-importing the same position returns its existing
 // id rather than creating a duplicate.
+//
+// This is the single-position sink, so it is where provenance is recorded: the
+// position arrived on its own, not inside a match (ADR-0001). The flag is
+// sticky, so it is raised even when the position is already stored — a match
+// may well have brought it in first.
 func WritePosition(ctx context.Context, tx storage.Tx, scope string, g *PositionGraph) (int64, error) {
 	if g == nil || g.Position == nil {
 		return 0, fmt.Errorf("ingest: nil position graph")
 	}
+	g.Position.IndividuallyImported = true
 	return savePositionWithAnalyses(ctx, tx, scope, g.Position, g.Analyses, nil)
 }
 
@@ -187,7 +193,7 @@ func (im PositionImporter) Import(ctx context.Context, scope string, src Source,
 		if g.Position == nil {
 			continue
 		}
-		if _, err := savePositionWithAnalyses(ctx, tx, scope, g.Position, g.Analyses, nil); err != nil {
+		if _, err := WritePosition(ctx, tx, scope, g); err != nil {
 			return sum, err
 		}
 		sum.SavedPositions++

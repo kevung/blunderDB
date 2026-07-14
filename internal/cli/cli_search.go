@@ -42,6 +42,7 @@ func (cli *CLI) runSearch(args []string) error {
 	tournamentIDsFlag := searchCmd.String("tournament-ids", "", "Filter by tournament IDs (comma-separated, e.g. '1,3' or range '1,5')")
 	positionIDsFlag := searchCmd.String("position-ids", "", "Filter by position IDs (range '2,7' or explicit list '5;10;15')")
 	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
+	individual := searchCmd.Bool("individual", false, "Only positions imported on their own, not as part of a match")
 
 	searchCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb search [options]")
@@ -78,6 +79,9 @@ func (cli *CLI) runSearch(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Search positions where dice were 6-5")
 		fmt.Println("  blunderdb search --db database.db --dice 6,5")
+		fmt.Println()
+		fmt.Println("  # Find the positions you imported yourself, not the ones matches brought in")
+		fmt.Println("  blunderdb search --db database.db --individual")
 		fmt.Println()
 		fmt.Println("  # Search positions where a 6 was rolled on either die")
 		fmt.Println("  blunderdb search --db database.db --dice 6")
@@ -238,6 +242,8 @@ func (cli *CLI) runSearch(args []string) error {
 		MatchIDsFilter:          *matchIDsFlag,
 		TournamentIDsFilter:     *tournamentIDsFlag,
 		PositionIDsFilter:       *positionIDsFlag,
+
+		IndividuallyImportedFilter: *individual,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

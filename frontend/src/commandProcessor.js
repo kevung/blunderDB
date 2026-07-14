@@ -182,42 +182,10 @@ function handleSubSearch(command, positions) {
         });
 
         if (command === 'ss') {
-            callbacks.onLoadPositionsByFilters?.(
-                [],
-                false,
-                false,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                false,
-                false,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                false,
-                false,
-                '',
-                command,
-                '',
-                '',
-                currentIDs
-            );
+            callbacks.onLoadPositionsByFilters?.({
+                searchCommand: command,
+                restrictToPositionIDs: currentIDs
+            });
         } else {
             const filters = command
                 .slice(2)
@@ -225,46 +193,12 @@ function handleSubSearch(command, positions) {
                 .split(' ')
                 .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
-            callbacks.onLoadPositionsByFilters?.(
+            callbacks.onLoadPositionsByFilters?.({
                 filters,
-                parsedFilters.includeCube,
-                parsedFilters.includeScore,
-                parsedFilters.pipCountFilter,
-                parsedFilters.winRateFilter,
-                parsedFilters.gammonRateFilter,
-                parsedFilters.backgammonRateFilter,
-                parsedFilters.player2WinRateFilter,
-                parsedFilters.player2GammonRateFilter,
-                parsedFilters.player2BackgammonRateFilter,
-                parsedFilters.player1CheckerOffFilter,
-                parsedFilters.player2CheckerOffFilter,
-                parsedFilters.player1BackCheckerFilter,
-                parsedFilters.player2BackCheckerFilter,
-                parsedFilters.player1CheckerInZoneFilter,
-                parsedFilters.player2CheckerInZoneFilter,
-                parsedFilters.searchText,
-                parsedFilters.player1AbsolutePipCountFilter,
-                parsedFilters.equityFilter,
-                parsedFilters.decisionTypeFilter,
-                parsedFilters.diceRollFilter,
-                parsedFilters.movePatternFilter,
-                parsedFilters.dateFilter,
-                parsedFilters.player1OutfieldBlotFilter,
-                parsedFilters.player2OutfieldBlotFilter,
-                parsedFilters.player1JanBlotFilter,
-                parsedFilters.player2JanBlotFilter,
-                parsedFilters.noContactFilter,
-                parsedFilters.mirrorPositionFilter,
-                parsedFilters.moveErrorFilter,
-                command,
-                parsedFilters.matchIDsFilter,
-                parsedFilters.tournamentIDsFilter,
-                currentIDs,
-                false,
-                parsedFilters.diceRollMode,
-                parsedFilters.positionIDsFilter,
-                parsedFilters.playerFilter
-            );
+                ...parsedFilters,
+                searchCommand: command,
+                restrictToPositionIDs: currentIDs
+            });
         }
     } else {
         statusBarTextStore.set(tMsg('commands.subSearchModeUnavailable'));
@@ -288,41 +222,7 @@ function handleSearch(command) {
         });
 
         if (command === 's') {
-            callbacks.onLoadPositionsByFilters?.(
-                [],
-                false,
-                false,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                false,
-                false,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                false,
-                false,
-                '',
-                command,
-                '',
-                ''
-            );
+            callbacks.onLoadPositionsByFilters?.({ searchCommand: command });
         } else {
             const filters = command
                 .slice(1)
@@ -330,46 +230,12 @@ function handleSearch(command) {
                 .split(' ')
                 .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
-            callbacks.onLoadPositionsByFilters?.(
+            callbacks.onLoadPositionsByFilters?.({
                 filters,
-                parsedFilters.includeCube,
-                parsedFilters.includeScore,
-                parsedFilters.pipCountFilter,
-                parsedFilters.winRateFilter,
-                parsedFilters.gammonRateFilter,
-                parsedFilters.backgammonRateFilter,
-                parsedFilters.player2WinRateFilter,
-                parsedFilters.player2GammonRateFilter,
-                parsedFilters.player2BackgammonRateFilter,
-                parsedFilters.player1CheckerOffFilter,
-                parsedFilters.player2CheckerOffFilter,
-                parsedFilters.player1BackCheckerFilter,
-                parsedFilters.player2BackCheckerFilter,
-                parsedFilters.player1CheckerInZoneFilter,
-                parsedFilters.player2CheckerInZoneFilter,
-                parsedFilters.searchText,
-                parsedFilters.player1AbsolutePipCountFilter,
-                parsedFilters.equityFilter,
-                parsedFilters.decisionTypeFilter,
-                parsedFilters.diceRollFilter,
-                parsedFilters.movePatternFilter,
-                parsedFilters.dateFilter,
-                parsedFilters.player1OutfieldBlotFilter,
-                parsedFilters.player2OutfieldBlotFilter,
-                parsedFilters.player1JanBlotFilter,
-                parsedFilters.player2JanBlotFilter,
-                parsedFilters.noContactFilter,
-                parsedFilters.mirrorPositionFilter,
-                parsedFilters.moveErrorFilter,
-                command,
-                parsedFilters.matchIDsFilter,
-                parsedFilters.tournamentIDsFilter,
-                '',
-                false,
-                parsedFilters.diceRollMode,
-                parsedFilters.positionIDsFilter,
-                parsedFilters.playerFilter
-            );
+                ...parsedFilters,
+                searchCommand: command,
+                restrictToPositionIDs: ''
+            });
         }
     } else {
         statusBarTextStore.set(tMsg('commands.searchRequiresMode'));
@@ -384,6 +250,9 @@ export function parseFilters(filters, command) {
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
     const mirrorPositionFilter = filters.includes('M');
+    // Positions the user imported on their own rather than inside a match.
+    // An exact match, so it does not collide with the id<ids> token.
+    const individuallyImportedFilter = filters.includes('i');
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
@@ -467,6 +336,7 @@ export function parseFilters(filters, command) {
         diceRollFilter,
         diceRollMode,
         mirrorPositionFilter,
+        individuallyImportedFilter,
         excludeStructure,
         pipCountFilter,
         winRateFilter,

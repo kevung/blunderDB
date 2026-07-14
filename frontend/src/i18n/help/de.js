@@ -854,6 +854,10 @@ export default {
                                 <td>Gespiegelte Positionen einbeziehen</td>
                             </tr>
                             <tr>
+                                <td>i</td>
+                                <td>Nur Positionen, die einzeln importiert wurden, nicht durch einen Match-Import</td>
+                            </tr>
+                            <tr>
                                 <td>x</td>
                                 <td
                                     >Positionen ausschließen, die <em>irgendeinen</em> Stein der im Tab „Except" gezeichneten Struktur enthalten (z. B. behält das Zeichnen von Steinen auf 1, 3 und 5 nur Positionen, die keinen davon

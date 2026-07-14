@@ -312,7 +312,7 @@ func (s *collectionStore) CopyPosition(ctx context.Context, scope string, toColl
 // collectionPositionCols is the position column list, prefixed for the join
 // with collection_position; the order matches engine.ReconstructPosition.
 const collectionPositionCols = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, ` +
-	`p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver`
+	`p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver, p.individually_imported`
 
 // Positions streams the positions of a collection in their collection order.
 func (s *collectionStore) Positions(ctx context.Context, scope string, collectionID int64) iter.Seq2[*domain.Position, error] {

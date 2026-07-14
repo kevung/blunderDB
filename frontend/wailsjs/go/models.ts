@@ -88,6 +88,20 @@ export namespace database {
 	        this.Count = source["Count"];
 	    }
 	}
+	export class IndividualSaveResult {
+	    id: number;
+	    existed: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new IndividualSaveResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.existed = source["existed"];
+	    }
+	}
 	export class MatchPlayerDetailStats {
 	    total_decisions: number;
 	    total_errors: number;
@@ -593,6 +607,7 @@ export namespace domain {
 	    decision_type: number;
 	    has_jacoby: number;
 	    has_beaver: number;
+	    individually_imported: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Position(source);
@@ -609,6 +624,7 @@ export namespace domain {
 	        this.decision_type = source["decision_type"];
 	        this.has_jacoby = source["has_jacoby"];
 	        this.has_beaver = source["has_beaver"];
+	        this.individually_imported = source["individually_imported"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1119,12 +1135,14 @@ export namespace domain {
 	    player2JanBlotFilter: string;
 	    noContactFilter: boolean;
 	    mirrorFilter: boolean;
+	    individuallyImportedFilter: boolean;
 	    moveErrorFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
+	    sort: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new SearchFilters(source);
@@ -1164,12 +1182,14 @@ export namespace domain {
 	        this.player2JanBlotFilter = source["player2JanBlotFilter"];
 	        this.noContactFilter = source["noContactFilter"];
 	        this.mirrorFilter = source["mirrorFilter"];
+	        this.individuallyImportedFilter = source["individuallyImportedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
+	        this.sort = source["sort"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

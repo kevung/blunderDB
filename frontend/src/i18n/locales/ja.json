@@ -270,7 +270,8 @@
             "creationDate": "作成日",
             "matchIDs": "マッチID",
             "tournamentIDs": "トーナメントID",
-            "player": "プレイヤー"
+            "player": "プレイヤー",
+            "individuallyImported": "個別にインポート"
         },
         "filterGroups": {
             "display": "表示",

@@ -207,9 +207,32 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 	return nil
 }
 
+// positionIsHeldSQL reports whether anything still holds a position once the
+// match that referenced it is gone. Deleting a match must not destroy work the
+// user did on a position that merely happened to occur in it.
+//
+// A position is held by: another match's move; membership in a collection; an
+// Anki card built from it; or having been imported individually, which says the
+// user brought it in deliberately (ADR-0001).
+//
+// Two things deliberately do NOT hold a position, because neither is evidence
+// the user did anything with it:
+//   - an analysis: it arrives with the match, and every match position has one,
+//     so counting it would mean never purging anything;
+//   - a comment: match importers attach the source file's per-move notes as
+//     comments (see ingest/xg.go), so a comment is not necessarily the user's.
+//     A note the user wrote on a match position is therefore still lost when the
+//     match is deleted — to keep such a position, put it in a collection or save
+//     it, which marks it individually imported.
+const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)`
+
 // DeleteCascade removes a match and all of its games, moves and move analyses
-// (via ON DELETE CASCADE), then deletes any position left referenced by no
-// move and no collection. The cascade and the orphan cleanup run atomically.
+// (via ON DELETE CASCADE), then deletes any position the match referenced that
+// nothing else holds (see positionIsHeldSQL). The cascade and the orphan
+// cleanup run atomically.
 func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
 		rows, err := tx.QueryContext(ctx,
@@ -239,16 +262,11 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 		}
 
 		for _, pid := range positionIDs {
-			var refs int
-			if err := tx.QueryRowContext(ctx,
-				`SELECT count(*) FROM (
-					SELECT position_id FROM move WHERE position_id = ?
-					UNION ALL
-					SELECT position_id FROM collection_position WHERE position_id = ?
-				 )`, pid, pid).Scan(&refs); err != nil {
+			var held bool
+			if err := tx.QueryRowContext(ctx, positionIsHeldSQL, pid).Scan(&held); err != nil {
 				return fmt.Errorf("ref check position %d: %w", pid, err)
 			}
-			if refs == 0 {
+			if !held {
 				if _, err := tx.ExecContext(ctx, `DELETE FROM position WHERE id = ?`, pid); err != nil {
 					return fmt.Errorf("delete orphan position %d: %w", pid, err)
 				}

@@ -335,6 +335,7 @@ func (d *Database) ensureAllTablesExist() error {
 		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
 		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
 		`ALTER TABLE position ADD COLUMN is_cube_response INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE position ADD COLUMN individually_imported INTEGER NOT NULL DEFAULT 0`,
 	}
 	for _, stmt := range newPositionCols {
 		_, _ = d.db.Exec(stmt) // ignore error: column may already exist

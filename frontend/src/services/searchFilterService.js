@@ -148,6 +148,8 @@ export function buildFilterTokens(activeFilters, options) {
                 return 'nc';
             case 'Mirror Position':
                 return 'M';
+            case 'Individually Imported':
+                return 'i';
             case 'Pipcount Difference':
                 return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
             case 'Player Absolute Pipcount':
@@ -337,6 +339,7 @@ export function parseFilterTokens(tokens) {
         incScore: tokens.includes('score'),
         ncFilter: tokens.includes('nc'),
         mirFilter: tokens.includes('M'),
+        iiFilter: tokens.includes('i'),
         pcFilter: find('pc'),
         plFilter: tokens.find((f) => f.startsWith('pl')),
         wrFilter: find('wr'),
@@ -428,6 +431,8 @@ export function parseSearchCommand(command) {
         dr: cmdFilters.includes('D') || cmdFilters.includes('D1'),
         drMode: cmdFilters.includes('D1') ? 'first' : 'both',
         mp: cmdFilters.includes('M'),
+        // Exact match, so it never collides with the id<ids> position-id token.
+        ii: cmdFilters.includes('i'),
         pc: find('pc'),
         wr: find('wr'),
         gr: find('gr'),
@@ -476,6 +481,7 @@ const FILTER_TOKENS = {
     'Include Dice Roll': { token: 'D', type: 'dice' },
     'No Contact': { token: 'nc', type: 'flag' },
     'Mirror Position': { token: 'M', type: 'flag' },
+    'Individually Imported': { token: 'i', type: 'flag' },
     'Pipcount Difference': { token: 'p', type: 'range' },
     'Player Absolute Pipcount': { token: 'P', type: 'range' },
     'Equity (millipoints)': { token: 'e', type: 'range' },
