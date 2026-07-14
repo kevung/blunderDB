@@ -129,8 +129,8 @@ export function buildFilterTokens(activeFilters, options) {
         player2JanBlotMax,
         player2JanBlotRangeMin,
         player2JanBlotRangeMax,
-        matchIDsInput,
-        tournamentIDsInput,
+        matchIDsSelected,
+        tournamentIDsSelected,
         playerName
     } = options;
 
@@ -257,9 +257,9 @@ export function buildFilterTokens(activeFilters, options) {
                       ? `BJ<${player2JanBlotMax}`
                       : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
             case 'Match IDs':
-                return matchIDsInput ? `ma${matchIDsInput}` : '';
+                return matchIDsSelected && matchIDsSelected.length ? `ma${matchIDsSelected.join(';')}` : '';
             case 'Tournament IDs':
-                return tournamentIDsInput ? `tn${tournamentIDsInput}` : '';
+                return tournamentIDsSelected && tournamentIDsSelected.length ? `tn${tournamentIDsSelected.join(';')}` : '';
             default:
                 return '';
         }

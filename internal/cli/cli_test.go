@@ -164,6 +164,32 @@ func TestCLI_ListMatches(t *testing.T) {
 	}
 }
 
+func TestCLI_ListTournaments(t *testing.T) {
+	cli := setupCLI(t)
+
+	out := captureStdout(t, func() {
+		if err := cli.listTournaments(10); err != nil {
+			t.Fatalf("listTournaments: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(out), []byte("No tournaments found")) {
+		t.Errorf("expected empty-DB message, got:\n%s", out)
+	}
+
+	if _, err := cli.db.CreateTournament("World Championship", "2026-01-01", "Monte Carlo"); err != nil {
+		t.Fatalf("CreateTournament: %v", err)
+	}
+
+	out = captureStdout(t, func() {
+		if err := cli.listTournaments(10); err != nil {
+			t.Fatalf("listTournaments: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(out), []byte("World Championship")) {
+		t.Errorf("listTournaments output missing tournament name:\n%s", out)
+	}
+}
+
 func TestCLI_ListPositions(t *testing.T) {
 	cli := setupCLI(t)
 	if _, err := cli.db.ImportXGMatch(testdataPath("test.xg")); err != nil {

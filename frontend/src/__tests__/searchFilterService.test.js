@@ -125,8 +125,8 @@ function baseOptions(overrides = {}) {
         player2JanBlotMax: 4,
         player2JanBlotRangeMin: 2,
         player2JanBlotRangeMax: 3,
-        matchIDsInput: '12',
-        tournamentIDsInput: '7',
+        matchIDsSelected: [12],
+        tournamentIDsSelected: [7],
         ...overrides
     };
 }
@@ -204,11 +204,16 @@ describe('buildFilterTokens — text, date, id filters', () => {
         expect(token('Creation Date', { creationDateOption: 'range', creationDateRangeMin: '2026-03-01', creationDateRangeMax: '2026-06-30' })).toBe('T2026/03/01,2026/06/30');
     });
 
-    test('Match/Tournament IDs are empty when the input is blank', () => {
-        expect(token('Match IDs', { matchIDsInput: '12' })).toBe('ma12');
-        expect(token('Match IDs', { matchIDsInput: '' })).toBe('');
-        expect(token('Tournament IDs', { tournamentIDsInput: '7' })).toBe('tn7');
-        expect(token('Tournament IDs', { tournamentIDsInput: '' })).toBe('');
+    test('Match/Tournament IDs are empty when the selection is empty', () => {
+        expect(token('Match IDs', { matchIDsSelected: [12] })).toBe('ma12');
+        expect(token('Match IDs', { matchIDsSelected: [] })).toBe('');
+        expect(token('Tournament IDs', { tournamentIDsSelected: [7] })).toBe('tn7');
+        expect(token('Tournament IDs', { tournamentIDsSelected: [] })).toBe('');
+    });
+
+    test('Match/Tournament IDs join multiple selections with a semicolon', () => {
+        expect(token('Match IDs', { matchIDsSelected: [3, 4, 5] })).toBe('ma3;4;5');
+        expect(token('Tournament IDs', { tournamentIDsSelected: [1, 2] })).toBe('tn1;2');
     });
 });
 
