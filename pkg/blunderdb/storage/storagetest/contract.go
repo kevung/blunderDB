@@ -1172,7 +1172,12 @@ func testPositionProvenanceSticky(t *testing.T, s storage.Storage) {
 // position below occurs in the match; they differ only in what else holds them.
 // Before the individually-imported flag existed, a position the user had
 // imported on its own was purged here as an orphan, silently, along with its
-// comment and its Anki card.
+// Anki card.
+//
+// A comment does NOT hold a position, and that is deliberate: match importers
+// attach the source file's per-move notes as comments (ingest/xg.go), so a
+// comment is not evidence the user did anything — holding on it would keep a
+// whole annotated match alive after the user deleted it.
 func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -1202,14 +1207,14 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		return id
 	}
 
-	purged := inMatch(1, false)     // held by nothing but the match…
-	individual := inMatch(2, true)  // …the user brought this one in themselves
+	purged := inMatch(1, false)    // held by nothing but the match…
+	individual := inMatch(2, true) // …the user brought this one in themselves
 	inCollection := inMatch(3, false)
 	commented := inMatch(4, false)
 	inDeck := inMatch(5, false)
 
-	// An analysis must NOT hold a position: every match position has one, so
-	// counting it would mean never purging anything.
+	// Neither an analysis nor a comment holds a position: both can arrive with
+	// the match, so holding on them would mean never purging anything.
 	if err := s.Analyses().Save(ctx, "", purged, &domain.PositionAnalysis{}); err != nil {
 		t.Fatalf("Save analysis: %v", err)
 	}
@@ -1221,7 +1226,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if err := s.Collections().AddPosition(ctx, "", coll, inCollection); err != nil {
 		t.Fatalf("AddPosition: %v", err)
 	}
-	if _, err := s.Comments().Add(ctx, "", commented, "why did I play this"); err != nil {
+	if _, err := s.Comments().Add(ctx, "", commented, "note that came in with the match"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
 	deck, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
@@ -1242,9 +1247,9 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		kept bool
 	}{
 		{"held by nothing (analysis only)", purged, false},
+		{"commented (the note may have come from the match)", commented, false},
 		{"individually imported", individual, true},
 		{"in a collection", inCollection, true},
-		{"commented", commented, true},
 		{"in an Anki deck", inDeck, true},
 	} {
 		_, err := s.Positions().Load(ctx, "", tc.id)

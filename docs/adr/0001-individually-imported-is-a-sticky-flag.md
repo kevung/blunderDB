@@ -41,6 +41,11 @@ binary filter (`i`).
   false positives (enrich-created positions) and irrecoverable false negatives (a position
   individually imported before a match that also contained it). The information to do
   better does not exist in those databases.
-- `individually_imported` joins Collection membership as a reason a Position survives the
-  orphan purge on match deletion. Without this, deleting a match would silently delete the
-  very positions the filter exists to surface.
+- `individually_imported` joins Collection membership and Anki-card membership as a reason a
+  Position survives the orphan purge on match deletion. Without this, deleting a match would
+  silently delete the very positions the filter exists to surface. A *comment* was considered
+  as a further reason and rejected: match importers attach the source file's per-move notes as
+  comments (`ingest/xg.go`), so a comment is not evidence of user work, and holding on it
+  would keep an entire annotated match alive after the user deleted it.
+- The retention predicate is stated in three places — both Storage backends and the `Database`
+  wrapper, which is the copy the GUI and the CLI actually run. They must not drift.

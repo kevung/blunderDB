@@ -31,10 +31,12 @@ complement of "individually imported": a Position can be both.
 
 **Orphan purge**:
 The sweep that runs when a Match is deleted: each Position the Match referenced is removed
-unless something else still holds it. What "holds" a Position is a deliberate list —
-Collection membership, a Comment, an Anki card, or being individually imported. An engine
-Analysis does not hold a Position, because it arrives with the Match rather than from the
-user.
+unless something else still holds it. What "holds" a Position is a deliberate list — another
+Match's move, Collection membership, an Anki card, or being individually imported. Neither an
+Analysis nor a Comment holds a Position: both can arrive *with* the Match (importers attach the
+source file's per-move notes as Comments), so neither is evidence the user did anything. A note
+the user wrote on a Match-sourced Position is therefore still lost when the Match is deleted —
+to keep such a Position, put it in a Collection or save it.
 
 ### Sets of positions the user curates
 

@@ -1453,9 +1453,9 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 	}
 
 	cases := []struct {
-		id       int
+		id         int
 		wantForced int
-		label    string
+		label      string
 	}{
 		{1, 1, "forced checker (1 move)"},
 		{2, 0, "unforced checker (2 moves)"},
@@ -1743,5 +1743,82 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 		if got != tc.wantResp {
 			t.Errorf("position id=%d (%s): is_cube_response=%d, want %d", tc.id, tc.label, got, tc.wantResp)
 		}
+	}
+}
+
+// TestMigrate_2_12_0_to_2_13_0_Backfill checks the one-shot reconstruction of
+// provenance on an existing database (ADR-0001). The move graph is the only
+// signal such a database carries: a position reachable from no move never came
+// from a match, so it must be the user's own.
+func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test_v2120.db")
+	createOldDatabase(t, dbPath, "2.12.0")
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+
+	// Two positions: one the user had saved on their own (no move references it),
+	// one a match brought in (a move does).
+	standalone, err := raw.Exec(`INSERT INTO position (state) VALUES ('{}')`)
+	if err != nil {
+		t.Fatalf("insert standalone position: %v", err)
+	}
+	standaloneID, _ := standalone.LastInsertId()
+
+	inMatch, err := raw.Exec(`INSERT INTO position (state) VALUES ('{"a":1}')`)
+	if err != nil {
+		t.Fatalf("insert match position: %v", err)
+	}
+	inMatchID, _ := inMatch.LastInsertId()
+
+	m, err := raw.Exec(`INSERT INTO match (player1_name, player2_name) VALUES ('A','B')`)
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := m.LastInsertId()
+	g, err := raw.Exec(`INSERT INTO game (match_id, game_number) VALUES (?, 1)`, matchID)
+	if err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	gameID, _ := g.LastInsertId()
+	if _, err := raw.Exec(
+		`INSERT INTO move (game_id, move_number, move_type, position_id, player) VALUES (?, 1, 'checker', ?, 0)`,
+		gameID, inMatchID); err != nil {
+		t.Fatalf("insert move: %v", err)
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.12.0 database: %v", err)
+	}
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !columnExists(d.db, "position", "individually_imported") {
+		t.Fatal("position.individually_imported should exist after migration")
+	}
+
+	flag := func(id int64) int {
+		var v int
+		if err := d.db.QueryRow(`SELECT individually_imported FROM position WHERE id = ?`, id).Scan(&v); err != nil {
+			t.Fatalf("read flag for position %d: %v", id, err)
+		}
+		return v
+	}
+	if got := flag(standaloneID); got != 1 {
+		t.Errorf("a position no move references should be backfilled as individually imported, got %d", got)
+	}
+	if got := flag(inMatchID); got != 0 {
+		t.Errorf("a position a move references came from a match, got individually_imported=%d", got)
 	}
 }
