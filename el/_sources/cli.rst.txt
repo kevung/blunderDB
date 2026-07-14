@@ -213,6 +213,9 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2).
 * ``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules).
 * ``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des virgules).
+* ``--individual`` — Uniquement les positions importées seules, c'est-à-dire
+  celles que vous avez ajoutées vous-même et non celles qu'un import de match
+  a apportées.
 
 **Exemples:**
 
@@ -220,6 +223,9 @@ Recherche des positions dans la base selon des critères combinables.
 
    # Rechercher les décisions de videau
    ./blunderdb search --db base.db --decision cube
+
+   # Retrouver les positions que vous avez ajoutées vous-même
+   ./blunderdb search --db base.db --individual
 
    # Rechercher les positions avec erreur >= 0.1
    ./blunderdb search --db base.db --error-min 0.1

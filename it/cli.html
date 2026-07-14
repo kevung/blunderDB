@@ -311,10 +311,14 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Pedine uscite minime (giocatore 1/2).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Filtrare per ID dei match (separati da virgole).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Filtrare per ID dei tornei (separati da virgole).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Solo le posizioni importate singolarmente, cioè quelle che hai aggiunto tu e non quelle portate da un import di partita.</p></li>
 </ul>
 <p><strong>Esempi:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rechercher les décisions de videau</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+
+<span class="c1"># Retrouver les positions que vous avez ajoutées vous-même</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
 
 <span class="c1"># Rechercher les positions avec erreur &gt;= 0.1</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1

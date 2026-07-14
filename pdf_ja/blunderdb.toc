@@ -108,27 +108,27 @@
 \contentsline {subsubsection}{トーナメントディレクトリのインポート}{44}{subsubsection*.30}%
 \contentsline {subsubsection}{定期バックアップ}{44}{subsubsection*.31}%
 \contentsline {subsubsection}{エラー分析}{44}{subsubsection*.32}%
-\contentsline {subsection}{\numberline {2.6.15}終了コード}{44}{subsection.2.6.15}%
+\contentsline {subsection}{\numberline {2.6.15}終了コード}{45}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}よくある質問（FAQ）}{45}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}blunderDB の用途は何ですか？}{45}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}blunderDB 作成の動機は何ですか？}{45}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{45}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{45}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{46}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{46}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{46}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}どのマッチファイル形式がサポートされていますか？}{46}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{46}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{46}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{47}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{47}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{47}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}blunderDB を変更、コピー、共有できますか？}{47}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}blunderDB はどのデータ形式を使用していますか？}{47}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}blunderDB の設計原則は何でしたか？}{47}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}blunderDB のソフトウェアアーキテクチャは何ですか？}{47}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}blunderDB はどのプラットフォームで動作しますか？}{47}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}blunderDB のアイコンはどこから来ていますか？}{47}{subsection.2.7.15}%
+\contentsline {subsection}{\numberline {2.7.14}blunderDB はどのプラットフォームで動作しますか？}{48}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}blunderDB のアイコンはどこから来ていますか？}{48}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}ヘッドレスモード（サーバー）}{48}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}概要}{48}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{48}{subsection.2.8.2}%
-\contentsline {subsubsection}{エンドポイント}{49}{subsubsection*.33}%
+\contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{49}{subsection.2.8.2}%
+\contentsline {subsubsection}{エンドポイント}{50}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{50}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{50}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{51}{subsection.2.8.5}%

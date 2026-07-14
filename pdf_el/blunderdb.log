@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.5)  5 JUL 2026 09:28
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.14)  14 JUL 2026 22:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1374,44 +1374,44 @@ Underfull \hbox (badness 8019) in paragraph at lines 1826--1828
 
 [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33]
 [34] [35] [36] [37] [38] [39] [40] [41] [42]
-Underfull \hbox (badness 5954) in paragraph at lines 5889--5891
+Underfull \hbox (badness 5954) in paragraph at lines 5907--5909
 []\TU/FreeSerif(2)/b/n/10 Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας. 
 \TU/FreeSerif(2)/m/n/10 Εμπιστεύεται την κεφαλίδα αιτήματος
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 5957--5959
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 5975--5977
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 5960
+Overfull \hbox (19.82352pt too wide) detected at line 5978
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6016--6018
+Underfull \hbox (badness 10000) in paragraph at lines 6034--6036
 [][][]\TU/FreeMono(2)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6026--6028
+Underfull \hbox (badness 10000) in paragraph at lines 6044--6046
 []\TU/FreeSerif(2)/m/n/10 ενεργοποιεί CORS για αυτή την προέλευση
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6048--6050
+Underfull \hbox (badness 10000) in paragraph at lines 6066--6068
 [][][]\TU/FreeMono(2)/m/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6084--6086
+Underfull \hbox (badness 10000) in paragraph at lines 6102--6104
 []\TU/FreeSerif(2)/m/n/10 Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθού
 ν μέσω μεταβλητής περιβάλλοντος
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6084--6086
+Underfull \hbox (badness 10000) in paragraph at lines 6102--6104
 \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(2)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(
 2)/m/n/10 , \TU/FreeMono(2)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(2)/m/n/10 , \TU/F
 reeMono(2)/m/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(2)/m/n/1
@@ -1419,77 +1419,77 @@ reeMono(2)/m/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(2)/m/n/1
  []
 
 [43] [44]
-Underfull \hbox (badness 7595) in paragraph at lines 6220--6222
+Underfull \hbox (badness 7595) in paragraph at lines 6238--6240
 []\TU/FreeSerif(2)/m/n/10 scope tenant προορισμού (υποχρεωτικό εκτός από
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
+Underfull \hbox (badness 10000) in paragraph at lines 6260--6262
 [][][]\TU/FreeMono(2)/m/n/10 on[]conflict
  []
 
 
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6351--6353
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6369--6371
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6354
+Overfull \hbox (9.46619pt too wide) detected at line 6372
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [45] [46]
-Underfull \hbox (badness 10000) in paragraph at lines 6660--6662
+Underfull \hbox (badness 10000) in paragraph at lines 6678--6680
 []\TU/FreeSerif(2)/m/n/10 Πολύ καλό για
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6681--6683
+Underfull \hbox (badness 10000) in paragraph at lines 6699--6701
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6684
+Underfull \hbox (badness 10000) detected at line 6702
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6692--6694
+Underfull \hbox (badness 10000) in paragraph at lines 6710--6712
 []\TU/FreeSerif(2)/m/n/10 Λάθη του παίκτη 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6692--6694
+Underfull \hbox (badness 10000) in paragraph at lines 6710--6712
 \TU/FreeSerif(2)/m/n/10 μεγαλύτερα από 40
  []
 
 
-Underfull \hbox (badness 5288) in paragraph at lines 6720--6722
+Underfull \hbox (badness 5288) in paragraph at lines 6738--6740
 []\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6750--6752
+Underfull \hbox (badness 10000) in paragraph at lines 6768--6770
 []\TU/FreeSerif(2)/m/n/10 Φράγμα εναντίον
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6782--6784
+Underfull \hbox (badness 10000) in paragraph at lines 6800--6802
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6782--6784
+Underfull \hbox (badness 10000) in paragraph at lines 6800--6802
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6785
+Underfull \hbox (badness 10000) detected at line 6803
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6785
+Underfull \hbox (badness 10000) detected at line 6803
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
@@ -1518,7 +1518,7 @@ File: win7.png Graphic file (type bmp)
 <win7.png>
  [52] [53] [54] [55] [56] [57] [58] [59] [60] [61]
 [62] [63]
-Underfull \hbox (badness 7522) in paragraph at lines 7839--7841
+Underfull \hbox (badness 7522) in paragraph at lines 7857--7859
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
@@ -1545,8 +1545,8 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  19604 strings out of 476443
- 402725 string characters out of 5793963
- 2002627 words of memory out of 5000000
+ 402725 string characters out of 5793962
+ 2003627 words of memory out of 5000000
  41065 multiletter control sequences out of 15000+600000
  568875 words of font info for 194 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191

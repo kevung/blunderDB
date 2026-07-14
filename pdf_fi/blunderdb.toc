@@ -75,49 +75,49 @@
 \contentsline {subsection}{\numberline {2.4.2}Asemat ja navigointi}{23}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}Muokkaus ja haku}{23}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Hakusuodattimet}{23}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Sekalaisia komentoja}{26}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.5}Sekalaisia komentoja}{27}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Näppäimistöoikotiet}{27}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Tietokanta}{27}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Asema}{27}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Asema}{28}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigointi}{28}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Näyttö}{28}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Toiminnot}{28}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Työkalut}{28}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Komentorivi}{28}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.6}Työkalut}{29}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Komentorivi}{29}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Hakuhistoriapaneeli}{29}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Suodatinkirjastopaneeli}{29}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Analyysipaneeli}{29}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}Ottelupaneeli}{29}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.10}Analyysipaneeli}{30}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}Ottelupaneeli}{30}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Anki\sphinxhyphen {}paneeli (välitoistoharjoittelu)}{30}{subsection.2.5.12}%
 \contentsline {section}{\numberline {2.6}Komentoriviliittymä (CLI)}{30}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Johdanto}{30}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Yleinen syntaksi}{30}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.2}Yleinen syntaksi}{31}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Käytettävissä olevat komennot}{31}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Luo tietokanta}{31}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Tuo tietoja}{31}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.5}import — Tuo tietoja}{32}{subsection.2.6.5}%
 \contentsline {subsubsection}{Ottelun tuonti}{32}{subsubsection*.27}%
 \contentsline {subsubsection}{Asemien tuonti}{32}{subsubsection*.28}%
 \contentsline {subsubsection}{Erätuonti}{32}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.6.6}export — Vie tietoja}{32}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Hae asemia}{33}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Luettele sisältö}{34}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Näytä ottelu}{34}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.9}match — Näytä ottelu}{35}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Tietokannan metatiedot}{35}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}edit — Muokkaa metatietoja}{35}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Tarkista eheys}{36}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Poista tietoja}{36}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Työnkulkuesimerkkejä}{36}{subsection.2.6.14}%
-\contentsline {subsubsection}{Turnaushakemiston tuonti}{36}{subsubsection*.30}%
+\contentsline {subsection}{\numberline {2.6.14}Työnkulkuesimerkkejä}{37}{subsection.2.6.14}%
+\contentsline {subsubsection}{Turnaushakemiston tuonti}{37}{subsubsection*.30}%
 \contentsline {subsubsection}{Säännöllinen varmuuskopiointi}{37}{subsubsection*.31}%
 \contentsline {subsubsection}{Virheiden analysointi}{37}{subsubsection*.32}%
 \contentsline {subsection}{\numberline {2.6.15}Paluukoodit}{37}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{37}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{37}{subsection.2.7.1}%
+\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{38}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{38}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Mikä motivoi blunderDB:n luomiseen?}{38}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Miten nykyisen tietokannan tila tallennetaan?}{38}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Pitäisikö minun luoda eri tietokantoja eri asemaluokille?}{38}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}Miten useita tietokantoja yhdistetään?}{38}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{38}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{39}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Mikä on kokoelma?}{39}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Mikä on EPC?}{39}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}Onko blunderDB:ssä komentorivikäyttöliittymä?}{39}{subsection.2.7.9}%

@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{05 lug 2026}
+\date{14 lug 2026}
 \release{0.27.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -2878,6 +2878,17 @@ La posizione o quella speculare verifica i filtri.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+i
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La posizione è stata importata singolarmente, non portata da un import di partita.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5325,6 +5336,10 @@ Cerca posizioni nel database secondo criteri combinabili.
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament\sphinxhyphen{}ids}} — Filtrare per ID dei tornei (separati da virgole).
 
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}} — Solo le posizioni importate singolarmente, cioè quelle che hai aggiunto tu e non quelle portate da un import di partita.
+
 \end{itemize}
 
 \sphinxAtStartPar
@@ -5333,6 +5348,9 @@ Cerca posizioni nel database secondo criteri combinabili.
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Rechercher les décisions de videau}
 ./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}decision\PYG{+w}{ }cube
+
+\PYG{c+c1}{\PYGZsh{} Retrouver les positions que vous avez ajoutées vous\PYGZhy{}même}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}individual
 
 \PYG{c+c1}{\PYGZsh{} Rechercher les positions avec erreur \PYGZgt{}= 0.1}
 ./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}error\PYGZhy{}min\PYG{+w}{ }\PYG{l+m}{0}.1
