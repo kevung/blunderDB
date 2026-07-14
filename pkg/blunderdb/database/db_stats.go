@@ -190,12 +190,19 @@ func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
 }
 
 // applyMatchBadges fills the per-player PR/MWC badge fields of every match in
-// the slice from the storage backend. Callers already hold the read lock.
+// the slice from the storage backend. Callers already hold the read lock. It
+// scopes the badge computation to exactly the matches being decorated, so the
+// cost is proportional to the page shown rather than a scan of every decision
+// in the database.
 func (d *Database) applyMatchBadges(matches []Match) error {
 	if len(matches) == 0 {
 		return nil
 	}
-	badges, err := d.store.Stats().MatchBadges(context.Background(), "", nil)
+	ids := make([]int64, len(matches))
+	for i := range matches {
+		ids[i] = matches[i].ID
+	}
+	badges, err := d.store.Stats().MatchBadges(context.Background(), "", ids)
 	if err != nil {
 		return err
 	}
