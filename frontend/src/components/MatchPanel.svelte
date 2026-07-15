@@ -1245,9 +1245,11 @@
     }
 
     .actions-col {
-        width: 52px;
-        min-width: 52px;
-        max-width: 52px;
+        /* Size to the row's buttons (like .narrow-col) instead of a fixed
+           width: a hard 52px cap clipped the 4th action button and pushed the
+           table past its container, adding a horizontal scrollbar. The flexible
+           player-name columns absorb the width. */
+        width: 1px;
         white-space: nowrap;
         text-align: center;
         padding: 0 4px;
@@ -1269,7 +1271,7 @@
 
     .item-actions {
         display: inline-flex;
-        gap: 2px;
+        gap: 1px;
         vertical-align: middle;
     }
 
@@ -1279,7 +1281,7 @@
         cursor: pointer;
         font-size: 12px;
         color: #666;
-        padding: 0 3px;
+        padding: 0 2px;
         line-height: 1;
     }
 
