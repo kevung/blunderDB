@@ -14,7 +14,7 @@ All commands run from the repo root unless stated.
 # Run the GUI in dev mode (hot-reload frontend via Vite)
 wails dev
 
-# Production build → build/bin/blunderdb
+# Production build → build/bin/blunderDB
 wails build
 
 # Linux/Windows need the webkit2_41 tag to match webkit2gtk-4.1
@@ -34,8 +34,8 @@ The same binary dispatches on `os.Args[1]` (see `main.go`):
 
 Full CLI reference lives in `CLI_USAGE.md`. Example:
 ```bash
-./blunderdb import --db mymatches.db --type match --file game.xg
-./blunderdb list --db mymatches.db --type stats
+./blunderDB import --db mymatches.db --type match --file game.xg
+./blunderDB list --db mymatches.db --type stats
 ```
 
 ## Development Workflow

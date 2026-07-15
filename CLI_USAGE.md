@@ -10,20 +10,20 @@ Build the blunderDB binary using Wails:
 wails build
 ```
 
-The binary will be located at `build/bin/blunderdb`.
+The binary will be located at `build/bin/blunderDB`.
 
 ## Usage
 
 The same binary works for both GUI and CLI modes:
-- **GUI Mode**: Run without arguments: `./blunderdb` 
-- **CLI Mode**: Provide CLI commands as arguments: `./blunderdb import --db database.db ...`
+- **GUI Mode**: Run without arguments: `./blunderDB` 
+- **CLI Mode**: Provide CLI commands as arguments: `./blunderDB import --db database.db ...`
 
 When you provide a CLI command as the first argument, it automatically runs in headless CLI mode without displaying the frontend.
 
 ### Basic Syntax
 
 ```bash
-./blunderdb <command> [options]
+./blunderDB <command> [options]
 ```
 
 ### Available Commands
@@ -41,14 +41,14 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `help` - Show help message
 - `version` - Show version information
 
-Use `blunderdb <command> --help` for more information about a command.
+Use `blunderDB <command> --help` for more information about a command.
 
 ## Create Command
 
 Create a new blunderDB database file with optional metadata.
 
 ```bash
-./blunderdb create --db <path> [options]
+./blunderDB create --db <path> [options]
 ```
 
 **Options:**
@@ -62,13 +62,13 @@ The `.db` extension is added automatically if missing. Parent directories are cr
 **Examples:**
 ```bash
 # Create a new database
-./blunderdb create --db mymatches.db
+./blunderDB create --db mymatches.db
 
 # Create with metadata
-./blunderdb create --db mymatches.db --user "John" --description "2025 tournament matches"
+./blunderDB create --db mymatches.db --user "John" --description "2025 tournament matches"
 
 # Overwrite existing database
-./blunderdb create --db mymatches.db --force
+./blunderDB create --db mymatches.db --force
 ```
 
 **Example output:**
@@ -90,13 +90,13 @@ Import match files (.xg, .sgf, .mat, .txt, .bgf) or XGP position files (.xgp) in
 ### Import Match
 
 ```bash
-./blunderdb import --db database.db --type match --file match.xg
+./blunderDB import --db database.db --type match --file match.xg
 ```
 
 ### Import XGP Position
 
 ```bash
-./blunderdb import --db database.db --type match --file position.xgp
+./blunderDB import --db database.db --type match --file position.xgp
 ```
 
 XGP files are single-position files exported from eXtreme Gammon. They contain
@@ -110,7 +110,7 @@ the position along with its analysis (checker moves and/or cube decisions).
 **Example:**
 ```bash
 # Import an XG match file
-./blunderdb import --db mymatches.db --type match --file test.xg
+./blunderDB import --db mymatches.db --type match --file test.xg
 
 # Output:
 # Connected to database: mymatches.db
@@ -129,7 +129,7 @@ the position along with its analysis (checker moves and/or cube decisions).
 Import positions from a text file (JSON format, one position per line):
 
 ```bash
-./blunderdb import --db database.db --type position --file positions.txt
+./blunderDB import --db database.db --type position --file positions.txt
 ```
 
 **Position file format:**
@@ -140,7 +140,7 @@ Each line should be a JSON-serialized Position object.
 Import all match files from a directory at once:
 
 ```bash
-./blunderdb import --db database.db --type batch --dir ./matches/
+./blunderDB import --db database.db --type batch --dir ./matches/
 ```
 
 **Options:**
@@ -152,10 +152,10 @@ Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
 **Examples:**
 ```bash
 # Batch import all files recursively
-./blunderdb import --db database.db --type batch --dir ./matches/
+./blunderDB import --db database.db --type batch --dir ./matches/
 
 # Batch import (non-recursive)
-./blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false
+./blunderDB import --db database.db --type batch --dir ./matches/ --recursive=false
 ```
 
 **Example output:**
@@ -179,7 +179,7 @@ Export database contents to files.
 ### Export Entire Database
 
 ```bash
-./blunderdb export --db database.db --type database --file export.db
+./blunderDB export --db database.db --type database --file export.db
 ```
 
 This creates a complete copy of the database including all positions, analyses, matches, and metadata.
@@ -189,7 +189,7 @@ This creates a complete copy of the database including all positions, analyses, 
 Export all positions to a JSON text file:
 
 ```bash
-./blunderdb export --db database.db --type positions --file positions.txt
+./blunderDB export --db database.db --type positions --file positions.txt
 ```
 
 Each position is exported as a JSON object on a separate line.
@@ -211,7 +211,7 @@ Each position is exported as a JSON object on a separate line.
 ### Export Database Without Matches
 
 ```bash
-./blunderdb export --db database.db --type database --file export.db --matches=false
+./blunderDB export --db database.db --type database --file export.db --matches=false
 ```
 
 This creates a copy of the database with positions, analyses, and comments, but without match data.
@@ -221,7 +221,7 @@ This creates a copy of the database with positions, analyses, and comments, but 
 Export only match data (with linked positions) to a new database:
 
 ```bash
-./blunderdb export --db database.db --type matches --file matches.db
+./blunderDB export --db database.db --type matches --file matches.db
 ```
 
 This creates a new database containing only the match structure and linked positions.
@@ -231,7 +231,7 @@ This creates a new database containing only the match structure and linked posit
 Search for positions in the database using filters.
 
 ```bash
-./blunderdb search --db database.db [options]
+./blunderDB search --db database.db [options]
 ```
 
 **Options:**
@@ -258,28 +258,28 @@ Search for positions in the database using filters.
 
 ```bash
 # Search cube decisions
-./blunderdb search --db database.db --decision cube
+./blunderDB search --db database.db --decision cube
 
 # Search positions with errors >= 0.1
-./blunderdb search --db database.db --error-min 0.1
+./blunderDB search --db database.db --error-min 0.1
 
 # Search in specific matches (2, 5, and 9)
-./blunderdb search --db database.db --match-ids 2,5,9
+./blunderDB search --db database.db --match-ids 2,5,9
 
 # Search in a tournament
-./blunderdb search --db database.db --tournament-ids 1
+./blunderDB search --db database.db --tournament-ids 1
 
 # Search positions where dice were 6-5 (either order)
-./blunderdb search --db database.db --dice 6,5
+./blunderDB search --db database.db --dice 6,5
 
 # Search positions where a 6 was rolled on either die
-./blunderdb search --db database.db --dice 6
+./blunderDB search --db database.db --dice 6
 
 # Search and export to new database
-./blunderdb search --db database.db --decision cube --export cubes.db
+./blunderDB search --db database.db --decision cube --export cubes.db
 
 # Output as JSON
-./blunderdb search --db database.db --format json --limit 10
+./blunderDB search --db database.db --format json --limit 10
 ```
 
 ## List Command
@@ -289,7 +289,7 @@ Display database contents and statistics.
 ### List Matches
 
 ```bash
-./blunderdb list --db database.db --type matches
+./blunderDB list --db database.db --type matches
 ```
 
 Shows all imported matches with details:
@@ -326,7 +326,7 @@ ID: 2
 ### List Tournaments
 
 ```bash
-./blunderdb list --db database.db --type tournaments
+./blunderDB list --db database.db --type tournaments
 ```
 
 Shows all tournaments with details:
@@ -355,7 +355,7 @@ ID: 2
 ### List Positions
 
 ```bash
-./blunderdb list --db database.db --type positions --limit 20
+./blunderDB list --db database.db --type positions --limit 20
 ```
 
 Shows position details:
@@ -370,7 +370,7 @@ Shows position details:
 ### Show Database Statistics
 
 ```bash
-./blunderdb list --db database.db --type stats
+./blunderDB list --db database.db --type stats
 ```
 
 Displays comprehensive performance statistics: PR/MWC metrics, Snowie Error Rate, rolling performance, top blunders, cube-action breakdown, and an error histogram.
@@ -389,17 +389,17 @@ Displays comprehensive performance statistics: PR/MWC metrics, Snowie Error Rate
 
 ```bash
 # Basic text report
-./blunderdb list --db database.db --type stats
+./blunderDB list --db database.db --type stats
 
 # MWC metric with player filter
-./blunderdb list --db database.db --type stats --metric mwc --player "Alice"
+./blunderDB list --db database.db --type stats --metric mwc --player "Alice"
 
 # Checker-play only, last 6 months
-./blunderdb list --db database.db --type stats \
+./blunderDB list --db database.db --type stats \
   --decision-type checker --from 2025-01-01
 
 # Machine-readable JSON for scripting
-./blunderdb list --db database.db --type stats --format json
+./blunderDB list --db database.db --type stats --format json
 ```
 
 **Text output sections:**
@@ -438,7 +438,7 @@ Remove data from the database.
 ### Delete Match
 
 ```bash
-./blunderdb delete --db database.db --type match --id 1 --confirm
+./blunderDB delete --db database.db --type match --id 1 --confirm
 ```
 
 Deletes a match and all associated data (games, moves, analyses). Without `--confirm`, the command will prompt for confirmation.
@@ -452,7 +452,7 @@ Deletes a match and all associated data (games, moves, analyses). Without `--con
 **Example:**
 ```bash
 # Delete with confirmation prompt
-./blunderdb delete --db database.db --type match --id 1
+./blunderDB delete --db database.db --type match --id 1
 
 # Output:
 # Match ID: 1
@@ -464,7 +464,7 @@ Deletes a match and all associated data (games, moves, analyses). Without `--con
 # Successfully deleted match ID 1
 
 # Delete without prompt
-./blunderdb delete --db database.db --type match --id 1 --confirm
+./blunderDB delete --db database.db --type match --id 1 --confirm
 ```
 
 ## Match Command
@@ -472,7 +472,7 @@ Deletes a match and all associated data (games, moves, analyses). Without `--con
 Display match positions and analysis data.
 
 ```bash
-./blunderdb match --db database.db --id <match_id> [options]
+./blunderDB match --db database.db --id <match_id> [options]
 ```
 
 **Options:**
@@ -484,13 +484,13 @@ Display match positions and analysis data.
 **Examples:**
 ```bash
 # Display match as JSON
-./blunderdb match --db database.db --id 1
+./blunderDB match --db database.db --id 1
 
 # Display match summary
-./blunderdb match --db database.db --id 1 --format summary
+./blunderDB match --db database.db --id 1 --format summary
 
 # Save match data to a file
-./blunderdb match --db database.db --id 1 --format text --output match1.txt
+./blunderDB match --db database.db --id 1 --format text --output match1.txt
 ```
 
 **Example output (summary):**
@@ -526,7 +526,7 @@ Position 2 [Game 1, Move 2]
 Display database metadata and statistics.
 
 ```bash
-./blunderdb info --db database.db [options]
+./blunderDB info --db database.db [options]
 ```
 
 **Options:**
@@ -536,10 +536,10 @@ Display database metadata and statistics.
 **Examples:**
 ```bash
 # Display database info
-./blunderdb info --db database.db
+./blunderDB info --db database.db
 
 # Display as JSON (for scripting)
-./blunderdb info --db database.db --format json
+./blunderDB info --db database.db --format json
 ```
 
 **Example output (text):**
@@ -567,7 +567,7 @@ Statistics:
 Edit database metadata (user name and description).
 
 ```bash
-./blunderdb edit --db database.db [options]
+./blunderDB edit --db database.db [options]
 ```
 
 **Options:**
@@ -582,19 +582,19 @@ At least one edit option is required.
 **Examples:**
 ```bash
 # Set user name
-./blunderdb edit --db database.db --user "Jane"
+./blunderDB edit --db database.db --user "Jane"
 
 # Set description
-./blunderdb edit --db database.db --description "Updated match collection"
+./blunderDB edit --db database.db --description "Updated match collection"
 
 # Set both
-./blunderdb edit --db database.db --user "Jane" --description "My matches"
+./blunderDB edit --db database.db --user "Jane" --description "My matches"
 
 # Clear user name
-./blunderdb edit --db database.db --clear-user
+./blunderDB edit --db database.db --clear-user
 
 # Clear description
-./blunderdb edit --db database.db --clear-description
+./blunderDB edit --db database.db --clear-description
 ```
 
 **Example output:**
@@ -609,7 +609,7 @@ Database metadata updated:
 Verify database integrity and optionally compare match data against source files.
 
 ```bash
-./blunderdb verify --db database.db [options]
+./blunderDB verify --db database.db [options]
 ```
 
 **Options:**
@@ -622,13 +622,13 @@ When run without `--match`, displays database statistics. When a match ID is spe
 **Examples:**
 ```bash
 # Verify database overview
-./blunderdb verify --db database.db
+./blunderDB verify --db database.db
 
 # Verify a specific match
-./blunderdb verify --db database.db --match 1
+./blunderDB verify --db database.db --match 1
 
 # Compare match against MAT source file
-./blunderdb verify --db database.db --match 1 --mat original.mat
+./blunderDB verify --db database.db --match 1 --mat original.mat
 ```
 
 **Example output:**
@@ -660,36 +660,36 @@ Verification complete!
 
 ```bash
 # Use batch import (recommended)
-./blunderdb import --db mymatches.db --type batch --dir ./matches/
+./blunderDB import --db mymatches.db --type batch --dir ./matches/
 
 # Or import individual files
-./blunderdb import --db mymatches.db --type match --file match1.xg
-./blunderdb import --db mymatches.db --type match --file match2.xg
+./blunderDB import --db mymatches.db --type match --file match1.xg
+./blunderDB import --db mymatches.db --type match --file match2.xg
 ```
 
 ### Backup Database
 
 ```bash
-./blunderdb export --db production.db --type database --file backup-$(date +%Y%m%d).db
+./blunderDB export --db production.db --type database --file backup-$(date +%Y%m%d).db
 ```
 
 ### Check Database Before and After Import
 
 ```bash
 # Before
-./blunderdb list --db database.db --type stats
+./blunderDB list --db database.db --type stats
 
 # Import
-./blunderdb import --db database.db --type match --file newmatch.xg
+./blunderDB import --db database.db --type match --file newmatch.xg
 
 # After
-./blunderdb list --db database.db --type stats
+./blunderDB list --db database.db --type stats
 ```
 
 ### Export Positions for Analysis
 
 ```bash
-./blunderdb export --db database.db --type positions --file positions.txt
+./blunderDB export --db database.db --type positions --file positions.txt
 # Process positions.txt with external tools
 ```
 
@@ -699,19 +699,19 @@ The CLI provides clear error messages:
 
 ```bash
 # Missing required flag
-./blunderdb import --db database.db --type match
+./blunderDB import --db database.db --type match
 # Error: --file flag is required
 
 # File not found
-./blunderdb import --db database.db --type match --file nonexistent.xg
+./blunderDB import --db database.db --type match --file nonexistent.xg
 # Error: input file does not exist: nonexistent.xg
 
 # Invalid import type
-./blunderdb import --db database.db --type invalid --file test.xg
+./blunderDB import --db database.db --type invalid --file test.xg
 # Error: unknown import type: invalid (must be 'match', 'position', or 'batch')
 
 # Database errors
-./blunderdb list --db /invalid/path/database.db --type stats
+./blunderDB list --db /invalid/path/database.db --type stats
 # Error: failed to open database: ...
 ```
 
@@ -745,7 +745,7 @@ The CLI and GUI share the same database format, so you can:
 This makes the CLI suitable for use in scripts with error checking:
 
 ```bash
-if ./blunderdb import --db database.db --type match --file match.xg; then
+if ./blunderDB import --db database.db --type match --file match.xg; then
     echo "Import successful"
 else
     echo "Import failed"
@@ -755,23 +755,23 @@ fi
 
 ## Generic `call` dispatcher
 
-In addition to the historical subcommands above, `blunderdb call` exposes
+In addition to the historical subcommands above, `blunderDB call` exposes
 **every** storage operation directly. It dispatches in-process through the exact
 same handlers the `serve` daemon serves, so the behaviour is identical to
 `POST /v1/<family>.<method>` — useful for scripting and integration testing.
 
 ```bash
 # List every available method (108+)
-blunderdb call --list
+blunderDB call --list
 
 # Read-only queries
-blunderdb call metadata.counts --db mydb.db
-blunderdb call positions.list   --db mydb.db --json '{"limit":10}'
-blunderdb call matches.get      --db mydb.db --json '{"id":1}'
+blunderDB call metadata.counts --db mydb.db
+blunderDB call positions.list   --db mydb.db --json '{"limit":10}'
+blunderDB call matches.get      --db mydb.db --json '{"id":1}'
 
 # Mutations
-blunderdb call positions.save   --db mydb.db --json '{"position":{...}}'
-blunderdb call matches.delete   --db mydb.db --json '{"id":42}'
+blunderDB call positions.save   --db mydb.db --json '{"position":{...}}'
+blunderDB call matches.delete   --db mydb.db --json '{"id":42}'
 ```
 
 Flags:
@@ -792,18 +792,18 @@ is printed to stdout so it stays parseable (e.g. with `jq`).
 
 ## Migrating a SQLite database into PostgreSQL
 
-`blunderdb migrate` copies a single-user SQLite database into a PostgreSQL
+`blunderDB migrate` copies a single-user SQLite database into a PostgreSQL
 backend under a chosen tenant scope — the path for a desktop user to "upload"
 their library into a server deployment.
 
 ```bash
-blunderdb migrate \
+blunderDB migrate \
     --from sqlite:///path/to/user.db \
     --to   "postgres://user:pass@host:5432/db?sslmode=disable" \
     --tenant-id my-tenant
 
 # Preview without writing
-blunderdb migrate --from sqlite:///path/to/user.db --tenant-id my-tenant --dry-run
+blunderDB migrate --from sqlite:///path/to/user.db --tenant-id my-tenant --dry-run
 ```
 
 It copies **positions, their analyses and comments, matches (games + moves),

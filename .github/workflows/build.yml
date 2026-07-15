@@ -319,8 +319,8 @@ jobs:
             tmp="$(mktemp -d)"
             stage="$tmp/$base"
             mkdir -p "$stage"
-            cp "$bin" "$stage/blunderdb"
-            chmod +x "$stage/blunderdb"
+            cp "$bin" "$stage/blunderDB"
+            chmod +x "$stage/blunderDB"
             cp build/linux/blunderdb.desktop build/linux/blunderdb-256.png \
                build/linux/io.github.kevung.blunderDB.metainfo.xml \
                build/linux/INSTALL.txt LICENSE "$stage/"
@@ -344,10 +344,10 @@ jobs:
           # nfpm does not expand env vars in the `src` glob, so stage the binary
           # at the fixed path nfpm.yaml expects, then remove the bare copy so it
           # is not uploaded to the release.
-          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderdb
+          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderDB
           nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
           nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
-          rm -f build/bin/blunderdb
+          rm -f build/bin/blunderDB
 
       - name: Add macOS perms
         if: runner.os == 'macOS'

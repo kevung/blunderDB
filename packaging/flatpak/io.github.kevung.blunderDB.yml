@@ -20,7 +20,7 @@ app-id: io.github.kevung.blunderDB
 runtime: org.gnome.Platform
 runtime-version: '47'
 sdk: org.gnome.Sdk
-command: blunderdb
+command: blunderDB
 
 finish-args:
   - --socket=wayland
@@ -36,7 +36,7 @@ modules:
   - name: blunderdb
     buildsystem: simple
     build-commands:
-      - install -Dm755 blunderdb /app/bin/blunderdb
+      - install -Dm755 blunderDB /app/bin/blunderDB
       # Flathub requires desktop/icon/metainfo to be named after the app-id.
       - install -Dm644 blunderdb-256.png /app/share/icons/hicolor/256x256/apps/io.github.kevung.blunderDB.png
       - |

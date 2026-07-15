@@ -1,9 +1,9 @@
 # nfpm config — generates .deb and .rpm from a single spec.
-# The webkit2gtk-4.1 binary must be placed at build/bin/blunderdb first
+# The webkit2gtk-4.1 binary must be placed at build/bin/blunderDB first
 # (nfpm expands ${VERSION} in fields but NOT in the `src` glob, so the binary
 # path is fixed rather than an env var). VERSION is read from the environment.
 # Build:
-#   cp build/bin/blunderDB-linux-webkit2gtk-4.1-<ver> build/bin/blunderdb
+#   cp build/bin/blunderDB-linux-webkit2gtk-4.1-<ver> build/bin/blunderDB
 #   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p deb
 #   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p rpm
 #
@@ -26,8 +26,8 @@ homepage: https://github.com/kevung/blunderDB
 license: MIT
 
 contents:
-  - src: build/bin/blunderdb
-    dst: /usr/bin/blunderdb
+  - src: build/bin/blunderDB
+    dst: /usr/bin/blunderDB
     file_info:
       mode: 0755
   - src: build/linux/blunderdb.desktop

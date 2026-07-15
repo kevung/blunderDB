@@ -19,7 +19,7 @@ sha256sums=('@SHA256@')
 _srcdir="blunderDB-linux-webkit2gtk-4.1-${pkgver}"
 
 package() {
-  install -Dm755 "${_srcdir}/blunderdb"        "${pkgdir}/usr/bin/blunderdb"
+  install -Dm755 "${_srcdir}/blunderDB"        "${pkgdir}/usr/bin/blunderDB"
   install -Dm644 "${_srcdir}/blunderdb.desktop" "${pkgdir}/usr/share/applications/blunderdb.desktop"
   install -Dm644 "${_srcdir}/blunderdb-256.png" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/blunderdb.png"
   install -Dm644 "${_srcdir}/io.github.kevung.blunderDB.metainfo.xml" \

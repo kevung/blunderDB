@@ -33,7 +33,7 @@ Prerequisites: Go 1.23+, Node.js 23+, [Wails v2](https://wails.io/).
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 git clone https://github.com/kevung/blunderDB.git
 cd blunderDB
-wails build            # binary at build/bin/blunderdb
+wails build            # binary at build/bin/blunderDB
 ```
 
 On Linux with webkit2gtk-4.1:
@@ -49,7 +49,7 @@ wails build -tags webkit2_41
 Launch the binary with no arguments to start the desktop app:
 
 ```bash
-./blunderdb
+./blunderDB
 ```
 
 Open or create a `.db` file, then import match files via the toolbar or drag-and-drop.
@@ -57,10 +57,10 @@ Open or create a `.db` file, then import match files via the toolbar or drag-and
 ### CLI
 
 ```bash
-./blunderdb import --db my.db --type match --file game.xg   # import a match
-./blunderdb search --db my.db --error ">0.05"                # search by error
-./blunderdb list   --db my.db --type stats                   # show statistics
-./blunderdb export --db my.db --type positions --file out.txt # export positions
+./blunderDB import --db my.db --type match --file game.xg   # import a match
+./blunderDB search --db my.db --error ">0.05"                # search by error
+./blunderDB list   --db my.db --type stats                   # show statistics
+./blunderDB export --db my.db --type positions --file out.txt # export positions
 ```
 
 See [CLI_USAGE.md](CLI_USAGE.md) for the full command reference.

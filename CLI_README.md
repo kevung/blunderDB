@@ -6,40 +6,40 @@ blunderDB now supports both GUI and CLI modes in a **single executable**.
 
 ### GUI Mode (default)
 ```bash
-./blunderdb
+./blunderDB
 ```
 
 ### CLI Mode
 ```bash
 # Create a new database
-./blunderdb create --db matches.db --user "John"
+./blunderDB create --db matches.db --user "John"
 
 # Import an XG match or XGP position
-./blunderdb import --db matches.db --type match --file game.xg
+./blunderDB import --db matches.db --type match --file game.xg
 
 # Batch import a directory
-./blunderdb import --db matches.db --type batch --dir ./matches/
+./blunderDB import --db matches.db --type batch --dir ./matches/
 
 # List statistics  
-./blunderdb list --db matches.db --type stats
+./blunderDB list --db matches.db --type stats
 
 # Search positions
-./blunderdb search --db matches.db --decision cube --error-min 0.1
+./blunderDB search --db matches.db --decision cube --error-min 0.1
 
 # Display match data
-./blunderdb match --db matches.db --id 1 --format summary
+./blunderDB match --db matches.db --id 1 --format summary
 
 # View database info
-./blunderdb info --db matches.db
+./blunderDB info --db matches.db
 
 # Edit database metadata
-./blunderdb edit --db matches.db --user "Jane"
+./blunderDB edit --db matches.db --user "Jane"
 
 # Verify database integrity
-./blunderdb verify --db matches.db
+./blunderDB verify --db matches.db
 
 # Show help
-./blunderdb help
+./blunderDB help
 ```
 
 ## How It Works
@@ -54,7 +54,7 @@ The binary automatically detects the mode:
 wails build
 ```
 
-Binary location: `build/bin/blunderdb`
+Binary location: `build/bin/blunderDB`
 
 ## Benefits
 
