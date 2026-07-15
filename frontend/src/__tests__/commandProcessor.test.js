@@ -101,6 +101,22 @@ describe('parseFilters', () => {
         expect(r.diceRollMode).toBe('first');
     });
 
+    test('exceptDiceFilter parses a single xD65 token', () => {
+        expect(parseFilters(['xD65'], 's xD65').exceptDiceFilter).toBe('65');
+    });
+
+    test('exceptDiceFilter joins multiple xD tokens with ";"', () => {
+        expect(parseFilters(['xD65', 'xD54'], 's xD65 xD54').exceptDiceFilter).toBe('65;54');
+    });
+
+    test('exceptDiceFilter is empty without an xD token', () => {
+        expect(parseFilters(['D'], 's D').exceptDiceFilter).toBe('');
+    });
+
+    test('exceptDiceFilter rejects out-of-range / malformed tokens', () => {
+        expect(parseFilters(['xD70', 'xD6', 'xD655'], 's xD70 xD6 xD655').exceptDiceFilter).toBe('');
+    });
+
     test('mirrorPositionFilter with "M"', () => {
         expect(parseFilters(['M'], 's M').mirrorPositionFilter).toBe(true);
     });

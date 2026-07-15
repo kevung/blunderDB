@@ -468,6 +468,40 @@ func (p *Position) MatchesDiceRollMode(filter Position, mode string) bool {
 	return dice == filterDice || reverseDice == filterDice
 }
 
+// ParseExceptDice parses an "except dice" filter string (e.g. "65;54") into
+// dice pairs. Each entry is two digits 1-6 (order-insensitive at match time);
+// malformed entries are skipped. Backs the xD<d1><d2> search discriminator,
+// which excludes positions rolled with any of the listed dice.
+func ParseExceptDice(s string) [][2]int {
+	var pairs [][2]int
+	for _, tok := range strings.Split(s, ";") {
+		tok = strings.TrimSpace(tok)
+		if len(tok) != 2 {
+			continue
+		}
+		d1 := int(tok[0] - '0')
+		d2 := int(tok[1] - '0')
+		if d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
+			continue
+		}
+		pairs = append(pairs, [2]int{d1, d2})
+	}
+	return pairs
+}
+
+// MatchesExceptDice reports whether the position's dice avoid every excluded
+// roll (each compared in both orders). A position rolled with none of the
+// excluded rolls — including cube decisions, which carry no roll — is kept.
+func (p *Position) MatchesExceptDice(excluded [][2]int) bool {
+	for _, pair := range excluded {
+		if (p.Dice[0] == pair[0] && p.Dice[1] == pair[1]) ||
+			(p.Dice[0] == pair[1] && p.Dice[1] == pair[0]) {
+			return false
+		}
+	}
+	return true
+}
+
 func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {
 	outfieldBlots := 0
 	for i := 7; i <= 18; i++ {

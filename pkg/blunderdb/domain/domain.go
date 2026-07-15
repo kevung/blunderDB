@@ -242,6 +242,7 @@ type SearchFilters struct {
 	CubeResponseFilter            string   `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only, "takepass" = take/pass only
 	DiceRollFilter                bool     `json:"diceRollFilter"`
 	DiceRollMode                  string   `json:"diceRollMode"`
+	ExceptDiceFilter              string   `json:"exceptDiceFilter"` // ";"-separated rolls to exclude, e.g. "65;54" (xD65 token)
 	MovePatternFilter             string   `json:"movePatternFilter"`
 	DateFilter                    string   `json:"dateFilter"`
 	Player1OutfieldBlotFilter     string   `json:"player1OutfieldBlotFilter"`
