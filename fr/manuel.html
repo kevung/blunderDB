@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuel &mdash; Documentation blunderDB 0.27.1</title>
+  <title>2. Manuel &mdash; Documentation blunderDB 0.28.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1783f8b8"></script>
+      <script src="_static/documentation_options.js?v=05e8d325"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -354,6 +354,14 @@ de doubler) ou <em>Prise / Passe</em> (réponse à un doublement adverse). Le co
 synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
 jour le type de décision, et inversement. En mode <em>Prise / Passe</em>, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.</p>
+<p>Le filtre <strong>Matchs &amp; Tournois</strong> s’appuie sur un sélecteur commun (fenêtre modale)
+plutôt que sur la saisie d’identifiants numériques : deux listes à cocher, une
+pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,
+date, événement pour les matchs ; nom, date, lieu pour les tournois), avec des
+boutons <em>Tout</em> / <em>Aucun</em> qui n’agissent que sur le sous-ensemble actuellement
+filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
+dans la liste des matchs, rendant visible le fait qu’un tournoi équivaut à
+l’ensemble de ses matchs.</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
 <p>Se référer à la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> pour la liste des filtres

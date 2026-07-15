@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{15 juillet 2026}
-\release{0.27.1}
+\release{0.28.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -726,6 +726,22 @@ Panneau Anki : ajout d’un mode « entraînement libre » (\sphinxstyleemphasis
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.28.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+15/07/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Panneau de recherche : filtre unifié « Matchs \& Tournois » remplaçant les champs de saisie d’identifiants par une fenêtre de sélection (listes à cocher filtrables par texte, boutons \sphinxstyleemphasis{Tout}/\sphinxstyleemphasis{Aucun}, cocher un tournoi coche ses matchs membres) — plus rapide sur les grosses bases, l’onglet Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que pour les matchs affichés ; \sphinxcode{\sphinxupquote{cli list \sphinxhyphen{}\sphinxhyphen{}type tournaments}} comble l’écart de parité correspondant. Nouveau filtre « Importée individuellement » (case à cocher du groupe Autre, ou jeton \sphinxcode{\sphinxupquote{i}} en ligne de commande, \sphinxcode{\sphinxupquote{s i}} ; disponible aussi en CLI via \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}}) pour retrouver une position enregistrée ou importée seule plutôt que noyée dans un import de match. Correction d’une perte de données : la suppression d’un match ne supprime plus les positions individuellement importées, mises en collection ou intégrées à un paquet Anki que ce match contenait aussi. Mode serveur (headless) : six nouvelles méthodes pour le planificateur Anki à répétition espacée — journal des révisions (\sphinxcode{\sphinxupquote{anki.reviewLog}}), prévision des cartes dues (\sphinxcode{\sphinxupquote{anki.forecast}}), suspension / mise en veille / suppression de carte (\sphinxcode{\sphinxupquote{anki.suspendCard}}, \sphinxcode{\sphinxupquote{anki.buryCard}}, \sphinxcode{\sphinxupquote{anki.removeCard}}) et ajustement automatique du taux de rétention visé d’un paquet vers son taux de réussite observé (\sphinxcode{\sphinxupquote{anki.optimizeParams}}) ; nouvelle méthode \sphinxcode{\sphinxupquote{tenant.purge}} pour supprimer définitivement les données d’un tenant sur un déploiement PostgreSQL multi\sphinxhyphen{}utilisateurs ; nouvelles méthodes \sphinxcode{\sphinxupquote{matches.list}} (filtrage/tri/pagination) et \sphinxcode{\sphinxupquote{stats.matchBadges}} (indicateurs PR/MWC bornés à une liste de matchs). Distribution Linux native : paquets \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, qui conservent le bit d’exécution perdu lors du téléchargement du binaire brut. Import : après l’import d’un match, l’onglet Matchs s’affiche et les positions importées sont immédiatement visibles ; après l’import d’une position isolée (fichier XGP, position BGBlitz, fichier de position texte, position collée ou lot de positions), l’onglet Analyse s’ouvre directement sur la position importée, au lieu de l’onglet Matchs ; correction du collage d’une analyse eXtreme Gammon en français ou en allemand depuis macOS, qui restait vide (accents décomposés par le presse\sphinxhyphen{}papier du système). Voir {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Mode headless (serveur)}}}}}, {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste des commandes}}}}} et {\hyperref[\detokenize{telecharge_install:telecharge-install}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Téléchargement et installation}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -747,15 +763,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.1.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.1.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
 
 \end{itemize}
 
@@ -820,7 +836,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binaire brut (méthode avancée)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} reste disponible. Comme un navigateur retire
+Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} reste disponible. Comme un navigateur retire
 le bit exécutable au téléchargement, il faut le rétablir avant la première
 exécution :
 
@@ -835,7 +851,7 @@ bibliothèque webkit2gtk. Si vous obtenez l’erreur
 \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, votre
 distribution utilise webkit2gtk\sphinxhyphen{}4.1 : utilisez le paquet \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}},
 le paquet AUR, ou téléchargez la version dédiée
-\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}. Les paquets natifs choisissent
+\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Les paquets natifs choisissent
 automatiquement la bonne dépendance.
 \end{sphinxadmonition}
 
@@ -1244,6 +1260,16 @@ de doubler) ou \sphinxstyleemphasis{Prise / Passe} (réponse à un doublement ad
 synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
 jour le type de décision, et inversement. En mode \sphinxstyleemphasis{Prise / Passe}, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Matchs \& Tournois} s’appuie sur un sélecteur commun (fenêtre modale)
+plutôt que sur la saisie d’identifiants numériques : deux listes à cocher, une
+pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,
+date, événement pour les matchs ; nom, date, lieu pour les tournois), avec des
+boutons \sphinxstyleemphasis{Tout} / \sphinxstyleemphasis{Aucun} qui n’agissent que sur le sous\sphinxhyphen{}ensemble actuellement
+filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
+dans la liste des matchs, rendant visible le fait qu’un tournoi équivaut à
+l’ensemble de ses matchs.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
@@ -5759,6 +5785,10 @@ Affiche le contenu de la base de données.
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{tournaments}} — Liste des tournois.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} — Liste des positions (limité à 10 par défaut).
 
 \item {} 
@@ -6606,6 +6636,17 @@ Deux méthodes de la famille \sphinxcode{\sphinxupquote{positions}} décodent un
 l’enregistrer : \sphinxcode{\sphinxupquote{positions.fromXGID}} reconstruit une position à partir d’une
 chaîne XGID, et \sphinxcode{\sphinxupquote{positions.fromXGP}} à partir d’un fichier de position unique
 \sphinxcode{\sphinxupquote{.xgp}}.
+
+\sphinxAtStartPar
+La famille \sphinxcode{\sphinxupquote{anki}} gagne six méthodes qui étendent le planificateur à
+répétition espacée (FSRS) : \sphinxcode{\sphinxupquote{anki.reviewLog}} (journal de chaque révision —
+notation et résultat FSRS — pour les statistiques de rétention et un
+historique fidèle), \sphinxcode{\sphinxupquote{anki.forecast}} (projection du nombre de cartes dues sur
+les prochains jours, cartes en retard comprises), \sphinxcode{\sphinxupquote{anki.suspendCard}} /
+\sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (retirer une carte de la file de
+révision temporairement ou définitivement) et \sphinxcode{\sphinxupquote{anki.optimizeParams}} (ajuste
+le taux de rétention visé d’un paquet vers le taux de réussite observé sur ses
+révisions).
 
 
 \subsection{Backend PostgreSQL et multi\sphinxhyphen{}utilisateurs}

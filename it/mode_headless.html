@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Modalità headless (server) &mdash; Documentazione blunderDB 0.27.1 </title>
+  <title>8. Modalità headless (server) &mdash; Documentazione blunderDB 0.28.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f9f1caea"></script>
+      <script src="_static/documentation_options.js?v=eb9ae177"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -195,22 +195,14 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 </ul>
 <p>La superficie applicativa segue lo schema <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famiglia&gt;.&lt;metodo&gt;</span></code> (per esempio <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Le famiglie coprono posizioni, analisi, match, commenti, collezioni, tornei, carte Anki, filtri, sessioni, ricerca, metadati, statistiche e import. Gli endpoint di elenco restituiscono un flusso NDJSON (un oggetto JSON per riga). Il server si arresta in modo pulito su <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
 <p>Due metodi della famiglia <code class="docutils literal notranslate"><span class="pre">positions</span></code> decodificano una posizione senza salvarla: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> ricostruisce una posizione da una stringa XGID e <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> da un file di posizione singola <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
+<p>La famiglia <code class="docutils literal notranslate"><span class="pre">anki</span></code> guadagna sei metodi che estendono il pianificatore a ripetizione dilazionata (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (registro di ogni revisione — valutazione e risultato FSRS — per le statistiche di ritenzione e uno storico fedele), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (proiezione del numero di carte in scadenza nei prossimi giorni, incluse quelle in ritardo), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (rimuovere una carta dalla coda di revisione temporaneamente o definitivamente) e <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (avvicina il tasso di ritenzione obiettivo di un mazzo al tasso di successo osservato sulle sue revisioni).</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Backend PostgreSQL e multiutente<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>Per un deployment condiviso, blunderDB può memorizzare i dati in <strong>PostgreSQL</strong> invece che in un file SQLite. Il backend è selezionato tramite <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> e la stringa di connessione <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Lo schema viene creato e migrato automaticamente all’avvio.</p>
 <p>I dati sono <strong>compartimentati per tenant</strong> (locatario): ogni richiesta porta un identificatore di scope (header <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, per impostazione predefinita <code class="docutils literal notranslate"><span class="pre">default</span></code>), il che permette a più utenti di condividere la stessa istanza senza vedere i dati altrui. L’opzione <code class="docutils literal notranslate"><span class="pre">--rls</span></code> abilita in aggiunta la <strong>Row-Level Security</strong> di PostgreSQL: vengono installate politiche di isolamento per tenant e <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> viene impostato per connessione. È una difesa in profondità facoltativa, disabilitata per impostazione predefinita.</p>
-<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
-état de session</strong> (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n’a
-pas de notion de tenant.</p>
+<p>Quando un tenant viene dismesso, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> elimina definitivamente tutti i suoi dati (posizioni, partite, collezioni, cronologia, ecc.) sul tenant corrente (quello indicato da <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>oltre al suo stato di sessione</strong> (ultima ricerca, ultima posizione, schede aperte — le poche righe <code class="docutils literal notranslate"><span class="pre">metadata</span></code> prefissate con questo scope): l’operazione viene eseguita in un’unica transazione, è idempotente (nessun errore nel purgare un tenant già vuoto o nel ripetere la chiamata) e non ha effetto su nessun altro tenant né sulla riga globale di versione dello schema. È disponibile solo con il backend PostgreSQL — restituisce un errore <code class="docutils literal notranslate"><span class="pre">invalid</span></code> su un backend SQLite, che non ha alcuna nozione di tenant.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Migrare un database SQLite verso PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

@@ -64,7 +64,7 @@
 
 \title{blunderDB}
 \date{15 Ιουλίου 2026}
-\release{0.27.1}
+\release{0.28.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -695,6 +695,22 @@
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.28.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+15 Ιουλίου 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Πίνακας αναζήτησης: ενοποιημένο φίλτρο «Αγώνες \& Τουρνουά» που αντικαθιστά τα πεδία εισαγωγής αναγνωριστικών με ένα παράθυρο επιλογής (λίστες με πλαίσια ελέγχου φιλτραρίσιμες με κείμενο, κουμπιά \sphinxstyleemphasis{Όλα}/\sphinxstyleemphasis{Κανένα}, η επιλογή ενός τουρνουά επιλέγει τους αγώνες\sphinxhyphen{}μέλη του) — ταχύτερο σε μεγάλες βάσεις δεδομένων, καθώς η καρτέλα Αγώνες και η προβολή Τουρνουά πλέον επανυπολογίζουν τις ενδείξεις PR/MWC μόνο για τους εμφανιζόμενους αγώνες· η \sphinxcode{\sphinxupquote{cli list \sphinxhyphen{}\sphinxhyphen{}type tournaments}} καλύπτει το αντίστοιχο κενό ισοτιμίας. Νέο φίλτρο «Μεμονωμένη εισαγωγή» (πλαίσιο ελέγχου της ομάδας Άλλο, ή διακριτικό εντολής \sphinxcode{\sphinxupquote{i}} στη γραμμή εντολών, \sphinxcode{\sphinxupquote{s i}}· διαθέσιμο επίσης στο CLI μέσω του \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}}) για τον εντοπισμό μιας θέσης που αποθηκεύτηκε ή εισήχθη μεμονωμένα αντί να είναι θαμμένη μέσα σε μια εισαγωγή αγώνα. Διόρθωση απώλειας δεδομένων: η διαγραφή ενός αγώνα δεν διαγράφει πλέον τις θέσεις που ήταν επίσης μεμονωμένα εισηγμένες, προστεθειμένες σε συλλογή ή ενταγμένες σε τράπουλα Anki, ακόμη κι αν αυτός ο αγώνας τις περιείχε επίσης. Λειτουργία διακομιστή (headless): έξι νέες μέθοδοι για τον προγραμματιστή διαστηματικής επανάληψης του Anki — καταγραφή επαναλήψεων (\sphinxcode{\sphinxupquote{anki.reviewLog}}), πρόβλεψη οφειλόμενων καρτών (\sphinxcode{\sphinxupquote{anki.forecast}}), αναστολή / αδρανοποίηση / αφαίρεση κάρτας (\sphinxcode{\sphinxupquote{anki.suspendCard}}, \sphinxcode{\sphinxupquote{anki.buryCard}}, \sphinxcode{\sphinxupquote{anki.removeCard}}) και αυτόματη προσαρμογή του στοχευόμενου ποσοστού διατήρησης ενός deck προς το παρατηρούμενο ποσοστό επιτυχίας του (\sphinxcode{\sphinxupquote{anki.optimizeParams}})· νέα μέθοδος \sphinxcode{\sphinxupquote{tenant.purge}} για την οριστική διαγραφή των δεδομένων ενός tenant σε ανάπτυξη PostgreSQL πολλαπλών χρηστών· νέες μέθοδοι \sphinxcode{\sphinxupquote{matches.list}} (φιλτράρισμα/ταξινόμηση/σελιδοποίηση) και \sphinxcode{\sphinxupquote{stats.matchBadges}} (ενδείξεις PR/MWC περιορισμένες σε μια λίστα αγώνων). Εγγενής διανομή Linux: πακέτα \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, τα οποία διατηρούν το bit εκτέλεσης που χάνεται κατά τη λήψη του ακατέργαστου εκτελέσιμου. Εισαγωγή: μετά την εισαγωγή ενός αγώνα, η καρτέλα Αγώνες εμφανίζεται και οι εισαγόμενες θέσεις είναι αμέσως ορατές· μετά την εισαγωγή μιας μεμονωμένης θέσης (αρχείο XGP, θέση BGBlitz, αρχείο κειμένου θέσης, επικολλημένη θέση ή παρτίδα θέσεων), η καρτέλα Ανάλυση ανοίγει πλέον απευθείας στην εισαγόμενη θέση, αντί της καρτέλας Αγώνες· διόρθωση της επικόλλησης μιας ανάλυσης eXtreme Gammon στα γαλλικά ή στα γερμανικά από macOS, η οποία επέστρεφε κενή (τόνοι αποσυντεθειμένοι από το πρόχειρο του συστήματος). Βλ. {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}}}}}, {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λίστα εντολών}}}}} και {\hyperref[\detokenize{telecharge_install:telecharge-install}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λήψη και εγκατάσταση}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -716,15 +732,15 @@
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.1.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.1.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
 
 \end{itemize}
 
@@ -776,7 +792,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
+Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -784,7 +800,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
+Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
 \end{sphinxadmonition}
 
 
@@ -1098,6 +1114,9 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \sphinxAtStartPar
 Το πάνελ προσφέρει έναν ρητό έλεγχο του \sphinxstylestrong{τύπου απόφασης} που αναζητείται: \sphinxstyleemphasis{Αδιάφορο} (κανένα φίλτρο), \sphinxstyleemphasis{Πιόνια} (αποφάσεις κίνησης) ή \sphinxstyleemphasis{Κύβος} (αποφάσεις κύβου). Όταν είναι επιλεγμένο το \sphinxstyleemphasis{Κύβος}, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: \sphinxstyleemphasis{Όλα}, \sphinxstyleemphasis{Διπλασιασμός / Όχι} (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή \sphinxstyleemphasis{Αποδοχή / Πάσο} (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία \sphinxstyleemphasis{Αποδοχή / Πάσο}, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.
+
+\sphinxAtStartPar
+Το φίλτρο \sphinxstylestrong{Αγώνες \& Τουρνουά} στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά \sphinxstyleemphasis{Όλα} / \sphinxstyleemphasis{Κανένα} που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες\sphinxhyphen{}μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.
 
 \begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
 \sphinxAtStartPar
@@ -5369,6 +5388,10 @@ version
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{tournaments}} — Λίστα των τουρνουά.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} — Λίστα των θέσεων (περιορισμένη στις 10 από προεπιλογή).
 
 \item {} 
@@ -6128,6 +6151,9 @@ PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά 
 \sphinxAtStartPar
 Δύο μέθοδοι της οικογένειας \sphinxcode{\sphinxupquote{positions}} αποκωδικοποιούν μια θέση χωρίς να την αποθηκεύουν: η \sphinxcode{\sphinxupquote{positions.fromXGID}} ανακατασκευάζει μια θέση από μια συμβολοσειρά XGID και η \sphinxcode{\sphinxupquote{positions.fromXGP}} από ένα αρχείο μεμονωμένης θέσης \sphinxcode{\sphinxupquote{.xgp}}.
 
+\sphinxAtStartPar
+Η οικογένεια \sphinxcode{\sphinxupquote{anki}} αποκτά έξι μεθόδους που επεκτείνουν τον προγραμματιστή διαστηματικής επανάληψης (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (καταγραφή κάθε επανάληψης — βαθμολογία και αποτέλεσμα FSRS — για στατιστικά διατήρησης και ένα πιστό ιστορικό), \sphinxcode{\sphinxupquote{anki.forecast}} (προβολή του αριθμού καρτών που οφείλονται τις επόμενες ημέρες, συμπεριλαμβανομένων των καθυστερημένων καρτών), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (αφαίρεση μιας κάρτας από την ουρά επανάληψης προσωρινά ή οριστικά) και \sphinxcode{\sphinxupquote{anki.optimizeParams}} (προσαρμόζει το στοχευόμενο ποσοστό διατήρησης ενός deck προς το ποσοστό επιτυχίας που παρατηρείται στις επαναλήψεις του).
+
 
 \subsection{Backend PostgreSQL και πολλαπλοί χρήστες}
 \label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
@@ -6138,16 +6164,7 @@ PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά 
 Τα δεδομένα είναι \sphinxstylestrong{διαχωρισμένα ανά tenant} (μισθωτή): κάθε αίτημα φέρει ένα αναγνωριστικό scope (κεφαλίδα \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, εξ ορισμού \sphinxcode{\sphinxupquote{default}}), πράγμα που επιτρέπει σε πολλούς χρήστες να μοιράζονται το ίδιο instance χωρίς να βλέπουν τα δεδομένα των άλλων. Η επιλογή \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} ενεργοποιεί επιπλέον το \sphinxstylestrong{Row\sphinxhyphen{}Level Security} του PostgreSQL: εγκαθίστανται πολιτικές απομόνωσης ανά tenant και το \sphinxcode{\sphinxupquote{app.tenant\_id}} ορίζεται ανά σύνδεση. Πρόκειται για μια προαιρετική άμυνα σε βάθος, απενεργοποιημένη εξ ορισμού.
 
 \sphinxAtStartPar
-Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
-état de session} (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
-pas de notion de tenant.
+Όταν ένα tenant καταργείται, το \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} διαγράφει οριστικά όλα τα δεδομένα του (θέσεις, αγώνες, συλλογές, ιστορικό κ.λπ.) για το τρέχον tenant (αυτό που φέρει το \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{καθώς και την κατάσταση συνεδρίας του} (τελευταία αναζήτηση, τελευταία θέση, ανοιχτές καρτέλες — τις λίγες γραμμές \sphinxcode{\sphinxupquote{metadata}} με πρόθεμα αυτού του scope): η λειτουργία εκτελείται σε μία μοναδική συναλλαγή, είναι ιδεμποτική (κανένα σφάλμα κατά την εκκαθάριση ενός ήδη κενού tenant ή κατά την επανάληψη της κλήσης) και δεν επηρεάζει κανένα άλλο tenant ούτε την καθολική γραμμή έκδοσης σχήματος. Είναι διαθέσιμη μόνο με το backend PostgreSQL — επιστρέφει σφάλμα \sphinxcode{\sphinxupquote{invalid}} σε ένα backend SQLite, το οποίο δεν έχει έννοια tenant.
 
 
 \subsection{Μετανάστευση μιας βάσης SQLite προς PostgreSQL}

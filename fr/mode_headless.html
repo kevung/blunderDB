@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Mode headless (serveur) &mdash; Documentation blunderDB 0.27.1</title>
+  <title>8. Mode headless (serveur) &mdash; Documentation blunderDB 0.28.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1783f8b8"></script>
+      <script src="_static/documentation_options.js?v=05e8d325"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -227,6 +227,15 @@ serveur s’arrête proprement sur <code class="docutils literal notranslate"><s
 l’enregistrer : <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> reconstruit une position à partir d’une
 chaîne XGID, et <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> à partir d’un fichier de position unique
 <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
+<p>La famille <code class="docutils literal notranslate"><span class="pre">anki</span></code> gagne six méthodes qui étendent le planificateur à
+répétition espacée (FSRS) : <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (journal de chaque révision —
+notation et résultat FSRS — pour les statistiques de rétention et un
+historique fidèle), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (projection du nombre de cartes dues sur
+les prochains jours, cartes en retard comprises), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> /
+<code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (retirer une carte de la file de
+révision temporairement ou définitivement) et <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (ajuste
+le taux de rétention visé d’un paquet vers le taux de réussite observé sur ses
+révisions).</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

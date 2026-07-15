@@ -22,11 +22,11 @@
 \contentsline {subsection}{\numberline {2.2.10}Panel de Comentarios}{10}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Panel de Búsqueda}{10}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Panel de Colecciones}{10}{subsection.2.2.12}%
-\contentsline {subsection}{\numberline {2.2.13}Panel de Partidas}{10}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.13}Panel de Partidas}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Panel de Torneos}{11}{subsection.2.2.14}%
 \contentsline {subsection}{\numberline {2.2.15}Panel Stats}{11}{subsection.2.2.15}%
 \contentsline {subsubsection}{Introducción}{11}{subsubsection*.7}%
-\contentsline {subsubsection}{Apertura del panel}{11}{subsubsection*.8}%
+\contentsline {subsubsection}{Apertura del panel}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Barra de filtro}{12}{subsubsection*.9}%
 \contentsline {paragraph}{Perspectiva del jugador}{12}{paragraph*.10}%
 \contentsline {paragraph}{Filtros disponibles}{12}{paragraph*.11}%
@@ -35,8 +35,8 @@
 \contentsline {paragraph}{Tarjetas de nivel}{13}{paragraph*.14}%
 \contentsline {paragraph}{PR deslizante sobre las últimas N decisiones}{13}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{13}{paragraph*.16}%
-\contentsline {subsubsection}{Pestaña Progresión}{13}{subsubsection*.17}%
-\contentsline {paragraph}{Curva por torneo}{13}{paragraph*.18}%
+\contentsline {subsubsection}{Pestaña Progresión}{14}{subsubsection*.17}%
+\contentsline {paragraph}{Curva por torneo}{14}{paragraph*.18}%
 \contentsline {paragraph}{Gráfico de dispersión por partida}{14}{paragraph*.19}%
 \contentsline {subsubsection}{Pestaña Errores}{14}{subsubsection*.20}%
 \contentsline {paragraph}{Reparto por acción de cubo}{14}{paragraph*.21}%
@@ -51,7 +51,7 @@
 \contentsline {section}{\numberline {2.3}Guía del usuario}{16}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Crear una nueva base de datos}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Abrir una base de datos existente}{16}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Importar y fusionar una base de datos}{16}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Importar y fusionar una base de datos}{17}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Editar una posición}{17}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Añadir una posición a la base de datos}{17}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Etiquetar una posición}{18}{subsection.2.3.6}%
@@ -137,7 +137,7 @@
 \contentsline {section}{\numberline {2.9}Anexo: Uso avanzado de los filtros}{44}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Búsqueda de posiciones en la línea de comandos}{44}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Búsqueda dentro de los resultados actuales}{44}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Biblioteca de filtros}{44}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.3}Biblioteca de filtros}{45}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Ejemplos}{45}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Anexo Windows: detección errónea de blunderDB como software malicioso}{46}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Advertencia de Windows SmartScreen}{47}{subsection.2.10.1}%

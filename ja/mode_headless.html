@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. ヘッドレスモード（サーバー） &mdash; blunderDB 0.27.1 ドキュメント</title>
+  <title>8. ヘッドレスモード（サーバー） &mdash; blunderDB 0.28.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0615af14"></script>
+      <script src="_static/documentation_options.js?v=147e8489"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -195,22 +195,14 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 </ul>
 <p>ビジネスロジックのインターフェースは <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> のスキーマに従います（例：<code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>、<code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> で正常に停止します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">positions</span></code> ファミリーの2つのメソッドは、局面を保存せずにデコードします。<code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> は XGID 文字列から局面を再構築し、<code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> は単一局面ファイル <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> から再構築します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki</span></code> ファミリーには、間隔反復スケジューラ（FSRS）を拡張する6つの新しいメソッドが加わります： <code class="docutils literal notranslate"><span class="pre">anki.reviewLog``（各復習の記録</span> <span class="pre">—</span> <span class="pre">評価とFSRSの結果</span> <span class="pre">—</span> <span class="pre">保持率の統計と正確な履歴のため）、``anki.forecast``（今後数日間に期限が来るカード数の予測、期限超過のカードを含む）、``anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <a href="#id1"><span class="problematic" id="id2">``</span></a>anki.removeCard``（カードを復習キューから一時的または完全に取り除く）、および <a href="#id3"><span class="problematic" id="id4">``</span></a>anki.optimizeParams``（デッキの目標保持率を、その復習で観測された成功率に近づける）。</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQLバックエンドとマルチユーザー<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>共有デプロイの場合、blunderDBはSQLiteファイルではなく <strong>PostgreSQL</strong> にデータを保存できます。バックエンドは <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> と接続文字列 <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。</p>
 <p>データは**テナント（利用者）ごとに分離**されています：各リクエストにはスコープ識別子（ヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>、デフォルトは <code class="docutils literal notranslate"><span class="pre">default</span></code>）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。<code class="docutils literal notranslate"><span class="pre">--rls</span></code> オプションは、補完的にPostgreSQLの <strong>Row-Level Security</strong> を有効にします：テナントごとの分離ポリシーがインストールされ、<code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。</p>
-<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
-état de session</strong> (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l'opération
-s'exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
-PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n'a
-pas de notion de tenant.</p>
+<p>テナントが廃止される際、<code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> は現在のテナント（<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> が示すテナント）のすべてのデータ（ポジション、マッチ、コレクション、履歴など）を完全に削除し、<a href="#id1"><span class="problematic" id="id2">**</span></a>そのセッションの状態**（最後の検索、最後のポジション、開いているタブ — このスコープを接頭辞とする <code class="docutils literal notranslate"><span class="pre">metadata</span></code> の数行）も削除します：この操作は単一のトランザクション内で実行され、冪等です（既に空のテナントをパージしてもエラーにはならず、呼び出しを繰り返しても問題ありません）。また、他のテナントにも、スキーマバージョンのグローバルな行にも一切影響しません。この機能はPostgreSQLバックエンドでのみ利用可能で、テナントという概念を持たないSQLiteバックエンドでは <code class="docutils literal notranslate"><span class="pre">invalid</span></code> エラーを返します。</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>SQLiteデータベースをPostgreSQLへ移行する<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

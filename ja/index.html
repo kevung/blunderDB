@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.27.1 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.28.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0615af14"></script>
+      <script src="_static/documentation_options.js?v=147e8489"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -272,6 +272,10 @@
 <tr class="row-even"><td><p>0.27.0</p></td>
 <td><p>2026/06/13</p></td>
 <td><p>Anki パネル：<em>Study</em> の隣の <em>Cram</em> ボタンから利用できる新しいフリー練習（<em>cram</em>）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。検索：最悪のミス（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド <code class="docutils literal notranslate"><span class="pre">blunders``（エイリアス</span> <span class="pre">``bl</span></code>）。オプションの数値で件数を選べます（<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター <code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code>。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド <a href="#id1"><span class="problematic" id="id2">``</span></a>matches.movesByMatch``（対局の全手を1回の呼び出しで取得）と <a href="#id3"><span class="problematic" id="id4">``</span></a>positions.epc``（両プレイヤーの Effective Pip Count）。<a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Anki パネル</span></a> および <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.28.0</p></td>
+<td><p>2026/07/15</p></td>
+<td><p>検索パネル：識別子入力欄を選択ウィンドウ（テキストで絞り込めるチェックボックスリスト、<em>すべて</em>/<em>なし</em> ボタン、トーナメントをチェックするとそのメンバーであるマッチもチェックされる）に置き換えた統合「マッチ＆トーナメント」フィルター —— 大規模なデータベースでも高速に動作するようになり、マッチタブとトーナメントビューは表示中のマッチについてのみ PR/MWC 指標を再計算するようになりました；<code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> がこれに対応するパリティの差を埋めます。新しい「個別インポート」フィルター（その他グループのチェックボックス、またはコマンドラインの <code class="docutils literal notranslate"><span class="pre">i</span></code> トークン、<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>；CLI では <code class="docutils literal notranslate"><span class="pre">--individual</span></code> でも利用可能）は、マッチのインポートに埋もれてしまうのではなく、単独で保存またはインポートされたポジションを見つけるためのものです。データ消失の不具合を修正：マッチを削除しても、そのマッチに含まれていた個別インポート済み、コレクションに追加済み、またはAnkiパッケージに組み込み済みのポジションは、もう削除されなくなりました。サーバー（ヘッドレス）モード：間隔反復（Anki）スケジューラ向けの新しいメソッドを6つ追加 —— 復習ログ（<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>）、期限到来カードの予測（<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>）、カードの一時停止・保留・削除（<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>）、そしてデッキの目標保持率を観測された成功率に自動調整する（<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>）；複数ユーザー向けPostgreSQL環境でテナントのデータを完全に削除する新しいメソッド <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>；フィルタリング／ソート／ページネーションに対応した新しいメソッド <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>、および 指定したマッチの一覧に限定した PR/MWC 指標を返す <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code>。Linuxネイティブ配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> パッケージ。インポート：マッチをインポートすると、マッチタブが表示され、インポートされたポジションがすぐに確認できるようになりました；単一のポジション（XGPファイル、BGBlitzポジション、ポジションテキストファイル、貼り付けたポジション、またはポジションの一括インポート）をインポートした場合は、マッチタブではなく、インポートしたポジションが表示された解析タブが直接開くようになりました；macOSからフランス語またはドイツ語のeXtreme Gammon解析を貼り付けると空になっていた不具合（システムのクリップボードによりアクセント記号が分解されていたため）を修正しました。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>、<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、および <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a> を参照。</p></td>
 </tr>
 </tbody>
 </table>

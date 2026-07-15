@@ -127,6 +127,16 @@ l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
 chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``.xgp``.
 
+La famille ``anki`` gagne six méthodes qui étendent le planificateur à
+répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —
+notation et résultat FSRS — pour les statistiques de rétention et un
+historique fidèle), ``anki.forecast`` (projection du nombre de cartes dues sur
+les prochains jours, cartes en retard comprises), ``anki.suspendCard`` /
+``anki.buryCard`` / ``anki.removeCard`` (retirer une carte de la file de
+révision temporairement ou définitivement) et ``anki.optimizeParams`` (ajuste
+le taux de rétention visé d'un paquet vers le taux de réussite observé sur ses
+révisions).
+
 .. _headless_postgres:
 
 Backend PostgreSQL et multi-utilisateurs

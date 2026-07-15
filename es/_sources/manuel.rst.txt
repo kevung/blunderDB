@@ -276,6 +276,15 @@ synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met
 jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
+Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre modale)
+plutôt que sur la saisie d'identifiants numériques : deux listes à cocher, une
+pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,
+date, événement pour les matchs ; nom, date, lieu pour les tournois), avec des
+boutons *Tout* / *Aucun* qui n'agissent que sur le sous-ensemble actuellement
+filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
+dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
+l'ensemble de ses matchs.
+
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
    disponibles.
 

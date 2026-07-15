@@ -29,44 +29,44 @@
 \contentsline {subsubsection}{Paneelin avaaminen}{11}{subsubsection*.8}%
 \contentsline {subsubsection}{Suodatinpalkki}{11}{subsubsection*.9}%
 \contentsline {paragraph}{Pelaajanäkökulma}{11}{paragraph*.10}%
-\contentsline {paragraph}{Saatavilla olevat suodattimet}{11}{paragraph*.11}%
+\contentsline {paragraph}{Saatavilla olevat suodattimet}{12}{paragraph*.11}%
 \contentsline {subsubsection}{PR / MWC \sphinxhyphen {}vaihto}{12}{subsubsection*.12}%
 \contentsline {subsubsection}{Dashboard\sphinxhyphen {}välilehti}{12}{subsubsection*.13}%
-\contentsline {paragraph}{Tasokortit}{12}{paragraph*.14}%
+\contentsline {paragraph}{Tasokortit}{13}{paragraph*.14}%
 \contentsline {paragraph}{Liukuva PR viimeisten N päätöksen perusteella}{13}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{13}{paragraph*.16}%
 \contentsline {subsubsection}{Progression\sphinxhyphen {}välilehti}{13}{subsubsection*.17}%
 \contentsline {paragraph}{Turnauskohtainen viivakaavio}{13}{paragraph*.18}%
 \contentsline {paragraph}{Ottelukohtainen hajontakaavio}{13}{paragraph*.19}%
-\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{13}{subsubsection*.20}%
-\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{13}{paragraph*.21}%
+\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{14}{subsubsection*.20}%
+\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{14}{paragraph*.21}%
 \contentsline {paragraph}{Checker / Cube \sphinxhyphen {}vertailu}{14}{paragraph*.22}%
 \contentsline {paragraph}{Virheiden suuruusjakauman histogrammi}{14}{paragraph*.23}%
 \contentsline {subsubsection}{Yhdistämissääntö}{14}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: rajoitukset}{14}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.16}EPC\sphinxhyphen {}paneeli}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.16}EPC\sphinxhyphen {}paneeli}{15}{subsection.2.2.16}%
 \contentsline {subsection}{\numberline {2.2.17}Anki\sphinxhyphen {}paneeli}{15}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Metatietopaneeli}{15}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Lokipaneeli}{15}{subsection.2.2.19}%
-\contentsline {section}{\numberline {2.3}Käyttöopas}{15}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{15}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.2.19}Lokipaneeli}{16}{subsection.2.2.19}%
+\contentsline {section}{\numberline {2.3}Käyttöopas}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{16}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Tuo ja yhdistä tietokanta}{16}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{16}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{17}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{17}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Merkitse asema tunnisteella}{17}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Poista asema}{17}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{17}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{18}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Tuo ottelu}{18}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Tuo ottelukansio}{18}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{18}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{19}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Selaa ottelua}{19}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Hallitse ottelupaneelia}{19}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Hallitse kokoelmia}{19}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Hallitse turnauksia}{20}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{20}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Laske EPC}{20}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{20}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{21}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{21}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{21}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Hae asemia kriteerien perusteella}{21}{subsection.2.3.21}%
@@ -131,14 +131,14 @@
 \contentsline {subsection}{\numberline {2.8.1}Yleiskatsaus}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{40}{subsection.2.8.2}%
 \contentsline {subsubsection}{Päätepisteet}{41}{subsubsection*.33}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{41}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{42}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{42}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{42}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{43}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{43}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{43}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Haku nykyisistä tuloksista}{44}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Suodatinkirjasto}{44}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{44}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{45}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{45}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{46}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{47}{subsection.2.10.2}%

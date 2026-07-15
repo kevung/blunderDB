@@ -80,7 +80,7 @@
 
 \title{blunderDB}
 \date{Jul 15, 2026}
-\release{0.27.1}
+\release{0.28.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -711,6 +711,22 @@ Anki panel: a new free\sphinxhyphen{}drill (\sphinxstyleemphasis{cram}) mode, av
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.28.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+July 15, 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Search panel: unified “Matches \& Tournaments” filter replacing the free\sphinxhyphen{}text ID fields with a picker window (text\sphinxhyphen{}filterable checkbox lists, \sphinxstyleemphasis{All}/\sphinxstyleemphasis{None} buttons, checking a tournament checks its member matches) — faster on large databases, since the Matches tab and Tournaments view now only recompute PR/MWC badges for the matches actually displayed; \sphinxcode{\sphinxupquote{cli list \sphinxhyphen{}\sphinxhyphen{}type tournaments}} closes the matching parity gap. New “Individually Imported” filter (checkbox in the Other group, or the \sphinxcode{\sphinxupquote{i}} command\sphinxhyphen{}line token, \sphinxcode{\sphinxupquote{s i}}; also available in the CLI via \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}}) to find a position that was saved or imported on its own rather than buried in a match import. Fixed a data\sphinxhyphen{}loss bug: deleting a match no longer deletes positions that were individually imported, added to a collection, or added to an Anki deck, even when the deleted match also contained them. Server mode (headless): six new methods for the Anki spaced\sphinxhyphen{}repetition scheduler — review log (\sphinxcode{\sphinxupquote{anki.reviewLog}}), due\sphinxhyphen{}card forecast (\sphinxcode{\sphinxupquote{anki.forecast}}), suspend / bury / remove a card (\sphinxcode{\sphinxupquote{anki.suspendCard}}, \sphinxcode{\sphinxupquote{anki.buryCard}}, \sphinxcode{\sphinxupquote{anki.removeCard}}) and automatically nudging a deck’s target retention rate toward its observed pass rate (\sphinxcode{\sphinxupquote{anki.optimizeParams}}); new \sphinxcode{\sphinxupquote{tenant.purge}} method to permanently delete a tenant’s data on a multi\sphinxhyphen{}user PostgreSQL deployment; new \sphinxcode{\sphinxupquote{matches.list}} (filter/sort/paginate) and \sphinxcode{\sphinxupquote{stats.matchBadges}} (PR/MWC badges scoped to a list of matches) methods. Native Linux distribution: \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} packages, which set the execute bit that was lost when downloading the raw binary. Import: after importing a match, the Matches tab now displays and the imported positions are immediately visible; after importing a standalone position (XGP file, BGBlitz position, position text file, pasted position, or a batch of positions), the Analysis tab now opens directly on the imported position instead of the Matches tab; fixed pasting a French or German eXtreme Gammon analysis from macOS, which came back empty (accents decomposed by the system clipboard). See {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}, {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{List of commands}}}}} and {\hyperref[\detokenize{telecharge_install:telecharge-install}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Download and Installation}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -732,15 +748,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.1.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.1.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
 
 \end{itemize}
 
@@ -792,7 +808,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raw binary (advanced method)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
+The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -800,7 +816,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}. Native packages select the correct dependency automatically.
+Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Native packages select the correct dependency automatically.
 \end{sphinxadmonition}
 
 
@@ -1114,6 +1130,9 @@ To refine a search among the currently filtered positions, use the \sphinxcode{\
 
 \sphinxAtStartPar
 The panel offers an explicit control over the \sphinxstylestrong{decision type} searched for: \sphinxstyleemphasis{Indifferent} (no filter), \sphinxstyleemphasis{Checker} (checker decisions) or \sphinxstyleemphasis{Cube} (cube decisions). When \sphinxstyleemphasis{Cube} is selected, a second list specifies the sub\sphinxhyphen{}type: \sphinxstyleemphasis{All}, \sphinxstyleemphasis{Double / No double} (the player on roll has to decide whether to double) or \sphinxstyleemphasis{Take / Pass} (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In \sphinxstyleemphasis{Take / Pass} mode, the cube is shown in the centre of the board at the offered value; that value remains editable.
+
+\sphinxAtStartPar
+The \sphinxstylestrong{Matches \& Tournaments} filter is backed by a shared picker (a modal window) instead of typed numeric IDs: two checkbox lists, one for matches and one for tournaments, each text\sphinxhyphen{}filterable (player, date, event for matches; name, date, location for tournaments), with \sphinxstyleemphasis{All} / \sphinxstyleemphasis{None} buttons that act only on the currently filtered subset. Checking a tournament automatically checks (and greys out) its member matches in the match list, making visible the fact that a tournament is equivalent to the set of its matches.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
@@ -5385,6 +5404,10 @@ Display database contents.
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{tournaments}} — List of tournaments.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} — List of positions (limited to 10 by default).
 
 \item {} 
@@ -6144,6 +6167,9 @@ The business surface follows the \sphinxcode{\sphinxupquote{POST /v1/<family>.<m
 \sphinxAtStartPar
 Two methods in the \sphinxcode{\sphinxupquote{positions}} family decode a position without storing it: \sphinxcode{\sphinxupquote{positions.fromXGID}} rebuilds a position from an XGID string, and \sphinxcode{\sphinxupquote{positions.fromXGP}} from a single\sphinxhyphen{}position \sphinxcode{\sphinxupquote{.xgp}} file.
 
+\sphinxAtStartPar
+The \sphinxcode{\sphinxupquote{anki}} family gains six methods that extend the spaced\sphinxhyphen{}repetition scheduler (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (a log of every review — rating and FSRS outcome — powering retention statistics and a faithful history), \sphinxcode{\sphinxupquote{anki.forecast}} (a projection of the number of cards due over the coming days, including overdue cards), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (remove a card from the review queue temporarily or permanently) and \sphinxcode{\sphinxupquote{anki.optimizeParams}} (nudges a deck’s target retention rate toward the pass rate observed on its reviews).
+
 
 \subsection{PostgreSQL backend and multi\sphinxhyphen{}user}
 \label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
@@ -6154,16 +6180,7 @@ For a shared deployment, blunderDB can store data in \sphinxstylestrong{PostgreS
 Data is \sphinxstylestrong{partitioned per tenant}: each request carries a scope identifier (the \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}} header, \sphinxcode{\sphinxupquote{default}} by default), which lets several users share the same instance without seeing each other’s data. The \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} option additionally enables PostgreSQL’s \sphinxstylestrong{Row\sphinxhyphen{}Level Security}: per\sphinxhyphen{}tenant isolation policies are installed and \sphinxcode{\sphinxupquote{app.tenant\_id}} is set per connection. This is an optional defence in depth, disabled by default.
 
 \sphinxAtStartPar
-Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
-état de session} (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
-pas de notion de tenant.
+When a tenant is decommissioned, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} permanently deletes all its data (positions, matches, collections, history, etc.) for the current tenant (the one carried by \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{as well as its session state} (last search, last position, open tabs — the handful of \sphinxcode{\sphinxupquote{metadata}} rows prefixed with that scope): the operation runs in a single transaction, is idempotent (no error purging an already\sphinxhyphen{}empty tenant or repeating the call), and does not affect any other tenant or the global schema\sphinxhyphen{}version row. It is only available with the PostgreSQL backend — it returns an \sphinxcode{\sphinxupquote{invalid}} error on a SQLite backend, which has no notion of tenant.
 
 
 \subsection{Migrating a SQLite database to PostgreSQL}

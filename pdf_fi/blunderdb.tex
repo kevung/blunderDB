@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{15.07.2026}
-\release{0.27.1}
+\release{0.28.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -713,6 +713,22 @@ Anki\sphinxhyphen{}paneeli: uusi vapaan harjoittelun (\sphinxstyleemphasis{cram}
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.28.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+15.7.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Hakupaneeli: yhtenäinen « Ottelut ja turnaukset » \sphinxhyphen{}suodatin, joka korvaa tunnisteiden syöttökentät valintaikkunalla (tekstillä suodatettavat valintaruutuluettelot, \sphinxstyleemphasis{Kaikki}/\sphinxstyleemphasis{Ei mitään} \sphinxhyphen{}painikkeet, turnauksen valitseminen valitsee sen jäsenottelut) — nopeampi suurilla tietokannoilla, sillä Ottelut\sphinxhyphen{}välilehti ja Turnaukset\sphinxhyphen{}näkymä laskevat PR/MWC\sphinxhyphen{}indikaattorit enää vain näytetyille otteluille; \sphinxcode{\sphinxupquote{cli list \sphinxhyphen{}\sphinxhyphen{}type tournaments}} täyttää vastaavan pariteettiaukon. Uusi « Erikseen tuotu » \sphinxhyphen{}suodatin (Muut\sphinxhyphen{}ryhmän valintaruutu tai komentorivin \sphinxcode{\sphinxupquote{i}}\sphinxhyphen{}tunnus, \sphinxcode{\sphinxupquote{s i}}; saatavilla myös CLI:ssä valitsimella \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}}) sellaisen aseman löytämiseksi, joka on tallennettu tai tuotu erikseen sen sijaan, että se hukkuisi ottelun tuontiin. Korjattu tiedonmenetys: ottelun poistaminen ei enää poista erikseen tuotuja, kokoelmaan lisättyjä tai Anki\sphinxhyphen{}pakkaan liitettyjä asemia, vaikka poistettu ottelu sisälsi myös ne. Palvelintila (headless): kuusi uutta metodia Ankin aikaväliin perustuvalle kertausajastimelle — kertausloki (\sphinxcode{\sphinxupquote{anki.reviewLog}}), erääntyvien korttien ennuste (\sphinxcode{\sphinxupquote{anki.forecast}}), kortin keskeyttäminen / hautaaminen / poistaminen (\sphinxcode{\sphinxupquote{anki.suspendCard}}, \sphinxcode{\sphinxupquote{anki.buryCard}}, \sphinxcode{\sphinxupquote{anki.removeCard}}) sekä pakan tavoitesäilytysasteen automaattinen säätäminen kohti sen havaittua onnistumisastetta (\sphinxcode{\sphinxupquote{anki.optimizeParams}}); uusi \sphinxcode{\sphinxupquote{tenant.purge}}\sphinxhyphen{}metodi, joka poistaa pysyvästi vuokralaisen tiedot monikäyttäjäisessä PostgreSQL\sphinxhyphen{}käyttöönotossa; uudet metodit \sphinxcode{\sphinxupquote{matches.list}} (suodatus/lajittelu/sivutus) ja \sphinxcode{\sphinxupquote{stats.matchBadges}} (PR/MWC\sphinxhyphen{}indikaattorit rajattuna ottelulistaan). Natiivi Linux\sphinxhyphen{}jakelu: \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}paketit, jotka säilyttävät suoritusbitin, joka katosi raakaa binääriä ladattaessa. Tuonti: ottelun tuonnin jälkeen Ottelut\sphinxhyphen{}välilehti avautuu näkyviin ja tuodut asemat ovat heti näkyvissä; yksittäisen aseman tuonnin jälkeen (XGP\sphinxhyphen{}tiedosto, BGBlitz\sphinxhyphen{}asema, asematekstitiedosto, liitetty asema tai asemaerä) Analyysi\sphinxhyphen{}välilehti avautuu nyt suoraan tuotuun asemaan Ottelut\sphinxhyphen{}välilehden sijaan; korjattu ranskan\sphinxhyphen{} tai saksankielisen eXtreme Gammon \sphinxhyphen{}analyysin liittäminen macOS:stä, joka jäi tyhjäksi (järjestelmän leikepöytä hajotti aksentit). Katso {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}tila (palvelin)}}}}}, {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoluettelo}}}}} ja {\hyperref[\detokenize{telecharge_install:telecharge-install}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Lataaminen ja asentaminen}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -734,15 +750,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.1.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.1.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
 
 \end{itemize}
 
@@ -794,7 +810,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raaka binääri (edistynyt menetelmä)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
+Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -802,7 +818,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
+Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
 \end{sphinxadmonition}
 
 
@@ -1116,6 +1132,9 @@ Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä 
 
 \sphinxAtStartPar
 Paneeli tarjoaa nimenomaisen hallinnan haettavalle \sphinxstylestrong{päätöstyypille}: \sphinxstyleemphasis{Indifférent} (ei suodatinta), \sphinxstyleemphasis{Siirto} (siirtopäätökset) tai \sphinxstyleemphasis{Tuplaus} (kuutiopäätökset). Kun \sphinxstyleemphasis{Tuplaus} on valittuna, toinen luettelo tarkentaa alityypin: \sphinxstyleemphasis{Kaikki}, \sphinxstyleemphasis{Tuplaus / Ei tuplausta} (vuorossa olevan pelaajan on päätettävä, tuplaako) tai \sphinxstyleemphasis{Hyväksy / Luovuta} (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. \sphinxstyleemphasis{Hyväksy / Luovuta} \sphinxhyphen{}tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Ottelut ja turnaukset} \sphinxhyphen{}suodatin perustuu yhteiseen valitsimeen (modaali\sphinxhyphen{}ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä \sphinxstyleemphasis{Kaikki} / \sphinxstyleemphasis{Ei mitään} \sphinxhyphen{}painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.
 
 \begin{sphinxadmonition}{tip}{Vihje:}
 \sphinxAtStartPar
@@ -5387,6 +5406,10 @@ Näytä tietokannan sisältö.
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{tournaments}} — Luettelo turnauksista.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} — Luettelo asemista (oletuksena rajoitettu 10:een).
 
 \item {} 
@@ -6146,6 +6169,9 @@ Toiminnallinen rajapinta noudattaa kaavaa \sphinxcode{\sphinxupquote{POST /v1/<p
 \sphinxAtStartPar
 Kaksi \sphinxcode{\sphinxupquote{positions}}\sphinxhyphen{}perheen metodia purkaa aseman tallentamatta sitä: \sphinxcode{\sphinxupquote{positions.fromXGID}} rakentaa aseman XGID\sphinxhyphen{}merkkijonosta ja \sphinxcode{\sphinxupquote{positions.fromXGP}} yksittäisen aseman \sphinxcode{\sphinxupquote{.xgp}}\sphinxhyphen{}tiedostosta.
 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{anki}}\sphinxhyphen{}perhe saa kuusi uutta metodia, jotka laajentavat aikaväliin perustuvaa kertausajastinta (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (loki jokaisesta kertauksesta — arvosana ja FSRS\sphinxhyphen{}tulos — säilytystilastoja ja tarkkaa historiaa varten), \sphinxcode{\sphinxupquote{anki.forecast}} (ennuste erääntyvien korttien määrästä tulevina päivinä, myöhässä olevat kortit mukaan lukien), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (kortin poistaminen kertausjonosta väliaikaisesti tai pysyvästi) sekä \sphinxcode{\sphinxupquote{anki.optimizeParams}} (säätää pakan tavoitesäilytysastetta kohti sen kertauksissa havaittua onnistumisastetta).
+
 
 \subsection{PostgreSQL\sphinxhyphen{}taustajärjestelmä ja monikäyttäjäisyys}
 \label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
@@ -6156,16 +6182,7 @@ Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot \sphinxstylestron
 Tiedot on \sphinxstylestrong{eristetty vuokralaisittain}: jokainen pyyntö sisältää scope\sphinxhyphen{}tunnisteen (otsake \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, oletuksena \sphinxcode{\sphinxupquote{default}}), mikä sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. Valinta \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} ottaa lisäksi käyttöön PostgreSQL:n \sphinxstylestrong{Row\sphinxhyphen{}Level Securityn}: vuokralaiskohtaiset eristyskäytännöt asennetaan ja \sphinxcode{\sphinxupquote{app.tenant\_id}} asetetaan yhteyskohtaisesti. Tämä on valinnainen syvyyspuolustus, joka on oletuksena pois käytöstä.
 
 \sphinxAtStartPar
-Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
-état de session} (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
-pas de notion de tenant.
+Kun vuokralainen poistetaan käytöstä, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} poistaa pysyvästi kaikki sen tiedot (asemat, ottelut, kokoelmat, historia jne.) nykyiseltä vuokralaiselta (se, jonka otsake \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}} määrittää), \sphinxstylestrong{sekä sen istunnon tilan} (viimeisin haku, viimeisin asema, avoimet välilehdet — ne muutamat \sphinxcode{\sphinxupquote{metadata}}\sphinxhyphen{}rivit, joiden etuliitteenä on tämä scope): toiminto suoritetaan yhdessä transaktiossa, on idempotentti (tyhjän vuokralaisen tyhjentäminen tai kutsun toistaminen ei aiheuta virhettä) eikä vaikuta muihin vuokralaisiin eikä skeeman version globaaliin riviin. Se on käytettävissä vain PostgreSQL\sphinxhyphen{}taustajärjestelmän kanssa — SQLite\sphinxhyphen{}taustajärjestelmässä, jolla ei ole vuokralaisen käsitettä, se palauttaa \sphinxcode{\sphinxupquote{invalid}}\sphinxhyphen{}virheen.
 
 
 \subsection{SQLite\sphinxhyphen{}tietokannan siirtäminen PostgreSQL:ään}

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. マニュアル &mdash; blunderDB 0.27.1 ドキュメント</title>
+  <title>2. マニュアル &mdash; blunderDB 0.28.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0615af14"></script>
+      <script src="_static/documentation_options.js?v=147e8489"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -264,6 +264,7 @@
 <p><strong>検索</strong> パネル（<em>CTRL-F</em> または <em>TAB</em>）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。<em>TAB</em> キーは検索パネルとポジションエディターを同時に開き、ボード上で検索するチェッカーの構造を定義できます。</p>
 <p>現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドを使用します（例：<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。検索パネルには同じ機能のための <em>Search in current results</em> チェックボックスも用意されています。</p>
 <p>このパネルでは、検索する <strong>判断タイプ</strong> を明示的に制御できます。 <em>指定なし</em> （フィルタなし）、 <em>チェッカー</em> （チェッカーの判断）、または <em>キューブ</em> （キューブの判断）です。 <em>キューブ</em> を選択すると、2つ目のリストでサブタイプを指定できます。 <em>すべて</em> 、 <em>ダブル / ノーダブル</em> （手番のプレイヤーがダブルするかを判断する）、または <em>テイク / パス</em> （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 <em>テイク / パス</em> モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。</p>
+<p><strong>マッチ＆トーナメント</strong> フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。<em>すべて</em> / <em>なし</em> ボタンは、現在絞り込まれているサブセットにのみ作用します。トーナメントをチェックすると、そのメンバーであるマッチがマッチリスト内で自動的にチェックされ（グレー表示になり）、トーナメントがそのマッチ全体の集合に相当することが視覚的にわかります。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なフィルターの一覧については <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">4 章</span></a> を参照してください。</p>

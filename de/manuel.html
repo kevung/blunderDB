@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Handbuch &mdash; blunderDB 0.27.1 Dokumentation</title>
+  <title>2. Handbuch &mdash; blunderDB 0.28.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e270cfb0"></script>
+      <script src="_static/documentation_options.js?v=f01be42d"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -264,6 +264,7 @@
 <p>Das Panel <strong>Suche</strong> (<em>CTRL-F</em> oder <em>TAB</em>) ermöglicht es, Stellungen nach frei kombinierbaren Kriterien zu filtern: Steinstruktur, Typ der Doppler-Entscheidung, Fehlergröße, Datum, Tags usw. Die Taste <em>TAB</em> öffnet gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu suchende Steinstruktur direkt auf dem Brett definiert werden kann.</p>
 <p>Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl <code class="docutils literal notranslate"><span class="pre">ss</span></code> gefolgt von Filtern (z. B.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen <em>Search in current results</em>.</p>
 <p>Das Panel bietet eine explizite Steuerung des gesuchten <strong>Entscheidungstyps</strong>: <em>Egal</em> (kein Filter), <em>Zug</em> (Zugentscheidungen) oder <em>Dopplung</em> (Doppler-Entscheidungen). Wenn <em>Dopplung</em> ausgewählt ist, gibt eine zweite Liste den Untertyp an: <em>Alle</em>, <em>Dopplung / Kein Doppel</em> (der Spieler am Zug muss über das Doppeln entscheiden) oder <em>Annehmen / Aufgeben</em> (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus <em>Annehmen / Aufgeben</em> wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.</p>
+<p>Der Filter <strong>Matches &amp; Turniere</strong> stützt sich auf einen gemeinsamen Auswahldialog (modales Fenster) anstelle der Eingabe numerischer Kennungen: zwei Kontrollkästchen-Listen, eine für Matches und eine für Turniere, jeweils per Text filterbar (Spieler, Datum, Ereignis für Matches; Name, Datum, Ort für Turniere), mit den Schaltflächen <em>Alle</em> / <em>Keine</em>, die nur auf die aktuell gefilterte Teilmenge wirken. Das Ankreuzen eines Turniers kreuzt automatisch dessen zugehörige Matches in der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein Turnier der Gesamtheit seiner Matches entspricht.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tipp</p>
 <p>Siehe <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Abschnitt 4</span></a> für die Liste der verfügbaren Filter.</p>

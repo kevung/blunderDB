@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.27.1</title>
+  <title>8. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.28.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=81161682"></script>
+      <script src="_static/documentation_options.js?v=937d3d1f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -195,22 +195,14 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 </ul>
 <p>Η επιφάνεια λειτουργιών ακολουθεί το σχήμα <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> (για παράδειγμα <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Οι οικογένειες καλύπτουν τις θέσεις, τις αναλύσεις, τους αγώνες, τα σχόλια, τις συλλογές, τα τουρνουά, τις κάρτες Anki, τα φίλτρα, τις συνεδρίες, την αναζήτηση, τα μεταδεδομένα, τα στατιστικά και την εισαγωγή. Τα σημεία πρόσβασης καταχώρισης επιστρέφουν μια ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζεται καθαρά με <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
 <p>Δύο μέθοδοι της οικογένειας <code class="docutils literal notranslate"><span class="pre">positions</span></code> αποκωδικοποιούν μια θέση χωρίς να την αποθηκεύουν: η <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> ανακατασκευάζει μια θέση από μια συμβολοσειρά XGID και η <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> από ένα αρχείο μεμονωμένης θέσης <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
+<p>Η οικογένεια <code class="docutils literal notranslate"><span class="pre">anki</span></code> αποκτά έξι μεθόδους που επεκτείνουν τον προγραμματιστή διαστηματικής επανάληψης (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (καταγραφή κάθε επανάληψης — βαθμολογία και αποτέλεσμα FSRS — για στατιστικά διατήρησης και ένα πιστό ιστορικό), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (προβολή του αριθμού καρτών που οφείλονται τις επόμενες ημέρες, συμπεριλαμβανομένων των καθυστερημένων καρτών), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (αφαίρεση μιας κάρτας από την ουρά επανάληψης προσωρινά ή οριστικά) και <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (προσαρμόζει το στοχευόμενο ποσοστό διατήρησης ενός deck προς το ποσοστό επιτυχίας που παρατηρείται στις επαναλήψεις του).</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>Backend PostgreSQL και πολλαπλοί χρήστες<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>Για μια κοινόχρηστη ανάπτυξη, το blunderDB μπορεί να αποθηκεύει τα δεδομένα στο <strong>PostgreSQL</strong> αντί σε ένα αρχείο SQLite. Το backend επιλέγεται μέσω του <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> και της συμβολοσειράς σύνδεσης <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την εκκίνηση.</p>
 <p>Τα δεδομένα είναι <strong>διαχωρισμένα ανά tenant</strong> (μισθωτή): κάθε αίτημα φέρει ένα αναγνωριστικό scope (κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, εξ ορισμού <code class="docutils literal notranslate"><span class="pre">default</span></code>), πράγμα που επιτρέπει σε πολλούς χρήστες να μοιράζονται το ίδιο instance χωρίς να βλέπουν τα δεδομένα των άλλων. Η επιλογή <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ενεργοποιεί επιπλέον το <strong>Row-Level Security</strong> του PostgreSQL: εγκαθίστανται πολιτικές απομόνωσης ανά tenant και το <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> ορίζεται ανά σύνδεση. Πρόκειται για μια προαιρετική άμυνα σε βάθος, απενεργοποιημένη εξ ορισμού.</p>
-<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
-état de session</strong> (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n’a
-pas de notion de tenant.</p>
+<p>Όταν ένα tenant καταργείται, το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> διαγράφει οριστικά όλα τα δεδομένα του (θέσεις, αγώνες, συλλογές, ιστορικό κ.λπ.) για το τρέχον tenant (αυτό που φέρει το <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>καθώς και την κατάσταση συνεδρίας του</strong> (τελευταία αναζήτηση, τελευταία θέση, ανοιχτές καρτέλες — τις λίγες γραμμές <code class="docutils literal notranslate"><span class="pre">metadata</span></code> με πρόθεμα αυτού του scope): η λειτουργία εκτελείται σε μία μοναδική συναλλαγή, είναι ιδεμποτική (κανένα σφάλμα κατά την εκκαθάριση ενός ήδη κενού tenant ή κατά την επανάληψη της κλήσης) και δεν επηρεάζει κανένα άλλο tenant ούτε την καθολική γραμμή έκδοσης σχήματος. Είναι διαθέσιμη μόνο με το backend PostgreSQL — επιστρέφει σφάλμα <code class="docutils literal notranslate"><span class="pre">invalid</span></code> σε ένα backend SQLite, το οποίο δεν έχει έννοια tenant.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>Μετανάστευση μιας βάσης SQLite προς PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

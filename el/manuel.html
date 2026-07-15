@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.27.1</title>
+  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.28.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=81161682"></script>
+      <script src="_static/documentation_options.js?v=937d3d1f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -264,6 +264,7 @@
 <p>Ο πίνακας <strong>Αναζήτησης</strong> (<em>CTRL-F</em> ή <em>TAB</em>) επιτρέπει το φιλτράρισμα των θέσεων σύμφωνα με κριτήρια που συνδυάζονται ελεύθερα: δομή πουλιών, τύπος απόφασης κύβου, μέγεθος σφάλματος, ημερομηνίες, ετικέτες κ.λπ. Το πλήκτρο <em>TAB</em> ανοίγει ταυτόχρονα τον πίνακα αναζήτησης και τον επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς αναζήτηση πάνω στο ταμπλό.</p>
 <p>Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> ακολουθούμενη από φίλτρα (π.χ.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου <em>Search in current results</em> για την ίδια λειτουργία.</p>
 <p>Το πάνελ προσφέρει έναν ρητό έλεγχο του <strong>τύπου απόφασης</strong> που αναζητείται: <em>Αδιάφορο</em> (κανένα φίλτρο), <em>Πιόνια</em> (αποφάσεις κίνησης) ή <em>Κύβος</em> (αποφάσεις κύβου). Όταν είναι επιλεγμένο το <em>Κύβος</em>, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: <em>Όλα</em>, <em>Διπλασιασμός / Όχι</em> (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή <em>Αποδοχή / Πάσο</em> (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία <em>Αποδοχή / Πάσο</em>, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.</p>
+<p>Το φίλτρο <strong>Αγώνες &amp; Τουρνουά</strong> στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά <em>Όλα</em> / <em>Κανένα</em> που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες-μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.</p>
 <div class="admonition tip">
 <p class="admonition-title">Πρακτική συμβουλή</p>
 <p>Ανατρέξτε στο <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Τομέας 4</span></a> για τη λίστα των διαθέσιμων φίλτρων.</p>

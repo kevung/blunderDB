@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless-tila (palvelin) &mdash; blunderDB 0.27.1 documentation</title>
+  <title>8. Headless-tila (palvelin) &mdash; blunderDB 0.28.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8e3a62bc"></script>
+      <script src="_static/documentation_options.js?v=9c514921"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -195,22 +195,14 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 </ul>
 <p>Toiminnallinen rajapinta noudattaa kaavaa <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> (esimerkiksi <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki-kortit, suodattimet, istunnot, haun, metatiedot, tilastot ja tuonnin. Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä kohti). Palvelin pysähtyy siististi signaaleilla <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
 <p>Kaksi <code class="docutils literal notranslate"><span class="pre">positions</span></code>-perheen metodia purkaa aseman tallentamatta sitä: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rakentaa aseman XGID-merkkijonosta ja <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> yksittäisen aseman <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>-tiedostosta.</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki</span></code>-perhe saa kuusi uutta metodia, jotka laajentavat aikaväliin perustuvaa kertausajastinta (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (loki jokaisesta kertauksesta — arvosana ja FSRS-tulos — säilytystilastoja ja tarkkaa historiaa varten), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (ennuste erääntyvien korttien määrästä tulevina päivinä, myöhässä olevat kortit mukaan lukien), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (kortin poistaminen kertausjonosta väliaikaisesti tai pysyvästi) sekä <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (säätää pakan tavoitesäilytysastetta kohti sen kertauksissa havaittua onnistumisastetta).</p>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">
 <span id="headless-postgres"></span><h2><span class="section-number">8.3. </span>PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
 <p>Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot <strong>PostgreSQL</strong>:ään SQLite-tiedoston sijaan. Taustajärjestelmä valitaan valinnalla <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> ja yhteysmerkkijonolla <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä.</p>
 <p>Tiedot on <strong>eristetty vuokralaisittain</strong>: jokainen pyyntö sisältää scope-tunnisteen (otsake <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, oletuksena <code class="docutils literal notranslate"><span class="pre">default</span></code>), mikä sallii usean käyttäjän jakaa saman instanssin näkemättä toistensa tietoja. Valinta <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ottaa lisäksi käyttöön PostgreSQL:n <strong>Row-Level Securityn</strong>: vuokralaiskohtaiset eristyskäytännöt asennetaan ja <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> asetetaan yhteyskohtaisesti. Tämä on valinnainen syvyyspuolustus, joka on oletuksena pois käytöstä.</p>
-<p>Quand un tenant est décommissionné, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>ainsi que son
-état de session</strong> (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes <code class="docutils literal notranslate"><span class="pre">metadata</span></code> préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur <code class="docutils literal notranslate"><span class="pre">invalid</span></code> sur un backend SQLite, qui n’a
-pas de notion de tenant.</p>
+<p>Kun vuokralainen poistetaan käytöstä, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> poistaa pysyvästi kaikki sen tiedot (asemat, ottelut, kokoelmat, historia jne.) nykyiseltä vuokralaiselta (se, jonka otsake <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> määrittää), <strong>sekä sen istunnon tilan</strong> (viimeisin haku, viimeisin asema, avoimet välilehdet — ne muutamat <code class="docutils literal notranslate"><span class="pre">metadata</span></code>-rivit, joiden etuliitteenä on tämä scope): toiminto suoritetaan yhdessä transaktiossa, on idempotentti (tyhjän vuokralaisen tyhjentäminen tai kutsun toistaminen ei aiheuta virhettä) eikä vaikuta muihin vuokralaisiin eikä skeeman version globaaliin riviin. Se on käytettävissä vain PostgreSQL-taustajärjestelmän kanssa — SQLite-taustajärjestelmässä, jolla ei ole vuokralaisen käsitettä, se palauttaa <code class="docutils literal notranslate"><span class="pre">invalid</span></code>-virheen.</p>
 </section>
 <section id="migrer-une-base-sqlite-vers-postgresql">
 <span id="headless-migrate"></span><h2><span class="section-number">8.4. </span>SQLite-tietokannan siirtäminen PostgreSQL:ään<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>

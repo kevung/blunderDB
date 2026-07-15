@@ -254,6 +254,7 @@ Affiche le contenu de la base de données.
 **Types:**
 
 * ``matches`` — Liste des matchs importés.
+* ``tournaments`` — Liste des tournois.
 * ``positions`` — Liste des positions (limité à 10 par défaut).
 * ``stats`` — Statistiques globales (positions, analyses, matchs, parties, coups).
 

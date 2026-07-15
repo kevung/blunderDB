@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{15.07.2026}
-\release{0.27.1}
+\release{0.28.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -713,6 +713,22 @@ Anki\sphinxhyphen{}Panel: ein neuer Modus für freies Üben (\sphinxstyleemphasi
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.28.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+15/07/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Suchpanel: einheitlicher Filter „Matches \& Turniere“, der die Eingabefelder für numerische Kennungen durch ein Auswahlfenster ersetzt (per Text filterbare Kontrollkästchen\sphinxhyphen{}Listen, Schaltflächen \sphinxstyleemphasis{Alle}/\sphinxstyleemphasis{Keine}, das Ankreuzen eines Turniers kreuzt dessen zugehörige Matches an) — schneller bei großen Datenbanken, da der Matches\sphinxhyphen{}Tab und die Turnier\sphinxhyphen{}Ansicht die PR/MWC\sphinxhyphen{}Indikatoren nur noch für die angezeigten Matches neu berechnen; \sphinxcode{\sphinxupquote{cli list \sphinxhyphen{}\sphinxhyphen{}type tournaments}} schließt die entsprechende Parity\sphinxhyphen{}Lücke. Neuer Filter „Einzeln importiert“ (Kontrollkästchen der Gruppe Sonstiges, oder das Befehlskürzel \sphinxcode{\sphinxupquote{i}}, \sphinxcode{\sphinxupquote{s i}}; auch über die CLI mit \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}} verfügbar), um eine Stellung zu finden, die einzeln gespeichert oder importiert wurde, statt in einem Match\sphinxhyphen{}Import verborgen zu sein. Fehlerbehebung bei Datenverlust: Das Löschen eines Matches löscht nun keine Stellungen mehr, die einzeln importiert, einer Sammlung hinzugefügt oder in ein Anki\sphinxhyphen{}Deck aufgenommen wurden, selbst wenn dieses Match sie ebenfalls enthielt. Server\sphinxhyphen{}Modus (headless): sechs neue Methoden für den Anki\sphinxhyphen{}Planer der verteilten Wiederholung (FSRS) — Wiederholungsprotokoll (\sphinxcode{\sphinxupquote{anki.reviewLog}}), Vorschau der fälligen Karten (\sphinxcode{\sphinxupquote{anki.forecast}}), Aussetzen / Zurückstellen / Löschen einer Karte (\sphinxcode{\sphinxupquote{anki.suspendCard}}, \sphinxcode{\sphinxupquote{anki.buryCard}}, \sphinxcode{\sphinxupquote{anki.removeCard}}) sowie automatische Anpassung der Zielretention eines Decks an dessen beobachtete Erfolgsquote (\sphinxcode{\sphinxupquote{anki.optimizeParams}}); neue Methode \sphinxcode{\sphinxupquote{tenant.purge}} zum endgültigen Löschen der Daten eines Tenants bei einem PostgreSQL\sphinxhyphen{}Mehrbenutzer\sphinxhyphen{}Deployment; neue Methoden \sphinxcode{\sphinxupquote{matches.list}} (Filterung/Sortierung/Paginierung) und \sphinxcode{\sphinxupquote{stats.matchBadges}} (PR/MWC\sphinxhyphen{}Indikatoren begrenzt auf eine Liste von Matches). Native Linux\sphinxhyphen{}Distribution: \sphinxcode{\sphinxupquote{.deb}}\sphinxhyphen{}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}Pakete, die das beim Herunterladen der rohen Binärdatei verlorene Ausführungsrecht beibehalten. Import: Nach dem Import eines Matches wird nun der Matches\sphinxhyphen{}Tab angezeigt, und die importierten Stellungen sind sofort sichtbar; nach dem Import einer einzelnen Stellung (XGP\sphinxhyphen{}Datei, BGBlitz\sphinxhyphen{}Stellung, Stellungstextdatei, eingefügte Stellung oder ein Stellungsstapel) öffnet sich nun direkt der Analyse\sphinxhyphen{}Tab mit der importierten Stellung, statt des Matches\sphinxhyphen{}Tabs; behoben: das Einfügen einer französischen oder deutschen eXtreme\sphinxhyphen{}Gammon\sphinxhyphen{}Analyse von macOS aus, das leer blieb (durch die Zwischenablage des Systems zerlegte Akzente). Siehe {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}Modus (Server)}}}}}, {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste der Befehle}}}}} und {\hyperref[\detokenize{telecharge_install:telecharge-install}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Download und Installation}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -734,15 +750,15 @@ Die neueste Version von blunderDB ist unter der MIT\sphinxhyphen{}Lizenz verfüg
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.27.1.exe}
+für Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1}
+für Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
 
 \item {} 
 \sphinxAtStartPar
-für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.27.1.zip}
+für Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
 
 \end{itemize}
 
@@ -794,7 +810,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Rohbinärdatei (fortgeschrittene Methode)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Die Rohbinärdatei \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.27.1} bleibt verfügbar. Da ein Browser beim Herunterladen das Ausführbar\sphinxhyphen{}Bit entfernt, müssen Sie es vor dem ersten Start wiederherstellen:
+Die Rohbinärdatei \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} bleibt verfügbar. Da ein Browser beim Herunterladen das Ausführbar\sphinxhyphen{}Bit entfernt, müssen Sie es vor dem ersten Start wiederherstellen:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -802,7 +818,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Es werden zwei Linux\sphinxhyphen{}Varianten je nach Version der webkit2gtk\sphinxhyphen{}Bibliothek veröffentlicht. Wenn Sie die Fehlermeldung \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1: Verwenden Sie das \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}Paket, das AUR\sphinxhyphen{}Paket oder laden Sie die dedizierte Version \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.27.1} herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus.
+Es werden zwei Linux\sphinxhyphen{}Varianten je nach Version der webkit2gtk\sphinxhyphen{}Bibliothek veröffentlicht. Wenn Sie die Fehlermeldung \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} erhalten, verwendet Ihre Distribution webkit2gtk\sphinxhyphen{}4.1: Verwenden Sie das \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}Paket, das AUR\sphinxhyphen{}Paket oder laden Sie die dedizierte Version \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0} herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus.
 \end{sphinxadmonition}
 
 
@@ -1116,6 +1132,9 @@ Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden 
 
 \sphinxAtStartPar
 Das Panel bietet eine explizite Steuerung des gesuchten \sphinxstylestrong{Entscheidungstyps}: \sphinxstyleemphasis{Egal} (kein Filter), \sphinxstyleemphasis{Zug} (Zugentscheidungen) oder \sphinxstyleemphasis{Dopplung} (Doppler\sphinxhyphen{}Entscheidungen). Wenn \sphinxstyleemphasis{Dopplung} ausgewählt ist, gibt eine zweite Liste den Untertyp an: \sphinxstyleemphasis{Alle}, \sphinxstyleemphasis{Dopplung / Kein Doppel} (der Spieler am Zug muss über das Doppeln entscheiden) oder \sphinxstyleemphasis{Annehmen / Aufgeben} (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus \sphinxstyleemphasis{Annehmen / Aufgeben} wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.
+
+\sphinxAtStartPar
+Der Filter \sphinxstylestrong{Matches \& Turniere} stützt sich auf einen gemeinsamen Auswahldialog (modales Fenster) anstelle der Eingabe numerischer Kennungen: zwei Kontrollkästchen\sphinxhyphen{}Listen, eine für Matches und eine für Turniere, jeweils per Text filterbar (Spieler, Datum, Ereignis für Matches; Name, Datum, Ort für Turniere), mit den Schaltflächen \sphinxstyleemphasis{Alle} / \sphinxstyleemphasis{Keine}, die nur auf die aktuell gefilterte Teilmenge wirken. Das Ankreuzen eines Turniers kreuzt automatisch dessen zugehörige Matches in der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein Turnier der Gesamtheit seiner Matches entspricht.
 
 \begin{sphinxadmonition}{tip}{Tipp:}
 \sphinxAtStartPar
@@ -5387,6 +5406,10 @@ Zeigt den Inhalt der Datenbank an.
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{tournaments}} — Liste der Turniere.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} — Liste der Positionen (standardmäßig auf 10 begrenzt).
 
 \item {} 
@@ -6146,6 +6169,9 @@ Die fachliche Oberfläche folgt dem Schema \sphinxcode{\sphinxupquote{POST /v1/<
 \sphinxAtStartPar
 Zwei Methoden der \sphinxcode{\sphinxupquote{positions}}\sphinxhyphen{}Familie dekodieren eine Stellung, ohne sie zu speichern: \sphinxcode{\sphinxupquote{positions.fromXGID}} rekonstruiert eine Stellung aus einer XGID\sphinxhyphen{}Zeichenkette und \sphinxcode{\sphinxupquote{positions.fromXGP}} aus einer Einzelstellungsdatei \sphinxcode{\sphinxupquote{.xgp}}.
 
+\sphinxAtStartPar
+Die Familie \sphinxcode{\sphinxupquote{anki}} gewinnt sechs Methoden hinzu, die den Planer für verteilte Wiederholung (FSRS) erweitern: \sphinxcode{\sphinxupquote{anki.reviewLog}} (ein Protokoll jeder Wiederholung — Bewertung und FSRS\sphinxhyphen{}Ergebnis — als Grundlage für Retentionsstatistiken und eine originalgetreue Historie), \sphinxcode{\sphinxupquote{anki.forecast}} (eine Vorausschau auf die Anzahl der in den kommenden Tagen fälligen Karten, überfällige Karten eingeschlossen), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (eine Karte vorübergehend oder endgültig aus der Wiederholungswarteschlange entfernen) sowie \sphinxcode{\sphinxupquote{anki.optimizeParams}} (verschiebt die Zielretention eines Decks in Richtung der auf seinen Wiederholungen beobachteten Erfolgsquote).
+
 
 \subsection{PostgreSQL\sphinxhyphen{}Backend und Mehrbenutzerbetrieb}
 \label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
@@ -6156,16 +6182,7 @@ Für eine gemeinsame Bereitstellung kann blunderDB die Daten in \sphinxstylestro
 Die Daten sind \sphinxstylestrong{nach Tenant (Mandant) abgeschottet}: jede Anfrage trägt eine Scope\sphinxhyphen{}Kennung (Header \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}, standardmäßig \sphinxcode{\sphinxupquote{default}}), was es mehreren Benutzern ermöglicht, dieselbe Instanz zu teilen, ohne die Daten der anderen zu sehen. Die Option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}rls}} aktiviert zusätzlich die \sphinxstylestrong{Row\sphinxhyphen{}Level Security} von PostgreSQL: Es werden Isolationsrichtlinien pro Tenant installiert und \sphinxcode{\sphinxupquote{app.tenant\_id}} wird pro Verbindung gesetzt. Dies ist eine optionale Verteidigung in der Tiefe, die standardmäßig deaktiviert ist.
 
 \sphinxAtStartPar
-Quand un tenant est décommissionné, \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} supprime
-définitivement toutes ses données (positions, matchs, collections, historique,
-etc.) sur le tenant courant (celui porté par \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}}), \sphinxstylestrong{ainsi que son
-état de session} (dernière recherche, dernière position, onglets ouverts —
-les quelques lignes \sphinxcode{\sphinxupquote{metadata}} préfixées par ce scope) : l’opération
-s’exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l’appel) et n’affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n’est disponible qu’avec le backend
-PostgreSQL — elle renvoie une erreur \sphinxcode{\sphinxupquote{invalid}} sur un backend SQLite, qui n’a
-pas de notion de tenant.
+Wird ein Tenant außer Betrieb genommen, löscht \sphinxcode{\sphinxupquote{POST /v1/tenant.purge}} unwiderruflich alle seine Daten (Stellungen, Matches, Sammlungen, Verlauf usw.) für den aktuellen Tenant (den über \sphinxcode{\sphinxupquote{X\sphinxhyphen{}Tenant\sphinxhyphen{}ID}} übermittelten), \sphinxstylestrong{sowie seinen Sitzungszustand} (letzte Suche, letzte Stellung, geöffnete Tabs — die wenigen mit diesem Scope präfixierten \sphinxcode{\sphinxupquote{metadata}}\sphinxhyphen{}Zeilen): Der Vorgang läuft in einer einzigen Transaktion ab, ist idempotent (kein Fehler beim Purgen eines bereits leeren Tenants oder beim erneuten Aufruf) und wirkt sich weder auf andere Tenants noch auf die globale Schema\sphinxhyphen{}Versionszeile aus. Er ist nur mit dem PostgreSQL\sphinxhyphen{}Backend verfügbar — bei einem SQLite\sphinxhyphen{}Backend, das keinen Begriff von Tenant kennt, liefert er einen \sphinxcode{\sphinxupquote{invalid}}\sphinxhyphen{}Fehler.
 
 
 \subsection{Eine SQLite\sphinxhyphen{}Datenbank nach PostgreSQL migrieren}
