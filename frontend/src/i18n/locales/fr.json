@@ -695,6 +695,7 @@
         "boardSvgNotFound": "SVG du plateau introuvable",
         "boardElementNotFound": "Élément du plateau introuvable",
         "boardImageCopied": "Image du plateau copiée dans le presse-papiers",
+        "boardImageSavedToFile": "Presse-papiers indisponible — image du plateau enregistrée dans {path} (installez wl-clipboard ou xclip pour copier directement)",
         "cannotBrowseEdit": "Impossible de parcourir les positions en mode édition",
         "cannotGoToEdit": "Impossible d'aller à la position en mode édition",
         "cannotShowMetadataEdit": "Impossible d'afficher les métadonnées en mode édition",

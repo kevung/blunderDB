@@ -695,6 +695,7 @@
         "boardSvgNotFound": "Board SVG not found",
         "boardElementNotFound": "Board element not found",
         "boardImageCopied": "Board image copied to clipboard",
+        "boardImageSavedToFile": "Clipboard unavailable — board image saved to {path} (install wl-clipboard or xclip to copy directly)",
         "cannotBrowseEdit": "Cannot browse positions in edit mode",
         "cannotGoToEdit": "Cannot go to position in edit mode",
         "cannotShowMetadataEdit": "Cannot show metadata in edit mode",

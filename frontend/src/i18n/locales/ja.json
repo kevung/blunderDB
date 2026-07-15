@@ -695,6 +695,7 @@
         "boardSvgNotFound": "ボードのSVGが見つかりません",
         "boardElementNotFound": "ボード要素が見つかりません",
         "boardImageCopied": "ボード画像をクリップボードにコピーしました",
+        "boardImageSavedToFile": "クリップボードを使用できません — ボード画像を {path} に保存しました（直接コピーするには wl-clipboard または xclip をインストールしてください）",
         "cannotBrowseEdit": "編集モードではポジションを閲覧できません",
         "cannotGoToEdit": "編集モードではポジションに移動できません",
         "cannotShowMetadataEdit": "編集モードではメタデータを表示できません",

@@ -6,6 +6,7 @@
     // Wails runtime
     import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
+    import { PathExists } from '../wailsjs/go/gui/App.js';
     import { initLanguage } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
@@ -388,16 +389,32 @@
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();
 
+        // Reopen the last database, but treat the remembered path as a *host
+        // capability* (the filesystem it lives on may be unmounted, the file may
+        // be locked by another instance, etc). Only a *definitively* gone path is
+        // forgotten; a path that is merely temporarily unavailable is kept so a
+        // later launch can reopen it once the condition clears. Probing existence
+        // first also stops SQLite from silently recreating an empty database at a
+        // stale path (sql.Open is lazy and modernc creates the file on first use).
         try {
             const lastDbPath = await GetLastDatabasePath();
-            if (lastDbPath) await openDatabaseByPath(lastDbPath);
-        } catch (error) {
-            logger.error('Error auto-reopening last database:', error);
-            try {
-                await SaveLastDatabasePath('');
-            } catch (_e) {
-                /* ignored */
+            if (lastDbPath) {
+                if (await PathExists(lastDbPath)) {
+                    // Present: attempt to reopen. openDatabaseByPath handles and
+                    // surfaces its own open errors; we deliberately keep the path
+                    // whatever happens, so a transient lock/IO error never erases it.
+                    await openDatabaseByPath(lastDbPath);
+                } else {
+                    // Definitively gone: forget it so we don't keep trying (and
+                    // don't recreate an empty database at the old location).
+                    logger.log('Last database no longer exists, forgetting path:', lastDbPath);
+                    await SaveLastDatabasePath('');
+                }
             }
+        } catch (error) {
+            // Any failure here (including the existence probe itself) is treated as
+            // transient: keep the remembered path untouched.
+            logger.error('Error auto-reopening last database (keeping remembered path):', error);
         }
     });
 

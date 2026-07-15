@@ -695,6 +695,7 @@
         "boardSvgNotFound": "Laudan SVG:tä ei löytynyt",
         "boardElementNotFound": "Lautaelementtiä ei löytynyt",
         "boardImageCopied": "Lautakuva kopioitu leikepöydälle",
+        "boardImageSavedToFile": "Leikepöytä ei käytettävissä — laudan kuva tallennettu kohteeseen {path} (asenna wl-clipboard tai xclip kopioidaksesi suoraan)",
         "cannotBrowseEdit": "Positioita ei voi selata muokkaustilassa",
         "cannotGoToEdit": "Positioon ei voi siirtyä muokkaustilassa",
         "cannotShowMetadataEdit": "Metatietoja ei voi näyttää muokkaustilassa",

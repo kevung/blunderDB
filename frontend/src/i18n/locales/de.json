@@ -695,6 +695,7 @@
         "boardSvgNotFound": "Brett-SVG nicht gefunden",
         "boardElementNotFound": "Brettelement nicht gefunden",
         "boardImageCopied": "Brettbild in die Zwischenablage kopiert",
+        "boardImageSavedToFile": "Zwischenablage nicht verfügbar — Brettbild gespeichert unter {path} (installieren Sie wl-clipboard oder xclip zum direkten Kopieren)",
         "cannotBrowseEdit": "Positionen können im Bearbeitungsmodus nicht durchsucht werden",
         "cannotGoToEdit": "Im Bearbeitungsmodus kann nicht zu einer Position gewechselt werden",
         "cannotShowMetadataEdit": "Metadaten können im Bearbeitungsmodus nicht angezeigt werden",

@@ -695,6 +695,7 @@
         "boardSvgNotFound": "SVG del tablero no encontrado",
         "boardElementNotFound": "Elemento del tablero no encontrado",
         "boardImageCopied": "Imagen del tablero copiada al portapapeles",
+        "boardImageSavedToFile": "Portapapeles no disponible — imagen del tablero guardada en {path} (instala wl-clipboard o xclip para copiar directamente)",
         "cannotBrowseEdit": "No se pueden explorar posiciones en modo de edición",
         "cannotGoToEdit": "No se puede ir a la posición en modo de edición",
         "cannotShowMetadataEdit": "No se pueden mostrar los metadatos en modo de edición",
