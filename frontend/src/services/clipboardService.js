@@ -11,6 +11,35 @@ import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
 import { logger } from '../utils/logger.js';
 
+// Write a PNG rendered from a <canvas> to the clipboard, walking the image
+// clipboard's fallback ladder (see docs/adr/0004). Rung 1 is the WebView's own
+// clipboard — it needs no external tool, so it is tried first. Only if the
+// WebView declines does it hand off to the Go backend, which tries an external
+// tool (xclip/wl-copy) and, failing that, saves the PNG to a file. Returns
+// { method: 'clipboard' } or { method: 'file', path } so the caller can tell the
+// user where the image ended up. Throws only if every rung — including the file
+// save — fails.
+async function writeCanvasToClipboard(canvas) {
+    // Rung 1: native WebView clipboard.
+    try {
+        if (navigator.clipboard && typeof window.ClipboardItem === 'function') {
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+            if (blob) {
+                await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': blob })]);
+                return { method: 'clipboard' };
+            }
+        }
+    } catch (err) {
+        logger.log('Native clipboard image write unavailable, falling back to backend:', err);
+    }
+    // Rung 2+: Go backend. Returns the saved file path when it fell back to a
+    // file, or an empty string when it reached the system clipboard.
+    const dataUrl = canvas.toDataURL('image/png');
+    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+    const savedPath = await CopyImageToClipboard(base64Data);
+    return savedPath ? { method: 'file', path: savedPath } : { method: 'clipboard' };
+}
+
 export function copyPosition() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
@@ -187,11 +216,13 @@ export async function copyBoardImage() {
             ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
             URL.revokeObjectURL(url);
 
-            const dataUrl = canvas.toDataURL('image/png');
-            const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
             try {
-                await CopyImageToClipboard(base64Data);
-                setStatusBarMessage(tMsg('status.boardImageCopied'));
+                const res = await writeCanvasToClipboard(canvas);
+                if (res.method === 'file') {
+                    setStatusBarMessage(tMsg('status.boardImageSavedToFile', { path: res.path }));
+                } else {
+                    setStatusBarMessage(tMsg('status.boardImageCopied'));
+                }
             } catch (err) {
                 logger.error('Failed to copy image to clipboard:', err);
                 setStatusBarMessage(tMsg('status.failedCopyImage', { err }));
@@ -321,11 +352,13 @@ export async function copyBoardWithAnalysisImage() {
                 drawCheckerAnalysis(ctx, analysis, startY, analysisWidth, rowHeight, tablePadding, headerFont, font, charWidth);
             }
 
-            const dataUrl = canvas.toDataURL('image/png');
-            const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
             try {
-                await CopyImageToClipboard(base64Data);
-                setStatusBarMessage(tMsg('status.boardAnalysisCopied'));
+                const res = await writeCanvasToClipboard(canvas);
+                if (res.method === 'file') {
+                    setStatusBarMessage(tMsg('status.boardImageSavedToFile', { path: res.path }));
+                } else {
+                    setStatusBarMessage(tMsg('status.boardAnalysisCopied'));
+                }
             } catch (err) {
                 logger.error('Failed to copy image to clipboard:', err);
                 setStatusBarMessage(tMsg('status.failedCopyImage', { err }));

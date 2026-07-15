@@ -286,7 +286,7 @@
         flex-shrink: 0;
         width: 100%;
         font-size: 12px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         gap: 0;
         user-select: none;
         height: 22px;

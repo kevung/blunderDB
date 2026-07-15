@@ -93,7 +93,7 @@
         background: #f7f7f7;
         border-bottom: 1px solid #e0e0e0;
         font-size: 12px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         color: #555;
         user-select: none;
         overflow: hidden;

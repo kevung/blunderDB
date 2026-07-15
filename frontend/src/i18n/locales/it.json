@@ -695,6 +695,7 @@
         "boardSvgNotFound": "SVG del board non trovato",
         "boardElementNotFound": "Elemento del board non trovato",
         "boardImageCopied": "Immagine del board copiata negli appunti",
+        "boardImageSavedToFile": "Appunti non disponibili — immagine del board salvata in {path} (installa wl-clipboard o xclip per copiare direttamente)",
         "cannotBrowseEdit": "Impossibile scorrere le posizioni in modalità di modifica",
         "cannotGoToEdit": "Impossibile andare alla posizione in modalità di modifica",
         "cannotShowMetadataEdit": "Impossibile mostrare i metadati in modalità di modifica",

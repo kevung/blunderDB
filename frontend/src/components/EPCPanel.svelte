@@ -132,7 +132,7 @@
         height: 100%;
         overflow-y: auto;
         padding: 8px 12px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         font-size: 12px;
     }
 

@@ -235,6 +235,20 @@ func (a *App) IsDirectory(path string) bool {
 	return info.IsDir()
 }
 
+// PathExists is a thin filesystem capability probe: it reports whether path
+// currently resolves to something on disk. It reports facts only and decides
+// nothing — the caller (e.g. last-database reopen at startup) uses it to tell a
+// *definitively* gone path (forget it) from one that merely failed to open for a
+// transient reason such as an unmounted disk or a lock held by another instance
+// (keep it). A false here means "not present now", never "permanently invalid".
+func (a *App) PathExists(path string) bool {
+	if path == "" {
+		return false
+	}
+	_, err := os.Stat(path)
+	return err == nil
+}
+
 // CollectImportableFiles recursively walks dirPath and returns all supported position/match files.
 func (a *App) CollectImportableFiles(dirPath string) ([]string, error) {
 	var files []string
@@ -294,73 +308,61 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// CopyImageToClipboard takes base64-encoded PNG data and copies it to the system clipboard.
-func (a *App) CopyImageToClipboard(base64Data string) error {
+// CopyImageToClipboard takes base64-encoded PNG data and copies it to the system
+// clipboard. The image clipboard is an Optional host capability (docs/adr/0004):
+// this is the *last* line of defence, reached only after the frontend's native
+// WebView clipboard write has already been tried and declined. When no clipboard
+// path works it does not fail the user's gesture — it saves the PNG to a file and
+// returns that path (empty string means the image reached the clipboard directly),
+// so the caller can tell the user where to find it. It errors only when even the
+// file fallback fails (e.g. no writable location).
+func (a *App) CopyImageToClipboard(base64Data string) (string, error) {
 	pngData, err := base64.StdEncoding.DecodeString(base64Data)
 	if err != nil {
-		return fmt.Errorf("failed to decode base64 data: %w", err)
+		return "", fmt.Errorf("failed to decode base64 data: %w", err)
 	}
 
 	switch goruntime.GOOS {
 	case "linux":
-		// Try xclip first (supports MIME types)
-		if path, err := exec.LookPath("xclip"); err == nil {
-			cmd := exec.Command(path, "-selection", "clipboard", "-t", "image/png")
-			cmd.Stdin = bytes.NewReader(pngData)
-			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("xclip failed: %w", err)
-			}
-			return nil
-		}
-		// Try wl-copy for Wayland
-		if path, err := exec.LookPath("wl-copy"); err == nil {
-			cmd := exec.Command(path, "--type", "image/png")
-			cmd.Stdin = bytes.NewReader(pngData)
-			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("wl-copy failed: %w", err)
-			}
-			return nil
-		}
-		return fmt.Errorf("no clipboard tool found (install xclip or wl-copy)")
+		return copyImageLinux(pngData)
 
 	case "darwin":
-		// Use osascript to set clipboard to PNG via a temp file
-		tmpFile, err := os.CreateTemp("", "blunderdb-clipboard-*.png")
-		if err != nil {
-			return fmt.Errorf("failed to create temp file: %w", err)
+		if err := copyImageViaTempFile(pngData, func(path string) *exec.Cmd {
+			return exec.Command("osascript", "-e", fmt.Sprintf(`set the clipboard to (read (POSIX file "%s") as «class PNGf»)`, path))
+		}); err != nil {
+			return saveImageFallback(pngData)
 		}
-		defer os.Remove(tmpFile.Name())
-		if _, err := tmpFile.Write(pngData); err != nil {
-			tmpFile.Close()
-			return fmt.Errorf("failed to write temp file: %w", err)
-		}
-		tmpFile.Close()
-		cmd := exec.Command("osascript", "-e", fmt.Sprintf(`set the clipboard to (read (POSIX file "%s") as «class PNGf»)`, tmpFile.Name()))
-		if err := cmd.Run(); err != nil {
-			return fmt.Errorf("osascript failed: %w", err)
-		}
-		return nil
+		return "", nil
 
 	case "windows":
-		// Write to temp file and use PowerShell
-		tmpFile, err := os.CreateTemp("", "blunderdb-clipboard-*.png")
-		if err != nil {
-			return fmt.Errorf("failed to create temp file: %w", err)
+		if err := copyImageViaTempFile(pngData, func(path string) *exec.Cmd {
+			script := fmt.Sprintf(`Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'))`, path)
+			return exec.Command("powershell", "-Command", script)
+		}); err != nil {
+			return saveImageFallback(pngData)
 		}
-		defer os.Remove(tmpFile.Name())
-		if _, err := tmpFile.Write(pngData); err != nil {
-			tmpFile.Close()
-			return fmt.Errorf("failed to write temp file: %w", err)
-		}
-		tmpFile.Close()
-		script := fmt.Sprintf(`Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'))`, tmpFile.Name())
-		cmd := exec.Command("powershell", "-Command", script)
-		if err := cmd.Run(); err != nil {
-			return fmt.Errorf("powershell clipboard failed: %w", err)
-		}
-		return nil
+		return "", nil
 
 	default:
-		return fmt.Errorf("unsupported OS: %s", goruntime.GOOS)
+		return saveImageFallback(pngData)
 	}
+}
+
+// copyImageViaTempFile writes the PNG to a temp file and runs the command built
+// by buildCmd against it (macOS/Windows clipboard tools read from a file path).
+func copyImageViaTempFile(pngData []byte, buildCmd func(path string) *exec.Cmd) error {
+	tmpFile, err := os.CreateTemp("", "blunderdb-clipboard-*.png")
+	if err != nil {
+		return fmt.Errorf("failed to create temp file: %w", err)
+	}
+	defer os.Remove(tmpFile.Name())
+	if _, err := tmpFile.Write(pngData); err != nil {
+		tmpFile.Close()
+		return fmt.Errorf("failed to write temp file: %w", err)
+	}
+	tmpFile.Close()
+	if err := buildCmd(tmpFile.Name()).Run(); err != nil {
+		return fmt.Errorf("clipboard command failed: %w", err)
+	}
+	return nil
 }

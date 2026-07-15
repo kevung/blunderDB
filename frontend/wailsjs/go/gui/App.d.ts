@@ -4,11 +4,13 @@ import {gui} from '../models';
 
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
-export function CopyImageToClipboard(arg1:string):Promise<void>;
+export function CopyImageToClipboard(arg1:string):Promise<string>;
 
 export function DeleteFile(arg1:string):Promise<void>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;
+
+export function PathExists(arg1:string):Promise<boolean>;
 
 export function OpenDatabaseDialog():Promise<string>;
 
