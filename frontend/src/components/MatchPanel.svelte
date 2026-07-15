@@ -758,7 +758,7 @@
                                         <input type="text" class="match-edit-input" bind:value={editPlayer2Value} onkeydown={handleMatchEditKeyDown} placeholder={$t('match.player2')} />
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="tournament-col no-select">{match.tournament_name || ''}</td>
+                                    <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
                                     <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
                                     <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
                                     <td class="actions-col no-select">
@@ -824,7 +824,7 @@
                                                 {/if}
                                             </div>
                                         {:else}
-                                            <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || ''}</span>
+                                            <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || match.event || ''}</span>
                                         {/if}
                                     </td>
                                     <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
