@@ -257,6 +257,13 @@ export function parseFilters(filters, command) {
     const decisionTypeFilter = filters.includes('d');
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
+    // `xD65` excludes the 6-5 roll (order-insensitive); repeatable (`xD65 xD54`).
+    // Unlike `D`, the value is inline in the token, not read from the board.
+    // Joined into a ";"-separated string for the backend (ExceptDiceFilter).
+    const exceptDiceFilter = filters
+        .filter((f) => typeof f === 'string' && /^xD[1-6][1-6]$/.test(f))
+        .map((f) => f.slice(2))
+        .join(';');
     const mirrorPositionFilter = filters.includes('M');
     // Positions the user imported on their own rather than inside a match.
     // An exact match, so it does not collide with the id<ids> token.
@@ -343,6 +350,7 @@ export function parseFilters(filters, command) {
         decisionTypeFilter,
         diceRollFilter,
         diceRollMode,
+        exceptDiceFilter,
         mirrorPositionFilter,
         individuallyImportedFilter,
         excludeStructure,

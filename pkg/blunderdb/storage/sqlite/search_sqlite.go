@@ -173,6 +173,13 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 				}
 			}
 		}
+		// Except-dice (xD65): exclude positions rolled with any of the listed rolls,
+		// each in either order. Unscoped by on-roll/decision-type — a roll is a roll
+		// whoever holds it; cube decisions (dice 0-0) never match, so they survive.
+		for _, pair := range domain.ParseExceptDice(f.ExceptDiceFilter) {
+			where.WriteString(" AND NOT ((p.dice_1 = ? AND p.dice_2 = ?) OR (p.dice_1 = ? AND p.dice_2 = ?))")
+			args = append(args, pair[0], pair[1], pair[1], pair[0])
+		}
 		if f.IncludeCube {
 			if f.Filter.Cube.Value == 0 {
 				where.WriteString(" AND p.cube_value IS NULL")
@@ -364,6 +371,9 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					}
 				}
 				if f.DiceRollFilter && !pos.MatchesDiceRollMode(f.Filter, f.DiceRollMode) {
+					return false
+				}
+				if f.ExceptDiceFilter != "" && !pos.MatchesExceptDice(domain.ParseExceptDice(f.ExceptDiceFilter)) {
 					return false
 				}
 				if f.NoContactFilter && !pos.MatchesNoContact() {

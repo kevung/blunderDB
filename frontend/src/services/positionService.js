@@ -362,6 +362,7 @@ export async function loadPositionsByFilters({
     restrictToPositionIDs = '',
     openInNewTab = false,
     diceRollMode = 'both',
+    exceptDiceFilter = '',
     positionIDsFilter = '',
     playerFilter = ''
 } = {}) {
@@ -437,6 +438,7 @@ export async function loadPositionsByFilters({
             cubeResponseFilter,
             diceRollFilter,
             diceRollMode,
+            exceptDiceFilter,
             movePatternFilter,
             dateFilter,
             player1OutfieldBlotFilter,
