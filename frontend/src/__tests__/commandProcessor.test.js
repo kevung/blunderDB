@@ -11,7 +11,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveSearchHistory: vi.fn().mockResolvedValue(undefined)
 }));
 
-import { parseFilters, processCommand, initCommandProcessor } from '../commandProcessor.js';
+import { parseFilters, processCommand, initCommandProcessor, stripQuotedTokens } from '../commandProcessor.js';
 import { SaveComment } from '../../wailsjs/go/database/Database.js';
 import { translate, resolveStatusMessage } from '../i18n';
 
@@ -276,6 +276,41 @@ describe('parseFilters', () => {
 
     test('no move pattern returns empty string', () => {
         expect(parseFilters(['p>30'], 's p>30').movePatternFilter).toBe('');
+    });
+
+    // -- multi-word quoted values must not leak into range filters (bug 3) -----
+    // Mirror the real command flow: strip the quoted region, then split.
+    const tokenize = (cmd) =>
+        stripQuotedTokens(cmd.slice(1).trim())
+            .split(' ')
+            .map((f) => f.trim());
+
+    test('stripQuotedTokens removes the whole quoted region', () => {
+        expect(stripQuotedTokens('t"big win" p>30').trim()).toBe('p>30');
+        expect(stripQuotedTokens('pl"Kévin Unger" m"24/23 13/10"').trim()).toBe('');
+    });
+
+    test('multi-word comment search does not leak a trailing word as a range filter', () => {
+        const cmd = 's t"big win"';
+        const r = parseFilters(tokenize(cmd), cmd);
+        expect(r.searchText).toBe('t"big win"');
+        expect(r.winRateFilter).toBeUndefined();
+    });
+
+    test('three-word comment search leaks no interior word', () => {
+        const cmd = 's t"a b c"';
+        const r = parseFilters(tokenize(cmd), cmd);
+        expect(r.searchText).toBe('t"a b c"');
+        // the bare middle word "b" must not become a backgammon-rate filter
+        expect(r.backgammonRateFilter).toBeUndefined();
+        expect(r.gammonRateFilter).toBeUndefined();
+    });
+
+    test('quoted value alongside a real range filter keeps both intact', () => {
+        const cmd = 's t"big win" w>50';
+        const r = parseFilters(tokenize(cmd), cmd);
+        expect(r.searchText).toBe('t"big win"');
+        expect(r.winRateFilter).toBe('w>50');
     });
 
     // -- blot filters --------------------------------------------------------

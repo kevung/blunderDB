@@ -187,9 +187,7 @@ function handleSubSearch(command, positions) {
                 restrictToPositionIDs: currentIDs
             });
         } else {
-            const filters = command
-                .slice(2)
-                .trim()
+            const filters = stripQuotedTokens(command.slice(2).trim())
                 .split(' ')
                 .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
@@ -224,9 +222,7 @@ function handleSearch(command) {
         if (command === 's') {
             callbacks.onLoadPositionsByFilters?.({ searchCommand: command });
         } else {
-            const filters = command
-                .slice(1)
-                .trim()
+            const filters = stripQuotedTokens(command.slice(1).trim())
                 .split(' ')
                 .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
@@ -240,6 +236,18 @@ function handleSearch(command) {
     } else {
         statusBarTextStore.set(tMsg('commands.searchRequiresMode'));
     }
+}
+
+// Quoted filter values — pl"…" (player), m"…" (move pattern) and t"…" (search
+// text / comment) — may contain spaces. Their values are recovered later via
+// regexes on the raw command, but the naive `.split(' ')` that builds the token
+// array would tear a multi-word value into loose words (`t"big win"` → `t"big`,
+// `win"`; `t"a b c"` → `t"a`, `b`, `c"`) and those words get misclassified as
+// range filters (`win"` → winRateFilter, the bare `b` → backgammonRateFilter),
+// silently zeroing the result set. Strip the whole quoted region before splitting
+// so no interior word survives. Both quote styles are supported.
+export function stripQuotedTokens(str) {
+    return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
 }
 
 export function parseFilters(filters, command) {
