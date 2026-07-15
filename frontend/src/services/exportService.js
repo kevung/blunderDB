@@ -120,7 +120,13 @@ export async function handleExportCommit() {
             includeComments: exportOptions.includeComments,
             includeFilterLibrary: exportOptions.includeFilterLibrary,
             includePlayedMoves: exportOptions.includePlayedMoves,
-            includeMatches: exportOptions.includeMatches,
+            // The backend treats "IncludeMatches && empty MatchIDs" as "export ALL
+            // matches" (the CLI's --match-ids empty=all convention). In the GUI the
+            // modal always auto-fills every match id when the section is enabled, so
+            // an empty selection here can only mean the user explicitly clicked "None"
+            // (or unchecked every match) — which must export no matches, not all.
+            // Collapse that to includeMatches=false so "None" means none.
+            includeMatches: exportOptions.includeMatches && (exportOptions.matchIDs || []).length > 0,
             includeCollections: exportOptions.includeCollections,
             collectionIDs: exportOptions.collectionIDs || [],
             matchIDs: exportOptions.matchIDs || [],
