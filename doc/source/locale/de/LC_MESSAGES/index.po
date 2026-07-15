@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 03:48+0200\n"
+"POT-Creation-Date: 2026-07-15 02:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -831,17 +831,114 @@ msgid ""
 "méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
 "appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
 ":ref:`mode_anki` et :ref:`cmd_mode`."
-msgstr "Anki-Panel: ein neuer Modus für freies Üben (*cram*), erreichbar über die Schaltfläche *Cram* neben *Study*, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl ``blunders`` (Alias ``bl``), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (``bl 50``); ein neuer Spielerfilter ``pl'Name'``, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server-Modus (headless): neue Methoden ``matches.movesByMatch`` (alle Züge einer Partie in einem einzigen Aufruf) und ``positions.epc`` (Effective Pip Count für beide Spieler). Siehe :ref:`mode_anki` und :ref:`cmd_mode`."
+msgstr ""
+"Anki-Panel: ein neuer Modus für freies Üben (*cram*), erreichbar über die"
+" Schaltfläche *Cram* neben *Study*, der zufällige Stellungen aus dem Deck"
+" anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal "
+"zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines "
+"Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl "
+"``blunders`` (Alias ``bl``), der die größten Fehler (Equity/MWC) direkt "
+"in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der "
+"Menge (``bl 50``); ein neuer Spielerfilter ``pl'Name'``, der jede "
+"Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer "
+"der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes "
+"Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server-Modus "
+"(headless): neue Methoden ``matches.movesByMatch`` (alle Züge einer "
+"Partie in einem einzigen Aufruf) und ``positions.epc`` (Effective Pip "
+"Count für beide Spieler). Siehe :ref:`mode_anki` und :ref:`cmd_mode`."
 
-#: ../../source/index.rst:153
+#: ../../source/index.rst:1
+msgid "0.28.0"
+msgstr "0.28.0"
+
+#: ../../source/index.rst:1
+msgid "15/07/2026"
+msgstr "15. Juli 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
+" champs de saisie d'identifiants par une fenêtre de sélection (listes à "
+"cocher filtrables par texte, boutons *Tout*/*Aucun*, cocher un tournoi "
+"coche ses matchs membres) — plus rapide sur les grosses bases, l'onglet "
+"Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que "
+"pour les matchs affichés ; ``cli list --type tournaments`` comble l'écart"
+" de parité correspondant. Nouveau filtre « Importée individuellement » "
+"(case à cocher du groupe Autre, ou jeton ``i`` en ligne de commande, ``s "
+"i`` ; disponible aussi en CLI via ``--individual``) pour retrouver une "
+"position enregistrée ou importée seule plutôt que noyée dans un import de"
+" match. Correction d'une perte de données : la suppression d'un match ne "
+"supprime plus les positions individuellement importées, mises en "
+"collection ou intégrées à un paquet Anki que ce match contenait aussi. "
+"Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
+"Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
+"prévision des cartes dues (``anki.forecast``), suspension / mise en "
+"veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, "
+"``anki.removeCard``) et ajustement automatique du taux de rétention visé "
+"d'un paquet vers son taux de réussite observé (``anki.optimizeParams``) ;"
+" nouvelle méthode ``tenant.purge`` pour supprimer définitivement les "
+"données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; "
+"nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et "
+"``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs). "
+"Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
+"bit d'exécution perdu lors du téléchargement du binaire brut. Import : "
+"après l'import d'un match, l'onglet Matchs s'affiche et les positions "
+"importées sont immédiatement visibles ; après l'import d'une position "
+"isolée (fichier XGP, position BGBlitz, fichier de position texte, "
+"position collée ou lot de positions), l'onglet Analyse s'ouvre "
+"directement sur la position importée, au lieu de l'onglet Matchs ; "
+"correction du collage d'une analyse eXtreme Gammon en français ou en "
+"allemand depuis macOS, qui restait vide (accents décomposés par le "
+"presse-papier du système). Voir :ref:`headless`, :ref:`cmd_mode` et "
+":ref:`telecharge_install`."
+msgstr ""
+"Suchpanel: einheitlicher Filter „Matches & Turniere“, der die "
+"Eingabefelder für numerische Kennungen durch ein Auswahlfenster ersetzt "
+"(per Text filterbare Kontrollkästchen-Listen, Schaltflächen "
+"*Alle*/*Keine*, das Ankreuzen eines Turniers kreuzt dessen zugehörige "
+"Matches an) — schneller bei großen Datenbanken, da der Matches-Tab und "
+"die Turnier-Ansicht die PR/MWC-Indikatoren nur noch für die angezeigten "
+"Matches neu berechnen; ``cli list --type tournaments`` schließt die "
+"entsprechende Parity-Lücke. Neuer Filter „Einzeln importiert“ "
+"(Kontrollkästchen der Gruppe Sonstiges, oder das Befehlskürzel ``i``, ``s"
+" i``; auch über die CLI mit ``--individual`` verfügbar), um eine Stellung"
+" zu finden, die einzeln gespeichert oder importiert wurde, statt in einem"
+" Match-Import verborgen zu sein. Fehlerbehebung bei Datenverlust: Das "
+"Löschen eines Matches löscht nun keine Stellungen mehr, die einzeln "
+"importiert, einer Sammlung hinzugefügt oder in ein Anki-Deck aufgenommen "
+"wurden, selbst wenn dieses Match sie ebenfalls enthielt. Server-Modus "
+"(headless): sechs neue Methoden für den Anki-Planer der verteilten "
+"Wiederholung (FSRS) — Wiederholungsprotokoll (``anki.reviewLog``), "
+"Vorschau der fälligen Karten (``anki.forecast``), Aussetzen / "
+"Zurückstellen / Löschen einer Karte (``anki.suspendCard``, "
+"``anki.buryCard``, ``anki.removeCard``) sowie automatische Anpassung der "
+"Zielretention eines Decks an dessen beobachtete Erfolgsquote "
+"(``anki.optimizeParams``); neue Methode ``tenant.purge`` zum endgültigen "
+"Löschen der Daten eines Tenants bei einem PostgreSQL-Mehrbenutzer-"
+"Deployment; neue Methoden ``matches.list`` "
+"(Filterung/Sortierung/Paginierung) und ``stats.matchBadges`` (PR/MWC-"
+"Indikatoren begrenzt auf eine Liste von Matches). Native Linux-"
+"Distribution: ``.deb``-/``.rpm``-Pakete, die das beim Herunterladen der "
+"rohen Binärdatei verlorene Ausführungsrecht beibehalten. Import: Nach dem"
+" Import eines Matches wird nun der Matches-Tab angezeigt, und die "
+"importierten Stellungen sind sofort sichtbar; nach dem Import einer "
+"einzelnen Stellung (XGP-Datei, BGBlitz-Stellung, Stellungstextdatei, "
+"eingefügte Stellung oder ein Stellungsstapel) öffnet sich nun direkt der "
+"Analyse-Tab mit der importierten Stellung, statt des Matches-Tabs; "
+"behoben: das Einfügen einer französischen oder deutschen eXtreme-Gammon-"
+"Analyse von macOS aus, das leer blieb (durch die Zwischenablage des "
+"Systems zerlegte Akzente). Siehe :ref:`headless`, :ref:`cmd_mode` und "
+":ref:`telecharge_install`."
+
+#: ../../source/index.rst:154
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:188
+#: ../../source/index.rst:189
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -849,7 +946,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes"
 " unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:192
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -865,31 +962,31 @@ msgstr ""
 "Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:210
+#: ../../source/index.rst:211
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -897,11 +994,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -909,19 +1006,19 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -930,7 +1027,7 @@ msgstr ""
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
 "danken:"
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -942,7 +1039,7 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -951,4 +1048,32 @@ msgstr ""
 "*Nicolas Harmand*, fröhlicher Gefährte seit nunmehr über einem Jahrzehnt "
 "in tollen Abenteuern und ein fantastischer Spielpartner, seit er sich mit"
 " dem Backgammon-Virus angesteckt hat."
+
+#~ msgid ""
+#~ "Mode serveur (headless) : six nouvelles"
+#~ " méthodes pour le planificateur Anki "
+#~ "à répétition espacée — journal des "
+#~ "révisions (``anki.reviewLog``), prévision des "
+#~ "cartes dues (``anki.forecast``), suspension /"
+#~ " mise en veille / suppression de "
+#~ "carte (``anki.suspendCard``, ``anki.buryCard``, "
+#~ "``anki.removeCard``) et ajustement automatique "
+#~ "du taux de rétention visé d'un "
+#~ "paquet vers son taux de réussite "
+#~ "observé (``anki.optimizeParams``) ; nouvelle "
+#~ "méthode ``tenant.purge`` pour supprimer "
+#~ "définitivement les données d'un tenant "
+#~ "sur un déploiement PostgreSQL multi-"
+#~ "utilisateurs. Distribution Linux native : "
+#~ "paquets ``.deb``/``.rpm``, dépôt AUR "
+#~ "(``blunderdb-bin``) et Flatpak, qui "
+#~ "conservent le bit d'exécution perdu lors"
+#~ " du téléchargement du binaire brut. "
+#~ "Correction du collage d'une analyse "
+#~ "eXtreme Gammon en français ou en "
+#~ "allemand depuis macOS, qui restait vide"
+#~ " (accents décomposés par le presse-"
+#~ "papier du système). Voir :ref:`headless` "
+#~ "et :ref:`telecharge_install`."
+#~ msgstr ""
 

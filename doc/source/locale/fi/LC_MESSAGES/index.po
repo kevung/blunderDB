@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 03:48+0200\n"
+"POT-Creation-Date: 2026-07-15 02:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -819,17 +819,110 @@ msgid ""
 "méthodes ``matches.movesByMatch`` (tous les coups d'un match en un seul "
 "appel) et ``positions.epc`` (Effective Pip Count des deux joueurs). Voir "
 ":ref:`mode_anki` et :ref:`cmd_mode`."
-msgstr "Anki-paneeli: uusi vapaan harjoittelun (*cram*) tila, käytettävissä *Cram*-painikkeesta *Study*-painikkeen vierestä, joka näyttää satunnaisia asemia pakasta muuttamatta kertausaikataulua — ihanteellinen lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen järjestystä häiritsemättä. Haku: uusi komento ``blunders`` (alias ``bl``), joka lataa pahimmat virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (``bl 50``); uusi pelaajasuodatin ``pl'nimi'``, joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen. Palvelintila (headless): uudet metodit ``matches.movesByMatch`` (ottelun kaikki siirrot yhdellä kutsulla) ja ``positions.epc`` (molempien pelaajien Effective Pip Count). Katso :ref:`mode_anki` ja :ref:`cmd_mode`."
+msgstr ""
+"Anki-paneeli: uusi vapaan harjoittelun (*cram*) tila, käytettävissä "
+"*Cram*-painikkeesta *Study*-painikkeen vierestä, joka näyttää satunnaisia"
+" asemia pakasta muuttamatta kertausaikataulua — ihanteellinen "
+"lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen "
+"järjestystä häiritsemättä. Haku: uusi komento ``blunders`` (alias "
+"``bl``), joka lataa pahimmat virheet (equity/MWC) suoraan "
+"analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (``bl "
+"50``); uusi pelaajasuodatin ``pl'nimi'``, joka löytää kaikki asemat "
+"ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja "
+"työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa "
+"näyttävät vastaavan komentotunnuksen. Palvelintila (headless): uudet "
+"metodit ``matches.movesByMatch`` (ottelun kaikki siirrot yhdellä "
+"kutsulla) ja ``positions.epc`` (molempien pelaajien Effective Pip Count)."
+" Katso :ref:`mode_anki` ja :ref:`cmd_mode`."
 
-#: ../../source/index.rst:153
+#: ../../source/index.rst:1
+msgid "0.28.0"
+msgstr "0.28.0"
+
+#: ../../source/index.rst:1
+msgid "15/07/2026"
+msgstr "15.7.2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
+" champs de saisie d'identifiants par une fenêtre de sélection (listes à "
+"cocher filtrables par texte, boutons *Tout*/*Aucun*, cocher un tournoi "
+"coche ses matchs membres) — plus rapide sur les grosses bases, l'onglet "
+"Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que "
+"pour les matchs affichés ; ``cli list --type tournaments`` comble l'écart"
+" de parité correspondant. Nouveau filtre « Importée individuellement » "
+"(case à cocher du groupe Autre, ou jeton ``i`` en ligne de commande, ``s "
+"i`` ; disponible aussi en CLI via ``--individual``) pour retrouver une "
+"position enregistrée ou importée seule plutôt que noyée dans un import de"
+" match. Correction d'une perte de données : la suppression d'un match ne "
+"supprime plus les positions individuellement importées, mises en "
+"collection ou intégrées à un paquet Anki que ce match contenait aussi. "
+"Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
+"Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
+"prévision des cartes dues (``anki.forecast``), suspension / mise en "
+"veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, "
+"``anki.removeCard``) et ajustement automatique du taux de rétention visé "
+"d'un paquet vers son taux de réussite observé (``anki.optimizeParams``) ;"
+" nouvelle méthode ``tenant.purge`` pour supprimer définitivement les "
+"données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; "
+"nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et "
+"``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs). "
+"Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
+"bit d'exécution perdu lors du téléchargement du binaire brut. Import : "
+"après l'import d'un match, l'onglet Matchs s'affiche et les positions "
+"importées sont immédiatement visibles ; après l'import d'une position "
+"isolée (fichier XGP, position BGBlitz, fichier de position texte, "
+"position collée ou lot de positions), l'onglet Analyse s'ouvre "
+"directement sur la position importée, au lieu de l'onglet Matchs ; "
+"correction du collage d'une analyse eXtreme Gammon en français ou en "
+"allemand depuis macOS, qui restait vide (accents décomposés par le "
+"presse-papier du système). Voir :ref:`headless`, :ref:`cmd_mode` et "
+":ref:`telecharge_install`."
+msgstr ""
+"Hakupaneeli: yhtenäinen « Ottelut ja turnaukset » -suodatin, joka korvaa "
+"tunnisteiden syöttökentät valintaikkunalla (tekstillä suodatettavat "
+"valintaruutuluettelot, *Kaikki*/*Ei mitään* -painikkeet, turnauksen "
+"valitseminen valitsee sen jäsenottelut) — nopeampi suurilla "
+"tietokannoilla, sillä Ottelut-välilehti ja Turnaukset-näkymä laskevat PR"
+"/MWC-indikaattorit enää vain näytetyille otteluille; ``cli list --type "
+"tournaments`` täyttää vastaavan pariteettiaukon. Uusi « Erikseen tuotu » "
+"-suodatin (Muut-ryhmän valintaruutu tai komentorivin ``i``-tunnus, ``s "
+"i``; saatavilla myös CLI:ssä valitsimella ``--individual``) sellaisen "
+"aseman löytämiseksi, joka on tallennettu tai tuotu erikseen sen sijaan, "
+"että se hukkuisi ottelun tuontiin. Korjattu tiedonmenetys: ottelun "
+"poistaminen ei enää poista erikseen tuotuja, kokoelmaan lisättyjä tai "
+"Anki-pakkaan liitettyjä asemia, vaikka poistettu ottelu sisälsi myös ne. "
+"Palvelintila (headless): kuusi uutta metodia Ankin aikaväliin "
+"perustuvalle kertausajastimelle — kertausloki (``anki.reviewLog``), "
+"erääntyvien korttien ennuste (``anki.forecast``), kortin keskeyttäminen /"
+" hautaaminen / poistaminen (``anki.suspendCard``, ``anki.buryCard``, "
+"``anki.removeCard``) sekä pakan tavoitesäilytysasteen automaattinen "
+"säätäminen kohti sen havaittua onnistumisastetta "
+"(``anki.optimizeParams``); uusi ``tenant.purge``-metodi, joka poistaa "
+"pysyvästi vuokralaisen tiedot monikäyttäjäisessä PostgreSQL-"
+"käyttöönotossa; uudet metodit ``matches.list`` "
+"(suodatus/lajittelu/sivutus) ja ``stats.matchBadges`` (PR/MWC-"
+"indikaattorit rajattuna ottelulistaan). Natiivi Linux-jakelu: "
+"``.deb``/``.rpm``-paketit, jotka säilyttävät suoritusbitin, joka katosi "
+"raakaa binääriä ladattaessa. Tuonti: ottelun tuonnin jälkeen Ottelut-"
+"välilehti avautuu näkyviin ja tuodut asemat ovat heti näkyvissä; "
+"yksittäisen aseman tuonnin jälkeen (XGP-tiedosto, BGBlitz-asema, "
+"asematekstitiedosto, liitetty asema tai asemaerä) Analyysi-välilehti "
+"avautuu nyt suoraan tuotuun asemaan Ottelut-välilehden sijaan; korjattu "
+"ranskan- tai saksankielisen eXtreme Gammon -analyysin liittäminen "
+"macOS:stä, joka jäi tyhjäksi (järjestelmän leikepöytä hajotti aksentit). "
+"Katso :ref:`headless`, :ref:`cmd_mode` ja :ref:`telecharge_install`."
+
+#: ../../source/index.rst:154
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:187
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:188
+#: ../../source/index.rst:189
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -837,7 +930,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:192
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -852,41 +945,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:199
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:201
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:210
+#: ../../source/index.rst:211
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:217
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -894,19 +987,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -915,7 +1008,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -927,7 +1020,7 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -936,4 +1029,32 @@ msgstr ""
 "*Nicolas Harmand*, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa"
 " seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
 "backgammon-tartunnan."
+
+#~ msgid ""
+#~ "Mode serveur (headless) : six nouvelles"
+#~ " méthodes pour le planificateur Anki "
+#~ "à répétition espacée — journal des "
+#~ "révisions (``anki.reviewLog``), prévision des "
+#~ "cartes dues (``anki.forecast``), suspension /"
+#~ " mise en veille / suppression de "
+#~ "carte (``anki.suspendCard``, ``anki.buryCard``, "
+#~ "``anki.removeCard``) et ajustement automatique "
+#~ "du taux de rétention visé d'un "
+#~ "paquet vers son taux de réussite "
+#~ "observé (``anki.optimizeParams``) ; nouvelle "
+#~ "méthode ``tenant.purge`` pour supprimer "
+#~ "définitivement les données d'un tenant "
+#~ "sur un déploiement PostgreSQL multi-"
+#~ "utilisateurs. Distribution Linux native : "
+#~ "paquets ``.deb``/``.rpm``, dépôt AUR "
+#~ "(``blunderdb-bin``) et Flatpak, qui "
+#~ "conservent le bit d'exécution perdu lors"
+#~ " du téléchargement du binaire brut. "
+#~ "Correction du collage d'une analyse "
+#~ "eXtreme Gammon en français ou en "
+#~ "allemand depuis macOS, qui restait vide"
+#~ " (accents décomposés par le presse-"
+#~ "papier du système). Voir :ref:`headless` "
+#~ "et :ref:`telecharge_install`."
+#~ msgstr ""
 

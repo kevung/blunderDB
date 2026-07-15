@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 22:08+0200\n"
+"POT-Creation-Date: 2026-07-14 22:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -92,46 +92,46 @@ msgid ""
 "l'exposez jamais directement sur l'Internet public.**"
 msgstr ""
 
-#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:231
+#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:252
 msgid "**Options:**"
 msgstr ""
 
-#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:179
-#: ../../source/mode_headless.rst:237
+#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:200
+#: ../../source/mode_headless.rst:258
 msgid "Option"
 msgstr ""
 
-#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:180
-#: ../../source/mode_headless.rst:238
+#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:201
+#: ../../source/mode_headless.rst:259
 msgid "Défaut"
 msgstr ""
 
-#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:181
-#: ../../source/mode_headless.rst:239
+#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:202
+#: ../../source/mode_headless.rst:260
 msgid "Signification"
 msgstr ""
 
-#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:240
+#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:261
 msgid "``--db <chemin>``"
 msgstr ""
 
 #: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:92
-#: ../../source/mode_headless.rst:183 ../../source/mode_headless.rst:186
-#: ../../source/mode_headless.rst:189 ../../source/mode_headless.rst:192
-#: ../../source/mode_headless.rst:241 ../../source/mode_headless.rst:256
-#: ../../source/mode_headless.rst:259
+#: ../../source/mode_headless.rst:204 ../../source/mode_headless.rst:207
+#: ../../source/mode_headless.rst:210 ../../source/mode_headless.rst:213
+#: ../../source/mode_headless.rst:262 ../../source/mode_headless.rst:277
+#: ../../source/mode_headless.rst:280
 msgid "–"
 msgstr ""
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:242
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:263
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:243
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:264
 msgid "``--backend <type>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:244
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:265
 msgid "``sqlite``"
 msgstr ""
 
@@ -139,15 +139,15 @@ msgstr ""
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:246
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:267
 msgid "``--dsn <chaîne>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:247
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:268
 msgid "``$BLUNDERDB_DSN``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:248
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:269
 msgid "chaîne de connexion du backend"
 msgstr ""
 
@@ -279,11 +279,24 @@ msgid ""
 "position unique ``.xgp``."
 msgstr ""
 
-#: ../../source/mode_headless.rst:133
+#: ../../source/mode_headless.rst:130
+msgid ""
+"La famille ``anki`` gagne six méthodes qui étendent le planificateur à "
+"répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque "
+"révision — notation et résultat FSRS — pour les statistiques de rétention"
+" et un historique fidèle), ``anki.forecast`` (projection du nombre de "
+"cartes dues sur les prochains jours, cartes en retard comprises), "
+"``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard`` (retirer "
+"une carte de la file de révision temporairement ou définitivement) et "
+"``anki.optimizeParams`` (ajuste le taux de rétention visé d'un paquet "
+"vers le taux de réussite observé sur ses révisions)."
+msgstr ""
+
+#: ../../source/mode_headless.rst:143
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr ""
 
-#: ../../source/mode_headless.rst:135
+#: ../../source/mode_headless.rst:145
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -291,7 +304,7 @@ msgid ""
 "``--dsn``. Le schéma est créé et migré automatiquement au démarrage."
 msgstr ""
 
-#: ../../source/mode_headless.rst:140
+#: ../../source/mode_headless.rst:150
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte un identifiant de scope (en-tête ``X-Tenant-ID``, par défaut "
@@ -303,18 +316,33 @@ msgid ""
 "défaut."
 msgstr ""
 
-#: ../../source/mode_headless.rst:151
+#: ../../source/mode_headless.rst:158
+msgid ""
+"Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime "
+"définitivement toutes ses données (positions, matchs, collections, "
+"historique, etc.) sur le tenant courant (celui porté par ``X-Tenant-"
+"ID``), **ainsi que son état de session** (dernière recherche, dernière "
+"position, onglets ouverts — les quelques lignes ``metadata`` préfixées "
+"par ce scope) : l'opération s'exécute dans une seule transaction, est "
+"idempotente (aucune erreur à purger un tenant déjà vide ou à répéter "
+"l'appel) et n'affecte aucun autre tenant ni la ligne globale de version "
+"de schéma. Elle n'est disponible qu'avec le backend PostgreSQL — elle "
+"renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a pas de "
+"notion de tenant."
+msgstr ""
+
+#: ../../source/mode_headless.rst:172
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr ""
 
-#: ../../source/mode_headless.rst:153
+#: ../../source/mode_headless.rst:174
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour"
 " « téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
 
-#: ../../source/mode_headless.rst:168
+#: ../../source/mode_headless.rst:189
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -325,53 +353,53 @@ msgid ""
 "émis en NDJSON sur la sortie standard."
 msgstr ""
 
-#: ../../source/mode_headless.rst:182
+#: ../../source/mode_headless.rst:203
 msgid "``--from <uri>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:184
+#: ../../source/mode_headless.rst:205
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:185
+#: ../../source/mode_headless.rst:206
 msgid "``--to <dsn>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:187
+#: ../../source/mode_headless.rst:208
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:188
+#: ../../source/mode_headless.rst:209
 msgid "``--tenant-id <scope>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:190
+#: ../../source/mode_headless.rst:211
 msgid "scope de tenant de destination (obligatoire sauf en ``--dry-run``)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:191
+#: ../../source/mode_headless.rst:212
 msgid "``--dry-run``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:193
+#: ../../source/mode_headless.rst:214
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr ""
 
-#: ../../source/mode_headless.rst:194
+#: ../../source/mode_headless.rst:215
 msgid "``--on-conflict <politique>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:195
+#: ../../source/mode_headless.rst:216
 msgid "``\"\"``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:196
+#: ../../source/mode_headless.rst:217
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:201
+#: ../../source/mode_headless.rst:222
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -379,11 +407,11 @@ msgid ""
 "de positions et de l'historique de matchs."
 msgstr ""
 
-#: ../../source/mode_headless.rst:209
+#: ../../source/mode_headless.rst:230
 msgid "Le dispatcher générique ``call``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:211
+#: ../../source/mode_headless.rst:232
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -392,52 +420,52 @@ msgid ""
 " utile pour le scripting et les tests d'intégration."
 msgstr ""
 
-#: ../../source/mode_headless.rst:245
+#: ../../source/mode_headless.rst:266
 msgid "``sqlite`` ou ``postgres``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:249
+#: ../../source/mode_headless.rst:270
 msgid "``--scope <chaîne>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:250
+#: ../../source/mode_headless.rst:271
 msgid "``default``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:251
+#: ../../source/mode_headless.rst:272
 msgid "scope de tenant (envoyé comme ``X-Tenant-ID``)"
 msgstr ""
 
-#: ../../source/mode_headless.rst:252
+#: ../../source/mode_headless.rst:273
 msgid "``--json <chaîne>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:253
+#: ../../source/mode_headless.rst:274
 #, python-brace-format
 msgid "``{}``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:254
+#: ../../source/mode_headless.rst:275
 msgid "corps de la requête au format JSON"
 msgstr ""
 
-#: ../../source/mode_headless.rst:255
+#: ../../source/mode_headless.rst:276
 msgid "``--json-file <chemin>``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:257
+#: ../../source/mode_headless.rst:278
 msgid "lit le corps de la requête depuis un fichier"
 msgstr ""
 
-#: ../../source/mode_headless.rst:258
+#: ../../source/mode_headless.rst:279
 msgid "``--list``"
 msgstr ""
 
-#: ../../source/mode_headless.rst:260
+#: ../../source/mode_headless.rst:281
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr ""
 
-#: ../../source/mode_headless.rst:262
+#: ../../source/mode_headless.rst:283
 #, python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "

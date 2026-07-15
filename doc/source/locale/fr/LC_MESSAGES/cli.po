@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-07-15 02:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -202,8 +202,8 @@ msgid ""
 msgstr ""
 
 #: ../../source/cli.rst:75 ../../source/cli.rst:100 ../../source/cli.rst:153
-#: ../../source/cli.rst:276 ../../source/cli.rst:305 ../../source/cli.rst:329
-#: ../../source/cli.rst:359 ../../source/cli.rst:391
+#: ../../source/cli.rst:283 ../../source/cli.rst:312 ../../source/cli.rst:336
+#: ../../source/cli.rst:366 ../../source/cli.rst:398
 msgid "**Options:**"
 msgstr ""
 
@@ -366,9 +366,9 @@ msgid ""
 "virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:168 ../../source/cli.rst:217 ../../source/cli.rst:254
-#: ../../source/cli.rst:283 ../../source/cli.rst:310 ../../source/cli.rst:339
-#: ../../source/cli.rst:369 ../../source/cli.rst:398
+#: ../../source/cli.rst:168 ../../source/cli.rst:220 ../../source/cli.rst:261
+#: ../../source/cli.rst:290 ../../source/cli.rst:317 ../../source/cli.rst:346
+#: ../../source/cli.rst:376 ../../source/cli.rst:405
 msgid "**Exemples:**"
 msgstr ""
 
@@ -384,8 +384,8 @@ msgstr ""
 msgid "**Options principales:**"
 msgstr ""
 
-#: ../../source/cli.rst:192 ../../source/cli.rst:278 ../../source/cli.rst:307
-#: ../../source/cli.rst:331 ../../source/cli.rst:361 ../../source/cli.rst:393
+#: ../../source/cli.rst:192 ../../source/cli.rst:285 ../../source/cli.rst:314
+#: ../../source/cli.rst:338 ../../source/cli.rst:368 ../../source/cli.rst:400
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr ""
 
@@ -470,170 +470,181 @@ msgid ""
 "virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:240
+#: ../../source/cli.rst:216
+msgid ""
+"``--individual`` — Uniquement les positions importées seules, "
+"c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
+"import de match a apportées."
+msgstr ""
+
+#: ../../source/cli.rst:246
 msgid "list — Lister le contenu"
 msgstr ""
 
-#: ../../source/cli.rst:242
+#: ../../source/cli.rst:248
 msgid "Affiche le contenu de la base de données."
 msgstr ""
 
-#: ../../source/cli.rst:248
+#: ../../source/cli.rst:254
 msgid "**Types:**"
 msgstr ""
 
-#: ../../source/cli.rst:250
+#: ../../source/cli.rst:256
 msgid "``matches`` — Liste des matchs importés."
 msgstr ""
 
-#: ../../source/cli.rst:251
+#: ../../source/cli.rst:257
+msgid "``tournaments`` — Liste des tournois."
+msgstr ""
+
+#: ../../source/cli.rst:258
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 msgstr ""
 
-#: ../../source/cli.rst:252
+#: ../../source/cli.rst:259
 msgid ""
 "``stats`` — Statistiques globales (positions, analyses, matchs, parties, "
 "coups)."
 msgstr ""
 
-#: ../../source/cli.rst:268
+#: ../../source/cli.rst:275
 msgid "match — Afficher un match"
 msgstr ""
 
-#: ../../source/cli.rst:270
+#: ../../source/cli.rst:277
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr ""
 
-#: ../../source/cli.rst:279
+#: ../../source/cli.rst:286
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:280
+#: ../../source/cli.rst:287
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
 msgstr ""
 
-#: ../../source/cli.rst:281
+#: ../../source/cli.rst:288
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr ""
 
-#: ../../source/cli.rst:297
+#: ../../source/cli.rst:304
 msgid "info — Métadonnées de la base"
 msgstr ""
 
-#: ../../source/cli.rst:299
+#: ../../source/cli.rst:306
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr ""
 
-#: ../../source/cli.rst:308
+#: ../../source/cli.rst:315
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 
-#: ../../source/cli.rst:321
+#: ../../source/cli.rst:328
 msgid "edit — Modifier les métadonnées"
 msgstr ""
 
-#: ../../source/cli.rst:323
+#: ../../source/cli.rst:330
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr ""
 
-#: ../../source/cli.rst:332
+#: ../../source/cli.rst:339
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr ""
 
-#: ../../source/cli.rst:333
+#: ../../source/cli.rst:340
 msgid "``--description`` — Nouvelle description."
 msgstr ""
 
-#: ../../source/cli.rst:334
+#: ../../source/cli.rst:341
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr ""
 
-#: ../../source/cli.rst:335
+#: ../../source/cli.rst:342
 msgid "``--clear-description`` — Effacer la description."
 msgstr ""
 
-#: ../../source/cli.rst:337
+#: ../../source/cli.rst:344
 msgid "Au moins une option de modification est requise."
 msgstr ""
 
-#: ../../source/cli.rst:350
+#: ../../source/cli.rst:357
 msgid "verify — Vérifier l'intégrité"
 msgstr ""
 
-#: ../../source/cli.rst:352
+#: ../../source/cli.rst:359
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
 msgstr ""
 
-#: ../../source/cli.rst:362
+#: ../../source/cli.rst:369
 msgid "``--match`` — ID du match à vérifier."
 msgstr ""
 
-#: ../../source/cli.rst:363
+#: ../../source/cli.rst:370
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr ""
 
-#: ../../source/cli.rst:365
+#: ../../source/cli.rst:372
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
 "les comparer avec le fichier source original."
 msgstr ""
 
-#: ../../source/cli.rst:383
+#: ../../source/cli.rst:390
 msgid "delete — Supprimer des données"
 msgstr ""
 
-#: ../../source/cli.rst:385
+#: ../../source/cli.rst:392
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr ""
 
-#: ../../source/cli.rst:394
+#: ../../source/cli.rst:401
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:395
+#: ../../source/cli.rst:402
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:396
+#: ../../source/cli.rst:403
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr ""
 
-#: ../../source/cli.rst:409
+#: ../../source/cli.rst:416
 msgid "Exemples de flux de travail"
 msgstr ""
 
-#: ../../source/cli.rst:412
+#: ../../source/cli.rst:419
 msgid "Import d'un répertoire de tournoi"
 msgstr ""
 
-#: ../../source/cli.rst:426
+#: ../../source/cli.rst:433
 msgid "Sauvegarde régulière"
 msgstr ""
 
-#: ../../source/cli.rst:434
+#: ../../source/cli.rst:441
 msgid "Analyse des erreurs"
 msgstr ""
 
-#: ../../source/cli.rst:445
+#: ../../source/cli.rst:452
 msgid "Codes de retour"
 msgstr ""
 
-#: ../../source/cli.rst:447
+#: ../../source/cli.rst:454
 msgid "``0`` — Succès."
 msgstr ""
 
-#: ../../source/cli.rst:448
+#: ../../source/cli.rst:455
 msgid "``1`` — Erreur."
 msgstr ""
 
-#: ../../source/cli.rst:450
+#: ../../source/cli.rst:457
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 01:54+0200\n"
+"POT-Creation-Date: 2026-07-15 02:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Manuel"
 msgstr "Manuale"
 
-#: ../../source/manuel.rst:7 ../../source/manuel.rst:348
+#: ../../source/manuel.rst:7 ../../source/manuel.rst:357
 msgid "Introduction"
 msgstr "Introduzione"
 
@@ -425,7 +425,7 @@ msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "visualizzare, aggiungere e modificare i commenti di una posizione."
 
 #: ../../source/manuel.rst:188 ../../source/manuel.rst:201
-#: ../../source/manuel.rst:329
+#: ../../source/manuel.rst:338
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Fare riferimento a :ref:`raccourcis` per le scorciatoie disponibili."
 
@@ -596,14 +596,36 @@ msgstr ""
 " al centro del board al valore offerto; tale valore resta modificabile."
 
 #: ../../source/manuel.rst:279
+msgid ""
+"Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
+" modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
+" à cocher, une pour les matchs et une pour les tournois, chacune "
+"filtrable par texte (joueur, date, événement pour les matchs ; nom, date,"
+" lieu pour les tournois), avec des boutons *Tout* / *Aucun* qui "
+"n'agissent que sur le sous-ensemble actuellement filtré. Cocher un "
+"tournoi coche automatiquement (et grise) ses matchs membres dans la liste"
+" des matchs, rendant visible le fait qu'un tournoi équivaut à l'ensemble "
+"de ses matchs."
+msgstr ""
+"Il filtro **Match & Tornei** si basa su un selettore comune (finestra "
+"modale) anziché sull'inserimento di identificativi numerici: due elenchi "
+"con caselle di spunta, uno per i match e uno per i tornei, ciascuno "
+"filtrabile per testo (giocatore, data, evento per i match; nome, data, "
+"luogo per i tornei), con pulsanti *Tutti* / *Nessuno* che agiscono solo "
+"sul sottoinsieme attualmente filtrato. Selezionare un torneo seleziona "
+"automaticamente (e disabilita, mostrandoli in grigio) i match che ne "
+"fanno parte nell'elenco dei match, rendendo visibile il fatto che un "
+"torneo equivale all'insieme dei suoi match."
+
+#: ../../source/manuel.rst:288
 msgid "Se référer à la :numref:`cmd_mode` pour la liste des filtres disponibles."
 msgstr "Fare riferimento a :numref:`cmd_mode` per l'elenco dei filtri disponibili."
 
-#: ../../source/manuel.rst:285
+#: ../../source/manuel.rst:294
 msgid "Panneau Collections"
 msgstr "Pannello Raccolte"
 
-#: ../../source/manuel.rst:287
+#: ../../source/manuel.rst:296
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -622,11 +644,11 @@ msgstr ""
 "modificato tramite trascinamento. Premere *CTRL-B* o eseguire il comando "
 "``collection`` per mostrare o nascondere il pannello."
 
-#: ../../source/manuel.rst:298
+#: ../../source/manuel.rst:307
 msgid "Panneau Matchs"
 msgstr "Pannello Match"
 
-#: ../../source/manuel.rst:300
+#: ../../source/manuel.rst:309
 msgid ""
 "Le panneau **Matchs** (*CTRL-Tab*) liste les matchs importés. Double-"
 "cliquer sur un match (ou appuyer sur *ENTREE*) pour naviguer dans ses "
@@ -637,35 +659,35 @@ msgstr ""
 "clic su un match (o premere *INVIO*) per navigare tra le sue mosse. Il "
 "comando ``m`` riprende la navigazione nell'ultimo match visitato."
 
-#: ../../source/manuel.rst:304
+#: ../../source/manuel.rst:313
 msgid "L'utilisateur peut:"
 msgstr "L'utente può:"
 
-#: ../../source/manuel.rst:306
+#: ../../source/manuel.rst:315
 msgid ""
 "parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
 "*DROITE*,"
 msgstr "scorrere le mosse di un match usando i tasti *SINISTRA* e *DESTRA*,"
 
-#: ../../source/manuel.rst:308
+#: ../../source/manuel.rst:317
 msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
 msgstr "passare da una partita all'altra con i tasti *PageUp* e *PageDown*,"
 
-#: ../../source/manuel.rst:310
+#: ../../source/manuel.rst:319
 msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
 msgstr "visualizzare l'analisi delle mosse (pedine e cubo) premendo *CTRL-L*,"
 
-#: ../../source/manuel.rst:312
+#: ../../source/manuel.rst:321
 msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
 msgstr ""
 "alternare tra l'analisi delle mosse di pedine e quella del cubo con il "
 "tasto *d*,"
 
-#: ../../source/manuel.rst:314
+#: ../../source/manuel.rst:323
 msgid "voir le coup effectivement joué mis en évidence dans l'analyse."
 msgstr "vedere la mossa effettivamente giocata evidenziata nell'analisi."
 
-#: ../../source/manuel.rst:316
+#: ../../source/manuel.rst:325
 msgid ""
 "La dernière position visitée dans chaque match est mémorisée et restaurée"
 " automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande "
@@ -675,7 +697,7 @@ msgstr ""
 "ripristinata automaticamente. Premere *CTRL-Tab* o eseguire il comando "
 "``match`` per mostrare o nascondere il pannello."
 
-#: ../../source/manuel.rst:320
+#: ../../source/manuel.rst:329
 msgid ""
 "Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-"
 "dessus du plateau : elle rappelle les joueurs en présence (*joueur 1* "
@@ -688,7 +710,7 @@ msgstr ""
 "*giocatore 2*) nonché il contesto del match (evento, luogo, turno, data e"
 " lunghezza del match, quando queste informazioni sono disponibili)."
 
-#: ../../source/manuel.rst:325
+#: ../../source/manuel.rst:334
 msgid ""
 "À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est "
 "affiché d'emblée et la revue débute directement sur la première position,"
@@ -698,11 +720,11 @@ msgstr ""
 " mostrato subito e la revisione inizia direttamente sulla prima "
 "posizione, così da cominciare immediatamente la navigazione."
 
-#: ../../source/manuel.rst:334
+#: ../../source/manuel.rst:343
 msgid "Panneau Tournois"
 msgstr "Pannello Tornei"
 
-#: ../../source/manuel.rst:336
+#: ../../source/manuel.rst:345
 msgid ""
 "Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en "
 "tournois pour un suivi organisé et une analyse statistique par événement."
@@ -718,11 +740,11 @@ msgstr ""
 "possono essere filtrate per torneo. Premere *CTRL-Y* per mostrare o "
 "nascondere il pannello."
 
-#: ../../source/manuel.rst:345
+#: ../../source/manuel.rst:354
 msgid "Panneau Stats"
 msgstr "Pannello Stats"
 
-#: ../../source/manuel.rst:350
+#: ../../source/manuel.rst:359
 msgid ""
 "Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
 "progression dans le temps à partir des positions importées dans la base "
@@ -736,11 +758,11 @@ msgstr ""
 "(Performance Rate) e **MWC cost** (Match Winning Chance cost) per "
 "l'insieme delle posizioni o per un sottoinsieme filtrato."
 
-#: ../../source/manuel.rst:356
+#: ../../source/manuel.rst:365
 msgid "Le panneau Stats est particulièrement utile pour :"
 msgstr "Il pannello Stats è particolarmente utile per:"
 
-#: ../../source/manuel.rst:358
+#: ../../source/manuel.rst:367
 msgid ""
 "**situer son niveau** par rapport aux seuils de référence (world-class, "
 "expert, avancé…) grâce au PR global ;"
@@ -748,7 +770,7 @@ msgstr ""
 "**valutare il proprio livello** rispetto alle soglie di riferimento "
 "(world-class, esperto, avanzato…) grazie al PR globale;"
 
-#: ../../source/manuel.rst:361
+#: ../../source/manuel.rst:370
 msgid ""
 "**suivre sa progression** tournoi après tournoi ou match après match "
 "grâce aux graphiques de l'onglet Progression ;"
@@ -756,7 +778,7 @@ msgstr ""
 "**seguire la propria progressione** torneo dopo torneo o match dopo match"
 " grazie ai grafici della scheda Progressione;"
 
-#: ../../source/manuel.rst:364
+#: ../../source/manuel.rst:373
 msgid ""
 "**identifier ses points faibles** : onglet Erreurs pour voir la "
 "répartition entre coups joués et décisions de videau, et la distribution "
@@ -766,7 +788,7 @@ msgstr ""
 "ripartizione tra mosse di pedine e decisioni di cubo e la distribuzione "
 "delle magnitudo d'errore;"
 
-#: ../../source/manuel.rst:368
+#: ../../source/manuel.rst:377
 msgid ""
 "**accéder directement aux positions concernées** en cliquant sur "
 "n'importe quel indicateur (drill-down)."
@@ -774,23 +796,23 @@ msgstr ""
 "**accedere direttamente alle posizioni interessate** cliccando su "
 "qualsiasi indicatore (drill-down)."
 
-#: ../../source/manuel.rst:372
+#: ../../source/manuel.rst:381
 msgid "Ouverture du panneau"
 msgstr "Apertura del pannello"
 
-#: ../../source/manuel.rst:374
+#: ../../source/manuel.rst:383
 msgid "Pour ouvrir le panneau Stats :"
 msgstr "Per aprire il pannello Stats:"
 
-#: ../../source/manuel.rst:376
+#: ../../source/manuel.rst:385
 msgid "Appuyer sur *CTRL-D*."
 msgstr "Premere *CTRL-D*."
 
-#: ../../source/manuel.rst:377
+#: ../../source/manuel.rst:386
 msgid "Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande."
 msgstr "Digitare il comando ``:stats`` o ``:st`` nella riga di comando."
 
-#: ../../source/manuel.rst:380
+#: ../../source/manuel.rst:389
 msgid ""
 "Le panneau se rafraîchit automatiquement à chaque modification du filtre."
 " Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
@@ -800,11 +822,11 @@ msgstr ""
 "ricalcola le statistiche in caso di semplice passaggio PR ↔ MWC: entrambe"
 " le metriche vengono calcolate simultaneamente dal backend."
 
-#: ../../source/manuel.rst:385
+#: ../../source/manuel.rst:394
 msgid "Barre de filtre"
 msgstr "Barra dei filtri"
 
-#: ../../source/manuel.rst:387
+#: ../../source/manuel.rst:396
 msgid ""
 "La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
 " un sous-ensemble de positions."
@@ -812,11 +834,11 @@ msgstr ""
 "La barra dei filtri, in alto nel pannello, permette di limitare il "
 "calcolo a un sottoinsieme di posizioni."
 
-#: ../../source/manuel.rst:391
+#: ../../source/manuel.rst:400
 msgid "Perspective joueur"
 msgstr "Prospettiva del giocatore"
 
-#: ../../source/manuel.rst:393
+#: ../../source/manuel.rst:402
 msgid ""
 "La liste déroulante **Joueur** permet de filtrer les statistiques selon "
 "le joueur analysé. blunderDB sélectionne automatiquement le joueur dont "
@@ -828,7 +850,7 @@ msgstr ""
 "giocatore il cui nome compare più spesso nel database — modificabile in "
 "qualsiasi momento."
 
-#: ../../source/manuel.rst:398
+#: ../../source/manuel.rst:407
 msgid ""
 "Changer de joueur ne provoque pas de perte de données ; il suffit de re-"
 "sélectionner le joueur précédent dans la liste."
@@ -836,11 +858,11 @@ msgstr ""
 "Cambiare giocatore non comporta alcuna perdita di dati; è sufficiente "
 "riselezionare il giocatore precedente dall'elenco."
 
-#: ../../source/manuel.rst:402
+#: ../../source/manuel.rst:411
 msgid "Filtres disponibles"
 msgstr "Filtri disponibili"
 
-#: ../../source/manuel.rst:404
+#: ../../source/manuel.rst:413
 msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
@@ -848,7 +870,7 @@ msgstr ""
 "**Torneo(i)** — restrizione a uno o più tornei. È possibile selezionare "
 "più tornei contemporaneamente."
 
-#: ../../source/manuel.rst:407
+#: ../../source/manuel.rst:416
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
@@ -856,11 +878,11 @@ msgstr ""
 "**Date** — intervallo temporale (*Da* … *A*). Se viene indicata solo la "
 "data di inizio, vengono incluse le posizioni più recenti."
 
-#: ../../source/manuel.rst:410
+#: ../../source/manuel.rst:419
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
 msgstr "**Tipo di decisione** — Tutti / Mosse di pedine / Decisioni di cubo."
 
-#: ../../source/manuel.rst:412
+#: ../../source/manuel.rst:421
 msgid ""
 "**Longueur de match** — restriction à des longueurs de match précises (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
@@ -869,7 +891,7 @@ msgstr ""
 "**Lunghezza del match** — restrizione a lunghezze di match specifiche (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 punti). È possibile combinare più lunghezze."
 
-#: ../../source/manuel.rst:415
+#: ../../source/manuel.rst:424
 msgid ""
 "Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur auto-"
 "détecté)."
@@ -877,7 +899,7 @@ msgstr ""
 "Un pulsante **Reset** azzera tutti i filtri (tranne il giocatore rilevato"
 " automaticamente)."
 
-#: ../../source/manuel.rst:419
+#: ../../source/manuel.rst:428
 msgid ""
 "Les filtres sont persistés dans la configuration de blunderDB "
 "(``config.yaml``) et sont restaurés à la prochaine ouverture."
@@ -885,11 +907,11 @@ msgstr ""
 "I filtri vengono salvati nella configurazione di blunderDB "
 "(``config.yaml``) e ripristinati all'avvio successivo."
 
-#: ../../source/manuel.rst:423
+#: ../../source/manuel.rst:432
 msgid "Toggle PR / MWC"
 msgstr "Commutazione PR / MWC"
 
-#: ../../source/manuel.rst:425
+#: ../../source/manuel.rst:434
 msgid ""
 "Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
 "dans tous les onglets."
@@ -897,11 +919,11 @@ msgstr ""
 "Il pulsante **PR / MWC** in alto nel pannello commuta la metrica "
 "visualizzata in tutte le schede."
 
-#: ../../source/manuel.rst:428
+#: ../../source/manuel.rst:437
 msgid "**PR (Performance Rate)**"
 msgstr "**PR (Performance Rate)**"
 
-#: ../../source/manuel.rst:430
+#: ../../source/manuel.rst:439
 msgid ""
 "Mesure la qualité de jeu *money-game* : somme des erreurs en millièmes de"
 " point de backgammon, divisée par le nombre de décisions. Indépendant du "
@@ -911,7 +933,7 @@ msgstr ""
 "di punto, divisa per il numero di decisioni. Indipendente dal punteggio "
 "del match."
 
-#: ../../source/manuel.rst:434
+#: ../../source/manuel.rst:443
 msgid "Seuils de référence approximatifs :"
 msgstr "Soglie di riferimento approssimative:"
 
@@ -963,11 +985,11 @@ msgstr "Principiante"
 msgid "> 12"
 msgstr "> 12"
 
-#: ../../source/manuel.rst:447
+#: ../../source/manuel.rst:456
 msgid "**MWC cost (Match Winning Chance cost)**"
 msgstr "**MWC cost (Match Winning Chance cost)**"
 
-#: ../../source/manuel.rst:449
+#: ../../source/manuel.rst:458
 msgid ""
 "Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
 "l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-"
@@ -977,7 +999,7 @@ msgstr ""
 "sull'intero set di dati filtrato. Calcolata a partire dalla MET Kazaross-"
 "XG2 integrata in blunderDB."
 
-#: ../../source/manuel.rst:454
+#: ../../source/manuel.rst:463
 msgid ""
 "Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
 "enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
@@ -989,7 +1011,7 @@ msgstr ""
 "MWC dipendono dalla MET utilizzata; non sono direttamente confrontabili "
 "tra software che usano MET diverse."
 
-#: ../../source/manuel.rst:459
+#: ../../source/manuel.rst:468
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."
@@ -997,37 +1019,37 @@ msgstr ""
 "La commutazione PR ↔ MWC è istantanea: non viene eseguito alcun ricalcolo"
 " da parte del backend."
 
-#: ../../source/manuel.rst:463
+#: ../../source/manuel.rst:472
 msgid "Onglet Dashboard"
 msgstr "Scheda Dashboard"
 
-#: ../../source/manuel.rst:465
+#: ../../source/manuel.rst:474
 msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
 msgstr ""
 "La scheda **Dashboard** offre una visione sintetica degli indicatori "
 "chiave."
 
-#: ../../source/manuel.rst:468
+#: ../../source/manuel.rst:477
 msgid "Cartes de niveau"
 msgstr "Schede di livello"
 
-#: ../../source/manuel.rst:470
+#: ../../source/manuel.rst:479
 msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Tre schede visualizzano il PR (o MWC) per:"
 
-#: ../../source/manuel.rst:472
+#: ../../source/manuel.rst:481
 msgid "**All** — toutes les décisions (coups + videau) ;"
 msgstr "**All** — tutte le decisioni (pedine + cubo);"
 
-#: ../../source/manuel.rst:473
+#: ../../source/manuel.rst:482
 msgid "**Checker** — coups joués seulement ;"
 msgstr "**Checker** — solo mosse di pedine;"
 
-#: ../../source/manuel.rst:474
+#: ../../source/manuel.rst:483
 msgid "**Cube** — décisions de videau seulement."
 msgstr "**Cube** — solo decisioni di cubo."
 
-#: ../../source/manuel.rst:476
+#: ../../source/manuel.rst:485
 msgid ""
 "Cliquer sur une carte charge dans le panneau d'analyse les positions du "
 "sous-ensemble correspondant (drill-down)."
@@ -1035,17 +1057,17 @@ msgstr ""
 "Cliccando su una scheda si caricano nel pannello di analisi le posizioni "
 "del sottoinsieme corrispondente (drill-down)."
 
-#: ../../source/manuel.rst:480
+#: ../../source/manuel.rst:489
 msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
 msgstr ""
 "Il numero totale di decisioni viene visualizzato in fondo a ciascuna "
 "scheda al passaggio del mouse."
 
-#: ../../source/manuel.rst:483
+#: ../../source/manuel.rst:492
 msgid "PR glissant sur N dernières décisions"
 msgstr "PR mobile sulle ultime N decisioni"
 
-#: ../../source/manuel.rst:485
+#: ../../source/manuel.rst:494
 msgid ""
 "Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
 "décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
@@ -1057,15 +1079,15 @@ msgstr ""
 " I valori in grigio corrispondono a un N superiore al numero di decisioni"
 " disponibili."
 
-#: ../../source/manuel.rst:490
+#: ../../source/manuel.rst:499
 msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
 msgstr "Cliccando su un valore si caricano le ultime *N* posizioni corrispondenti."
 
-#: ../../source/manuel.rst:493
+#: ../../source/manuel.rst:502
 msgid "Top blunders"
 msgstr "Top blunder"
 
-#: ../../source/manuel.rst:495
+#: ../../source/manuel.rst:504
 msgid ""
 "La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
 "décroissante. Cliquer sur une ligne charge la position concernée dans le "
@@ -1075,19 +1097,19 @@ msgstr ""
 "decrescente. Cliccando su una riga si carica la posizione interessata nel"
 " pannello di analisi."
 
-#: ../../source/manuel.rst:499
+#: ../../source/manuel.rst:508
 msgid "Onglet Progression"
 msgstr "Scheda Progressione"
 
-#: ../../source/manuel.rst:501
+#: ../../source/manuel.rst:510
 msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
 msgstr "La scheda **Progressione** presenta l'evoluzione del livello nel tempo."
 
-#: ../../source/manuel.rst:504
+#: ../../source/manuel.rst:513
 msgid "Courbe par tournoi"
 msgstr "Grafico a linee per torneo"
 
-#: ../../source/manuel.rst:506
+#: ../../source/manuel.rst:515
 msgid ""
 "Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :"
 " ordre des tournois, axe Y : valeur de la métrique). Des bandes de "
@@ -1097,7 +1119,7 @@ msgstr ""
 "ordine dei tornei, asse Y: valore della metrica). Bande colorate "
 "evidenziano le soglie di livello."
 
-#: ../../source/manuel.rst:510
+#: ../../source/manuel.rst:519
 msgid ""
 "Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
 "options :"
@@ -1105,11 +1127,11 @@ msgstr ""
 "Cliccando su un punto del grafico si apre un menu contestuale con due "
 "opzioni:"
 
-#: ../../source/manuel.rst:512
+#: ../../source/manuel.rst:521
 msgid "**Open tournament** — ouvre le tournoi dans le panneau Tournois."
 msgstr "**Open tournament** — apre il torneo nel pannello Tornei."
 
-#: ../../source/manuel.rst:513
+#: ../../source/manuel.rst:522
 msgid ""
 "**Open positions** — charge toutes les positions du tournoi dans le "
 "panneau d'analyse."
@@ -1117,11 +1139,11 @@ msgstr ""
 "**Open positions** — carica tutte le posizioni del torneo nel pannello di"
 " analisi."
 
-#: ../../source/manuel.rst:517
+#: ../../source/manuel.rst:526
 msgid "Scatter plot par match"
 msgstr "Scatter plot per match"
 
-#: ../../source/manuel.rst:519
+#: ../../source/manuel.rst:528
 msgid ""
 "Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
 "MWC). La taille du point est proportionnelle au nombre de décisions dans "
@@ -1131,15 +1153,15 @@ msgstr ""
 " PR o MWC). La dimensione del punto è proporzionale al numero di "
 "decisioni nel match."
 
-#: ../../source/manuel.rst:522
+#: ../../source/manuel.rst:531
 msgid "Cliquer sur un point ouvre un menu contextuel :"
 msgstr "Cliccando su un punto si apre un menu contestuale:"
 
-#: ../../source/manuel.rst:524
+#: ../../source/manuel.rst:533
 msgid "**Open match** — ouvre le match dans le panneau des matchs."
 msgstr "**Open match** — apre il match nel pannello Match."
 
-#: ../../source/manuel.rst:525
+#: ../../source/manuel.rst:534
 msgid ""
 "**Open positions** — charge toutes les positions du match dans le panneau"
 " d'analyse."
@@ -1147,19 +1169,19 @@ msgstr ""
 "**Open positions** — carica tutte le posizioni del match nel pannello di "
 "analisi."
 
-#: ../../source/manuel.rst:529
+#: ../../source/manuel.rst:538
 msgid "Onglet Erreurs"
 msgstr "Scheda Errori"
 
-#: ../../source/manuel.rst:531
+#: ../../source/manuel.rst:540
 msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
 msgstr "La scheda **Errori** scompone le fonti di errore."
 
-#: ../../source/manuel.rst:534
+#: ../../source/manuel.rst:543
 msgid "Répartition par action de videau"
 msgstr "Ripartizione per azione di cubo"
 
-#: ../../source/manuel.rst:536
+#: ../../source/manuel.rst:545
 msgid ""
 "Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
 "décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
@@ -1171,7 +1193,7 @@ msgstr ""
 "Ogni barra indica inoltre il numero di decisioni e il tasso di blunder in"
 " un suggerimento."
 
-#: ../../source/manuel.rst:540
+#: ../../source/manuel.rst:549
 msgid ""
 "Cliquer sur une barre charge les positions correspondant à cette action "
 "de videau, **uniquement celles avec une erreur** (drill-down)."
@@ -1179,11 +1201,11 @@ msgstr ""
 "Cliccando su una barra si caricano le posizioni corrispondenti a "
 "quell'azione di cubo, **solo quelle con un errore** (drill-down)."
 
-#: ../../source/manuel.rst:544
+#: ../../source/manuel.rst:553
 msgid "Répartition Checker / Cube"
 msgstr "Confronto Checker / Cube"
 
-#: ../../source/manuel.rst:546
+#: ../../source/manuel.rst:555
 msgid ""
 "Un diagramme comparatif place côte à côte le PR des coups joués et des "
 "décisions de videau. Cliquer sur une barre charge les positions du sous-"
@@ -1193,11 +1215,11 @@ msgstr ""
 "delle decisioni di cubo. Cliccando su una barra si caricano le posizioni "
 "del sottoinsieme con errore."
 
-#: ../../source/manuel.rst:551
+#: ../../source/manuel.rst:560
 msgid "Histogramme des magnitudes d'erreur"
 msgstr "Istogramma delle magnitudo d'errore"
 
-#: ../../source/manuel.rst:553
+#: ../../source/manuel.rst:562
 msgid ""
 "Un histogramme distribue les erreurs selon leur magnitude en millièmes de"
 " point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur "
@@ -1207,11 +1229,11 @@ msgstr ""
 "millesimi di punto (fasce: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). "
 "Cliccando su una barra si caricano le posizioni della fascia."
 
-#: ../../source/manuel.rst:558
+#: ../../source/manuel.rst:567
 msgid "Règle d'agrégation"
 msgstr "Regola di aggregazione"
 
-#: ../../source/manuel.rst:561
+#: ../../source/manuel.rst:570
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -1220,11 +1242,11 @@ msgstr ""
 "Il PR di un torneo (o di un qualsiasi sottoinsieme) è calcolato con la "
 "regola **somma/somma** — mai come media dei PR individuali dei match."
 
-#: ../../source/manuel.rst:565
+#: ../../source/manuel.rst:574
 msgid "Formule :"
 msgstr "Formula:"
 
-#: ../../source/manuel.rst:567
+#: ../../source/manuel.rst:576
 msgid ""
 "PR_{tournoi} = \\frac{\\sum_{i} \\text{erreur}_i}{\\text{nombre total de "
 "décisions}}"
@@ -1232,23 +1254,23 @@ msgstr ""
 "PR_{torneo} = \\frac{\\sum_{i} \\text{errore}_i}{\\text{numero totale di "
 "decisioni}}"
 
-#: ../../source/manuel.rst:571
+#: ../../source/manuel.rst:580
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Esempio:** un giocatore disputa due match in un torneo —"
 
-#: ../../source/manuel.rst:573
+#: ../../source/manuel.rst:582
 msgid "Match A : 10 décisions, erreur totale 50 mp → PR = 5,0"
 msgstr "Match A: 10 decisioni, errore totale 50 mp → PR = 5,0"
 
-#: ../../source/manuel.rst:574
+#: ../../source/manuel.rst:583
 msgid "Match B : 90 décisions, erreur totale 270 mp → PR = 3,0"
 msgstr "Match B: 90 decisioni, errore totale 270 mp → PR = 3,0"
 
-#: ../../source/manuel.rst:576
+#: ../../source/manuel.rst:585
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Media ingenua dei PR: (5,0 + 3,0) / 2 = **4,0** *(errato)*"
 
-#: ../../source/manuel.rst:578
+#: ../../source/manuel.rst:587
 msgid ""
 "Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = **3,2** "
 "*(correct)*"
@@ -1256,7 +1278,7 @@ msgstr ""
 "Regola somma/somma: (50 + 270) / (10 + 90) = 320 / 100 = **3,2** "
 "*(corretto)*"
 
-#: ../../source/manuel.rst:580
+#: ../../source/manuel.rst:589
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
@@ -1265,11 +1287,11 @@ msgstr ""
 "di lunghezza dei match (un match a 21 punti pesa più di un match a 1 "
 "punto)."
 
-#: ../../source/manuel.rst:584
+#: ../../source/manuel.rst:593
 msgid "MWC : limitations"
 msgstr "MWC: limitazioni"
 
-#: ../../source/manuel.rst:586
+#: ../../source/manuel.rst:595
 msgid ""
 "Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
 "référence de facto dans le backgammon compétitif. Les résultats ne sont "
@@ -1279,7 +1301,7 @@ msgstr ""
 "riferimento di fatto nel backgammon agonistico. I risultati non sono "
 "direttamente confrontabili con software che usano altre MET."
 
-#: ../../source/manuel.rst:590
+#: ../../source/manuel.rst:599
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -1289,7 +1311,7 @@ msgstr ""
 " calcolo MWC. Se il database contiene molte posizioni money-game, il MWC "
 "cost potrebbe essere sottostimato o non disponibile."
 
-#: ../../source/manuel.rst:594
+#: ../../source/manuel.rst:603
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -1299,11 +1321,11 @@ msgstr ""
 "indicatore per singola decisione. Misura l'impatto totale dei tuoi errori"
 " sulle tue probabilità di vittoria."
 
-#: ../../source/manuel.rst:601
+#: ../../source/manuel.rst:610
 msgid "Panneau EPC"
 msgstr "Pannello EPC"
 
-#: ../../source/manuel.rst:603
+#: ../../source/manuel.rst:612
 msgid ""
 "Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une "
 "position de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant "
@@ -1314,7 +1336,7 @@ msgstr ""
 " posizione di bearoff. Si attiva premendo *CTRL-E*, cliccando sulla "
 "scheda EPC nel pannello inferiore o eseguendo il comando ``epc``."
 
-#: ../../source/manuel.rst:607
+#: ../../source/manuel.rst:616
 msgid ""
 "Dans ce panneau, l'utilisateur édite la position des pions dans le jan (6"
 " derniers points) et les informations suivantes sont affichées en temps "
@@ -1324,27 +1346,27 @@ msgstr ""
 "casa (gli ultimi 6 punti) e le seguenti informazioni vengono visualizzate"
 " in tempo reale per ciascun giocatore:"
 
-#: ../../source/manuel.rst:611
+#: ../../source/manuel.rst:620
 msgid "l'EPC (Effective Pip Count),"
 msgstr "l'EPC (Effective Pip Count),"
 
-#: ../../source/manuel.rst:613
+#: ../../source/manuel.rst:622
 msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
 msgstr "il numero medio di lanci necessari (Mean Rolls),"
 
-#: ../../source/manuel.rst:615
+#: ../../source/manuel.rst:624
 msgid "l'écart type (Standard Deviation),"
 msgstr "la deviazione standard (Standard Deviation),"
 
-#: ../../source/manuel.rst:617
+#: ../../source/manuel.rst:626
 msgid "le pip count,"
 msgstr "il pip count,"
 
-#: ../../source/manuel.rst:619
+#: ../../source/manuel.rst:628
 msgid "le wastage (différence entre l'EPC et le pip count)."
 msgstr "il wastage (differenza tra l'EPC e il pip count)."
 
-#: ../../source/manuel.rst:621
+#: ../../source/manuel.rst:630
 msgid ""
 "Lorsque les deux joueurs ont des pions dans leur jan, une section de "
 "comparaison affiche les différences d'EPC et de pip count."
@@ -1352,7 +1374,7 @@ msgstr ""
 "Quando entrambi i giocatori hanno pedine nella propria casa, una sezione "
 "di confronto mostra le differenze di EPC e di pip count."
 
-#: ../../source/manuel.rst:624
+#: ../../source/manuel.rst:633
 msgid ""
 "Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre"
 " onglet."
@@ -1360,17 +1382,17 @@ msgstr ""
 "Per chiudere il pannello EPC, premere *CTRL-E* o passare a un'altra "
 "scheda."
 
-#: ../../source/manuel.rst:626
+#: ../../source/manuel.rst:635
 msgid ""
 "Le calcul repose sur la base de données interne de bearoff à 6 points de "
 "GNUbg."
 msgstr "Il calcolo si basa sul database interno di bearoff a 6 punti di GNUbg."
 
-#: ../../source/manuel.rst:632
+#: ../../source/manuel.rst:641
 msgid "Panneau Anki"
 msgstr "Pannello Anki"
 
-#: ../../source/manuel.rst:634
+#: ../../source/manuel.rst:643
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
 "répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
@@ -1380,7 +1402,7 @@ msgstr ""
 " ripetizione dilazionata utilizzando l'algoritmo FSRS. L'utente può "
 "creare mazzi a partire da raccolte o risultati di ricerca."
 
-#: ../../source/manuel.rst:638
+#: ../../source/manuel.rst:647
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -1392,7 +1414,7 @@ msgstr ""
 "basati su una ricerca si sincronizzano automaticamente all'apertura della"
 " scheda Anki."
 
-#: ../../source/manuel.rst:642
+#: ../../source/manuel.rst:651
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -1408,7 +1430,7 @@ msgstr ""
 "(Difficile), *3* (Bene) o *4* (Facile). Premere *Esc* per interrompere e "
 "tornare all'elenco dei mazzi."
 
-#: ../../source/manuel.rst:648
+#: ../../source/manuel.rst:657
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -1419,9 +1441,17 @@ msgid ""
 " la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
 "positions. *Esc* revient à la liste sans enregistrer de session "
 "interrompue."
-msgstr "**Allenamento libero (cram):** Il pulsante *Cram*, accanto a *Study*, avvia una sessione di allenamento libero: ti vengono mostrate posizioni casuali del mazzo senza tenere conto della pianificazione FSRS. Questa modalità **non modifica mai il piano di ripetizione dilazionata** — ideale per scaldarsi prima di un torneo o per ripassare intensamente un mazzo tematico senza alterarne l'ordine. Un'etichetta *Cram* sostituisce lo stato della carta e un pulsante *Avanti* (tasti *1*–*4*) scorre le posizioni. *Esc* torna all'elenco senza salvare una sessione interrotta."
+msgstr ""
+"**Allenamento libero (cram):** Il pulsante *Cram*, accanto a *Study*, "
+"avvia una sessione di allenamento libero: ti vengono mostrate posizioni "
+"casuali del mazzo senza tenere conto della pianificazione FSRS. Questa "
+"modalità **non modifica mai il piano di ripetizione dilazionata** — "
+"ideale per scaldarsi prima di un torneo o per ripassare intensamente un "
+"mazzo tematico senza alterarne l'ordine. Un'etichetta *Cram* sostituisce "
+"lo stato della carta e un pulsante *Avanti* (tasti *1*–*4*) scorre le "
+"posizioni. *Esc* torna all'elenco senza salvare una sessione interrotta."
 
-#: ../../source/manuel.rst:657
+#: ../../source/manuel.rst:666
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -1432,7 +1462,7 @@ msgstr ""
 "e mostra la tua progressione. Cliccarci sopra per riprendere da dove ci "
 "si era fermati."
 
-#: ../../source/manuel.rst:661
+#: ../../source/manuel.rst:670
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1444,11 +1474,11 @@ msgstr ""
 "(ritenzione obiettivo, intervallo massimo, fattore di casualità) possono "
 "essere configurati per mazzo nelle Impostazioni (icona a ingranaggio)."
 
-#: ../../source/manuel.rst:669
+#: ../../source/manuel.rst:678
 msgid "Panneau Métadonnées"
 msgstr "Pannello Metadati"
 
-#: ../../source/manuel.rst:671
+#: ../../source/manuel.rst:680
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1459,11 +1489,11 @@ msgstr ""
 " corrente: nome, descrizione, numero di posizioni, numero di match e di "
 "partite, versione dello schema. Accessibile tramite il comando ``meta``."
 
-#: ../../source/manuel.rst:678
+#: ../../source/manuel.rst:687
 msgid "Panneau Journal"
 msgstr "Pannello Registro"
 
-#: ../../source/manuel.rst:680
+#: ../../source/manuel.rst:689
 msgid ""
 "Le panneau **Journal** affiche le journal des opérations récentes : "
 "imports, exports et opérations sur la base de données, avec leurs "

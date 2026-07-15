@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 03:30+0200\n"
+"POT-Creation-Date: 2026-07-15 00:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -469,6 +469,14 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ou celle miroir vérifie les filtres."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "i"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position a été importée seule, et non apportée par l'import d'un match."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -1077,7 +1085,7 @@ msgid ""
 "sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:212
+#: ../../source/cmd_mode.rst:213
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1086,7 +1094,7 @@ msgid ""
 "l'autre des deux dés du lancer)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:218
+#: ../../source/cmd_mode.rst:219
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1095,7 +1103,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:225
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1103,14 +1111,14 @@ msgid ""
 "positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
 "tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:233
+#: ../../source/cmd_mode.rst:234
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1120,7 +1128,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:243
+#: ../../source/cmd_mode.rst:244
 msgid "Commandes diverses"
 msgstr ""
 
@@ -1132,7 +1140,7 @@ msgstr ""
 msgid "Efface l'historique des commandes."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:252
+#: ../../source/cmd_mode.rst:253
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."

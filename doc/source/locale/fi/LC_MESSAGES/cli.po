@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 23:48+0200\n"
+"POT-Creation-Date: 2026-07-15 02:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -221,8 +221,8 @@ msgid ""
 msgstr "Luo uusi tietokantatiedosto valinnaisilla metatiedoilla."
 
 #: ../../source/cli.rst:75 ../../source/cli.rst:100 ../../source/cli.rst:153
-#: ../../source/cli.rst:282 ../../source/cli.rst:311 ../../source/cli.rst:335
-#: ../../source/cli.rst:365 ../../source/cli.rst:397
+#: ../../source/cli.rst:283 ../../source/cli.rst:312 ../../source/cli.rst:336
+#: ../../source/cli.rst:366 ../../source/cli.rst:398
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -403,9 +403,9 @@ msgstr ""
 "``--tournament-ids`` — Vietävien turnausten tunnukset (pilkulla "
 "eroteltuna)."
 
-#: ../../source/cli.rst:168 ../../source/cli.rst:220 ../../source/cli.rst:260
-#: ../../source/cli.rst:289 ../../source/cli.rst:316 ../../source/cli.rst:345
-#: ../../source/cli.rst:375 ../../source/cli.rst:404
+#: ../../source/cli.rst:168 ../../source/cli.rst:220 ../../source/cli.rst:261
+#: ../../source/cli.rst:290 ../../source/cli.rst:317 ../../source/cli.rst:346
+#: ../../source/cli.rst:376 ../../source/cli.rst:405
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -421,8 +421,8 @@ msgstr "Hae asemia tietokannasta yhdisteltävien kriteerien avulla."
 msgid "**Options principales:**"
 msgstr "**Pääasialliset valitsimet:**"
 
-#: ../../source/cli.rst:192 ../../source/cli.rst:284 ../../source/cli.rst:313
-#: ../../source/cli.rst:337 ../../source/cli.rst:367 ../../source/cli.rst:399
+#: ../../source/cli.rst:192 ../../source/cli.rst:285 ../../source/cli.rst:314
+#: ../../source/cli.rst:338 ../../source/cli.rst:368 ../../source/cli.rst:400
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Tietokanta (pakollinen)."
 
@@ -527,7 +527,9 @@ msgid ""
 "``--individual`` — Uniquement les positions importées seules, "
 "c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
 "import de match a apportées."
-msgstr "``--individual`` — Vain erikseen tuodut asemat, eli ne jotka lisäsit itse, eikä niitä jotka ottelun tuonti toi mukanaan."
+msgstr ""
+"``--individual`` — Vain erikseen tuodut asemat, eli ne jotka lisäsit "
+"itse, eikä niitä jotka ottelun tuonti toi mukanaan."
 
 #: ../../source/cli.rst:246
 msgid "list — Lister le contenu"
@@ -546,28 +548,32 @@ msgid "``matches`` — Liste des matchs importés."
 msgstr "``matches`` — Luettelo tuoduista otteluista."
 
 #: ../../source/cli.rst:257
+msgid "``tournaments`` — Liste des tournois."
+msgstr "``tournaments`` — Luettelo turnauksista."
+
+#: ../../source/cli.rst:258
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 msgstr "``positions`` — Luettelo asemista (oletuksena rajoitettu 10:een)."
 
-#: ../../source/cli.rst:258
+#: ../../source/cli.rst:259
 msgid ""
 "``stats`` — Statistiques globales (positions, analyses, matchs, parties, "
 "coups)."
 msgstr "``stats`` — Yleiset tilastot (asemat, analyysit, ottelut, pelit, siirrot)."
 
-#: ../../source/cli.rst:274
+#: ../../source/cli.rst:275
 msgid "match — Afficher un match"
 msgstr "match — Näytä ottelu"
 
-#: ../../source/cli.rst:276
+#: ../../source/cli.rst:277
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr "Näytä tuodun ottelun asemat ja analyysit."
 
-#: ../../source/cli.rst:285
+#: ../../source/cli.rst:286
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — Näytettävän ottelun tunnus (pakollinen)."
 
-#: ../../source/cli.rst:286
+#: ../../source/cli.rst:287
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -575,55 +581,55 @@ msgstr ""
 "``--format`` — Tulostusmuoto: ``json``, ``text`` tai ``summary`` (oletus:"
 " ``json``)."
 
-#: ../../source/cli.rst:287
+#: ../../source/cli.rst:288
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — Tulostiedosto (oletus: vakiotuloste)."
 
-#: ../../source/cli.rst:303
+#: ../../source/cli.rst:304
 msgid "info — Métadonnées de la base"
 msgstr "info — Tietokannan metatiedot"
 
-#: ../../source/cli.rst:305
+#: ../../source/cli.rst:306
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Näytä tietokannan metatiedot ja tilastot."
 
-#: ../../source/cli.rst:314
+#: ../../source/cli.rst:315
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Tulostusmuoto: ``text`` tai ``json`` (oletus: ``text``)."
 
-#: ../../source/cli.rst:327
+#: ../../source/cli.rst:328
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Muokkaa metatietoja"
 
-#: ../../source/cli.rst:329
+#: ../../source/cli.rst:330
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Muokkaa tietokannan käyttäjänimeä tai kuvausta."
 
-#: ../../source/cli.rst:338
+#: ../../source/cli.rst:339
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Uusi käyttäjänimi."
 
-#: ../../source/cli.rst:339
+#: ../../source/cli.rst:340
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Uusi kuvaus."
 
-#: ../../source/cli.rst:340
+#: ../../source/cli.rst:341
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Tyhjennä käyttäjänimi."
 
-#: ../../source/cli.rst:341
+#: ../../source/cli.rst:342
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Tyhjennä kuvaus."
 
-#: ../../source/cli.rst:343
+#: ../../source/cli.rst:344
 msgid "Au moins une option de modification est requise."
 msgstr "Vähintään yksi muokkausvalitsin vaaditaan."
 
-#: ../../source/cli.rst:356
+#: ../../source/cli.rst:357
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Tarkista eheys"
 
-#: ../../source/cli.rst:358
+#: ../../source/cli.rst:359
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -631,17 +637,17 @@ msgstr ""
 "Tarkista tietokannan eheys ja valinnaisesti vertaa ottelua sen "
 "lähdetiedostoon."
 
-#: ../../source/cli.rst:368
+#: ../../source/cli.rst:369
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — Tarkistettavan ottelun tunnus."
 
-#: ../../source/cli.rst:369
+#: ../../source/cli.rst:370
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr ""
 "``--mat`` — Verrattava MAT-tiedosto (käytetään yhdessä ``--match``:n "
 "kanssa)."
 
-#: ../../source/cli.rst:371
+#: ../../source/cli.rst:372
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -651,11 +657,11 @@ msgstr ""
 "tilastot. ``--match``-valitsimen kanssa se tarkistaa ottelun tiedot ja "
 "voi verrata niitä alkuperäiseen lähdetiedostoon."
 
-#: ../../source/cli.rst:389
+#: ../../source/cli.rst:390
 msgid "delete — Supprimer des données"
 msgstr "delete — Poista tietoja"
 
-#: ../../source/cli.rst:391
+#: ../../source/cli.rst:392
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -663,47 +669,47 @@ msgstr ""
 "Poista ottelu ja kaikki siihen liittyvät tiedot (pelit, siirrot, "
 "analyysit)."
 
-#: ../../source/cli.rst:400
+#: ../../source/cli.rst:401
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Poistotyyppi: ``match`` (pakollinen)."
 
-#: ../../source/cli.rst:401
+#: ../../source/cli.rst:402
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Poistettavan kohteen tunnus (pakollinen)."
 
-#: ../../source/cli.rst:402
+#: ../../source/cli.rst:403
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Poista pyytämättä vahvistusta."
 
-#: ../../source/cli.rst:415
+#: ../../source/cli.rst:416
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:418
+#: ../../source/cli.rst:419
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:432
+#: ../../source/cli.rst:433
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:440
+#: ../../source/cli.rst:441
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:451
+#: ../../source/cli.rst:452
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:453
+#: ../../source/cli.rst:454
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:454
+#: ../../source/cli.rst:455
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:456
+#: ../../source/cli.rst:457
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "
