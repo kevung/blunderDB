@@ -376,8 +376,8 @@ msgid ""
 "des dés. Pour prendre en compte la position du videau, du score, des dés,"
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
-"現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。オプションの数値で読み込む件数を指定できます（``bl "
-"50``）。既定値は10です。局面検索では、デフォルトで blunderDB "
+"現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。オプションの数値で読み込む件数を指定できます（\\ ``bl "
+"50``\\ ）。既定値は10です。局面検索では、デフォルトで blunderDB "
 "は現在の駒の配置を考慮し、キューブ、スコア、ダイスの状態は無視します。キューブ、スコア、ダイスを考慮させるには、検索時に明示的に指定する必要があります。"
 
 #: ../../source/cmd_mode.rst:102
@@ -386,7 +386,7 @@ msgid ""
 "recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
 "les résultats actuellement filtrés."
 msgstr ""
-"検索コマンド ``s`` は検索パネル（``TAB`` キー）で利用できます。コマンド ``ss`` "
+"検索コマンド ``s`` は検索パネル（\\ ``TAB`` キー）で利用できます。コマンド ``ss`` "
 "を使うと、現在フィルタされている結果の中から検索できます。"
 
 #: ../../source/cmd_mode.rst:107
@@ -1101,9 +1101,8 @@ msgid ""
 "du premier dé est utilisée pour matcher les positions (sur l'un ou "
 "l'autre des deux dés du lancer)."
 msgstr ""
-"ダイスの目（`D` または `D1`）に応じて局面をフィルタすると、*当然ながら* 決定の種類（`d`）に応じても局面がフィルタされます。フィルタ"
-" `D1` は 2 つ目のダイスの値を無視します。局面のマッチには 1 つ目のダイスの値のみが使われます（出目の 2 "
-"つのダイスのいずれかに対して）。"
+"ダイスの目（`D` または `D1`）に応じて局面をフィルタすると、\\ *当然ながら* 決定の種類（`d`）に応じても局面がフィルタされます。フィルタ"
+" `D1` は 2 つ目のダイスの値を無視します。局面のマッチには 1 つ目のダイスの値のみが使われます（出目の 2 つのダイスのいずれかに対して）。"
 
 #: ../../source/cmd_mode.rst:219
 msgid ""
@@ -1134,8 +1133,9 @@ msgid ""
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
 "tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
-"トーナメント（``tn``）内を検索することは、該当トーナメントのすべてのマッチ内を検索することと同じです。マッチとトーナメントの識別子は、対応するパネルの"
-" ID 列で確認できます。"
+"トーナメント（\\ ``tn``\\ "
+"）内を検索することは、該当トーナメントのすべてのマッチ内を検索することと同じです。マッチとトーナメントの識別子は、対応するパネルの ID "
+"列で確認できます。"
 
 #: ../../source/cmd_mode.rst:234
 #, python-format

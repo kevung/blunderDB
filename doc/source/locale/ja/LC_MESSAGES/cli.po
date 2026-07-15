@@ -38,26 +38,28 @@ msgstr "blunderDBはグラフィカルインターフェースと同じ実行フ
 msgid ""
 "**l'import en masse** de matchs: importer un répertoire entier de "
 "fichiers de matchs (XG, SGF, MAT, BGF…) en une seule commande,"
-msgstr "**マッチの一括インポート**：1つのコマンドでマッチファイル（XG、SGF、MAT、BGF…）のディレクトリ全体をインポートする、"
+msgstr "**マッチの一括インポート**\\ ：1つのコマンドでマッチファイル（XG、SGF、MAT、BGF…）のディレクトリ全体をインポートする、"
 
 #: ../../source/cli.rst:16
 msgid ""
 "**l'automatisation**: intégrer blunderDB dans des scripts shell pour des "
 "sauvegardes régulières, des exports planifiés ou des chaînes de "
 "traitement,"
-msgstr "**自動化**：定期的なバックアップ、スケジュールされたエクスポート、または処理パイプラインのためにblunderDBをシェルスクリプトに統合する、"
+msgstr ""
+"**自動化**\\ "
+"：定期的なバックアップ、スケジュールされたエクスポート、または処理パイプラインのためにblunderDBをシェルスクリプトに統合する、"
 
 #: ../../source/cli.rst:19
 msgid ""
 "**l'utilisation sur serveur**: manipuler des bases de données sur des "
 "machines sans environnement graphique,"
-msgstr "**サーバー使用**：グラフィカル環境のないマシンでデータベースを管理する、"
+msgstr "**サーバー使用**\\ ：グラフィカル環境のないマシンでデータベースを管理する、"
 
 #: ../../source/cli.rst:22
 msgid ""
 "**l'inspection rapide**: vérifier le contenu ou l'intégrité d'une base de"
 " données sans lancer l'interface graphique."
-msgstr "**クイック検査**：グラフィカルインターフェースを起動せずにデータベースのコンテンツや整合性を確認する。"
+msgstr "**クイック検査**\\ ：グラフィカルインターフェースを起動せずにデータベースのコンテンツや整合性を確認する。"
 
 #: ../../source/cli.rst:25
 msgid ""
@@ -249,15 +251,15 @@ msgstr "``--db`` — データベースのパス（必須）。"
 msgid ""
 "``--type`` — Type d'import: ``match``, ``position`` ou ``batch`` "
 "(obligatoire)."
-msgstr "``--type`` — インポートの種類：``match``、``position``、または ``batch``（必須）。"
+msgstr "``--type`` — インポートの種類：\\ ``match``\\ 、\\ ``position``\\ 、または ``batch``\\ （必須）。"
 
 #: ../../source/cli.rst:104
 msgid "``--file`` — Fichier à importer (pour ``match`` et ``position``)."
-msgstr "``--file`` — インポートするファイル（``match`` および ``position`` 用）。"
+msgstr "``--file`` — インポートするファイル（\\ ``match`` および ``position`` 用）。"
 
 #: ../../source/cli.rst:105
 msgid "``--dir`` — Répertoire à importer (pour ``batch``)."
-msgstr "``--dir`` — インポートするディレクトリ（``batch`` 用）。"
+msgstr "``--dir`` — インポートするディレクトリ（\\ ``batch`` 用）。"
 
 #: ../../source/cli.rst:106
 msgid ""
@@ -274,8 +276,8 @@ msgid ""
 "Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
 "Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``)."
 msgstr ""
-"対応フォーマット：eXtreme "
-"Gammon（``.xg``、``.xgp``）、GNUbg（``.sgf``）、Jellyfish（``.mat``、``.txt``）、BGBlitz（``.bgf``）。"
+"対応フォーマット：eXtreme Gammon（\\ ``.xg``\\ 、\\ ``.xgp``\\ ）、GNUbg（\\ ``.sgf``\\ "
+"）、Jellyfish（\\ ``.mat``\\ 、\\ ``.txt``\\ ）、BGBlitz（\\ ``.bgf``\\ ）。"
 
 #: ../../source/cli.rst:119
 msgid "Import de positions"
@@ -320,7 +322,9 @@ msgstr "``--db`` — ソースデータベース（必須）。"
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions`` ou ``matches`` "
 "(obligatoire)."
-msgstr "``--type`` — エクスポートの種類：``database``、``positions``、または ``matches``（必須）。"
+msgstr ""
+"``--type`` — エクスポートの種類：\\ ``database``\\ 、\\ ``positions``\\ 、または "
+"``matches``\\ （必須）。"
 
 #: ../../source/cli.rst:157
 msgid "``--file`` — Fichier de sortie (obligatoire)."
@@ -395,7 +399,9 @@ msgstr "``--db`` — データベース（必須）。"
 msgid ""
 "``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut:"
 " ``table``)."
-msgstr "``--format`` — 出力フォーマット：``table``、``json``、または ``xgid``（デフォルト：``table``）。"
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``table``\\ 、\\ ``json``\\ 、または ``xgid``\\ "
+"（デフォルト：\\ ``table``\\ ）。"
 
 #: ../../source/cli.rst:194
 msgid "``--limit`` — Nombre maximum de résultats (0 = illimité)."
@@ -411,7 +417,7 @@ msgstr "**利用可能なフィルター：**"
 
 #: ../../source/cli.rst:199
 msgid "``--decision`` — Type de décision: ``checker`` ou ``cube``."
-msgstr "``--decision`` — 決定の種類：``checker`` または ``cube``。"
+msgstr "``--decision`` — 決定の種類：\\ ``checker`` または ``cube``\\ 。"
 
 #: ../../source/cli.rst:200
 msgid ""
@@ -421,8 +427,8 @@ msgid ""
 "Implique ``--decision checker`` si aucune valeur de ``--decision`` n'est "
 "donnée."
 msgstr ""
-"``--dice`` — ダイスの目。``5,3`` は両方のダイスが一致するポジションを検索します（順序不問）。``5`` "
-"はいずれかのダイスに5が現れるポジションを検索します（もう一方のダイスの値は無視されます）。``--decision`` "
+"``--dice`` — ダイスの目。\\ ``5,3`` は両方のダイスが一致するポジションを検索します（順序不問）。\\ ``5`` "
+"はいずれかのダイスに5が現れるポジションを検索します（もう一方のダイスの値は無視されます）。\\ ``--decision`` "
 "の値が指定されていない場合は ``--decision checker`` を意味します。"
 
 #: ../../source/cli.rst:205
@@ -528,7 +534,9 @@ msgstr "``--id`` — 表示するマッチのID（必須）。"
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
-msgstr "``--format`` — 出力フォーマット：``json``、``text``、または ``summary``（デフォルト：``json``）。"
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``json``\\ 、\\ ``text``\\ 、または ``summary``\\ "
+"（デフォルト：\\ ``json``\\ ）。"
 
 #: ../../source/cli.rst:288
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
@@ -544,7 +552,7 @@ msgstr "データベースのメタデータと統計を表示します。"
 
 #: ../../source/cli.rst:315
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
-msgstr "``--format`` — 出力フォーマット：``text`` または ``json``（デフォルト：``text``）。"
+msgstr "``--format`` — 出力フォーマット：\\ ``text`` または ``json``\\ （デフォルト：\\ ``text``\\ ）。"
 
 #: ../../source/cli.rst:328
 msgid "edit — Modifier les métadonnées"
@@ -590,7 +598,7 @@ msgstr "``--match`` — 確認するマッチのID。"
 
 #: ../../source/cli.rst:370
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
-msgstr "``--mat`` — 比較するMATファイル（``--match`` と共に使用）。"
+msgstr "``--mat`` — 比較するMATファイル（\\ ``--match`` と共に使用）。"
 
 #: ../../source/cli.rst:372
 msgid ""
@@ -598,7 +606,7 @@ msgid ""
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
 "les comparer avec le fichier source original."
 msgstr ""
-"``--match`` オプションなしの場合、コマンドはデータベースの一般統計を表示します。``--match`` "
+"``--match`` オプションなしの場合、コマンドはデータベースの一般統計を表示します。\\ ``--match`` "
 "を使用すると、マッチのデータを確認し、元のソースファイルと比較できます。"
 
 #: ../../source/cli.rst:390
@@ -613,7 +621,7 @@ msgstr "マッチとすべての関連データ（ゲーム、手、分析）を
 
 #: ../../source/cli.rst:401
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
-msgstr "``--type`` — 削除の種類：``match``（必須）。"
+msgstr "``--type`` — 削除の種類：\\ ``match``\\ （必須）。"
 
 #: ../../source/cli.rst:402
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."

@@ -38,7 +38,8 @@ msgid ""
 "la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
 "rapidement des filtres et d'utiliser la bibliothèque de filtres."
 msgstr ""
-"フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは``SPACE``キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
+"フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは\\"
+" ``SPACE``\\ キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
 
 #: ../../source/annexe_filtres.rst:19
 msgid "Recherche de positions en ligne de commande"
@@ -50,7 +51,7 @@ msgstr "フィルターを使って検索するには、"
 
 #: ../../source/annexe_filtres.rst:23
 msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "``TAB``キーを押して検索パネルを開きます。"
+msgstr "``TAB``\\ キーを押して検索パネルを開きます。"
 
 #: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
 msgid "Editer la position courante."
@@ -58,15 +59,15 @@ msgstr "現在のポジションを編集します。"
 
 #: ../../source/annexe_filtres.rst:25
 msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "``SPACE``キーでコマンドラインを開きます。"
+msgstr "``SPACE``\\ キーでコマンドラインを開きます。"
 
 #: ../../source/annexe_filtres.rst:26
 msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "``s``コマンドに続けて、必要に応じてフィルターを入力します。"
+msgstr "``s``\\ コマンドに続けて、必要に応じてフィルターを入力します。"
 
 #: ../../source/annexe_filtres.rst:27
 msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "``ENTER``キーで検索を開始します。"
+msgstr "``ENTER``\\ キーで検索を開始します。"
 
 #: ../../source/annexe_filtres.rst:30
 msgid ""
@@ -74,7 +75,8 @@ msgid ""
 "(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
 " risque de filtrer abusivement des structures de pions."
 msgstr ""
-"検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（``BACKSPACE``キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。"
+"検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（\\ ``BACKSPACE``\\ "
+"キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。"
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
@@ -100,14 +102,16 @@ msgid ""
 "``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
 "préalable."
 msgstr ""
-"コマンドラインでは、``ss``コマンドに続けてフィルターを入力します（例: ``ss nc``、``ss "
-"E>40``）。``ss``コマンドは、事前に検索を行った後に機能します。"
+"コマンドラインでは、\\ ``ss``\\ コマンドに続けてフィルターを入力します（例: ``ss nc``\\ 、\\ ``ss E>40``\\ "
+"）。\\ ``ss``\\ コマンドは、事前に検索を行った後に機能します。"
 
 #: ../../source/annexe_filtres.rst:47
 msgid ""
 "La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
 "\"Search in current results\" pour la même fonctionnalité."
-msgstr "検索ウィンドウ（``CTRL-F``）にも、同じ機能のための\"Search in current results\"チェックボックスがあります。"
+msgstr ""
+"検索ウィンドウ（\\ ``CTRL-F``\\ ）にも、同じ機能のための\"Search in current "
+"results\"チェックボックスがあります。"
 
 #: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
@@ -125,11 +129,11 @@ msgstr "ライブラリにフィルターを追加するには、"
 
 #: ../../source/annexe_filtres.rst:58
 msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "``TAB``を押して検索パネルを開きます。"
+msgstr "``TAB``\\ を押して検索パネルを開きます。"
 
 #: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
 msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-msgstr "``CTRL-K``を押してフィルターライブラリを開きます。"
+msgstr "``CTRL-K``\\ を押してフィルターライブラリを開きます。"
 
 #: ../../source/annexe_filtres.rst:61
 msgid "Donner un nom au filtre."
@@ -147,7 +151,7 @@ msgstr "\"Add\"ボタンを使って検索コマンドを保存します。"
 msgid ""
 "Lors de l'édition de la commande, il est possible d'utiliser les touches "
 "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-msgstr "コマンドの編集中は、``UP``キーと``DOWN``キーを使ってコマンド履歴をナビゲートできます。"
+msgstr "コマンドの編集中は、\\ ``UP``\\ キーと\\ ``DOWN``\\ キーを使ってコマンド履歴をナビゲートできます。"
 
 #: ../../source/annexe_filtres.rst:69
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
@@ -372,7 +376,7 @@ msgstr "シナリオ"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s nc``, chercher les petites courses"
-msgstr "``s nc``の後、短いレースを検索する"
+msgstr "``s nc``\\ の後、短いレースを検索する"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss P<70"
@@ -380,7 +384,7 @@ msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s g>20``, ne garder que les erreurs"
-msgstr "``s g>20``の後、エラーのみを残す"
+msgstr "``s g>20``\\ の後、エラーのみを残す"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss E>40"
@@ -388,7 +392,7 @@ msgstr "ss E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s tn1``, chercher les décisions de cube"
-msgstr "``s tn1``の後、キューブの判断を検索する"
+msgstr "``s tn1``\\ の後、キューブの判断を検索する"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"

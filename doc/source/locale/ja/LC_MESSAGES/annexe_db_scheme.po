@@ -29,7 +29,7 @@ msgid ""
 "*.db*). En l'absence de blunderDB, elle peut ainsi être ouverte et "
 "inspectée avec n'importe quel éditeur ou navigateur de fichiers SQLite."
 msgstr ""
-"blunderDB のデータベースは単純な SQLite ファイル（拡張子 *.db*）です。そのため、blunderDB がなくても、任意の "
+"blunderDB のデータベースは単純な SQLite ファイル（拡張子 *.db*\\ ）です。そのため、blunderDB がなくても、任意の "
 "SQLite ファイルエディターやブラウザーで開いて中身を確認できます。"
 
 #: ../../source/annexe_db_scheme.rst:11
@@ -44,9 +44,9 @@ msgid ""
 "évolue. La version du schéma d'une base ouverte est visible dans le "
 "panneau **Métadonnées** (commande ``meta``)."
 msgstr ""
-"データベースのスキーマは **バージョン管理されています**。現在のスキーマのバージョンは **2.13.0** です "
-"；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、**メタデータ**"
-" パネル（``meta`` コマンド）で確認できます。"
+"データベースのスキーマは **バージョン管理されています**\\ 。現在のスキーマのバージョンは **2.13.0** です "
+"；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、\\ "
+"**メタデータ** パネル（\\ ``meta`` コマンド）で確認できます。"
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""
@@ -63,9 +63,9 @@ msgid ""
 "ouverte par des versions plus anciennes de blunderDB, d'où l'importance "
 "de la sauvegarde préalable."
 msgstr ""
-"バージョン 0.10.0 以降、データベースを開くときに "
-"**すべてのスキーマの移行が自動的に行われます**。手動での移行コマンドは不要です。移行はその場で行われます：新しいスキーマに移行されたデータベースは、以前のバージョンの"
-" blunderDB では開けなくなります。そのため、事前のバックアップが重要です。"
+"バージョン 0.10.0 以降、データベースを開くときに **すべてのスキーマの移行が自動的に行われます**\\ "
+"。手動での移行コマンドは不要です。移行はその場で行われます：新しいスキーマに移行されたデータベースは、以前のバージョンの blunderDB "
+"では開けなくなります。そのため、事前のバックアップが重要です。"
 
 #: ../../source/annexe_db_scheme.rst:32
 msgid "Principales tables"
@@ -81,8 +81,8 @@ msgid ""
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
 "commentaires)."
 msgstr ""
-"**ポジションと分析** ：``position``\\ （重複排除されたポジション）、``analysis``\\ "
-"（関連する分析データ）、``comment``\\ （コメント）。"
+"**ポジションと分析** ：\\ ``position``\\ （重複排除されたポジション）、\\ ``analysis``\\ "
+"（関連する分析データ）、\\ ``comment``\\ （コメント）。"
 
 #: ../../source/annexe_db_scheme.rst:40
 msgid ""
@@ -90,7 +90,7 @@ msgid ""
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
 "coup."
 msgstr ""
-"**マッチ** ：``match``\\ 、``game``\\ 、``move``\\ 、``move_analysis`` "
+"**マッチ** ：\\ ``match``\\ 、\\ ``game``\\ 、\\ ``move``\\ 、\\ ``move_analysis`` "
 "は、インポートされたマッチ、そのゲーム、その手、および各手の分析を格納します。"
 
 #: ../../source/annexe_db_scheme.rst:43
@@ -98,12 +98,12 @@ msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
 msgstr ""
-"**コレクション** ：``collection`` と ``collection_position``\\ "
+"**コレクション** ：\\ ``collection`` と ``collection_position``\\ "
 "（連結テーブル）は、手動で選択されたポジションをまとめます。"
 
 #: ../../source/annexe_db_scheme.rst:46
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
-msgstr "**トーナメント** ：``tournament`` はマッチをトーナメントにまとめます。"
+msgstr "**トーナメント** ：\\ ``tournament`` はマッチをトーナメントにまとめます。"
 
 #: ../../source/annexe_db_scheme.rst:48
 msgid ""
@@ -111,8 +111,8 @@ msgid ""
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
 "révisions (algorithme FSRS)."
 msgstr ""
-"**間隔反復（Anki）** ：``anki_deck``\\ 、``anki_card``\\ 、``anki_review_log`` "
-"は、デッキ、カード、および復習の記録（FSRS アルゴリズム）を管理します。"
+"**間隔反復（Anki）** ：\\ ``anki_deck``\\ 、\\ ``anki_card``\\ 、\\ "
+"``anki_review_log`` は、デッキ、カード、および復習の記録（FSRS アルゴリズム）を管理します。"
 
 #: ../../source/annexe_db_scheme.rst:52
 msgid ""
@@ -121,8 +121,8 @@ msgid ""
 "``filter_library`` la bibliothèque de filtres, et ``metadata`` les "
 "métadonnées de la base (dont la version du schéma)."
 msgstr ""
-"**履歴とその他** ：``command_history`` と ``search_history`` "
-"はコマンドと検索の履歴を保持し、``filter_library`` はフィルターライブラリを、``metadata`` "
+"**履歴とその他** ：\\ ``command_history`` と ``search_history`` はコマンドと検索の履歴を保持し、\\ "
+"``filter_library`` はフィルターライブラリを、\\ ``metadata`` "
 "はデータベースのメタデータ（スキーマのバージョンを含む）を保持します。"
 
 #: ../../source/annexe_db_scheme.rst:58

@@ -22,4 +22,4 @@ msgstr ""
 #: ../../source/stats.rst:4
 msgid ""
 "Cette page a été intégrée dans la section :ref:`stats` du :ref:`manuel`."
-msgstr "このページは :ref:`manual` の :ref:`stats` セクションに統合されました。"
+msgstr "このページは :ref:`manuel` の :ref:`stats` セクションに統合されました。"
