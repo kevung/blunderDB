@@ -98,20 +98,20 @@
 <p class="admonition-title">警告</p>
 <p>このセクションは、ポジション検索機能を最大限に活用したいblunderDBの上級ユーザーを対象としています。</p>
 </div>
-<p>フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは``SPACE``キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。</p>
+<p>フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは<code class="docutils literal notranslate"><span class="pre">SPACE</span></code>キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。</p>
 <section id="recherche-de-positions-en-ligne-de-commande">
 <h2><span class="section-number">9.1. </span>コマンドラインによるポジション検索<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>フィルターを使って検索するには、</p>
 <ol class="arabic simple">
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>TAB``キーを押して検索パネルを開きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TAB</span></code>キーを押して検索パネルを開きます。</p></li>
 <li><p>現在のポジションを編集します。</p></li>
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>SPACE``キーでコマンドラインを開きます。</p></li>
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s``コマンドに続けて、必要に応じてフィルターを入力します。</p></li>
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>ENTER``キーで検索を開始します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SPACE</span></code>キーでコマンドラインを開きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code>コマンドに続けて、必要に応じてフィルターを入力します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ENTER</span></code>キーで検索を開始します。</p></li>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">警告</p>
-<p>検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（<a href="#id1"><span class="problematic" id="id2">``</span></a>BACKSPACE``キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。</p>
+<p>検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（<code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code>キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
@@ -121,7 +121,7 @@
 <section id="recherche-dans-les-resultats-courants">
 <h2><span class="section-number">9.2. </span>現在の結果内での検索<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Link to this heading"></a></h2>
 <p>現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。</p>
-<p>コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">ss``コマンドに続けてフィルターを入力します（例:</span> <span class="pre">``ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。<a href="#id1"><span class="problematic" id="id2">``</span></a>ss``コマンドは、事前に検索を行った後に機能します。</p>
+<p>コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">ss</span></code>コマンドに続けてフィルターを入力します（例: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。<code class="docutils literal notranslate"><span class="pre">ss</span></code>コマンドは、事前に検索を行った後に機能します。</p>
 <p>検索ウィンドウ（<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>）にも、同じ機能のための&quot;Search in current results&quot;チェックボックスがあります。</p>
 </section>
 <section id="bibliotheque-de-filtres">
@@ -129,8 +129,8 @@
 <p>フィルターライブラリを使うと、ユーザーは検索コマンドを保存して、テーマ別の学習を容易にできます。</p>
 <p>ライブラリにフィルターを追加するには、</p>
 <ol class="arabic simple">
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>TAB``を押して検索パネルを開きます。</p></li>
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>CTRL-K``を押してフィルターライブラリを開きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TAB</span></code>を押して検索パネルを開きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>を押してフィルターライブラリを開きます。</p></li>
 <li><p>現在のポジションを編集します。</p></li>
 <li><p>フィルターに名前を付けます。</p></li>
 <li><p>検索コマンドを編集します。</p></li>
@@ -138,11 +138,11 @@
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>コマンドの編集中は、<a href="#id1"><span class="problematic" id="id2">``</span></a>UP``キーと``DOWN``キーを使ってコマンド履歴をナビゲートできます。</p>
+<p>コマンドの編集中は、<code class="docutils literal notranslate"><span class="pre">UP</span></code>キーと<code class="docutils literal notranslate"><span class="pre">DOWN</span></code>キーを使ってコマンド履歴をナビゲートできます。</p>
 </div>
 <p>ライブラリに保存したフィルターを使用するには、</p>
 <ol class="arabic simple">
-<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>CTRL-K``を押してフィルターライブラリを開きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>を押してフィルターライブラリを開きます。</p></li>
 <li><p>目的のフィルターを検索します。</p></li>
 <li><p>フィルターをダブルクリックして検索を開始します。</p></li>
 </ol>
@@ -253,13 +253,13 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s nc``の後、短いレースを検索する</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">nc</span></code>の後、短いレースを検索する</p></td>
 <td><p>ss P&lt;70</p></td>
 </tr>
-<tr class="row-odd"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s g&gt;20``の後、エラーのみを残す</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">g&gt;20</span></code>の後、エラーのみを残す</p></td>
 <td><p>ss E&gt;40</p></td>
 </tr>
-<tr class="row-even"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s tn1``の後、キューブの判断を検索する</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">tn1</span></code>の後、キューブの判断を検索する</p></td>
 <td><p>ss d</p></td>
 </tr>
 </tbody>

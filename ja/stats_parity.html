@@ -109,7 +109,7 @@
              
   <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
 <span id="stats-parity"></span><h1><span class="section-number">13. </span>付録：統計モデル — XG / gnuBG / blunderDB の整合<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
-<p>このページでは、blunderDB が <strong>PR**（Performance Rate）、**Snowie Error Rate</strong>、<strong>MWC</strong> 損失をどのように計算し、これらの指標が eXtreme Gammon (XG) および gnuBG（オープンリファレンス）とどのように整合しているかを説明します。</p>
+<p>このページでは、blunderDB が <strong>PR</strong>（Performance Rate）、<strong>Snowie Error Rate</strong>、<strong>MWC</strong> 損失をどのように計算し、これらの指標が eXtreme Gammon (XG) および gnuBG（オープンリファレンス）とどのように整合しているかを説明します。</p>
 <nav class="contents local" id="id1">
 <ul class="simple">
 <li><p><a class="reference internal" href="#definitions-formelles" id="id2">正式な定義</a></p>
@@ -294,7 +294,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — チェッカー累積、強制手の除外（<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — 決定ごとの EMG → MWC 変換。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — MWC 損失の累積（<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>）。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — 述語 <a href="#id1"><span class="problematic" id="id2">``</span></a>isCloseCubedecision``（閾値 0.16）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — 述語 <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code>（閾値 0.16）。</p></li>
 </ul>
 </section>
 </section>
