@@ -46,7 +46,7 @@ func TestTenantPurgeSQLiteNotSupported(t *testing.T) {
 	}
 
 	// The SQLite data must be untouched by the rejected purge attempt.
-	loadResp := post(t, ts, "/v1/positions.load", idReq{ID: saved.ID})
+	loadResp := post(t, ts, "/v1/positions.load", idReq(saved))
 	defer loadResp.Body.Close()
 	if loadResp.StatusCode != http.StatusOK {
 		t.Fatalf("post-attempted-purge load status = %d, want 200 (SQLite data must be untouched)", loadResp.StatusCode)
