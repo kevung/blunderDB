@@ -56,3 +56,49 @@ Free text attached to a Position. The model allows several per Position (match i
 one row per note found in the source file), but the GUI treats a Position as having a
 single comment: it loads and edits whichever row comes back first. Known debt — a Position
 that arrived with two comments shows only one of them, arbitrarily.
+
+## The host environment
+
+**Host capability**:
+A facility blunderDB consumes from the machine, OS or desktop it runs on but does **not**
+own — its presence and its shape are not guaranteed and vary from system to system.
+Examples: an image clipboard tool, an installed font, the keyboard layout, the locale, a
+writable config/data directory, the WebView renderer. Each host capability has a *state*
+(present / absent / degraded) and a *fallback strategy*.
+_Avoid_: dependency (reserved for Go/npm packages), platform (too coarse — clipboard tools
+and keyboard layouts vary *within* one platform).
+
+**Essential capability**:
+A Host capability without which blunderDB cannot fulfil its core mission of storing and
+searching positions. There are exactly two: a **writable config/data directory** and the
+**WebView renderer**. When one is absent, blunderDB fails loud and early with an actionable
+message rather than entering a half-broken state.
+
+**Optional capability**:
+A Host capability whose absence must never block the core product — an image clipboard,
+a CJK font, single-instance locking, an expected keyboard layout, a specific locale. When
+absent or in a different shape, blunderDB degrades gracefully: it detects, falls back on an
+embedded or native substitute where possible, and surfaces a non-blocking notice rather than
+an interrupting error.
+
+**Fallback strategy**:
+The ordered ladder (its rungs) blunderDB walks when an Optional capability is absent or
+degraded: prefer a substitute it *ships* (an embedded font) or a *native* mechanism (the
+WebView's own clipboard) over requiring the user to install an external tool, and only then —
+if every rung fails — show a non-blocking notice explaining what is unavailable and how to
+restore it.
+
+**Capability probe**:
+The thin piece of code that inspects the host and reports the raw *facts* about one Host
+capability's state as plain data — e.g. "xclip present, wl-copy absent, session is Wayland".
+A probe does no deciding: it only gathers facts (a `LookPath`, a `Getenv`, a `Stat`) and
+carries no fallback logic of its own. Kept deliberately dumb so it needs only a smoke test;
+the decision it feeds lives in the Fallback policy.
+_Avoid_: detector (too vague — a probe reports, it does not choose).
+
+**Fallback policy**:
+The pure function that turns a Capability probe's facts into a chosen rung of the Fallback
+strategy — facts in, decision out, no I/O. Because all the *risk* (which rung is right) lives
+here and it touches nothing external, it is exhaustively unit-testable with hand-written fact
+values, without simulating a whole host. Pairs with a Capability probe per capability
+(clipboard, font, locale, paths).
