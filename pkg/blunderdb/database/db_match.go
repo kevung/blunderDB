@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
@@ -494,63 +495,11 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	// 1. Swap player1_name and player2_name in the match table
-	_, err = tx.Exec(`
-		UPDATE match 
-		SET player1_name = player2_name, player2_name = player1_name
-		WHERE id = ?
-	`, matchID)
-	if err != nil {
-		return fmt.Errorf("failed to swap player names: %w", err)
-	}
-
-	// 2. Swap initial_score_1/initial_score_2 and flip winner in the game table
-	_, err = tx.Exec(`
-		UPDATE game
-		SET initial_score_1 = initial_score_2,
-		    initial_score_2 = initial_score_1,
-		    winner = -winner
-		WHERE match_id = ?
-	`, matchID)
-	if err != nil {
-		return fmt.Errorf("failed to swap game scores/winner: %w", err)
-	}
-
-	// 3. Flip player in the move table (XG encoding: 1 → -1, -1 → 1)
-	_, err = tx.Exec(`
-		UPDATE move
-		SET player = -player
-		WHERE game_id IN (SELECT id FROM game WHERE match_id = ?)
-	`, matchID)
-	if err != nil {
-		return fmt.Errorf("failed to swap move players: %w", err)
-	}
-
-	// 4. Update position denormalized columns to swap scores and cube owner.
-	// The board (state) is unchanged; only the score_1/score_2 and cube_owner
-	// columns need updating.
-	_, err = tx.Exec(`
-		UPDATE position SET
-			score_1 = score_2, score_2 = score_1,
-			cube_owner = CASE WHEN cube_owner = -1 THEN -1 WHEN cube_owner IS NULL THEN NULL ELSE 1 - cube_owner END
-		WHERE id IN (
-			SELECT DISTINCT m.position_id FROM move m
-			INNER JOIN game g ON m.game_id = g.id
-			WHERE g.match_id = ?
-		)
-	`, matchID)
-	if err != nil {
-		return fmt.Errorf("failed to swap position scores/cube: %w", err)
-	}
-
-	return tx.Commit()
+	// Delegate to the storage layer, whose SwapPlayers swaps each position by
+	// copy-on-write with a recomputed Zobrist (#107). The raw SQL this replaced
+	// mutated positions in place — corrupting positions shared with other matches
+	// (dedup by Zobrist) and leaving a stale hash (score/cube are hashed).
+	return d.store.Matches().SwapPlayers(context.Background(), "", matchID)
 }
 
 // MergePlayers renames all occurrences of the given player names (in both

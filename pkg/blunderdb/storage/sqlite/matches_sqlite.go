@@ -360,18 +360,66 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 			 WHERE game_id IN (SELECT id FROM game WHERE match_id = ?)`, id); err != nil {
 			return fmt.Errorf("swap move players: %w", err)
 		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE position SET
-				score_1 = score_2, score_2 = score_1,
-				cube_owner = CASE WHEN cube_owner = -1 THEN -1
-				                  WHEN cube_owner IS NULL THEN NULL
-				                  ELSE 1 - cube_owner END
-			 WHERE id IN (
-				SELECT DISTINCT mv.position_id FROM move mv
-				INNER JOIN game g ON mv.game_id = g.id
-				WHERE g.match_id = ? AND mv.position_id IS NOT NULL
-			 )`, id); err != nil {
-			return fmt.Errorf("swap position scores: %w", err)
+		// Positions swap by copy-on-write, NOT in place (#107): a position is
+		// deduplicated by Zobrist and may be shared with other matches, and its
+		// score/cube are part of that hash. For each position this match uses, save
+		// a swapped copy (Save recomputes the Zobrist and dedups) and repoint this
+		// match's moves to it; the original stays intact for whoever else holds it.
+		rows, err := tx.QueryContext(ctx,
+			`SELECT DISTINCT mv.position_id FROM move mv
+			 INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = ? AND mv.position_id IS NOT NULL`, id)
+		if err != nil {
+			return fmt.Errorf("collect swap positions: %w", err)
+		}
+		var posIDs []int64
+		for rows.Next() {
+			var pid int64
+			if err := rows.Scan(&pid); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan swap position id: %w", err)
+			}
+			posIDs = append(posIDs, pid)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("collect swap positions: %w", err)
+		}
+
+		ps := &positionStore{db: tx}
+		for _, pid := range posIDs {
+			pos, err := ps.Load(ctx, scope, pid)
+			if err != nil {
+				return fmt.Errorf("load swap position %d: %w", pid, err)
+			}
+			pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
+			if pos.Cube.Owner != domain.None {
+				pos.Cube.Owner = 1 - pos.Cube.Owner
+			}
+			newID, err := ps.Save(ctx, scope, pos)
+			if err != nil {
+				return fmt.Errorf("save swapped position: %w", err)
+			}
+			if newID == pid {
+				continue // swap is a no-op for this position (self-mirrored)
+			}
+			if _, err := tx.ExecContext(ctx,
+				`UPDATE move SET position_id = ?
+				 WHERE position_id = ? AND game_id IN (SELECT id FROM game WHERE match_id = ?)`,
+				newID, pid, id); err != nil {
+				return fmt.Errorf("repoint swapped move: %w", err)
+			}
+			// Drop the original if this match was its last holder (mirrors the
+			// orphan cleanup of DeleteCascade).
+			var held bool
+			if err := tx.QueryRowContext(ctx, positionIsHeldSQL, pid).Scan(&held); err != nil {
+				return fmt.Errorf("swap orphan check: %w", err)
+			}
+			if !held {
+				if _, err := tx.ExecContext(ctx, `DELETE FROM position WHERE id = ?`, pid); err != nil {
+					return fmt.Errorf("delete swap orphan: %w", err)
+				}
+			}
 		}
 		return nil
 	})
