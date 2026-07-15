@@ -1,10 +1,13 @@
 package ingest
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // mat_export.go renders a stored match as a Jellyfish/gnubg .mat text — the
@@ -14,6 +17,41 @@ import (
 
 // Move.Player encoding is XG {1 = player 1, -1 = player 2}; Game.Winner is the
 // gnubg encoding {0 = player 1, 1 = player 2, -1 = unfinished}.
+
+// ReadMatchForMAT reconstructs a stored match into the shape RenderMAT wants:
+// the match header, its games in order, and each game's moves keyed by game id.
+// It is the read-side counterpart WriteMatch never had.
+func ReadMatchForMAT(ctx context.Context, s storage.Storage, scope string, matchID int64) (*domain.Match, []*domain.Game, map[int64][]*domain.Move, error) {
+	m, err := s.Matches().Get(ctx, scope, matchID)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	var games []*domain.Game
+	for g, err := range s.Matches().Games(ctx, scope, matchID) {
+		if err != nil {
+			return nil, nil, nil, err
+		}
+		games = append(games, g)
+	}
+	movesByGame := map[int64][]*domain.Move{}
+	for mv, err := range s.Matches().MovesByMatch(ctx, scope, matchID) {
+		if err != nil {
+			return nil, nil, nil, err
+		}
+		movesByGame[mv.GameID] = append(movesByGame[mv.GameID], mv)
+	}
+	return m, games, movesByGame, nil
+}
+
+// ExportMatchMAT reads a stored match and writes its .mat transcript to w.
+func ExportMatchMAT(ctx context.Context, s storage.Storage, scope string, matchID int64, w io.Writer) error {
+	m, games, moves, err := ReadMatchForMAT(ctx, s, scope, matchID)
+	if err != nil {
+		return err
+	}
+	_, err = io.WriteString(w, RenderMAT(m, games, moves))
+	return err
+}
 
 // RenderMAT writes match m with its games (in order) and each game's moves
 // (keyed by game id, in order) as a .mat transcript.

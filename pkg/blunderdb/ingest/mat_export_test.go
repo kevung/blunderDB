@@ -1,12 +1,14 @@
 package ingest
 
 import (
+	"context"
 	"strings"
 	"testing"
 
 	"github.com/kevung/gnubgparser"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // TestRenderMATRoundTrip builds a match graph, renders it to .mat, and re-parses
@@ -107,4 +109,66 @@ func TestRenderMATCombinedCubeAndMatchWin(t *testing.T) {
 	if doubles != 1 || takes != 1 {
 		t.Errorf("combined cube split wrong: doubles=%d takes=%d\n%s", doubles, takes, out)
 	}
+}
+
+// TestRenderMATFromStoredMatch is the strongest round-trip: import a real .mat
+// into storage, read it back, render, and re-parse. The re-rendered transcript
+// must reproduce the same game structure (count, scores, points) as parsing the
+// original file directly.
+func TestRenderMATFromStoredMatch(t *testing.T) {
+	ctx := context.Background()
+	s, err := sqlite.Open(ctx, ":memory:", nil)
+	if err != nil {
+		t.Fatalf("sqlite.Open: %v", err)
+	}
+	defer s.Close()
+
+	graph, err := MapGnuBG("../../../testdata/test.mat")
+	if err != nil {
+		t.Fatalf("MapGnuBG: %v", err)
+	}
+	res := writeGraph(t, s, graph)
+
+	m, games, moves, err := ReadMatchForMAT(ctx, s, "", res.MatchID)
+	if err != nil {
+		t.Fatalf("ReadMatchForMAT: %v", err)
+	}
+	out := RenderMAT(m, games, moves)
+
+	rt, err := gnubgparser.ParseMAT(strings.NewReader(out))
+	if err != nil {
+		t.Fatalf("re-parse rendered .mat: %v\n%s", err, out)
+	}
+	orig, err := gnubgparser.ParseMATFile("../../../testdata/test.mat")
+	if err != nil {
+		t.Fatalf("parse original: %v", err)
+	}
+
+	if len(rt.Games) != len(orig.Games) {
+		t.Fatalf("game count: rendered %d vs original %d", len(rt.Games), len(orig.Games))
+	}
+	for i := range orig.Games {
+		og, rg := orig.Games[i], rt.Games[i]
+		if rg.Score != og.Score {
+			t.Errorf("game %d score: rendered %v vs original %v", i+1, rg.Score, og.Score)
+		}
+		if rg.Points != og.Points {
+			t.Errorf("game %d points: rendered %d vs original %d", i+1, rg.Points, og.Points)
+		}
+		// Checker-move count must be preserved (notation may differ: bar/off vs 25/0).
+		oc, rc := countChecker(og.Moves), countChecker(rg.Moves)
+		if rc != oc {
+			t.Errorf("game %d checker moves: rendered %d vs original %d", i+1, rc, oc)
+		}
+	}
+}
+
+func countChecker(moves []gnubgparser.MoveRecord) int {
+	n := 0
+	for _, m := range moves {
+		if m.Type == gnubgparser.MoveTypeNormal {
+			n++
+		}
+	}
+	return n
 }
