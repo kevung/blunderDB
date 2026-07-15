@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",
+        "exportMat": ".mat をエクスポート",
+        "matExported": "マッチをエクスポートしました",
         "addComment": "コメントを追加…",
         "ariaLabel": "マッチナビゲーター",
         "checkerErrorsBlunders": "チェッカーエラー（ブランダー）",

@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Erreur lors de l'export du match",
+        "exportMat": "Exporter en .mat",
+        "matExported": "Match exporté",
         "addComment": "Ajouter un commentaire…",
         "ariaLabel": "Navigateur de match",
         "checkerErrorsBlunders": "Erreurs de pions (blunders)",

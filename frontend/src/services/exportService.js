@@ -1,7 +1,7 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
-import { OpenExportDatabaseDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
-import { ExportDatabase, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
+import { ExportDatabase, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -69,6 +69,28 @@ export async function exportDatabase() {
         setStatusBarMessage(tMsg('status.errorPreparingExport', { error }));
         await ShowAlert(`Error preparing export: ${error}`);
         statusBarModeStore.set('NORMAL');
+    }
+}
+
+// exportMatchMat exports a single match to a Jellyfish/gnubg .mat file. The save
+// dialog is pre-filled with a name built server-side (the same helper the CLI
+// batch uses), and the file is written straight to the chosen path — a .mat has
+// nothing to configure, so there is no modal. Cancelling the dialog is a silent
+// no-op; a write failure raises a native alert and a status-bar message.
+export async function exportMatchMat(match) {
+    if (!match || match.id == null) return;
+    try {
+        const defaultName = await SuggestMatFilename(match.id);
+        const filePath = await OpenExportMatDialog(defaultName);
+        if (!filePath) {
+            return; // user cancelled the dialog
+        }
+        await ExportMatchMAT(match.id, filePath);
+        setStatusBarMessage(tMsg('match.matExported'));
+    } catch (error) {
+        logger.error('Error exporting match to .mat:', error);
+        setStatusBarMessage(tMsg('match.errorExportingMat'));
+        await ShowAlert(`Error exporting match: ${error}`);
     }
 }
 

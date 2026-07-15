@@ -130,6 +130,10 @@ export function ExportDatabase(arg1) {
   return window['go']['database']['Database']['ExportDatabase'](arg1);
 }
 
+export function ExportMatchMAT(arg1, arg2) {
+  return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
+}
+
 export function ExportTournaments(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5);
 }
@@ -460,6 +464,10 @@ export function SetMigrationProgress(arg1) {
 
 export function SetupDatabase(arg1) {
   return window['go']['database']['Database']['SetupDatabase'](arg1);
+}
+
+export function SuggestMatFilename(arg1) {
+  return window['go']['database']['Database']['SuggestMatFilename'](arg1);
 }
 
 export function SwapMatchPlayers(arg1) {

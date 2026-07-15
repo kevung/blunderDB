@@ -111,6 +111,26 @@ func (a *App) OpenExportDatabaseDialog() (string, error) {
 	return filePath, nil
 }
 
+// OpenExportMatDialog opens a save dialog for a match .mat export, pre-filled
+// with defaultName (built server-side by Database.SuggestMatFilename so the GUI
+// and CLI agree on the name). It ensures a .mat extension and returns "" if the
+// user cancels.
+func (a *App) OpenExportMatDialog(defaultName string) (string, error) {
+	filePath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:                "Export Match (.mat)",
+		DefaultFilename:      defaultName,
+		Filters:              []runtime.FileFilter{{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"}},
+		CanCreateDirectories: true,
+	})
+	if err != nil || filePath == "" {
+		return filePath, err
+	}
+	if !strings.HasSuffix(strings.ToLower(filePath), ".mat") {
+		filePath += ".mat"
+	}
+	return filePath, nil
+}
+
 func (a *App) DeleteFile(filePath string) error {
 	// Validate that the file has a .db extension to prevent arbitrary file deletion
 	if !strings.HasSuffix(strings.ToLower(filePath), ".db") {
