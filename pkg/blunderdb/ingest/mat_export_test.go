@@ -268,3 +268,24 @@ func TestRenderMATMoneyGame(t *testing.T) {
 		}
 	}
 }
+
+// TestRenderMATBlanksCannotMove: a dance stored as the display marker
+// "Cannot Move" must render as an empty cell (dice only), never the literal
+// "Cannot Move" — which gnubg rejects as move notation.
+func TestRenderMATBlanksCannotMove(t *testing.T) {
+	m := &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7}
+	games := []*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}}}
+	moves := map[int64][]*domain.Move{
+		1: {
+			{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+			{Player: -1, MoveType: "checker", Dice: [2]int32{6, 4}, CheckerMove: "Cannot Move"},
+		},
+	}
+	out := RenderMAT(m, games, moves)
+	if strings.Contains(out, "Cannot Move") {
+		t.Fatalf("output must not contain the literal \"Cannot Move\":\n%s", out)
+	}
+	if !strings.Contains(out, "64:") {
+		t.Fatalf("the danced roll should still show its dice \"64:\":\n%s", out)
+	}
+}

@@ -152,9 +152,11 @@ func movesToPlays(moves []*domain.Move) []play {
 			}
 			continue
 		}
-		// Checker move: "DD: notation" (notation may be empty for a forced no-move).
+		// Checker move: "DD: notation". A forced no-move (dance) is stored as the
+		// display marker "Cannot Move"; a .mat leaves the cell blank after the
+		// dice, so emit dice only for it (and for an empty notation).
 		cell := fmt.Sprintf("%d%d:", mv.Dice[0], mv.Dice[1])
-		if mv.CheckerMove != "" {
+		if mv.CheckerMove != "" && mv.CheckerMove != "Cannot Move" {
 			cell += " " + mv.CheckerMove
 		}
 		plays = append(plays, play{mv.Player, cell})
