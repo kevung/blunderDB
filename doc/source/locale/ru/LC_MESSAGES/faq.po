@@ -317,32 +317,31 @@ msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr "Каковы были принципы проектирования blunderDB?"
 
 #: ../../source/faq.rst:151
-#, fuzzy
 msgid ""
-"L'ergonomie de blunderDB — sa ligne de commande, activée par la barre "
-"d'*ESPACE*, et ses raccourcis clavier — s'inspire du très puissant "
-"éditeur de texte `Vim "
-"<https://en.wikipedia.org/wiki/Vim_(text_editor)>`_. Je souhaitais "
-"blunderDB léger, autonome, sans installation et disponible pour "
-"différentes plateformes, d'où mon choix du langage Go et de la "
-"bibliothèque Svelte. Pour la sérialisation de la base de données, le "
-"format de fichiers doit être multi-plateforme et adapté pour contenir une"
-" base de données. Le format de fichier sqlite semblait tout indiqué."
+"L'ergonomie de blunderDB privilégie une utilisation au clavier : une "
+"ligne de commande, ouverte d'un appui sur la barre d'*ESPACE*, et des "
+"raccourcis clavier permettent une prise en main rapide et fluide, sans "
+"quitter le clavier. Je souhaitais par ailleurs blunderDB léger, autonome,"
+" sans installation et disponible pour différentes plateformes, d'où mon "
+"choix du langage Go et de la bibliothèque Svelte. Pour la sérialisation "
+"de la base de données, le format de fichiers doit être multi-plateforme "
+"et adapté pour contenir une base de données. Le format de fichier sqlite "
+"semblait tout indiqué."
 msgstr ""
-"Модальная работа blunderDB (NORMAL, EDIT) вдохновлена очень мощным "
-"текстовым редактором `Vim "
-"<https://en.wikipedia.org/wiki/Vim_(text_editor)>`_. Я хотел, чтобы "
-"blunderDB был лёгким, автономным, без установки и доступным для разных "
-"платформ, что обусловило выбор языка Go и библиотеки Svelte. Для "
-"сериализации базы данных формат файла должен быть кроссплатформенным и "
-"подходящим для хранения базы данных. Формат файла SQLite казался идеально"
-" подходящим."
+"Эргономика blunderDB отдаёт предпочтение работе с клавиатуры: командная "
+"строка, открываемая нажатием клавиши *ПРОБЕЛ*, и сочетания клавиш "
+"обеспечивают быстрое и плавное освоение, не отрывая рук от клавиатуры. "
+"Кроме того, я хотел, чтобы blunderDB был лёгким, автономным, не требующим"
+" установки и доступным для разных платформ, отсюда мой выбор языка Go и "
+"библиотеки Svelte. Для сериализации базы данных формат файлов должен быть"
+" кроссплатформенным и подходящим для хранения базы данных. Формат файлов "
+"SQLite оказался как нельзя кстати."
 
-#: ../../source/faq.rst:162
+#: ../../source/faq.rst:163
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "Какова программная архитектура blunderDB?"
 
-#: ../../source/faq.rst:164
+#: ../../source/faq.rst:165
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -351,7 +350,7 @@ msgstr ""
 "Бэкенд написан на `Go <https://go.dev/>`_. Он отвечает за все операции с "
 "базой данных SQLite, в которой хранятся позиции."
 
-#: ../../source/faq.rst:168
+#: ../../source/faq.rst:169
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -359,7 +358,7 @@ msgstr ""
 "Фронтенд написан на `Svelte <https://svelte.dev/>`_. Он отвечает за "
 "отображение графического интерфейса и доски для нард."
 
-#: ../../source/faq.rst:171
+#: ../../source/faq.rst:172
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -368,11 +367,11 @@ msgstr ""
 "Приложение упаковано с помощью `Wails <https://wails.io/>`_, что "
 "обеспечивает создание нативных настольных приложений для Windows и Linux."
 
-#: ../../source/faq.rst:174
+#: ../../source/faq.rst:175
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "База данных управляется `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:176
+#: ../../source/faq.rst:177
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -380,19 +379,19 @@ msgstr ""
 "Для получения дополнительной информации см. `репозиторий blunderDB на "
 "GitHub <https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:179
+#: ../../source/faq.rst:180
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "На каких платформах работает blunderDB?"
 
-#: ../../source/faq.rst:181
+#: ../../source/faq.rst:182
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB работает на Windows, Linux и Mac."
 
-#: ../../source/faq.rst:184
+#: ../../source/faq.rst:185
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Откуда взята иконка blunderDB?"
 
-#: ../../source/faq.rst:186
+#: ../../source/faq.rst:187
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
