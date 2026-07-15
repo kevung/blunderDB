@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
+	"io"
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -126,5 +128,25 @@ func (s *Server) matchRoutes() []route {
 		{http.MethodPost, "/v1/matches.movePositions", rpcStream(func(ctx context.Context, scope string, req matchIDReq) iterMovePos {
 			return ms().MovePositions(ctx, scope, req.MatchID)
 		})},
+		{http.MethodPost, "/v1/matches.exportMat", s.exportMatchMATHandler},
 	}
+}
+
+// exportMatchMATHandler serves POST /v1/matches.exportMat {matchId}. It streams
+// the match as a Jellyfish/gnubg .mat transcript (text/plain), the format XG
+// re-imports. Not JSON/NDJSON: the body is the raw .mat text.
+func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
+	var req matchIDReq
+	if err := decodeJSON(r, &req); err != nil {
+		writeErrorCode(w, CodeInvalid, "invalid request body")
+		return
+	}
+	m, games, moves, err := ingest.ReadMatchForMAT(r.Context(), s.opts.Storage, scopeOf(r), req.MatchID)
+	if err != nil {
+		writeErrorCode(w, codeForErr(err), err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Disposition", `attachment; filename="match.mat"`)
+	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves))
 }
