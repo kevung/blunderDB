@@ -60,14 +60,9 @@
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Anexo Mac: posible bloqueo de blunderDB</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">12. Anexo: Esquema de la base de datos</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Versión 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Versión 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Versión 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Versión 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Versión 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Versión 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Versión 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Versión 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">12.1. Versionado y migraciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">12.2. Tablas principales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">12.3. Principios de diseño</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
@@ -98,87 +93,41 @@
              
   <section id="annexe-schema-de-la-base-de-donnees">
 <span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Anexo: Esquema de la base de datos<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<p>Una base de datos de blunderDB es un simple archivo SQLite (extensión <em>.db</em>). En ausencia de blunderDB, puede así abrirse e inspeccionarse con cualquier editor o navegador de archivos SQLite.</p>
+<section id="versionnage-et-migrations">
+<h2><span class="section-number">12.1. </span>Versionado y migraciones<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
+<p>El esquema de la base de datos está <strong>versionado</strong>. La versión actual del esquema es <strong>2.13.0</strong>; es independiente de la versión de la aplicación y solo se incrementa cuando la estructura interna evoluciona. La versión del esquema de una base abierta es visible en el panel <strong>Metadatos</strong> (comando <code class="docutils literal notranslate"><span class="pre">meta</span></code>).</p>
 <div class="admonition important">
 <p class="admonition-title">Importante</p>
-<p>Haga siempre una copia de seguridad de su archivo .db antes de realizar migraciones de la base de datos.</p>
+<p>Guarde siempre una copia de su archivo <em>.db</em> antes de abrir una base creada con una versión anterior de blunderDB.</p>
 </div>
-<section id="version-1-0-0">
-<h2><span class="section-number">12.1. </span>Versión 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
-<p>La versión 1.0.0 de la base de datos contiene las siguientes tablas:</p>
-<ul class="simple">
-<li><p><strong>position</strong>: Almacena las posiciones con las columnas <cite>id</cite> (clave primaria) y <cite>state</cite> (estado de la posición en formato JSON).</p></li>
-<li><p><strong>analysis</strong>: Almacena los análisis de las posiciones con las columnas <cite>id</cite> (clave primaria), <cite>position_id</cite> (clave foránea que referencia <cite>position</cite>) y <cite>data</cite> (datos del análisis en formato JSON).</p></li>
-<li><p><strong>comment</strong>: Almacena los comentarios asociados a las posiciones con las columnas <cite>id</cite> (clave primaria), <cite>position_id</cite> (clave foránea que referencia <cite>position</cite>) y <cite>text</cite> (texto del comentario).</p></li>
-<li><p><strong>metadata</strong>: Almacena los metadatos de la base de datos con las columnas <cite>key</cite> (clave primaria) y <cite>value</cite> (valor asociado a la clave).</p></li>
-</ul>
-</section>
-<section id="version-1-1-0">
-<h2><span class="section-number">12.2. </span>Versión 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
-<p>La versión 1.1.0 de la base de datos añade la siguiente tabla:</p>
-<ul class="simple">
-<li><p><strong>command_history</strong>: Almacena el historial de comandos con las columnas <cite>id</cite> (clave primaria), <cite>command</cite> (texto del comando) y <cite>timestamp</cite> (fecha y hora de ejecución del comando).</p></li>
-</ul>
-<p>Las demás tablas permanecen sin cambios respecto a la versión 1.0.0.</p>
-<p>Para migrar la base de datos de la versión 1.0.0 a la versión 1.1.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> en blunderDB.</p>
-</section>
-<section id="version-1-2-0">
-<h2><span class="section-number">12.3. </span>Versión 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
-<p>La versión 1.2.0 de la base de datos añade la siguiente tabla:</p>
-<ul class="simple">
-<li><p><strong>filter_library</strong>: Almacena los filtros de búsqueda con las columnas <cite>id</cite> (clave primaria), <cite>name</cite> (nombre del filtro), <cite>command</cite> (comando asociado al filtro) y <cite>edit_position</cite> (posición editada al guardar el filtro).</p></li>
-</ul>
-<p>Las demás tablas permanecen sin cambios respecto a la versión 1.1.0.</p>
-<p>Para migrar la base de datos de la versión 1.1.0 a la versión 1.2.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> en blunderDB.</p>
-</section>
-<section id="version-1-3-0">
-<h2><span class="section-number">12.4. </span>Versión 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
-<p>La versión 1.3.0 de la base de datos añade la siguiente tabla:</p>
-<ul class="simple">
-<li><p><strong>search_history</strong>: Almacena el historial de búsquedas de posiciones con las columnas <cite>id</cite> (clave primaria), <cite>command</cite> (texto del comando de búsqueda), <cite>position</cite> (estado de la posición en el momento de la búsqueda) y <cite>timestamp</cite> (fecha y hora de la búsqueda).</p></li>
-</ul>
-<p>Las demás tablas permanecen sin cambios respecto a la versión 1.2.0.</p>
-<p>Para migrar la base de datos de la versión 1.2.0 a la versión 1.3.0, ejecute el comando <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> en blunderDB.</p>
-</section>
-<section id="version-1-4-0">
-<h2><span class="section-number">12.5. </span>Versión 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
-<p>La versión 1.4.0 de la base de datos añade las siguientes tablas para la gestión de partidas:</p>
-<ul class="simple">
-<li><p><strong>match</strong>: Almacena las partidas importadas con las columnas <cite>id</cite> (clave primaria), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite> y <cite>match_hash</cite> (hash para la detección de duplicados).</p></li>
-<li><p><strong>game</strong>: Almacena los juegos de una partida con las columnas <cite>id</cite> (clave primaria), <cite>match_id</cite> (clave foránea que referencia <cite>match</cite>), <cite>game_number</cite>, <cite>initial_score_1</cite>, <cite>initial_score_2</cite>, <cite>winner</cite>, <cite>points_won</cite> y <cite>move_count</cite>.</p></li>
-<li><p><strong>move</strong>: Almacena las jugadas de un juego con las columnas <cite>id</cite> (clave primaria), <cite>game_id</cite> (clave foránea que referencia <cite>game</cite>), <cite>move_number</cite>, <cite>move_type</cite>, <cite>position_id</cite> (clave foránea que referencia <cite>position</cite>), <cite>player</cite>, <cite>dice_1</cite>, <cite>dice_2</cite>, <cite>checker_move</cite> y <cite>cube_action</cite>.</p></li>
-<li><p><strong>move_analysis</strong>: Almacena el análisis de cada jugada con las columnas <cite>id</cite> (clave primaria), <cite>move_id</cite> (clave foránea que referencia <cite>move</cite>), <cite>analysis_type</cite>, <cite>depth</cite>, <cite>equity</cite>, <cite>equity_error</cite>, <cite>win_rate</cite>, <cite>gammon_rate</cite>, <cite>backgammon_rate</cite>, <cite>opponent_win_rate</cite>, <cite>opponent_gammon_rate</cite> y <cite>opponent_backgammon_rate</cite>.</p></li>
-</ul>
-<p>La migración de 1.3.0 a 1.4.0 es automática al abrir la base de datos.</p>
-</section>
-<section id="version-1-5-0">
-<h2><span class="section-number">12.6. </span>Versión 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
-<p>La versión 1.5.0 de la base de datos añade las siguientes tablas para la gestión de colecciones:</p>
-<ul class="simple">
-<li><p><strong>collection</strong>: Almacena las colecciones de posiciones con las columnas <cite>id</cite> (clave primaria), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite> y <cite>updated_at</cite>.</p></li>
-<li><p><strong>collection_position</strong>: Tabla de unión que asocia posiciones con colecciones con las columnas <cite>id</cite> (clave primaria), <cite>collection_id</cite> (clave foránea que referencia <cite>collection</cite>), <cite>position_id</cite> (clave foránea que referencia <cite>position</cite>), <cite>sort_order</cite> y <cite>added_at</cite>. El par (<cite>collection_id</cite>, <cite>position_id</cite>) es único.</p></li>
-</ul>
-<p>La migración de 1.4.0 a 1.5.0 es automática al abrir la base de datos.</p>
-</section>
-<section id="version-1-6-0">
-<h2><span class="section-number">12.7. </span>Versión 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
-<p>La versión 1.6.0 de la base de datos añade la siguiente tabla para la gestión de torneos:</p>
-<ul class="simple">
-<li><p><strong>tournament</strong>: Almacena los torneos con las columnas <cite>id</cite> (clave primaria), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite> y <cite>updated_at</cite>.</p></li>
-<li><p>Adición de la columna <cite>tournament_id</cite> (clave foránea que referencia <cite>tournament</cite>) en la tabla <cite>match</cite> para asignar una partida a un torneo.</p></li>
-</ul>
-<p>La migración de 1.5.0 a 1.6.0 es automática al abrir la base de datos.</p>
-</section>
-<section id="version-1-7-0">
-<h2><span class="section-number">12.8. </span>Versión 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
-<p>La versión 1.7.0 de la base de datos añade la siguiente columna:</p>
-<ul class="simple">
-<li><p>Adición de la columna <cite>last_visited_position</cite> en la tabla <cite>match</cite> para recordar la última posición visitada en cada partida.</p></li>
-</ul>
-<p>La migración de 1.6.0 a 1.7.0 es automática al abrir la base de datos.</p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Desde la versión 0.10.0, todas las migraciones de bases de datos se realizan automáticamente al abrir un archivo de base de datos.</p>
+<p>Desde la versión 0.10.0, <strong>todas las migraciones de esquema se efectúan automáticamente</strong> al abrir una base de datos. No es necesario ningún comando de migración manual. La migración se realiza in situ: una base migrada a un esquema reciente ya no puede abrirse con versiones más antiguas de blunderDB, de ahí la importancia de la copia de seguridad previa.</p>
 </div>
+</section>
+<section id="principales-tables">
+<h2><span class="section-number">12.2. </span>Tablas principales<a class="headerlink" href="#principales-tables" title="Link to this heading"></a></h2>
+<p>El esquema actual se articula en torno a las siguientes tablas:</p>
+<ul class="simple">
+<li><p><strong>Posiciones y análisis</strong>: <code class="docutils literal notranslate"><span class="pre">position</span></code> (las posiciones, deduplicadas), <code class="docutils literal notranslate"><span class="pre">analysis</span></code> (los datos de análisis asociados) y <code class="docutils literal notranslate"><span class="pre">comment</span></code> (los comentarios).</p></li>
+<li><p><strong>Matches</strong>: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">game</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code> y <code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> almacenan los matches importados, sus partidas, sus jugadas y el análisis de cada jugada.</p></li>
+<li><p><strong>Colecciones</strong>: <code class="docutils literal notranslate"><span class="pre">collection</span></code> y <code class="docutils literal notranslate"><span class="pre">collection_position</span></code> (tabla de enlace) agrupan posiciones elegidas manualmente.</p></li>
+<li><p><strong>Torneos</strong>: <code class="docutils literal notranslate"><span class="pre">tournament</span></code> agrupa matches en torneos.</p></li>
+<li><p><strong>Repetición espaciada (Anki)</strong>: <code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>, <code class="docutils literal notranslate"><span class="pre">anki_card</span></code> y <code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> gestionan los mazos, las tarjetas y el registro de repasos (algoritmo FSRS).</p></li>
+<li><p><strong>Historial y varios</strong>: <code class="docutils literal notranslate"><span class="pre">command_history</span></code> y <code class="docutils literal notranslate"><span class="pre">search_history</span></code> conservan el historial de comandos y de búsquedas, <code class="docutils literal notranslate"><span class="pre">filter_library</span></code> la biblioteca de filtros, y <code class="docutils literal notranslate"><span class="pre">metadata</span></code> los metadatos de la base (incluida la versión del esquema).</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2><span class="section-number">12.3. </span>Principios de diseño<a class="headerlink" href="#principes-de-conception" title="Link to this heading"></a></h2>
+<p>A partir del esquema 2.0.0, varias decisiones de diseño aceleran la búsqueda y reducen el tamaño del archivo:</p>
+<ul class="simple">
+<li><p><strong>Deduplicación de posiciones</strong>: cada posición lleva un hash de Zobrist y un índice único, de modo que una misma posición encontrada en varias importaciones se almacena una sola vez.</p></li>
+<li><p><strong>Columnas de filtrado desnormalizadas</strong>: criterios buscados con frecuencia (tipo de decisión, dados, diferencia de carrera, fichas retiradas, fichas atrasadas, error de jugada o de cubo, probabilidades de victoria…) se precalculan en columnas dedicadas para un filtrado rápido.</p></li>
+<li><p><strong>Prefiltrado por bitboards</strong>: columnas de ocupación y de máscaras de puntos permiten un prefiltrado entero muy rápido en las búsquedas de patrones de estructura.</p></li>
+<li><p><strong>Almacenamiento compacto</strong>: las posiciones se codifican de forma compacta y los datos de análisis se comprimen (zlib), lo que reduce fuertemente el tamaño del archivo.</p></li>
+<li><p><strong>Registro WAL</strong>: el modo WAL y unos PRAGMA ajustados mejoran el rendimiento de lectura y escritura.</p></li>
+</ul>
 </section>
 </section>
 

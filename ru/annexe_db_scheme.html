@@ -60,14 +60,9 @@
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Приложение Mac: возможная блокировка blunderDB</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">12. Приложение: Схема базы данных</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Version 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">12.1. Версионирование и миграции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">12.2. Основные таблицы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">12.3. Принципы проектирования</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
@@ -98,87 +93,41 @@
              
   <section id="annexe-schema-de-la-base-de-donnees">
 <span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Приложение: Схема базы данных<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h1>
+<p>База данных blunderDB — это обычный файл SQLite (расширение <em>.db</em>). Поэтому при отсутствии blunderDB её можно открыть и просмотреть в любом редакторе или обозревателе файлов SQLite.</p>
+<section id="versionnage-et-migrations">
+<h2><span class="section-number">12.1. </span>Версионирование и миграции<a class="headerlink" href="#versionnage-et-migrations" title="Ссылка на этот заголовок"></a></h2>
+<p>Схема базы данных <strong>версионирована</strong>. Текущая версия схемы — <strong>2.13.0</strong>; она не зависит от версии приложения и увеличивается только при изменении внутренней структуры. Версию схемы открытой базы можно увидеть в панели <strong>Метаданные</strong> (команда <code class="docutils literal notranslate"><span class="pre">meta</span></code>).</p>
 <div class="admonition important">
 <p class="admonition-title">Важно</p>
-<p>Всегда создавайте резервную копию файла .db перед выполнением миграций базы данных.</p>
+<p>Всегда создавайте резервную копию файла <em>.db</em> перед открытием базы, созданной более ранней версией blunderDB.</p>
 </div>
-<section id="version-1-0-0">
-<h2><span class="section-number">12.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.0.0 базы данных содержит следующие таблицы:</p>
-<ul class="simple">
-<li><p><strong>position</strong>: хранит позиции со столбцами <cite>id</cite> (первичный ключ) и <cite>state</cite> (состояние позиции в формате JSON).</p></li>
-<li><p><strong>analysis</strong>: хранит анализы позиций со столбцами <cite>id</cite> (первичный ключ), <cite>position_id</cite> (внешний ключ к <cite>position</cite>) и <cite>data</cite> (данные анализа в формате JSON).</p></li>
-<li><p><strong>comment</strong>: хранит комментарии, связанные с позициями, со столбцами <cite>id</cite> (первичный ключ), <cite>position_id</cite> (внешний ключ к <cite>position</cite>) и <cite>text</cite> (текст комментария).</p></li>
-<li><p><strong>metadata</strong>: хранит метаданные базы данных со столбцами <cite>key</cite> (первичный ключ) и <cite>value</cite> (значение, связанное с ключом).</p></li>
-</ul>
-</section>
-<section id="version-1-1-0">
-<h2><span class="section-number">12.2. </span>Version 1.1.0<a class="headerlink" href="#version-1-1-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.1.0 базы данных добавляет следующую таблицу:</p>
-<ul class="simple">
-<li><p><strong>command_history</strong>: хранит историю команд со столбцами <cite>id</cite> (первичный ключ), <cite>command</cite> (текст команды) и <cite>timestamp</cite> (дата и время выполнения команды).</p></li>
-</ul>
-<p>Остальные таблицы остаются без изменений по сравнению с версией 1.0.0.</p>
-<p>Для миграции базы данных с версии 1.0.0 до версии 1.1.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> в blunderDB.</p>
-</section>
-<section id="version-1-2-0">
-<h2><span class="section-number">12.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.2.0 базы данных добавляет следующую таблицу:</p>
-<ul class="simple">
-<li><p><strong>filter_library</strong>: хранит поисковые фильтры со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite> (название фильтра), <cite>command</cite> (команда, связанная с фильтром) и <cite>edit_position</cite> (редактируемая позиция при сохранении фильтра).</p></li>
-</ul>
-<p>Остальные таблицы остаются без изменений по сравнению с версией 1.1.0.</p>
-<p>Для миграции базы данных с версии 1.1.0 до версии 1.2.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> в blunderDB.</p>
-</section>
-<section id="version-1-3-0">
-<h2><span class="section-number">12.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.3.0 базы данных добавляет следующую таблицу:</p>
-<ul class="simple">
-<li><p><strong>search_history</strong>: хранит историю поиска позиций со столбцами <cite>id</cite> (первичный ключ), <cite>command</cite> (текст поисковой команды), <cite>position</cite> (состояние позиции в момент поиска) и <cite>timestamp</cite> (дата и время поиска).</p></li>
-</ul>
-<p>Остальные таблицы остаются без изменений по сравнению с версией 1.2.0.</p>
-<p>Для миграции базы данных с версии 1.2.0 до версии 1.3.0 выполните команду <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> в blunderDB.</p>
-</section>
-<section id="version-1-4-0">
-<h2><span class="section-number">12.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.4.0 базы данных добавляет следующие таблицы для управления матчами:</p>
-<ul class="simple">
-<li><p><strong>match</strong>: хранит импортированные матчи со столбцами <cite>id</cite> (первичный ключ), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite> и <cite>match_hash</cite> (хеш для обнаружения дубликатов).</p></li>
-<li><p><strong>game</strong>: хранит партии матча со столбцами <cite>id</cite> (первичный ключ), <cite>match_id</cite> (внешний ключ к <cite>match</cite>), <cite>game_number</cite>, <cite>initial_score_1</cite>, <cite>initial_score_2</cite>, <cite>winner</cite>, <cite>points_won</cite> и <cite>move_count</cite>.</p></li>
-<li><p><strong>move</strong>: хранит ходы партии со столбцами <cite>id</cite> (первичный ключ), <cite>game_id</cite> (внешний ключ к <cite>game</cite>), <cite>move_number</cite>, <cite>move_type</cite>, <cite>position_id</cite> (внешний ключ к <cite>position</cite>), <cite>player</cite>, <cite>dice_1</cite>, <cite>dice_2</cite>, <cite>checker_move</cite> и <cite>cube_action</cite>.</p></li>
-<li><p><strong>move_analysis</strong>: хранит анализ каждого хода со столбцами <cite>id</cite> (первичный ключ), <cite>move_id</cite> (внешний ключ к <cite>move</cite>), <cite>analysis_type</cite>, <cite>depth</cite>, <cite>equity</cite>, <cite>equity_error</cite>, <cite>win_rate</cite>, <cite>gammon_rate</cite>, <cite>backgammon_rate</cite>, <cite>opponent_win_rate</cite>, <cite>opponent_gammon_rate</cite> и <cite>opponent_backgammon_rate</cite>.</p></li>
-</ul>
-<p>Миграция с 1.3.0 до 1.4.0 выполняется автоматически при открытии базы данных.</p>
-</section>
-<section id="version-1-5-0">
-<h2><span class="section-number">12.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.5.0 базы данных добавляет следующие таблицы для управления коллекциями:</p>
-<ul class="simple">
-<li><p><strong>collection</strong>: хранит коллекции позиций со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite> и <cite>updated_at</cite>.</p></li>
-<li><p><strong>collection_position</strong>: связующая таблица, которая связывает позиции с коллекциями, со столбцами <cite>id</cite> (первичный ключ), <cite>collection_id</cite> (внешний ключ к <cite>collection</cite>), <cite>position_id</cite> (внешний ключ к <cite>position</cite>), <cite>sort_order</cite> и <cite>added_at</cite>. Пара (<cite>collection_id</cite>, <cite>position_id</cite>) является уникальной.</p></li>
-</ul>
-<p>Миграция с 1.4.0 до 1.5.0 выполняется автоматически при открытии базы данных.</p>
-</section>
-<section id="version-1-6-0">
-<h2><span class="section-number">12.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.6.0 базы данных добавляет следующую таблицу для управления турнирами:</p>
-<ul class="simple">
-<li><p><strong>tournament</strong>: хранит турниры со столбцами <cite>id</cite> (первичный ключ), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite> и <cite>updated_at</cite>.</p></li>
-<li><p>Добавление столбца <cite>tournament_id</cite> (внешний ключ к <cite>tournament</cite>) в таблицу <cite>match</cite> для назначения матча турниру.</p></li>
-</ul>
-<p>Миграция с 1.5.0 до 1.6.0 выполняется автоматически при открытии базы данных.</p>
-</section>
-<section id="version-1-7-0">
-<h2><span class="section-number">12.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Ссылка на этот заголовок"></a></h2>
-<p>Версия 1.7.0 базы данных добавляет следующий столбец:</p>
-<ul class="simple">
-<li><p>Добавление столбца <cite>last_visited_position</cite> в таблицу <cite>match</cite> для запоминания последней посещённой позиции в каждом матче.</p></li>
-</ul>
-<p>Миграция с 1.6.0 до 1.7.0 выполняется автоматически при открытии базы данных.</p>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Начиная с версии 0.10.0, все миграции баз данных выполняются автоматически при открытии файла базы данных.</p>
+<p>Начиная с версии 0.10.0, <strong>все миграции схемы выполняются автоматически</strong> при открытии базы данных. Никакой команды ручной миграции не требуется. Миграция выполняется на месте: база, перенесённая на более новую схему, больше не может быть открыта более старыми версиями blunderDB, отсюда важность предварительного резервного копирования.</p>
 </div>
+</section>
+<section id="principales-tables">
+<h2><span class="section-number">12.2. </span>Основные таблицы<a class="headerlink" href="#principales-tables" title="Ссылка на этот заголовок"></a></h2>
+<p>Текущая схема строится вокруг следующих таблиц:</p>
+<ul class="simple">
+<li><p><strong>Позиции и анализ</strong>: <code class="docutils literal notranslate"><span class="pre">position</span></code> (позиции, дедуплицированные), <code class="docutils literal notranslate"><span class="pre">analysis</span></code> (связанные данные анализа) и <code class="docutils literal notranslate"><span class="pre">comment</span></code> (комментарии).</p></li>
+<li><p><strong>Матчи</strong>: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">game</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code> и <code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> хранят импортированные матчи, их партии, ходы и анализ каждого хода.</p></li>
+<li><p><strong>Коллекции</strong>: <code class="docutils literal notranslate"><span class="pre">collection</span></code> и <code class="docutils literal notranslate"><span class="pre">collection_position</span></code> (связующая таблица) объединяют позиции, выбранные вручную.</p></li>
+<li><p><strong>Турниры</strong>: <code class="docutils literal notranslate"><span class="pre">tournament</span></code> объединяет матчи в турниры.</p></li>
+<li><p><strong>Интервальное повторение (Anki)</strong>: <code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>, <code class="docutils literal notranslate"><span class="pre">anki_card</span></code> и <code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> управляют колодами, карточками и журналом повторений (алгоритм FSRS).</p></li>
+<li><p><strong>История и прочее</strong>: <code class="docutils literal notranslate"><span class="pre">command_history</span></code> и <code class="docutils literal notranslate"><span class="pre">search_history</span></code> хранят историю команд и поисков, <code class="docutils literal notranslate"><span class="pre">filter_library</span></code> — библиотеку фильтров, а <code class="docutils literal notranslate"><span class="pre">metadata</span></code> — метаданные базы (включая версию схемы).</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2><span class="section-number">12.3. </span>Принципы проектирования<a class="headerlink" href="#principes-de-conception" title="Ссылка на этот заголовок"></a></h2>
+<p>Начиная со схемы 2.0.0, несколько проектных решений ускоряют поиск и уменьшают размер файла:</p>
+<ul class="simple">
+<li><p><strong>Дедупликация позиций</strong>: каждая позиция несёт хеш Zobrist и уникальный индекс, так что одна и та же позиция, встречающаяся в нескольких импортах, хранится лишь один раз.</p></li>
+<li><p><strong>Денормализованные колонки фильтрации</strong>: часто искомые критерии (тип решения, кости, разница пипкаунта, снятые шашки, отставшие шашки, ошибка хода или куба, шансы на выигрыш…) предварительно вычисляются в выделенных колонках для быстрой фильтрации.</p></li>
+<li><p><strong>Предварительная фильтрация по bitboards</strong>: колонки занятости и масок пунктов обеспечивают очень быструю целочисленную предварительную фильтрацию при поиске структурных шаблонов.</p></li>
+<li><p><strong>Компактное хранение</strong>: позиции кодируются компактно, а данные анализа сжимаются (zlib), что значительно уменьшает размер файла.</p></li>
+<li><p><strong>Журналирование WAL</strong>: режим WAL и настроенные PRAGMA улучшают производительность при чтении и записи.</p></li>
+</ul>
 </section>
 </section>
 

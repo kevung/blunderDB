@@ -147,29 +147,24 @@
 \contentsline {subsection}{\numberline {2.11.1}Installazione di blunderDB}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorizzazione all’esecuzione di blunderDB}{55}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Appendice: Schema del database}{55}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Versione 1.0.0}{56}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Versione 1.1.0}{56}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Versione 1.2.0}{56}{subsection.2.12.3}%
-\contentsline {subsection}{\numberline {2.12.4}Versione 1.3.0}{56}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}Versione 1.4.0}{57}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Versione 1.5.0}{57}{subsection.2.12.6}%
-\contentsline {subsection}{\numberline {2.12.7}Versione 1.6.0}{57}{subsection.2.12.7}%
-\contentsline {subsection}{\numberline {2.12.8}Versione 1.7.0}{57}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}Appendice: modello statistico — allineamento XG / gnuBG / blunderDB}{58}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Definizioni formali}{58}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.47}%
-\contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.48}%
-\contentsline {subsubsection}{Perdita di MWC (Match Winning Chance)}{59}{subsubsection*.49}%
-\contentsline {subsection}{\numberline {2.13.2}Decisioni conteggiate nel denominatore del PR}{59}{subsection.2.13.2}%
-\contentsline {subsubsection}{Mosse di pedine — decisioni conteggiate}{59}{subsubsection*.50}%
-\contentsline {subsubsection}{Decisioni di cubo — decisioni conteggiate}{59}{subsubsection*.51}%
-\contentsline {subsubsection}{Riepilogo del filtro}{59}{subsubsection*.52}%
-\contentsline {subsection}{\numberline {2.13.3}Corrispondenza blunderDB ↔ XG ↔ gnuBG}{59}{subsection.2.13.3}%
-\contentsline {subsubsection}{Confronto XG ↔ blunderDB (stesso motore di analisi)}{60}{subsubsection*.53}%
-\contentsline {subsubsection}{Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)}{60}{subsubsection*.54}%
-\contentsline {subsection}{\numberline {2.13.4}Convalidare i propri valori}{60}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}Riferimento gnuBG}{60}{subsection.2.13.5}%
-\contentsline {chapter}{\numberline {3}Contatti}{63}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Fare una donazione}{65}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Ringraziamenti}{67}{chapter.5}%
+\contentsline {subsection}{\numberline {2.12.1}Versionamento e migrazioni}{56}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Tabelle principali}{56}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Principi di progettazione}{56}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Appendice: modello statistico — allineamento XG / gnuBG / blunderDB}{57}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Definizioni formali}{57}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{57}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{57}{subsubsection*.48}%
+\contentsline {subsubsection}{Perdita di MWC (Match Winning Chance)}{58}{subsubsection*.49}%
+\contentsline {subsection}{\numberline {2.13.2}Decisioni conteggiate nel denominatore del PR}{58}{subsection.2.13.2}%
+\contentsline {subsubsection}{Mosse di pedine — decisioni conteggiate}{58}{subsubsection*.50}%
+\contentsline {subsubsection}{Decisioni di cubo — decisioni conteggiate}{58}{subsubsection*.51}%
+\contentsline {subsubsection}{Riepilogo del filtro}{58}{subsubsection*.52}%
+\contentsline {subsection}{\numberline {2.13.3}Corrispondenza blunderDB ↔ XG ↔ gnuBG}{58}{subsection.2.13.3}%
+\contentsline {subsubsection}{Confronto XG ↔ blunderDB (stesso motore di analisi)}{59}{subsubsection*.53}%
+\contentsline {subsubsection}{Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)}{59}{subsubsection*.54}%
+\contentsline {subsection}{\numberline {2.13.4}Convalidare i propri valori}{59}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}Riferimento gnuBG}{59}{subsection.2.13.5}%
+\contentsline {chapter}{\numberline {3}Contatti}{61}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Fare una donazione}{63}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Ringraziamenti}{65}{chapter.5}%
 \xpginauxfilefalse 

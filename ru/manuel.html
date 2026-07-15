@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. Панель матчей</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. Панель турниров</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Панель Stats</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. Введение</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">2.15.1. Введение</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. Открытие панели</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. Панель фильтров</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. Перспектива игрока</a></li>
@@ -221,7 +221,7 @@
 <p>Команда <code class="docutils literal notranslate"><span class="pre">demo</span></code> загружает <strong>образец базы данных</strong> (матчи, турнир и анализы), позволяющий познакомиться с возможностями инструмента, не импортируя собственные партии. Обучающие туры опираются на эту базу, когда ни одна база не открыта.</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>Навигация по позициям<a class="headerlink" href="#navigation-dans-les-positions" title="Ссылка на этот заголовок"></a></h2>
+<span id="navigation-positions"></span><h2><span class="section-number">2.6. </span>Навигация по позициям<a class="headerlink" href="#navigation-dans-les-positions" title="Ссылка на этот заголовок"></a></h2>
 <p>По умолчанию blunderDB позволяет:</p>
 <ul class="simple">
 <li><p>прокручивать различные позиции в текущей библиотеке,</p></li>
@@ -234,7 +234,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>Редактирование позиций<a class="headerlink" href="#edition-de-positions" title="Ссылка на этот заголовок"></a></h2>
+<span id="edition-positions"></span><h2><span class="section-number">2.7. </span>Редактирование позиций<a class="headerlink" href="#edition-de-positions" title="Ссылка на этот заголовок"></a></h2>
 <p>Нажатие клавиши <em>TAB</em> открывает панель поиска и позволяет редактировать позицию на доске для добавления в базу данных или для задания структуры позиции для поиска. Распределение шашек, куб, счёт и право хода можно изменять с помощью мыши (см. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Редактирование позиции</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Совет</p>
@@ -242,7 +242,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.8. </span>Командная строка<a class="headerlink" href="#la-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<span id="ligne-commande"></span><h2><span class="section-number">2.8. </span>Командная строка<a class="headerlink" href="#la-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
 <p>Командная строка, встроенная в строку состояния, позволяет выполнять все функции blunderDB, доступные в графическом интерфейсе: общие операции с базой данных, навигация по позициям, отображение анализа и/или комментариев, поиск позиций по фильтрам… После первоначального освоения интерфейса рекомендуется постепенно использовать командную строку для мощной и плавной работы с blunderDB, особенно для функций поиска позиций.</p>
 <p>Для открытия командной строки нажмите клавишу <em>ПРОБЕЛ</em>. Для отправки запроса и закрытия командной строки нажмите клавишу <em>ENTER</em>.</p>
 <p>blunderDB выполняет запросы пользователя при условии их корректности и немедленно изменяет состояние базы данных при необходимости. Явное сохранение пользователем не требуется.</p>
@@ -271,11 +271,11 @@
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.12. </span>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>Коллекции</strong> (<em>CTRL-B</em>) управляет коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно добавлять или удалять из них. Дважды щёлкните на коллекции для просмотра её позиций с помощью клавиш <em>ВЛЕВО</em> и <em>ВПРАВО</em>. Порядок коллекций и позиций внутри них можно изменять перетаскиванием. Нажмите <em>CTRL-B</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">collection</span></code> для отображения или скрытия панели.</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.13. </span>Панель матчей<a class="headerlink" href="#panneau-matchs" title="Ссылка на этот заголовок"></a></h2>
+<span id="id7"></span><h2><span class="section-number">2.13. </span>Панель матчей<a class="headerlink" href="#panneau-matchs" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>Матчи</strong> (<em>CTRL-Tab</em>) содержит список импортированных матчей. Дважды щёлкните на матче (или нажмите <em>ENTER</em>) для навигации по его ходам. Команда <code class="docutils literal notranslate"><span class="pre">m</span></code> возобновляет навигацию по последнему посещённому матчу.</p>
 <p>Пользователь может:</p>
 <ul class="simple">
@@ -294,13 +294,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.14. </span>Панель турниров<a class="headerlink" href="#panneau-tournois" title="Ссылка на этот заголовок"></a></h2>
+<span id="id8"></span><h2><span class="section-number">2.14. </span>Панель турниров<a class="headerlink" href="#panneau-tournois" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>Турниры</strong> (<em>CTRL-Y</em>) группирует матчи в турниры для организованного отслеживания и статистического анализа по событиям. Турниры можно создавать, переименовывать и удалять; матчи можно назначать им. Статистика панели Stats может фильтроваться по турниру. Нажмите <em>CTRL-Y</em> для отображения или скрытия панели.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.15. </span>Панель Stats<a class="headerlink" href="#panneau-stats" title="Ссылка на этот заголовок"></a></h2>
-<section id="id7">
-<h3><span class="section-number">2.15.1. </span>Введение<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h3>
+<section id="id9">
+<h3><span class="section-number">2.15.1. </span>Введение<a class="headerlink" href="#id9" title="Ссылка на этот заголовок"></a></h3>
 <p>Панель <strong>Stats</strong> позволяет анализировать уровень игры и отслеживать прогресс во времени на основе позиций, импортированных в базу данных. Вычисляет и отображает <strong>PR</strong> (Performance Rate) и <strong>MWC cost</strong> (Match Winning Chance cost) для всех позиций или отфильтрованного подмножества.</p>
 <p>Панель Stats особенно полезна для:</p>
 <ul class="simple">
@@ -488,7 +488,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>Панель EPC<a class="headerlink" href="#panneau-epc" title="Ссылка на этот заголовок"></a></h2>
+<span id="id10"></span><h2><span class="section-number">2.16. </span>Панель EPC<a class="headerlink" href="#panneau-epc" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>EPC</strong> (<em>CTRL-E</em>) вычисляет EPC (Effective Pip Count) позиции снятия шашек. Активируется нажатием <em>CTRL-E</em>, щелчком на вкладке EPC в нижней панели или выполнением команды <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>В этой панели пользователь редактирует позиции шашек в домашней таблице (последние 6 пунктов), и в реальном времени для каждого игрока отображается следующая информация:</p>
 <ul class="simple">
@@ -506,7 +506,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Панель Anki<a class="headerlink" href="#panneau-anki" title="Ссылка на этот заголовок"></a></h2>
+<span id="id11"></span><h2><span class="section-number">2.17. </span>Панель Anki<a class="headerlink" href="#panneau-anki" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>Anki</strong> (<em>CTRL-K</em>) позволяет изучать позиции методом интервального повторения с использованием алгоритма FSRS. Пользователи могут создавать колоды из коллекций или результатов поиска.</p>
 <p><strong>Создание колод:</strong> Нажмите <em>New Deck</em> для создания колоды из коллекции или текущих результатов поиска. Колоды на основе поиска синхронизируются автоматически при открытии вкладки Anki.</p>
 <p><strong>Повторение:</strong> Выберите колоду и нажмите <em>Study</em> (или дважды щёлкните на колоде) для начала повторения карточек с наступившим сроком. Каждая карточка показывает соответствующую позицию на доске. Оцените своё запоминание клавишами <em>1</em> (Снова), <em>2</em> (Сложно), <em>3</em> (Хорошо) или <em>4</em> (Легко). Нажмите <em>Esc</em> для остановки и возврата к списку колод.</p>

@@ -407,7 +407,6 @@ INPUT extractbb -B cropbox -O win7.png
 INPUT ./win7.png
 INPUT ./win7.png
 INPUT ./win7.png
-INPUT /usr/share/texmf/fonts/tfm/public/tex-gyre/ts1-qtmri.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/tex-gyre/ec-qhvr.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/tex-gyre/ec-qhvr.tfm
 INPUT ./blunderdb.ind

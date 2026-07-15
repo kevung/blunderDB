@@ -172,7 +172,7 @@ permettant de découvrir les fonctionnalités de l'outil sans importer ses propr
 parties. Les visites guidées s'appuient sur cette base lorsqu'aucune base n'est
 ouverte.
 
-.. _mode_normal:
+.. _navigation_positions:
 
 Navigation dans les positions
 -----------------------------
@@ -187,7 +187,7 @@ Par défaut, blunderDB permet de:
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
-.. _mode_edit:
+.. _edition_positions:
 
 Édition de positions
 --------------------
@@ -200,7 +200,7 @@ modifiés à l'aide de la souris (voir :ref:`guide_edit_position`).
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
-.. _mode_command:
+.. _ligne_commande:
 
 La ligne de commande
 --------------------
@@ -288,7 +288,7 @@ l'ensemble de ses matchs.
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
    disponibles.
 
-.. _mode_collection:
+.. _panneau_collections:
 
 Panneau Collections
 -------------------
@@ -301,7 +301,7 @@ L'ordre des collections et des positions au sein des collections peut être
 modifié par glisser-déposer. Appuyer sur *CTRL-B* ou exécuter la commande
 ``collection`` pour afficher ou masquer le panneau.
 
-.. _mode_match:
+.. _panneau_matchs:
 
 Panneau Matchs
 --------------
@@ -604,7 +604,7 @@ MWC : limitations
   un indicateur par décision. Il mesure l'impact total de vos erreurs sur
   vos chances de victoire.
 
-.. _mode_epc:
+.. _panneau_epc:
 
 Panneau EPC
 -----------
@@ -635,7 +635,7 @@ Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre onglet
 .. note:: Le calcul repose sur la base de données interne de bearoff
    à 6 points de GNUbg.
 
-.. _mode_anki:
+.. _panneau_anki:
 
 Panneau Anki
 ------------

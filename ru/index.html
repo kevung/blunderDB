@@ -271,7 +271,7 @@
 </tr>
 <tr class="row-even"><td><p>0.27.0</p></td>
 <td><p>13/06/2026</p></td>
-<td><p>Панель Anki: новый режим свободной тренировки (<em>cram</em>), доступный по кнопке <em>Cram</em> рядом с <em>Study</em>, который показывает случайные позиции из колоды, не изменяя график интервального повторения — идеально для разминки перед турниром или интенсивного повторения колоды без нарушения её порядка. Поиск: новая команда <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">bl</span></code>), загружающая худшие ошибки (equity/MWC) прямо в представление анализа, с необязательным числом для выбора количества (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); новый фильтр по игроку <code class="docutils literal notranslate"><span class="pre">pl'имя'</span></code>, находящий все позиции из матча с участием заданного игрока на любой стороне; и всплывающие подсказки, показывающие при наведении на каждый фильтр панели поиска соответствующий командный токен. Серверный (headless) режим: новые методы <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (все ходы матча за один вызов) и <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count для обоих игроков). См. <a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Панель Anki</span></a> и <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>.</p></td>
+<td><p>Панель Anki: новый режим свободной тренировки (<em>cram</em>), доступный по кнопке <em>Cram</em> рядом с <em>Study</em>, который показывает случайные позиции из колоды, не изменяя график интервального повторения — идеально для разминки перед турниром или интенсивного повторения колоды без нарушения её порядка. Поиск: новая команда <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">bl</span></code>), загружающая худшие ошибки (equity/MWC) прямо в представление анализа, с необязательным числом для выбора количества (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); новый фильтр по игроку <code class="docutils literal notranslate"><span class="pre">pl'имя'</span></code>, находящий все позиции из матча с участием заданного игрока на любой стороне; и всплывающие подсказки, показывающие при наведении на каждый фильтр панели поиска соответствующий командный токен. Серверный (headless) режим: новые методы <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (все ходы матча за один вызов) и <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count для обоих игроков). См. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Панель Anki</span></a> и <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.28.0</p></td>
 <td><p>15/07/2026</p></td>
@@ -421,14 +421,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Приложение: Схема базы данных</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. Version 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#versionnage-et-migrations">12.1. Версионирование и миграции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principales-tables">12.2. Основные таблицы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principes-de-conception">12.3. Принципы проектирования</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a><ul>

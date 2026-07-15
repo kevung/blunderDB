@@ -709,7 +709,7 @@ Anzeigeeinstellungen für die Oberfläche im Konfigurationsfenster: ein Schieber
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Anki\sphinxhyphen{}Panel: ein neuer Modus für freies Üben (\sphinxstyleemphasis{cram}), erreichbar über die Schaltfläche \sphinxstyleemphasis{Cram} neben \sphinxstyleemphasis{Study}, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl \sphinxcode{\sphinxupquote{blunders}} (Alias \sphinxcode{\sphinxupquote{bl}}), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (\sphinxcode{\sphinxupquote{bl 50}}); ein neuer Spielerfilter \sphinxcode{\sphinxupquote{pl'Name'}}, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server\sphinxhyphen{}Modus (headless): neue Methoden \sphinxcode{\sphinxupquote{matches.movesByMatch}} (alle Züge einer Partie in einem einzigen Aufruf) und \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count für beide Spieler). Siehe {\hyperref[\detokenize{manuel:mode-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki\sphinxhyphen{}Panel}}}}} und {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste der Befehle}}}}}.
+Anki\sphinxhyphen{}Panel: ein neuer Modus für freies Üben (\sphinxstyleemphasis{cram}), erreichbar über die Schaltfläche \sphinxstyleemphasis{Cram} neben \sphinxstyleemphasis{Study}, der zufällige Stellungen aus dem Deck anzeigt, ohne den Plan der verteilten Wiederholung zu verändern — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines Decks, ohne dessen Reihenfolge zu stören. Suche: ein neuer Befehl \sphinxcode{\sphinxupquote{blunders}} (Alias \sphinxcode{\sphinxupquote{bl}}), der die größten Fehler (Equity/MWC) direkt in die Analyseansicht lädt, mit einer optionalen Anzahl zur Auswahl der Menge (\sphinxcode{\sphinxupquote{bl 50}}); ein neuer Spielerfilter \sphinxcode{\sphinxupquote{pl'Name'}}, der jede Stellung aus einer Partie findet, an der ein bestimmter Spieler an einer der beiden Seiten beteiligt war; und Tooltips, die beim Überfahren jedes Filters im Suchpanel das zugehörige Befehlskürzel anzeigen. Server\sphinxhyphen{}Modus (headless): neue Methoden \sphinxcode{\sphinxupquote{matches.movesByMatch}} (alle Züge einer Partie in einem einzigen Aufruf) und \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count für beide Spieler). Siehe {\hyperref[\detokenize{manuel:panneau-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki\sphinxhyphen{}Panel}}}}} und {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste der Befehle}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1058,7 +1058,7 @@ Der Befehl \sphinxcode{\sphinxupquote{demo}} lädt eine \sphinxstylestrong{Beisp
 
 
 \subsection{Navigation durch die Stellungen}
-\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:mode-normal}}
+\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:navigation-positions}}
 \sphinxAtStartPar
 Standardmäßig ermöglicht blunderDB:
 \begin{itemize}
@@ -1083,7 +1083,7 @@ Siehe {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std
 
 
 \subsection{Stellungen bearbeiten}
-\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:mode-edit}}
+\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:edition-positions}}
 \sphinxAtStartPar
 Das Drücken der Taste \sphinxstyleemphasis{TAB} öffnet das Suchpanel und ermöglicht es, eine Stellung auf dem Brett zu bearbeiten, um sie der Datenbank hinzuzufügen oder eine zu suchende Stellungsstruktur zu definieren. Die Verteilung der Steine, des Dopplers, des Punktestands und des Zugrechts können mit der Maus geändert werden (siehe {\hyperref[\detokenize{guide_utilisateur:guide-edit-position}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Eine Position bearbeiten}}}}}).
 
@@ -1094,7 +1094,7 @@ Siehe {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std
 
 
 \subsection{Die Befehlszeile}
-\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:mode-command}}
+\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:ligne-commande}}
 \sphinxAtStartPar
 Die in die Statusleiste integrierte Befehlszeile ermöglicht es, alle in der grafischen Oberfläche verfügbaren Funktionen von blunderDB auszuführen: allgemeine Operationen auf der Datenbank, Stellungsnavigation, Anzeige der Analyse und/oder Kommentare, Suche nach Stellungen mittels Filtern … Nach einer ersten Einarbeitung in die Oberfläche empfiehlt es sich, allmählich die Befehlszeile zu verwenden, die eine leistungsfähige und flüssige Nutzung von blunderDB ermöglicht, insbesondere für die Funktionen zur Stellungssuche.
 
@@ -1143,13 +1143,13 @@ Siehe \hyperref[\detokenize{cmd_mode:cmd-mode}]{Abschnitt \ref{\detokenize{cmd_m
 
 
 \subsection{Sammlungen\sphinxhyphen{}Panel}
-\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:mode-collection}}
+\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{Sammlungen} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) ermöglicht es, Stellungssammlungen zu verwalten. Sammlungen können erstellt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder daraus entfernt werden. Doppelklicken Sie auf eine Sammlung, um ihre Stellungen mit den Tasten \sphinxstyleemphasis{LINKS} und \sphinxstyleemphasis{RECHTS} zu durchblättern. Die Reihenfolge der Sammlungen und der Stellungen innerhalb der Sammlungen kann per Drag\sphinxhyphen{}and\sphinxhyphen{}drop geändert werden. Drücken Sie \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} oder führen Sie den Befehl \sphinxcode{\sphinxupquote{collection}} aus, um das Panel ein\sphinxhyphen{} oder auszublenden.
 
 
 \subsection{Matches\sphinxhyphen{}Panel}
-\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:mode-match}}
+\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:id7}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{Matches} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie \sphinxstyleemphasis{EINGABE}), um durch seine Züge zu navigieren. Der Befehl \sphinxcode{\sphinxupquote{m}} setzt die Navigation im zuletzt besuchten Match fort.
 
@@ -1194,7 +1194,7 @@ Siehe {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std
 
 
 \subsection{Turnier\sphinxhyphen{}Panel}
-\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id6}}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id8}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{Turniere} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) ermöglicht es, Matches in Turnieren zu gruppieren, um eine organisierte Nachverfolgung und eine statistische Analyse pro Veranstaltung zu ermöglichen. Turniere können erstellt, umbenannt und gelöscht werden; Matches können ihnen zugeordnet werden. Die Statistiken des Stats\sphinxhyphen{}Panels können nach Turnier gefiltert werden. Drücken Sie \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}, um das Panel ein\sphinxhyphen{} oder auszublenden.
 
@@ -1203,7 +1203,7 @@ Das Panel \sphinxstylestrong{Turniere} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Einführung}
-\label{\detokenize{manuel:id7}}
+\label{\detokenize{manuel:id9}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{Stats} ermöglicht es, das eigene Spielniveau zu analysieren und den Fortschritt im Zeitverlauf anhand der in die Datenbank importierten Stellungen zu verfolgen. Es berechnet und zeigt die Kennzahlen \sphinxstylestrong{PR} (Performance Rate) und \sphinxstylestrong{MWC cost} (Match Winning Chance cost) für alle Stellungen oder eine gefilterte Teilmenge an.
 
@@ -1580,7 +1580,7 @@ Der MWC cost ist kumulativ über den gesamten gefilterten Datensatz — keine Ke
 
 
 \subsection{EPC\sphinxhyphen{}Panel}
-\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:mode-epc}}
+\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:id10}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) berechnet den EPC (Effective Pip Count) einer Bearoff\sphinxhyphen{}Stellung. Es wird aktiviert, indem man \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} drückt, auf den Tab EPC im unteren Panel klickt oder den Befehl \sphinxcode{\sphinxupquote{epc}} ausführt.
 
@@ -1622,7 +1622,7 @@ Die Berechnung beruht auf der internen 6\sphinxhyphen{}Punkte\sphinxhyphen{}Bear
 
 
 \subsection{Anki\sphinxhyphen{}Panel}
-\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:mode-anki}}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:id11}}
 \sphinxAtStartPar
 Das Panel \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) ermöglicht es, Stellungen durch verteiltes Wiederholen mithilfe des FSRS\sphinxhyphen{}Algorithmus zu studieren. Der Benutzer kann Stapel aus Sammlungen oder Suchergebnissen erstellen.
 
@@ -2489,7 +2489,7 @@ gv4
 
 
 \subsection{Positionen und Navigation}
-\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-normal}}
+\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-positions}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -2658,7 +2658,7 @@ Navigiert zum zuletzt besuchten Match.
 
 
 \subsection{Bearbeitung und Suche}
-\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edit}}
+\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edition}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -5850,14 +5850,7 @@ Die Datenbank ist eine einfache SQLite\sphinxhyphen{}Datei. Auch ohne blunderDB 
 \subsection{Was waren die Entwurfsprinzipien von blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
-d‘\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
-texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
-léger, autonome, sans installation et disponible pour différentes plateformes,
-d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
-sérialisation de la base de données, le format de fichiers doit être
-multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
-fichier sqlite semblait tout indiqué.
+Die Bedienung von blunderDB ist auf die Tastatur ausgerichtet: eine Befehlszeile, die sich durch einen Druck auf die \sphinxstyleemphasis{LEERTASTE} öffnet, sowie Tastenkürzel ermöglichen eine schnelle und flüssige Handhabung, ohne die Tastatur zu verlassen. Außerdem wollte ich blunderDB leichtgewichtig, eigenständig, ohne Installation und für verschiedene Plattformen verfügbar machen, weshalb ich die Programmiersprache Go und die Bibliothek Svelte gewählt habe. Für die Serialisierung der Datenbank musste das Dateiformat plattformübergreifend und geeignet sein, eine Datenbank zu enthalten. Das SQLite\sphinxhyphen{}Dateiformat schien dafür wie geschaffen.
 
 
 \subsection{Wie ist die Softwarearchitektur von blunderDB aufgebaut?}
@@ -7268,173 +7261,84 @@ Sie müssen diesen Vorgang nur einmal durchführen. Danach können Sie blunderDB
 
 \section{Anhang: Datenbankschema}
 \label{\detokenize{annexe_db_scheme:annexe-schema-de-la-base-de-donnees}}\label{\detokenize{annexe_db_scheme:annexe-db-migration}}\label{\detokenize{annexe_db_scheme::doc}}
+\sphinxAtStartPar
+Eine blunderDB\sphinxhyphen{}Datenbank ist einfach eine SQLite\sphinxhyphen{}Datei (Endung \sphinxstyleemphasis{.db}). Auch ohne blunderDB kann sie somit mit einem beliebigen SQLite\sphinxhyphen{}Editor oder \sphinxhyphen{}Browser geöffnet und untersucht werden.
+
+
+\subsection{Versionierung und Migrationen}
+\label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
+\sphinxAtStartPar
+Das Schema der Datenbank ist \sphinxstylestrong{versioniert}. Die aktuelle Version des Schemas ist \sphinxstylestrong{2.13.0}; sie ist unabhängig von der Version der Anwendung und wird nur dann erhöht, wenn sich die interne Struktur ändert. Die Schemaversion einer geöffneten Datenbank ist im Panel \sphinxstylestrong{Metadaten} (Befehl \sphinxcode{\sphinxupquote{meta}}) sichtbar.
+
 \begin{sphinxadmonition}{important}{Wichtig:}
 \sphinxAtStartPar
-Sichern Sie immer Ihre .db\sphinxhyphen{}Datei, bevor Sie Datenbankmigrationen durchführen.
+Sichern Sie immer Ihre \sphinxstyleemphasis{.db}\sphinxhyphen{}Datei, bevor Sie eine mit einer älteren Version von blunderDB erstellte Datenbank öffnen.
 \end{sphinxadmonition}
-
-
-\subsection{Version 1.0.0}
-\label{\detokenize{annexe_db_scheme:version-1-0-0}}
-\sphinxAtStartPar
-Version 1.0.0 der Datenbank enthält die folgenden Tabellen:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{position}: Speichert die Positionen mit den Spalten \sphinxtitleref{id} (Primärschlüssel) und \sphinxtitleref{state} (Zustand der Position im JSON\sphinxhyphen{}Format).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{analysis}: Speichert die Analysen der Positionen mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{position\_id} (Fremdschlüssel auf \sphinxtitleref{position}) und \sphinxtitleref{data} (Analysedaten im JSON\sphinxhyphen{}Format).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{comment}: Speichert die mit den Positionen verknüpften Kommentare mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{position\_id} (Fremdschlüssel auf \sphinxtitleref{position}) und \sphinxtitleref{text} (Kommentartext).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{metadata}: Speichert die Metadaten der Datenbank mit den Spalten \sphinxtitleref{key} (Primärschlüssel) und \sphinxtitleref{value} (mit dem Schlüssel verknüpfter Wert).
-
-\end{itemize}
-
-
-\subsection{Version 1.1.0}
-\label{\detokenize{annexe_db_scheme:version-1-1-0}}
-\sphinxAtStartPar
-Version 1.1.0 der Datenbank fügt die folgende Tabelle hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{command\_history}: Speichert den Befehlsverlauf mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{command} (Text des Befehls) und \sphinxtitleref{timestamp} (Datum und Uhrzeit der Befehlsausführung).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die übrigen Tabellen bleiben gegenüber Version 1.0.0 unverändert.
-
-\sphinxAtStartPar
-Um die Datenbank von Version 1.0.0 auf Version 1.1.0 zu migrieren, führen Sie den Befehl \sphinxcode{\sphinxupquote{migrate\_from\_1\_0\_to\_1\_1}} in blunderDB aus.
-
-
-\subsection{Version 1.2.0}
-\label{\detokenize{annexe_db_scheme:version-1-2-0}}
-\sphinxAtStartPar
-Version 1.2.0 der Datenbank fügt die folgende Tabelle hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{filter\_library}: Speichert Suchfilter mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{name} (Filtername), \sphinxtitleref{command} (mit dem Filter verknüpfter Befehl) und \sphinxtitleref{edit\_position} (beim Speichern des Filters bearbeitete Position).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die übrigen Tabellen bleiben gegenüber Version 1.1.0 unverändert.
-
-\sphinxAtStartPar
-Um die Datenbank von Version 1.1.0 auf Version 1.2.0 zu migrieren, führen Sie den Befehl \sphinxcode{\sphinxupquote{migrate\_from\_1\_1\_to\_1\_2}} in blunderDB aus.
-
-
-\subsection{Version 1.3.0}
-\label{\detokenize{annexe_db_scheme:version-1-3-0}}
-\sphinxAtStartPar
-Version 1.3.0 der Datenbank fügt die folgende Tabelle hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{search\_history}: Speichert den Verlauf der Positionssuchen mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{command} (Text des Suchbefehls), \sphinxtitleref{position} (Zustand der Position zum Zeitpunkt der Suche) und \sphinxtitleref{timestamp} (Datum und Uhrzeit der Suche).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die übrigen Tabellen bleiben gegenüber Version 1.2.0 unverändert.
-
-\sphinxAtStartPar
-Um die Datenbank von Version 1.2.0 auf Version 1.3.0 zu migrieren, führen Sie den Befehl \sphinxcode{\sphinxupquote{migrate\_from\_1\_2\_to\_1\_3}} in blunderDB aus.
-
-
-\subsection{Version 1.4.0}
-\label{\detokenize{annexe_db_scheme:version-1-4-0}}
-\sphinxAtStartPar
-Version 1.4.0 der Datenbank fügt die folgenden Tabellen für die Matchverwaltung hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{match}: Speichert die importierten Matches mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{player1\_name}, \sphinxtitleref{player2\_name}, \sphinxtitleref{event}, \sphinxtitleref{location}, \sphinxtitleref{round}, \sphinxtitleref{match\_length}, \sphinxtitleref{match\_date}, \sphinxtitleref{import\_date}, \sphinxtitleref{file\_path}, \sphinxtitleref{game\_count} und \sphinxtitleref{match\_hash} (Hash zur Duplikaterkennung).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{game}: Speichert die Partien eines Matches mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{match\_id} (Fremdschlüssel auf \sphinxtitleref{match}), \sphinxtitleref{game\_number}, \sphinxtitleref{initial\_score\_1}, \sphinxtitleref{initial\_score\_2}, \sphinxtitleref{winner}, \sphinxtitleref{points\_won} und \sphinxtitleref{move\_count}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move}: Speichert die Züge einer Partie mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{game\_id} (Fremdschlüssel auf \sphinxtitleref{game}), \sphinxtitleref{move\_number}, \sphinxtitleref{move\_type}, \sphinxtitleref{position\_id} (Fremdschlüssel auf \sphinxtitleref{position}), \sphinxtitleref{player}, \sphinxtitleref{dice\_1}, \sphinxtitleref{dice\_2}, \sphinxtitleref{checker\_move} und \sphinxtitleref{cube\_action}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move\_analysis}: Speichert die Analyse jedes Zuges mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{move\_id} (Fremdschlüssel auf \sphinxtitleref{move}), \sphinxtitleref{analysis\_type}, \sphinxtitleref{depth}, \sphinxtitleref{equity}, \sphinxtitleref{equity\_error}, \sphinxtitleref{win\_rate}, \sphinxtitleref{gammon\_rate}, \sphinxtitleref{backgammon\_rate}, \sphinxtitleref{opponent\_win\_rate}, \sphinxtitleref{opponent\_gammon\_rate} und \sphinxtitleref{opponent\_backgammon\_rate}.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die Migration von 1.3.0 auf 1.4.0 erfolgt automatisch beim Öffnen der Datenbank.
-
-
-\subsection{Version 1.5.0}
-\label{\detokenize{annexe_db_scheme:version-1-5-0}}
-\sphinxAtStartPar
-Version 1.5.0 der Datenbank fügt die folgenden Tabellen für die Sammlungsverwaltung hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection}: Speichert Positionssammlungen mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{name}, \sphinxtitleref{description}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at} und \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection\_position}: Verknüpfungstabelle, die Positionen mit Sammlungen verknüpft, mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{collection\_id} (Fremdschlüssel auf \sphinxtitleref{collection}), \sphinxtitleref{position\_id} (Fremdschlüssel auf \sphinxtitleref{position}), \sphinxtitleref{sort\_order} und \sphinxtitleref{added\_at}. Das Paar (\sphinxtitleref{collection\_id}, \sphinxtitleref{position\_id}) ist eindeutig.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die Migration von 1.4.0 auf 1.5.0 erfolgt automatisch beim Öffnen der Datenbank.
-
-
-\subsection{Version 1.6.0}
-\label{\detokenize{annexe_db_scheme:version-1-6-0}}
-\sphinxAtStartPar
-Version 1.6.0 der Datenbank fügt die folgende Tabelle für die Turnierverwaltung hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{tournament}: Speichert Turniere mit den Spalten \sphinxtitleref{id} (Primärschlüssel), \sphinxtitleref{name}, \sphinxtitleref{date}, \sphinxtitleref{location}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at} und \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-Hinzufügen der Spalte \sphinxtitleref{tournament\_id} (Fremdschlüssel auf \sphinxtitleref{tournament}) in der Tabelle \sphinxtitleref{match}, um ein Match einem Turnier zuzuordnen.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die Migration von 1.5.0 auf 1.6.0 erfolgt automatisch beim Öffnen der Datenbank.
-
-
-\subsection{Version 1.7.0}
-\label{\detokenize{annexe_db_scheme:version-1-7-0}}
-\sphinxAtStartPar
-Version 1.7.0 der Datenbank fügt die folgende Spalte hinzu:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Hinzufügen der Spalte \sphinxtitleref{last\_visited\_position} in der Tabelle \sphinxtitleref{match}, um die zuletzt besuchte Position in jedem Match zu speichern.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Die Migration von 1.6.0 auf 1.7.0 erfolgt automatisch beim Öffnen der Datenbank.
 
 \begin{sphinxadmonition}{note}{Bemerkung:}
 \sphinxAtStartPar
-Seit Version 0.10.0 werden alle Datenbankmigrationen automatisch beim Öffnen einer Datenbankdatei durchgeführt.
+Seit Version 0.10.0 werden \sphinxstylestrong{alle Schemamigrationen automatisch durchgeführt}, wenn eine Datenbank geöffnet wird. Es ist kein manueller Migrationsbefehl erforderlich. Die Migration erfolgt an Ort und Stelle: Eine auf ein neueres Schema migrierte Datenbank kann nicht mehr von älteren Versionen von blunderDB geöffnet werden, daher ist die vorherige Sicherung so wichtig.
 \end{sphinxadmonition}
+
+
+\subsection{Wichtigste Tabellen}
+\label{\detokenize{annexe_db_scheme:principales-tables}}
+\sphinxAtStartPar
+Das aktuelle Schema gliedert sich um die folgenden Tabellen:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Positionen und Analysen}: \sphinxcode{\sphinxupquote{position}} (die deduplizierten Positionen), \sphinxcode{\sphinxupquote{analysis}} (die zugehörigen Analysedaten) und \sphinxcode{\sphinxupquote{comment}} (die Kommentare).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Matches}: \sphinxcode{\sphinxupquote{match}}, \sphinxcode{\sphinxupquote{game}}, \sphinxcode{\sphinxupquote{move}} und \sphinxcode{\sphinxupquote{move\_analysis}} speichern die importierten Matches, ihre Partien, ihre Züge und die Analyse jedes Zuges.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Sammlungen}: \sphinxcode{\sphinxupquote{collection}} und \sphinxcode{\sphinxupquote{collection\_position}} (Verknüpfungstabelle) fassen manuell ausgewählte Positionen zusammen.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Turniere}: \sphinxcode{\sphinxupquote{tournament}} fasst Matches zu Turnieren zusammen.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Verteilte Wiederholung (Anki)}: \sphinxcode{\sphinxupquote{anki\_deck}}, \sphinxcode{\sphinxupquote{anki\_card}} und \sphinxcode{\sphinxupquote{anki\_review\_log}} verwalten die Stapel, die Karten und das Protokoll der Wiederholungen (FSRS\sphinxhyphen{}Algorithmus).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Verlauf und Verschiedenes}: \sphinxcode{\sphinxupquote{command\_history}} und \sphinxcode{\sphinxupquote{search\_history}} bewahren den Verlauf der Befehle und der Suchen auf, \sphinxcode{\sphinxupquote{filter\_library}} die Filterbibliothek und \sphinxcode{\sphinxupquote{metadata}} die Metadaten der Datenbank (darunter die Schemaversion).
+
+\end{itemize}
+
+
+\subsection{Gestaltungsprinzipien}
+\label{\detokenize{annexe_db_scheme:principes-de-conception}}
+\sphinxAtStartPar
+Ab Schema 2.0.0 beschleunigen mehrere Gestaltungsentscheidungen die Suche und verringern die Dateigröße:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Deduplizierung der Positionen}: Jede Position trägt einen Zobrist\sphinxhyphen{}Hash und einen eindeutigen Index, sodass ein und dieselbe Position, die in mehreren Importen vorkommt, nur ein einziges Mal gespeichert wird.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Denormalisierte Filterspalten}: Häufig gesuchte Kriterien (Entscheidungstyp, Würfel, Differenz im Rennstand, herausgetragene Steine, zurückliegende Steine, Fehler beim Zug oder beim Doppler, Gewinnchancen …) werden in dedizierten Spalten vorberechnet, um ein schnelles Filtern zu ermöglichen.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Vorfilter über Bitboards}: Belegungs\sphinxhyphen{} und Punktmasken\sphinxhyphen{}Spalten ermöglichen einen sehr schnellen ganzzahligen Vorfilter bei der Suche nach Strukturmustern.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Kompakte Speicherung}: Die Positionen werden kompakt kodiert und die Analysedaten komprimiert (zlib), was die Dateigröße stark verringert.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{WAL\sphinxhyphen{}Journaling}: Der WAL\sphinxhyphen{}Modus und angepasste PRAGMA verbessern die Lese\sphinxhyphen{} und Schreibleistung.
+
+\end{itemize}
 
 \sphinxstepscope
 

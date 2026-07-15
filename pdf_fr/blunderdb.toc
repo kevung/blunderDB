@@ -146,28 +146,23 @@
 \contentsline {subsection}{\numberline {2.11.1}Installation de blunderDB}{56}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorisation de l’exécution de blunderDB}{56}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Annexe: Schéma de la base de données}{56}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Version 1.0.0}{57}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Version 1.1.0}{57}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Version 1.2.0}{57}{subsection.2.12.3}%
-\contentsline {subsection}{\numberline {2.12.4}Version 1.3.0}{57}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}Version 1.4.0}{58}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Version 1.5.0}{58}{subsection.2.12.6}%
-\contentsline {subsection}{\numberline {2.12.7}Version 1.6.0}{58}{subsection.2.12.7}%
-\contentsline {subsection}{\numberline {2.12.8}Version 1.7.0}{58}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB}{59}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Définitions formelles}{59}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{59}{subsubsection*.47}%
-\contentsline {subsubsection}{Snowie Error Rate}{59}{subsubsection*.48}%
-\contentsline {subsubsection}{Perte MWC (Match Winning Chance)}{60}{subsubsection*.49}%
-\contentsline {subsection}{\numberline {2.13.2}Décisions comptées au dénominateur du PR}{60}{subsection.2.13.2}%
-\contentsline {subsubsection}{Coups de pions — décisions comptées}{60}{subsubsection*.50}%
-\contentsline {subsubsection}{Décisions de cube — décisions comptées}{60}{subsubsection*.51}%
-\contentsline {subsubsection}{Résumé du filtre}{60}{subsubsection*.52}%
+\contentsline {subsection}{\numberline {2.12.1}Versionnage et migrations}{57}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Principales tables}{57}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Principes de conception}{57}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB}{58}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Définitions formelles}{58}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.48}%
+\contentsline {subsubsection}{Perte MWC (Match Winning Chance)}{59}{subsubsection*.49}%
+\contentsline {subsection}{\numberline {2.13.2}Décisions comptées au dénominateur du PR}{59}{subsection.2.13.2}%
+\contentsline {subsubsection}{Coups de pions — décisions comptées}{59}{subsubsection*.50}%
+\contentsline {subsubsection}{Décisions de cube — décisions comptées}{59}{subsubsection*.51}%
+\contentsline {subsubsection}{Résumé du filtre}{59}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}Correspondance blunderDB ↔ XG ↔ gnuBG}{60}{subsection.2.13.3}%
-\contentsline {subsubsection}{Comparaison XG ↔ blunderDB (même moteur d’analyse)}{61}{subsubsection*.53}%
-\contentsline {subsubsection}{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}{61}{subsubsection*.54}%
-\contentsline {subsection}{\numberline {2.13.4}Valider vos propres chiffres}{61}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}Référence gnuBG}{61}{subsection.2.13.5}%
+\contentsline {subsubsection}{Comparaison XG ↔ blunderDB (même moteur d’analyse)}{60}{subsubsection*.53}%
+\contentsline {subsubsection}{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}{60}{subsubsection*.54}%
+\contentsline {subsection}{\numberline {2.13.4}Valider vos propres chiffres}{60}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}Référence gnuBG}{60}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Contacts}{63}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Faire un don}{65}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Remerciements}{67}{chapter.5}%

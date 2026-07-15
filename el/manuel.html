@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. Πίνακας Αγώνων</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. Πίνακας Τουρνουά</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Πίνακας Stats</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. Εισαγωγή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">2.15.1. Εισαγωγή</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. Άνοιγμα του πίνακα</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. Γραμμή φίλτρου</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. Οπτική γωνία παίκτη</a></li>
@@ -221,7 +221,7 @@
 <p>Η εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> φορτώνει μια <strong>βάση δείγματος</strong> (αγώνες, τουρνουά και αναλύσεις) που επιτρέπει την εξερεύνηση των λειτουργιών του εργαλείου χωρίς εισαγωγή των δικών σας παρτίδων. Οι ξεναγήσεις στηρίζονται σε αυτή τη βάση όταν δεν υπάρχει ανοιχτή βάση.</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>Πλοήγηση στις θέσεις<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<span id="navigation-positions"></span><h2><span class="section-number">2.6. </span>Πλοήγηση στις θέσεις<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
 <p>Εξ ορισμού, το blunderDB επιτρέπει:</p>
 <ul class="simple">
 <li><p>την κύλιση μεταξύ των διαφόρων θέσεων της τρέχουσας βιβλιοθήκης,</p></li>
@@ -234,7 +234,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>Επεξεργασία θέσεων<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<span id="edition-positions"></span><h2><span class="section-number">2.7. </span>Επεξεργασία θέσεων<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
 <p>Το πάτημα του πλήκτρου <em>TAB</em> ανοίγει τον πίνακα αναζήτησης και επιτρέπει την επεξεργασία μιας θέσης στο ταμπλό για την προσθήκή της στη βάση δεδομένων ή τον ορισμό μιας δομής θέσης προς αναζήτηση. Η κατανομή των πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με τη βοήθεια του ποντικιού (βλ. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Επεξεργασία θέσης</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Πρακτική συμβουλή</p>
@@ -242,7 +242,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.8. </span>Η γραμμή εντολών<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<span id="ligne-commande"></span><h2><span class="section-number">2.8. </span>Η γραμμή εντολών<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>Η γραμμή εντολών, ενσωματωμένη στη γραμμή κατάστασης, επιτρέπει την εκτέλεση του συνόλου των λειτουργιών του blunderDB που είναι διαθέσιμες στη γραφική διεπαφή: γενικές λειτουργίες στη βάση δεδομένων, πλοήγηση θέσεων, εμφάνιση της ανάλυσης ή/και των σχολίων, αναζήτηση θέσεων με βάση φίλτρα… Μετά την πρώτη εξοικείωση με τη διεπαφή, συνιστάται η σταδιακή χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων.</p>
 <p>Για να ανοίξετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>SPACE</em>. Για να υποβάλετε ένα ερώτημα και να κλείσετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>ENTER</em>.</p>
 <p>Το blunderDB εκτελεί τα ερωτήματα που αποστέλλονται από τον χρήστη υπό την προϋπόθεση ότι είναι έγκυρα και τροποποιεί αμέσως την κατάσταση της βάσης δεδομένων εφόσον χρειάζεται. Δεν απαιτούνται ρητές ενέργειες αποθήκευσης από την πλευρά του χρήστη.</p>
@@ -271,11 +271,11 @@
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>Πίνακας Συλλογών<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.12. </span>Πίνακας Συλλογών<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>Συλλογών</strong> (<em>CTRL-B</em>) επιτρέπει τη διαχείριση συλλογών θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Μπορούν να προστεθούν ή να αφαιρεθούν θέσεις σε αυτές. Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>. Η σειρά των συλλογών και των θέσεων εντός των συλλογών μπορεί να τροποποιηθεί με μεταφορά και απόθεση. Πατήστε <em>CTRL-B</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">collection</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.13. </span>Πίνακας Αγώνων<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<span id="id7"></span><h2><span class="section-number">2.13. </span>Πίνακας Αγώνων<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>Αγώνων</strong> (<em>CTRL-Tab</em>) παραθέτει τους εισηγμένους αγώνες. Κάντε διπλό κλικ σε έναν αγώνα (ή πατήστε <em>ENTER</em>) για να πλοηγηθείτε στις κινήσεις του. Η εντολή <code class="docutils literal notranslate"><span class="pre">m</span></code> συνεχίζει την πλοήγηση στον τελευταίο αγώνα που επισκεφτήκατε.</p>
 <p>Ο χρήστης μπορεί:</p>
 <ul class="simple">
@@ -294,13 +294,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.14. </span>Πίνακας Τουρνουά<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<span id="id8"></span><h2><span class="section-number">2.14. </span>Πίνακας Τουρνουά<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>Τουρνουά</strong> (<em>CTRL-Y</em>) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε <em>CTRL-Y</em> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.15. </span>Πίνακας Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
-<section id="id7">
-<h3><span class="section-number">2.15.1. </span>Εισαγωγή<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<section id="id9">
+<h3><span class="section-number">2.15.1. </span>Εισαγωγή<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>Ο πίνακας <strong>Stats</strong> επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες <strong>PR</strong> (Performance Rate) και <strong>MWC cost</strong> (Match Winning Chance cost) για το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο.</p>
 <p>Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:</p>
 <ul class="simple">
@@ -488,7 +488,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>Πίνακας EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<span id="id10"></span><h2><span class="section-number">2.16. </span>Πίνακας EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>EPC</strong> (<em>CTRL-E</em>) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας <em>CTRL-E</em>, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>Σε αυτόν τον πίνακα, ο χρήστης επεξεργάζεται τη θέση των πουλιών στο εσωτερικό τάβλι (τους 6 τελευταίους πόντους) και οι ακόλουθες πληροφορίες εμφανίζονται σε πραγματικό χρόνο για κάθε παίκτη:</p>
 <ul class="simple">
@@ -506,7 +506,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Πίνακας Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="id11"></span><h2><span class="section-number">2.17. </span>Πίνακας Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>Anki</strong> (<em>CTRL-K</em>) επιτρέπει τη μελέτη θέσεων με διαστήματα επανάληψης χρησιμοποιώντας τον αλγόριθμο FSRS. Ο χρήστης μπορεί να δημιουργήσει πακέτα (decks) από συλλογές ή από αποτελέσματα αναζήτησης.</p>
 <p><strong>Δημιουργία πακέτων:</strong> Κάντε κλικ στο <em>New Deck</em> για να δημιουργήσετε ένα πακέτο από μια συλλογή ή από τα τρέχοντα αποτελέσματα αναζήτησης. Τα πακέτα που βασίζονται σε αναζήτηση συγχρονίζονται αυτόματα κατά την ενεργοποίηση της καρτέλας Anki.</p>
 <p><strong>Επανάληψη:</strong> Επιλέξτε ένα πακέτο και έπειτα κάντε κλικ στο <em>Study</em> (ή κάντε διπλό κλικ σε ένα πακέτο) για να ξεκινήσετε την επανάληψη των καρτών που οφείλονται. Κάθε κάρτα εμφανίζει την αντίστοιχη θέση στο ταμπλό. Αξιολογήστε την ανάκλησή σας με τα πλήκτρα <em>1</em> (Ξανά), <em>2</em> (Δύσκολο), <em>3</em> (Καλό), ή <em>4</em> (Εύκολο). Πατήστε <em>Esc</em> για να σταματήσετε και να επιστρέψετε στη λίστα των πακέτων.</p>

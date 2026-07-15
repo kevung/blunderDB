@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. Panel de Partidas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. Panel de Torneos</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Panel Stats</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. Introducción</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">2.15.1. Introducción</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. Apertura del panel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. Barra de filtro</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. Perspectiva del jugador</a></li>
@@ -221,7 +221,7 @@
 <p>El comando <code class="docutils literal notranslate"><span class="pre">demo</span></code> carga una <strong>base de ejemplo</strong> (partidas, un torneo y análisis) que permite descubrir las funcionalidades de la herramienta sin importar las partidas propias. Las visitas guiadas se apoyan en esta base cuando no hay ninguna base abierta.</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>Navegación por las posiciones<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<span id="navigation-positions"></span><h2><span class="section-number">2.6. </span>Navegación por las posiciones<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
 <p>Por defecto, blunderDB permite:</p>
 <ul class="simple">
 <li><p>desplazarse por las distintas posiciones de la biblioteca actual,</p></li>
@@ -234,7 +234,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>Edición de posiciones<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<span id="edition-positions"></span><h2><span class="section-number">2.7. </span>Edición de posiciones<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
 <p>Pulsar la tecla <em>TAB</em> abre el panel de búsqueda y permite editar una posición en el tablero para añadirla a la base de datos o para definir una estructura de posición que buscar. La distribución de las fichas, el cubo, la puntuación y el turno pueden modificarse con el ratón (véase <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editar una posición</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
@@ -242,7 +242,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.8. </span>La línea de comandos<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<span id="ligne-commande"></span><h2><span class="section-number">2.8. </span>La línea de comandos<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>La línea de comandos, integrada en la barra de estado, permite realizar todas las funcionalidades de blunderDB disponibles en la interfaz gráfica: operaciones generales sobre la base de datos, navegación por las posiciones, visualización del análisis o de los comentarios, búsqueda de posiciones según filtros… Tras una primera toma de contacto con la interfaz, se recomienda utilizar progresivamente la línea de comandos, que permite un uso potente y fluido de blunderDB, especialmente para las funcionalidades de búsqueda de posiciones.</p>
 <p>Para abrir la línea de comandos, pulse la tecla <em>ESPACIO</em>. Para enviar una consulta y cerrar la línea de comandos, pulse la tecla <em>INTRO</em>.</p>
 <p>blunderDB ejecuta las consultas enviadas por el usuario siempre que sean válidas y modifica inmediatamente el estado de la base de datos si procede. No se requieren acciones de guardado explícitas por parte del usuario.</p>
@@ -271,11 +271,11 @@
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.12. </span>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Pueden añadirse o quitarse posiciones de ellas. Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El orden de las colecciones y de las posiciones dentro de ellas puede modificarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">collection</span></code> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.13. </span>Panel de Partidas<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<span id="id7"></span><h2><span class="section-number">2.13. </span>Panel de Partidas<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
 <p>El panel <strong>Partidas</strong> (<em>CTRL-Tab</em>) lista las partidas importadas. Haga doble clic en una partida (o pulse <em>INTRO</em>) para navegar por sus jugadas. El comando <code class="docutils literal notranslate"><span class="pre">m</span></code> reanuda la navegación en la última partida visitada.</p>
 <p>El usuario puede:</p>
 <ul class="simple">
@@ -294,13 +294,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.14. </span>Panel de Torneos<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<span id="id8"></span><h2><span class="section-number">2.14. </span>Panel de Torneos<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>El panel <strong>Torneos</strong> (<em>CTRL-Y</em>) permite agrupar partidas en torneos para un seguimiento organizado y un análisis estadístico por evento. Los torneos pueden crearse, renombrarse y eliminarse; las partidas pueden asignarse a ellos. Las estadísticas del panel Stats pueden filtrarse por torneo. Pulse <em>CTRL-Y</em> para mostrar u ocultar el panel.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.15. </span>Panel Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
-<section id="id7">
-<h3><span class="section-number">2.15.1. </span>Introducción<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<section id="id9">
+<h3><span class="section-number">2.15.1. </span>Introducción<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p>El panel <strong>Stats</strong> permite analizar el nivel de juego y seguir la progresión a lo largo del tiempo a partir de las posiciones importadas en la base de datos. Calcula y muestra los indicadores <strong>PR</strong> (Performance Rate) y <strong>MWC cost</strong> (Match Winning Chance cost) para el conjunto de las posiciones o para un subconjunto filtrado.</p>
 <p>El panel Stats resulta especialmente útil para:</p>
 <ul class="simple">
@@ -488,7 +488,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>Panel EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<span id="id10"></span><h2><span class="section-number">2.16. </span>Panel EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
 <p>El panel <strong>EPC</strong> (<em>CTRL-E</em>) calcula el EPC (Effective Pip Count) de una posición de bearoff. Se activa pulsando <em>CTRL-E</em>, haciendo clic en la pestaña EPC del panel inferior, o ejecutando el comando <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>En este panel, el usuario edita la posición de las fichas en el tablero interior (los 6 últimos puntos) y se muestra en tiempo real la siguiente información para cada jugador:</p>
 <ul class="simple">
@@ -506,7 +506,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Panel Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="id11"></span><h2><span class="section-number">2.17. </span>Panel Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p>El panel <strong>Anki</strong> (<em>CTRL-K</em>) permite estudiar posiciones mediante repetición espaciada utilizando el algoritmo FSRS. El usuario puede crear mazos a partir de colecciones o de resultados de búsqueda.</p>
 <p><strong>Creación de mazos:</strong> Haga clic en <em>New Deck</em> para crear un mazo a partir de una colección o de los resultados de búsqueda actuales. Los mazos basados en una búsqueda se sincronizan automáticamente al activar la pestaña Anki.</p>
 <p><strong>Repaso:</strong> Seleccione un mazo y luego haga clic en <em>Study</em> (o haga doble clic en un mazo) para empezar a repasar las cartas pendientes. Cada carta muestra la posición correspondiente en el tablero. Evalúe su recuerdo con las teclas <em>1</em> (Repetir), <em>2</em> (Difícil), <em>3</em> (Bien) o <em>4</em> (Fácil). Pulse <em>Esc</em> para detenerse y volver a la lista de mazos.</p>

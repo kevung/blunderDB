@@ -41,7 +41,7 @@ Opérations globales
    "gv2", "Ouvre la table des valeurs de gammon avec videau à 2."
    "gv4", "Ouvre la table des valeurs de gammon avec videau à 4."
 
-.. _cmd_normal:
+.. _cmd_positions:
 
 Positions et navigation
 -----------------------
@@ -66,7 +66,7 @@ Positions et navigation
    "m", "Naviguer dans le dernier match visité."
 
 
-.. _cmd_edit:
+.. _cmd_edition:
 
 Édition et recherche
 --------------------

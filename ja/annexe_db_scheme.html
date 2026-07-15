@@ -60,14 +60,9 @@
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac 付録：blunderDB の起動ブロックについて</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">12. 付録: データベーススキーマ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. バージョン 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. バージョン 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. バージョン 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. バージョン 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. バージョン 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. バージョン 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. バージョン 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. バージョン 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">12.1. バージョン管理と移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">12.2. 主なテーブル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">12.3. 設計の原則</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
@@ -98,87 +93,41 @@
              
   <section id="annexe-schema-de-la-base-de-donnees">
 <span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>付録: データベーススキーマ<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<p>blunderDB のデータベースは単純な SQLite ファイル（拡張子 <em>.db</em>）です。そのため、blunderDB がなくても、任意の SQLite ファイルエディターやブラウザーで開いて中身を確認できます。</p>
+<section id="versionnage-et-migrations">
+<h2><span class="section-number">12.1. </span>バージョン管理と移行<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
+<p>データベースのスキーマは <strong>バージョン管理されています</strong>。現在のスキーマのバージョンは <strong>2.13.0</strong> です ；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、<strong>メタデータ</strong> パネル（<code class="docutils literal notranslate"><span class="pre">meta</span></code> コマンド）で確認できます。</p>
 <div class="admonition important">
 <p class="admonition-title">重要</p>
-<p>データベースの移行を行う前に、必ず .db ファイルをバックアップしてください。</p>
+<p>以前のバージョンの blunderDB で作成したデータベースを開く前に、必ず <em>.db</em> ファイルをバックアップしてください。</p>
 </div>
-<section id="version-1-0-0">
-<h2><span class="section-number">12.1. </span>バージョン 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.0.0 には次のテーブルが含まれます:</p>
-<ul class="simple">
-<li><p><strong>position</strong>: ポジションを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）と <a href="#id3"><span class="problematic" id="id4">`</span></a>state`（JSON 形式のポジションの状態）を持ちます。</p></li>
-<li><p><strong>analysis</strong>: ポジションの分析を格納します。列 <cite>id`（主キー）、`position_id`（`position</cite> を参照する外部キー）、および <a href="#id1"><span class="problematic" id="id2">`</span></a>data`（JSON 形式の分析データ）を持ちます。</p></li>
-<li><p><strong>comment</strong>: ポジションに関連付けられたコメントを格納します。列 <cite>id`（主キー）、`position_id`（`position</cite> を参照する外部キー）、および <a href="#id1"><span class="problematic" id="id2">`</span></a>text`（コメントのテキスト）を持ちます。</p></li>
-<li><p><strong>metadata</strong>: データベースのメタデータを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>key`（主キー）と <a href="#id3"><span class="problematic" id="id4">`</span></a>value`（キーに関連付けられた値）を持ちます。</p></li>
-</ul>
-</section>
-<section id="version-1-1-0">
-<h2><span class="section-number">12.2. </span>バージョン 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.1.0 では次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>command_history</strong>: コマンド履歴を格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>command`（コマンドのテキスト）、および <a href="#id5"><span class="problematic" id="id6">`</span></a>timestamp`（コマンド実行の日時）を持ちます。</p></li>
-</ul>
-<p>その他のテーブルはバージョン 1.0.0 から変更されていません。</p>
-<p>データベースをバージョン 1.0.0 からバージョン 1.1.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> コマンドを実行してください。</p>
-</section>
-<section id="version-1-2-0">
-<h2><span class="section-number">12.3. </span>バージョン 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.2.0 では次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>filter_library</strong>: 検索フィルターを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>name`（フィルター名）、<a href="#id5"><span class="problematic" id="id6">`</span></a>command`（フィルターに関連付けられたコマンド）、および <a href="#id7"><span class="problematic" id="id8">`</span></a>edit_position`（フィルター保存時に編集されたポジション）を持ちます。</p></li>
-</ul>
-<p>その他のテーブルはバージョン 1.1.0 から変更されていません。</p>
-<p>データベースをバージョン 1.1.0 からバージョン 1.2.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> コマンドを実行してください。</p>
-</section>
-<section id="version-1-3-0">
-<h2><span class="section-number">12.4. </span>バージョン 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.3.0 では次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>search_history</strong>: ポジション検索の履歴を格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>command`（検索コマンドのテキスト）、<a href="#id5"><span class="problematic" id="id6">`</span></a>position`（検索時のポジションの状態）、および <a href="#id7"><span class="problematic" id="id8">`</span></a>timestamp`（検索の日時）を持ちます。</p></li>
-</ul>
-<p>その他のテーブルはバージョン 1.2.0 から変更されていません。</p>
-<p>データベースをバージョン 1.2.0 からバージョン 1.3.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> コマンドを実行してください。</p>
-</section>
-<section id="version-1-4-0">
-<h2><span class="section-number">12.5. </span>バージョン 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.4.0 では、マッチ管理のための次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>match</strong>: インポートされたマッチを格納します。列 <cite>id`（主キー）、`player1_name</cite>、<cite>player2_name</cite>、<cite>event</cite>、<cite>location</cite>、<cite>round</cite>、<cite>match_length</cite>、<cite>match_date</cite>、<cite>import_date</cite>、<cite>file_path</cite>、<cite>game_count</cite>、および <a href="#id1"><span class="problematic" id="id2">`</span></a>match_hash`（重複検出用のハッシュ）を持ちます。</p></li>
-<li><p><strong>game</strong>: マッチのゲームを格納します。列 <cite>id`（主キー）、`match_id`（`match</cite> を参照する外部キー）、<cite>game_number</cite>、<cite>initial_score_1</cite>、<cite>initial_score_2</cite>、<cite>winner</cite>、<cite>points_won</cite>、および <cite>move_count</cite> を持ちます。</p></li>
-<li><p><strong>move</strong>: ゲームの手を格納します。列 <cite>id`（主キー）、`game_id`（`game</cite> を参照する外部キー）、<cite>move_number</cite>、<cite>move_type</cite>、<cite>position_id`（`position</cite> を参照する外部キー）、<cite>player</cite>、<cite>dice_1</cite>、<cite>dice_2</cite>、<cite>checker_move</cite>、および <cite>cube_action</cite> を持ちます。</p></li>
-<li><p><strong>move_analysis</strong>: 各手の分析を格納します。列 <cite>id`（主キー）、`move_id`（`move</cite> を参照する外部キー）、<cite>analysis_type</cite>、<cite>depth</cite>、<cite>equity</cite>、<cite>equity_error</cite>、<cite>win_rate</cite>、<cite>gammon_rate</cite>、<cite>backgammon_rate</cite>、<cite>opponent_win_rate</cite>、<cite>opponent_gammon_rate</cite>、および <cite>opponent_backgammon_rate</cite> を持ちます。</p></li>
-</ul>
-<p>1.3.0 から 1.4.0 への移行は、データベースを開く際に自動的に行われます。</p>
-</section>
-<section id="version-1-5-0">
-<h2><span class="section-number">12.6. </span>バージョン 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.5.0 では、コレクション管理のための次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>collection</strong>: ポジションのコレクションを格納します。列 <cite>id`（主キー）、`name</cite>、<cite>description</cite>、<cite>sort_order</cite>、<cite>created_at</cite>、および <cite>updated_at</cite> を持ちます。</p></li>
-<li><p><strong>collection_position</strong>: ポジションをコレクションに関連付ける連結テーブルです。列 <cite>id`（主キー）、`collection_id`（`collection</cite> を参照する外部キー）、<cite>position_id`（`position</cite> を参照する外部キー）、<cite>sort_order</cite>、および <cite>added_at</cite> を持ちます。ペア (<cite>collection_id</cite>, <cite>position_id</cite>) は一意です。</p></li>
-</ul>
-<p>1.4.0 から 1.5.0 への移行は、データベースを開く際に自動的に行われます。</p>
-</section>
-<section id="version-1-6-0">
-<h2><span class="section-number">12.7. </span>バージョン 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.6.0 では、トーナメント管理のための次のテーブルが追加されます:</p>
-<ul class="simple">
-<li><p><strong>tournament</strong>: トーナメントを格納します。列 <cite>id`（主キー）、`name</cite>、<cite>date</cite>、<cite>location</cite>、<cite>sort_order</cite>、<cite>created_at</cite>、および <cite>updated_at</cite> を持ちます。</p></li>
-<li><p>マッチをトーナメントに割り当てるため、<cite>match</cite> テーブルに <cite>tournament_id</cite> 列（<cite>tournament</cite> を参照する外部キー）を追加しました。</p></li>
-</ul>
-<p>1.5.0 から 1.6.0 への移行は、データベースを開く際に自動的に行われます。</p>
-</section>
-<section id="version-1-7-0">
-<h2><span class="section-number">12.8. </span>バージョン 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
-<p>データベースのバージョン 1.7.0 では次の列が追加されます:</p>
-<ul class="simple">
-<li><p>各マッチで最後に閲覧したポジションを記憶するため、<cite>match</cite> テーブルに <cite>last_visited_position</cite> 列を追加しました。</p></li>
-</ul>
-<p>1.6.0 から 1.7.0 への移行は、データベースを開く際に自動的に行われます。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
-<p>バージョン 0.10.0 以降、すべてのデータベース移行はデータベースファイルを開く際に自動的に行われます。</p>
+<p>バージョン 0.10.0 以降、データベースを開くときに <strong>すべてのスキーマの移行が自動的に行われます</strong>。手動での移行コマンドは不要です。移行はその場で行われます：新しいスキーマに移行されたデータベースは、以前のバージョンの blunderDB では開けなくなります。そのため、事前のバックアップが重要です。</p>
 </div>
+</section>
+<section id="principales-tables">
+<h2><span class="section-number">12.2. </span>主なテーブル<a class="headerlink" href="#principales-tables" title="Link to this heading"></a></h2>
+<p>現在のスキーマは次のテーブルを中心に構成されています：</p>
+<ul class="simple">
+<li><p><strong>ポジションと分析</strong> ：<code class="docutils literal notranslate"><span class="pre">position</span></code>（重複排除されたポジション）、<code class="docutils literal notranslate"><span class="pre">analysis</span></code>（関連する分析データ）、<code class="docutils literal notranslate"><span class="pre">comment</span></code>（コメント）。</p></li>
+<li><p><strong>マッチ</strong> ：<code class="docutils literal notranslate"><span class="pre">match</span></code>、<code class="docutils literal notranslate"><span class="pre">game</span></code>、<code class="docutils literal notranslate"><span class="pre">move</span></code>、<code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> は、インポートされたマッチ、そのゲーム、その手、および各手の分析を格納します。</p></li>
+<li><p><strong>コレクション</strong> ：<code class="docutils literal notranslate"><span class="pre">collection</span></code> と <code class="docutils literal notranslate"><span class="pre">collection_position</span></code>（連結テーブル）は、手動で選択されたポジションをまとめます。</p></li>
+<li><p><strong>トーナメント</strong> ：<code class="docutils literal notranslate"><span class="pre">tournament</span></code> はマッチをトーナメントにまとめます。</p></li>
+<li><p><strong>間隔反復（Anki）</strong> ：<code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>、<code class="docutils literal notranslate"><span class="pre">anki_card</span></code>、<code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> は、デッキ、カード、および復習の記録（FSRS アルゴリズム）を管理します。</p></li>
+<li><p><strong>履歴とその他</strong> ：<code class="docutils literal notranslate"><span class="pre">command_history</span></code> と <code class="docutils literal notranslate"><span class="pre">search_history</span></code> はコマンドと検索の履歴を保持し、<code class="docutils literal notranslate"><span class="pre">filter_library</span></code> はフィルターライブラリを、<code class="docutils literal notranslate"><span class="pre">metadata</span></code> はデータベースのメタデータ（スキーマのバージョンを含む）を保持します。</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2><span class="section-number">12.3. </span>設計の原則<a class="headerlink" href="#principes-de-conception" title="Link to this heading"></a></h2>
+<p>スキーマ 2.0.0 以降、いくつかの設計上の選択によって、検索が高速化され、ファイルサイズが削減されます：</p>
+<ul class="simple">
+<li><p><strong>ポジションの重複排除</strong> ：各ポジションは Zobrist ハッシュと一意のインデックスを持つため、複数のインポートで同じポジションが現れても一度しか保存されません。</p></li>
+<li><p><strong>非正規化されたフィルタリング列</strong> ：よく検索される条件（判断タイプ、出目、ピップカウント差、ベアオフしたチェッカー、バックチェッカー、手やキューブのエラー、勝率など）は、高速なフィルタリングのために専用の列にあらかじめ計算されています。</p></li>
+<li><p><strong>ビットボードによる事前フィルタリング</strong> ：占有列とポイントマスク列により、構造パターンの検索時に非常に高速な整数ベースの事前フィルタリングが可能になります。</p></li>
+<li><p><strong>コンパクトなストレージ</strong> ：ポジションはコンパクトにエンコードされ、分析データは（zlib で）圧縮されるため、ファイルサイズが大幅に削減されます。</p></li>
+<li><p><strong>WAL ジャーナリング</strong> ：WAL モードと調整された PRAGMA により、読み書きのパフォーマンスが向上します。</p></li>
+</ul>
 </section>
 </section>
 

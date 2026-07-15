@@ -691,7 +691,7 @@
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Πίνακας Anki: μια νέα λειτουργία ελεύθερης εξάσκησης (\sphinxstyleemphasis{cram}), προσβάσιμη από το κουμπί \sphinxstyleemphasis{Cram} δίπλα στο \sphinxstyleemphasis{Study}, που εμφανίζει τυχαίες θέσεις από την τράπουλα χωρίς να τροποποιεί το πρόγραμμα επαναλαμβανόμενης μελέτης — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας τράπουλας χωρίς να διαταράσσεται η σειρά της. Αναζήτηση: μια νέα εντολή \sphinxcode{\sphinxupquote{blunders}} (ψευδώνυμο \sphinxcode{\sphinxupquote{bl}}) που φορτώνει απευθείας τα χειρότερα λάθη (equity/MWC) στην προβολή ανάλυσης, με προαιρετικό αριθμό για την επιλογή του πλήθους (\sphinxcode{\sphinxupquote{bl 50}})· ένα νέο φίλτρο παίκτη \sphinxcode{\sphinxupquote{pl'όνομα'}} που βρίσκει όλες τις θέσεις από έναν αγώνα στον οποίο συμμετείχε ένας συγκεκριμένος παίκτης, σε οποιαδήποτε πλευρά· και επεξηγήσεις που, καθώς ο δείκτης περνά πάνω από κάθε φίλτρο του πίνακα αναζήτησης, εμφανίζουν το αντίστοιχο διακριτικό εντολής. Λειτουργία διακομιστή (headless): νέες μέθοδοι \sphinxcode{\sphinxupquote{matches.movesByMatch}} (όλες οι κινήσεις ενός αγώνα σε μία κλήση) και \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count και για τους δύο παίκτες). Δείτε {\hyperref[\detokenize{manuel:mode-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Anki}}}}} και {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λίστα εντολών}}}}}.
+Πίνακας Anki: μια νέα λειτουργία ελεύθερης εξάσκησης (\sphinxstyleemphasis{cram}), προσβάσιμη από το κουμπί \sphinxstyleemphasis{Cram} δίπλα στο \sphinxstyleemphasis{Study}, που εμφανίζει τυχαίες θέσεις από την τράπουλα χωρίς να τροποποιεί το πρόγραμμα επαναλαμβανόμενης μελέτης — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας τράπουλας χωρίς να διαταράσσεται η σειρά της. Αναζήτηση: μια νέα εντολή \sphinxcode{\sphinxupquote{blunders}} (ψευδώνυμο \sphinxcode{\sphinxupquote{bl}}) που φορτώνει απευθείας τα χειρότερα λάθη (equity/MWC) στην προβολή ανάλυσης, με προαιρετικό αριθμό για την επιλογή του πλήθους (\sphinxcode{\sphinxupquote{bl 50}})· ένα νέο φίλτρο παίκτη \sphinxcode{\sphinxupquote{pl'όνομα'}} που βρίσκει όλες τις θέσεις από έναν αγώνα στον οποίο συμμετείχε ένας συγκεκριμένος παίκτης, σε οποιαδήποτε πλευρά· και επεξηγήσεις που, καθώς ο δείκτης περνά πάνω από κάθε φίλτρο του πίνακα αναζήτησης, εμφανίζουν το αντίστοιχο διακριτικό εντολής. Λειτουργία διακομιστή (headless): νέες μέθοδοι \sphinxcode{\sphinxupquote{matches.movesByMatch}} (όλες οι κινήσεις ενός αγώνα σε μία κλήση) και \sphinxcode{\sphinxupquote{positions.epc}} (Effective Pip Count και για τους δύο παίκτες). Δείτε {\hyperref[\detokenize{manuel:panneau-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Anki}}}}} και {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λίστα εντολών}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1040,7 +1040,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 
 \subsection{Πλοήγηση στις θέσεις}
-\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:mode-normal}}
+\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:navigation-positions}}
 \sphinxAtStartPar
 Εξ ορισμού, το blunderDB επιτρέπει:
 \begin{itemize}
@@ -1065,7 +1065,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 
 \subsection{Επεξεργασία θέσεων}
-\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:mode-edit}}
+\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:edition-positions}}
 \sphinxAtStartPar
 Το πάτημα του πλήκτρου \sphinxstyleemphasis{TAB} ανοίγει τον πίνακα αναζήτησης και επιτρέπει την επεξεργασία μιας θέσης στο ταμπλό για την προσθήκή της στη βάση δεδομένων ή τον ορισμό μιας δομής θέσης προς αναζήτηση. Η κατανομή των πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με τη βοήθεια του ποντικιού (βλ. {\hyperref[\detokenize{guide_utilisateur:guide-edit-position}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Επεξεργασία θέσης}}}}}).
 
@@ -1076,7 +1076,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 
 \subsection{Η γραμμή εντολών}
-\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:mode-command}}
+\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:ligne-commande}}
 \sphinxAtStartPar
 Η γραμμή εντολών, ενσωματωμένη στη γραμμή κατάστασης, επιτρέπει την εκτέλεση του συνόλου των λειτουργιών του blunderDB που είναι διαθέσιμες στη γραφική διεπαφή: γενικές λειτουργίες στη βάση δεδομένων, πλοήγηση θέσεων, εμφάνιση της ανάλυσης ή/και των σχολίων, αναζήτηση θέσεων με βάση φίλτρα… Μετά την πρώτη εξοικείωση με τη διεπαφή, συνιστάται η σταδιακή χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων.
 
@@ -1125,13 +1125,13 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 
 \subsection{Πίνακας Συλλογών}
-\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:mode-collection}}
+\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{Συλλογών} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) επιτρέπει τη διαχείριση συλλογών θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Μπορούν να προστεθούν ή να αφαιρεθούν θέσεις σε αυτές. Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα \sphinxstyleemphasis{ΑΡΙΣΤΕΡΑ} και \sphinxstyleemphasis{ΔΕΞΙΑ}. Η σειρά των συλλογών και των θέσεων εντός των συλλογών μπορεί να τροποποιηθεί με μεταφορά και απόθεση. Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ή εκτελέστε την εντολή \sphinxcode{\sphinxupquote{collection}} για να εμφανίσετε ή να αποκρύψετε τον πίνακα.
 
 
 \subsection{Πίνακας Αγώνων}
-\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:mode-match}}
+\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:id7}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{Αγώνων} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) παραθέτει τους εισηγμένους αγώνες. Κάντε διπλό κλικ σε έναν αγώνα (ή πατήστε \sphinxstyleemphasis{ENTER}) για να πλοηγηθείτε στις κινήσεις του. Η εντολή \sphinxcode{\sphinxupquote{m}} συνεχίζει την πλοήγηση στον τελευταίο αγώνα που επισκεφτήκατε.
 
@@ -1176,7 +1176,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 
 \subsection{Πίνακας Τουρνουά}
-\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id6}}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id8}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{Τουρνουά} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} για να εμφανίσετε ή να αποκρύψετε τον πίνακα.
 
@@ -1185,7 +1185,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Εισαγωγή}
-\label{\detokenize{manuel:id7}}
+\label{\detokenize{manuel:id9}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{Stats} επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες \sphinxstylestrong{PR} (Performance Rate) και \sphinxstylestrong{MWC cost} (Match Winning Chance cost) για το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο.
 
@@ -1562,7 +1562,7 @@ Expert
 
 
 \subsection{Πίνακας EPC}
-\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:mode-epc}}
+\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:id10}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή \sphinxcode{\sphinxupquote{epc}}.
 
@@ -1604,7 +1604,7 @@ Expert
 
 
 \subsection{Πίνακας Anki}
-\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:mode-anki}}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:id11}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) επιτρέπει τη μελέτη θέσεων με διαστήματα επανάληψης χρησιμοποιώντας τον αλγόριθμο FSRS. Ο χρήστης μπορεί να δημιουργήσει πακέτα (decks) από συλλογές ή από αποτελέσματα αναζήτησης.
 
@@ -2471,7 +2471,7 @@ gv4
 
 
 \subsection{Θέσεις και πλοήγηση}
-\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-normal}}
+\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-positions}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -2640,7 +2640,7 @@ m
 
 
 \subsection{Επεξεργασία και αναζήτηση}
-\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edit}}
+\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edition}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -5832,14 +5832,7 @@ blunders από διαδικτυακό παιχνίδι.
 \subsection{Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
-d”\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
-texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
-léger, autonome, sans installation et disponible pour différentes plateformes,
-d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
-sérialisation de la base de données, le format de fichiers doit être
-multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
-fichier sqlite semblait tout indiqué.
+Η εργονομία του blunderDB δίνει προτεραιότητα στη χρήση μέσω πληκτρολογίου: μια γραμμή εντολών, που ανοίγει με το πάτημα του πλήκτρου \sphinxstyleemphasis{SPACE}, και συντομεύσεις πληκτρολογίου επιτρέπουν μια γρήγορη και ομαλή εξοικείωση, χωρίς να αφήνετε το πληκτρολόγιο. Ήθελα εξάλλου το blunderDB να είναι ελαφρύ, αυτόνομο, χωρίς εγκατάσταση και διαθέσιμο για διάφορες πλατφόρμες, εξ ου και η επιλογή μου της γλώσσας Go και της βιβλιοθήκης Svelte. Για τη σειριοποίηση της βάσης δεδομένων, η μορφή αρχείου έπρεπε να είναι πολυπλατφορμική και κατάλληλη για να περιέχει μια βάση δεδομένων. Η μορφή αρχείου SQLite φαινόταν η ιδανική επιλογή.
 
 
 \subsection{Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;}
@@ -7250,173 +7243,84 @@ shasum\PYG{+w}{ }\PYGZhy{}a\PYG{+w}{ }\PYG{l+m}{256}\PYG{+w}{ }\PYGZhy{}c\PYG{+w
 
 \section{Παράρτημα: Σχήμα της βάσης δεδομένων}
 \label{\detokenize{annexe_db_scheme:annexe-schema-de-la-base-de-donnees}}\label{\detokenize{annexe_db_scheme:annexe-db-migration}}\label{\detokenize{annexe_db_scheme::doc}}
+\sphinxAtStartPar
+Μια βάση δεδομένων blunderDB είναι ένα απλό αρχείο SQLite (επέκταση \sphinxstyleemphasis{.db}). Έτσι, ελλείψει του blunderDB, μπορεί να ανοιχτεί και να επιθεωρηθεί με οποιονδήποτε επεξεργαστή ή περιηγητή αρχείων SQLite.
+
+
+\subsection{Εκδόσεις και μεταβάσεις}
+\label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
+\sphinxAtStartPar
+Το σχήμα της βάσης δεδομένων είναι \sphinxstylestrong{εκδοσιοποιημένο}. Η τρέχουσα έκδοση του σχήματος είναι \sphinxstylestrong{2.13.0}· είναι ανεξάρτητη από την έκδοση της εφαρμογής και αυξάνεται μόνο όταν εξελίσσεται η εσωτερική δομή. Η έκδοση του σχήματος μιας ανοιχτής βάσης είναι ορατή στον πίνακα \sphinxstylestrong{Μεταδεδομένων} (εντολή \sphinxcode{\sphinxupquote{meta}}).
+
 \begin{sphinxadmonition}{important}{Σημαντικό:}
 \sphinxAtStartPar
-Δημιουργείτε πάντα αντίγραφο ασφαλείας του αρχείου .db σας πριν εκτελέσετε μεταναστεύσεις της βάσης δεδομένων.
+Δημιουργείτε πάντα αντίγραφο ασφαλείας του αρχείου \sphinxstyleemphasis{.db} σας πριν ανοίξετε μια βάση που δημιουργήθηκε με προγενέστερη έκδοση του blunderDB.
 \end{sphinxadmonition}
-
-
-\subsection{Έκδοση 1.0.0}
-\label{\detokenize{annexe_db_scheme:version-1-0-0}}
-\sphinxAtStartPar
-Η έκδοση 1.0.0 της βάσης δεδομένων περιέχει τους ακόλουθους πίνακες:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{position}: Αποθηκεύει τις θέσεις με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί) και \sphinxtitleref{state} (κατάσταση της θέσης σε μορφή JSON).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{analysis}: Αποθηκεύει τις αναλύσεις των θέσεων με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{position\_id} (ξένο κλειδί προς το \sphinxtitleref{position}), και \sphinxtitleref{data} (δεδομένα της ανάλυσης σε μορφή JSON).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{comment}: Αποθηκεύει τα σχόλια που σχετίζονται με τις θέσεις με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{position\_id} (ξένο κλειδί προς το \sphinxtitleref{position}), και \sphinxtitleref{text} (κείμενο του σχολίου).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{metadata}: Αποθηκεύει τα μεταδεδομένα της βάσης δεδομένων με τις στήλες \sphinxtitleref{key} (πρωτεύον κλειδί) και \sphinxtitleref{value} (τιμή που σχετίζεται με το κλειδί).
-
-\end{itemize}
-
-
-\subsection{Έκδοση 1.1.0}
-\label{\detokenize{annexe_db_scheme:version-1-1-0}}
-\sphinxAtStartPar
-Η έκδοση 1.1.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{command\_history}: Αποθηκεύει το ιστορικό των εντολών με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{command} (κείμενο της εντολής), και \sphinxtitleref{timestamp} (ημερομηνία και ώρα εκτέλεσης της εντολής).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Οι υπόλοιποι πίνακες παραμένουν αμετάβλητοι σε σχέση με την έκδοση 1.0.0.
-
-\sphinxAtStartPar
-Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.0.0 στην έκδοση 1.1.0, εκτελέστε την εντολή \sphinxcode{\sphinxupquote{migrate\_from\_1\_0\_to\_1\_1}} στο blunderDB.
-
-
-\subsection{Έκδοση 1.2.0}
-\label{\detokenize{annexe_db_scheme:version-1-2-0}}
-\sphinxAtStartPar
-Η έκδοση 1.2.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{filter\_library}: Αποθηκεύει τα φίλτρα αναζήτησης με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{name} (όνομα του φίλτρου), \sphinxtitleref{command} (εντολή που σχετίζεται με το φίλτρο), και \sphinxtitleref{edit\_position} (θέση που επεξεργάστηκε κατά την αποθήκευση του φίλτρου).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Οι υπόλοιποι πίνακες παραμένουν αμετάβλητοι σε σχέση με την έκδοση 1.1.0.
-
-\sphinxAtStartPar
-Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.1.0 στην έκδοση 1.2.0, εκτελέστε την εντολή \sphinxcode{\sphinxupquote{migrate\_from\_1\_1\_to\_1\_2}} στο blunderDB.
-
-
-\subsection{Έκδοση 1.3.0}
-\label{\detokenize{annexe_db_scheme:version-1-3-0}}
-\sphinxAtStartPar
-Η έκδοση 1.3.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{search\_history}: Αποθηκεύει το ιστορικό των αναζητήσεων θέσεων με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{command} (κείμενο της εντολής αναζήτησης), \sphinxtitleref{position} (κατάσταση της θέσης κατά τη στιγμή της αναζήτησης), και \sphinxtitleref{timestamp} (ημερομηνία και ώρα της αναζήτησης).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Οι υπόλοιποι πίνακες παραμένουν αμετάβλητοι σε σχέση με την έκδοση 1.2.0.
-
-\sphinxAtStartPar
-Για να μεταναστεύσετε τη βάση δεδομένων από την έκδοση 1.2.0 στην έκδοση 1.3.0, εκτελέστε την εντολή \sphinxcode{\sphinxupquote{migrate\_from\_1\_2\_to\_1\_3}} στο blunderDB.
-
-
-\subsection{Έκδοση 1.4.0}
-\label{\detokenize{annexe_db_scheme:version-1-4-0}}
-\sphinxAtStartPar
-Η έκδοση 1.4.0 της βάσης δεδομένων προσθέτει τους ακόλουθους πίνακες για τη διαχείριση των αγώνων:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{match}: Αποθηκεύει τους εισαγόμενους αγώνες με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{player1\_name}, \sphinxtitleref{player2\_name}, \sphinxtitleref{event}, \sphinxtitleref{location}, \sphinxtitleref{round}, \sphinxtitleref{match\_length}, \sphinxtitleref{match\_date}, \sphinxtitleref{import\_date}, \sphinxtitleref{file\_path}, \sphinxtitleref{game\_count}, και \sphinxtitleref{match\_hash} (hash για την ανίχνευση διπλότυπων).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{game}: Αποθηκεύει τις παρτίδες ενός αγώνα με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{match\_id} (ξένο κλειδί προς το \sphinxtitleref{match}), \sphinxtitleref{game\_number}, \sphinxtitleref{initial\_score\_1}, \sphinxtitleref{initial\_score\_2}, \sphinxtitleref{winner}, \sphinxtitleref{points\_won}, και \sphinxtitleref{move\_count}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move}: Αποθηκεύει τις κινήσεις μιας παρτίδας με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{game\_id} (ξένο κλειδί προς το \sphinxtitleref{game}), \sphinxtitleref{move\_number}, \sphinxtitleref{move\_type}, \sphinxtitleref{position\_id} (ξένο κλειδί προς το \sphinxtitleref{position}), \sphinxtitleref{player}, \sphinxtitleref{dice\_1}, \sphinxtitleref{dice\_2}, \sphinxtitleref{checker\_move}, και \sphinxtitleref{cube\_action}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move\_analysis}: Αποθηκεύει την ανάλυση κάθε κίνησης με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{move\_id} (ξένο κλειδί προς το \sphinxtitleref{move}), \sphinxtitleref{analysis\_type}, \sphinxtitleref{depth}, \sphinxtitleref{equity}, \sphinxtitleref{equity\_error}, \sphinxtitleref{win\_rate}, \sphinxtitleref{gammon\_rate}, \sphinxtitleref{backgammon\_rate}, \sphinxtitleref{opponent\_win\_rate}, \sphinxtitleref{opponent\_gammon\_rate}, και \sphinxtitleref{opponent\_backgammon\_rate}.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Η μετάβαση από την 1.3.0 στην 1.4.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.
-
-
-\subsection{Έκδοση 1.5.0}
-\label{\detokenize{annexe_db_scheme:version-1-5-0}}
-\sphinxAtStartPar
-Η έκδοση 1.5.0 της βάσης δεδομένων προσθέτει τους ακόλουθους πίνακες για τη διαχείριση των συλλογών:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection}: Αποθηκεύει τις συλλογές θέσεων με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{name}, \sphinxtitleref{description}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at}, και \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection\_position}: Πίνακας σύνδεσης που συσχετίζει θέσεις με συλλογές με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{collection\_id} (ξένο κλειδί προς το \sphinxtitleref{collection}), \sphinxtitleref{position\_id} (ξένο κλειδί προς το \sphinxtitleref{position}), \sphinxtitleref{sort\_order}, και \sphinxtitleref{added\_at}. Το ζεύγος (\sphinxtitleref{collection\_id}, \sphinxtitleref{position\_id}) είναι μοναδικό.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Η μετάβαση από την 1.4.0 στην 1.5.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.
-
-
-\subsection{Έκδοση 1.6.0}
-\label{\detokenize{annexe_db_scheme:version-1-6-0}}
-\sphinxAtStartPar
-Η έκδοση 1.6.0 της βάσης δεδομένων προσθέτει τον ακόλουθο πίνακα για τη διαχείριση των τουρνουά:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{tournament}: Αποθηκεύει τα τουρνουά με τις στήλες \sphinxtitleref{id} (πρωτεύον κλειδί), \sphinxtitleref{name}, \sphinxtitleref{date}, \sphinxtitleref{location}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at}, και \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-Προσθήκη της στήλης \sphinxtitleref{tournament\_id} (ξένο κλειδί προς το \sphinxtitleref{tournament}) στον πίνακα \sphinxtitleref{match} για την ανάθεση ενός αγώνα σε ένα τουρνουά.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Η μετάβαση από την 1.5.0 στην 1.6.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.
-
-
-\subsection{Έκδοση 1.7.0}
-\label{\detokenize{annexe_db_scheme:version-1-7-0}}
-\sphinxAtStartPar
-Η έκδοση 1.7.0 της βάσης δεδομένων προσθέτει την ακόλουθη στήλη:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Προσθήκη της στήλης \sphinxtitleref{last\_visited\_position} στον πίνακα \sphinxtitleref{match} για την απομνημόνευση της τελευταίας θέσης που επισκέφθηκε σε κάθε αγώνα.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Η μετάβαση από την 1.6.0 στην 1.7.0 γίνεται αυτόματα κατά το άνοιγμα της βάσης δεδομένων.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Από την έκδοση 0.10.0, όλες οι μεταναστεύσεις των βάσεων δεδομένων εκτελούνται αυτόματα κατά το άνοιγμα ενός αρχείου βάσης δεδομένων.
+Από την έκδοση 0.10.0, \sphinxstylestrong{όλες οι μεταβάσεις σχήματος εκτελούνται αυτόματα} κατά το άνοιγμα μιας βάσης δεδομένων. Δεν απαιτείται καμία εντολή χειροκίνητης μετάβασης. Η μετάβαση πραγματοποιείται επιτόπου: μια βάση που έχει μεταβεί σε πρόσφατο σχήμα δεν μπορεί πλέον να ανοιχτεί από παλαιότερες εκδόσεις του blunderDB, εξ ου και η σημασία του προηγούμενου αντιγράφου ασφαλείας.
 \end{sphinxadmonition}
+
+
+\subsection{Κύριοι πίνακες}
+\label{\detokenize{annexe_db_scheme:principales-tables}}
+\sphinxAtStartPar
+Το τρέχον σχήμα διαρθρώνεται γύρω από τους ακόλουθους πίνακες:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Θέσεις και αναλύσεις}: \sphinxcode{\sphinxupquote{position}} (οι θέσεις, χωρίς διπλότυπα), \sphinxcode{\sphinxupquote{analysis}} (τα σχετικά δεδομένα ανάλυσης) και \sphinxcode{\sphinxupquote{comment}} (τα σχόλια).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Αγώνες}: οι \sphinxcode{\sphinxupquote{match}}, \sphinxcode{\sphinxupquote{game}}, \sphinxcode{\sphinxupquote{move}} και \sphinxcode{\sphinxupquote{move\_analysis}} αποθηκεύουν τους εισαγόμενους αγώνες, τις παρτίδες τους, τις κινήσεις τους και την ανάλυση κάθε κίνησης.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Συλλογές}: οι \sphinxcode{\sphinxupquote{collection}} και \sphinxcode{\sphinxupquote{collection\_position}} (πίνακας σύνδεσης) ομαδοποιούν θέσεις που επιλέγονται χειροκίνητα.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Τουρνουά}: ο \sphinxcode{\sphinxupquote{tournament}} ομαδοποιεί αγώνες σε τουρνουά.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Επανάληψη με διαστήματα (Anki)}: οι \sphinxcode{\sphinxupquote{anki\_deck}}, \sphinxcode{\sphinxupquote{anki\_card}} και \sphinxcode{\sphinxupquote{anki\_review\_log}} διαχειρίζονται τα πακέτα, τις κάρτες και το αρχείο καταγραφής επαναλήψεων (αλγόριθμος FSRS).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Ιστορικό και διάφορα}: οι \sphinxcode{\sphinxupquote{command\_history}} και \sphinxcode{\sphinxupquote{search\_history}} διατηρούν το ιστορικό των εντολών και των αναζητήσεων, ο \sphinxcode{\sphinxupquote{filter\_library}} τη βιβλιοθήκη φίλτρων, και ο \sphinxcode{\sphinxupquote{metadata}} τα μεταδεδομένα της βάσης (μεταξύ των οποίων και η έκδοση του σχήματος).
+
+\end{itemize}
+
+
+\subsection{Αρχές σχεδιασμού}
+\label{\detokenize{annexe_db_scheme:principes-de-conception}}
+\sphinxAtStartPar
+Από το σχήμα 2.0.0, αρκετές επιλογές σχεδιασμού επιταχύνουν την αναζήτηση και μειώνουν το μέγεθος του αρχείου:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Απαλοιφή διπλότυπων θέσεων}: κάθε θέση φέρει έναν κατακερματισμό Zobrist και ένα μοναδικό ευρετήριο, έτσι ώστε μια ίδια θέση που συναντάται σε πολλαπλές εισαγωγές να αποθηκεύεται μόνο μία φορά.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Αποκανονικοποιημένες στήλες φιλτραρίσματος}: κριτήρια που αναζητούνται συχνά (τύπος απόφασης, ζάρια, διαφορά κούρσας, πούλια εκτός, καθυστερημένα πούλια, σφάλμα κίνησης ή κύβου, πιθανότητες νίκης…) προϋπολογίζονται σε ειδικές στήλες για γρήγορο φιλτράρισμα.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Προφιλτράρισμα με bitboards}: στήλες κατοχής και μασκών σημείων επιτρέπουν ένα πολύ γρήγορο ακέραιο προφιλτράρισμα κατά τις αναζητήσεις μοτίβων δομής.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Συμπαγής αποθήκευση}: οι θέσεις κωδικοποιούνται με συμπαγή τρόπο και τα δεδομένα ανάλυσης συμπιέζονται (zlib), γεγονός που μειώνει σημαντικά το μέγεθος του αρχείου.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Καταγραφή WAL}: η λειτουργία WAL και προσαρμοσμένα PRAGMA βελτιώνουν τις επιδόσεις ανάγνωσης και εγγραφής.
+
+\end{itemize}
 
 \sphinxstepscope
 

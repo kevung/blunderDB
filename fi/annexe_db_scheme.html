@@ -60,14 +60,9 @@
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac-liite: blunderDB:n mahdollinen esto</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">12. Liite: Tietokannan skeema</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Versio 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Versio 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Versio 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Versio 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Versio 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Versio 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Versio 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Versio 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">12.1. Versiointi ja migraatiot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">12.2. Päätaulut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">12.3. Suunnitteluperiaatteet</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
@@ -98,87 +93,41 @@
              
   <section id="annexe-schema-de-la-base-de-donnees">
 <span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Liite: Tietokannan skeema<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<p>blunderDB-tietokanta on yksinkertainen SQLite-tiedosto (pääte <em>.db</em>). Ilman blunderDB:tä se voidaan siten avata ja tarkastella millä tahansa SQLite-editorilla tai -tiedostoselaimella.</p>
+<section id="versionnage-et-migrations">
+<h2><span class="section-number">12.1. </span>Versiointi ja migraatiot<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
+<p>Tietokannan skeema on <strong>versioitu</strong>. Skeeman nykyinen versio on <strong>2.13.0</strong>; se on riippumaton sovelluksen versiosta ja sitä kasvatetaan vain, kun sisäinen rakenne muuttuu. Avatun tietokannan skeeman versio näkyy <strong>Metatiedot</strong>-paneelissa (komento <code class="docutils literal notranslate"><span class="pre">meta</span></code>).</p>
 <div class="admonition important">
 <p class="admonition-title">Tärkeä</p>
-<p>Varmuuskopioi aina .db-tiedostosi ennen tietokannan migraatioiden suorittamista.</p>
+<p>Varmuuskopioi aina <em>.db</em>-tiedostosi ennen kuin avaat aiemmalla blunderDB:n versiolla luodun tietokannan.</p>
 </div>
-<section id="version-1-0-0">
-<h2><span class="section-number">12.1. </span>Versio 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.0.0 sisältää seuraavat taulut:</p>
-<ul class="simple">
-<li><p><strong>position</strong>: Tallentaa positiot sarakkeilla <cite>id</cite> (pääavain) ja <cite>state</cite> (position tila JSON-muodossa).</p></li>
-<li><p><strong>analysis</strong>: Tallentaa positioiden analyysit sarakkeilla <cite>id</cite> (pääavain), <cite>position_id</cite> (viiteavain tauluun <cite>position</cite>) ja <cite>data</cite> (analyysin tiedot JSON-muodossa).</p></li>
-<li><p><strong>comment</strong>: Tallentaa positioihin liittyvät kommentit sarakkeilla <cite>id</cite> (pääavain), <cite>position_id</cite> (viiteavain tauluun <cite>position</cite>) ja <cite>text</cite> (kommentin teksti).</p></li>
-<li><p><strong>metadata</strong>: Tallentaa tietokannan metatiedot sarakkeilla <cite>key</cite> (pääavain) ja <cite>value</cite> (avaimeen liittyvä arvo).</p></li>
-</ul>
-</section>
-<section id="version-1-1-0">
-<h2><span class="section-number">12.2. </span>Versio 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.1.0 lisää seuraavan taulun:</p>
-<ul class="simple">
-<li><p><strong>command_history</strong>: Tallentaa komentohistorian sarakkeilla <cite>id</cite> (pääavain), <cite>command</cite> (komennon teksti) ja <cite>timestamp</cite> (komennon suorituksen päivämäärä ja kellonaika).</p></li>
-</ul>
-<p>Muut taulut pysyvät muuttumattomina versioon 1.0.0 verrattuna.</p>
-<p>Migratoidaksesi tietokannan versiosta 1.0.0 versioon 1.1.0 suorita komento <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> blunderDB:ssä.</p>
-</section>
-<section id="version-1-2-0">
-<h2><span class="section-number">12.3. </span>Versio 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.2.0 lisää seuraavan taulun:</p>
-<ul class="simple">
-<li><p><strong>filter_library</strong>: Tallentaa hakusuodattimet sarakkeilla <cite>id</cite> (pääavain), <cite>name</cite> (suodattimen nimi), <cite>command</cite> (suodattimeen liittyvä komento) ja <cite>edit_position</cite> (suodatinta tallennettaessa muokattu positio).</p></li>
-</ul>
-<p>Muut taulut pysyvät muuttumattomina versioon 1.1.0 verrattuna.</p>
-<p>Migratoidaksesi tietokannan versiosta 1.1.0 versioon 1.2.0 suorita komento <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> blunderDB:ssä.</p>
-</section>
-<section id="version-1-3-0">
-<h2><span class="section-number">12.4. </span>Versio 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.3.0 lisää seuraavan taulun:</p>
-<ul class="simple">
-<li><p><strong>search_history</strong>: Tallentaa positiohakujen historian sarakkeilla <cite>id</cite> (pääavain), <cite>command</cite> (hakukomennon teksti), <cite>position</cite> (position tila haun hetkellä) ja <cite>timestamp</cite> (haun päivämäärä ja kellonaika).</p></li>
-</ul>
-<p>Muut taulut pysyvät muuttumattomina versioon 1.2.0 verrattuna.</p>
-<p>Migratoidaksesi tietokannan versiosta 1.2.0 versioon 1.3.0 suorita komento <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> blunderDB:ssä.</p>
-</section>
-<section id="version-1-4-0">
-<h2><span class="section-number">12.5. </span>Versio 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.4.0 lisää seuraavat taulut otteluiden hallintaa varten:</p>
-<ul class="simple">
-<li><p><strong>match</strong>: Tallentaa tuodut ottelut sarakkeilla <cite>id</cite> (pääavain), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite> ja <cite>match_hash</cite> (tiiviste duplikaattien tunnistamiseen).</p></li>
-<li><p><strong>game</strong>: Tallentaa ottelun pelit sarakkeilla <cite>id</cite> (pääavain), <cite>match_id</cite> (viiteavain tauluun <cite>match</cite>), <cite>game_number</cite>, <cite>initial_score_1</cite>, <cite>initial_score_2</cite>, <cite>winner</cite>, <cite>points_won</cite> ja <cite>move_count</cite>.</p></li>
-<li><p><strong>move</strong>: Tallentaa pelin siirrot sarakkeilla <cite>id</cite> (pääavain), <cite>game_id</cite> (viiteavain tauluun <cite>game</cite>), <cite>move_number</cite>, <cite>move_type</cite>, <cite>position_id</cite> (viiteavain tauluun <cite>position</cite>), <cite>player</cite>, <cite>dice_1</cite>, <cite>dice_2</cite>, <cite>checker_move</cite> ja <cite>cube_action</cite>.</p></li>
-<li><p><strong>move_analysis</strong>: Tallentaa kunkin siirron analyysin sarakkeilla <cite>id</cite> (pääavain), <cite>move_id</cite> (viiteavain tauluun <cite>move</cite>), <cite>analysis_type</cite>, <cite>depth</cite>, <cite>equity</cite>, <cite>equity_error</cite>, <cite>win_rate</cite>, <cite>gammon_rate</cite>, <cite>backgammon_rate</cite>, <cite>opponent_win_rate</cite>, <cite>opponent_gammon_rate</cite> ja <cite>opponent_backgammon_rate</cite>.</p></li>
-</ul>
-<p>Migraatio versiosta 1.3.0 versioon 1.4.0 tapahtuu automaattisesti tietokantaa avattaessa.</p>
-</section>
-<section id="version-1-5-0">
-<h2><span class="section-number">12.6. </span>Versio 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.5.0 lisää seuraavat taulut kokoelmien hallintaa varten:</p>
-<ul class="simple">
-<li><p><strong>collection</strong>: Tallentaa positiokokoelmat sarakkeilla <cite>id</cite> (pääavain), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite> ja <cite>updated_at</cite>.</p></li>
-<li><p><strong>collection_position</strong>: Liitostaulu, joka yhdistää positiot kokoelmiin sarakkeilla <cite>id</cite> (pääavain), <cite>collection_id</cite> (viiteavain tauluun <cite>collection</cite>), <cite>position_id</cite> (viiteavain tauluun <cite>position</cite>), <cite>sort_order</cite> ja <cite>added_at</cite>. Pari (<cite>collection_id</cite>, <cite>position_id</cite>) on yksilöllinen.</p></li>
-</ul>
-<p>Migraatio versiosta 1.4.0 versioon 1.5.0 tapahtuu automaattisesti tietokantaa avattaessa.</p>
-</section>
-<section id="version-1-6-0">
-<h2><span class="section-number">12.7. </span>Versio 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.6.0 lisää seuraavan taulun turnausten hallintaa varten:</p>
-<ul class="simple">
-<li><p><strong>tournament</strong>: Tallentaa turnaukset sarakkeilla <cite>id</cite> (pääavain), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite> ja <cite>updated_at</cite>.</p></li>
-<li><p>Lisätty sarake <cite>tournament_id</cite> (viiteavain tauluun <cite>tournament</cite>) tauluun <cite>match</cite> ottelun liittämiseksi turnaukseen.</p></li>
-</ul>
-<p>Migraatio versiosta 1.5.0 versioon 1.6.0 tapahtuu automaattisesti tietokantaa avattaessa.</p>
-</section>
-<section id="version-1-7-0">
-<h2><span class="section-number">12.8. </span>Versio 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
-<p>Tietokannan versio 1.7.0 lisää seuraavan sarakkeen:</p>
-<ul class="simple">
-<li><p>Lisätty sarake <cite>last_visited_position</cite> tauluun <cite>match</cite> kussakin ottelussa viimeksi vieraillun position muistamiseksi.</p></li>
-</ul>
-<p>Migraatio versiosta 1.6.0 versioon 1.7.0 tapahtuu automaattisesti tietokantaa avattaessa.</p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Versiosta 0.10.0 lähtien kaikki tietokannan migraatiot suoritetaan automaattisesti tietokantatiedostoa avattaessa.</p>
+<p>Versiosta 0.10.0 alkaen <strong>kaikki skeeman migraatiot suoritetaan automaattisesti</strong> tietokantaa avattaessa. Manuaalista migraatiokomentoa ei tarvita. Migraatio tehdään paikan päällä: uudempaan skeemaan migroitua tietokantaa ei enää voi avata blunderDB:n vanhemmilla versioilla, mistä johtuu etukäteisvarmuuskopioinnin tärkeys.</p>
 </div>
+</section>
+<section id="principales-tables">
+<h2><span class="section-number">12.2. </span>Päätaulut<a class="headerlink" href="#principales-tables" title="Link to this heading"></a></h2>
+<p>Nykyinen skeema rakentuu seuraavien taulujen ympärille:</p>
+<ul class="simple">
+<li><p><strong>Asemat ja analyysit</strong>: <code class="docutils literal notranslate"><span class="pre">position</span></code> (asemat, deduplikoituina), <code class="docutils literal notranslate"><span class="pre">analysis</span></code> (niihin liittyvät analyysitiedot) ja <code class="docutils literal notranslate"><span class="pre">comment</span></code> (kommentit).</p></li>
+<li><p><strong>Ottelut</strong>: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">game</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code> ja <code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> tallentavat tuodut ottelut, niiden pelit, siirrot ja kunkin siirron analyysin.</p></li>
+<li><p><strong>Kokoelmat</strong>: <code class="docutils literal notranslate"><span class="pre">collection</span></code> ja <code class="docutils literal notranslate"><span class="pre">collection_position</span></code> (liitostaulu) ryhmittelevät manuaalisesti valittuja asemia.</p></li>
+<li><p><strong>Turnaukset</strong>: <code class="docutils literal notranslate"><span class="pre">tournament</span></code> ryhmittelee otteluita turnauksiksi.</p></li>
+<li><p><strong>Välitoisto (Anki)</strong>: <code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>, <code class="docutils literal notranslate"><span class="pre">anki_card</span></code> ja <code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> hallitsevat pakkoja, kortteja ja kertausten lokia (FSRS-algoritmi).</p></li>
+<li><p><strong>Historia ja muut</strong>: <code class="docutils literal notranslate"><span class="pre">command_history</span></code> ja <code class="docutils literal notranslate"><span class="pre">search_history</span></code> säilyttävät komentojen ja hakujen historian, <code class="docutils literal notranslate"><span class="pre">filter_library</span></code> suodatinkirjaston ja <code class="docutils literal notranslate"><span class="pre">metadata</span></code> tietokannan metatiedot (mukaan lukien skeeman version).</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2><span class="section-number">12.3. </span>Suunnitteluperiaatteet<a class="headerlink" href="#principes-de-conception" title="Link to this heading"></a></h2>
+<p>Skeemasta 2.0.0 alkaen useat suunnitteluratkaisut nopeuttavat hakua ja pienentävät tiedoston kokoa:</p>
+<ul class="simple">
+<li><p><strong>Asemien deduplikointi</strong>: jokaisella asemalla on Zobrist-tiiviste ja uniikki indeksi, joten sama asema, joka kohdataan useissa tuonneissa, tallennetaan vain kerran.</p></li>
+<li><p><strong>Denormalisoidut suodatussarakkeet</strong>: usein haetut kriteerit (päätöstyyppi, nopat, pip-ero, pelistä poistetut nappulat, takana olevat nappulat, siirto- tai kuutiovirhe, voiton mahdollisuudet…) esilasketaan omiin sarakkeisiinsa nopeaa suodatusta varten.</p></li>
+<li><p><strong>Esisuodatus bitboardeilla</strong>: miehityssarakkeet ja pistemaskisarakkeet mahdollistavat erittäin nopean kokonaislukupohjaisen esisuodatuksen rakennemotiivien hakujen aikana.</p></li>
+<li><p><strong>Kompakti tallennus</strong>: asemat koodataan kompaktisti ja analyysitiedot pakataan (zlib), mikä pienentää tiedoston kokoa merkittävästi.</p></li>
+<li><p><strong>WAL-lokitus</strong>: WAL-tila ja säädetyt PRAGMA:t parantavat luku- ja kirjoitussuorituskykyä.</p></li>
+</ul>
 </section>
 </section>
 

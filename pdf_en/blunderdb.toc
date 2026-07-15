@@ -147,28 +147,23 @@
 \contentsline {subsection}{\numberline {2.11.1}Installation of blunderDB}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Authorization to Run blunderDB}{55}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Annex: Database Schema}{55}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Version 1.0.0}{55}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Version 1.1.0}{56}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Version 1.2.0}{56}{subsection.2.12.3}%
-\contentsline {subsection}{\numberline {2.12.4}Version 1.3.0}{56}{subsection.2.12.4}%
-\contentsline {subsection}{\numberline {2.12.5}Version 1.4.0}{56}{subsection.2.12.5}%
-\contentsline {subsection}{\numberline {2.12.6}Version 1.5.0}{57}{subsection.2.12.6}%
-\contentsline {subsection}{\numberline {2.12.7}Version 1.6.0}{57}{subsection.2.12.7}%
-\contentsline {subsection}{\numberline {2.12.8}Version 1.7.0}{57}{subsection.2.12.8}%
-\contentsline {section}{\numberline {2.13}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{57}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Formal definitions}{58}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{58}{subsubsection*.47}%
-\contentsline {subsubsection}{Snowie Error Rate}{58}{subsubsection*.48}%
+\contentsline {subsection}{\numberline {2.12.1}Versioning and migrations}{55}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Main tables}{56}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Design principles}{56}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{56}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Formal definitions}{57}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{57}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{57}{subsubsection*.48}%
 \contentsline {subsubsection}{MWC loss (Match Winning Chance)}{58}{subsubsection*.49}%
-\contentsline {subsection}{\numberline {2.13.2}Decisions counted in the PR denominator}{59}{subsection.2.13.2}%
-\contentsline {subsubsection}{Checker plays — counted decisions}{59}{subsubsection*.50}%
-\contentsline {subsubsection}{Cube decisions — counted decisions}{59}{subsubsection*.51}%
-\contentsline {subsubsection}{Filter summary}{59}{subsubsection*.52}%
-\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG correspondence}{59}{subsection.2.13.3}%
-\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{59}{subsubsection*.53}%
-\contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{60}{subsubsection*.54}%
-\contentsline {subsection}{\numberline {2.13.4}Validating your own figures}{60}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}gnuBG reference}{60}{subsection.2.13.5}%
+\contentsline {subsection}{\numberline {2.13.2}Decisions counted in the PR denominator}{58}{subsection.2.13.2}%
+\contentsline {subsubsection}{Checker plays — counted decisions}{58}{subsubsection*.50}%
+\contentsline {subsubsection}{Cube decisions — counted decisions}{58}{subsubsection*.51}%
+\contentsline {subsubsection}{Filter summary}{58}{subsubsection*.52}%
+\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG correspondence}{58}{subsection.2.13.3}%
+\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{58}{subsubsection*.53}%
+\contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{59}{subsubsection*.54}%
+\contentsline {subsection}{\numberline {2.13.4}Validating your own figures}{59}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG reference}{59}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Contact}{61}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Donate}{63}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Acknowledgments}{65}{chapter.5}%

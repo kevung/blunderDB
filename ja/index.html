@@ -271,7 +271,7 @@
 </tr>
 <tr class="row-even"><td><p>0.27.0</p></td>
 <td><p>2026/06/13</p></td>
-<td><p>Anki パネル：<em>Study</em> の隣の <em>Cram</em> ボタンから利用できる新しいフリー練習（<em>cram</em>）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。検索：最悪のミス（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド <code class="docutils literal notranslate"><span class="pre">blunders``（エイリアス</span> <span class="pre">``bl</span></code>）。オプションの数値で件数を選べます（<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター <code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code>。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド <a href="#id1"><span class="problematic" id="id2">``</span></a>matches.movesByMatch``（対局の全手を1回の呼び出しで取得）と <a href="#id3"><span class="problematic" id="id4">``</span></a>positions.epc``（両プレイヤーの Effective Pip Count）。<a class="reference internal" href="manuel.html#mode-anki"><span class="std std-ref">Anki パネル</span></a> および <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照。</p></td>
+<td><p>Anki パネル：<em>Study</em> の隣の <em>Cram</em> ボタンから利用できる新しいフリー練習（<em>cram</em>）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。検索：最悪のミス（エクイティ/MWC）を分析ビューに直接読み込む新しいコマンド <code class="docutils literal notranslate"><span class="pre">blunders``（エイリアス</span> <span class="pre">``bl</span></code>）。オプションの数値で件数を選べます（<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター <code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code>。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド <a href="#id1"><span class="problematic" id="id2">``</span></a>matches.movesByMatch``（対局の全手を1回の呼び出しで取得）と <a href="#id3"><span class="problematic" id="id4">``</span></a>positions.epc``（両プレイヤーの Effective Pip Count）。<a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki パネル</span></a> および <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照。</p></td>
 </tr>
 <tr class="row-odd"><td><p>0.28.0</p></td>
 <td><p>2026/07/15</p></td>
@@ -421,14 +421,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. 付録: データベーススキーマ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. バージョン 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. バージョン 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. バージョン 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. バージョン 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. バージョン 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. バージョン 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. バージョン 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. バージョン 1.7.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#versionnage-et-migrations">12.1. バージョン管理と移行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principales-tables">12.2. 主なテーブル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principes-de-conception">12.3. 設計の原則</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="stats_parity.html">13. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a><ul>

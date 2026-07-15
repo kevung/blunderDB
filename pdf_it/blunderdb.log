@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.15)  15 JUL 2026 01:11
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.15)  15 JUL 2026 01:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1096,69 +1096,69 @@ LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 
 [37] [38] [39] [40]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5932.
+(Font)              scaled to size 10.79993pt on input line 5925.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6016--6018
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6009--6011
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6019
+Overfull \hbox (11.423pt too wide) detected at line 6012
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6075--6077
+Underfull \hbox (badness 10000) in paragraph at lines 6068--6070
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [41] [42]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6404--6406
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6397--6399
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6407
+Overfull \hbox (1.06567pt too wide) detected at line 6400
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [43] [44]
-Underfull \hbox (badness 6412) in paragraph at lines 6702--6704
+Underfull \hbox (badness 6412) in paragraph at lines 6695--6697
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 6705
+Underfull \hbox (badness 6412) detected at line 6698
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6718--6720
+Underfull \hbox (badness 6412) in paragraph at lines 6711--6713
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6734--6736
+Underfull \hbox (badness 10000) in paragraph at lines 6727--6729
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6745--6747
+Underfull \hbox (badness 10000) in paragraph at lines 6738--6740
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6759--6761
+Underfull \hbox (badness 10000) in paragraph at lines 6752--6754
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6824--6826
+Underfull \hbox (badness 10000) in paragraph at lines 6817--6819
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6840--6842
+Underfull \hbox (badness 6412) in paragraph at lines 6833--6835
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
@@ -1186,33 +1186,33 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [49] [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
-[60] [61] [62
-
-]
+[60]
 Capitolo 3.
-[63] [64
+[61
+
+] [62
 
 ]
 Capitolo 4.
-[65] [66
+[63] [64
 
 ]
 Capitolo 5.
-(./blunderdb.ind) [67] (./blunderdb.aux)
+(./blunderdb.ind) [65] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 5754EA52754DAAF9A7D01B7412B97363;33781.
+(rerunfilecheck)             Checksum: 17C1F8F0A57264CFF77F0975F957262D;33232.
  ) 
 Here is how much of TeX's memory you used:
- 19376 strings out of 476443
- 395415 string characters out of 5793962
+ 19371 strings out of 476443
+ 395279 string characters out of 5793962
  2007627 words of memory out of 5000000
- 40933 multiletter control sequences out of 15000+600000
+ 40928 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3335b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (71 pages).
+Output written on blunderdb.pdf (69 pages).

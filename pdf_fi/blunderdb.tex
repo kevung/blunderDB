@@ -709,7 +709,7 @@ Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Anki\sphinxhyphen{}paneeli: uusi vapaan harjoittelun (\sphinxstyleemphasis{cram}) tila, käytettävissä \sphinxstyleemphasis{Cram}\sphinxhyphen{}painikkeesta \sphinxstyleemphasis{Study}\sphinxhyphen{}painikkeen vierestä, joka näyttää satunnaisia asemia pakasta muuttamatta kertausaikataulua — ihanteellinen lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen järjestystä häiritsemättä. Haku: uusi komento \sphinxcode{\sphinxupquote{blunders}} (alias \sphinxcode{\sphinxupquote{bl}}), joka lataa pahimmat virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (\sphinxcode{\sphinxupquote{bl 50}}); uusi pelaajasuodatin \sphinxcode{\sphinxupquote{pl'nimi'}}, joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen. Palvelintila (headless): uudet metodit \sphinxcode{\sphinxupquote{matches.movesByMatch}} (ottelun kaikki siirrot yhdellä kutsulla) ja \sphinxcode{\sphinxupquote{positions.epc}} (molempien pelaajien Effective Pip Count). Katso {\hyperref[\detokenize{manuel:mode-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki\sphinxhyphen{}paneeli}}}}} ja {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoluettelo}}}}}.
+Anki\sphinxhyphen{}paneeli: uusi vapaan harjoittelun (\sphinxstyleemphasis{cram}) tila, käytettävissä \sphinxstyleemphasis{Cram}\sphinxhyphen{}painikkeesta \sphinxstyleemphasis{Study}\sphinxhyphen{}painikkeen vierestä, joka näyttää satunnaisia asemia pakasta muuttamatta kertausaikataulua — ihanteellinen lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen järjestystä häiritsemättä. Haku: uusi komento \sphinxcode{\sphinxupquote{blunders}} (alias \sphinxcode{\sphinxupquote{bl}}), joka lataa pahimmat virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (\sphinxcode{\sphinxupquote{bl 50}}); uusi pelaajasuodatin \sphinxcode{\sphinxupquote{pl'nimi'}}, joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen. Palvelintila (headless): uudet metodit \sphinxcode{\sphinxupquote{matches.movesByMatch}} (ottelun kaikki siirrot yhdellä kutsulla) ja \sphinxcode{\sphinxupquote{positions.epc}} (molempien pelaajien Effective Pip Count). Katso {\hyperref[\detokenize{manuel:panneau-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki\sphinxhyphen{}paneeli}}}}} ja {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoluettelo}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1058,7 +1058,7 @@ Komento \sphinxcode{\sphinxupquote{demo}} lataa \sphinxstylestrong{esimerkkitiet
 
 
 \subsection{Asemien selaaminen}
-\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:mode-normal}}
+\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:navigation-positions}}
 \sphinxAtStartPar
 Oletuksena blunderDB mahdollistaa seuraavat:
 \begin{itemize}
@@ -1083,7 +1083,7 @@ Katso saatavilla olevat pikanäppäimet kohdasta {\hyperref[\detokenize{raccourc
 
 
 \subsection{Asemien muokkaus}
-\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:mode-edit}}
+\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:edition-positions}}
 \sphinxAtStartPar
 \sphinxstyleemphasis{TAB}\sphinxhyphen{}näppäimen painaminen avaa hakupaneelin ja mahdollistaa aseman muokkaamisen laudalla sen lisäämiseksi tietokantaan tai haettavan asemarakenteen määrittämiseksi. Pelinappuloiden, kuution, pistetilanteen ja vuoron jakaumaa voi muokata hiirellä (katso {\hyperref[\detokenize{guide_utilisateur:guide-edit-position}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Muokkaa asemaa}}}}}).
 
@@ -1094,7 +1094,7 @@ Katso saatavilla olevat pikanäppäimet kohdasta {\hyperref[\detokenize{raccourc
 
 
 \subsection{Komentorivi}
-\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:mode-command}}
+\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:ligne-commande}}
 \sphinxAtStartPar
 Tilariviin upotettu komentorivi mahdollistaa kaikkien graafisessa käyttöliittymässä saatavilla olevien blunderDB:n toimintojen suorittamisen: yleiset tietokantatoiminnot, asemissa navigointi, analyysin ja/tai kommenttien näyttäminen, asemien haku suodattimilla… Kun käyttöliittymä on tullut tutuksi, suositellaan vähitellen siirtymistä komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja sujuvan käytön, erityisesti asemahakutoiminnoissa.
 
@@ -1143,13 +1143,13 @@ Katso saatavilla olevien suodattimien luettelo kohdasta \hyperref[\detokenize{cm
 
 
 \subsection{Kokoelmapaneeli}
-\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:mode-collection}}
+\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 \sphinxstylestrong{Kokoelmapaneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) mahdollistaa asemakokoelmien hallinnan. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Asemia voi lisätä niihin tai poistaa niistä. Kaksoisnapsauta kokoelmaa selataksesi sen asemia näppäimillä \sphinxstyleemphasis{VASEN} ja \sphinxstyleemphasis{OIKEA}. Kokoelmien ja niiden sisältämien asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Näytä tai piilota paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} tai suorittamalla komento \sphinxcode{\sphinxupquote{collection}}.
 
 
 \subsection{Ottelupaneeli}
-\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:mode-match}}
+\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:id7}}
 \sphinxAtStartPar
 \sphinxstylestrong{Ottelupaneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina \sphinxstyleemphasis{ENTER}) navigoidaksesi sen siirroissa. Komento \sphinxcode{\sphinxupquote{m}} jatkaa navigointia viimeksi katsotussa ottelussa.
 
@@ -1194,7 +1194,7 @@ Katso saatavilla olevat pikanäppäimet kohdasta {\hyperref[\detokenize{raccourc
 
 
 \subsection{Turnauspaneeli}
-\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id6}}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id8}}
 \sphinxAtStartPar
 \sphinxstylestrong{Turnauspaneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats\sphinxhyphen{}paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}.
 
@@ -1203,7 +1203,7 @@ Katso saatavilla olevat pikanäppäimet kohdasta {\hyperref[\detokenize{raccourc
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Johdanto}
-\label{\detokenize{manuel:id7}}
+\label{\detokenize{manuel:id9}}
 \sphinxAtStartPar
 \sphinxstylestrong{Stats\sphinxhyphen{}paneeli} mahdollistaa oman pelitason analysoinnin ja kehityksen seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se laskee ja näyttää tunnusluvut \sphinxstylestrong{PR} (Performance Rate) ja \sphinxstylestrong{MWC cost} (Match Winning Chance cost) kaikille asemille tai suodatetulle osajoukolle.
 
@@ -1580,7 +1580,7 @@ MWC cost on kumulatiivinen koko suodatetussa aineistossa — ei päätöskohtain
 
 
 \subsection{EPC\sphinxhyphen{}paneeli}
-\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:mode-epc}}
+\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:id10}}
 \sphinxAtStartPar
 \sphinxstylestrong{EPC\sphinxhyphen{}paneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) laskee bearoff\sphinxhyphen{}aseman EPC:n (Effective Pip Count). Se aktivoidaan painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, napsauttamalla EPC\sphinxhyphen{}välilehteä alapaneelissa tai suorittamalla komento \sphinxcode{\sphinxupquote{epc}}.
 
@@ -1622,7 +1622,7 @@ Laskenta perustuu GNUbg:n sisäänrakennettuun 6 pisteen bearoff\sphinxhyphen{}t
 
 
 \subsection{Anki\sphinxhyphen{}paneeli}
-\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:mode-anki}}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:id11}}
 \sphinxAtStartPar
 \sphinxstylestrong{Anki\sphinxhyphen{}paneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) mahdollistaa asemien opiskelun välitoistolla FSRS\sphinxhyphen{}algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai hakutuloksista.
 
@@ -2489,7 +2489,7 @@ Avaa gammon\sphinxhyphen{}arvojen taulukon kuution arvolla 4.
 
 
 \subsection{Asemat ja navigointi}
-\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-normal}}
+\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-positions}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -2658,7 +2658,7 @@ Navigoi viimeksi käytyyn otteluun.
 
 
 \subsection{Muokkaus ja haku}
-\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edit}}
+\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edition}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -5850,14 +5850,7 @@ Tietokanta on yksinkertainen SQLite\sphinxhyphen{}tiedosto. Ilman blunderDB:tä 
 \subsection{Mitkä olivat blunderDB:n suunnitteluperiaatteet?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-L’ergonomie de blunderDB — sa ligne de commande, activée par la barre
-d’\sphinxstyleemphasis{ESPACE}, et ses raccourcis clavier — s’inspire du très puissant éditeur de
-texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
-léger, autonome, sans installation et disponible pour différentes plateformes,
-d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
-sérialisation de la base de données, le format de fichiers doit être
-multi\sphinxhyphen{}plateforme et adapté pour contenir une base de données. Le format de
-fichier sqlite semblait tout indiqué.
+blunderDB:n ergonomia suosii näppäimistökäyttöä: komentorivi, joka avataan painamalla \sphinxstyleemphasis{VÄLILYÖNTI}\sphinxhyphen{}näppäintä, sekä pikanäppäimet mahdollistavat nopean ja sujuvan käytön näppäimistöltä poistumatta. Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go\sphinxhyphen{}ohjelmointikielen ja Svelte\sphinxhyphen{}kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite\sphinxhyphen{}tiedostomuoto vaikutti täydelliseltä valinnalta.
 
 
 \subsection{Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}
@@ -7268,173 +7261,84 @@ Sinun tarvitsee tehdä tämä toimenpide vain kerran. Tämän jälkeen voit avat
 
 \section{Liite: Tietokannan skeema}
 \label{\detokenize{annexe_db_scheme:annexe-schema-de-la-base-de-donnees}}\label{\detokenize{annexe_db_scheme:annexe-db-migration}}\label{\detokenize{annexe_db_scheme::doc}}
+\sphinxAtStartPar
+blunderDB\sphinxhyphen{}tietokanta on yksinkertainen SQLite\sphinxhyphen{}tiedosto (pääte \sphinxstyleemphasis{.db}). Ilman blunderDB:tä se voidaan siten avata ja tarkastella millä tahansa SQLite\sphinxhyphen{}editorilla tai \sphinxhyphen{}tiedostoselaimella.
+
+
+\subsection{Versiointi ja migraatiot}
+\label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
+\sphinxAtStartPar
+Tietokannan skeema on \sphinxstylestrong{versioitu}. Skeeman nykyinen versio on \sphinxstylestrong{2.13.0}; se on riippumaton sovelluksen versiosta ja sitä kasvatetaan vain, kun sisäinen rakenne muuttuu. Avatun tietokannan skeeman versio näkyy \sphinxstylestrong{Metatiedot}\sphinxhyphen{}paneelissa (komento \sphinxcode{\sphinxupquote{meta}}).
+
 \begin{sphinxadmonition}{important}{Tärkeä:}
 \sphinxAtStartPar
-Varmuuskopioi aina .db\sphinxhyphen{}tiedostosi ennen tietokannan migraatioiden suorittamista.
+Varmuuskopioi aina \sphinxstyleemphasis{.db}\sphinxhyphen{}tiedostosi ennen kuin avaat aiemmalla blunderDB:n versiolla luodun tietokannan.
 \end{sphinxadmonition}
-
-
-\subsection{Versio 1.0.0}
-\label{\detokenize{annexe_db_scheme:version-1-0-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.0.0 sisältää seuraavat taulut:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{position}: Tallentaa positiot sarakkeilla \sphinxtitleref{id} (pääavain) ja \sphinxtitleref{state} (position tila JSON\sphinxhyphen{}muodossa).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{analysis}: Tallentaa positioiden analyysit sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{position\_id} (viiteavain tauluun \sphinxtitleref{position}) ja \sphinxtitleref{data} (analyysin tiedot JSON\sphinxhyphen{}muodossa).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{comment}: Tallentaa positioihin liittyvät kommentit sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{position\_id} (viiteavain tauluun \sphinxtitleref{position}) ja \sphinxtitleref{text} (kommentin teksti).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{metadata}: Tallentaa tietokannan metatiedot sarakkeilla \sphinxtitleref{key} (pääavain) ja \sphinxtitleref{value} (avaimeen liittyvä arvo).
-
-\end{itemize}
-
-
-\subsection{Versio 1.1.0}
-\label{\detokenize{annexe_db_scheme:version-1-1-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.1.0 lisää seuraavan taulun:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{command\_history}: Tallentaa komentohistorian sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{command} (komennon teksti) ja \sphinxtitleref{timestamp} (komennon suorituksen päivämäärä ja kellonaika).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Muut taulut pysyvät muuttumattomina versioon 1.0.0 verrattuna.
-
-\sphinxAtStartPar
-Migratoidaksesi tietokannan versiosta 1.0.0 versioon 1.1.0 suorita komento \sphinxcode{\sphinxupquote{migrate\_from\_1\_0\_to\_1\_1}} blunderDB:ssä.
-
-
-\subsection{Versio 1.2.0}
-\label{\detokenize{annexe_db_scheme:version-1-2-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.2.0 lisää seuraavan taulun:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{filter\_library}: Tallentaa hakusuodattimet sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{name} (suodattimen nimi), \sphinxtitleref{command} (suodattimeen liittyvä komento) ja \sphinxtitleref{edit\_position} (suodatinta tallennettaessa muokattu positio).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Muut taulut pysyvät muuttumattomina versioon 1.1.0 verrattuna.
-
-\sphinxAtStartPar
-Migratoidaksesi tietokannan versiosta 1.1.0 versioon 1.2.0 suorita komento \sphinxcode{\sphinxupquote{migrate\_from\_1\_1\_to\_1\_2}} blunderDB:ssä.
-
-
-\subsection{Versio 1.3.0}
-\label{\detokenize{annexe_db_scheme:version-1-3-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.3.0 lisää seuraavan taulun:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{search\_history}: Tallentaa positiohakujen historian sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{command} (hakukomennon teksti), \sphinxtitleref{position} (position tila haun hetkellä) ja \sphinxtitleref{timestamp} (haun päivämäärä ja kellonaika).
-
-\end{itemize}
-
-\sphinxAtStartPar
-Muut taulut pysyvät muuttumattomina versioon 1.2.0 verrattuna.
-
-\sphinxAtStartPar
-Migratoidaksesi tietokannan versiosta 1.2.0 versioon 1.3.0 suorita komento \sphinxcode{\sphinxupquote{migrate\_from\_1\_2\_to\_1\_3}} blunderDB:ssä.
-
-
-\subsection{Versio 1.4.0}
-\label{\detokenize{annexe_db_scheme:version-1-4-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.4.0 lisää seuraavat taulut otteluiden hallintaa varten:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{match}: Tallentaa tuodut ottelut sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{player1\_name}, \sphinxtitleref{player2\_name}, \sphinxtitleref{event}, \sphinxtitleref{location}, \sphinxtitleref{round}, \sphinxtitleref{match\_length}, \sphinxtitleref{match\_date}, \sphinxtitleref{import\_date}, \sphinxtitleref{file\_path}, \sphinxtitleref{game\_count} ja \sphinxtitleref{match\_hash} (tiiviste duplikaattien tunnistamiseen).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{game}: Tallentaa ottelun pelit sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{match\_id} (viiteavain tauluun \sphinxtitleref{match}), \sphinxtitleref{game\_number}, \sphinxtitleref{initial\_score\_1}, \sphinxtitleref{initial\_score\_2}, \sphinxtitleref{winner}, \sphinxtitleref{points\_won} ja \sphinxtitleref{move\_count}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move}: Tallentaa pelin siirrot sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{game\_id} (viiteavain tauluun \sphinxtitleref{game}), \sphinxtitleref{move\_number}, \sphinxtitleref{move\_type}, \sphinxtitleref{position\_id} (viiteavain tauluun \sphinxtitleref{position}), \sphinxtitleref{player}, \sphinxtitleref{dice\_1}, \sphinxtitleref{dice\_2}, \sphinxtitleref{checker\_move} ja \sphinxtitleref{cube\_action}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{move\_analysis}: Tallentaa kunkin siirron analyysin sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{move\_id} (viiteavain tauluun \sphinxtitleref{move}), \sphinxtitleref{analysis\_type}, \sphinxtitleref{depth}, \sphinxtitleref{equity}, \sphinxtitleref{equity\_error}, \sphinxtitleref{win\_rate}, \sphinxtitleref{gammon\_rate}, \sphinxtitleref{backgammon\_rate}, \sphinxtitleref{opponent\_win\_rate}, \sphinxtitleref{opponent\_gammon\_rate} ja \sphinxtitleref{opponent\_backgammon\_rate}.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Migraatio versiosta 1.3.0 versioon 1.4.0 tapahtuu automaattisesti tietokantaa avattaessa.
-
-
-\subsection{Versio 1.5.0}
-\label{\detokenize{annexe_db_scheme:version-1-5-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.5.0 lisää seuraavat taulut kokoelmien hallintaa varten:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection}: Tallentaa positiokokoelmat sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{name}, \sphinxtitleref{description}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at} ja \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{collection\_position}: Liitostaulu, joka yhdistää positiot kokoelmiin sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{collection\_id} (viiteavain tauluun \sphinxtitleref{collection}), \sphinxtitleref{position\_id} (viiteavain tauluun \sphinxtitleref{position}), \sphinxtitleref{sort\_order} ja \sphinxtitleref{added\_at}. Pari (\sphinxtitleref{collection\_id}, \sphinxtitleref{position\_id}) on yksilöllinen.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Migraatio versiosta 1.4.0 versioon 1.5.0 tapahtuu automaattisesti tietokantaa avattaessa.
-
-
-\subsection{Versio 1.6.0}
-\label{\detokenize{annexe_db_scheme:version-1-6-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.6.0 lisää seuraavan taulun turnausten hallintaa varten:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{tournament}: Tallentaa turnaukset sarakkeilla \sphinxtitleref{id} (pääavain), \sphinxtitleref{name}, \sphinxtitleref{date}, \sphinxtitleref{location}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at} ja \sphinxtitleref{updated\_at}.
-
-\item {} 
-\sphinxAtStartPar
-Lisätty sarake \sphinxtitleref{tournament\_id} (viiteavain tauluun \sphinxtitleref{tournament}) tauluun \sphinxtitleref{match} ottelun liittämiseksi turnaukseen.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Migraatio versiosta 1.5.0 versioon 1.6.0 tapahtuu automaattisesti tietokantaa avattaessa.
-
-
-\subsection{Versio 1.7.0}
-\label{\detokenize{annexe_db_scheme:version-1-7-0}}
-\sphinxAtStartPar
-Tietokannan versio 1.7.0 lisää seuraavan sarakkeen:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Lisätty sarake \sphinxtitleref{last\_visited\_position} tauluun \sphinxtitleref{match} kussakin ottelussa viimeksi vieraillun position muistamiseksi.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Migraatio versiosta 1.6.0 versioon 1.7.0 tapahtuu automaattisesti tietokantaa avattaessa.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Versiosta 0.10.0 lähtien kaikki tietokannan migraatiot suoritetaan automaattisesti tietokantatiedostoa avattaessa.
+Versiosta 0.10.0 alkaen \sphinxstylestrong{kaikki skeeman migraatiot suoritetaan automaattisesti} tietokantaa avattaessa. Manuaalista migraatiokomentoa ei tarvita. Migraatio tehdään paikan päällä: uudempaan skeemaan migroitua tietokantaa ei enää voi avata blunderDB:n vanhemmilla versioilla, mistä johtuu etukäteisvarmuuskopioinnin tärkeys.
 \end{sphinxadmonition}
+
+
+\subsection{Päätaulut}
+\label{\detokenize{annexe_db_scheme:principales-tables}}
+\sphinxAtStartPar
+Nykyinen skeema rakentuu seuraavien taulujen ympärille:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Asemat ja analyysit}: \sphinxcode{\sphinxupquote{position}} (asemat, deduplikoituina), \sphinxcode{\sphinxupquote{analysis}} (niihin liittyvät analyysitiedot) ja \sphinxcode{\sphinxupquote{comment}} (kommentit).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Ottelut}: \sphinxcode{\sphinxupquote{match}}, \sphinxcode{\sphinxupquote{game}}, \sphinxcode{\sphinxupquote{move}} ja \sphinxcode{\sphinxupquote{move\_analysis}} tallentavat tuodut ottelut, niiden pelit, siirrot ja kunkin siirron analyysin.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Kokoelmat}: \sphinxcode{\sphinxupquote{collection}} ja \sphinxcode{\sphinxupquote{collection\_position}} (liitostaulu) ryhmittelevät manuaalisesti valittuja asemia.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Turnaukset}: \sphinxcode{\sphinxupquote{tournament}} ryhmittelee otteluita turnauksiksi.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Välitoisto (Anki)}: \sphinxcode{\sphinxupquote{anki\_deck}}, \sphinxcode{\sphinxupquote{anki\_card}} ja \sphinxcode{\sphinxupquote{anki\_review\_log}} hallitsevat pakkoja, kortteja ja kertausten lokia (FSRS\sphinxhyphen{}algoritmi).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Historia ja muut}: \sphinxcode{\sphinxupquote{command\_history}} ja \sphinxcode{\sphinxupquote{search\_history}} säilyttävät komentojen ja hakujen historian, \sphinxcode{\sphinxupquote{filter\_library}} suodatinkirjaston ja \sphinxcode{\sphinxupquote{metadata}} tietokannan metatiedot (mukaan lukien skeeman version).
+
+\end{itemize}
+
+
+\subsection{Suunnitteluperiaatteet}
+\label{\detokenize{annexe_db_scheme:principes-de-conception}}
+\sphinxAtStartPar
+Skeemasta 2.0.0 alkaen useat suunnitteluratkaisut nopeuttavat hakua ja pienentävät tiedoston kokoa:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Asemien deduplikointi}: jokaisella asemalla on Zobrist\sphinxhyphen{}tiiviste ja uniikki indeksi, joten sama asema, joka kohdataan useissa tuonneissa, tallennetaan vain kerran.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Denormalisoidut suodatussarakkeet}: usein haetut kriteerit (päätöstyyppi, nopat, pip\sphinxhyphen{}ero, pelistä poistetut nappulat, takana olevat nappulat, siirto\sphinxhyphen{} tai kuutiovirhe, voiton mahdollisuudet…) esilasketaan omiin sarakkeisiinsa nopeaa suodatusta varten.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Esisuodatus bitboardeilla}: miehityssarakkeet ja pistemaskisarakkeet mahdollistavat erittäin nopean kokonaislukupohjaisen esisuodatuksen rakennemotiivien hakujen aikana.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Kompakti tallennus}: asemat koodataan kompaktisti ja analyysitiedot pakataan (zlib), mikä pienentää tiedoston kokoa merkittävästi.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{WAL\sphinxhyphen{}lokitus}: WAL\sphinxhyphen{}tila ja säädetyt PRAGMA:t parantavat luku\sphinxhyphen{} ja kirjoitussuorituskykyä.
+
+\end{itemize}
 
 \sphinxstepscope
 

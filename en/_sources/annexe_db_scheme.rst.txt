@@ -3,95 +3,79 @@
 Annexe: Schéma de la base de données
 ====================================
 
+Une base de données blunderDB est un simple fichier SQLite (extension *.db*).
+En l'absence de blunderDB, elle peut ainsi être ouverte et inspectée avec
+n'importe quel éditeur ou navigateur de fichiers SQLite.
 
-.. important:: 
-    Sauvegardez toujours votre fichier .db avant d'effectuer des migrations de base de données.
+Versionnage et migrations
+-------------------------
 
-Version 1.0.0
--------------
+Le schéma de la base de données est **versionné**. La version courante du
+schéma est **2.13.0** ; elle est indépendante de la version de l'application et
+n'est incrémentée que lorsque la structure interne évolue. La version du schéma
+d'une base ouverte est visible dans le panneau **Métadonnées** (commande
+``meta``).
 
-La version 1.0.0 de la base de données contient les tables suivantes :
+.. important::
+   Sauvegardez toujours votre fichier *.db* avant d'ouvrir une base créée avec
+   une version antérieure de blunderDB.
 
-- **position** : Stocke les positions avec les colonnes `id` (clé primaire) et `state` (état de la position en format JSON).
-- **analysis** : Stocke les analyses des positions avec les colonnes `id` (clé primaire), `position_id` (clé étrangère vers `position`), et `data` (données de l'analyse en format JSON).
-- **comment** : Stocke les commentaires associés aux positions avec les colonnes `id` (clé primaire), `position_id` (clé étrangère vers `position`), et `text` (texte du commentaire).
-- **metadata** : Stocke les métadonnées de la base de données avec les colonnes `key` (clé primaire) et `value` (valeur associée à la clé).
+.. note::
+   Depuis la version 0.10.0, **toutes les migrations de schéma sont effectuées
+   automatiquement** à l'ouverture d'une base de données. Aucune commande de
+   migration manuelle n'est nécessaire. La migration s'effectue sur place :
+   une base migrée vers un schéma récent ne peut plus être ouverte par des
+   versions plus anciennes de blunderDB, d'où l'importance de la sauvegarde
+   préalable.
 
-Version 1.1.0
--------------
+Principales tables
+------------------
 
-La version 1.1.0 de la base de données ajoute la table suivante :
+Le schéma courant s'articule autour des tables suivantes :
 
-- **command_history** : Stocke l'historique des commandes avec les colonnes `id` (clé primaire), `command` (texte de la commande), et `timestamp` (date et heure de l'exécution de la commande).
+* **Positions et analyses** : ``position`` (les positions, dédupliquées),
+  ``analysis`` (les données d'analyse associées) et ``comment`` (les
+  commentaires).
 
-Les autres tables restent inchangées par rapport à la version 1.0.0.
+* **Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent les
+  matchs importés, leurs parties, leurs coups et l'analyse de chaque coup.
 
-Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB.
+* **Collections** : ``collection`` et ``collection_position`` (table de liaison)
+  regroupent des positions choisies manuellement.
 
-Version 1.2.0
--------------
+* **Tournois** : ``tournament`` regroupe des matchs en tournois.
 
-La version 1.2.0 de la base de données ajoute la table suivante :
+* **Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et
+  ``anki_review_log`` gèrent les paquets, les cartes et le journal des
+  révisions (algorithme FSRS).
 
-- **filter_library** : Stocke les filtres de recherche avec les colonnes `id` (clé primaire), `name` (nom du filtre), `command` (commande associée au filtre), et `edit_position` (position éditée lors de l'enregistrement du filtre). 
+* **Historique et divers** : ``command_history`` et ``search_history``
+  conservent l'historique des commandes et des recherches, ``filter_library``
+  la bibliothèque de filtres, et ``metadata`` les métadonnées de la base
+  (dont la version du schéma).
 
-Les autres tables restent inchangées par rapport à la version 1.1.0.
+Principes de conception
+-----------------------
 
-Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB.
+À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la recherche
+et réduisent la taille du fichier :
 
-Version 1.3.0
--------------
+* **Déduplication des positions** : chaque position porte un hash de Zobrist et
+  un index unique, de sorte qu'une même position rencontrée dans plusieurs
+  imports n'est stockée qu'une seule fois.
 
-La version 1.3.0 de la base de données ajoute la table suivante :
+* **Colonnes de filtrage dénormalisées** : des critères fréquemment recherchés
+  (type de décision, dés, différence de course, pions sortis, pions arriérés,
+  erreur de coup ou de videau, chances de gain…) sont précalculés en colonnes
+  dédiées pour un filtrage rapide.
 
-- **search_history** : Stocke l'historique des recherches de positions avec les colonnes `id` (clé primaire), `command` (texte de la commande de recherche), `position` (état de la position au moment de la recherche), et `timestamp` (date et heure de la recherche).
+* **Préfiltre par bitboards** : des colonnes d'occupation et de masques de
+  points permettent un préfiltre entier très rapide lors des recherches de
+  motifs de structure.
 
-Les autres tables restent inchangées par rapport à la version 1.2.0.
+* **Stockage compact** : les positions sont encodées de façon compacte et les
+  données d'analyse sont compressées (zlib), ce qui réduit fortement la taille
+  du fichier.
 
-Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB.
-
-Version 1.4.0
--------------
-
-La version 1.4.0 de la base de données ajoute les tables suivantes pour la gestion des matchs :
-
-- **match** : Stocke les matchs importés avec les colonnes `id` (clé primaire), `player1_name`, `player2_name`, `event`, `location`, `round`, `match_length`, `match_date`, `import_date`, `file_path`, `game_count`, et `match_hash` (hash pour la détection de doublons).
-- **game** : Stocke les parties d'un match avec les colonnes `id` (clé primaire), `match_id` (clé étrangère vers `match`), `game_number`, `initial_score_1`, `initial_score_2`, `winner`, `points_won`, et `move_count`.
-- **move** : Stocke les coups d'une partie avec les colonnes `id` (clé primaire), `game_id` (clé étrangère vers `game`), `move_number`, `move_type`, `position_id` (clé étrangère vers `position`), `player`, `dice_1`, `dice_2`, `checker_move`, et `cube_action`.
-- **move_analysis** : Stocke l'analyse de chaque coup avec les colonnes `id` (clé primaire), `move_id` (clé étrangère vers `move`), `analysis_type`, `depth`, `equity`, `equity_error`, `win_rate`, `gammon_rate`, `backgammon_rate`, `opponent_win_rate`, `opponent_gammon_rate`, et `opponent_backgammon_rate`.
-
-La migration de 1.3.0 à 1.4.0 est automatique à l'ouverture de la base de données.
-
-Version 1.5.0
--------------
-
-La version 1.5.0 de la base de données ajoute les tables suivantes pour la gestion des collections :
-
-- **collection** : Stocke les collections de positions avec les colonnes `id` (clé primaire), `name`, `description`, `sort_order`, `created_at`, et `updated_at`.
-- **collection_position** : Table de liaison qui associe des positions aux collections avec les colonnes `id` (clé primaire), `collection_id` (clé étrangère vers `collection`), `position_id` (clé étrangère vers `position`), `sort_order`, et `added_at`. La paire (`collection_id`, `position_id`) est unique.
-
-La migration de 1.4.0 à 1.5.0 est automatique à l'ouverture de la base de données.
-
-Version 1.6.0
--------------
-
-La version 1.6.0 de la base de données ajoute la table suivante pour la gestion des tournois :
-
-- **tournament** : Stocke les tournois avec les colonnes `id` (clé primaire), `name`, `date`, `location`, `sort_order`, `created_at`, et `updated_at`.
-- Ajout de la colonne `tournament_id` (clé étrangère vers `tournament`) dans la table `match` pour assigner un match à un tournoi.
-
-La migration de 1.5.0 à 1.6.0 est automatique à l'ouverture de la base de données.
-
-Version 1.7.0
--------------
-
-La version 1.7.0 de la base de données ajoute la colonne suivante :
-
-- Ajout de la colonne `last_visited_position` dans la table `match` pour mémoriser la dernière position visitée dans chaque match.
-
-La migration de 1.6.0 à 1.7.0 est automatique à l'ouverture de la base de données.
-
-.. note:: Depuis la version 0.10.0, toutes les migrations de bases de données
-   sont effectuées automatiquement lors de l'ouverture d'un fichier de base de
-   données.
-
+* **Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les
+  performances en lecture et en écriture.

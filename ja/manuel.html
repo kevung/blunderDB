@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.13. マッチパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.14. トーナメントパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.15. Stats パネル</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">2.15.1. はじめに</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">2.15.1. はじめに</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.15.2. パネルを開く</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.15.3. フィルターバー</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.15.3.1. プレイヤーの視点</a></li>
@@ -221,7 +221,7 @@
 <p>コマンド <code class="docutils literal notranslate"><span class="pre">demo</span></code> は、自分の対局をインポートしなくてもツールの機能を試せる <strong>サンプルデータベース</strong> （マッチ、トーナメント、解析）を読み込みます。データベースが開かれていない場合、ガイドツアーはこのデータベースを利用します。</p>
 </section>
 <section id="navigation-dans-les-positions">
-<span id="mode-normal"></span><h2><span class="section-number">2.6. </span>ポジションのナビゲーション<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<span id="navigation-positions"></span><h2><span class="section-number">2.6. </span>ポジションのナビゲーション<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
 <p>既定では、blunderDB では次のことができます：</p>
 <ul class="simple">
 <li><p>現在のライブラリのさまざまなポジションをスクロールする、</p></li>
@@ -234,7 +234,7 @@
 </div>
 </section>
 <section id="edition-de-positions">
-<span id="mode-edit"></span><h2><span class="section-number">2.7. </span>ポジションの編集<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<span id="edition-positions"></span><h2><span class="section-number">2.7. </span>ポジションの編集<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
 <p><em>TAB</em> キーを押すと検索パネルが開き、ボード上のポジションを編集して、データベースに追加したり、検索するポジションの構造を定義したりできます。チェッカーの配置、キューブ、スコア、手番はマウスで変更できます（<a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">ポジションを編集する</span></a> を参照）。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -242,7 +242,7 @@
 </div>
 </section>
 <section id="la-ligne-de-commande">
-<span id="mode-command"></span><h2><span class="section-number">2.8. </span>コマンドライン<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<span id="ligne-commande"></span><h2><span class="section-number">2.8. </span>コマンドライン<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
 <p>ステータスバーに内蔵されたコマンドラインでは、グラフィカルインターフェースで利用できる blunderDB のすべての機能を実行できます。データベースに対する一般的な操作、ポジションのナビゲーション、分析やコメントの表示、フィルターに基づくポジションの検索などです。インターフェースにある程度慣れたら、特にポジション検索機能において blunderDB を強力かつ快適に使用できるコマンドラインを徐々に使うことをお勧めします。</p>
 <p>コマンドラインを開くには、<em>スペース</em> キーを押します。リクエストを送信してコマンドラインを閉じるには、<em>Enter</em> キーを押します。</p>
 <p>blunderDB は、ユーザーが送信したリクエストが有効である限りそれを実行し、必要に応じてデータベースの状態を即座に変更します。ユーザーによる明示的な保存操作はありません。</p>
@@ -271,11 +271,11 @@
 </div>
 </section>
 <section id="panneau-collections">
-<span id="mode-collection"></span><h2><span class="section-number">2.12. </span>コレクションパネル<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<span id="id6"></span><h2><span class="section-number">2.12. </span>コレクションパネル<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
 <p><strong>コレクション</strong> パネル（<em>CTRL-B</em>）では、ポジションのコレクションを管理できます。コレクションは作成、名前変更、削除ができます。ポジションを追加したり取り除いたりできます。コレクションをダブルクリックすると、<em>左</em> キーと <em>右</em> キーでそのポジションを閲覧できます。コレクションの順序やコレクション内のポジションの順序は、ドラッグ＆ドロップで変更できます。パネルを表示または非表示にするには、<em>CTRL-B</em> を押すか <code class="docutils literal notranslate"><span class="pre">collection</span></code> コマンドを実行します。</p>
 </section>
 <section id="panneau-matchs">
-<span id="mode-match"></span><h2><span class="section-number">2.13. </span>マッチパネル<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<span id="id7"></span><h2><span class="section-number">2.13. </span>マッチパネル<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
 <p><strong>マッチ</strong> パネル（<em>CTRL-Tab</em>）はインポートしたマッチを一覧表示します。マッチをダブルクリックする（または <em>Enter</em> を押す）と、その手を辿ることができます。<code class="docutils literal notranslate"><span class="pre">m</span></code> コマンドは最後に閲覧したマッチのナビゲーションを再開します。</p>
 <p>ユーザーは次のことができます：</p>
 <ul class="simple">
@@ -294,13 +294,13 @@
 </div>
 </section>
 <section id="panneau-tournois">
-<span id="id6"></span><h2><span class="section-number">2.14. </span>トーナメントパネル<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<span id="id8"></span><h2><span class="section-number">2.14. </span>トーナメントパネル<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p><strong>トーナメント</strong> パネル（<em>CTRL-Y</em>）では、整理された記録管理とイベントごとの統計分析のために、マッチをトーナメントにまとめることができます。トーナメントは作成、名前変更、削除ができ、マッチを割り当てられます。Stats パネルの統計はトーナメントごとにフィルターできます。パネルを表示または非表示にするには、<em>CTRL-Y</em> を押します。</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.15. </span>Stats パネル<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
-<section id="id7">
-<h3><span class="section-number">2.15.1. </span>はじめに<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<section id="id9">
+<h3><span class="section-number">2.15.1. </span>はじめに<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <p><strong>Stats</strong> パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、<a href="#id1"><span class="problematic" id="id2">**</span></a>PR**（Performance Rate）と <a href="#id3"><span class="problematic" id="id4">**</span></a>MWC cost**（Match Winning Chance cost）の指標を計算して表示します。</p>
 <p>Stats パネルは特に次の用途に役立ちます：</p>
 <ul class="simple">
@@ -488,7 +488,7 @@
 </section>
 </section>
 <section id="panneau-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.16. </span>EPC パネル<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<span id="id10"></span><h2><span class="section-number">2.16. </span>EPC パネル<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
 <p><strong>EPC</strong> パネル（<em>CTRL-E</em>）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。<em>CTRL-E</em> を押すか、下部パネルの EPC タブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行することで有効になります。</p>
 <p>このパネルでは、ユーザーがインナーボード（最後の 6 ポイント）内のチェッカーの配置を編集すると、各プレイヤーについて次の情報がリアルタイムで表示されます：</p>
 <ul class="simple">
@@ -506,7 +506,7 @@
 </div>
 </section>
 <section id="panneau-anki">
-<span id="mode-anki"></span><h2><span class="section-number">2.17. </span>Anki パネル<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="id11"></span><h2><span class="section-number">2.17. </span>Anki パネル<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p><strong>Anki</strong> パネル（<em>CTRL-K</em>）では、FSRS アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。</p>
 <p><strong>デッキの作成：</strong> <em>New Deck</em> をクリックすると、コレクションまたは現在の検索結果からデッキを作成できます。検索に基づくデッキは、Anki タブをアクティブにすると自動的に同期されます。</p>
 <p><strong>復習：</strong> デッキを選択してから <em>Study</em> をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。各カードは対応するポジションをボード上に表示します。あなたの想起度を <em>1*（もう一度）、*2*（難しい）、*3*（普通）、または *4*（簡単）のキーで評価してください。*Esc</em> を押すと停止してデッキのリストに戻ります。</p>

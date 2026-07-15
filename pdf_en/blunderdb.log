@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.15)  15 JUL 2026 01:10
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.15)  15 JUL 2026 01:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1043,64 +1043,64 @@ LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 (Font)              scaled to size 8.99994pt on input line 5669.
  [37] [38] [39]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5930.
+(Font)              scaled to size 10.79993pt on input line 5923.
 
-Underfull \hbox (badness 10000) in paragraph at lines 6014--6016
+Underfull \hbox (badness 10000) in paragraph at lines 6007--6009
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6017
+Underfull \hbox (badness 10000) detected at line 6010
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6073--6075
+Underfull \hbox (badness 10000) in paragraph at lines 6066--6068
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [40] [41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 6402--6404
+Underfull \hbox (badness 10000) in paragraph at lines 6395--6397
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6405
+Underfull \hbox (badness 10000) detected at line 6398
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 [43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6700--6702
+Underfull \hbox (badness 10000) in paragraph at lines 6693--6695
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6716--6718
+Underfull \hbox (badness 10000) in paragraph at lines 6709--6711
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6732--6734
+Underfull \hbox (badness 10000) in paragraph at lines 6725--6727
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6757--6759
+Underfull \hbox (badness 10000) in paragraph at lines 6750--6752
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6757--6759
+Underfull \hbox (badness 10000) in paragraph at lines 6750--6752
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6760
+Underfull \hbox (badness 10000) detected at line 6753
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6838--6840
+Underfull \hbox (badness 10000) in paragraph at lines 6831--6833
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
@@ -1128,11 +1128,11 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
-[60]
-Chapter 3.
-[61
+[60
 
-] [62
+]
+Chapter 3.
+[61] [62
 
 ]
 Chapter 4.
@@ -1146,13 +1146,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 18E1BFEE8991BA9BB3D3094FA05454A8;30897.
+(rerunfilecheck)             Checksum: 0CD5F7380E25110216DB1A5976FAB8C1;30305.
  ) 
 Here is how much of TeX's memory you used:
- 19316 strings out of 476443
- 394918 string characters out of 5793962
- 2002627 words of memory out of 5000000
- 40877 multiletter control sequences out of 15000+600000
+ 19311 strings out of 476443
+ 394782 string characters out of 5793962
+ 2003627 words of memory out of 5000000
+ 40872 multiletter control sequences out of 15000+600000
  565069 words of font info for 103 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3085b,575s stack positions out of 10000i,1000n,20000p,200000b,200000s
