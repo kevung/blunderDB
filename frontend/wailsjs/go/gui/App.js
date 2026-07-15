@@ -26,6 +26,10 @@ export function OpenExportDatabaseDialog() {
   return window['go']['gui']['App']['OpenExportDatabaseDialog']();
 }
 
+export function OpenExportMatDialog(arg1) {
+  return window['go']['gui']['App']['OpenExportMatDialog'](arg1);
+}
+
 export function OpenImportDatabaseDialog() {
   return window['go']['gui']['App']['OpenImportDatabaseDialog']();
 }

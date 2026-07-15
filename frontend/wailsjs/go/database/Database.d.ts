@@ -69,6 +69,8 @@ export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<str
 
 export function ExportDatabase(arg1:domain.ExportOptions):Promise<void>;
 
+export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
+
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
 
 export function GetAllAnkiDecks():Promise<Array<domain.AnkiDeck>>;
@@ -234,6 +236,8 @@ export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
+
+export function SuggestMatFilename(arg1:number):Promise<string>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
 

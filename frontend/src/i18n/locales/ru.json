@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Ошибка при экспорте матча",
+        "exportMat": "Экспорт .mat",
+        "matExported": "Матч экспортирован",
         "addComment": "Добавить комментарий…",
         "ariaLabel": "Навигатор по матчу",
         "checkerErrorsBlunders": "Ошибки игры шашками (blunders)",

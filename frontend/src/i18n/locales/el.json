@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Σφάλμα κατά την εξαγωγή του αγώνα",
+        "exportMat": "Εξαγωγή .mat",
+        "matExported": "Ο αγώνας εξήχθη",
         "addComment": "Προσθήκη σχολίου…",
         "ariaLabel": "Πλοηγός αγώνα",
         "checkerErrorsBlunders": "Σφάλματα πουλιών (Blunders)",

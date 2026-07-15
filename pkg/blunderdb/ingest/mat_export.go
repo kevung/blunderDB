@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -186,4 +187,75 @@ func orDefault(s, def string) string {
 		return def
 	}
 	return s
+}
+
+// SuggestMATFilename builds a filesystem-friendly default name for a match's
+// .mat export: "{Player1}_{Player2}_{YYYY-MM-DD}_{Np|unlimited}.mat". Each
+// player's words are CamelCased and concatenated (no spaces), accents kept;
+// the date is the match date (falling back to the import date, then omitted);
+// MatchLength <= 0 renders as "unlimited" (money game). The same name feeds the
+// GUI save dialog and the CLI batch export so both agree.
+func SuggestMATFilename(m *domain.Match) string {
+	p1 := camelConcat(m.Player1Name)
+	if p1 == "" {
+		p1 = "Player1"
+	}
+	p2 := camelConcat(m.Player2Name)
+	if p2 == "" {
+		p2 = "Player2"
+	}
+	parts := []string{p1, p2}
+	if d := matFilenameDate(m); d != "" {
+		parts = append(parts, d)
+	}
+	if m.MatchLength > 0 {
+		parts = append(parts, fmt.Sprintf("%dp", m.MatchLength))
+	} else {
+		parts = append(parts, "unlimited")
+	}
+	return strings.Join(parts, "_") + ".mat"
+}
+
+// matFilenameDate returns YYYY-MM-DD from the match date, falling back to the
+// import date, or "" when neither is set.
+func matFilenameDate(m *domain.Match) string {
+	d := m.MatchDate
+	if d.IsZero() {
+		d = m.ImportDate
+	}
+	if d.IsZero() {
+		return ""
+	}
+	return d.Format("2006-01-02")
+}
+
+// camelConcat splits a player name on whitespace, capitalises each word's first
+// rune, drops filesystem-forbidden characters, and concatenates the words.
+func camelConcat(s string) string {
+	var b strings.Builder
+	for _, word := range strings.Fields(s) {
+		word = stripForbidden(word)
+		if word == "" {
+			continue
+		}
+		r := []rune(word)
+		r[0] = unicode.ToUpper(r[0])
+		b.WriteString(string(r))
+	}
+	return b.String()
+}
+
+// stripForbidden removes path separators, characters illegal in filenames on
+// common filesystems, and control runes. Accents and other letters are kept.
+func stripForbidden(s string) string {
+	return strings.Map(func(r rune) rune {
+		switch r {
+		case '/', '\\', ':', '*', '?', '"', '<', '>', '|':
+			return -1
+		}
+		if unicode.IsControl(r) {
+			return -1
+		}
+		return r
+	}, s)
 }

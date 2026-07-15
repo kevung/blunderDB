@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Virhe ottelun viennissä",
+        "exportMat": "Vie .mat",
+        "matExported": "Ottelu viety",
         "addComment": "Lisää kommentti…",
         "ariaLabel": "Ottelunavigointi",
         "checkerErrorsBlunders": "Nappulavirheet (blunderit)",

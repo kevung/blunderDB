@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -14,8 +15,9 @@ func (cli *CLI) runExport(args []string) error {
 
 	// Define flags
 	dbPath := exportCmd.String("db", "", "Path to the database file (required)")
-	exportType := exportCmd.String("type", "", "Export type: database, positions, matches (required)")
+	exportType := exportCmd.String("type", "", "Export type: database, positions, matches, mat (required)")
 	outputFile := exportCmd.String("file", "", "Path to the output file (required)")
+	outputDir := exportCmd.String("dir", "", "Output directory for .mat batch export (type=mat, multiple matches)")
 	includeAnalysis := exportCmd.Bool("analysis", true, "Include analysis in database export (default: true)")
 	includeComments := exportCmd.Bool("comments", true, "Include comments in database export (default: true)")
 	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
@@ -38,6 +40,7 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println("  database   Export entire database (positions, analysis, comments, matches)")
 		fmt.Println("  positions  Export positions to text file (JSON format)")
 		fmt.Println("  matches    Export only matches to a new database")
+		fmt.Println("  mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  # Export entire database with all matches")
@@ -63,6 +66,13 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Export only matches to a new database")
 		fmt.Println("  blunderdb export --db database.db --type matches --file matches.db")
+		fmt.Println()
+		fmt.Println("  # Export one match as a .mat transcript")
+		fmt.Println("  blunderdb export --db database.db --type mat --match-ids 5 --file game.mat")
+		fmt.Println()
+		fmt.Println("  # Export several (or all) matches as .mat files into a directory")
+		fmt.Println("  blunderdb export --db database.db --type mat --match-ids 5,9,12 --dir out/")
+		fmt.Println("  blunderdb export --db database.db --type mat --dir out/")
 	}
 
 	if err := exportCmd.Parse(args); err != nil {
@@ -80,7 +90,14 @@ func (cli *CLI) runExport(args []string) error {
 		return fmt.Errorf("missing required flag: --type")
 	}
 
-	if *outputFile == "" {
+	// The .mat export accepts either --file (single match) or --dir (batch);
+	// every other type writes one output file and requires --file.
+	if strings.ToLower(*exportType) == "mat" {
+		if *outputFile == "" && *outputDir == "" {
+			exportCmd.Usage()
+			return fmt.Errorf("type mat requires --file (single match) or --dir (multiple matches)")
+		}
+	} else if *outputFile == "" {
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --file")
 	}
@@ -124,9 +141,89 @@ func (cli *CLI) runExport(args []string) error {
 		return cli.exportPositions(*outputFile)
 	case "matches":
 		return cli.exportMatchesOnly(*outputFile)
+	case "mat":
+		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir)
 	default:
-		return fmt.Errorf("unknown export type: %s (must be 'database', 'positions', or 'matches')", *exportType)
+		return fmt.Errorf("unknown export type: %s (must be 'database', 'positions', 'matches', or 'mat')", *exportType)
 	}
+}
+
+// exportMatchesMAT writes one or more matches as Jellyfish/gnubg .mat
+// transcripts. A .mat file holds exactly one match, so --file exports a single
+// match to that path, while --dir writes one auto-named file per match (all
+// matches when matchIDs is empty). Auto-names come from the same helper the GUI
+// dialog uses; on a name collision within the batch the match id is appended.
+func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string) error {
+	ids := matchIDs
+	if len(ids) == 0 {
+		matches, err := cli.db.GetAllMatches()
+		if err != nil {
+			return fmt.Errorf("failed to load matches: %v", err)
+		}
+		for _, m := range matches {
+			ids = append(ids, m.ID)
+		}
+	}
+	if len(ids) == 0 {
+		return fmt.Errorf("no matches found in database")
+	}
+
+	// Single match to an explicit file.
+	if outputFile != "" {
+		if len(ids) != 1 {
+			return fmt.Errorf("--file exports exactly one match; use --dir for %d matches", len(ids))
+		}
+		path := ensureMatExt(outputFile)
+		if err := cli.db.ExportMatchMAT(ids[0], path); err != nil {
+			return fmt.Errorf("failed to export match %d: %v", ids[0], err)
+		}
+		fmt.Printf("Successfully exported match %d to %s\n", ids[0], path)
+		return nil
+	}
+
+	// Batch into a directory, one auto-named .mat per match.
+	if err := os.MkdirAll(outputDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
+	}
+	used := make(map[string]bool)
+	for _, id := range ids {
+		name, err := cli.db.SuggestMatFilename(id)
+		if err != nil {
+			return fmt.Errorf("failed to build filename for match %d: %v", id, err)
+		}
+		path := filepath.Join(outputDir, name)
+		if used[name] || fileExists(path) {
+			name = matSuffixID(name, id)
+			path = filepath.Join(outputDir, name)
+		}
+		used[name] = true
+		if err := cli.db.ExportMatchMAT(id, path); err != nil {
+			return fmt.Errorf("failed to export match %d: %v", id, err)
+		}
+		fmt.Printf("Exported match %d -> %s\n", id, path)
+	}
+	fmt.Printf("Successfully exported %d match(es) to %s\n", len(ids), outputDir)
+	return nil
+}
+
+// ensureMatExt appends .mat unless the path already ends in it.
+func ensureMatExt(path string) string {
+	if !strings.HasSuffix(strings.ToLower(path), ".mat") {
+		return path + ".mat"
+	}
+	return path
+}
+
+// matSuffixID inserts "_m<id>" before the .mat extension to disambiguate a
+// filename collision in a batch export.
+func matSuffixID(name string, id int64) string {
+	ext := filepath.Ext(name)
+	return fmt.Sprintf("%s_m%d%s", strings.TrimSuffix(name, ext), id, ext)
+}
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 // exportDatabaseWithOptions exports the database with configurable options

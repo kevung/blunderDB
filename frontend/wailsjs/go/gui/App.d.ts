@@ -14,6 +14,8 @@ export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenExportDatabaseDialog():Promise<string>;
 
+export function OpenExportMatDialog(arg1:string):Promise<string>;
+
 export function OpenImportDatabaseDialog():Promise<string>;
 
 export function OpenPositionDialog():Promise<gui.FileDialogResponse>;

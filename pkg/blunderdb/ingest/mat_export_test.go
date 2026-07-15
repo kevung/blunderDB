@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/gnubgparser"
 
@@ -171,4 +172,65 @@ func countChecker(moves []gnubgparser.MoveRecord) int {
 		}
 	}
 	return n
+}
+
+// TestSuggestMATFilename covers the default .mat filename helper: CamelCased
+// player names (accents kept, no spaces), the Np/unlimited length segment, date
+// fallback, forbidden-character stripping, and empty-name defaults.
+func TestSuggestMATFilename(t *testing.T) {
+	d := func(s string) time.Time {
+		tm, err := time.Parse("2006-01-02", s)
+		if err != nil {
+			t.Fatalf("parse date %q: %v", s, err)
+		}
+		return tm
+	}
+	tests := []struct {
+		name string
+		m    *domain.Match
+		want string
+	}{
+		{
+			name: "normal match with accents and spaces",
+			m:    &domain.Match{Player1Name: "Kévin Unger", Player2Name: "Joe Smith", MatchDate: d("2024-01-15"), MatchLength: 7},
+			want: "KévinUnger_JoeSmith_2024-01-15_7p.mat",
+		},
+		{
+			name: "money game (length 0) renders unlimited",
+			m:    &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchDate: d("2024-03-02"), MatchLength: 0},
+			want: "Alice_Bob_2024-03-02_unlimited.mat",
+		},
+		{
+			name: "money game (length -1) renders unlimited",
+			m:    &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchDate: d("2024-03-02"), MatchLength: -1},
+			want: "Alice_Bob_2024-03-02_unlimited.mat",
+		},
+		{
+			name: "empty names fall back to Player1/Player2",
+			m:    &domain.Match{MatchDate: d("2024-05-09"), MatchLength: 5},
+			want: "Player1_Player2_2024-05-09_5p.mat",
+		},
+		{
+			name: "forbidden characters are stripped",
+			m:    &domain.Match{Player1Name: "a/b:c", Player2Name: "x?y*z", MatchDate: d("2024-06-01"), MatchLength: 3},
+			want: "Abc_Xyz_2024-06-01_3p.mat",
+		},
+		{
+			name: "no date at all omits the date segment",
+			m:    &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7},
+			want: "Alice_Bob_7p.mat",
+		},
+		{
+			name: "falls back to import date when match date is zero",
+			m:    &domain.Match{Player1Name: "Alice", Player2Name: "Bob", ImportDate: d("2024-07-04"), MatchLength: 7},
+			want: "Alice_Bob_2024-07-04_7p.mat",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SuggestMATFilename(tt.m); got != tt.want {
+				t.Errorf("SuggestMATFilename() = %q, want %q", got, tt.want)
+			}
+		})
+	}
 }

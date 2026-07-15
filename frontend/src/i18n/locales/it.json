@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Errore durante l'esportazione del match",
+        "exportMat": "Esporta .mat",
+        "matExported": "Match esportato",
         "addComment": "Aggiungi commento…",
         "ariaLabel": "Navigatore del match",
         "checkerErrorsBlunders": "Errori di mossa (blunder)",

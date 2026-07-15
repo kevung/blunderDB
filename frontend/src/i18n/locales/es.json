@@ -291,6 +291,9 @@
         }
     },
     "match": {
+        "errorExportingMat": "Error al exportar el partido",
+        "exportMat": "Exportar .mat",
+        "matExported": "Partido exportado",
         "addComment": "Añadir comentario…",
         "ariaLabel": "Navegador de partidas",
         "checkerErrorsBlunders": "Errores de fichas (blunders)",

@@ -196,8 +196,9 @@ Each position is exported as a JSON object on a separate line.
 
 **Options:**
 - `--db` - Path to the source database file (required)
-- `--type` - Export type: `database`, `positions`, or `matches` (required)
-- `--file` - Path to the output file (required)
+- `--type` - Export type: `database`, `positions`, `matches`, or `mat` (required)
+- `--file` - Path to the output file (required for all types except `mat`, where `--file` or `--dir` is required)
+- `--dir` - Output directory for `mat` batch export (one auto-named `.mat` per match)
 - `--analysis` - Include analysis in database export (default: true)
 - `--comments` - Include comments in database export (default: true)
 - `--filters` - Include filter library in database export (default: true)
@@ -225,6 +226,25 @@ Export only match data (with linked positions) to a new database:
 ```
 
 This creates a new database containing only the match structure and linked positions.
+
+### Export Matches as .mat Transcripts
+
+Export one or more matches as Jellyfish/gnubg `.mat` text transcripts (the format XG re-imports). A `.mat` file holds exactly one match, so:
+
+- Use `--file` to export a single match (selected with `--match-ids`) to that exact path:
+
+```bash
+./blunderDB export --db database.db --type mat --match-ids 5 --file game.mat
+```
+
+- Use `--dir` to export several matches (or all matches, when `--match-ids` is omitted) as auto-named files into a directory:
+
+```bash
+./blunderDB export --db database.db --type mat --match-ids 5,9,12 --dir out/
+./blunderDB export --db database.db --type mat --dir out/
+```
+
+Auto-named files follow the scheme `Player1_Player2_YYYY-MM-DD_Np.mat` (money games use `unlimited` instead of `Np`); the match id is appended on a name collision. Passing `--file` with more than one match is an error. Analysis and comments are not part of the `.mat` format (it is a pure move transcript).
 
 ## Search Command
 

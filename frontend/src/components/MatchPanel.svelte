@@ -19,6 +19,7 @@
         GetMatchDetailStats
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
+    import { exportMatchMat } from '../services/exportService.js';
     import { t, tMsg } from '../i18n';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import {
@@ -834,6 +835,14 @@
                                                 class="icon-btn"
                                                 onclick={(e) => {
                                                     e.stopPropagation();
+                                                    exportMatchMat(match);
+                                                }}
+                                                title={$t('match.exportMat')}>⬇</button
+                                            >
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
                                                     ((e) => swapMatchPlayers(match, e))(e);
                                                 }}
                                                 title={$t('match.swapPlayers')}>⇄</button
@@ -896,6 +905,7 @@
                         <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>{$t('match.transcript')}</button>
                         <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
                         <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
+                        <button class="detail-tab export-mat-btn" onclick={() => exportMatchMat(detailMatch)} title={$t('match.exportMat')}>⬇ .mat</button>
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
                     </div>
                 </div>
