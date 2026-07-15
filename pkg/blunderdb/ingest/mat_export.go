@@ -67,7 +67,16 @@ func RenderMAT(m *domain.Match, games []*domain.Game, movesByGame map[int64][]*d
 	fmt.Fprintf(&b, "; [Player 1 \"%s\"]\n", p1)
 	fmt.Fprintf(&b, "; [Player 2 \"%s\"]\n\n", p2)
 
-	fmt.Fprintf(&b, "%d point match\n\n", m.MatchLength)
+	// A money session has no match length. gnubg/Jellyfish (and gnubgparser,
+	// our round-trip gate) encode it as "0 point match" — 0 means money game.
+	// Normalise the Unlimited (-1) sentinel and any negative value to 0 so a
+	// money match renders a header that re-parses instead of "-1 point match",
+	// which the parser's `\d+` header regex rejects.
+	matchLen := m.MatchLength
+	if matchLen < 0 {
+		matchLen = 0
+	}
+	fmt.Fprintf(&b, "%d point match\n\n", matchLen)
 
 	for _, g := range games {
 		renderMATGame(&b, m, p1, p2, g, movesByGame[g.ID])

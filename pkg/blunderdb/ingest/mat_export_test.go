@@ -234,3 +234,37 @@ func TestSuggestMATFilename(t *testing.T) {
 		})
 	}
 }
+
+// TestRenderMATMoneyGame: a money session (MatchLength 0 or the Unlimited
+// sentinel) renders a "0 point match" header — the gnubg/Jellyfish money
+// convention — never "-1 point match", and round-trips through gnubgparser as a
+// length-0 match. Guards the money-game header fix (both RenderMAT's clamp and
+// gnubgparser accepting a 0-length header).
+func TestRenderMATMoneyGame(t *testing.T) {
+	for _, ml := range []int32{0, domain.Unlimited} {
+		m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: ml}
+		games := []*domain.Game{
+			{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+		}
+		moves := map[int64][]*domain.Move{
+			1: {
+				{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+				{Player: -1, MoveType: "checker", Dice: [2]int32{6, 4}, CheckerMove: "24/18 13/9"},
+			},
+		}
+		out := RenderMAT(m, games, moves)
+		if !strings.Contains(out, "0 point match") {
+			t.Fatalf("MatchLength %d: expected '0 point match' header, got:\n%s", ml, out)
+		}
+		if strings.Contains(out, "-1 point match") {
+			t.Fatalf("MatchLength %d: header must not be '-1 point match'", ml)
+		}
+		parsed, err := gnubgparser.ParseMAT(strings.NewReader(out))
+		if err != nil {
+			t.Fatalf("MatchLength %d: money game must round-trip, got: %v\n%s", ml, err, out)
+		}
+		if parsed.Metadata.MatchLength != 0 {
+			t.Errorf("MatchLength %d: parsed length = %d, want 0", ml, parsed.Metadata.MatchLength)
+		}
+	}
+}

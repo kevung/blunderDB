@@ -74,6 +74,8 @@ github.com/kevung/bgfparser v1.2.0 h1:SzKAOsYw9W1UTqEvI9Zi1hffgVysySTJAKIc6aPJRa
 github.com/kevung/bgfparser v1.2.0/go.mod h1:MrNvTuq7aDXV51Z1ej3Mcyi4gjo+4oOc7dgyHZV5jG8=
 github.com/kevung/gnubgparser v1.2.0 h1:bIVZxLEh0z1TOhXGTTjQo8t966MEN0M5PnKJVFhCF5c=
 github.com/kevung/gnubgparser v1.2.0/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
+github.com/kevung/gnubgparser v1.3.0 h1:K5An/pl2jJ420ddit0rpe+yKaJFkuPrVCHGyP8mK1SE=
+github.com/kevung/gnubgparser v1.3.0/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
 github.com/kevung/xgparser v1.3.0 h1:nzvcOrpGvRJRgart2hkT9ChsYdu8YkmQgZ90C8MtikI=
 github.com/kevung/xgparser v1.3.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
 github.com/klauspost/compress v1.18.5 h1:/h1gH5Ce+VWNLSWqPzOVn6XBO+vJbCNGvjoaGBFW2IE=
