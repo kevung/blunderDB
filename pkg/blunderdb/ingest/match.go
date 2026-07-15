@@ -170,9 +170,26 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 			return posID, err
 		}
 	}
-	for _, c := range comments {
-		if _, err := tx.Comments().Add(ctx, scope, posID, c); err != nil {
-			return posID, err
+	// Add only comments not already on the position (#108). Positions are
+	// deduplicated by Zobrist, so an enrich re-import — or the same file imported
+	// twice — revisits a position that already carries its comment; adding again
+	// would duplicate it.
+	if len(comments) > 0 {
+		existing := map[string]bool{}
+		for c, err := range tx.Comments().ByPosition(ctx, scope, posID) {
+			if err != nil {
+				return posID, err
+			}
+			existing[c.Text] = true
+		}
+		for _, c := range comments {
+			if c == "" || existing[c] {
+				continue
+			}
+			if _, err := tx.Comments().Add(ctx, scope, posID, c); err != nil {
+				return posID, err
+			}
+			existing[c] = true
 		}
 	}
 	return posID, nil
