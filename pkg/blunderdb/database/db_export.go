@@ -38,6 +38,28 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	}
 	defer exportDB.Close()
 
+	// Pin the export target to a single connection so the PRAGMAs below (which are
+	// per-connection in SQLite) apply to every write in the whole export.
+	exportDB.SetMaxOpenConns(1)
+
+	// The export target is a throwaway file built from scratch; on any error it is
+	// removed/rebuilt, so mid-build durability is irrelevant. Only the positions
+	// phase runs inside a transaction — the match/game/move/analysis phases (the
+	// high-cardinality ones) write in autocommit, and with SQLite's defaults
+	// (journal_mode=DELETE, synchronous=FULL) each of those thousands of INSERTs
+	// does a rollback-journal write + fsync. That fsync-per-row cliff is what makes
+	// exporting a real match appear to hang for minutes. Turning off the journal and
+	// fsync collapses it to a handful of disk writes.
+	for _, pragma := range []string{
+		"PRAGMA journal_mode=OFF",
+		"PRAGMA synchronous=OFF",
+		"PRAGMA temp_store=MEMORY",
+	} {
+		if _, err = exportDB.Exec(pragma); err != nil {
+			return fmt.Errorf("cannot configure export database: %v", err)
+		}
+	}
+
 	// Create the schema for the export database
 	_, err = exportDB.Exec(`
 		CREATE TABLE IF NOT EXISTS position (
