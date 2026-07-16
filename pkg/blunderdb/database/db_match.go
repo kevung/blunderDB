@@ -52,20 +52,25 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	return matches, nil
 }
 
-// GetMatchByID returns a specific match by ID
+// GetMatchByID returns a specific match by ID, including the name of the
+// tournament it is assigned to (empty when unassigned) so callers can display
+// the full provenance without a second lookup.
 func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
 	var m Match
 	err := d.db.QueryRow(`
-		SELECT id, player1_name, player2_name, event, location, round,
-		       match_length, match_date, import_date, file_path, game_count,
-		       COALESCE(last_visited_position, -1) as last_visited_position
-		FROM match
-		WHERE id = ?
+		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
+		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
+		       COALESCE(m.last_visited_position, -1) as last_visited_position,
+		       m.tournament_id, COALESCE(t.name, '') AS tournament_name
+		FROM match m
+		LEFT JOIN tournament t ON m.tournament_id = t.id
+		WHERE m.id = ?
 	`, matchID).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &m.LastVisitedPosition)
+		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &m.LastVisitedPosition,
+		&m.TournamentID, &m.TournamentName)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -75,6 +80,47 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	}
 
 	return &m, nil
+}
+
+// GetPositionProvenance returns the matches that reference the given position
+// through their move graph (move → game → match) — the position's provenance.
+// Because positions are deduplicated across imports by canonical Zobrist hash,
+// one stored position can be reached from several matches, so this returns a
+// list; it is empty for a position no match references (e.g. one the user
+// imported on its own). Each match carries its tournament name (empty when
+// unassigned). Ordered most-recent match first. Backs the "display position
+// metadata" feature (MatchInfoBar shown outside match-review mode too).
+func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	rows, err := d.db.Query(`
+		SELECT DISTINCT m.id, m.player1_name, m.player2_name, m.event, m.location,
+		       m.round, m.match_length, m.match_date, m.import_date, m.file_path,
+		       m.game_count, m.tournament_id, COALESCE(t.name, '') AS tournament_name
+		FROM move mv
+		JOIN game g ON mv.game_id = g.id
+		JOIN match m ON g.match_id = m.id
+		LEFT JOIN tournament t ON m.tournament_id = t.id
+		WHERE mv.position_id = ?
+		ORDER BY m.match_date DESC, m.id DESC
+	`, positionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var matches []Match
+	for rows.Next() {
+		var m Match
+		if err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location,
+			&m.Round, &m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath,
+			&m.GameCount, &m.TournamentID, &m.TournamentName); err != nil {
+			return nil, err
+		}
+		matches = append(matches, m)
+	}
+	return matches, rows.Err()
 }
 
 // SaveLastVisitedPosition saves the last visited position index for a match
