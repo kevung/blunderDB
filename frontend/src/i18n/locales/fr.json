@@ -177,6 +177,8 @@
         "dbCreated": "Nouvelle base de données créée avec succès",
         "dbMigrated": "Base de données migrée vers la version {version} avec succès.",
         "dbOpened": "Base de données ouverte avec succès",
+        "dbReadOnly": "Ouverte en lecture seule — cette base est déjà ouverte dans une autre fenêtre blunderDB.",
+        "readOnlySuffix": "[lecture seule]",
         "dbVersion": "Version de la base de données : {version}",
         "dbVersionMismatch": "Incompatibilité majeure de version de base de données. Le schéma de la base de données peut être incompatible avec la version actuelle de blunderDB. Continuer à modifier la base de données se fait à vos propres risques. Sauvegardez votre fichier avant de continuer.\nVersion de la base de données : {dbVersion}\nVersion attendue : {modelVersion}",
         "epcErrorComputing": "EPC : erreur de calcul",

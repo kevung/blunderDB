@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
-import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion } from '../../wailsjs/go/database/Database.js';
+import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion, IsReadOnly } from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
@@ -175,9 +175,19 @@ export async function openDatabaseByPath(filePath) {
             openModal(MODAL.WARNING);
         }
 
-        setStatusBarMessage(tMsg('commands.dbOpened'));
+        // Read-only fallback: another blunderDB instance holds the write lock, so
+        // the backend opened this database read-only (per the single-writer guard).
+        // Surface it non-blockingly — a title suffix (persistent) plus a status
+        // message — rather than a modal, so browsing/searching still works.
+        const readOnly = await IsReadOnly().catch(() => false);
         const filename = getFilenameFromPath(filePath);
-        WindowSetTitle(`blunderDB - ${filename}`);
+        if (readOnly) {
+            WindowSetTitle(`blunderDB - ${filename} ${tMsg('commands.readOnlySuffix')}`);
+            setStatusBarMessage(tMsg('commands.dbReadOnly'));
+        } else {
+            setStatusBarMessage(tMsg('commands.dbOpened'));
+            WindowSetTitle(`blunderDB - ${filename}`);
+        }
 
         // The Matches panel may already be visible (it is the default tab,
         // opened at mount before the DB finished loading), so its own
