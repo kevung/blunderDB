@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log/slog"
 	"sync"
 
@@ -18,6 +19,53 @@ type Database struct {
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
+	lock              *fileLock                           // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	readOnly          bool                                // opened read-only because another instance holds the write lock
+}
+
+// acquireFileLock takes the single-writer advisory lock for a file-backed
+// database before it is opened. On success d.lock holds it and d.readOnly is
+// false. If another instance already holds it, d.readOnly is set true and the
+// caller must open the file read-only (ADR-0004: multiple instances are allowed,
+// but a database may not be opened read-write twice). A lock-infrastructure
+// failure (e.g. a read-only directory) is NON-fatal: single-instance is an
+// optional capability that must never block opening, so d.readOnly stays false
+// and the open proceeds unguarded. :memory: and the empty path are never locked.
+func (d *Database) acquireFileLock(path string) {
+	d.releaseFileLock()
+	d.readOnly = false
+	if path == "" || path == ":memory:" {
+		return
+	}
+	lock, ok, err := tryLockExclusive(path + ".lock")
+	if err != nil {
+		slog.Warn("single-instance lock unavailable; opening without it", "path", path, "err", err)
+		return
+	}
+	if !ok {
+		slog.Info("database already open in another instance; opening read-only", "path", path)
+		d.readOnly = true
+		return
+	}
+	d.lock = lock
+}
+
+// releaseFileLock drops the single-writer lock if held.
+func (d *Database) releaseFileLock() {
+	if d.lock != nil {
+		if err := d.lock.release(); err != nil {
+			slog.Warn("releasing single-instance lock failed", "err", err)
+		}
+		d.lock = nil
+	}
+}
+
+// IsReadOnly reports whether the current database was opened read-only because
+// another instance holds the write lock. The GUI surfaces this as a notice.
+func (d *Database) IsReadOnly() bool {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.readOnly
 }
 
 // beginCancellableImport creates a fresh cancellable context for an import or
@@ -71,6 +119,8 @@ func (d *Database) Conn() *sql.DB {
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	d.releaseFileLock()
+	d.readOnly = false
 	if d.db == nil {
 		return nil
 	}
@@ -94,10 +144,20 @@ func (d *Database) SetupDatabase(path string) error {
 		d.db.Close() // Close the currently opened database
 	}
 
+	// Creating/erasing a database requires the write lock. If another instance
+	// holds it we cannot wipe the file underneath it — refuse rather than open
+	// read-only (there is nothing to create read-only).
+	d.acquireFileLock(path)
+	if d.readOnly {
+		d.readOnly = false
+		return fmt.Errorf("database %q is open in another instance; close it before creating/replacing it", path)
+	}
+
 	// Open the database using string path
 	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
+		d.releaseFileLock()
 		return err
 	}
 
@@ -517,10 +577,17 @@ func (d *Database) OpenDatabase(path string) error {
 		d.db.Close() // Close the currently opened database
 	}
 
+	// Take the single-writer lock before opening. If another instance holds it
+	// this sets d.readOnly and we open read-only instead of racing a second
+	// writer against the same file (the probable cause of the transient
+	// "last database not reopened" failure — ADR-0004).
+	d.acquireFileLock(path)
+
 	// Open the database using string path
 	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
+		d.releaseFileLock()
 		return err
 	}
 
@@ -530,6 +597,27 @@ func (d *Database) OpenDatabase(path string) error {
 	// with no schema -> "no such table". ConfigurePool pins ":memory:" to a
 	// single connection; file-backed DBs are allowed to grow.
 	sqlite.ConfigurePool(d.db, path)
+
+	// Read-only fallback: pin to a single connection so PRAGMA query_only (a
+	// per-connection setting) reliably blocks writes on every query, then apply
+	// pragmas and forbid writes. The migration chain and ANALYZE both write, so
+	// they are skipped — the writer instance that holds the lock owns them; it
+	// opened with the same app version, so the schema is already current.
+	if d.readOnly {
+		d.db.SetMaxOpenConns(1)
+		if err = d.applyPragmas(path); err != nil {
+			// WAL/pragma setup can fail read-only; don't turn a browse-only open
+			// into a hard failure (ADR-0004 ladder). Log and continue.
+			slog.Warn("read-only pragma setup partially failed", "err", err)
+		}
+		if _, err = d.db.Exec(`PRAGMA query_only = ON`); err != nil {
+			d.db.Close()
+			d.db = nil
+			return fmt.Errorf("cannot open database read-only: %w", err)
+		}
+		d.rebuildStore()
+		return nil
+	}
 
 	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
 	if err = d.applyPragmas(path); err != nil {
