@@ -1,40 +1,71 @@
 <script>
-    // Compact header strip shown directly above the board while reviewing a
-    // match. It is the match-mode counterpart to the (now removed) "P1 vs P2"
-    // status-bar text: in general/database position review it renders nothing,
-    // so the board stays uncluttered. Full match metadata (event, round, date,
-    // length) is fetched by id via GetMatchByID — the matchContextStore only
-    // carries the player names, and matchID is always set in match mode.
-    import { matchContextStore } from '../stores/positionStore';
-    import { GetMatchByID } from '../../wailsjs/go/database/Database.js';
+    // Compact header strip shown directly above the board. While reviewing a
+    // match it shows that match (players, event, round, date, length + tournament).
+    // Outside match mode — search results, collection, go-to — it shows the
+    // *provenance* of the position being studied: the match(es) it came from,
+    // resolved via GetPositionProvenance. A position no match references (e.g. one
+    // imported on its own) shows nothing, so the board stays uncluttered. Because
+    // positions dedupe across imports, provenance can be one-to-many: the first
+    // match is shown and a "+N" badge lists the rest.
+    import { matchContextStore, positionStore } from '../stores/positionStore';
+    import { GetMatchByID, GetPositionProvenance } from '../../wailsjs/go/database/Database.js';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
 
     let match = $state(null);
-    let loadedMatchID = $state(null);
+    // Other matches this position also came from (provenance is one-to-many).
+    let otherMatches = $state([]);
+    // Cache key: 'm<id>' in match mode, 'p<id>' for a studied position's provenance.
+    let loadedKey = $state(null);
 
-    // Fetch (and cache) the full match whenever the active match id changes.
+    // In match mode: fetch the reviewed match by id. Outside: fetch the studied
+    // position's provenance. Cached by key so navigating within a match (matchID
+    // stable) or redrawing doesn't refetch.
     $effect(() => {
         const ctx = $matchContextStore;
-        if (!ctx.isMatchMode || !ctx.matchID) {
-            match = null;
-            loadedMatchID = null;
+        if (ctx.isMatchMode && ctx.matchID) {
+            const key = 'm' + ctx.matchID;
+            if (loadedKey === key) return;
+            const wantID = ctx.matchID;
+            GetMatchByID(wantID)
+                .then((m) => {
+                    if ($matchContextStore.matchID === wantID) {
+                        match = m;
+                        otherMatches = [];
+                        loadedKey = key;
+                    }
+                })
+                .catch((e) => {
+                    logger.error('MatchInfoBar: failed to load match', e);
+                    match = null;
+                });
             return;
         }
-        if (ctx.matchID === loadedMatchID) return;
-        const wantID = ctx.matchID;
-        GetMatchByID(wantID)
-            .then((m) => {
-                // Ignore a stale response if the user navigated on in the meantime.
-                if ($matchContextStore.matchID === wantID) {
-                    match = m;
-                    loadedMatchID = wantID;
-                }
+
+        // Provenance of the studied position (only real, saved positions).
+        const posID = $positionStore?.id;
+        if (!posID || posID <= 0) {
+            match = null;
+            otherMatches = [];
+            loadedKey = null;
+            return;
+        }
+        const key = 'p' + posID;
+        if (loadedKey === key) return;
+        const wantID = posID;
+        GetPositionProvenance(wantID)
+            .then((matches) => {
+                // Ignore a stale response if the user navigated on, or entered a match.
+                if ($positionStore?.id !== wantID || $matchContextStore.isMatchMode) return;
+                match = matches && matches.length > 0 ? matches[0] : null;
+                otherMatches = matches && matches.length > 1 ? matches.slice(1) : [];
+                loadedKey = key;
             })
             .catch((e) => {
-                logger.error('MatchInfoBar: failed to load match', e);
+                logger.error('MatchInfoBar: failed to load provenance', e);
                 match = null;
+                otherMatches = [];
             });
     });
 
@@ -52,14 +83,27 @@
         return `${year}/${month}/${day}`;
     }
 
-    // Optional metadata fields, in display order, empties omitted.
+    // Optional metadata fields, in display order, empties omitted. Tournament
+    // name leads (it is the broadest provenance), then event/location/round/date/length.
     let metaParts = $derived(
-        [match?.event, match?.location, match?.round, formatDate(match?.match_date), match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : '']
+        [
+            match?.tournament_name,
+            match?.event,
+            match?.location,
+            match?.round,
+            formatDate(match?.match_date),
+            match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : ''
+        ]
             .map((s) => (s == null ? '' : String(s).trim()))
             .filter((s) => s.length > 0)
     );
 
-    let visible = $derived($matchContextStore.isMatchMode && !!$matchContextStore.matchID);
+    // Tooltip listing the other matches the (deduplicated) position came from.
+    // Data only — player names — so it needs no translation.
+    let otherMatchesTitle = $derived(otherMatches.map((m) => `${m.player1_name} ${$t('matchInfo.vs')} ${m.player2_name}`).join('\n'));
+
+    // Visible in match mode, or whenever a studied position resolves to a match.
+    let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match);
 </script>
 
 {#if visible}
@@ -76,6 +120,9 @@
         {#if metaParts.length > 0}
             <span class="sep">·</span>
             <span class="meta">{metaParts.join(' · ')}</span>
+        {/if}
+        {#if otherMatches.length > 0}
+            <span class="more" title={otherMatchesTitle}>+{otherMatches.length}</span>
         {/if}
     </div>
 {/if}
@@ -133,5 +180,16 @@
     .meta {
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .more {
+        flex-shrink: 0;
+        padding: 0 5px;
+        border-radius: 8px;
+        background: #e0e0e0;
+        color: #555;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: default;
     }
 </style>
