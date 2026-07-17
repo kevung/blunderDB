@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 22:00+0200\n"
+"POT-Creation-Date: 2026-07-17 10:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -288,32 +288,41 @@ msgstr ""
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
-" Windows et Linux."
+" Windows, Linux et macOS."
 msgstr ""
 
-#: ../../source/faq.rst:175
+#: ../../source/faq.rst:176
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr ""
 
-#: ../../source/faq.rst:177
+#: ../../source/faq.rst:178
+msgid ""
+"Le même binaire offre également une interface en ligne de commande et un "
+"mode serveur facultatif, qui peut s'appuyer sur `PostgreSQL "
+"<https://www.postgresql.org/>`_ pour les déploiements multi-utilisateurs."
+" L'usage normal de blunderDB reste l'application de bureau. Voir "
+":ref:`cli` et :ref:`headless`."
+msgstr ""
+
+#: ../../source/faq.rst:184
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 msgstr ""
 
-#: ../../source/faq.rst:180
+#: ../../source/faq.rst:187
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr ""
 
-#: ../../source/faq.rst:182
+#: ../../source/faq.rst:189
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr ""
 
-#: ../../source/faq.rst:185
+#: ../../source/faq.rst:192
 msgid "D'où vient l'icône de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:194
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
@@ -459,5 +468,12 @@ msgstr ""
 #~ " adapté pour contenir une base de "
 #~ "données. Le format de fichier sqlite "
 #~ "semblait tout indiqué."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "L'application est encapsulée avec `Wails "
+#~ "<https://wails.io/>`_, permettant la production "
+#~ "d'applications Desktop natives, déclinables "
+#~ "sous Windows et Linux."
 #~ msgstr ""
 
