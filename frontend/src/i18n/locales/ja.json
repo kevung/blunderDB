@@ -177,6 +177,8 @@
         "dbCreated": "新規データベースを正常に作成しました",
         "dbMigrated": "データベースをバージョン {version} に正常に移行しました。",
         "dbOpened": "データベースを正常に開きました",
+        "dbReadOnly": "読み取り専用で開きました — このデータベースは別の blunderDB ウィンドウですでに開かれています。",
+        "readOnlySuffix": "[読み取り専用]",
         "dbVersion": "データベースバージョン: {version}",
         "dbVersionMismatch": "データベースのメジャーバージョンが一致しません。データベーススキーマが現在の blunderDB バージョンと互換性がない可能性があります。このまま編集を続ける場合は自己責任で行ってください。続行する前にファイルをバックアップしてください。\nデータベースバージョン: {dbVersion}\n想定バージョン: {modelVersion}",
         "epcErrorComputing": "EPC: 計算エラー",

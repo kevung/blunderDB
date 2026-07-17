@@ -177,6 +177,8 @@
         "dbCreated": "Neue Datenbank erfolgreich erstellt",
         "dbMigrated": "Datenbank erfolgreich auf Version {version} migriert.",
         "dbOpened": "Datenbank erfolgreich geöffnet",
+        "dbReadOnly": "Schreibgeschützt geöffnet — diese Datenbank ist bereits in einem anderen blunderDB-Fenster geöffnet.",
+        "readOnlySuffix": "[schreibgeschützt]",
         "dbVersion": "Datenbankversion: {version}",
         "dbVersionMismatch": "Abweichung der Haupt-Datenbankversion. Das Datenbankschema ist möglicherweise nicht mit der aktuellen Version von blunderDB kompatibel. Die weitere Bearbeitung der Datenbank erfolgt auf eigene Gefahr. Sichern Sie Ihre Datei, bevor Sie fortfahren.\nDatenbankversion: {dbVersion}\nErwartete Version: {modelVersion}",
         "epcErrorComputing": "EPC: Fehler bei der Berechnung",
