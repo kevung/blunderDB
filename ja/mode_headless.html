@@ -59,6 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. 概要</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. エンドポイント</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">8.2.2. Déploiement avec Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQLバックエンドとマルチユーザー</a></li>
@@ -196,6 +197,32 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <p>ビジネスロジックのインターフェースは <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code> のスキーマに従います（例：<code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>、<code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> で正常に停止します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">positions</span></code> ファミリーの2つのメソッドは、局面を保存せずにデコードします。<code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> は XGID 文字列から局面を再構築し、<code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> は単一局面ファイル <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> から再構築します。</p>
 <p><code class="docutils literal notranslate"><span class="pre">anki</span></code> ファミリーには、間隔反復スケジューラ（FSRS）を拡張する6つの新しいメソッドが加わります： <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>（各復習の記録 — 評価とFSRSの結果 — 保持率の統計と正確な履歴のため）、<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>（今後数日間に期限が来るカード数の予測、期限超過のカードを含む）、<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>（カードを復習キューから一時的または完全に取り除く）、および <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>（デッキの目標保持率を、その復習で観測された成功率に近づける）。</p>
+</section>
+<section id="deploiement-avec-docker">
+<span id="headless-docker"></span><h3><span class="section-number">8.2.2. </span>Déploiement avec Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>Le dépôt fournit un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> qui construit une image conteneur
+minimale du démon : seul le binaire <code class="docutils literal notranslate"><span class="pre">serve</span></code> est compilé (Go pur, sans
+interface graphique et sans CGO, donc lié statiquement), puis placé dans une
+image <em>distroless</em>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Construire l&#39;image (depuis la racine du dépôt)</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># Lancer le démon (le backend par défaut de l&#39;image est postgres)</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">&quot;postgres://user:pass@hôte:5432/blunderdb?sslmode=disable&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>L'image écoute sur le port 8080 et se configure par variables d'environnement
+(<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>Comme le démon lui-même, le conteneur n'effectue <strong>aucune
+authentification</strong> : il doit être placé derrière un reverse-proxy chargé de
+l'authentification et ne jamais être exposé directement sur l'Internet
+public.</p>
+</div>
 </section>
 </section>
 <section id="backend-postgresql-et-multi-utilisateurs">

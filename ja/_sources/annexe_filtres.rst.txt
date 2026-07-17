@@ -55,20 +55,16 @@ afin de faciliter ses études thématiques.
 
 Pour ajouter un filtre à la bibliothèque,
 
-1. Appuyer sur ``TAB`` pour ouvrir le panneau de recherche.
-2. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``.
-3. Editer la position courante.
-4. Donner un nom au filtre.
-5. Editer la commande de recherche.
-6. Sauvegarder la commande de recherche à l'aide du bouton "Add".
-
-.. tip::
-   Lors de l'édition de la commande, il est possible d'utiliser les touches
-   ``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes.
+1. Lancer la recherche à conserver (commande ``s`` suivie de filtres).
+2. Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner
+   l'onglet *Historique*.
+3. Cliquer sur l'icône signet de la recherche à enregistrer.
+4. Donner un nom au filtre et valider.
 
 Pour utiliser un filtre enregistré dans la bibliothèque,
 
-1. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``.
+1. Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner
+   l'onglet *Enregistrés*.
 2. Rechercher le filtre souhaité.
 3. Double cliquer sur le filtre pour lancer la recherche.
 

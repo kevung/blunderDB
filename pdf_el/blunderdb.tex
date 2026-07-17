@@ -675,7 +675,7 @@
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ρυθμίσεις εμφάνισης της διεπαφής στο παράθυρο διαμόρφωσης: ένα ρυθμιστικό κλίμακας για τη μεγέθυνση ή σμίκρυνση ολόκληρης της διεπαφής, και μια επιλογή θέσης των πλαισίων (κάτω, στο πλάι ή αυτόματα) για την καλύτερη αξιοποίηση των πλατιών οθονών. Προστέθηκε μια γραμμή πληροφοριών πάνω από το ταμπλό που δείχνει τους παίκτες και το πλαίσιο του ματς (διοργάνωση, τόπος, γύρος, ημερομηνία, μήκος). Κατά το άνοιγμα μιας βάσης, το πλαίσιο των ματς εμφανίζεται αμέσως και η ανασκόπηση ξεκινά από την πρώτη θέση. Οι συντομεύσεις πληκτρολογίου είναι πλέον ανεξάρτητες από τη διάταξη του πληκτρολογίου (AZERTY, QWERTY, QWERTZ…). Διόρθωση της αποκωδικοποίησης XGID (δείκτες Jacoby/Beaver και τιμή του κύβου). Βλ. {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ρυθμίσεις}}}}}.
+Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d’une barre d’informations au\sphinxhyphen{}dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des onglets de vues multiples : plusieurs espaces de travail indépendants (liste de positions, position courante, recherche) avec les raccourcis \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} (nouvelle vue), \sphinxstyleemphasis{CTRL\sphinxhyphen{}W} (fermer), \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp}/\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (changer de vue) et renommage par double\sphinxhyphen{}clic sur l’onglet. Voir {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ρυθμίσεις}}}}} et {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Onglets de vues}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1015,6 +1015,46 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \end{sphinxadmonition}
 
 
+\subsection{Onglets de vues}
+\label{\detokenize{manuel:onglets-de-vues}}\label{\detokenize{manuel:onglets-vues}}
+\sphinxAtStartPar
+Sous la barre d’outils, une barre d’onglets permet de travailler avec
+plusieurs \sphinxstylestrong{vues} en parallèle. Chaque vue est un espace de travail
+indépendant qui conserve sa propre liste de positions, l’index de la position
+courante, la position affichée, l’analyse et le coup sélectionné, le panneau
+actif, le commentaire en cours ainsi que le contexte de navigation dans un
+match. Il est ainsi possible, par exemple, de garder une recherche ouverte
+dans une vue tout en parcourant un match dans une autre.
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Créer une vue} : cliquer sur le bouton \sphinxstyleemphasis{+} de la barre d’onglets ou
+appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}. La nouvelle vue démarre comme une copie de la vue
+courante.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Fermer une vue} : cliquer sur la croix de l’onglet ou appuyer sur
+\sphinxstyleemphasis{CTRL\sphinxhyphen{}W}. La dernière vue ne peut pas être fermée.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Changer de vue} : cliquer sur un onglet, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp} /
+\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (ou \sphinxstyleemphasis{MAJ\sphinxhyphen{}J} / \sphinxstyleemphasis{MAJ\sphinxhyphen{}K}) pour passer à la vue précédente /
+suivante, ou \sphinxstyleemphasis{CTRL\sphinxhyphen{}1} à \sphinxstyleemphasis{CTRL\sphinxhyphen{}9} pour atteindre directement la n\sphinxhyphen{}ième vue.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Renommer une vue} : double\sphinxhyphen{}cliquer sur l’onglet, saisir le nouveau nom
+et valider avec \sphinxstyleemphasis{ENTREE}.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les vues sont enregistrées avec l’état de session de la base de données et
+restaurées à sa réouverture.
+
+
 \subsection{Ρυθμίσεις}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
@@ -1118,6 +1158,18 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \sphinxAtStartPar
 Το φίλτρο \sphinxstylestrong{Αγώνες \& Τουρνουά} στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά \sphinxstyleemphasis{Όλα} / \sphinxstyleemphasis{Κανένα} που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες\sphinxhyphen{}μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.
 
+\sphinxAtStartPar
+Le panneau de recherche comporte trois onglets sur son bord gauche :
+\sphinxstyleemphasis{Recherche} (les filtres), \sphinxstyleemphasis{Historique} et \sphinxstyleemphasis{Enregistrés}. L’onglet
+\sphinxstylestrong{Historique} liste les recherches passées avec leur date et leur commande :
+un clic sélectionne une recherche et affiche la position associée sur le
+plateau, un double\sphinxhyphen{}clic la ré\sphinxhyphen{}exécute. Chaque entrée peut être enregistrée
+dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
+supprimée. L’onglet \sphinxstylestrong{Enregistrés} contient la \sphinxstylestrong{bibliothèque de filtres} :
+double\sphinxhyphen{}cliquer sur un filtre enregistré pour relancer la recherche
+correspondante (voir {\hyperref[\detokenize{annexe_filtres:annexe-filtres}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Παράρτημα: Προχωρημένη χρήση των φίλτρων}}}}}). La commande \sphinxcode{\sphinxupquote{history}} (alias
+\sphinxcode{\sphinxupquote{hi}}) ouvre le panneau de recherche.
+
 \begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
 \sphinxAtStartPar
 Ανατρέξτε στο \hyperref[\detokenize{cmd_mode:cmd-mode}]{Τομέας \ref{\detokenize{cmd_mode:cmd-mode}}} για τη λίστα των διαθέσιμων φίλτρων.
@@ -1162,6 +1214,17 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \sphinxAtStartPar
 Η τελευταία θέση που επισκεφτήκατε σε κάθε αγώνα αποθηκεύεται και επαναφέρεται αυτόματα. Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} ή εκτελέστε την εντολή \sphinxcode{\sphinxupquote{match}} για να εμφανίσετε ή να αποκρύψετε τον πίνακα.
+
+\sphinxAtStartPar
+Chaque match peut être exporté en transcription Jellyfish \sphinxcode{\sphinxupquote{.mat}} via le
+bouton ⬇ de la liste des matchs ou le bouton \sphinxstyleemphasis{.mat} de la fiche du match.
+
+\sphinxAtStartPar
+Le bouton \sphinxstylestrong{Fusionner les joueurs} de la barre d’outils du panneau ouvre une
+fenêtre listant tous les noms de joueurs de la base avec leur nombre de
+matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
+nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
+par joueur lorsqu’un même joueur apparaît sous plusieurs noms.
 
 \sphinxAtStartPar
 Όταν ένα ματς είναι ανοιχτό, μια \sphinxstylestrong{γραμμή πληροφοριών} εμφανίζεται πάνω από το ταμπλό: δείχνει τους εμπλεκόμενους παίκτες (\sphinxstyleemphasis{παίκτης 1} εναντίον \sphinxstyleemphasis{παίκτη 2}) μαζί με το πλαίσιο του ματς (διοργάνωση, τόπος, γύρος, ημερομηνία και μήκος ματς, όταν αυτές οι πληροφορίες είναι διαθέσιμες).
@@ -2547,23 +2610,23 @@ comment, co
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-filter, fl
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Εμφάνιση/απόκρυψη της βιβλιοθήκης φίλτρων.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
 history, hi
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης.
+Ouvrir le panneau de recherche (l’historique de recherche se trouve dans son onglet \sphinxstyleemphasis{Historique}).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+stats, st
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Afficher/masquer le panneau de statistiques.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4380,6 +4443,98 @@ CTRL\sphinxhyphen{}E
 \sphinxattableend\end{savenotes}
 
 
+\subsection{Onglets de vues}
+\label{\detokenize{raccourcis:onglets-de-vues}}\label{\detokenize{raccourcis:raccourcis-vues}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Συντόμευση
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Ενέργεια
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}T
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Créer une nouvelle vue (copie de la vue courante).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}W
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Fermer la vue courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}PageUp, MAJ\sphinxhyphen{}J
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Vue précédente.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}PageDown, MAJ\sphinxhyphen{}K
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Vue suivante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}1 … CTRL\sphinxhyphen{}9
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Aller directement à la n\sphinxhyphen{}ième vue.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Double\sphinxhyphen{}clic sur l’onglet
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Renommer la vue.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
 \subsection{Γραμμή εντολών}
 \label{\detokenize{raccourcis:ligne-de-commande}}\label{\detokenize{raccourcis:raccourcis-command}}
 
@@ -4428,8 +4583,12 @@ CTRL\sphinxhyphen{}E
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Πίνακας ιστορικού αναζήτησης}
-\label{\detokenize{raccourcis:panneau-historique-de-recherche}}\label{\detokenize{raccourcis:raccourcis-search-history}}
+\subsection{Historique de recherche}
+\label{\detokenize{raccourcis:historique-de-recherche}}\label{\detokenize{raccourcis:raccourcis-search-history}}
+\sphinxAtStartPar
+L’historique de recherche est l’onglet \sphinxstyleemphasis{Historique} du panneau de recherche
+(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -4466,40 +4625,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Εκτέλεση της αναζήτησης και κλείσιμο του πίνακα.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-ΠΑΝΩ, k
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Επιλογή της προηγούμενης αναζήτησης (πιο πρόσφατη, από πάνω).
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-ΚΑΤΩ, j
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Επιλογή της επόμενης αναζήτησης (παλαιότερη, από κάτω).
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Esc
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Αποεπιλογή της αναζήτησης. Αν δεν υπάρχει επιλεγμένη αναζήτηση, κλείσιμο του πίνακα.
+Exécuter la recherche.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4509,8 +4635,12 @@ Esc
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Πίνακας βιβλιοθήκης φίλτρων}
-\label{\detokenize{raccourcis:panneau-bibliotheque-de-filtres}}\label{\detokenize{raccourcis:raccourcis-filter-library}}
+\subsection{Bibliothèque de filtres}
+\label{\detokenize{raccourcis:bibliotheque-de-filtres}}\label{\detokenize{raccourcis:raccourcis-filter-library}}
+\sphinxAtStartPar
+La bibliothèque de filtres est l’onglet \sphinxstyleemphasis{Enregistrés} du panneau de recherche
+(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -4548,39 +4678,6 @@ Esc
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Εκτέλεση της αναζήτησης του φίλτρου.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-ΠΑΝΩ, k
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Επιλογή του προηγούμενου φίλτρου (όταν ένα φίλτρο είναι επιλεγμένο).
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-ΚΑΤΩ, j
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Επιλογή του επόμενου φίλτρου (όταν ένα φίλτρο είναι επιλεγμένο).
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Esc
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Αποεπιλογή του φίλτρου. Αν δεν υπάρχει επιλεγμένο φίλτρο, κλείσιμο του πίνακα.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5193,11 +5290,20 @@ version
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Τύπος εξαγωγής: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}} ή \sphinxcode{\sphinxupquote{matches}} (υποχρεωτικό).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type d’export: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}}, \sphinxcode{\sphinxupquote{matches}} ou
+\sphinxcode{\sphinxupquote{mat}} (export d’un ou plusieurs matchs en transcription Jellyfish
+\sphinxcode{\sphinxupquote{.mat}}) (obligatoire).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Αρχείο εξόδου (υποχρεωτικό).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Fichier de sortie (obligatoire, sauf pour \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type mat}}
+utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Répertoire de sortie pour l’export \sphinxcode{\sphinxupquote{.mat}} par lot (plusieurs
+matchs, un fichier par match ; sans \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}}, tous les matchs sont
+exportés).
 
 \item {} 
 \sphinxAtStartPar
@@ -5249,6 +5355,13 @@ version
 
 \PYG{c+c1}{\PYGZsh{} Export de matchs spécifiques}
 ./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }matches\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }selection.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{1},3,5
+
+\PYG{c+c1}{\PYGZsh{} Export d\PYGZsq{}un match en transcription .mat (Jellyfish)}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{5}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }match5.mat
+
+\PYG{c+c1}{\PYGZsh{} Export de plusieurs matchs (ou de tous) en .mat dans un répertoire}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{5},9,12\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
 \end{sphinxVerbatim}
 
 
@@ -5339,6 +5452,12 @@ version
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}position\sphinxhyphen{}ids}} — Filtrer par IDs de positions : intervalle \sphinxcode{\sphinxupquote{2,7}}
+(positions 2 à 7) ou liste explicite séparée par des points\sphinxhyphen{}virgules
+\sphinxcode{\sphinxupquote{5;10;15}}.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}} — Μόνο οι θέσεις που εισήχθησαν μεμονωμένα, δηλαδή αυτές που προσθέσατε εσείς και όχι όσες έφερε μια εισαγωγή αγώνα.
 
 \end{itemize}
@@ -5396,7 +5515,49 @@ version
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{stats}} — Συνολικά στατιστικά (θέσεις, αναλύσεις, αγώνες, παρτίδες, κινήσεις).
+\sphinxcode{\sphinxupquote{stats}} — Rapport de statistiques de performance : PR / Snowie ER / MWC
+(global, pions, videau), PR glissant sur les N dernières décisions, top
+blunders, répartition par action de videau et histogramme des magnitudes
+d’erreur.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options (type ``stats`` uniquement):}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metric}} — Métrique affichée: \sphinxcode{\sphinxupquote{pr}} ou \sphinxcode{\sphinxupquote{mwc}} (défaut: \sphinxcode{\sphinxupquote{pr}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}player}} — Restreindre au joueur indiqué.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament}} — Restreindre à un ou plusieurs IDs de tournois (séparés
+par des virgules).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from}} — Date de début (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to}} — Date de fin (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision\sphinxhyphen{}type}} — Type de décision: \sphinxcode{\sphinxupquote{all}}, \sphinxcode{\sphinxupquote{checker}} ou \sphinxcode{\sphinxupquote{cube}}
+(défaut: \sphinxcode{\sphinxupquote{all}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}top\sphinxhyphen{}blunders}} — Nombre de pires erreurs listées (défaut: 10).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — Μορφή εξόδου: \sphinxcode{\sphinxupquote{text}} ή \sphinxcode{\sphinxupquote{json}} (προεπιλογή: \sphinxcode{\sphinxupquote{text}}).
 
 \end{itemize}
 
@@ -5406,6 +5567,15 @@ version
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Statistiques de la base}
 ./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats
+
+\PYG{c+c1}{\PYGZsh{} Statistiques en MWC pour un joueur donné}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats\PYG{+w}{ }\PYGZhy{}\PYGZhy{}metric\PYG{+w}{ }mwc\PYG{+w}{ }\PYGZhy{}\PYGZhy{}player\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Alice\PYGZdq{}}
+
+\PYG{c+c1}{\PYGZsh{} Coups de pions uniquement, depuis une date}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats\PYG{+w}{ }\PYGZhy{}\PYGZhy{}decision\PYGZhy{}type\PYG{+w}{ }checker\PYG{+w}{ }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }\PYG{l+m}{2026}\PYGZhy{}01\PYGZhy{}01
+
+\PYG{c+c1}{\PYGZsh{} Sortie JSON (pour un script)}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }json
 
 \PYG{c+c1}{\PYGZsh{} Liste des matchs}
 ./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }matches
@@ -6161,6 +6331,38 @@ PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά 
 Η οικογένεια \sphinxcode{\sphinxupquote{anki}} αποκτά έξι μεθόδους που επεκτείνουν τον προγραμματιστή διαστηματικής επανάληψης (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (καταγραφή κάθε επανάληψης — βαθμολογία και αποτέλεσμα FSRS — για στατιστικά διατήρησης και ένα πιστό ιστορικό), \sphinxcode{\sphinxupquote{anki.forecast}} (προβολή του αριθμού καρτών που οφείλονται τις επόμενες ημέρες, συμπεριλαμβανομένων των καθυστερημένων καρτών), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (αφαίρεση μιας κάρτας από την ουρά επανάληψης προσωρινά ή οριστικά) και \sphinxcode{\sphinxupquote{anki.optimizeParams}} (προσαρμόζει το στοχευόμενο ποσοστό διατήρησης ενός deck προς το ποσοστό επιτυχίας που παρατηρείται στις επαναλήψεις του).
 
 
+\subsubsection{Déploiement avec Docker}
+\label{\detokenize{mode_headless:deploiement-avec-docker}}\label{\detokenize{mode_headless:headless-docker}}
+\sphinxAtStartPar
+Le dépôt fournit un \sphinxcode{\sphinxupquote{Dockerfile.serve}} qui construit une image conteneur
+minimale du démon : seul le binaire \sphinxcode{\sphinxupquote{serve}} est compilé (Go pur, sans
+interface graphique et sans CGO, donc lié statiquement), puis placé dans une
+image \sphinxstyleemphasis{distroless}.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Construire l\PYGZsq{}image (depuis la racine du dépôt)}
+docker\PYG{+w}{ }build\PYG{+w}{ }\PYGZhy{}f\PYG{+w}{ }Dockerfile.serve\PYG{+w}{ }\PYGZhy{}t\PYG{+w}{ }blunderdb\PYGZhy{}serve\PYG{+w}{ }.
+
+\PYG{c+c1}{\PYGZsh{} Lancer le démon (le backend par défaut de l\PYGZsq{}image est postgres)}
+docker\PYG{+w}{ }run\PYG{+w}{ }\PYGZhy{}\PYGZhy{}rm\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }\PYG{l+m}{8080}:8080\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}e\PYG{+w}{ }\PYG{n+nv}{BLUNDERDB\PYGZus{}DSN}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}postgres://user:pass@hôte:5432/blunderdb?sslmode=disable\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }blunderdb\PYGZhy{}serve
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+L’image écoute sur le port 8080 et se configure par variables d’environnement
+(\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
+\sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+
+\begin{sphinxadmonition}{warning}{Προειδοποίηση:}
+\sphinxAtStartPar
+Comme le démon lui\sphinxhyphen{}même, le conteneur n’effectue \sphinxstylestrong{aucune
+authentification} : il doit être placé derrière un reverse\sphinxhyphen{}proxy chargé de
+l’authentification et ne jamais être exposé directement sur l’Internet
+public.
+\end{sphinxadmonition}
+
+
 \subsection{Backend PostgreSQL και πολλαπλοί χρήστες}
 \label{\detokenize{mode_headless:backend-postgresql-et-multi-utilisateurs}}\label{\detokenize{mode_headless:headless-postgres}}
 \sphinxAtStartPar
@@ -6547,34 +6749,22 @@ scope tenant (αποστέλλεται ως \sphinxcode{\sphinxupquote{X\sphinxh
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Πατήστε \sphinxcode{\sphinxupquote{TAB}} για να ανοίξετε τον πίνακα αναζήτησης.
+Lancer la recherche à conserver (commande \sphinxcode{\sphinxupquote{s}} suivie de filtres).
 
 \item {} 
 \sphinxAtStartPar
-Ανοίξτε τη βιβλιοθήκη φίλτρων πατώντας \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}K}}.
+Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
+l’onglet \sphinxstyleemphasis{Historique}.
 
 \item {} 
 \sphinxAtStartPar
-Επεξεργαστείτε την τρέχουσα θέση.
+Cliquer sur l’icône signet de la recherche à enregistrer.
 
 \item {} 
 \sphinxAtStartPar
-Δώστε ένα όνομα στο φίλτρο.
-
-\item {} 
-\sphinxAtStartPar
-Επεξεργαστείτε την εντολή αναζήτησης.
-
-\item {} 
-\sphinxAtStartPar
-Αποθηκεύστε την εντολή αναζήτησης με το κουμπί «Add».
+Donner un nom au filtre et valider.
 
 \end{enumerate}
-
-\begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
-\sphinxAtStartPar
-Κατά την επεξεργασία της εντολής, μπορείτε να χρησιμοποιήσετε τα πλήκτρα \sphinxcode{\sphinxupquote{ΕΠΑΝΩ}} και \sphinxcode{\sphinxupquote{ΚΑΤΩ}} για να περιηγηθείτε στο ιστορικό των εντολών.
-\end{sphinxadmonition}
 
 \sphinxAtStartPar
 Για να χρησιμοποιήσετε ένα φίλτρο αποθηκευμένο στη βιβλιοθήκη,
@@ -6582,7 +6772,8 @@ scope tenant (αποστέλλεται ως \sphinxcode{\sphinxupquote{X\sphinxh
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Ανοίξτε τη βιβλιοθήκη φίλτρων πατώντας \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}K}}.
+Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
+l’onglet \sphinxstyleemphasis{Enregistrés}.
 
 \item {} 
 \sphinxAtStartPar

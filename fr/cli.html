@@ -272,8 +272,14 @@ C’est la méthode la plus efficace pour importer un grand nombre de matchs.</p
 <p><strong>Options:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base source (obligatoire).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code> ou <code class="docutils literal notranslate"><span class="pre">matches</span></code> (obligatoire).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">mat</span></code> (export d’un ou plusieurs matchs en transcription Jellyfish
+<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire, sauf pour <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>
+utilisé avec <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire de sortie pour l’export <code class="docutils literal notranslate"><span class="pre">.mat</span></code> par lot (plusieurs
+matchs, un fichier par match ; sans <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, tous les matchs sont
+exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Inclure les analyses (défaut: oui).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Inclure les commentaires (défaut: oui).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Inclure la bibliothèque de filtres (défaut: oui).</p></li>
@@ -293,6 +299,13 @@ C’est la méthode la plus efficace pour importer un grand nombre de matchs.</p
 
 <span class="c1"># Export de matchs spécifiques</span>
 ./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># Export d&#39;un match en transcription .mat (Jellyfish)</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+
+<span class="c1"># Export de plusieurs matchs (ou de tous) en .mat dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
 </pre></div>
 </div>
 </section>
@@ -328,6 +341,9 @@ donnée.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Pions sortis minimum (joueur 1/2).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Filtrer par IDs de matchs (séparés par des virgules).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Filtrer par IDs de tournois (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filtrer par IDs de positions : intervalle <code class="docutils literal notranslate"><span class="pre">2,7</span></code>
+(positions 2 à 7) ou liste explicite séparée par des points-virgules
+<code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Uniquement les positions importées seules, c’est-à-dire
 celles que vous avez ajoutées vous-même et non celles qu’un import de match
 a apportées.</p></li>
@@ -367,11 +383,36 @@ a apportées.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Liste des matchs importés.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Liste des tournois.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Liste des positions (limité à 10 par défaut).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Statistiques globales (positions, analyses, matchs, parties, coups).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Rapport de statistiques de performance : PR / Snowie ER / MWC
+(global, pions, videau), PR glissant sur les N dernières décisions, top
+blunders, répartition par action de videau et histogramme des magnitudes
+d’erreur.</p></li>
+</ul>
+<p><strong>Options (type ``stats`` uniquement):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Métrique affichée: <code class="docutils literal notranslate"><span class="pre">pr</span></code> ou <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restreindre au joueur indiqué.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois (séparés
+par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Date de début (AAAA-MM-JJ).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Date de fin (AAAA-MM-JJ).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>
+(défaut: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Nombre de pires erreurs listées (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
 </ul>
 <p><strong>Exemples:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Statistiques de la base</span>
 ./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+
+<span class="c1"># Statistiques en MWC pour un joueur donné</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">&quot;Alice&quot;</span>
+
+<span class="c1"># Coups de pions uniquement, depuis une date</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+
+<span class="c1"># Sortie JSON (pour un script)</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
 
 <span class="c1"># Liste des matchs</span>
 ./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches

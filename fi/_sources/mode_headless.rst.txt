@@ -137,6 +137,37 @@ révision temporairement ou définitivement) et ``anki.optimizeParams`` (ajuste
 le taux de rétention visé d'un paquet vers le taux de réussite observé sur ses
 révisions).
 
+.. _headless_docker:
+
+Déploiement avec Docker
+-----------------------
+
+Le dépôt fournit un ``Dockerfile.serve`` qui construit une image conteneur
+minimale du démon : seul le binaire ``serve`` est compilé (Go pur, sans
+interface graphique et sans CGO, donc lié statiquement), puis placé dans une
+image *distroless*.
+
+.. code-block:: bash
+
+   # Construire l'image (depuis la racine du dépôt)
+   docker build -f Dockerfile.serve -t blunderdb-serve .
+
+   # Lancer le démon (le backend par défaut de l'image est postgres)
+   docker run --rm -p 8080:8080 \
+       -e BLUNDERDB_DSN="postgres://user:pass@hôte:5432/blunderdb?sslmode=disable" \
+       blunderdb-serve
+
+L'image écoute sur le port 8080 et se configure par variables d'environnement
+(``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
+``BLUNDERDB_RLS``).
+
+.. warning::
+
+   Comme le démon lui-même, le conteneur n'effectue **aucune
+   authentification** : il doit être placé derrière un reverse-proxy chargé de
+   l'authentification et ne jamais être exposé directement sur l'Internet
+   public.
+
 .. _headless_postgres:
 
 Backend PostgreSQL et multi-utilisateurs
