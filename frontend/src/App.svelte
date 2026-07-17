@@ -48,6 +48,7 @@
     import {
         showPosition,
         loadAllPositions,
+        reloadAllPositions,
         loadPositionsByFilters,
         firstPosition,
         previousPosition,
@@ -365,7 +366,7 @@
             onToggleComment: toggleCommentPanel,
             exitApp,
             onLoadPositionsByFilters: loadPositionsByFilters,
-            onLoadAllPositions: loadAllPositions,
+            onLoadAllPositions: reloadAllPositions,
             toggleMetadataPanel,
             toggleSearchHistoryPanel,
             toggleMatchPanel,
@@ -484,7 +485,7 @@
         onToggleHelp={toggleHelpModal}
         onToggleConfig={() => toggleModal(MODAL.CONFIG)}
         onToggleTour={() => toggleModal(MODAL.TOUR)}
-        onLoadAllPositions={loadAllPositions}
+        onLoadAllPositions={reloadAllPositions}
         onToggleEPCMode={toggleEPCMode}
     />
 

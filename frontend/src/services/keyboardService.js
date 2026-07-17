@@ -24,7 +24,7 @@ import {
     toggleStatsPanel,
     toggleEPCMode,
     togglePipcount,
-    loadAllPositions,
+    reloadAllPositions,
     loadRandomPosition
 } from './positionService.js';
 import { importDatabase, importPosition, importFolder, pastePosition } from './importService.js';
@@ -240,7 +240,7 @@ export function handleKeyDown(event) {
         event.preventDefault();
         toggleCollectionPanelAction();
     } else if (event.ctrlKey && letter('r')) {
-        loadAllPositions();
+        reloadAllPositions();
     } else if (event.ctrlKey && event.code === 'Tab') {
         event.preventDefault();
         activeTabStore.set('matches');

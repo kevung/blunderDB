@@ -329,6 +329,18 @@ export async function loadAllPositions() {
     }
 }
 
+// Explicit user reload of the whole library (Ctrl+R, the toolbar reload button,
+// the `e` command). loadAllPositions on its own lands on the Matches tab; an
+// explicit reload is a "study" action, so surface the analysis panel for the
+// shown position instead. Guard on an open DB with positions so an empty reload
+// stays on the neutral state.
+export async function reloadAllPositions() {
+    await loadAllPositions();
+    if (get(databasePathStore) && get(positionsStore).length > 0) {
+        activeTabStore.set('analysis');
+    }
+}
+
 // loadPositionsByFilters takes one options object rather than the ~38 positional
 // arguments it used to. The list had grown long enough that adding a filter meant
 // inserting an argument at the same index in six call sites, and getting an index
