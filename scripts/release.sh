@@ -17,6 +17,8 @@
 # Files updated:
 #   - doc/source/conf.py           (Sphinx release variable)
 #   - frontend/src/stores/metaStore.js  (application version in UI)
+#   - wails.json                   (info.productVersion → Windows .exe version
+#                                   resource, macOS Info.plist CFBundleVersion)
 #   - doc/source/index.rst         (changelog entry, if --changelog given)
 #
 # After running, the CI workflow (.github/workflows/build.yml) is triggered
@@ -30,6 +32,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONF_PY="$REPO_ROOT/doc/source/conf.py"
 META_STORE="$REPO_ROOT/frontend/src/stores/metaStore.js"
 INDEX_RST="$REPO_ROOT/doc/source/index.rst"
+WAILS_JSON="$REPO_ROOT/wails.json"
 
 # Colors for output
 RED='\033[0;31m'
@@ -68,14 +71,15 @@ EOF
 
 # Extract current versions from source files
 get_current_versions() {
-    local conf_ver meta_ver
+    local conf_ver meta_ver wails_ver
     conf_ver=$(grep -oP "^release\s*=\s*'\\K[^']+" "$CONF_PY" 2>/dev/null || echo "NOT FOUND")
     meta_ver=$(grep -oP "applicationVersion:\s*'\\K[^']+" "$META_STORE" 2>/dev/null || echo "NOT FOUND")
-    echo "$conf_ver" "$meta_ver"
+    wails_ver=$(grep -oP '"productVersion":\s*"\K[^"]+' "$WAILS_JSON" 2>/dev/null || echo "NOT FOUND")
+    echo "$conf_ver" "$meta_ver" "$wails_ver"
 }
 
 check_versions() {
-    read -r conf_ver meta_ver <<< "$(get_current_versions)"
+    read -r conf_ver meta_ver wails_ver <<< "$(get_current_versions)"
     local latest_tag
     latest_tag=$(git -C "$REPO_ROOT" describe --tags --abbrev=0 2>/dev/null || echo "NO TAG")
 
@@ -84,13 +88,14 @@ check_versions() {
     echo "======================================="
     printf "  %-40s %s\n" "doc/source/conf.py (release)" "$conf_ver"
     printf "  %-40s %s\n" "frontend/src/stores/metaStore.js" "$meta_ver"
+    printf "  %-40s %s\n" "wails.json (info.productVersion)" "$wails_ver"
     printf "  %-40s %s\n" "Latest git tag" "$latest_tag"
     echo ""
 
-    if [[ "$conf_ver" == "$meta_ver" ]]; then
-        echo -e "  ${GREEN}✓ conf.py and metaStore.js are in sync${NC}"
+    if [[ "$conf_ver" == "$meta_ver" && "$conf_ver" == "$wails_ver" ]]; then
+        echo -e "  ${GREEN}✓ conf.py, metaStore.js and wails.json are in sync${NC}"
     else
-        echo -e "  ${RED}✗ conf.py and metaStore.js are OUT OF SYNC${NC}"
+        echo -e "  ${RED}✗ conf.py, metaStore.js and wails.json are OUT OF SYNC${NC}"
     fi
 
     if [[ "$conf_ver" == "$latest_tag" ]]; then
@@ -195,11 +200,12 @@ if ! git -C "$REPO_ROOT" diff --quiet 2>/dev/null || ! git -C "$REPO_ROOT" diff 
 fi
 
 # --- Show current state ---
-read -r conf_ver meta_ver <<< "$(get_current_versions)"
+read -r conf_ver meta_ver wails_ver <<< "$(get_current_versions)"
 echo ""
 info "Current versions:"
 echo "  conf.py:       $conf_ver"
 echo "  metaStore.js:  $meta_ver"
+echo "  wails.json:    $wails_ver"
 info "New version:     $VERSION"
 if [[ -n "$CHANGELOG" ]]; then
     info "Changelog:       $CHANGELOG"
@@ -231,6 +237,19 @@ do_update_meta_store() {
     fi
     sed -i "s/applicationVersion: '.*'/applicationVersion: '$VERSION'/" "$META_STORE"
     ok "Updated metaStore.js: applicationVersion = '$VERSION'"
+}
+
+# --- Update wails.json ---
+# Feeds the Windows .exe version resource and the macOS Info.plist
+# CFBundleVersion. Left unset, every non-macOS binary ships as 0.0.0.
+do_update_wails_json() {
+    info "Updating $WAILS_JSON ..."
+    if $DRY_RUN; then
+        echo "  \"productVersion\": \"$wails_ver\"  →  \"productVersion\": \"$VERSION\""
+        return
+    fi
+    sed -i "s/\"productVersion\": \"[^\"]*\"/\"productVersion\": \"$VERSION\"/" "$WAILS_JSON"
+    ok "Updated wails.json: productVersion = \"$VERSION\""
 }
 
 # --- Update doc/source/index.rst changelog ---
@@ -277,6 +296,7 @@ do_update_changelog() {
 # --- Perform updates ---
 do_update_conf_py
 do_update_meta_store
+do_update_wails_json
 do_update_changelog
 
 if $DRY_RUN; then
@@ -302,7 +322,7 @@ if [[ "$yn" =~ ^[Nn]$ ]]; then
     exit 0
 fi
 
-git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$INDEX_RST"
+git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$INDEX_RST"
 git -C "$REPO_ROOT" commit -m "Release $VERSION"
 git -C "$REPO_ROOT" tag "$VERSION"
 ok "Created commit and tag '$VERSION'"
