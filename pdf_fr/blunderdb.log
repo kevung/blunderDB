@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 08:56
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 09:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1046,83 +1046,83 @@ LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 
 [37] [38] [39] [40]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6385.
+(Font)              scaled to size 10.79993pt on input line 6393.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6474--6476
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6482--6484
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6477
+Overfull \hbox (11.423pt too wide) detected at line 6485
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6533--6535
+Underfull \hbox (badness 10000) in paragraph at lines 6541--6543
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
-
-Underfull \hbox (badness 8151) in paragraph at lines 6602--6606
+[41]
+Underfull \hbox (badness 8151) in paragraph at lines 6610--6614
 []\TU/FreeSerif(0)/m/n/10 La plupart des options peuvent aussi être fournies pa
 r variable d’environnement (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
-[41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 6775--6777
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 6783--6785
 []\TU/FreeSerif(0)/m/n/10 scope de tenant de destination (obligatoire sauf en
  []
 
-
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6914--6916
+[43]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6922--6924
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6917
+Overfull \hbox (1.06567pt too wide) detected at line 6925
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 7286--7288
+[44] [45]
+Underfull \hbox (badness 10000) in paragraph at lines 7294--7296
 []\TU/FreeSerif(0)/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7362--7364
+Underfull \hbox (badness 10000) in paragraph at lines 7370--7372
 []\TU/FreeSerif(0)/m/n/10 Double avec au moins
  []
 
-[45]
-Underfull \hbox (badness 7851) in paragraph at lines 7521--7529
+[46]
+Underfull \hbox (badness 7851) in paragraph at lines 7529--7537
 \TU/FreeSerif(0)/m/n/10 de certifier numériquement leurs applications voire de 
 distribuer via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7521--7529
+Underfull \hbox (badness 10000) in paragraph at lines 7529--7537
 \TU/FreeSerif(0)/m/n/10 préconisé de faire appel à des sociétés extérieures pou
 r obtenir un certificat numérique au prix
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7521--7529
+Underfull \hbox (badness 10000) in paragraph at lines 7529--7537
 \TU/FreeSerif(0)/m/n/10 de plusieurs centaines d’euros (voir par exemple [][]$[
 ][][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] [
 ] [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
-[46]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+[47]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
 File: win1.png Graphic file (type bmp)
 <win1.png>
- [47] [48] [49]
+ [48] [49]
 File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
@@ -1135,8 +1135,8 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60]
-[61] [62
+ [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61]
+[62
 
 ]
 Chapter 3.
@@ -1157,11 +1157,11 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: B8542C978FE170A5A15DA506EC3CD7DB;34259.
  ) 
 Here is how much of TeX's memory you used:
- 18964 strings out of 476443
- 377732 string characters out of 5793962
+ 18962 strings out of 476443
+ 377666 string characters out of 5793962
  2007627 words of memory out of 5000000
- 40537 multiletter control sequences out of 15000+600000
- 565134 words of font info for 104 fonts, out of 8000000 for 9000
+ 40536 multiletter control sequences out of 15000+600000
+ 565069 words of font info for 103 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3250b,560s stack positions out of 10000i,1000n,20000p,200000b,200000s
 

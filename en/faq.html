@@ -182,8 +182,9 @@
 <ul class="simple">
 <li><p>The backend is coded in <a class="reference external" href="https://go.dev/">Go</a>. It is responsible for all operations on the SQLite database that stores the positions.</p></li>
 <li><p>The frontend is coded in <a class="reference external" href="https://svelte.dev/">Svelte</a>. It is responsible for rendering the graphical interface and the Backgammon board.</p></li>
-<li><p>The application is encapsulated with <a class="reference external" href="https://wails.io/">Wails</a>, enabling the production of native desktop applications that can run on both Windows and Linux.</p></li>
+<li><p>The application is encapsulated with <a class="reference external" href="https://wails.io/">Wails</a>, enabling the production of native desktop applications for Windows, Linux and macOS.</p></li>
 <li><p>The database is managed by <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
+<li><p>The same binary also provides a command-line interface and an optional server mode, which can rely on <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> for multi-user deployments. The normal way to use blunderDB remains the desktop application. See <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a> and <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>.</p></li>
 </ul>
 <p>For more information, see the <a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB GitHub repository</a>.</p>
 </section>

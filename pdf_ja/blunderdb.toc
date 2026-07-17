@@ -129,39 +129,39 @@
 \contentsline {subsection}{\numberline {2.8.1}概要}{48}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{49}{subsection.2.8.2}%
 \contentsline {subsubsection}{エンドポイント}{50}{subsubsection*.33}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{50}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{50}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{51}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{52}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{52}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{53}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{53}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}例}{54}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{55}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{55}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{56}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}ダウンロードの整合性を確認する（SHA256）}{61}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Mac 付録：blunderDB の起動ブロックについて}{62}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}blunderDB のインストール}{62}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}blunderDB の実行を許可する}{64}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}付録: データベーススキーマ}{64}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}バージョン管理と移行}{64}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}主なテーブル}{64}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}設計の原則}{65}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}付録：統計モデル — XG / gnuBG / blunderDB の整合}{65}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}正式な定義}{66}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{66}{subsubsection*.47}%
-\contentsline {subsubsection}{Snowie Error Rate}{66}{subsubsection*.48}%
-\contentsline {subsubsection}{MWC 損失（Match Winning Chance）}{67}{subsubsection*.49}%
-\contentsline {subsection}{\numberline {2.13.2}PR の分母にカウントされる決定}{67}{subsection.2.13.2}%
-\contentsline {subsubsection}{チェッカープレイ — カウントされる決定}{67}{subsubsection*.50}%
-\contentsline {subsubsection}{キューブ決定 — カウントされる決定}{67}{subsubsection*.51}%
-\contentsline {subsubsection}{フィルターの概要}{67}{subsubsection*.52}%
-\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG の対応}{67}{subsection.2.13.3}%
-\contentsline {subsubsection}{XG ↔ blunderDB の比較（同じ解析エンジン）}{68}{subsubsection*.53}%
-\contentsline {subsubsection}{gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）}{68}{subsubsection*.54}%
-\contentsline {subsection}{\numberline {2.13.4}自分の数値を検証する}{68}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}gnuBG 参照}{68}{subsection.2.13.5}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{51}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{51}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{52}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}付録: フィルターの高度な使い方}{53}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}コマンドラインによるポジション検索}{53}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}現在の結果内での検索}{54}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}フィルターライブラリ}{54}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}例}{55}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Windows 付録：blunderDB のマルウェアとしての誤検知}{56}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen の警告}{56}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Windows Defender によるブロック}{57}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}ダウンロードの整合性を確認する（SHA256）}{59}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Mac 付録：blunderDB の起動ブロックについて}{63}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}blunderDB のインストール}{65}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}blunderDB の実行を許可する}{65}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}付録: データベーススキーマ}{65}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}バージョン管理と移行}{65}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}主なテーブル}{66}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}設計の原則}{66}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}付録：統計モデル — XG / gnuBG / blunderDB の整合}{67}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}正式な定義}{67}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{67}{subsubsection*.47}%
+\contentsline {subsubsection}{Snowie Error Rate}{68}{subsubsection*.48}%
+\contentsline {subsubsection}{MWC 損失（Match Winning Chance）}{68}{subsubsection*.49}%
+\contentsline {subsection}{\numberline {2.13.2}PR の分母にカウントされる決定}{68}{subsection.2.13.2}%
+\contentsline {subsubsection}{チェッカープレイ — カウントされる決定}{68}{subsubsection*.50}%
+\contentsline {subsubsection}{キューブ決定 — カウントされる決定}{68}{subsubsection*.51}%
+\contentsline {subsubsection}{フィルターの概要}{69}{subsubsection*.52}%
+\contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG の対応}{69}{subsection.2.13.3}%
+\contentsline {subsubsection}{XG ↔ blunderDB の比較（同じ解析エンジン）}{69}{subsubsection*.53}%
+\contentsline {subsubsection}{gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）}{69}{subsubsection*.54}%
+\contentsline {subsection}{\numberline {2.13.4}自分の数値を検証する}{69}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG 参照}{70}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {第3章}連絡先}{71}{chapter.3}%
 \contentsline {chapter}{\numberline {第4章}寄付する}{73}{chapter.4}%
 \contentsline {chapter}{\numberline {第5章}謝辞}{75}{chapter.5}%

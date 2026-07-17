@@ -5865,11 +5865,15 @@ Käyttöliittymä on koodattu \sphinxhref{https://svelte.dev/}{Svelte}\sphinxhyp
 
 \item {} 
 \sphinxAtStartPar
-Sovellus on kapseloitu \sphinxhref{https://wails.io/}{Wails}\sphinxhyphen{}työkalulla, mikä mahdollistaa natiivien työpöytäsovellusten tuottamisen, jotka toimivat sekä Windowsissa että Linuxissa.
+Sovellus paketoidaan \sphinxhref{https://wails.io/}{Wails}\sphinxhyphen{}kirjastolla, mikä mahdollistaa natiivien työpöytäsovellusten tuottamisen Windowsille, Linuxille ja macOS:lle.
 
 \item {} 
 \sphinxAtStartPar
 Tietokantaa hallitsee \sphinxhref{https://www.sqlite.org/}{SQLite}.
+
+\item {} 
+\sphinxAtStartPar
+Sama binääri tarjoaa myös komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää \sphinxhref{https://www.postgresql.org/}{PostgreSQL}\sphinxhyphen{}tietokantaa monen käyttäjän asennuksissa. blunderDB:n tavanomainen käyttötapa on edelleen työpöytäsovellus. Katso {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoriviliittymä (CLI)}}}}} ja {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}tila (palvelin)}}}}}.
 
 \end{itemize}
 

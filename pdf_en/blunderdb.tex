@@ -5863,11 +5863,15 @@ The frontend is coded in \sphinxhref{https://svelte.dev/}{Svelte}. It is respons
 
 \item {} 
 \sphinxAtStartPar
-The application is encapsulated with \sphinxhref{https://wails.io/}{Wails}, enabling the production of native desktop applications that can run on both Windows and Linux.
+The application is encapsulated with \sphinxhref{https://wails.io/}{Wails}, enabling the production of native desktop applications for Windows, Linux and macOS.
 
 \item {} 
 \sphinxAtStartPar
 The database is managed by \sphinxhref{https://www.sqlite.org/}{SQLite}.
+
+\item {} 
+\sphinxAtStartPar
+The same binary also provides a command\sphinxhyphen{}line interface and an optional server mode, which can rely on \sphinxhref{https://www.postgresql.org/}{PostgreSQL} for multi\sphinxhyphen{}user deployments. The normal way to use blunderDB remains the desktop application. See {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Command Line Interface (CLI)}}}}} and {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
 
 \end{itemize}
 

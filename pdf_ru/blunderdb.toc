@@ -128,21 +128,21 @@
 \contentsline {subsection}{\numberline {2.7.14}На каких платформах работает blunderDB?}{41}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Откуда взята иконка blunderDB?}{41}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Безголовый режим (сервер)}{41}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Обзор}{41}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.1}Обзор}{42}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Демон \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{42}{subsection.2.8.2}%
 \contentsline {subsubsection}{Точки доступа}{43}{subsubsection*.33}%
-\contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{43}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{43}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{44}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{44}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{44}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{45}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Приложение: Расширенное использование фильтров}{45}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Поиск позиций в командной строке}{45}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Поиск позиций в командной строке}{46}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Поиск в текущих результатах}{46}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Библиотека фильтров}{46}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Примеры}{47}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения}{47}{section.2.10}%
+\contentsline {section}{\numberline {2.10}Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения}{48}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Предупреждение Windows SmartScreen}{48}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Блокировка Windows Defender}{48}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Проверка целостности загрузки (SHA256)}{53}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.2}Блокировка Windows Defender}{49}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Проверка целостности загрузки (SHA256)}{52}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Приложение Mac: возможная блокировка blunderDB}{57}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Установка blunderDB}{57}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Разрешение на запуск blunderDB}{57}{subsection.2.11.2}%
@@ -150,7 +150,7 @@
 \contentsline {subsection}{\numberline {2.12.1}Версионирование и миграции}{57}{subsection.2.12.1}%
 \contentsline {subsection}{\numberline {2.12.2}Основные таблицы}{58}{subsection.2.12.2}%
 \contentsline {subsection}{\numberline {2.12.3}Принципы проектирования}{58}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB}{58}{section.2.13}%
+\contentsline {section}{\numberline {2.13}Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB}{59}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Формальные определения}{59}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{59}{subsubsection*.47}%
 \contentsline {subsubsection}{Snowie Error Rate}{59}{subsubsection*.48}%
@@ -160,7 +160,7 @@
 \contentsline {subsubsection}{Решения по кубу — засчитанные решения}{60}{subsubsection*.51}%
 \contentsline {subsubsection}{Сводка фильтра}{60}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}Соответствие blunderDB ↔ XG ↔ gnuBG}{60}{subsection.2.13.3}%
-\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{60}{subsubsection*.53}%
+\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{61}{subsubsection*.53}%
 \contentsline {subsubsection}{Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)}{61}{subsubsection*.54}%
 \contentsline {subsection}{\numberline {2.13.4}Проверка собственных данных}{61}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}Ссылки gnuBG}{61}{subsection.2.13.5}%

@@ -6309,11 +6309,19 @@ rendu de l’interface graphique et du board de Backgammon.
 \item {} 
 \sphinxAtStartPar
 L’application est encapsulée avec \sphinxhref{https://wails.io/}{Wails}, permettant la
-production d’applications Desktop natives, déclinables sous Windows et Linux.
+production d’applications Desktop natives, déclinables sous Windows, Linux et
+macOS.
 
 \item {} 
 \sphinxAtStartPar
 La base de données est gérée par \sphinxhref{https://www.sqlite.org/}{Sqlite}.
+
+\item {} 
+\sphinxAtStartPar
+Le même binaire offre également une interface en ligne de commande et un mode
+serveur facultatif, qui peut s’appuyer sur \sphinxhref{https://www.postgresql.org/}{PostgreSQL} pour les déploiements multi\sphinxhyphen{}utilisateurs.
+L’usage normal de blunderDB reste l’application de bureau. Voir
+{\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Interface en ligne de commande (CLI)}}}}} et {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Mode headless (serveur)}}}}}.
 
 \end{itemize}
 

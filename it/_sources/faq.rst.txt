@@ -170,9 +170,16 @@ Quel est l'architecture logicielle de blunderDB?
   rendu de l'interface graphique et du board de Backgammon.
 
 * L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant la
-  production d'applications Desktop natives, déclinables sous Windows et Linux.
+  production d'applications Desktop natives, déclinables sous Windows, Linux et
+  macOS.
 
 * La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_.
+
+* Le même binaire offre également une interface en ligne de commande et un mode
+  serveur facultatif, qui peut s'appuyer sur `PostgreSQL
+  <https://www.postgresql.org/>`_ pour les déploiements multi-utilisateurs.
+  L'usage normal de blunderDB reste l'application de bureau. Voir
+  :ref:`cli` et :ref:`headless`.
 
 Pour plus d'informations, voir le `dépôt Github de blunderDB <https://github.com/kevung/blunderDB>`_.
 

@@ -130,17 +130,17 @@
 \contentsline {subsection}{\numberline {2.8.1}Vue d’ensemble}{41}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Le démon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{41}{subsection.2.8.2}%
 \contentsline {subsubsection}{Points d’accès}{42}{subsubsection*.33}%
-\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL et multi\sphinxhyphen {}utilisateurs}{42}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Migrer une base SQLite vers PostgreSQL}{42}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Le dispatcher générique \sphinxstyleliteralintitle {\sphinxupquote {call}}}{43}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL et multi\sphinxhyphen {}utilisateurs}{43}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Migrer une base SQLite vers PostgreSQL}{43}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Le dispatcher générique \sphinxstyleliteralintitle {\sphinxupquote {call}}}{44}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Annexe: Utilisation avancée des filtres}{44}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Recherche de positions en ligne de commande}{44}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Recherche de positions en ligne de commande}{45}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Recherche dans les résultats courants}{45}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Bibliothèque de filtres}{45}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Exemples}{45}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{46}{section.2.10}%
+\contentsline {subsection}{\numberline {2.9.4}Exemples}{46}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{47}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Avertissement Windows SmartScreen}{47}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Blocage Windows Defender}{47}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.2}Blocage Windows Defender}{48}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{50}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Annexe Mac : Blocage éventuel de blunderDB}{56}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Installation de blunderDB}{56}{subsection.2.11.1}%

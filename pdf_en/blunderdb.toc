@@ -126,7 +126,7 @@
 \contentsline {subsection}{\numberline {2.7.12}What were the design principles of blunderDB?}{39}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}What is the software architecture of blunderDB?}{39}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}On which platforms does blunderDB run?}{39}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}Where does the blunderDB icon come from?}{39}{subsection.2.7.15}%
+\contentsline {subsection}{\numberline {2.7.15}Where does the blunderDB icon come from?}{40}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless mode (server)}{40}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Overview}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}The \sphinxstyleliteralintitle {\sphinxupquote {serve}} daemon}{40}{subsection.2.8.2}%

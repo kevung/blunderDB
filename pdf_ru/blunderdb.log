@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 08:57
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 09:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1574,114 +1574,113 @@ Underfull \hbox (badness 10000) in paragraph at lines 2330--2332
 
 [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37]
 [38] [39] [40] [41]
-Underfull \hbox (badness 8056) in paragraph at lines 5903--5905
+Underfull \hbox (badness 8056) in paragraph at lines 5907--5909
 []\TU/FreeSerif(1)/m/n/10 Эти три варианта использования опираются на общий \TU
 /FreeSerif(1)/b/n/10 слой хранения\TU/FreeSerif(1)/m/n/10 , который умеет работ
 ать с
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 5991--5993
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 5995--5997
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 5994
+Overfull \hbox (19.82352pt too wide) detected at line 5998
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6050--6052
+Underfull \hbox (badness 10000) in paragraph at lines 6054--6056
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6082--6084
+Underfull \hbox (badness 10000) in paragraph at lines 6086--6088
 [][][]\TU/FreeMono(1)/m/n/10 rate[]limit[]burst
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 6118--6120
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 6122--6124
 []\TU/FreeSerif(1)/m/n/10 Большинство опций можно также задать через переменные
  окружения (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(1)/m/n/10 ,
  []
 
-[42]
-Underfull \hbox (badness 10000) in paragraph at lines 6144--6146
+
+Underfull \hbox (badness 10000) in paragraph at lines 6148--6150
 []\TU/FreeSerif(1)/m/n/10 Два метода семейства \TU/FreeMono(1)/m/n/10 positions
  \TU/FreeSerif(1)/m/n/10 декодируют позицию, не сохраняя её: \TU/FreeMono(1)/m/
 n/10 positions.fromXGID
  []
 
 [43]
-Underfull \hbox (badness 10000) in paragraph at lines 6194--6196
+Underfull \hbox (badness 10000) in paragraph at lines 6198--6200
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6197
+Underfull \hbox (badness 10000) detected at line 6201
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6216--6218
+Underfull \hbox (badness 10000) in paragraph at lines 6220--6222
 []\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
 //chemin \TU/FreeSerif(1)/m/n/10 или
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6248--6250
+Underfull \hbox (badness 6412) in paragraph at lines 6252--6254
 []\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6270--6272
+Underfull \hbox (badness 10000) in paragraph at lines 6274--6276
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
-
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6379--6381
+[44]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6383--6385
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 6382
+Overfull \hbox (9.46619pt too wide) detected at line 6386
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6448--6450
+Underfull \hbox (badness 10000) in paragraph at lines 6452--6454
 []\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
 .<метод> \TU/FreeSerif(1)/m/n/10 и
  []
 
-[44] [45]
-Underfull \hbox (badness 10000) in paragraph at lines 6734--6736
+[45] [46]
+Underfull \hbox (badness 10000) in paragraph at lines 6738--6740
 []\TU/FreeSerif(1)/m/n/10 Позиция турнира
  []
 
-[46]
-Underfull \hbox (badness 10000) in paragraph at lines 6969--6971
+[47]
+Underfull \hbox (badness 10000) in paragraph at lines 6973--6975
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
-[47]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+[48]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [48] [49]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
+ [49] [50] [51]
 File: win3.png Graphic file (type bmp)
 <win3.png>
- [50] [51] [52]
 File: win4.png Graphic file (type bmp)
 <win4.png>
 File: win5.png Graphic file (type bmp)
@@ -1690,12 +1689,11 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [53] [54] [55] [56] [57] [58] [59] [60] [61]
-[62
-
-]
+ [52] [53] [54] [55] [56] [57] [58] [59] [60] [61] [62]
 Глава 3.
-[63] [64
+[63
+
+] [64
 
 ]
 Глава 4.

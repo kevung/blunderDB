@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 08:56
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 09:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1315,134 +1315,134 @@ LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
 (Font)              scaled to size 8.99994pt on input line 5671.
  [38] [39] [40] [41]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5925.
+(Font)              scaled to size 10.79993pt on input line 5929.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5925.
+(Font)              scaled to size 10.79993pt on input line 5929.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6009--6011
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6013--6015
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6012
+Overfull \hbox (11.423pt too wide) detected at line 6016
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6068--6070
+Underfull \hbox (badness 10000) in paragraph at lines 6072--6074
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6078--6080
+Underfull \hbox (badness 10000) in paragraph at lines 6082--6084
 []\TU/FreeSerif(1)/m/n/10 aktiviert CORS für diesen Ursprung (standardmäßig
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6126--6128
+Underfull \hbox (badness 10000) in paragraph at lines 6130--6132
 []\TU/FreeSerif(1)/m/n/10 PostgreSQL: aktiviert Row-Level Security pro Tenant
  []
 
 
-Underfull \hbox (badness 5475) in paragraph at lines 6136--6138
+Underfull \hbox (badness 5475) in paragraph at lines 6140--6142
 []\TU/FreeSerif(1)/m/n/10 Die meisten Optionen können auch über Umgebungsvariab
 len bereitgestellt werden (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSeri
 f(1)/m/n/10 ,
  []
 
 [42]
-Underfull \hbox (badness 5817) in paragraph at lines 6234--6236
+Underfull \hbox (badness 5817) in paragraph at lines 6238--6240
 []\TU/FreeSerif(1)/m/n/10 SQLite-Quelldatenbank (\TU/FreeMono(1)/m/n/10 sqlite:
 ///chemin \TU/FreeSerif(1)/m/n/10 oder ein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6288--6290
+Underfull \hbox (badness 10000) in paragraph at lines 6292--6294
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 [43]
-Underfull \hbox (badness 7256) in paragraph at lines 6309--6311
+Underfull \hbox (badness 7256) in paragraph at lines 6313--6315
 []\TU/FreeSerif(1)/m/n/10 Noch nicht migriert werden die Anwendungszustände: An
 ki-Decks/-Karten, Filterbibliothek, Such- und
  []
 
 
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6397--6399
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6401--6403
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6400
+Overfull \hbox (1.06567pt too wide) detected at line 6404
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 5592) in paragraph at lines 6466--6468
+Underfull \hbox (badness 5592) in paragraph at lines 6470--6472
 []\TU/FreeSerif(1)/m/n/10 zeigt alle Methoden \TU/FreeMono(1)/m/n/10 <famille>.
 <méthode> \TU/FreeSerif(1)/m/n/10 an und
  []
 
 [44] [45]
-Underfull \hbox (badness 6316) in paragraph at lines 6660--6662
+Underfull \hbox (badness 6316) in paragraph at lines 6664--6666
 []\TU/FreeSerif(1)/m/n/10 Schlagen auf dem Ass-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6690--6692
+Underfull \hbox (badness 10000) in paragraph at lines 6694--6696
 []\TU/FreeSerif(1)/m/n/10 Take/Pass-Entscheidung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6727--6729
+Underfull \hbox (badness 10000) in paragraph at lines 6731--6733
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6730
+Underfull \hbox (badness 10000) detected at line 6734
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6766--6768
+Underfull \hbox (badness 10000) in paragraph at lines 6770--6772
 []\TU/FreeSerif(1)/m/n/10 Ein rückständiger Stein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6817--6819
+Underfull \hbox (badness 10000) in paragraph at lines 6821--6823
 []\TU/FreeSerif(1)/m/n/10 Ass-Punkt des Gegners
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6858--6860
+Underfull \hbox (badness 10000) in paragraph at lines 6862--6864
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6872--6874
+Underfull \hbox (badness 10000) in paragraph at lines 6876--6878
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 [46]
-Underfull \hbox (badness 10000) in paragraph at lines 6987--6989
+Underfull \hbox (badness 10000) in paragraph at lines 6991--6993
 \TU/FreeSerif(1)/m/n/10 Windows verlangt heutzutage von Softwareherstellern ode
 r unabhängigen Softwareentwicklern, ihre
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6987--6989
+Underfull \hbox (badness 10000) in paragraph at lines 6991--6993
 \TU/FreeSerif(1)/m/n/10 Anwendungen digital zu zertifizieren oder sie sogar übe
 r den Windows Store zu vertreiben. Es wird
  []
 
 
-Underfull \hbox (badness 6125) in paragraph at lines 6987--6989
+Underfull \hbox (badness 6125) in paragraph at lines 6991--6993
 \TU/FreeSerif(1)/m/n/10 daher empfohlen, sich an externe Unternehmen zu wenden,
  um ein digitales Zertifikat zu erhalten, das
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6987--6989
+Underfull \hbox (badness 10000) in paragraph at lines 6991--6993
 \TU/FreeSerif(1)/m/n/10 mehrere hundert Euro kostet (siehe zum Beispiel [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
