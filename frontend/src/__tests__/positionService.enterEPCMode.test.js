@@ -45,7 +45,9 @@ vi.mock('../services/databaseService.js', () => ({
 // ── Stores réels (partagés avec positionService via le cache de modules) ──────
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
+import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
+import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 
 // ── Module testé ──────────────────────────────────────────────────────────────
 import { enterEPCMode, exitEPCMode } from '../services/positionService.js';
@@ -195,6 +197,20 @@ describe('exitEPCMode — ordre des set', () => {
         expect(modeIdx, 'statusBarModeStore.set("NORMAL") doit avoir eu lieu').toBeGreaterThanOrEqual(0);
         expect(posIdx, 'positionStore.set doit avoir eu lieu').toBeGreaterThanOrEqual(0);
         expect(modeIdx, 'mode doit être remis à NORMAL avant la restauration de la position').toBeLessThan(posIdx);
+    });
+
+    test('T6 — exitEPCMode recharge l’analyse de la position restaurée (bug X2)', async () => {
+        // Sans ce rechargement, le panneau d’analyse restait vide après un aller-retour
+        // position → EPC → analyse (l’effet de nav ne redessine plus en mode match).
+        LoadAnalysis.mockClear();
+        LoadAnalysis.mockResolvedValueOnce({ positionId: 99, checkerAnalysis: { moves: [] } });
+
+        await exitEPCMode();
+
+        // showPosition a été appelée sur la position restaurée (id 99) → analyse rechargée.
+        expect(LoadAnalysis).toHaveBeenCalledWith(99);
+        expect(get(positionStore).id).toBe(99);
+        expect(get(analysisStore).checkerAnalysis).toEqual({ moves: [] });
     });
 
     test('T5 — exitEPCMode ignoré si mode !== EPC', () => {

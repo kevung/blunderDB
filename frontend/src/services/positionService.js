@@ -915,6 +915,12 @@ export async function enterEditMode() {
         statusBarModeStore.set('EDIT');
         closePanel(PANEL.COMMENT);
         closePanel(PANEL.ANALYSIS);
+        // Clear the selected analysis move so its move arrows are erased when
+        // leaving a match/analysis position for the search tab. The board only
+        // auto-clears the selection on a position-ID change, and here the id is
+        // unchanged (we blank the same position object below), so the arrows
+        // would otherwise persist over the empty EDIT board.
+        selectedMoveStore.set(null);
         positionStore.update((pos) => {
             pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
             pos.board.bearoff = [15, 15];
@@ -999,7 +1005,7 @@ export function enterEPCMode() {
     currentPositionIndexStore.set(0);
 }
 
-export function exitEPCMode() {
+export async function exitEPCMode() {
     if (get(statusBarModeStore) !== 'EPC') return;
 
     // Return to the match if EPC was opened from one, instead of dropping to
@@ -1020,12 +1026,22 @@ export function exitEPCMode() {
     if (savedPositionsBeforeEPC) {
         positionsStore.set(savedPositionsBeforeEPC);
         if (savedPositionBeforeEPC) {
-            positionStore.set(savedPositionBeforeEPC);
             currentPositionIndexStore.set(savedPositionIndexBeforeEPC);
+            // Reload through showPosition (not a bare positionStore.set) so the
+            // analysis is fetched again and the analysis panel is repopulated on
+            // return. In MATCH mode the nav effect no longer redraws (bug 1
+            // guard), so without this the panel stayed empty after EPC; in
+            // NORMAL mode this simply mirrors the index-driven redraw.
+            const restored = savedPositionBeforeEPC;
+            savedPositionsBeforeEPC = null;
+            savedPositionBeforeEPC = null;
+            savedPositionIndexBeforeEPC = -1;
+            await showPosition(restored);
+        } else {
+            savedPositionsBeforeEPC = null;
+            savedPositionBeforeEPC = null;
+            savedPositionIndexBeforeEPC = -1;
         }
-        savedPositionsBeforeEPC = null;
-        savedPositionBeforeEPC = null;
-        savedPositionIndexBeforeEPC = -1;
     } else {
         loadAllPositions();
     }
