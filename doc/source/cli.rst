@@ -153,8 +153,14 @@ Exporte le contenu de la base vers des fichiers.
 **Options:**
 
 * ``--db`` — Base source (obligatoire).
-* ``--type`` — Type d'export: ``database``, ``positions`` ou ``matches`` (obligatoire).
-* ``--file`` — Fichier de sortie (obligatoire).
+* ``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou
+  ``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish
+  ``.mat``) (obligatoire).
+* ``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat``
+  utilisé avec ``--dir``).
+* ``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot (plusieurs
+  matchs, un fichier par match ; sans ``--match-ids``, tous les matchs sont
+  exportés).
 * ``--analysis`` — Inclure les analyses (défaut: oui).
 * ``--comments`` — Inclure les commentaires (défaut: oui).
 * ``--filters`` — Inclure la bibliothèque de filtres (défaut: oui).
@@ -177,6 +183,13 @@ Exporte le contenu de la base vers des fichiers.
 
    # Export de matchs spécifiques
    ./blunderdb export --db base.db --type matches --file selection.db --match-ids 1,3,5
+
+   # Export d'un match en transcription .mat (Jellyfish)
+   ./blunderdb export --db base.db --type mat --match-ids 5 --file match5.mat
+
+   # Export de plusieurs matchs (ou de tous) en .mat dans un répertoire
+   ./blunderdb export --db base.db --type mat --match-ids 5,9,12 --dir sorties/
+   ./blunderdb export --db base.db --type mat --dir sorties/
 
 search — Rechercher des positions
 ----------------------------------
@@ -213,6 +226,9 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2).
 * ``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules).
 * ``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des virgules).
+* ``--position-ids`` — Filtrer par IDs de positions : intervalle ``2,7``
+  (positions 2 à 7) ou liste explicite séparée par des points-virgules
+  ``5;10;15``.
 * ``--individual`` — Uniquement les positions importées seules, c'est-à-dire
   celles que vous avez ajoutées vous-même et non celles qu'un import de match
   a apportées.
@@ -256,7 +272,23 @@ Affiche le contenu de la base de données.
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
 * ``positions`` — Liste des positions (limité à 10 par défaut).
-* ``stats`` — Statistiques globales (positions, analyses, matchs, parties, coups).
+* ``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC
+  (global, pions, videau), PR glissant sur les N dernières décisions, top
+  blunders, répartition par action de videau et histogramme des magnitudes
+  d'erreur.
+
+**Options (type ``stats`` uniquement):**
+
+* ``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``).
+* ``--player`` — Restreindre au joueur indiqué.
+* ``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés
+  par des virgules).
+* ``--from`` — Date de début (AAAA-MM-JJ).
+* ``--to`` — Date de fin (AAAA-MM-JJ).
+* ``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube``
+  (défaut: ``all``).
+* ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
+* ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
 
 **Exemples:**
 
@@ -264,6 +296,15 @@ Affiche le contenu de la base de données.
 
    # Statistiques de la base
    ./blunderdb list --db base.db --type stats
+
+   # Statistiques en MWC pour un joueur donné
+   ./blunderdb list --db base.db --type stats --metric mwc --player "Alice"
+
+   # Coups de pions uniquement, depuis une date
+   ./blunderdb list --db base.db --type stats --decision-type checker --from 2026-01-01
+
+   # Sortie JSON (pour un script)
+   ./blunderdb list --db base.db --type stats --format json
 
    # Liste des matchs
    ./blunderdb list --db base.db --type matches
