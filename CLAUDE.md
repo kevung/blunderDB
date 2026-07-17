@@ -42,22 +42,32 @@ Full CLI reference lives in `CLI_USAGE.md`. Example:
 
 For **every new modification**, work in an isolated git worktree to avoid conflicts — never edit directly on the shared checkout. The cycle is: create a worktree, do the work and commit there, merge the branch back, then remove the worktree to clean up.
 
+Give `git worktree add` an **absolute** path: a `../blunderDB-<feature>` relative
+to the wrong cwd silently creates the worktree *inside* the repo.
+
 ```bash
+# 0. Anchor on the repo root so the paths below cannot drift with the cwd
+ROOT=$(git rev-parse --show-toplevel)
+WT="$ROOT/../blunderDB-<feature>"
+
 # 1. Create a worktree on a fresh branch for the change
-git worktree add ../blunderDB-<feature> -b feat/<feature>
+git worktree add "$WT" -b feat/<feature>
 
 # 2. Work + commit inside that worktree
-cd ../blunderDB-<feature>
+cd "$WT"
 # … edit, test …
 git add -A && git commit -m "feat: <feature>"
 
 # 3. Merge the branch back into the base branch
-cd /home/unger/src/blunderDB
+cd "$ROOT"
 git merge feat/<feature>
 
 # 4. Clean up the worktree (and the branch once merged)
-git worktree remove ../blunderDB-<feature>
+git worktree remove "$WT"
 git branch -d feat/<feature>
+
+# Sanity check: only the main checkout should remain
+git worktree list
 ```
 
 ## Tests
