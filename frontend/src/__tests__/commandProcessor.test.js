@@ -34,6 +34,7 @@ describe('parseFilters', () => {
         expect(result).toHaveProperty('includeCube', false);
         expect(result).toHaveProperty('includeScore', false);
         expect(result).toHaveProperty('noContactFilter', false);
+        expect(result).toHaveProperty('individuallyImportedFilter', false);
         expect(result).toHaveProperty('decisionTypeFilter', false);
         expect(result).toHaveProperty('diceRollFilter', false);
         expect(result).toHaveProperty('mirrorPositionFilter', false);
@@ -83,6 +84,17 @@ describe('parseFilters', () => {
 
     test('noContactFilter with "nc"', () => {
         expect(parseFilters(['nc'], 's nc').noContactFilter).toBe(true);
+    });
+
+    test('individuallyImportedFilter with "i"', () => {
+        expect(parseFilters(['i'], 's i').individuallyImportedFilter).toBe(true);
+    });
+
+    // 'i' is matched exactly so it cannot swallow the id<ids> token.
+    test('individuallyImportedFilter stays off for the id<ids> token', () => {
+        const r = parseFilters(['id5,10'], 's id5,10');
+        expect(r.individuallyImportedFilter).toBe(false);
+        expect(r.positionIDsFilter).toBe('5,10');
     });
 
     test('decisionTypeFilter with "d"', () => {
