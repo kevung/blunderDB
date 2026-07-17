@@ -85,11 +85,30 @@
 
     // Optional metadata fields, in display order, empties omitted. Tournament
     // name leads (it is the broadest provenance), then event/location/round/date/length.
-    let metaParts = $derived(
-        [match?.tournament_name, match?.event, match?.location, match?.round, formatDate(match?.match_date), match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : '']
-            .map((s) => (s == null ? '' : String(s).trim()))
-            .filter((s) => s.length > 0)
-    );
+    // Deduplicate case-insensitively: tournament_name (from the tournament table)
+    // and event (the match header field) are frequently the same string for a match
+    // filed under a tournament, and showing both looked like a duplicate.
+    let metaParts = $derived.by(() => {
+        const raw = [
+            match?.tournament_name,
+            match?.event,
+            match?.location,
+            match?.round,
+            formatDate(match?.match_date),
+            match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : ''
+        ];
+        const seen = new Set();
+        const out = [];
+        for (const v of raw) {
+            const s = v == null ? '' : String(v).trim();
+            if (!s) continue;
+            const key = s.toLowerCase();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            out.push(s);
+        }
+        return out;
+    });
 
     // Tooltip listing the other matches the (deduplicated) position came from.
     // Data only — player names — so it needs no translation.
