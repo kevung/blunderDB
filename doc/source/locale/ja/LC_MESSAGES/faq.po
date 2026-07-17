@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-17 10:55+0200\n"
+"POT-Creation-Date: 2026-07-17 11:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ja <LL@li.org>\n"
@@ -278,28 +278,52 @@ msgstr "blunderDB の設計原則は何でしたか？"
 
 #: ../../source/faq.rst:151
 msgid ""
-"L'ergonomie de blunderDB privilégie une utilisation au clavier : une ligne "
-"de commande, ouverte d'un appui sur la barre d'*ESPACE*, et des raccourcis "
-"clavier permettent une prise en main rapide et fluide, sans quitter le "
-"clavier. Je souhaitais par ailleurs blunderDB léger, autonome, sans "
-"installation et disponible pour différentes plateformes, d'où mon choix du "
-"langage Go et de la bibliothèque Svelte. Pour la sérialisation de la base de"
-" données, le format de fichiers doit être multi-plateforme et adapté pour "
-"contenir une base de données. Le format de fichier sqlite semblait tout "
-"indiqué."
+"Je voulais une interface accessible, mais pensée pour un usage avancé et "
+"soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
+"commande, ouverte d'un appui sur la barre d'*ESPACE*, et les raccourcis "
+"clavier servent cet usage, sans être un passage obligé."
 msgstr ""
-"blunderDB のエルゴノミクスはキーボード操作を重視しています：\\ *スペース* "
-"キーを押すと開くコマンドラインとキーボードショートカットにより、キーボードから手を離すことなく、素早くスムーズに操作できます。また、私は "
-"blunderDB を軽量で自己完結型、インストール不要で、さまざまなプラットフォームで利用できるものにしたいと考えていました。そのため、Go 言語と "
-"Svelte "
+"私はとっつきやすいインターフェースを望んでいましたが、それ以上に、ポジションや検索を次々とこなす高度で継続的な利用を想定して設計しました。\\ "
+"*スペース* キーを押すと開くコマンドラインとキーボードショートカットは、その利用を支えるものであり、必須ではありません。"
+
+#: ../../source/faq.rst:156
+msgid ""
+"Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et "
+"disponible pour différentes plateformes, d'où mon choix du langage Go et de "
+"la bibliothèque Svelte. Pour la sérialisation de la base de données, le "
+"format de fichiers doit être multi-plateforme et adapté pour contenir une "
+"base de données. Le format de fichier sqlite semblait tout indiqué."
+msgstr ""
+"また、私は blunderDB "
+"を軽量で自己完結型、インストール不要で、さまざまなプラットフォームで利用できるものにしたいと考えていました。そのため、Go 言語と Svelte "
 "ライブラリを選びました。データベースのシリアライズについては、ファイル形式がマルチプラットフォームであり、データベースを格納するのに適している必要がありました。SQLite"
 " のファイル形式はまさに最適だと思われました。"
 
 #: ../../source/faq.rst:163
+msgid ""
+"Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
+"copier, sauvegarder ou envoyer à un autre joueur."
+msgstr ""
+"また、データベースは単一のファイルのままであってほしいと考えていました。コピーしたり、バックアップしたり、別のプレイヤーに送ったりできるようにです。"
+
+#: ../../source/faq.rst:166
+msgid ""
+"Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
+"binaire offre une interface en ligne de commande et un mode serveur "
+"facultatif, qui peut s'appuyer sur PostgreSQL pour les déploiements multi-"
+"utilisateurs. L'usage normal reste toutefois l'application de bureau. Voir "
+":ref:`cli` et :ref:`headless`."
+msgstr ""
+"最後に、blunderDB "
+"はデスクトップアプリケーションにとどまりません。同じバイナリがコマンドラインインターフェースと、任意のサーバーモードを提供し、サーバーモードはマルチユーザー環境では"
+" PostgreSQL を利用できます。とはいえ、通常の使い方はデスクトップアプリケーションのままです。:ref:`cli` および "
+":ref:`headless` を参照してください。"
+
+#: ../../source/faq.rst:174
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "blunderDB のソフトウェアアーキテクチャは何ですか？"
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:176
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -308,7 +332,7 @@ msgstr ""
 "バックエンドは `Go <https://go.dev/>`_ でコーディングされています。ポジションを保存する SQLite "
 "データベースのすべての操作を担当します。"
 
-#: ../../source/faq.rst:169
+#: ../../source/faq.rst:180
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge du"
 " rendu de l'interface graphique et du board de Backgammon."
@@ -316,7 +340,7 @@ msgstr ""
 "フロントエンドは `Svelte <https://svelte.dev/>`_ "
 "でコーディングされています。グラフィカルインターフェースとバックギャモンボードのレンダリングを担当します。"
 
-#: ../../source/faq.rst:172
+#: ../../source/faq.rst:183
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant "
 "la production d'applications Desktop natives, déclinables sous Windows, "
@@ -325,23 +349,20 @@ msgstr ""
 "アプリケーションは `Wails <https://wails.io/>`_ でパッケージ化されており、Windows、Linux、macOS "
 "向けのネイティブなデスクトップアプリケーションを生成できます。"
 
-#: ../../source/faq.rst:176
+#: ../../source/faq.rst:187
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "データベースは `SQLite <https://www.sqlite.org/>`_ で管理されています。"
 
-#: ../../source/faq.rst:178
+#: ../../source/faq.rst:189
 msgid ""
-"Le même binaire offre également une interface en ligne de commande et un "
-"mode serveur facultatif, qui peut s'appuyer sur `PostgreSQL "
-"<https://www.postgresql.org/>`_ pour les déploiements multi-utilisateurs. "
-"L'usage normal de blunderDB reste l'application de bureau. Voir :ref:`cli` "
-"et :ref:`headless`."
+"Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
+"<https://www.postgresql.org/>`_ à la place de Sqlite pour les déploiements "
+"multi-utilisateurs."
 msgstr ""
-"同じバイナリはコマンドラインインターフェースと、任意のサーバーモードも提供します。サーバーモードは、マルチユーザー環境では `PostgreSQL "
-"<https://www.postgresql.org/>`_ を利用できます。blunderDB "
-"の通常の使い方はデスクトップアプリケーションのままです。:ref:`cli` および :ref:`headless` を参照してください。"
+"任意のサーバーモードでは、マルチユーザー環境向けに SQLite の代わりに `PostgreSQL "
+"<https://www.postgresql.org/>`_ を利用できます。"
 
-#: ../../source/faq.rst:184
+#: ../../source/faq.rst:193
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -349,19 +370,19 @@ msgstr ""
 "詳細については、`blunderDB GitHub リポジトリ <https://github.com/kevung/blunderDB>`_ "
 "を参照してください。"
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:196
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "blunderDB はどのプラットフォームで動作しますか？"
 
-#: ../../source/faq.rst:189
+#: ../../source/faq.rst:198
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB は Windows、Linux、Mac で動作します。"
 
-#: ../../source/faq.rst:192
+#: ../../source/faq.rst:201
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "blunderDB のアイコンはどこから来ていますか？"
 
-#: ../../source/faq.rst:194
+#: ../../source/faq.rst:203
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

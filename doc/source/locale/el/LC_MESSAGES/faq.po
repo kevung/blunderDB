@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-17 10:55+0200\n"
+"POT-Creation-Date: 2026-07-17 11:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: el <LL@li.org>\n"
@@ -323,31 +323,57 @@ msgstr "Ποιες ήταν οι αρχές σχεδιασμού του blunderD
 
 #: ../../source/faq.rst:151
 msgid ""
-"L'ergonomie de blunderDB privilégie une utilisation au clavier : une ligne "
-"de commande, ouverte d'un appui sur la barre d'*ESPACE*, et des raccourcis "
-"clavier permettent une prise en main rapide et fluide, sans quitter le "
-"clavier. Je souhaitais par ailleurs blunderDB léger, autonome, sans "
-"installation et disponible pour différentes plateformes, d'où mon choix du "
-"langage Go et de la bibliothèque Svelte. Pour la sérialisation de la base de"
-" données, le format de fichiers doit être multi-plateforme et adapté pour "
-"contenir une base de données. Le format de fichier sqlite semblait tout "
-"indiqué."
+"Je voulais une interface accessible, mais pensée pour un usage avancé et "
+"soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
+"commande, ouverte d'un appui sur la barre d'*ESPACE*, et les raccourcis "
+"clavier servent cet usage, sans être un passage obligé."
 msgstr ""
-"Η εργονομία του blunderDB δίνει προτεραιότητα στη χρήση μέσω πληκτρολογίου: "
-"μια γραμμή εντολών, που ανοίγει με το πάτημα του πλήκτρου *SPACE*, και "
-"συντομεύσεις πληκτρολογίου επιτρέπουν μια γρήγορη και ομαλή εξοικείωση, "
-"χωρίς να αφήνετε το πληκτρολόγιο. Ήθελα εξάλλου το blunderDB να είναι "
-"ελαφρύ, αυτόνομο, χωρίς εγκατάσταση και διαθέσιμο για διάφορες πλατφόρμες, "
-"εξ ου και η επιλογή μου της γλώσσας Go και της βιβλιοθήκης Svelte. Για τη "
-"σειριοποίηση της βάσης δεδομένων, η μορφή αρχείου έπρεπε να είναι "
-"πολυπλατφορμική και κατάλληλη για να περιέχει μια βάση δεδομένων. Η μορφή "
-"αρχείου SQLite φαινόταν η ιδανική επιλογή."
+"Ήθελα μια προσιτή διεπαφή, σχεδιασμένη όμως πρωτίστως για προχωρημένη και "
+"εντατική χρήση, όπου εναλλάσσονται συνεχώς θέσεις και αναζητήσεις. Η γραμμή "
+"εντολών, που ανοίγει με το πάτημα του πλήκτρου *SPACE*, και οι συντομεύσεις "
+"πληκτρολογίου εξυπηρετούν αυτή τη χρήση, χωρίς να είναι υποχρεωτικές."
+
+#: ../../source/faq.rst:156
+msgid ""
+"Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et "
+"disponible pour différentes plateformes, d'où mon choix du langage Go et de "
+"la bibliothèque Svelte. Pour la sérialisation de la base de données, le "
+"format de fichiers doit être multi-plateforme et adapté pour contenir une "
+"base de données. Le format de fichier sqlite semblait tout indiqué."
+msgstr ""
+"Ήθελα εξάλλου το blunderDB να είναι ελαφρύ, αυτόνομο, χωρίς εγκατάσταση και "
+"διαθέσιμο για διάφορες πλατφόρμες, εξ ου και η επιλογή μου της γλώσσας Go "
+"και της βιβλιοθήκης Svelte. Για τη σειριοποίηση της βάσης δεδομένων, η μορφή"
+" αρχείου έπρεπε να είναι πολυπλατφορμική και κατάλληλη για να περιέχει μια "
+"βάση δεδομένων. Η μορφή αρχείου SQLite φαινόταν η ιδανική επιλογή."
 
 #: ../../source/faq.rst:163
+msgid ""
+"Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
+"copier, sauvegarder ou envoyer à un autre joueur."
+msgstr ""
+"Μου ήταν επίσης σημαντικό μια βάση να παραμένει ένα απλό αρχείο, που μπορεί "
+"κανείς να αντιγράψει, να αποθηκεύσει ή να στείλει σε άλλον παίκτη."
+
+#: ../../source/faq.rst:166
+msgid ""
+"Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
+"binaire offre une interface en ligne de commande et un mode serveur "
+"facultatif, qui peut s'appuyer sur PostgreSQL pour les déploiements multi-"
+"utilisateurs. L'usage normal reste toutefois l'application de bureau. Voir "
+":ref:`cli` et :ref:`headless`."
+msgstr ""
+"Τέλος, το blunderDB δεν περιορίζεται πλέον στην εφαρμογή επιφάνειας "
+"εργασίας: το ίδιο εκτελέσιμο προσφέρει μια διεπαφή γραμμής εντολών και μια "
+"προαιρετική λειτουργία διακομιστή, η οποία μπορεί να βασιστεί στην "
+"PostgreSQL για εγκαταστάσεις πολλαπλών χρηστών. Η κανονική χρήση παραμένει "
+"ωστόσο η εφαρμογή επιφάνειας εργασίας. Δείτε :ref:`cli` και :ref:`headless`."
+
+#: ../../source/faq.rst:174
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;"
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:176
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -356,7 +382,7 @@ msgstr ""
 "Το backend είναι γραμμένο σε `Go <https://go.dev/>`_. Είναι υπεύθυνο για το "
 "σύνολο των λειτουργιών στη βάση δεδομένων SQLite που αποθηκεύει τις θέσεις."
 
-#: ../../source/faq.rst:169
+#: ../../source/faq.rst:180
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge du"
 " rendu de l'interface graphique et du board de Backgammon."
@@ -365,7 +391,7 @@ msgstr ""
 "υπεύθυνο για την απόδοση της γραφικής διεπαφής και του ταμπλό του "
 "Backgammon."
 
-#: ../../source/faq.rst:172
+#: ../../source/faq.rst:183
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant "
 "la production d'applications Desktop natives, déclinables sous Windows, "
@@ -375,26 +401,22 @@ msgstr ""
 "επιτρέπει την παραγωγή εγγενών εφαρμογών επιφάνειας εργασίας για Windows, "
 "Linux και macOS."
 
-#: ../../source/faq.rst:176
+#: ../../source/faq.rst:187
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr ""
 "Η βάση δεδομένων διαχειρίζεται από το `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:178
+#: ../../source/faq.rst:189
 msgid ""
-"Le même binaire offre également une interface en ligne de commande et un "
-"mode serveur facultatif, qui peut s'appuyer sur `PostgreSQL "
-"<https://www.postgresql.org/>`_ pour les déploiements multi-utilisateurs. "
-"L'usage normal de blunderDB reste l'application de bureau. Voir :ref:`cli` "
-"et :ref:`headless`."
+"Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
+"<https://www.postgresql.org/>`_ à la place de Sqlite pour les déploiements "
+"multi-utilisateurs."
 msgstr ""
-"Το ίδιο εκτελέσιμο προσφέρει επίσης μια διεπαφή γραμμής εντολών και μια "
-"προαιρετική λειτουργία διακομιστή, η οποία μπορεί να βασιστεί στην "
-"`PostgreSQL <https://www.postgresql.org/>`_ για εγκαταστάσεις πολλαπλών "
-"χρηστών. Η κανονική χρήση του blunderDB παραμένει η εφαρμογή επιφάνειας "
-"εργασίας. Δείτε :ref:`cli` και :ref:`headless`."
+"Η προαιρετική λειτουργία διακομιστή μπορεί να βασιστεί στην `PostgreSQL "
+"<https://www.postgresql.org/>`_ αντί της SQLite για εγκαταστάσεις πολλαπλών "
+"χρηστών."
 
-#: ../../source/faq.rst:184
+#: ../../source/faq.rst:193
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -402,19 +424,19 @@ msgstr ""
 "Για περισσότερες πληροφορίες, δείτε το `αποθετήριο GitHub του blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:196
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "Σε ποιες πλατφόρμες λειτουργεί το blunderDB;"
 
-#: ../../source/faq.rst:189
+#: ../../source/faq.rst:198
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "Το blunderDB λειτουργεί σε Windows, Linux και Mac."
 
-#: ../../source/faq.rst:192
+#: ../../source/faq.rst:201
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Από πού προέρχεται το εικονίδιο του blunderDB;"
 
-#: ../../source/faq.rst:194
+#: ../../source/faq.rst:203
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

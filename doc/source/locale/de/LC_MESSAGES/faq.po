@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-17 10:55+0200\n"
+"POT-Creation-Date: 2026-07-17 11:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -326,31 +326,59 @@ msgstr "Was waren die Entwurfsprinzipien von blunderDB?"
 
 #: ../../source/faq.rst:151
 msgid ""
-"L'ergonomie de blunderDB privilégie une utilisation au clavier : une ligne "
-"de commande, ouverte d'un appui sur la barre d'*ESPACE*, et des raccourcis "
-"clavier permettent une prise en main rapide et fluide, sans quitter le "
-"clavier. Je souhaitais par ailleurs blunderDB léger, autonome, sans "
-"installation et disponible pour différentes plateformes, d'où mon choix du "
-"langage Go et de la bibliothèque Svelte. Pour la sérialisation de la base de"
-" données, le format de fichiers doit être multi-plateforme et adapté pour "
-"contenir une base de données. Le format de fichier sqlite semblait tout "
-"indiqué."
+"Je voulais une interface accessible, mais pensée pour un usage avancé et "
+"soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
+"commande, ouverte d'un appui sur la barre d'*ESPACE*, et les raccourcis "
+"clavier servent cet usage, sans être un passage obligé."
 msgstr ""
-"Die Bedienung von blunderDB ist auf die Tastatur ausgerichtet: eine "
-"Befehlszeile, die sich durch einen Druck auf die *LEERTASTE* öffnet, sowie "
-"Tastenkürzel ermöglichen eine schnelle und flüssige Handhabung, ohne die "
-"Tastatur zu verlassen. Außerdem wollte ich blunderDB leichtgewichtig, "
-"eigenständig, ohne Installation und für verschiedene Plattformen verfügbar "
-"machen, weshalb ich die Programmiersprache Go und die Bibliothek Svelte "
-"gewählt habe. Für die Serialisierung der Datenbank musste das Dateiformat "
-"plattformübergreifend und geeignet sein, eine Datenbank zu enthalten. Das "
-"SQLite-Dateiformat schien dafür wie geschaffen."
+"Ich wollte eine zugängliche Oberfläche, die aber vor allem für eine "
+"fortgeschrittene und intensive Nutzung gedacht ist, bei der man Positionen "
+"und Suchanfragen aneinanderreiht. Die Befehlszeile, die sich durch einen "
+"Druck auf die *LEERTASTE* öffnet, und die Tastenkürzel dienen dieser "
+"Nutzung, ohne ein Muss zu sein."
+
+#: ../../source/faq.rst:156
+msgid ""
+"Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et "
+"disponible pour différentes plateformes, d'où mon choix du langage Go et de "
+"la bibliothèque Svelte. Pour la sérialisation de la base de données, le "
+"format de fichiers doit être multi-plateforme et adapté pour contenir une "
+"base de données. Le format de fichier sqlite semblait tout indiqué."
+msgstr ""
+"Außerdem wollte ich blunderDB leichtgewichtig, eigenständig, ohne "
+"Installation und für verschiedene Plattformen verfügbar machen, weshalb ich "
+"die Programmiersprache Go und die Bibliothek Svelte gewählt habe. Für die "
+"Serialisierung der Datenbank musste das Dateiformat plattformübergreifend "
+"und geeignet sein, eine Datenbank zu enthalten. Das SQLite-Dateiformat "
+"schien dafür wie geschaffen."
 
 #: ../../source/faq.rst:163
+msgid ""
+"Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
+"copier, sauvegarder ou envoyer à un autre joueur."
+msgstr ""
+"Zudem war mir wichtig, dass eine Datenbank eine einzige Datei bleibt, die "
+"man kopieren, sichern oder einem anderen Spieler schicken kann."
+
+#: ../../source/faq.rst:166
+msgid ""
+"Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
+"binaire offre une interface en ligne de commande et un mode serveur "
+"facultatif, qui peut s'appuyer sur PostgreSQL pour les déploiements multi-"
+"utilisateurs. L'usage normal reste toutefois l'application de bureau. Voir "
+":ref:`cli` et :ref:`headless`."
+msgstr ""
+"Schließlich beschränkt sich blunderDB nicht mehr auf die Desktop-Anwendung: "
+"Dieselbe Binärdatei bietet eine Befehlszeilen-Schnittstelle und einen "
+"optionalen Servermodus, der für Mehrbenutzer-Installationen auf PostgreSQL "
+"zurückgreifen kann. Die normale Nutzung bleibt dennoch die Desktop-"
+"Anwendung. Siehe :ref:`cli` und :ref:`headless`."
+
+#: ../../source/faq.rst:174
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "Wie ist die Softwarearchitektur von blunderDB aufgebaut?"
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:176
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -360,7 +388,7 @@ msgstr ""
 "sämtliche Operationen auf der SQLite-Datenbank zuständig, die die Positionen"
 " speichert."
 
-#: ../../source/faq.rst:169
+#: ../../source/faq.rst:180
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge du"
 " rendu de l'interface graphique et du board de Backgammon."
@@ -369,7 +397,7 @@ msgstr ""
 " die Darstellung der grafischen Oberfläche und des Backgammon-Boards "
 "zuständig."
 
-#: ../../source/faq.rst:172
+#: ../../source/faq.rst:183
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant "
 "la production d'applications Desktop natives, déclinables sous Windows, "
@@ -379,25 +407,21 @@ msgstr ""
 "Erstellung nativer Desktop-Anwendungen für Windows, Linux und macOS "
 "ermöglicht."
 
-#: ../../source/faq.rst:176
+#: ../../source/faq.rst:187
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "Die Datenbank wird von `SQLite <https://www.sqlite.org/>`_ verwaltet."
 
-#: ../../source/faq.rst:178
+#: ../../source/faq.rst:189
 msgid ""
-"Le même binaire offre également une interface en ligne de commande et un "
-"mode serveur facultatif, qui peut s'appuyer sur `PostgreSQL "
-"<https://www.postgresql.org/>`_ pour les déploiements multi-utilisateurs. "
-"L'usage normal de blunderDB reste l'application de bureau. Voir :ref:`cli` "
-"et :ref:`headless`."
+"Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
+"<https://www.postgresql.org/>`_ à la place de Sqlite pour les déploiements "
+"multi-utilisateurs."
 msgstr ""
-"Dieselbe Binärdatei bietet außerdem eine Befehlszeilen-Schnittstelle und "
-"einen optionalen Servermodus, der für Mehrbenutzer-Installationen auf "
-"`PostgreSQL <https://www.postgresql.org/>`_ zurückgreifen kann. Die normale "
-"Nutzung von blunderDB bleibt die Desktop-Anwendung. Siehe :ref:`cli` und "
-":ref:`headless`."
+"Der optionale Servermodus kann für Mehrbenutzer-Installationen auf "
+"`PostgreSQL <https://www.postgresql.org/>`_ anstelle von SQLite "
+"zurückgreifen."
 
-#: ../../source/faq.rst:184
+#: ../../source/faq.rst:193
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -405,19 +429,19 @@ msgstr ""
 "Weitere Informationen finden Sie im `GitHub-Repository von blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:196
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "Auf welchen Plattformen läuft blunderDB?"
 
-#: ../../source/faq.rst:189
+#: ../../source/faq.rst:198
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB läuft unter Windows, Linux und Mac."
 
-#: ../../source/faq.rst:192
+#: ../../source/faq.rst:201
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Woher stammt das Symbol von blunderDB?"
 
-#: ../../source/faq.rst:194
+#: ../../source/faq.rst:203
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
