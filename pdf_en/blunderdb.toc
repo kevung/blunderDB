@@ -125,32 +125,32 @@
 \contentsline {subsection}{\numberline {2.7.11}What data format does blunderDB use?}{39}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}What were the design principles of blunderDB?}{39}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}What is the software architecture of blunderDB?}{39}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}On which platforms does blunderDB run?}{39}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.14}On which platforms does blunderDB run?}{40}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Where does the blunderDB icon come from?}{40}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless mode (server)}{40}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Overview}{40}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}The \sphinxstyleliteralintitle {\sphinxupquote {serve}} daemon}{40}{subsection.2.8.2}%
 \contentsline {subsubsection}{Endpoints}{41}{subsubsection*.33}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQL backend and multi\sphinxhyphen {}user}{42}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQL backend and multi\sphinxhyphen {}user}{41}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Migrating a SQLite database to PostgreSQL}{42}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}The generic \sphinxstyleliteralintitle {\sphinxupquote {call}} dispatcher}{43}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.5}The generic \sphinxstyleliteralintitle {\sphinxupquote {call}} dispatcher}{42}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Annex: Advanced Filter Usage}{43}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Command\sphinxhyphen {}line search for positions}{44}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Command\sphinxhyphen {}line search for positions}{43}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Search in Current Results}{44}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Filter Library}{44}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Examples}{45}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Windows Annex: False Detection of blunderDB as Malware}{46}{section.2.10}%
+\contentsline {subsection}{\numberline {2.9.4}Examples}{44}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Windows Annex: False Detection of blunderDB as Malware}{45}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen Warning}{46}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defender Blocking}{46}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Verify the download integrity (SHA256)}{50}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Verify the download integrity (SHA256)}{47}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Mac Annex: Possible Blocking of blunderDB}{55}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Installation of blunderDB}{55}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Authorization to Run blunderDB}{55}{subsection.2.11.2}%
 \contentsline {section}{\numberline {2.12}Annex: Database Schema}{55}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Versioning and migrations}{55}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.1}Versioning and migrations}{56}{subsection.2.12.1}%
 \contentsline {subsection}{\numberline {2.12.2}Main tables}{56}{subsection.2.12.2}%
 \contentsline {subsection}{\numberline {2.12.3}Design principles}{56}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{56}{section.2.13}%
+\contentsline {section}{\numberline {2.13}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{57}{section.2.13}%
 \contentsline {subsection}{\numberline {2.13.1}Formal definitions}{57}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{57}{subsubsection*.47}%
 \contentsline {subsubsection}{Snowie Error Rate}{57}{subsubsection*.48}%
@@ -160,7 +160,7 @@
 \contentsline {subsubsection}{Cube decisions — counted decisions}{58}{subsubsection*.51}%
 \contentsline {subsubsection}{Filter summary}{58}{subsubsection*.52}%
 \contentsline {subsection}{\numberline {2.13.3}blunderDB ↔ XG ↔ gnuBG correspondence}{58}{subsection.2.13.3}%
-\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{58}{subsubsection*.53}%
+\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{59}{subsubsection*.53}%
 \contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{59}{subsubsection*.54}%
 \contentsline {subsection}{\numberline {2.13.4}Validating your own figures}{59}{subsection.2.13.4}%
 \contentsline {subsection}{\numberline {2.13.5}gnuBG reference}{59}{subsection.2.13.5}%

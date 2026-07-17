@@ -5850,7 +5850,16 @@ Tietokanta on yksinkertainen SQLite\sphinxhyphen{}tiedosto. Ilman blunderDB:tä 
 \subsection{Mitkä olivat blunderDB:n suunnitteluperiaatteet?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-blunderDB:n ergonomia suosii näppäimistökäyttöä: komentorivi, joka avataan painamalla \sphinxstyleemphasis{VÄLILYÖNTI}\sphinxhyphen{}näppäintä, sekä pikanäppäimet mahdollistavat nopean ja sujuvan käytön näppäimistöltä poistumatta. Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go\sphinxhyphen{}ohjelmointikielen ja Svelte\sphinxhyphen{}kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite\sphinxhyphen{}tiedostomuoto vaikutti täydelliseltä valinnalta.
+Halusin käyttöliittymän, joka on helposti lähestyttävä mutta ennen kaikkea suunniteltu edistyneeseen ja pitkäkestoiseen käyttöön, jossa asemat ja haut seuraavat toisiaan. Komentorivi, joka avataan painamalla \sphinxstyleemphasis{VÄLILYÖNTI}\sphinxhyphen{}näppäintä, ja pikanäppäimet palvelevat tätä käyttöä, ilman että ne ovat pakollisia.
+
+\sphinxAtStartPar
+Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go\sphinxhyphen{}ohjelmointikielen ja Svelte\sphinxhyphen{}kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite\sphinxhyphen{}tiedostomuoto vaikutti täydelliseltä valinnalta.
+
+\sphinxAtStartPar
+Minulle oli myös tärkeää, että tietokanta pysyy yksinkertaisena tiedostona, jonka voi kopioida, varmuuskopioida tai lähettää toiselle pelaajalle.
+
+\sphinxAtStartPar
+Lopuksi, blunderDB ei rajoitu enää työpöytäsovellukseen: sama binääri tarjoaa komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää PostgreSQL:ää monen käyttäjän asennuksissa. Tavanomainen käyttötapa on kuitenkin edelleen työpöytäsovellus. Katso {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoriviliittymä (CLI)}}}}} ja {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}tila (palvelin)}}}}}.
 
 
 \subsection{Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}
@@ -5873,7 +5882,7 @@ Tietokantaa hallitsee \sphinxhref{https://www.sqlite.org/}{SQLite}.
 
 \item {} 
 \sphinxAtStartPar
-Sama binääri tarjoaa myös komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää \sphinxhref{https://www.postgresql.org/}{PostgreSQL}\sphinxhyphen{}tietokantaa monen käyttäjän asennuksissa. blunderDB:n tavanomainen käyttötapa on edelleen työpöytäsovellus. Katso {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoriviliittymä (CLI)}}}}} ja {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless\sphinxhyphen{}tila (palvelin)}}}}}.
+Valinnainen palvelintila voi käyttää \sphinxhref{https://www.postgresql.org/}{PostgreSQL}\sphinxhyphen{}tietokantaa SQLiten sijaan monen käyttäjän asennuksissa.
 
 \end{itemize}
 

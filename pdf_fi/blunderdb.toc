@@ -124,7 +124,7 @@
 \contentsline {subsection}{\numberline {2.7.10}Voinko muokata, kopioida ja jakaa blunderDB:tä?}{39}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Mitä tietomuotoa blunderDB käyttää?}{39}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Mitkä olivat blunderDB:n suunnitteluperiaatteet?}{39}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{39}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.13}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{40}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Millä alustoilla blunderDB toimii?}{40}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Mistä blunderDB:n kuvake on peräisin?}{40}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}tila (palvelin)}{40}{section.2.8}%
@@ -135,7 +135,7 @@
 \contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{42}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{43}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{43}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{43}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{44}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Haku nykyisistä tuloksista}{44}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Suodatinkirjasto}{44}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{45}{subsection.2.9.4}%

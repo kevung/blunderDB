@@ -5850,7 +5850,16 @@ Il database è un semplice file SQLite. In assenza di blunderDB, può quindi ess
 \subsection{Quali sono stati i principi di progettazione di blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-L’ergonomia di blunderDB privilegia un utilizzo da tastiera: una riga di comando, aperta con la pressione della barra \sphinxstyleemphasis{SPAZIO}, e delle scorciatoie da tastiera consentono una presa in mano rapida e fluida, senza abbandonare la tastiera. Desideravo inoltre che blunderDB fosse leggero, autonomo, senza installazione e disponibile per diverse piattaforme, da cui la mia scelta del linguaggio Go e della libreria Svelte. Per la serializzazione del database, il formato dei file deve essere multipiattaforma e adatto a contenere un database. Il formato di file sqlite sembrava perfettamente indicato.
+Volevo un’interfaccia accessibile, ma pensata soprattutto per un utilizzo avanzato e prolungato, in cui si concatenano posizioni e ricerche. La riga di comando, aperta con la pressione della barra \sphinxstyleemphasis{SPAZIO}, e le scorciatoie da tastiera servono questo utilizzo, senza essere un passaggio obbligato.
+
+\sphinxAtStartPar
+Desideravo inoltre che blunderDB fosse leggero, autonomo, senza installazione e disponibile per diverse piattaforme, da cui la mia scelta del linguaggio Go e della libreria Svelte. Per la serializzazione del database, il formato dei file deve essere multipiattaforma e adatto a contenere un database. Il formato di file sqlite sembrava perfettamente indicato.
+
+\sphinxAtStartPar
+Ci tenevo anche a che un database restasse un semplice file, che si può copiare, salvare o inviare a un altro giocatore.
+
+\sphinxAtStartPar
+Infine, blunderDB non si limita più all’applicazione desktop: lo stesso binario offre un’interfaccia a riga di comando e una modalità server facoltativa, che può appoggiarsi a PostgreSQL per le installazioni multiutente. L’uso normale resta tuttavia l’applicazione desktop. Vedere {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Interfaccia a riga di comando (CLI)}}}}} e {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Modalità headless (server)}}}}}.
 
 
 \subsection{Qual è l’architettura software di blunderDB?}
@@ -5873,7 +5882,7 @@ Il database è gestito da \sphinxhref{https://www.sqlite.org/}{SQLite}.
 
 \item {} 
 \sphinxAtStartPar
-Lo stesso binario offre inoltre un’interfaccia a riga di comando e una modalità server facoltativa, che può appoggiarsi a \sphinxhref{https://www.postgresql.org/}{PostgreSQL} per le installazioni multiutente. L’uso normale di blunderDB resta l’applicazione desktop. Vedere {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Interfaccia a riga di comando (CLI)}}}}} e {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Modalità headless (server)}}}}}.
+La modalità server facoltativa può appoggiarsi a \sphinxhref{https://www.postgresql.org/}{PostgreSQL} invece di SQLite per le installazioni multiutente.
 
 \end{itemize}
 

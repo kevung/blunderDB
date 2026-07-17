@@ -126,7 +126,7 @@
 \contentsline {subsection}{\numberline {2.7.12}Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;}{42}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;}{42}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Σε ποιες πλατφόρμες λειτουργεί το blunderDB;}{42}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{42}{subsection.2.7.15}%
+\contentsline {subsection}{\numberline {2.7.15}Από πού προέρχεται το εικονίδιο του blunderDB;}{43}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)}{43}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Επισκόπηση}{43}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Ο δαίμονας \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%

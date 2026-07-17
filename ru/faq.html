@@ -176,7 +176,10 @@
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">7.12. </span>Каковы были принципы проектирования blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
-<p>Эргономика blunderDB отдаёт предпочтение работе с клавиатуры: командная строка, открываемая нажатием клавиши <em>ПРОБЕЛ</em>, и сочетания клавиш обеспечивают быстрое и плавное освоение, не отрывая рук от клавиатуры. Кроме того, я хотел, чтобы blunderDB был лёгким, автономным, не требующим установки и доступным для разных платформ, отсюда мой выбор языка Go и библиотеки Svelte. Для сериализации базы данных формат файлов должен быть кроссплатформенным и подходящим для хранения базы данных. Формат файлов SQLite оказался как нельзя кстати.</p>
+<p>Я хотел, чтобы интерфейс оставался доступным, но прежде всего продумывал его для продвинутой и интенсивной работы, когда позиции и запросы идут одна за другой. Командная строка, открываемая нажатием клавиши <em>ПРОБЕЛ</em>, и сочетания клавиш служат такой работе, но не являются обязательными.</p>
+<p>Кроме того, я хотел, чтобы blunderDB был лёгким, автономным, не требующим установки и доступным для разных платформ, отсюда мой выбор языка Go и библиотеки Svelte. Для сериализации базы данных формат файлов должен быть кроссплатформенным и подходящим для хранения базы данных. Формат файлов SQLite оказался как нельзя кстати.</p>
+<p>Мне также было важно, чтобы база оставалась обычным файлом, который можно скопировать, сохранить или отправить другому игроку.</p>
+<p>Наконец, blunderDB больше не ограничивается настольным приложением: тот же исполняемый файл предоставляет интерфейс командной строки и необязательный серверный режим, который может опираться на PostgreSQL для многопользовательских развёртываний. Тем не менее обычным способом использования остаётся настольное приложение. См. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a> и <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">7.13. </span>Какова программная архитектура blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
@@ -185,7 +188,7 @@
 <li><p>Фронтенд написан на <a class="reference external" href="https://svelte.dev/">Svelte</a>. Он отвечает за отображение графического интерфейса и доски для нард.</p></li>
 <li><p>Приложение упаковано с помощью <a class="reference external" href="https://wails.io/">Wails</a>, что позволяет создавать нативные настольные приложения для Windows, Linux и macOS.</p></li>
 <li><p>База данных управляется <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
-<li><p>Тот же исполняемый файл также предоставляет интерфейс командной строки и необязательный серверный режим, который может опираться на <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> для многопользовательских развёртываний. Обычным способом использования blunderDB остаётся настольное приложение. См. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a> и <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></li>
+<li><p>Необязательный серверный режим может опираться на <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> вместо SQLite для многопользовательских развёртываний.</p></li>
 </ul>
 <p>Для получения дополнительной информации см. <a class="reference external" href="https://github.com/kevung/blunderDB">репозиторий blunderDB на GitHub</a>.</p>
 </section>

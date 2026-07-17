@@ -226,15 +226,23 @@ blunderDB, elle peut ainsi s’ouvrir avec tout éditeur de fichier sqlite.</p>
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">7.12. </span>Quelles ont été les principes de conception de blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
-<p>L’ergonomie de blunderDB privilégie une utilisation au clavier : une ligne de
-commande, ouverte d’un appui sur la barre d”<em>ESPACE</em>, et des raccourcis clavier
-permettent une prise en main rapide et fluide, sans quitter le clavier. Je
-souhaitais par ailleurs blunderDB léger, autonome, sans installation et
+<p>Je voulais une interface accessible, mais pensée pour un usage avancé et
+soutenu, où l’on enchaîne les positions et les recherches. La ligne de
+commande, ouverte d’un appui sur la barre d”<em>ESPACE</em>, et les raccourcis clavier
+servent cet usage, sans être un passage obligé.</p>
+<p>Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et
 disponible pour différentes plateformes,
 d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
 sérialisation de la base de données, le format de fichiers doit être
 multi-plateforme et adapté pour contenir une base de données. Le format de
 fichier sqlite semblait tout indiqué.</p>
+<p>Je tenais aussi à ce qu’une base reste un simple fichier, que l’on peut copier,
+sauvegarder ou envoyer à un autre joueur.</p>
+<p>Enfin, blunderDB ne se limite plus à l’application de bureau : le même binaire
+offre une interface en ligne de commande et un mode serveur facultatif, qui
+peut s’appuyer sur PostgreSQL pour les déploiements multi-utilisateurs. L’usage
+normal reste toutefois l’application de bureau. Voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a> et
+<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">7.13. </span>Quel est l’architecture logicielle de blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
@@ -248,10 +256,8 @@ rendu de l’interface graphique et du board de Backgammon.</p></li>
 production d’applications Desktop natives, déclinables sous Windows, Linux et
 macOS.</p></li>
 <li><p>La base de données est gérée par <a class="reference external" href="https://www.sqlite.org/">Sqlite</a>.</p></li>
-<li><p>Le même binaire offre également une interface en ligne de commande et un mode
-serveur facultatif, qui peut s’appuyer sur <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> pour les déploiements multi-utilisateurs.
-L’usage normal de blunderDB reste l’application de bureau. Voir
-<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a> et <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></li>
+<li><p>Le mode serveur facultatif peut s’appuyer sur <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> à la place de Sqlite pour les déploiements
+multi-utilisateurs.</p></li>
 </ul>
 <p>Pour plus d’informations, voir le <a class="reference external" href="https://github.com/kevung/blunderDB">dépôt Github de blunderDB</a>.</p>
 </section>

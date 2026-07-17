@@ -5848,7 +5848,16 @@ The database is a simple SQLite file. In the absence of blunderDB, it can thus b
 \subsection{What were the design principles of blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-blunderDB’s ergonomics favour keyboard\sphinxhyphen{}driven use: a command line, opened by pressing the \sphinxstyleemphasis{SPACE} bar, together with keyboard shortcuts allow a quick and fluid experience without ever leaving the keyboard. I also wanted blunderDB to be lightweight, self\sphinxhyphen{}contained, installation\sphinxhyphen{}free and available on different platforms, hence my choice of the Go language and the Svelte library. For serialising the database, the file format had to be cross\sphinxhyphen{}platform and suited to holding a database. The SQLite file format seemed the obvious fit.
+I wanted an interface that stays approachable, but designed above all for advanced, sustained use, where one moves from position to position and from search to search. The command line, opened by pressing the \sphinxstyleemphasis{SPACE} bar, and the keyboard shortcuts serve that use, without being mandatory.
+
+\sphinxAtStartPar
+I also wanted blunderDB to be lightweight, self\sphinxhyphen{}contained, installation\sphinxhyphen{}free and available on different platforms, hence my choice of the Go language and the Svelte library. For serialising the database, the file format had to be cross\sphinxhyphen{}platform and suited to holding a database. The SQLite file format seemed the obvious fit.
+
+\sphinxAtStartPar
+I was also keen that a database should remain a single file, one that can be copied, backed up or sent to another player.
+
+\sphinxAtStartPar
+Finally, blunderDB is no longer limited to the desktop application: the same binary provides a command\sphinxhyphen{}line interface and an optional server mode, which can rely on PostgreSQL for multi\sphinxhyphen{}user deployments. The normal way to use it nevertheless remains the desktop application. See {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Command Line Interface (CLI)}}}}} and {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
 
 
 \subsection{What is the software architecture of blunderDB?}
@@ -5871,7 +5880,7 @@ The database is managed by \sphinxhref{https://www.sqlite.org/}{SQLite}.
 
 \item {} 
 \sphinxAtStartPar
-The same binary also provides a command\sphinxhyphen{}line interface and an optional server mode, which can rely on \sphinxhref{https://www.postgresql.org/}{PostgreSQL} for multi\sphinxhyphen{}user deployments. The normal way to use blunderDB remains the desktop application. See {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Command Line Interface (CLI)}}}}} and {\hyperref[\detokenize{mode_headless:headless}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Headless mode (server)}}}}}.
+The optional server mode can rely on \sphinxhref{https://www.postgresql.org/}{PostgreSQL} instead of SQLite for multi\sphinxhyphen{}user deployments.
 
 \end{itemize}
 

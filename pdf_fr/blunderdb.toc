@@ -126,7 +126,7 @@
 \contentsline {subsection}{\numberline {2.7.13}Quel est l’architecture logicielle de blunderDB?}{40}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{40}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}D’où vient l’icône de blunderDB?}{40}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Mode headless (serveur)}{40}{section.2.8}%
+\contentsline {section}{\numberline {2.8}Mode headless (serveur)}{41}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Vue d’ensemble}{41}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Le démon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{41}{subsection.2.8.2}%
 \contentsline {subsubsection}{Points d’accès}{42}{subsubsection*.33}%

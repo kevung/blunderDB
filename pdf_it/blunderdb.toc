@@ -128,7 +128,7 @@
 \contentsline {subsection}{\numberline {2.7.14}Su quali piattaforme funziona blunderDB?}{40}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Da dove proviene l’icona di blunderDB?}{40}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Modalità headless (server)}{40}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Panoramica}{40}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.1}Panoramica}{41}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Il demone \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{41}{subsection.2.8.2}%
 \contentsline {subsubsection}{Punti di accesso}{42}{subsubsection*.33}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL e multiutente}{42}{subsection.2.8.3}%

@@ -176,7 +176,10 @@
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">7.12. </span>Mitkä olivat blunderDB:n suunnitteluperiaatteet?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
-<p>blunderDB:n ergonomia suosii näppäimistökäyttöä: komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä, sekä pikanäppäimet mahdollistavat nopean ja sujuvan käytön näppäimistöltä poistumatta. Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go-ohjelmointikielen ja Svelte-kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite-tiedostomuoto vaikutti täydelliseltä valinnalta.</p>
+<p>Halusin käyttöliittymän, joka on helposti lähestyttävä mutta ennen kaikkea suunniteltu edistyneeseen ja pitkäkestoiseen käyttöön, jossa asemat ja haut seuraavat toisiaan. Komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä, ja pikanäppäimet palvelevat tätä käyttöä, ilman että ne ovat pakollisia.</p>
+<p>Halusin blunderDB:stä myös kevyen, itsenäisen, asennusta vaatimattoman ja useilla alustoilla saatavilla olevan, mistä johtui Go-ohjelmointikielen ja Svelte-kirjaston valintani. Tietokannan sarjallistamiseen tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan sisältämiseen. SQLite-tiedostomuoto vaikutti täydelliseltä valinnalta.</p>
+<p>Minulle oli myös tärkeää, että tietokanta pysyy yksinkertaisena tiedostona, jonka voi kopioida, varmuuskopioida tai lähettää toiselle pelaajalle.</p>
+<p>Lopuksi, blunderDB ei rajoitu enää työpöytäsovellukseen: sama binääri tarjoaa komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää PostgreSQL:ää monen käyttäjän asennuksissa. Tavanomainen käyttötapa on kuitenkin edelleen työpöytäsovellus. Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a> ja <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">7.13. </span>Mikä on blunderDB:n ohjelmistoarkkitehtuuri?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
@@ -185,7 +188,7 @@
 <li><p>Käyttöliittymä on koodattu <a class="reference external" href="https://svelte.dev/">Svelte</a>-kielellä. Se vastaa graafisen käyttöliittymän ja backgammon-laudan piirtämisestä.</p></li>
 <li><p>Sovellus paketoidaan <a class="reference external" href="https://wails.io/">Wails</a>-kirjastolla, mikä mahdollistaa natiivien työpöytäsovellusten tuottamisen Windowsille, Linuxille ja macOS:lle.</p></li>
 <li><p>Tietokantaa hallitsee <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
-<li><p>Sama binääri tarjoaa myös komentorivikäyttöliittymän ja valinnaisen palvelintilan, joka voi käyttää <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a>-tietokantaa monen käyttäjän asennuksissa. blunderDB:n tavanomainen käyttötapa on edelleen työpöytäsovellus. Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a> ja <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></li>
+<li><p>Valinnainen palvelintila voi käyttää <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a>-tietokantaa SQLiten sijaan monen käyttäjän asennuksissa.</p></li>
 </ul>
 <p>Lisätietoja löytyy <a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB:n GitHub-arkistosta</a>.</p>
 </section>

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 09:11
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 09:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1043,80 +1043,79 @@ LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
 (Font)              scaled to size 8.99994pt on input line 5669.
  [37] [38] [39]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 5927.
+(Font)              scaled to size 10.79993pt on input line 5936.
 
-Underfull \hbox (badness 10000) in paragraph at lines 6011--6013
+Underfull \hbox (badness 10000) in paragraph at lines 6020--6022
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6014
+Underfull \hbox (badness 10000) detected at line 6023
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6070--6072
+Underfull \hbox (badness 10000) in paragraph at lines 6079--6081
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [40] [41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 6399--6401
+Underfull \hbox (badness 10000) in paragraph at lines 6408--6410
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6402
+Underfull \hbox (badness 10000) detected at line 6411
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
-[43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 6697--6699
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 6706--6708
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6713--6715
+Underfull \hbox (badness 10000) in paragraph at lines 6722--6724
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6729--6731
+Underfull \hbox (badness 10000) in paragraph at lines 6738--6740
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6754--6756
+Underfull \hbox (badness 10000) in paragraph at lines 6763--6765
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6754--6756
+Underfull \hbox (badness 10000) in paragraph at lines 6763--6765
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6757
+Underfull \hbox (badness 10000) detected at line 6766
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6835--6837
+Underfull \hbox (badness 10000) in paragraph at lines 6844--6846
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
-[45]
+[44] [45]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [46] [47]
+ [46]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [48] [49]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1127,12 +1126,12 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [50] [51] [52] [53] [54] [55] [56] [57] [58] [59]
-[60
-
-]
+ [47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58]
+[59] [60]
 Chapter 3.
-[61] [62
+[61
+
+] [62
 
 ]
 Chapter 4.
