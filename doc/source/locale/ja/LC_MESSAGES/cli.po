@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-15 02:04+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -204,8 +204,8 @@ msgid ""
 msgstr "任意のメタデータとともに新しいデータベースファイルを作成します。"
 
 #: ../../source/cli.rst:75 ../../source/cli.rst:100 ../../source/cli.rst:153
-#: ../../source/cli.rst:283 ../../source/cli.rst:312 ../../source/cli.rst:336
-#: ../../source/cli.rst:366 ../../source/cli.rst:398
+#: ../../source/cli.rst:324 ../../source/cli.rst:353 ../../source/cli.rst:377
+#: ../../source/cli.rst:407 ../../source/cli.rst:439
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -251,7 +251,9 @@ msgstr "``--db`` — データベースのパス（必須）。"
 msgid ""
 "``--type`` — Type d'import: ``match``, ``position`` ou ``batch`` "
 "(obligatoire)."
-msgstr "``--type`` — インポートの種類：\\ ``match``\\ 、\\ ``position``\\ 、または ``batch``\\ （必須）。"
+msgstr ""
+"``--type`` — インポートの種類：\\ ``match``\\ 、\\ ``position``\\ 、または ``batch``\\ "
+"（必須）。"
 
 #: ../../source/cli.rst:104
 msgid "``--file`` — Fichier à importer (pour ``match`` et ``position``)."
@@ -276,8 +278,8 @@ msgid ""
 "Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
 "Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``)."
 msgstr ""
-"対応フォーマット：eXtreme Gammon（\\ ``.xg``\\ 、\\ ``.xgp``\\ ）、GNUbg（\\ ``.sgf``\\ "
-"）、Jellyfish（\\ ``.mat``\\ 、\\ ``.txt``\\ ）、BGBlitz（\\ ``.bgf``\\ ）。"
+"対応フォーマット：eXtreme Gammon（\\ ``.xg``\\ 、\\ ``.xgp``\\ ）、GNUbg（\\ ``.sgf``\\"
+" ）、Jellyfish（\\ ``.mat``\\ 、\\ ``.txt``\\ ）、BGBlitz（\\ ``.bgf``\\ ）。"
 
 #: ../../source/cli.rst:119
 msgid "Import de positions"
@@ -320,82 +322,95 @@ msgstr "``--db`` — ソースデータベース（必須）。"
 
 #: ../../source/cli.rst:156
 msgid ""
-"``--type`` — Type d'export: ``database``, ``positions`` ou ``matches`` "
-"(obligatoire)."
+"``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
+"``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
+"``.mat``) (obligatoire)."
 msgstr ""
-"``--type`` — エクスポートの種類：\\ ``database``\\ 、\\ ``positions``\\ 、または "
-"``matches``\\ （必須）。"
+"``--type`` — エクスポートの種類：\\ ``database``\\ 、\\ ``positions``\\ 、\\ ``matches``\\ 、または "
+"``mat``\\ （1つまたは複数のマッチをJellyfish ``.mat`` トランスクリプションでエクスポート）（必須）。"
 
-#: ../../source/cli.rst:157
-msgid "``--file`` — Fichier de sortie (obligatoire)."
-msgstr "``--file`` — 出力ファイル（必須）。"
+#: ../../source/cli.rst:159
+msgid ""
+"``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
+"utilisé avec ``--dir``)."
+msgstr ""
+"``--file`` — 出力ファイル（\\ ``--dir``\\ と併用する ``--type mat`` を除き必須）。"
 
-#: ../../source/cli.rst:158
+#: ../../source/cli.rst:161
+msgid ""
+"``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
+"(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
+"matchs sont exportés)."
+msgstr ""
+"``--dir`` — バッチ ``.mat`` エクスポートの出力ディレクトリ（複数のマッチ、マッチごとに1ファイル。\\ "
+"``--match-ids``\\ なしの場合、すべてのマッチがエクスポートされます）。"
+
+#: ../../source/cli.rst:164
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — 分析を含める（デフォルト：はい）。"
 
-#: ../../source/cli.rst:159
+#: ../../source/cli.rst:165
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — コメントを含める（デフォルト：はい）。"
 
-#: ../../source/cli.rst:160
+#: ../../source/cli.rst:166
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — フィルターライブラリを含める（デフォルト：はい）。"
 
-#: ../../source/cli.rst:161
+#: ../../source/cli.rst:167
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — プレイされた手を含める（デフォルト：はい）。"
 
-#: ../../source/cli.rst:162
+#: ../../source/cli.rst:168
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — マッチを含める（デフォルト：はい）。"
 
-#: ../../source/cli.rst:163
+#: ../../source/cli.rst:169
 msgid "``--collections`` — Inclure les collections (défaut: non)."
 msgstr "``--collections`` — コレクションを含める（デフォルト：いいえ）。"
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:170
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules)."
 msgstr "``--collection-ids`` — エクスポートするコレクションのID（カンマ区切り）。"
 
-#: ../../source/cli.rst:165
+#: ../../source/cli.rst:171
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
 msgstr "``--match-ids`` — エクスポートするマッチのID（カンマ区切り、空=すべて）。"
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:172
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules)."
 msgstr "``--tournament-ids`` — エクスポートするトーナメントのID（カンマ区切り）。"
 
-#: ../../source/cli.rst:168 ../../source/cli.rst:220 ../../source/cli.rst:261
-#: ../../source/cli.rst:290 ../../source/cli.rst:317 ../../source/cli.rst:346
-#: ../../source/cli.rst:376 ../../source/cli.rst:405
+#: ../../source/cli.rst:174 ../../source/cli.rst:236 ../../source/cli.rst:293
+#: ../../source/cli.rst:331 ../../source/cli.rst:358 ../../source/cli.rst:387
+#: ../../source/cli.rst:417 ../../source/cli.rst:446
 msgid "**Exemples:**"
 msgstr "**例：**"
 
-#: ../../source/cli.rst:182
+#: ../../source/cli.rst:195
 msgid "search — Rechercher des positions"
 msgstr "search — ポジションを検索する"
 
-#: ../../source/cli.rst:184
+#: ../../source/cli.rst:197
 msgid "Recherche des positions dans la base selon des critères combinables."
 msgstr "組み合わせ可能な条件でデータベース内のポジションを検索します。"
 
-#: ../../source/cli.rst:190
+#: ../../source/cli.rst:203
 msgid "**Options principales:**"
 msgstr "**主なオプション：**"
 
-#: ../../source/cli.rst:192 ../../source/cli.rst:285 ../../source/cli.rst:314
-#: ../../source/cli.rst:338 ../../source/cli.rst:368 ../../source/cli.rst:400
+#: ../../source/cli.rst:205 ../../source/cli.rst:326 ../../source/cli.rst:355
+#: ../../source/cli.rst:379 ../../source/cli.rst:409 ../../source/cli.rst:441
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — データベース（必須）。"
 
-#: ../../source/cli.rst:193
+#: ../../source/cli.rst:206
 msgid ""
 "``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut:"
 " ``table``)."
@@ -403,23 +418,23 @@ msgstr ""
 "``--format`` — 出力フォーマット：\\ ``table``\\ 、\\ ``json``\\ 、または ``xgid``\\ "
 "（デフォルト：\\ ``table``\\ ）。"
 
-#: ../../source/cli.rst:194
+#: ../../source/cli.rst:207
 msgid "``--limit`` — Nombre maximum de résultats (0 = illimité)."
 msgstr "``--limit`` — 結果の最大件数（0 = 無制限）。"
 
-#: ../../source/cli.rst:195
+#: ../../source/cli.rst:208
 msgid "``--export`` — Exporter les résultats vers une nouvelle base."
 msgstr "``--export`` — 結果を新しいデータベースにエクスポートする。"
 
-#: ../../source/cli.rst:197
+#: ../../source/cli.rst:210
 msgid "**Filtres disponibles:**"
 msgstr "**利用可能なフィルター：**"
 
-#: ../../source/cli.rst:199
+#: ../../source/cli.rst:212
 msgid "``--decision`` — Type de décision: ``checker`` ou ``cube``."
 msgstr "``--decision`` — 決定の種類：\\ ``checker`` または ``cube``\\ 。"
 
-#: ../../source/cli.rst:200
+#: ../../source/cli.rst:213
 msgid ""
 "``--dice`` — Lancer de dés. ``5,3`` cherche les positions où les deux dés"
 " correspondent (peu importe l'ordre). ``5`` cherche les positions où un 5"
@@ -431,106 +446,161 @@ msgstr ""
 "はいずれかのダイスに5が現れるポジションを検索します（もう一方のダイスの値は無視されます）。\\ ``--decision`` "
 "の値が指定されていない場合は ``--decision checker`` を意味します。"
 
-#: ../../source/cli.rst:205
+#: ../../source/cli.rst:218
 msgid "``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count."
 msgstr "``--pip-min`` / ``--pip-max`` — ピップカウント差の範囲。"
 
-#: ../../source/cli.rst:206
+#: ../../source/cli.rst:219
 msgid ""
 "``--winrate-min`` / ``--winrate-max`` — Intervalle de taux de victoire "
 "(%)."
 msgstr "``--winrate-min`` / ``--winrate-max`` — 勝率の範囲（%）。"
 
-#: ../../source/cli.rst:207
+#: ../../source/cli.rst:220
 msgid "``--cube`` — Valeur du videau."
 msgstr "``--cube`` — キューブの値。"
 
-#: ../../source/cli.rst:208
+#: ../../source/cli.rst:221
 msgid "``--score1`` / ``--score2`` — Scores des joueurs."
 msgstr "``--score1`` / ``--score2`` — プレイヤーのスコア。"
 
-#: ../../source/cli.rst:209
+#: ../../source/cli.rst:222
 msgid "``--match-length`` — Longueur du match."
 msgstr "``--match-length`` — マッチの長さ。"
 
-#: ../../source/cli.rst:210
+#: ../../source/cli.rst:223
 msgid "``--error-min`` — Erreur d'équité minimale."
 msgstr "``--error-min`` — 最小エクイティエラー。"
 
-#: ../../source/cli.rst:211
+#: ../../source/cli.rst:224
 msgid ""
 "``--move-error-min`` / ``--move-error-max`` — Erreur du coup joué "
 "(millipoints)."
 msgstr "``--move-error-min`` / ``--move-error-max`` — プレイされた手のエラー（ミリポイント）。"
 
-#: ../../source/cli.rst:212
+#: ../../source/cli.rst:225
 msgid "``--has-analysis`` — Uniquement les positions avec analyse."
 msgstr "``--has-analysis`` — 分析のあるポジションのみ。"
 
-#: ../../source/cli.rst:213
+#: ../../source/cli.rst:226
 msgid "``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2)."
 msgstr "``--off1-min`` / ``--off2-min`` — ベアオフした最小チェッカー数（プレイヤー1/2）。"
 
-#: ../../source/cli.rst:214
+#: ../../source/cli.rst:227
 msgid "``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules)."
 msgstr "``--match-ids`` — マッチIDでフィルタリングする（カンマ区切り）。"
 
-#: ../../source/cli.rst:215
+#: ../../source/cli.rst:228
 msgid ""
 "``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des "
 "virgules)."
 msgstr "``--tournament-ids`` — トーナメントIDでフィルタリングする（カンマ区切り）。"
 
-#: ../../source/cli.rst:216
+#: ../../source/cli.rst:229
+msgid ""
+"``--position-ids`` — Filtrer par IDs de positions : intervalle ``2,7`` "
+"(positions 2 à 7) ou liste explicite séparée par des points-virgules "
+"``5;10;15``."
+msgstr ""
+"``--position-ids`` — ポジションIDでフィルタリングする：範囲 ``2,7``\\ （ポジション2から7）"
+"、またはセミコロン区切りの明示的なリスト ``5;10;15``\\ 。"
+
+#: ../../source/cli.rst:232
 msgid ""
 "``--individual`` — Uniquement les positions importées seules, "
 "c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
 "import de match a apportées."
 msgstr "``--individual`` — 単独でインポートされた局面のみ。つまり、マッチのインポートで入ったものではなく、自分で追加した局面です。"
 
-#: ../../source/cli.rst:246
+#: ../../source/cli.rst:262
 msgid "list — Lister le contenu"
 msgstr "list — 内容を一覧表示する"
 
-#: ../../source/cli.rst:248
+#: ../../source/cli.rst:264
 msgid "Affiche le contenu de la base de données."
 msgstr "データベースの内容を表示します。"
 
-#: ../../source/cli.rst:254
+#: ../../source/cli.rst:270
 msgid "**Types:**"
 msgstr "**タイプ：**"
 
-#: ../../source/cli.rst:256
+#: ../../source/cli.rst:272
 msgid "``matches`` — Liste des matchs importés."
 msgstr "``matches`` — インポートされたマッチのリスト。"
 
-#: ../../source/cli.rst:257
+#: ../../source/cli.rst:273
 msgid "``tournaments`` — Liste des tournois."
 msgstr "``tournaments`` — トーナメントのリスト。"
 
-#: ../../source/cli.rst:258
+#: ../../source/cli.rst:274
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 msgstr "``positions`` — ポジションのリスト（デフォルトで10件に制限）。"
 
-#: ../../source/cli.rst:259
-msgid ""
-"``stats`` — Statistiques globales (positions, analyses, matchs, parties, "
-"coups)."
-msgstr "``stats`` — グローバル統計（ポジション、分析、マッチ、ゲーム、手）。"
-
 #: ../../source/cli.rst:275
+msgid ""
+"``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC"
+" (global, pions, videau), PR glissant sur les N dernières décisions, top "
+"blunders, répartition par action de videau et histogramme des magnitudes "
+"d'erreur."
+msgstr ""
+"``stats`` — パフォーマンス統計レポート：PR / Snowie ER / MWC"
+"（全体、チェッカー、ダブリングキューブ）、直近N手の決定に対する移動平均PR、トップブランダー"
+"、ダブリングキューブアクション別の内訳、エラーの大きさのヒストグラム。"
+
+#: ../../source/cli.rst:280
+msgid "**Options (type ``stats`` uniquement):**"
+msgstr "**オプション（\\ ``stats`` タイプのみ）：**"
+
+#: ../../source/cli.rst:282
+msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
+msgstr "``--metric`` — 表示するメトリック：\\ ``pr`` または ``mwc``\\ （デフォルト：\\ ``pr``\\ ）。"
+
+#: ../../source/cli.rst:283
+msgid "``--player`` — Restreindre au joueur indiqué."
+msgstr "``--player`` — 指定したプレイヤーに限定する。"
+
+#: ../../source/cli.rst:284
+msgid ""
+"``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
+" par des virgules)."
+msgstr "``--tournament`` — 1つまたは複数のトーナメントIDに限定する（カンマ区切り）。"
+
+#: ../../source/cli.rst:286
+msgid "``--from`` — Date de début (AAAA-MM-JJ)."
+msgstr "``--from`` — 開始日（YYYY-MM-DD）。"
+
+#: ../../source/cli.rst:287
+msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
+msgstr "``--to`` — 終了日（YYYY-MM-DD）。"
+
+#: ../../source/cli.rst:288
+msgid ""
+"``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
+"(défaut: ``all``)."
+msgstr ""
+"``--decision-type`` — 決定の種類：\\ ``all``\\ 、\\ ``checker`` または ``cube``\\ （デフォルト：\\ ``all``\\ ）。"
+
+#: ../../source/cli.rst:290
+msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
+msgstr "``--top-blunders`` — リストする最悪のエラーの数（デフォルト：10）。"
+
+#: ../../source/cli.rst:291 ../../source/cli.rst:356
+msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
+msgstr "``--format`` — 出力フォーマット：\\ ``text`` または ``json``\\ （デフォルト：\\ ``text``\\ ）。"
+
+#: ../../source/cli.rst:316
 msgid "match — Afficher un match"
 msgstr "match — マッチを表示する"
 
-#: ../../source/cli.rst:277
+#: ../../source/cli.rst:318
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr "インポートされたマッチのポジションと分析を表示します。"
 
-#: ../../source/cli.rst:286
+#: ../../source/cli.rst:327
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — 表示するマッチのID（必須）。"
 
-#: ../../source/cli.rst:287
+#: ../../source/cli.rst:328
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -538,69 +608,65 @@ msgstr ""
 "``--format`` — 出力フォーマット：\\ ``json``\\ 、\\ ``text``\\ 、または ``summary``\\ "
 "（デフォルト：\\ ``json``\\ ）。"
 
-#: ../../source/cli.rst:288
+#: ../../source/cli.rst:329
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — 出力ファイル（デフォルト：標準出力）。"
 
-#: ../../source/cli.rst:304
+#: ../../source/cli.rst:345
 msgid "info — Métadonnées de la base"
 msgstr "info — データベースのメタデータ"
 
-#: ../../source/cli.rst:306
+#: ../../source/cli.rst:347
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "データベースのメタデータと統計を表示します。"
 
-#: ../../source/cli.rst:315
-msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
-msgstr "``--format`` — 出力フォーマット：\\ ``text`` または ``json``\\ （デフォルト：\\ ``text``\\ ）。"
-
-#: ../../source/cli.rst:328
+#: ../../source/cli.rst:369
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — メタデータを編集する"
 
-#: ../../source/cli.rst:330
+#: ../../source/cli.rst:371
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "データベースのユーザー名または説明を編集します。"
 
-#: ../../source/cli.rst:339
+#: ../../source/cli.rst:380
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — 新しいユーザー名。"
 
-#: ../../source/cli.rst:340
+#: ../../source/cli.rst:381
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — 新しい説明。"
 
-#: ../../source/cli.rst:341
+#: ../../source/cli.rst:382
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — ユーザー名を削除する。"
 
-#: ../../source/cli.rst:342
+#: ../../source/cli.rst:383
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — 説明を削除する。"
 
-#: ../../source/cli.rst:344
+#: ../../source/cli.rst:385
 msgid "Au moins une option de modification est requise."
 msgstr "少なくとも1つの編集オプションが必要です。"
 
-#: ../../source/cli.rst:357
+#: ../../source/cli.rst:398
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — 整合性を確認する"
 
-#: ../../source/cli.rst:359
+#: ../../source/cli.rst:400
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
 msgstr "データベースの整合性を確認し、オプションでマッチとそのソースファイルを比較します。"
 
-#: ../../source/cli.rst:369
+#: ../../source/cli.rst:410
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — 確認するマッチのID。"
 
-#: ../../source/cli.rst:370
+#: ../../source/cli.rst:411
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — 比較するMATファイル（\\ ``--match`` と共に使用）。"
 
-#: ../../source/cli.rst:372
+#: ../../source/cli.rst:413
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -609,57 +675,62 @@ msgstr ""
 "``--match`` オプションなしの場合、コマンドはデータベースの一般統計を表示します。\\ ``--match`` "
 "を使用すると、マッチのデータを確認し、元のソースファイルと比較できます。"
 
-#: ../../source/cli.rst:390
+#: ../../source/cli.rst:431
 msgid "delete — Supprimer des données"
 msgstr "delete — データを削除する"
 
-#: ../../source/cli.rst:392
+#: ../../source/cli.rst:433
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "マッチとすべての関連データ（ゲーム、手、分析）を削除します。"
 
-#: ../../source/cli.rst:401
+#: ../../source/cli.rst:442
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — 削除の種類：\\ ``match``\\ （必須）。"
 
-#: ../../source/cli.rst:402
+#: ../../source/cli.rst:443
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — 削除する要素のID（必須）。"
 
-#: ../../source/cli.rst:403
+#: ../../source/cli.rst:444
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — 確認なしで削除する。"
 
-#: ../../source/cli.rst:416
+#: ../../source/cli.rst:457
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:419
+#: ../../source/cli.rst:460
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:433
+#: ../../source/cli.rst:474
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:441
+#: ../../source/cli.rst:482
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:452
+#: ../../source/cli.rst:493
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:454
+#: ../../source/cli.rst:495
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:455
+#: ../../source/cli.rst:496
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:457
+#: ../../source/cli.rst:498
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
+
+#~ msgid ""
+#~ "``stats`` — Statistiques globales (positions,"
+#~ " analyses, matchs, parties, coups)."
+#~ msgstr "``stats`` — グローバル統計（ポジション、分析、マッチ、ゲーム、手）。"
 

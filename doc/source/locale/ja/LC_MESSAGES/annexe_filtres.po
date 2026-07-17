@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: ja <LL@li.org>\n"
 "Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
@@ -25,21 +25,24 @@ msgstr "付録: フィルターの高度な使い方"
 
 #: ../../source/annexe_filtres.rst:8
 msgid ""
-"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
-" exploiter pleinement les fonctionnalités de recherche de positions."
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
+"souhaitent exploiter pleinement les fonctionnalités de recherche de "
+"positions."
 msgstr "このセクションは、ポジション検索機能を最大限に活用したいblunderDBの上級ユーザーを対象としています。"
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
-"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
-"utilisation permet de rechercher des positions spécifiques relativement "
-"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
-"commande est détaillée. La ligne de commande est accessible en appuyant sur "
-"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
-"rapidement des filtres et d'utiliser la bibliothèque de filtres."
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
+" utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne "
+"de commande est détaillée. La ligne de commande est accessible en "
+"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
+"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
+"filtres."
 msgstr ""
 "フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは\\"
-" ``SPACE``\\ キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
+" ``SPACE``\\ "
+"キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
 
 #: ../../source/annexe_filtres.rst:19
 msgid "Recherche de positions en ligne de commande"
@@ -53,7 +56,7 @@ msgstr "フィルターを使って検索するには、"
 msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
 msgstr "``TAB``\\ キーを押して検索パネルを開きます。"
 
-#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+#: ../../source/annexe_filtres.rst:24
 msgid "Editer la position courante."
 msgstr "現在のポジションを編集します。"
 
@@ -71,17 +74,17 @@ msgstr "``ENTER``\\ キーで検索を開始します。"
 
 #: ../../source/annexe_filtres.rst:30
 msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
-"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
-" risque de filtrer abusivement des structures de pions."
+"Ne pas oublier d'effacer la position courante avant de lancer une "
+"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
+"souhaitée, au risque de filtrer abusivement des structures de pions."
 msgstr ""
 "検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（\\ ``BACKSPACE``\\ "
 "キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。"
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la "
-":numref:`cmd_filter`."
+"La liste des filtres disponibles en ligne de commande est fournie dans la"
+" :numref:`cmd_filter`."
 msgstr "コマンドラインで利用可能なフィルターの一覧は :numref:`cmd_filter` に記載されています。"
 
 #: ../../source/annexe_filtres.rst:39
@@ -93,17 +96,16 @@ msgid ""
 "Il est possible d'affiner une recherche en cherchant parmi les positions "
 "actuellement filtrées. Cela permet de restreindre progressivement les "
 "résultats."
-msgstr ""
-"現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。"
+msgstr "現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。"
 
 #: ../../source/annexe_filtres.rst:44
 msgid ""
 "En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
-"préalable."
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
+"recherche préalable."
 msgstr ""
-"コマンドラインでは、\\ ``ss``\\ コマンドに続けてフィルターを入力します（例: ``ss nc``\\ 、\\ ``ss E>40``\\ "
-"）。\\ ``ss``\\ コマンドは、事前に検索を行った後に機能します。"
+"コマンドラインでは、\\ ``ss``\\ コマンドに続けてフィルターを入力します（例: ``ss nc``\\ 、\\ ``ss "
+"E>40``\\ ）。\\ ``ss``\\ コマンドは、事前に検索を行った後に機能します。"
 
 #: ../../source/annexe_filtres.rst:47
 msgid ""
@@ -128,50 +130,49 @@ msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "ライブラリにフィルターを追加するには、"
 
 #: ../../source/annexe_filtres.rst:58
-msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "``TAB``\\ を押して検索パネルを開きます。"
+msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
+msgstr "保存したい検索を実行します（\\ ``s``\\ コマンドに続けてフィルターを入力）。"
 
-#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
-msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-msgstr "``CTRL-K``\\ を押してフィルターライブラリを開きます。"
+#: ../../source/annexe_filtres.rst:59
+msgid ""
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Historique*."
+msgstr ""
+"検索パネル（\\ ``TAB``\\ または\\ ``CTRL-F``\\ ）を開き、\\ *履歴*\\ タブを選択します。"
 
 #: ../../source/annexe_filtres.rst:61
-msgid "Donner un nom au filtre."
-msgstr "フィルターに名前を付けます。"
+msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
+msgstr "保存したい検索のブックマークアイコンをクリックします。"
 
 #: ../../source/annexe_filtres.rst:62
-msgid "Editer la commande de recherche."
-msgstr "検索コマンドを編集します。"
+msgid "Donner un nom au filtre et valider."
+msgstr "フィルターに名前を付けて確定します。"
 
-#: ../../source/annexe_filtres.rst:63
-msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-msgstr "\"Add\"ボタンを使って検索コマンドを保存します。"
-
-#: ../../source/annexe_filtres.rst:66
-msgid ""
-"Lors de l'édition de la commande, il est possible d'utiliser les touches "
-"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-msgstr "コマンドの編集中は、\\ ``UP``\\ キーと\\ ``DOWN``\\ キーを使ってコマンド履歴をナビゲートできます。"
-
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:64
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "ライブラリに保存したフィルターを使用するには、"
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Enregistrés*."
+msgstr ""
+"検索パネル（\\ ``TAB``\\ または\\ ``CTRL-F``\\ ）を開き、\\ *保存済み*\\ タブを選択します。"
+
+#: ../../source/annexe_filtres.rst:68
 msgid "Rechercher le filtre souhaité."
 msgstr "目的のフィルターを検索します。"
 
-#: ../../source/annexe_filtres.rst:73
+#: ../../source/annexe_filtres.rst:69
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "フィルターをダブルクリックして検索を開始します。"
 
-#: ../../source/annexe_filtres.rst:76
+#: ../../source/annexe_filtres.rst:72
 msgid "Exemples"
 msgstr "例"
 
-#: ../../source/annexe_filtres.rst:78
-msgid ""
-"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+#: ../../source/annexe_filtres.rst:74
+msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "コマンドラインでのフィルターの使用例をいくつか紹介します:"
 
 #: ../../source/annexe_filtres.rst:1
@@ -366,7 +367,7 @@ msgstr "トーナメント2でのエラー"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:105
+#: ../../source/annexe_filtres.rst:101
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "現在の結果内での検索例:"
 
@@ -397,3 +398,23 @@ msgstr "``s tn1``\\ の後、キューブの判断を検索する"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
+
+#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+#~ msgstr "``TAB``\\ を押して検索パネルを開きます。"
+
+#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+#~ msgstr "``CTRL-K``\\ を押してフィルターライブラリを開きます。"
+
+#~ msgid "Editer la commande de recherche."
+#~ msgstr "検索コマンドを編集します。"
+
+#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+#~ msgstr "\"Add\"ボタンを使って検索コマンドを保存します。"
+
+#~ msgid ""
+#~ "Lors de l'édition de la commande, "
+#~ "il est possible d'utiliser les touches"
+#~ " ``HAUT`` et ``BAS`` pour naviguer "
+#~ "dans l'historique des commandes."
+#~ msgstr "コマンドの編集中は、\\ ``UP``\\ キーと\\ ``DOWN``\\ キーを使ってコマンド履歴をナビゲートできます。"
+

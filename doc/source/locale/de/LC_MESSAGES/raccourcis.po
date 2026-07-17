@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -30,8 +30,8 @@ msgid ""
 " utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
 msgstr ""
 "Die Tastenkürzel sind unabhängig von der Tastaturbelegung: Sie bleiben "
-"unabhängig von der verwendeten Belegung (AZERTY, QWERTY, QWERTZ usw.) auf "
-"die gleiche Weise erreichbar."
+"unabhängig von der verwendeten Belegung (AZERTY, QWERTY, QWERTZ usw.) auf"
+" die gleiche Weise erreichbar."
 
 #: ../../source/raccourcis.rst:15
 msgid "Base de données"
@@ -394,6 +394,58 @@ msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
 
 #: ../../source/raccourcis.rst:121
+msgid "Onglets de vues"
+msgstr "Ansichts-Reiter"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-T"
+msgstr "STRG-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Créer une nouvelle vue (copie de la vue courante)."
+msgstr "Eine neue Ansicht erstellen (Kopie der aktuellen Ansicht)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-W"
+msgstr "STRG-W"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer la vue courante."
+msgstr "Die aktuelle Ansicht schließen."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageUp, MAJ-J"
+msgstr "STRG-Bild-auf, UMSCHALT-J"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue précédente."
+msgstr "Vorherige Ansicht."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageDown, MAJ-K"
+msgstr "STRG-Bild-ab, UMSCHALT-K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue suivante."
+msgstr "Nächste Ansicht."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-1 … CTRL-9"
+msgstr "STRG-1 … STRG-9"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aller directement à la n-ième vue."
+msgstr "Direkt zur n-ten Ansicht springen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic sur l'onglet"
+msgstr "Doppelklick auf den Reiter"
+
+#: ../../source/raccourcis.rst:1
+msgid "Renommer la vue."
+msgstr "Die Ansicht umbenennen."
+
+#: ../../source/raccourcis.rst:138
 msgid "Ligne de commande"
 msgstr "Befehlszeile"
 
@@ -413,9 +465,17 @@ msgstr "UNTEN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Im Befehlsverlauf nach unten blättern."
 
-#: ../../source/raccourcis.rst:134
-msgid "Panneau historique de recherche"
-msgstr "Suchverlauf-Fenster"
+#: ../../source/raccourcis.rst:151
+msgid "Historique de recherche"
+msgstr "Suchverlauf"
+
+#: ../../source/raccourcis.rst:153
+msgid ""
+"L'historique de recherche est l'onglet *Historique* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
+msgstr ""
+"Der Suchverlauf ist der Reiter *Verlauf* des Suchfensters (*CTRL-F* oder "
+"*TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
@@ -430,32 +490,20 @@ msgid "Double-clic"
 msgstr "Doppelklick"
 
 #: ../../source/raccourcis.rst:1
-msgid "Exécuter la recherche et fermer le panneau."
-msgstr "Die Suche ausführen und das Fenster schließen."
+msgid "Exécuter la recherche."
+msgstr "Die Suche ausführen."
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
-msgstr "Vorherige Suche auswählen (neuer, darüber)."
+#: ../../source/raccourcis.rst:167
+msgid "Bibliothèque de filtres"
+msgstr "Filterbibliothek"
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-msgstr "Nächste Suche auswählen (älter, darunter)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
-
-#: ../../source/raccourcis.rst:1
+#: ../../source/raccourcis.rst:169
 msgid ""
-"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
-"panneau."
+"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
 msgstr ""
-"Die Suche abwählen. Wenn keine Suche ausgewählt ist, das Fenster "
-"schließen."
-
-#: ../../source/raccourcis.rst:150
-msgid "Panneau bibliothèque de filtres"
-msgstr "Filterbibliothek-Fenster"
+"Die Filterbibliothek ist der Reiter *Gespeichert* des Suchfensters "
+"(*CTRL-F* oder *TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -465,21 +513,7 @@ msgstr "Einen Filter auswählen/abwählen (Position anzeigen)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Die Suche des Filters ausführen."
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-msgstr "Vorherigen Filter auswählen (wenn ein Filter ausgewählt ist)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-msgstr "Nächsten Filter auswählen (wenn ein Filter ausgewählt ist)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
-msgstr ""
-"Den Filter abwählen. Wenn kein Filter ausgewählt ist, das Fenster "
-"schließen."
-
-#: ../../source/raccourcis.rst:166
+#: ../../source/raccourcis.rst:183
 msgid "Panneau d'analyse"
 msgstr "Analyse-Fenster"
 
@@ -506,10 +540,14 @@ msgid ""
 msgstr "Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
-#: ../../source/raccourcis.rst:182
+#: ../../source/raccourcis.rst:199
 msgid "Panneau des matchs"
 msgstr "Match-Fenster"
 
@@ -545,7 +583,7 @@ msgstr "Das ausgewählte Match löschen."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Abwählen/Fenster schließen."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:217
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-Fenster (verteiltes Wiederholen)"
 
@@ -586,4 +624,33 @@ msgid "Arrêter la révision et revenir à la liste des paquets (reprise possibl
 msgstr ""
 "Die Wiederholung beenden und zur Stapelliste zurückkehren (später "
 "fortsetzbar)."
+
+#~ msgid "Exécuter la recherche et fermer le panneau."
+#~ msgstr "Die Suche ausführen und das Fenster schließen."
+
+#~ msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+#~ msgstr "Vorherige Suche auswählen (neuer, darüber)."
+
+#~ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+#~ msgstr "Nächste Suche auswählen (älter, darunter)."
+
+#~ msgid ""
+#~ "Désélectionner la recherche. Si aucune "
+#~ "recherche sélectionnée, fermer le panneau."
+#~ msgstr ""
+#~ "Die Suche abwählen. Wenn keine Suche "
+#~ "ausgewählt ist, das Fenster schließen."
+
+#~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+#~ msgstr "Vorherigen Filter auswählen (wenn ein Filter ausgewählt ist)."
+
+#~ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+#~ msgstr "Nächsten Filter auswählen (wenn ein Filter ausgewählt ist)."
+
+#~ msgid ""
+#~ "Désélectionner le filtre. Si aucun "
+#~ "filtre sélectionné, fermer le panneau."
+#~ msgstr ""
+#~ "Den Filter abwählen. Wenn kein Filter"
+#~ " ausgewählt ist, das Fenster schließen."
 

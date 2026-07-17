@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -29,9 +29,9 @@ msgid ""
 "ils restent accessibles de la même manière quelle que soit la disposition"
 " utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
 msgstr ""
-"Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne pysyvät "
-"käytettävissä samalla tavalla riippumatta käytetystä asettelusta (AZERTY, "
-"QWERTY, QWERTZ jne.)."
+"Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne "
+"pysyvät käytettävissä samalla tavalla riippumatta käytetystä asettelusta "
+"(AZERTY, QWERTY, QWERTZ jne.)."
 
 #: ../../source/raccourcis.rst:15
 msgid "Base de données"
@@ -392,6 +392,58 @@ msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
 #: ../../source/raccourcis.rst:121
+msgid "Onglets de vues"
+msgstr "Näkymävälilehdet"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-T"
+msgstr "CTRL-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Créer une nouvelle vue (copie de la vue courante)."
+msgstr "Luo uusi näkymä (nykyisen näkymän kopio)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-W"
+msgstr "CTRL-W"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer la vue courante."
+msgstr "Sulje nykyinen näkymä."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageUp, MAJ-J"
+msgstr "CTRL-PageUp, SHIFT-J"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue précédente."
+msgstr "Edellinen näkymä."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageDown, MAJ-K"
+msgstr "CTRL-PageDown, SHIFT-K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue suivante."
+msgstr "Seuraava näkymä."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-1 … CTRL-9"
+msgstr "CTRL-1 … CTRL-9"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aller directement à la n-ième vue."
+msgstr "Siirry suoraan n:nteen näkymään."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic sur l'onglet"
+msgstr "Välilehden kaksoisnapsautus"
+
+#: ../../source/raccourcis.rst:1
+msgid "Renommer la vue."
+msgstr "Nimeä näkymä uudelleen."
+
+#: ../../source/raccourcis.rst:138
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -411,9 +463,16 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:134
-msgid "Panneau historique de recherche"
-msgstr "Hakuhistoriapaneeli"
+#: ../../source/raccourcis.rst:151
+msgid "Historique de recherche"
+msgstr "Hakuhistoria"
+
+#: ../../source/raccourcis.rst:153
+msgid ""
+"L'historique de recherche est l'onglet *Historique* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
+msgstr ""
+"Hakuhistoria on hakupaneelin (*CTRL-F* tai *TAB*) *Historique*-välilehti."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
@@ -428,30 +487,20 @@ msgid "Double-clic"
 msgstr "Kaksoisnapsautus"
 
 #: ../../source/raccourcis.rst:1
-msgid "Exécuter la recherche et fermer le panneau."
-msgstr "Suorita haku ja sulje paneeli."
+msgid "Exécuter la recherche."
+msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
-msgstr "Valitse edellinen haku (uudempi, ylempänä)."
+#: ../../source/raccourcis.rst:167
+msgid "Bibliothèque de filtres"
+msgstr "Suodatinkirjasto"
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-msgstr "Valitse seuraava haku (vanhempi, alempana)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr "Esc"
-
-#: ../../source/raccourcis.rst:1
+#: ../../source/raccourcis.rst:169
 msgid ""
-"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
-"panneau."
-msgstr "Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
-
-#: ../../source/raccourcis.rst:150
-msgid "Panneau bibliothèque de filtres"
-msgstr "Suodatinkirjastopaneeli"
+"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
+msgstr ""
+"Suodatinkirjasto on hakupaneelin (*CTRL-F* tai *TAB*) "
+"*Enregistrés*-välilehti."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -461,21 +510,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-msgstr "Valitse edellinen suodatin (kun suodatin on valittu)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-msgstr "Valitse seuraava suodatin (kun suodatin on valittu)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
-msgstr ""
-"Poista suodattimen valinta. Jos mitään suodatinta ei ole valittu, sulje "
-"paneeli."
-
-#: ../../source/raccourcis.rst:166
+#: ../../source/raccourcis.rst:183
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -504,10 +539,14 @@ msgstr ""
 "ottelunavigoinnissa)."
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:182
+#: ../../source/raccourcis.rst:199
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -543,7 +582,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:217
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -582,4 +621,32 @@ msgstr "Arvioi: Helppo."
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
+
+#~ msgid "Exécuter la recherche et fermer le panneau."
+#~ msgstr "Suorita haku ja sulje paneeli."
+
+#~ msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+#~ msgstr "Valitse edellinen haku (uudempi, ylempänä)."
+
+#~ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+#~ msgstr "Valitse seuraava haku (vanhempi, alempana)."
+
+#~ msgid ""
+#~ "Désélectionner la recherche. Si aucune "
+#~ "recherche sélectionnée, fermer le panneau."
+#~ msgstr "Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
+
+#~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+#~ msgstr "Valitse edellinen suodatin (kun suodatin on valittu)."
+
+#~ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+#~ msgstr "Valitse seuraava suodatin (kun suodatin on valittu)."
+
+#~ msgid ""
+#~ "Désélectionner le filtre. Si aucun "
+#~ "filtre sélectionné, fermer le panneau."
+#~ msgstr ""
+#~ "Poista suodattimen valinta. Jos mitään "
+#~ "suodatinta ei ole valittu, sulje "
+#~ "paneeli."
 

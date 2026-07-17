@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-15 02:17+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -791,8 +791,12 @@ msgid ""
 "base, le panneau des matchs est affiché d'emblée et la revue débute sur "
 "la première position. Les raccourcis clavier sont désormais indépendants "
 "de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
-"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
-":ref:`configuration`."
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des "
+"onglets de vues multiples : plusieurs espaces de travail indépendants "
+"(liste de positions, position courante, recherche) avec les raccourcis "
+"*CTRL-T* (nouvelle vue), *CTRL-W* (fermer), *CTRL-PageUp*/*CTRL-PageDown*"
+" (changer de vue) et renommage par double-clic sur l'onglet. Voir "
+":ref:`configuration` et :ref:`onglets_vues`."
 msgstr ""
 "Anzeigeeinstellungen für die Oberfläche im Konfigurationsfenster: ein "
 "Schieberegler zur Skalierung, um die gesamte Oberfläche zu vergrößern "
@@ -803,8 +807,13 @@ msgstr ""
 "Öffnen einer Datenbank wird das Matchs-Panel sofort angezeigt und die "
 "Durchsicht beginnt bei der ersten Stellung. Die Tastenkürzel sind nun "
 "unabhängig von der Tastaturbelegung (AZERTY, QWERTY, QWERTZ…). Behebung "
-"der XGID-Dekodierung (Jacoby/Beaver-Indikatoren und Doppler-Wert). Siehe "
-":ref:`configuration`."
+"der XGID-Dekodierung (Jacoby/Beaver-Indikatoren und Doppler-Wert). "
+"Hinzufügen der Reiter für mehrere Ansichten: mehrere unabhängige "
+"Arbeitsbereiche (Positionsliste, aktuelle Position, Suche) mit den "
+"Tastenkürzeln *CTRL-T* (neue Ansicht), *CTRL-W* (schließen), "
+"*CTRL-PageUp*/*CTRL-PageDown* (Ansicht wechseln) und Umbenennen per "
+"Doppelklick auf den Reiter. Siehe :ref:`configuration` und "
+":ref:`onglets_vues`."
 
 #: ../../source/index.rst:1
 msgid "0.27.0"
@@ -930,15 +939,74 @@ msgstr ""
 "Systems zerlegte Akzente). Siehe :ref:`headless`, :ref:`cmd_mode` und "
 ":ref:`telecharge_install`."
 
-#: ../../source/index.rst:154
+#: ../../source/index.rst:1
+msgid "0.29.0"
+msgstr "0.29.0"
+
+#: ../../source/index.rst:1
+msgid "18/07/2026"
+msgstr "18. Juli 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
+" (panneau Matchs) comme en ligne de commande, avec la route serveur "
+"correspondante — pratique pour rejouer un match dans un autre logiciel de"
+" backgammon. Recherche : nouveau discriminateur « dés exclus » (jeton "
+"``xD65``, plusieurs autorisés) qui écarte les positions dont le lancer "
+"correspond à un jet donné. Ouverture concurrente sécurisée : une base "
+"déjà ouverte en écriture dans une autre fenêtre de blunderDB s'ouvre "
+"désormais en lecture seule (navigation, recherche et analyse possibles, "
+"modifications désactivées, mention « [lecture seule] » dans la barre de "
+"titre) au lieu de risquer une corruption. Provenance des positions : hors"
+" mode match, la barre d'informations au-dessus du plateau indique le "
+"match — et son tournoi — d'où provient la position étudiée, avec un badge"
+" « +N » lorsqu'elle apparaît dans plusieurs matchs. Robustesse accrue "
+"face à l'environnement : repli automatique lorsqu'une police, le presse-"
+"papier ou la dernière base ouverte ne sont pas disponibles. Un "
+"rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la barre"
+" d'outils ou commande ``e``) rouvre le panneau d'analyse de la position "
+"affichée. Corrections notables : suppression d'un blocage à l'export de "
+"grosses bases, bouton « Aucun » de l'export qui n'exportait pas "
+"réellement aucun match, filtre par commentaire multi-mots, dédoublonnage "
+"de l'événement et du tournoi dans la barre d'informations, et divers "
+"ajustements d'affichage. Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et "
+":ref:`manuel`."
+msgstr ""
+"Export eines Matches im Jellyfish/gnubg-Format (``.mat``) sowohl über die "
+"Oberfläche (Matches-Panel) als auch über die Kommandozeile, mit der "
+"entsprechenden Server-Route — praktisch, um ein Match in einer anderen "
+"Backgammon-Software erneut durchzuspielen. Suche: neuer Diskriminator "
+"„ausgeschlossene Würfel“ (Befehlskürzel ``xD65``, mehrere erlaubt), der "
+"Positionen ausschließt, deren Wurf einem bestimmten Würfelwurf entspricht."
+" Sicheres gleichzeitiges Öffnen: Eine Datenbank, die bereits in einem "
+"anderen blunderDB-Fenster zum Schreiben geöffnet ist, wird nun "
+"schreibgeschützt geöffnet (Navigation, Suche und Analyse möglich, "
+"Änderungen deaktiviert, Hinweis „[schreibgeschützt]“ in der Titelleiste), "
+"statt eine Beschädigung zu riskieren. Herkunft der Positionen: Außerhalb "
+"des Match-Modus zeigt die Informationsleiste über dem Brett das Match — "
+"und dessen Turnier — an, aus dem die untersuchte Position stammt, mit "
+"einem Badge „+N“, wenn sie in mehreren Matches vorkommt. Erhöhte "
+"Robustheit gegenüber der Umgebung: automatischer Rückfall, wenn eine "
+"Schriftart, die Zwischenablage oder die zuletzt geöffnete Datenbank nicht "
+"verfügbar sind. Ein explizites Neuladen der Bibliothek (``CTRL-R``, "
+"Schaltfläche in der Werkzeugleiste oder Befehl ``e``) öffnet das "
+"Analysepanel der angezeigten Position erneut. Nennenswerte Korrekturen: "
+"Behebung einer Blockade beim Export großer Datenbanken, Schaltfläche "
+"„Keine“ des Exports, die tatsächlich kein Match exportierte, Filter nach "
+"mehrwortigem Kommentar, Entdopplung des Ereignisses und des Turniers in "
+"der Informationsleiste sowie verschiedene Anzeigeanpassungen. Siehe "
+":ref:`cmd_mode`, :ref:`panneau_matchs` und :ref:`manuel`."
+
+#: ../../source/index.rst:155
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -946,7 +1014,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes"
 " unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:193
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -962,31 +1030,31 @@ msgstr ""
 "Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -994,11 +1062,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -1006,19 +1074,19 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1027,7 +1095,7 @@ msgstr ""
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
 "danken:"
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:230
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1039,7 +1107,7 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:234
+#: ../../source/index.rst:235
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

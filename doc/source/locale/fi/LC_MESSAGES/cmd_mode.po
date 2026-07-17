@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 23:48+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -264,20 +264,23 @@ msgid "Afficher/écrire des commentaires."
 msgstr "Näytä/kirjoita kommentteja."
 
 #: ../../source/cmd_mode.rst:1
-msgid "filter, fl"
-msgstr "filter, fl"
-
-#: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
-msgstr "Näytä/piilota suodatinkirjasto."
-
-#: ../../source/cmd_mode.rst:1
 msgid "history, hi"
 msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher l'historique de recherche."
-msgstr "Näytä/piilota hakuhistoria."
+msgid ""
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
+msgstr ""
+"Avaa hakupaneeli (hakuhistoria löytyy sen *Historique*-välilehdeltä)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "stats, st"
+msgstr "stats, st"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/masquer le panneau de statistiques."
+msgstr "Näytä/piilota tilastopaneeli."
 
 #: ../../source/cmd_mode.rst:1
 msgid "match, ma"
@@ -485,6 +488,20 @@ msgstr ""
 "nopan arvo esiintyy jommassakummassa aseman nopassa)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "xD65"
+msgstr "xD65"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
+msgstr ""
+"Asemaa **ei** ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo "
+"ilmoitetaan tunnuksessa; toistettavissa useiden heittojen poissulkemiseksi "
+"(``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "nc"
 msgstr "nc"
 
@@ -502,7 +519,7 @@ msgstr "Asema tai sen peilikuva vastaa suodattimia."
 
 #: ../../source/cmd_mode.rst:1
 msgid "i"
-msgstr ""
+msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position a été importée seule, et non apportée par l'import d'un match."
@@ -1118,7 +1135,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:213
+#: ../../source/cmd_mode.rst:214
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1132,7 +1149,7 @@ msgstr ""
 "ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman "
 "heiton nopan kanssa)."
 
-#: ../../source/cmd_mode.rst:219
+#: ../../source/cmd_mode.rst:220
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1146,7 +1163,7 @@ msgstr ""
 "vähintään 10 pippiä edellä. `p50,70` : pelaaja on kilpajuoksussa 50–70 "
 "pippiä jäljessä."
 
-#: ../../source/cmd_mode.rst:225
+#: ../../source/cmd_mode.rst:226
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1158,7 +1175,7 @@ msgstr ""
 " pätee turnauksiin suodattimella ``tn`` ja asemiin suodattimella ``id`` "
 "(esim. ``s id5 id10`` asemille 5 ja 10)."
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:231
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1168,8 +1185,7 @@ msgstr ""
 "kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät "
 "vastaavien paneelien ID-sarakkeissa."
 
-#: ../../source/cmd_mode.rst:234
-#, python-format
+#: ../../source/cmd_mode.rst:235
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1183,7 +1199,7 @@ msgstr ""
 "vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa "
 "ja voittomahdollisuudet ovat vähintään 60%."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:245
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1195,7 +1211,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Tyhjentää komentohistorian."
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1205,4 +1221,13 @@ msgstr ""
 
 #~ msgid "blunders, bl"
 #~ msgstr ""
+
+#~ msgid "filter, fl"
+#~ msgstr "filter, fl"
+
+#~ msgid "Afficher/cacher la bibliothèque de filtres."
+#~ msgstr "Näytä/piilota suodatinkirjasto."
+
+#~ msgid "Afficher/cacher l'historique de recherche."
+#~ msgstr "Näytä/piilota hakuhistoria."
 

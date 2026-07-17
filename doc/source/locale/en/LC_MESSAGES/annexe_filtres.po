@@ -5,17 +5,17 @@
 # SPDX-FileCopyrightText: 2025 unger <kevin.unger@proton.me>
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 00:25+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
-"Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
@@ -24,26 +24,28 @@ msgstr "Annex: Advanced Filter Usage"
 
 #: ../../source/annexe_filtres.rst:8
 msgid ""
-"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
-" exploiter pleinement les fonctionnalités de recherche de positions."
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
+"souhaitent exploiter pleinement les fonctionnalités de recherche de "
+"positions."
 msgstr ""
-"This section is for advanced users of blunderDB who wish to fully leverage "
-"the position search features."
+"This section is for advanced users of blunderDB who wish to fully "
+"leverage the position search features."
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
-"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
-"utilisation permet de rechercher des positions spécifiques relativement "
-"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
-"commande est détaillée. La ligne de commande est accessible en appuyant sur "
-"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
-"rapidement des filtres et d'utiliser la bibliothèque de filtres."
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
+" utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne "
+"de commande est détaillée. La ligne de commande est accessible en "
+"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
+"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
+"filtres."
 msgstr ""
-"Filters are at the heart of position analysis in blunderDB. Their use allows"
-" for searching specific positions with great precision. In this section, the"
-" use of filters through the command line is detailed. The command line can "
-"be accessed by pressing the ``SPACE`` key. It allows users to quickly "
-"combine filters and use the filter library with ease."
+"Filters are at the heart of position analysis in blunderDB. Their use "
+"allows for searching specific positions with great precision. In this "
+"section, the use of filters through the command line is detailed. The "
+"command line can be accessed by pressing the ``SPACE`` key. It allows "
+"users to quickly combine filters and use the filter library with ease."
 
 #: ../../source/annexe_filtres.rst:19
 msgid "Recherche de positions en ligne de commande"
@@ -57,7 +59,7 @@ msgstr "To perform a search using filters,"
 msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
 msgstr "Press the ``TAB`` key to open the search panel."
 
-#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+#: ../../source/annexe_filtres.rst:24
 msgid "Editer la position courante."
 msgstr "Edit the current position."
 
@@ -75,9 +77,9 @@ msgstr "Start the search with the ``ENTER`` key."
 
 #: ../../source/annexe_filtres.rst:30
 msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
-"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
-" risque de filtrer abusivement des structures de pions."
+"Ne pas oublier d'effacer la position courante avant de lancer une "
+"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
+"souhaitée, au risque de filtrer abusivement des structures de pions."
 msgstr ""
 "Don't forget to clear the current position before starting a search "
 "(``BACKSPACE`` key), if it isn't the one you want, to avoid excessively "
@@ -85,8 +87,8 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la "
-":numref:`cmd_filter`."
+"La liste des filtres disponibles en ligne de commande est fournie dans la"
+" :numref:`cmd_filter`."
 msgstr ""
 "The list of available filters in the command line is provided in "
 ":numref:`cmd_filter`."
@@ -101,25 +103,26 @@ msgid ""
 "actuellement filtrées. Cela permet de restreindre progressivement les "
 "résultats."
 msgstr ""
-"It is possible to refine a search by searching among the currently filtered "
-"positions. This allows you to progressively narrow down the results."
+"It is possible to refine a search by searching among the currently "
+"filtered positions. This allows you to progressively narrow down the "
+"results."
 
 #: ../../source/annexe_filtres.rst:44
 msgid ""
 "En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
-"préalable."
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
+"recherche préalable."
 msgstr ""
-"In the command line, use the ``ss`` command followed by filters (e.g.: ``ss "
-"nc``, ``ss E>40``). The ``ss`` command works after a prior search."
+"In the command line, use the ``ss`` command followed by filters (e.g.: "
+"``ss nc``, ``ss E>40``). The ``ss`` command works after a prior search."
 
 #: ../../source/annexe_filtres.rst:47
 msgid ""
 "La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
 "\"Search in current results\" pour la même fonctionnalité."
 msgstr ""
-"The search window (``CTRL-F``) also offers a \"Search in current results\" "
-"checkbox for the same functionality."
+"The search window (``CTRL-F``) also offers a \"Search in current "
+"results\" checkbox for the same functionality."
 
 #: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
@@ -138,52 +141,50 @@ msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "To add a filter to the library,"
 
 #: ../../source/annexe_filtres.rst:58
-msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "Press ``TAB`` to open the search panel."
+msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
+msgstr "Start the search you want to keep (``s`` command followed by filters)."
 
-#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
-msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-msgstr "Open the filter library by pressing ``CTRL-K``."
+#: ../../source/annexe_filtres.rst:59
+msgid ""
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Historique*."
+msgstr ""
+"Open the search panel (``TAB`` or ``CTRL-F``) and select the *History* "
+"tab."
 
 #: ../../source/annexe_filtres.rst:61
-msgid "Donner un nom au filtre."
-msgstr "Give a name to the filter."
+msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
+msgstr "Click the bookmark icon of the search to save."
 
 #: ../../source/annexe_filtres.rst:62
-msgid "Editer la commande de recherche."
-msgstr "Edit the search command."
+msgid "Donner un nom au filtre et valider."
+msgstr "Give the filter a name and confirm."
 
-#: ../../source/annexe_filtres.rst:63
-msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-msgstr "Save the search command using the \"Add\" button."
-
-#: ../../source/annexe_filtres.rst:66
-msgid ""
-"Lors de l'édition de la commande, il est possible d'utiliser les touches "
-"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-msgstr ""
-"While editing the command, you can use the ``UP`` and ``DOWN`` arrow keys to"
-" navigate through the command history."
-
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:64
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "To use a filter saved in the library,"
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Enregistrés*."
+msgstr ""
+"Open the search panel (``TAB`` or ``CTRL-F``) and select the *Saved* tab."
+
+#: ../../source/annexe_filtres.rst:68
 msgid "Rechercher le filtre souhaité."
 msgstr "Search for the desired filter."
 
-#: ../../source/annexe_filtres.rst:73
+#: ../../source/annexe_filtres.rst:69
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Double-click on the filter to start the search."
 
-#: ../../source/annexe_filtres.rst:76
+#: ../../source/annexe_filtres.rst:72
 msgid "Exemples"
 msgstr "Examples"
 
-#: ../../source/annexe_filtres.rst:78
-msgid ""
-"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+#: ../../source/annexe_filtres.rst:74
+msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Here are some examples of using filters in the command line:"
 
 #: ../../source/annexe_filtres.rst:1
@@ -378,7 +379,7 @@ msgstr "Errors in tournament 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:105
+#: ../../source/annexe_filtres.rst:101
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Examples of searching within current results:"
 
@@ -415,3 +416,27 @@ msgstr "ss d"
 
 #~ msgid "Basculer dans le mode EDIT."
 #~ msgstr "Switch to EDIT mode."
+
+#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+#~ msgstr "Press ``TAB`` to open the search panel."
+
+#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+#~ msgstr "Open the filter library by pressing ``CTRL-K``."
+
+#~ msgid "Editer la commande de recherche."
+#~ msgstr "Edit the search command."
+
+#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+#~ msgstr "Save the search command using the \"Add\" button."
+
+#~ msgid ""
+#~ "Lors de l'édition de la commande, "
+#~ "il est possible d'utiliser les touches"
+#~ " ``HAUT`` et ``BAS`` pour naviguer "
+#~ "dans l'historique des commandes."
+#~ msgstr ""
+#~ "While editing the command, you can "
+#~ "use the ``UP`` and ``DOWN`` arrow "
+#~ "keys to navigate through the command "
+#~ "history."
+

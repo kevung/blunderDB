@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-15 02:17+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -478,7 +478,6 @@ msgid "20/04/2026"
 msgstr "2026/04/20"
 
 #: ../../source/index.rst:1
-#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -709,11 +708,18 @@ msgid ""
 "base, le panneau des matchs est affiché d'emblée et la revue débute sur "
 "la première position. Les raccourcis clavier sont désormais indépendants "
 "de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
-"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
-":ref:`configuration`."
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des "
+"onglets de vues multiples : plusieurs espaces de travail indépendants "
+"(liste de positions, position courante, recherche) avec les raccourcis "
+"*CTRL-T* (nouvelle vue), *CTRL-W* (fermer), *CTRL-PageUp*/*CTRL-PageDown*"
+" (changer de vue) et renommage par double-clic sur l'onglet. Voir "
+":ref:`configuration` et :ref:`onglets_vues`."
 msgstr ""
 "設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。XGID"
-" のデコードを修正（Jacoby/Beaver フラグとキューブの値）。:ref:`configuration` を参照。"
+" のデコードを修正（Jacoby/Beaver フラグとキューブの値）。複数ビュータブを追加：独立した複数のワークスペース（ポジションリスト、現在のポジション、検索）を、\\ "
+"*CTRL-T*\\ （新しいビュー）、\\ *CTRL-W*\\ （閉じる）、\\ "
+"*CTRL-PageUp*/*CTRL-PageDown*\\ （ビューの切り替え）のショートカットで操作でき、タブをダブルクリックして名前を変更できます。:ref:`configuration`"
+" および :ref:`onglets_vues` を参照。"
 
 #: ../../source/index.rst:1
 msgid "0.27.0"
@@ -746,8 +752,9 @@ msgstr ""
 " ``blunders``\\ （エイリアス ``bl``\\ ）。オプションの数値で件数を選べます（\\ ``bl 50``\\ "
 "）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター ``pl'名前'``\\ "
 "。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。サーバー（ヘッドレス）モード：新しいメソッド "
-"``matches.movesByMatch``\\ （対局の全手を1回の呼び出しで取得）と ``positions.epc``\\ （両プレイヤーの "
-"Effective Pip Count）。:ref:`panneau_anki` および :ref:`cmd_mode` を参照。"
+"``matches.movesByMatch``\\ （対局の全手を1回の呼び出しで取得）と ``positions.epc``\\ "
+"（両プレイヤーの Effective Pip Count）。:ref:`panneau_anki` および :ref:`cmd_mode` "
+"を参照。"
 
 #: ../../source/index.rst:1
 msgid "0.28.0"
@@ -805,23 +812,70 @@ msgstr ""
 "）、カードの一時停止・保留・削除（\\ ``anki.suspendCard``\\ 、\\ ``anki.buryCard``\\ 、\\ "
 "``anki.removeCard``\\ ）、そしてデッキの目標保持率を観測された成功率に自動調整する（\\ "
 "``anki.optimizeParams``\\ ）；複数ユーザー向けPostgreSQL環境でテナントのデータを完全に削除する新しいメソッド "
-"``tenant.purge``\\ ；フィルタリング／ソート／ページネーションに対応した新しいメソッド ``matches.list``\\ 、および"
-" 指定したマッチの一覧に限定した PR/MWC 指標を返す ``stats.matchBadges``\\ "
+"``tenant.purge``\\ ；フィルタリング／ソート／ページネーションに対応した新しいメソッド ``matches.list``\\ "
+"、および 指定したマッチの一覧に限定した PR/MWC 指標を返す ``stats.matchBadges``\\ "
 "。Linuxネイティブ配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する ``.deb``/``.rpm`` "
 "パッケージ。インポート：マッチをインポートすると、マッチタブが表示され、インポートされたポジションがすぐに確認できるようになりました；単一のポジション（XGPファイル、BGBlitzポジション、ポジションテキストファイル、貼り付けたポジション、またはポジションの一括インポート）をインポートした場合は、マッチタブではなく、インポートしたポジションが表示された解析タブが直接開くようになりました；macOSからフランス語またはドイツ語のeXtreme"
 " "
 "Gammon解析を貼り付けると空になっていた不具合（システムのクリップボードによりアクセント記号が分解されていたため）を修正しました。:ref:`headless`、:ref:`cmd_mode`、および"
 " :ref:`telecharge_install` を参照。"
 
-#: ../../source/index.rst:154
+#: ../../source/index.rst:1
+msgid "0.29.0"
+msgstr "0.29.0"
+
+#: ../../source/index.rst:1
+msgid "18/07/2026"
+msgstr "2026/07/18"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
+" (panneau Matchs) comme en ligne de commande, avec la route serveur "
+"correspondante — pratique pour rejouer un match dans un autre logiciel de"
+" backgammon. Recherche : nouveau discriminateur « dés exclus » (jeton "
+"``xD65``, plusieurs autorisés) qui écarte les positions dont le lancer "
+"correspond à un jet donné. Ouverture concurrente sécurisée : une base "
+"déjà ouverte en écriture dans une autre fenêtre de blunderDB s'ouvre "
+"désormais en lecture seule (navigation, recherche et analyse possibles, "
+"modifications désactivées, mention « [lecture seule] » dans la barre de "
+"titre) au lieu de risquer une corruption. Provenance des positions : hors"
+" mode match, la barre d'informations au-dessus du plateau indique le "
+"match — et son tournoi — d'où provient la position étudiée, avec un badge"
+" « +N » lorsqu'elle apparaît dans plusieurs matchs. Robustesse accrue "
+"face à l'environnement : repli automatique lorsqu'une police, le presse-"
+"papier ou la dernière base ouverte ne sont pas disponibles. Un "
+"rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la barre"
+" d'outils ou commande ``e``) rouvre le panneau d'analyse de la position "
+"affichée. Corrections notables : suppression d'un blocage à l'export de "
+"grosses bases, bouton « Aucun » de l'export qui n'exportait pas "
+"réellement aucun match, filtre par commentaire multi-mots, dédoublonnage "
+"de l'événement et du tournoi dans la barre d'informations, et divers "
+"ajustements d'affichage. Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et "
+":ref:`manuel`."
+msgstr ""
+"インターフェース（マッチパネル）からもコマンドラインからも、マッチをJellyfish/gnubg形式（\\ ``.mat``\\ "
+"）でエクスポートできるようになりました。対応するサーバールートも追加 —— "
+"別のバックギャモンソフトでマッチを再生するのに便利です。検索：出目が指定したロールに一致する局面を除外する新しい「除外ダイス」判別子（\\ "
+"``xD65``\\ トークン、複数指定可）。安全な同時オープン：別のblunderDBウィンドウで既に書き込みモードで開かれているデータベースは、"
+"破損の危険を冒す代わりに、読み取り専用で開くようになりました（ナビゲーション、検索、解析は可能、編集は無効、タイトルバーに「[読み取り専用]」と表示）。"
+"局面の由来：マッチモード以外では、ボード上部の情報バーに、研究中の局面がどのマッチ ―― およびそのトーナメント ―― "
+"から来たのかが表示され、複数のマッチに現れる場合は「+N」バッジが付きます。環境に対する堅牢性の向上：フォント、クリップボード、"
+"または最後に開いたデータベースが利用できない場合の自動フォールバック。ライブラリの明示的な再読み込み（\\ ``CTRL-R``\\ "
+"、ツールバーのボタン、または ``e`` コマンド）で、表示中の局面の解析パネルが再び開きます。主な修正：大規模なデータベースの"
+"エクスポート時のフリーズを解消、実際にはどのマッチもエクスポートしていなかったエクスポートの「なし」ボタン、複数単語によるコメントフィルター、"
+"情報バーでのイベントとトーナメントの重複排除、およびさまざまな表示の調整。:ref:`cmd_mode`、:ref:`panneau_matchs` "
+"および :ref:`manuel` を参照。"
+
+#: ../../source/index.rst:155
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:188
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -829,7 +883,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:193
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -839,59 +893,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:200
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -899,7 +953,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:230
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -909,7 +963,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:234
+#: ../../source/index.rst:235
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

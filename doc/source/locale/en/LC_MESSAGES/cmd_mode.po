@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 23:48+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -263,20 +263,23 @@ msgid "Afficher/écrire des commentaires."
 msgstr "Show/write comments."
 
 #: ../../source/cmd_mode.rst:1
-msgid "filter, fl"
-msgstr "filter, fl"
-
-#: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
-msgstr "Show/hide the filter library."
-
-#: ../../source/cmd_mode.rst:1
 msgid "history, hi"
 msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher l'historique de recherche."
-msgstr "Show/hide the search history."
+msgid ""
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
+msgstr ""
+"Open the search panel (the search history is in its *History* tab)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "stats, st"
+msgstr "stats, st"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/masquer le panneau de statistiques."
+msgstr "Show/hide the statistics panel."
 
 #: ../../source/cmd_mode.rst:1
 msgid "match, ma"
@@ -483,6 +486,20 @@ msgstr ""
 " value appears on either die of the position)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "xD65"
+msgstr "xD65"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
+msgstr ""
+"The position was **not** played with the 6-5 roll (any order). The value "
+"is given in the token; repeatable to exclude several rolls (``xD65 "
+"xD54``)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "nc"
 msgstr "nc"
 
@@ -500,7 +517,7 @@ msgstr "The position or the mirror one meets the filters."
 
 #: ../../source/cmd_mode.rst:1
 msgid "i"
-msgstr ""
+msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position a été importée seule, et non apportée par l'import d'un match."
@@ -1120,7 +1137,7 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. pl'Alice'). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:213
+#: ../../source/cmd_mode.rst:214
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1133,7 +1150,7 @@ msgstr ""
 " filter ignores the second die: only the first die's value is used to "
 "match positions (against either die of the roll)."
 
-#: ../../source/cmd_mode.rst:219
+#: ../../source/cmd_mode.rst:220
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1147,7 +1164,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:225
+#: ../../source/cmd_mode.rst:226
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1159,7 +1176,7 @@ msgstr ""
 " to tournaments with ``tn`` and to positions with ``id`` (e.g. ``s id5 "
 "id10`` for positions 5 and 10)."
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:231
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1169,8 +1186,7 @@ msgstr ""
 "that tournament. Match and tournament IDs are visible in the ID columns "
 "of the corresponding panels."
 
-#: ../../source/cmd_mode.rst:234
-#, python-format
+#: ../../source/cmd_mode.rst:235
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1184,7 +1200,7 @@ msgstr ""
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:245
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1196,7 +1212,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Clear the command history."
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1590,4 +1606,13 @@ msgstr ""
 
 #~ msgid "blunders, bl"
 #~ msgstr ""
+
+#~ msgid "filter, fl"
+#~ msgstr "filter, fl"
+
+#~ msgid "Afficher/cacher la bibliothèque de filtres."
+#~ msgstr "Show/hide the filter library."
+
+#~ msgid "Afficher/cacher l'historique de recherche."
+#~ msgstr "Show/hide the search history."
 

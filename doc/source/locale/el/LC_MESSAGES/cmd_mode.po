@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 23:48+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -264,20 +264,24 @@ msgid "Afficher/écrire des commentaires."
 msgstr "Εμφάνιση/εγγραφή σχολίων."
 
 #: ../../source/cmd_mode.rst:1
-msgid "filter, fl"
-msgstr "filter, fl"
-
-#: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
-msgstr "Εμφάνιση/απόκρυψη της βιβλιοθήκης φίλτρων."
-
-#: ../../source/cmd_mode.rst:1
 msgid "history, hi"
 msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher l'historique de recherche."
-msgstr "Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης."
+msgid ""
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
+msgstr ""
+"Ανοίγει τον πίνακα αναζήτησης (το ιστορικό αναζήτησης βρίσκεται στην καρτέλα "
+"του *Historique*)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "stats, st"
+msgstr "stats, st"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/masquer le panneau de statistiques."
+msgstr "Εμφάνιση/απόκρυψη του πίνακα στατιστικών."
 
 #: ../../source/cmd_mode.rst:1
 msgid "match, ma"
@@ -492,6 +496,20 @@ msgstr ""
 "ζαριού εμφανίζεται σε ένα από τα δύο ζάρια της θέσης)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "xD65"
+msgstr "xD65"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
+msgstr ""
+"Η θέση **δεν** παίχτηκε με τη ζαριά 6-5 (ανεξαρτήτως σειράς). Η τιμή "
+"αναγράφεται στο διακριτικό· επαναλήψιμο για τον αποκλεισμό πολλών ζαριών "
+"(``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "nc"
 msgstr "nc"
 
@@ -509,7 +527,7 @@ msgstr "Η θέση ή η κατοπτρική της επαληθεύει τα 
 
 #: ../../source/cmd_mode.rst:1
 msgid "i"
-msgstr ""
+msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position a été importée seule, et non apportée par l'import d'un match."
@@ -1131,7 +1149,7 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:213
+#: ../../source/cmd_mode.rst:214
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1145,7 +1163,7 @@ msgstr ""
 "ζαριού χρησιμοποιείται για την αντιστοίχιση των θέσεων (σε οποιοδήποτε "
 "από τα δύο ζάρια της ζαριάς)."
 
-#: ../../source/cmd_mode.rst:219
+#: ../../source/cmd_mode.rst:220
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1159,7 +1177,7 @@ msgstr ""
 "pips μπροστά στην κούρσα. `p50,70` : ο παίκτης είναι μεταξύ 50 και 70 "
 "pips πίσω στην κούρσα."
 
-#: ../../source/cmd_mode.rst:225
+#: ../../source/cmd_mode.rst:226
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1171,7 +1189,7 @@ msgstr ""
 "ίδια αρχή ισχύει για τα τουρνουά με ``tn`` και για τις θέσεις με ``id`` "
 "(π.χ. ``s id5 id10`` για τις θέσεις 5 και 10)."
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:231
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1181,7 +1199,7 @@ msgstr ""
 "τους αγώνες του εν λόγω τουρνουά. Τα αναγνωριστικά των αγώνων και των "
 "τουρνουά είναι ορατά στις στήλες ID των αντίστοιχων πάνελ."
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:235
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1197,7 +1215,7 @@ msgstr ""
 "τουλάχιστον 10 πούλια στη ζώνη, και ο αντίπαλος έχει μεταξύ 2 και 3 "
 "οπίσθια πούλια."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:245
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -1209,7 +1227,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Διαγράφει το ιστορικό εντολών."
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:254
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1219,4 +1237,13 @@ msgstr ""
 
 #~ msgid "blunders, bl"
 #~ msgstr ""
+
+#~ msgid "filter, fl"
+#~ msgstr "filter, fl"
+
+#~ msgid "Afficher/cacher la bibliothèque de filtres."
+#~ msgstr "Εμφάνιση/απόκρυψη της βιβλιοθήκης φίλτρων."
+
+#~ msgid "Afficher/cacher l'historique de recherche."
+#~ msgstr "Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης."
 
