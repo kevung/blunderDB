@@ -1,6 +1,6 @@
 # blunderDB v2.0.0 Optimization — Task Sheets
 
-Hierarchical breakdown of `DATABASE_OPTIMIZATION_PLAN.md`. Each sheet is an independent execution unit, sized ≤500 lines, with checkboxes keyed to concrete `file:line` anchors.
+Hierarchical breakdown of `doc/archive/DATABASE_OPTIMIZATION_PLAN.md` (archived since completion). Each sheet is an independent execution unit, sized ≤500 lines, with checkboxes keyed to concrete `file:line` anchors.
 
 ## Execution order
 

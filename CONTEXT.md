@@ -56,3 +56,19 @@ Free text attached to a Position. The model allows several per Position (match i
 one row per note found in the source file), but the GUI treats a Position as having a
 single comment: it loads and edits whichever row comes back first. Known debt — a Position
 that arrived with two comments shows only one of them, arbitrarily.
+
+### Who owns the data
+
+**Tenant**:
+The owner of a set of Positions, Matches, Collections and decks. On the desktop
+there is exactly one, implicit Tenant: the person whose database file it is. In
+server mode each caller is a distinct Tenant, and nothing one Tenant stores is
+ever visible to another. Deduplication, the Orphan purge, and every other rule
+in this glossary apply *within* one Tenant — the same board position stored by
+two Tenants is two rows, not one.
+_Avoid_: user, account, customer
+
+**Scope**:
+The storage layer's spelling of Tenant: every persistence call carries a scope,
+and the empty scope denotes the desktop's single implicit Tenant. "Scope" and
+"Tenant" name the same concept; prefer Tenant in prose and design discussion.

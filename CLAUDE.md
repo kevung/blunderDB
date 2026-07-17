@@ -2,41 +2,62 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+It deliberately holds **working rules and invariants, not an architecture tour**. The
+architecture is documented where it lives: the package doc of
+`pkg/blunderdb/storage/storage.go` (persistence contract and backends), `CONTEXT.md`
+(domain glossary), `docs/adr/` (decisions), `doc/source/mode_headless.rst` (server
+mode, user-facing), and `CLI_USAGE.md` (CLI reference). Read those before changing
+the subsystem they describe.
+
 ## Project Overview
 
-blunderDB is a backgammon blunder analysis tool. It is a **Wails v2 desktop application** (Go backend + Svelte 5 / Vite frontend) distributed as a single binary that runs in either GUI or CLI mode depending on the invocation.
+blunderDB is a backgammon blunder analysis tool: a **Wails v2 desktop application**
+(Go backend + Svelte 5 / Vite frontend) whose single binary also runs headless. One
+executable, five modes, dispatched on `os.Args[1]` in `main.go`:
+
+- No args → **GUI** (Wails desktop app)
+- `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
+- `call` → generic in-process dispatcher over the same handlers (scripting/tests)
+- `migrate` → copy a SQLite database into PostgreSQL under a tenant
+- `create|import|export|list|match|verify|delete|help|version|info|edit|search` → **CLI**
 
 ## Build & Run
 
 All commands run from the repo root unless stated.
 
 ```bash
-# Run the GUI in dev mode (hot-reload frontend via Vite)
-wails dev
-
-# Production build → build/bin/blunderDB
-wails build
-
-# Linux/Windows need the webkit2_41 tag to match webkit2gtk-4.1
-wails build -tags webkit2_41
-
-# Frontend alone (from frontend/)
-cd frontend && npm install && npm run dev     # or: npm run build
+make dev      # wails dev  -tags webkit2_41  (hot-reload frontend via Vite)
+make build    # wails build -tags webkit2_41 → build/bin/blunderDB
 ```
 
-CI (`.github/workflows/build.yml`) builds on ubuntu-latest (webkit2gtk-4.1), ubuntu-22.04 (webkit2gtk-4.0, no tag), windows-latest and macos-latest (`darwin/universal`). Go 1.25.0, Node v23.4.0, Wails v2.10.1.
+The `webkit2_41` tag matches webkit2gtk-4.1 (Arch, ubuntu-latest); plain
+`wails build` targets webkit2gtk-4.0 (ubuntu-22.04 in CI). CI
+(`.github/workflows/build.yml`) builds ubuntu-latest, ubuntu-22.04,
+windows-latest, macos-latest (`darwin/universal`). Toolchain: Go 1.25.12 in CI
+(`go.mod` says 1.25.10), Node 23.4.0, Wails CLI v2.10.2 (library v2.10.1).
 
-## Running the binary
+`cmd/serve/` builds the daemon alone — pure Go, CGO disabled, no Wails — for the
+container image (`Dockerfile.serve`).
 
-The same binary dispatches on `os.Args[1]` (see `main.go`):
-- No args → GUI mode (Wails)
-- First arg is `create|import|export|list|match|verify|delete|help|version|info|edit|search` → headless CLI
+## Tests
 
-Full CLI reference lives in `CLI_USAGE.md`. Example:
 ```bash
-./blunderDB import --db mymatches.db --type match --file game.xg
-./blunderDB list --db mymatches.db --type stats
+go test ./...                     # all Go tests
+go test -run TestNameRegex ./...  # single test
+cd frontend && npm test           # vitest
 ```
+
+CI enforces more than the bare suites — run these before pushing anything nontrivial:
+`go vet ./...`, `go test -race`, `golangci-lint` (v2.11.4, config `.golangci.yml`),
+`govulncheck`, and on the frontend `npm run lint`, `npm run format:check` (prettier
+**fails the build**), `npm run test:e2e` (Playwright).
+
+Most Go tests live beside the code (`pkg/blunderdb/database/`,
+`pkg/blunderdb/storage/…`, `internal/cli/`, `./tests/`). Fixtures live under
+`testdata/`; the EPC engine embeds `pkg/blunderdb/engine/gnubg_os6.bd`. The
+`database` and `cli` test packages `chdir` to the repo root via `TestMain` so
+repo-root-relative fixture paths resolve. Both storage backends must pass the shared
+contract suite in `pkg/blunderdb/storage/storagetest/`.
 
 ## Claude Code setup
 
@@ -86,106 +107,115 @@ git branch -d feat/<feature>
 git worktree list
 ```
 
-## Tests
-
-```bash
-go test ./...                     # all Go tests
-go test ./tests/...               # the secondary test package
-go test -run TestNameRegex ./...  # single test
-```
-
-Tests live in the package directories alongside the code they exercise — most are in `pkg/blunderdb/database/` (e.g. `migration_test.go`, `export_test.go`, `gnubg_import_test.go`), with others in `pkg/blunderdb/engine/`, `internal/cli/`, and `./tests/` (integration-style). Many tests rely on fixture files under `testdata/`, `gnubg/`, and on the embedded `gnubg_os6.bd` bearoff database; the `database` and `cli` test packages `chdir` to the repo root via a `TestMain` so those repo-root-relative paths resolve.
+**A user-visible feature ships with its documentation.** Any new command, shortcut,
+panel, or filter must land in the same branch as its `doc/source/raccourcis.rst` /
+`doc/source/manuel.rst` / `doc/source/cmd_mode.rst` entries (French source only —
+the 8 translations are refreshed at release time). Undocumented features have gone
+undiscovered for whole release cycles; don't add to that pile.
 
 ## Documentation
 
-Sphinx docs live under `doc/` (French + English). Build with `cd doc && python build.py` (requires `doc/requirements.txt` and LaTeX for the PDF build). GitHub Pages publishes from `gh-pages` on tag pushes.
+Sphinx docs live under `doc/` in **nine languages**: French is the source,
+`doc/source/locale/` holds gettext translations (en, de, el, es, fi, it, ja, ru).
+Build with `cd doc && python build.py` (requires `doc/requirements.txt` and LaTeX
+for the PDF build). GitHub Pages publishes from `gh-pages` on tag pushes. Historical
+design notes live in `doc/archive/` — consult when touching the related subsystem,
+but they do not reflect current code.
+
+**Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
+Split long documents into a README index + per-topic files.
 
 ## Release Process
 
-Use `scripts/release.sh <version>` — it updates the version string in three places (`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, optionally `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the tag triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. The `DatabaseVersion` constant in `pkg/blunderdb/domain/` is independent — bump it only when the SQLite schema changes (migrations live in `pkg/blunderdb/database/db_migration.go`).
+Use `scripts/release.sh <version>` — it updates the version in **four** places
+(`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, `wails.json`, optionally
+the `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the tag
+triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
+the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 
-## Architecture
+The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.13.0**) is
+independent of the app version — bump it only when the SQLite schema changes.
 
-### Backend (Go)
+## Architecture in one screen
 
-The backend is split into importable packages under `pkg/blunderdb/` and
-`internal/`, plus a thin `package main` at the repo root. (The split is the
-result of the `tasks/headless/` P1 refactor; the `aliases.go` files noted
-below are convenience re-exports kept intentionally so the `database`/`cli`
-packages can use unqualified `domain` names — not a pending migration.)
+Backend packages, thinnest description that lets you find things:
 
-- **Repo root (`package main`)** — `main.go` dispatches CLI vs GUI and holds
-  the Wails `//go:embed` directives (`frontend/dist`, app icon); `config.go`
-  is the `Config` struct (XDG-persisted JSON at `blunderDB/config.yaml`:
-  window size, last DB path); `logging.go` configures `slog`. `main.go`
-  stays at the repo root because Wails builds the `main` package from the
-  project root and `//go:embed` patterns cannot use parent paths.
-- **`pkg/blunderdb/domain/`** (`package domain`) — dependency-free domain
-  types (`Position`, `Board`, `Cube`, `Match`, `Game`, `Move`,
-  `PositionAnalysis`, FSRS `AnkiCard`/`AnkiDeck`, `Tournament`, …),
-  constants (`DatabaseVersion`, color/bar indices, decision-type enums) and
-  the pure `Position` predicate methods.
-- **`pkg/blunderdb/engine/`** (`package engine`) — `bitboards.go`,
-  `zobrist.go`, and `epc.go` (the Effective Pip Count engine, which embeds
-  `gnubg_os6.bd` via `//go:embed`). Imports only `domain`.
-- **`pkg/blunderdb/database/`** (`package database`) — the `Database` struct
-  and the whole persistence layer:
-  - `db.go` — connection lifecycle (`NewDatabase`, `SetupDatabase`,
-    `OpenDatabase`, `applyPragmas`, `Conn`, `Close`). Uses
-    `modernc.org/sqlite` (pure-Go SQLite, no CGO). The GUI opens the user's
-    `.db` file directly; `:memory:` is only used by tests (which is why
-    `ConfigurePool` pins it to a single connection — each pooled connection
-    would otherwise be a separate empty database).
-  - `db_schema.go` — table/index DDL. `db_migration.go` — `CheckVersion`
-    and per-version upgrade paths.
-  - `db_position.go`, `db_analysis.go`, `db_match.go`, `db_tournament.go`,
-    `db_collection.go`, `db_comment.go`, `db_anki.go`, `db_session.go`,
-    `db_met.go` — domain-specific persistence.
-  - `db_search.go`, `db_filter_match.go`, `db_stats.go` — query, filter and
-    aggregate logic.
-  - `db_import_*.go` and `db_export.go` — import/export pipelines for XG,
-    GnuBG, BGF, native `.db`, and JSON.
-  - `aliases.go` re-exports `domain` names into the package.
-- **`internal/gui/`** (`package gui`) — `app.go` (`App` struct, bound to the
-  frontend: file/directory dialogs, drag-drop file reading, clipboard via
-  xclip/wl-copy/osascript/PowerShell, alerts) and `run.go` (the Wails
-  bootstrap that wires `Bind`).
-- **`internal/cli/`** (`package cli`) — `cli.go` (`CLI` struct, `Run`
-  dispatcher, shared helpers) and one `cli_<cmd>.go` per subcommand
-  (`cli_import.go`, `cli_export.go`, `cli_list.go`, …); `aliases.go`
-  re-exports `domain`/`database` names.
+- `main.go` (repo root, `package main`) — mode dispatch + Wails `//go:embed`
+  (must stay at root: embed patterns can't use parent paths); `config.go`
+  (XDG-persisted window/last-DB config); `logging.go` (slog).
+- `pkg/blunderdb/domain/` — dependency-free domain types and constants
+  (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
+- `pkg/blunderdb/engine/` — bitboards, Zobrist hashing, EPC (embeds `gnubg_os6.bd`).
+- `pkg/blunderdb/storage/` — the persistence **contract**; backends
+  `storage/sqlite/` (desktop/CLI) and `storage/postgres/` (serve daemon, RLS,
+  tenant purge); shared contract tests in `storage/storagetest/`. Read this
+  package's doc comment first.
+- `pkg/blunderdb/database/` — the legacy SQLite-only `Database` wrapper the GUI
+  and CLI run; delegates to `storage/sqlite`. Schema DDL in `db_schema.go`,
+  migrations in `db_migration.go`, per-domain `db_*.go` files.
+- `pkg/blunderdb/ingest/` — backend-agnostic import/export used by the daemon;
+  `pkg/blunderdb/parser/` — position-text parsing shared by GUI/CLI/server;
+  `pkg/blunderdb/migrate/` — SQLite→PostgreSQL copy; `pkg/blunderdb/server/` —
+  `Bootstrap()` for in-process embedding by a trusted parent (gammonGo).
+- `internal/gui/` — Wails `App` (dialogs, clipboard, drag-drop) + bootstrap;
+  `internal/cli/` — one `cli_<cmd>.go` per subcommand; `internal/server/` — the
+  HTTP daemon (`routes.go`, `handlers_*.go`, middleware, metrics, `call.go`).
+- `cmd/` — `serve` (headless entrypoint), `blunderdb-loadtest`, `extract_gnubg_stats`.
 
-Match/position import parsers are **external modules** (own repos under `github.com/kevung/…`): `xgparser` (eXtreme Gammon `.xg`/`.xgp`), `gnubgparser` (GnuBG `.sgf`), `bgfparser` (BGBlitz `.bgf`). Jellyfish `.mat` parsing is handled in this repo. Position text files are a JSON-per-line format produced by the app itself.
+Match/position parsers for external formats are separate modules
+(`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`
+handling lives in this repo (`database/db_mat_export.go`, `ingest/mat_export.go`).
 
-Domain vocabulary and the decisions behind it live in `CONTEXT.md` (glossary) and `docs/adr/` — read those before changing how positions are identified, where they came from, or what survives a match deletion.
+Frontend: `frontend/src/App.svelte` stays thin; feature logic lives in
+`components/` panels and one store per feature area under `stores/`.
+`commandProcessor.js` parses the in-app command line;
+`commandVocabulary.js` powers autocomplete and is locked to the processor by
+`commandVocabulary.sync.test.js`. `Board.svelte` renders via two.js.
 
-Key backend invariants worth knowing before editing:
-- Positions are stored with a canonical hash (Zobrist; see `pkg/blunderdb/database/canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup. Provenance (`Position.IndividuallyImported`) is deliberately **not** part of that hash: hashing it would split one position into two rows. Use `SaveIndividualPosition` when the user brings a position in on its own.
-- Deleting a match purges the positions it referenced that nothing else holds. The retention predicate (`positionIsHeldSQL`) is stated in **three** places — `database/db_match.go` (the copy the GUI and CLI run), `storage/sqlite/matches_sqlite.go` and `storage/postgres/matches_postgres.go`. Keep them identical.
-- A single mutex (`Database.mu`) serializes writes; import cancellation uses an atomic flag (`importCancelled`).
-- Schema changes require incrementing `DatabaseVersion` in `pkg/blunderdb/domain/` **and** adding a migration path (`CheckVersion` in `db_migration.go`, table/index DDL in `db_schema.go`). Cover the migration with a test in `pkg/blunderdb/database/migration_test.go`.
+## Invariants
 
-### Frontend (Svelte 5 + Vite, in `frontend/`)
+Violating one of these is a bug even if all tests pass:
 
-- `frontend/src/App.svelte` — root component that mounts the toolbar, board, command line, and the modals/panels under `frontend/src/components/`. Kept thin — feature logic lives in the panels and stores.
-- `frontend/src/stores/` — Svelte stores, one per feature area (positions, analysis, collection, tournament, Anki, EPC, search history, UI, gammon/takepoint tables, etc.). Cross-component state lives here, not in props.
-- `frontend/src/commandProcessor.js` — parses the in-app command line (see `CommandLine.svelte`); a large source of user-facing behavior.
-- `frontend/src/components/Board.svelte` — board rendering uses `two.js`.
-- `frontend/wailsjs/` — **auto-generated** Go↔JS bindings. Do not hand-edit. They regenerate when `wails dev`/`wails build` sees changes to exported methods on bound structs. The bound structs live in different packages, so the bindings are namespaced by package: `App` → `wailsjs/go/gui/`, `Database` → `wailsjs/go/database/`, `Config` → `wailsjs/go/main/`. After adding a backend method, restart `wails dev` so the `.js`/`.d.ts` are refreshed.
-
-### Svelte 5 — store/effect rule
-
-In this project, any store access inside a Svelte 5 component **must** use the auto-subscribe syntax `$storeName` or a `$effect(() => { const v = $storeName; ... })`. **Do not** use `.subscribe()` inside a component (rare exceptions must be justified in the commit message). Reason: `.subscribe()` callbacks capture stale closures and their internal dependencies (`$otherStore`, `get(x)`) are invisible to the Svelte compiler's dependency tracker — this caused the reactivity bugs documented in `tasks/ui-reactivity/` after the Svelte 5 migration.
-
-### CLI/GUI parity
-
-The CLI reuses the same `Database` methods the GUI calls over Wails. When adding DB functionality, prefer putting the logic on `Database` in `pkg/blunderdb/database/` and exposing it from both `internal/cli/` (as a subcommand) and the frontend (it will auto-bind). Don't fork logic between a CLI-only helper and a GUI-only method.
+- **Positions are identified by Zobrist hash** (per tenant) to dedup across
+  imports. Always write through `SavePosition`; use `SaveIndividualPosition` when
+  the user brings a position in on its own. Provenance
+  (`individually_imported`) is sticky and deliberately **not** part of the hash
+  — see ADR-0001 and `CONTEXT.md`.
+- **The retention predicate (`positionIsHeldSQL`) is stated in three places** —
+  `database/db_match.go` (the copy the GUI and CLI run),
+  `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`.
+  Keep the *predicate* identical in all three (placeholders and boolean syntax
+  differ by SQL dialect).
+- **Schema changes** require bumping `DatabaseVersion` in `pkg/blunderdb/domain/`
+  **and** a migration path (`CheckVersion` in `db_migration.go`, DDL in
+  `db_schema.go`, PostgreSQL side under `storage/postgres/migrations/`), covered by
+  a test in `migration_test.go`.
+- **The serve daemon performs NO authentication** — it trusts `X-Tenant-ID` and
+  must run behind an authenticating reverse proxy. Never "fix" this by adding
+  auth to the engine, and never weaken the warnings. See ADR-0004.
+- **Concurrency**: `Database.mu` is an RWMutex over the legacy wrapper; the
+  Storage backends have **no** global lock — they rely on pooled connections and
+  per-operation transactions. Import cancellation is context-based
+  (`beginCancellableImport`/`CancelImport` in `database/db.go`), not a flag.
+- **CLI/GUI/server parity**: put DB logic on `Database` (or the Storage contract)
+  and expose it to the frontend (auto-bound), the CLI, and the server handlers.
+  Don't fork logic into a mode-specific helper.
+- **Svelte 5 store rule**: inside components, always `$store` or
+  `$effect(() => { const v = $store; … })` — **never** `.subscribe()` (stale
+  closures, invisible to the compiler's dependency tracking; caused the
+  post-migration reactivity bugs). Rare exceptions must be justified in the
+  commit message.
+- `frontend/wailsjs/` is **generated** (namespaced `gui`/`database`/`main`); never
+  hand-edit; restart `wails dev` after changing exported bound methods.
 
 ## Notes & Gotchas
 
-- Wails drag-drop on Linux: `DisableWebViewDrop` must stay `false` (bug #4743 — see comment in `main.go`).
-- Linux WebKit GPU policy is forced to `Never` for stability.
-- `*.db` files in the repo root (`a.db`, `c.db`, `testBG.db`, `Quiz*.db`) are user sample databases — do not commit changes to them and do not treat them as fixtures.
-- Historical design/implementation notes have been moved to `doc/archive/` — consult them when touching the related subsystem but don't assume they reflect current code.
-- **Document size rule.** Plans, task sheets, and design notes must stay ≤500 lines each. Split long documents into a README index + per-topic files.
-- **v2.0.0 schema shape.** `DatabaseVersion = "2.0.0"`. Key ideas: Zobrist hash column + unique index on `position` for deduplication across imports; denormalized scalar filter columns on `position` (`decision_type`, `dice_1/2`, `pip_diff`, `off_1/2`, `back_checkers_1/2`, `no_contact`, `occupancy_1/2`, `point_mask_1/2`, …) and on `analysis` (`cube_error`, `best_move_equity_error`, `player1_win_rate`, …); bitboard occupancy/point-mask columns enable fast integer pre-filter for checker-structure pattern searches; WAL journal mode + tuned PRAGMAs (cache_size, synchronous=NORMAL, temp_store=MEMORY). See `DATABASE_OPTIMIZATION_PLAN.md` and `tasks/` for the full plan and per-phase task sheets.
+- Wails drag-drop on Linux: `DisableWebViewDrop` must stay `false` (bug #4743 —
+  see comment in `internal/gui/run.go`); WebKit GPU policy is forced to `Never`.
+- The GUI opens the user's `.db` file directly; `:memory:` is test-only, which is
+  why `sqlite.ConfigurePool` pins it to a single connection (each pooled
+  connection would otherwise be a separate empty database). PRAGMAs (WAL,
+  `synchronous=NORMAL`, …) live in `storage/sqlite/sqlite.go`.
+- `tasks/` holds finished task sheets (v2.0.0 optimization, headless refactor,
+  stats parity…) kept as execution history; `tasks/FOLLOWUPS.md` lists still-open
+  follow-ups.

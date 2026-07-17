@@ -1,25 +1,27 @@
 // Package storage defines the persistence contract for the blunderDB engine.
 //
-// The Storage interface is composed of per-family sub-interfaces. A concrete
-// backend (currently SQLite, PostgreSQL later) implements it under a sibling
-// sub-package. The Database wrapper kept for the Wails GUI delegates to a
-// Storage value.
+// The Storage interface is composed of per-family sub-interfaces. Two
+// concrete backends implement it under sibling sub-packages: storage/sqlite
+// (the desktop app and single-user CLI) and storage/postgres (the
+// multi-tenant `serve` daemon, with optional row-level security). Both are
+// held to the same shared contract suite in storage/storagetest. The
+// Database wrapper kept for the Wails GUI delegates to a Storage value.
 //
 // Design notes (see tasks/headless/02-storage-interface.md):
 //   - Every method takes a context.Context for cancellation/deadlines.
-//   - Every data method takes a scope string. It is empty ("") today; it
-//     becomes the per-tenant identifier once PostgreSQL multi-tenancy lands.
+//   - Every data method takes a scope string: the tenant identifier
+//     (domain term: Tenant, see CONTEXT.md). The desktop app and CLI pass
+//     "" — the single implicit tenant of a private database; the serve
+//     daemon passes the caller's tenant so rows never cross tenants.
 //   - List-style methods return a range-friendly iter.Seq2 so large result
 //     sets can be streamed instead of fully materialised.
 //   - Save/Update/Delete return (int64, error) or error. SQLite uses
-//     LastInsertId internally; PostgreSQL will use RETURNING id — the
+//     LastInsertId internally; PostgreSQL uses RETURNING id — the
 //     interface hides the difference.
 //
-// This file (and the rest of package storage) is the interface scaffolding
-// only — no backend implementation lives here. The DTO structs declared
-// alongside the sub-interfaces are the storage-layer vocabulary; reconciling
-// them with the equivalents currently in package database happens in the
-// implementation PRs.
+// This file declares the contract only — no backend implementation lives
+// here. The DTO structs declared alongside the sub-interfaces are the
+// storage-layer vocabulary shared by both backends and the server handlers.
 //
 // # Concurrency and isolation
 //
