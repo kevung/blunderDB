@@ -777,7 +777,17 @@
                         class="icon-btn edit-header-btn"
                         onclick={(e) => {
                             e.stopPropagation();
-                            ((e) => startEdit(selectedTournament, e))(e);
+                            // Return to the tournament list first: the inline-editable
+                            // row is only rendered in the list view ({#if !selectedTournament}).
+                            // Clicking edit here used to set editingTournament while the
+                            // detail view stayed visible, so nothing looked editable until
+                            // the user manually pressed the back arrow.
+                            const t = selectedTournament;
+                            selectedTournamentStore.set(null);
+                            tournamentMatchesStore.set([]);
+                            addMatchSearch = '';
+                            editingTournamentComment = false;
+                            startEdit(t, e);
                         }}
                         title={$t('common.edit')}>✎</button
                     >
