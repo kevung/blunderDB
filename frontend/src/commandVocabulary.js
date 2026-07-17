@@ -1,6 +1,8 @@
 // Canonical list of command-mode commands and their aliases, used to power
 // command-line autocompletion (see CommandLine.svelte). Keep this in sync with
-// the command branches in commandProcessor.js / CommandLine.svelte.
+// the command branches in commandProcessor.js / CommandLine.svelte —
+// commandVocabulary.sync.test.js enforces it, since processCommand's if/else
+// chain has no trailing else and an unhandled command is a silent no-op.
 //
 // `name` is the canonical form inserted on completion; `aliases` are the
 // accepted shorthands. Search filter tokens (p, w, ma, id, …) are intentionally
@@ -27,7 +29,6 @@ export const COMMANDS = [
     { name: 'ss', aliases: [] },
     { name: 'stats', aliases: ['st'] },
     { name: 'blunders', aliases: ['bl'] },
-    { name: 'filter', aliases: ['fl'] },
     { name: 'history', aliases: ['hi'] },
     { name: 'match', aliases: ['ma'] },
     { name: 'collection', aliases: ['coll'] },
