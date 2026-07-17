@@ -24,3 +24,6 @@ messages.mo
 
 # Claude Code scheduler runtime lock (local, transient)
 .claude/scheduled_tasks.lock
+
+# Claude Code personal overrides (per-machine; the shared config is settings.json)
+.claude/settings.local.json

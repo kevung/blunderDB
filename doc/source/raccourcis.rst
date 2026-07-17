@@ -115,6 +115,23 @@ Outils
    "CTRL-E", "Afficher/cacher le panneau EPC."
    "?", "Afficher/cacher l'aide."
 
+.. _raccourcis_vues:
+
+Onglets de vues
+---------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "CTRL-T", "Créer une nouvelle vue (copie de la vue courante)."
+   "CTRL-W", "Fermer la vue courante."
+   "CTRL-PageUp, MAJ-J", "Vue précédente."
+   "CTRL-PageDown, MAJ-K", "Vue suivante."
+   "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
+   "Double-clic sur l'onglet", "Renommer la vue."
+
 .. _raccourcis_command:
 
 Ligne de commande
@@ -130,8 +147,11 @@ Ligne de commande
 
 .. _raccourcis_search_history:
 
-Panneau historique de recherche
---------------------------------
+Historique de recherche
+-----------------------
+
+L'historique de recherche est l'onglet *Historique* du panneau de recherche
+(*CTRL-F* ou *TAB*).
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -139,15 +159,15 @@ Panneau historique de recherche
    :align: center
 
    "Clic", "Sélectionner/désélectionner une recherche (afficher la position)."
-   "Double-clic", "Exécuter la recherche et fermer le panneau."
-   "HAUT, k", "Sélectionner la recherche précédente (plus récente, au-dessus)."
-   "BAS, j", "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-   "Esc", "Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le panneau."
+   "Double-clic", "Exécuter la recherche."
 
 .. _raccourcis_filter_library:
 
-Panneau bibliothèque de filtres
---------------------------------
+Bibliothèque de filtres
+-----------------------
+
+La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de recherche
+(*CTRL-F* ou *TAB*).
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -156,9 +176,6 @@ Panneau bibliothèque de filtres
 
    "Clic", "Sélectionner/désélectionner un filtre (afficher la position)."
    "Double-clic", "Exécuter la recherche du filtre."
-   "HAUT, k", "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-   "BAS, j", "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-   "Esc", "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 
 .. _raccourcis_analysis:
 

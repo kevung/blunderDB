@@ -123,6 +123,36 @@ suivantes:
    nombre de positions indiqué dans la barre d'état correspond au nombre de
    positions filtrées.
 
+.. _onglets_vues:
+
+Onglets de vues
+---------------
+
+Sous la barre d'outils, une barre d'onglets permet de travailler avec
+plusieurs **vues** en parallèle. Chaque vue est un espace de travail
+indépendant qui conserve sa propre liste de positions, l'index de la position
+courante, la position affichée, l'analyse et le coup sélectionné, le panneau
+actif, le commentaire en cours ainsi que le contexte de navigation dans un
+match. Il est ainsi possible, par exemple, de garder une recherche ouverte
+dans une vue tout en parcourant un match dans une autre.
+
+* **Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets ou
+  appuyer sur *CTRL-T*. La nouvelle vue démarre comme une copie de la vue
+  courante.
+
+* **Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur
+  *CTRL-W*. La dernière vue ne peut pas être fermée.
+
+* **Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-PageUp* /
+  *CTRL-PageDown* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue précédente /
+  suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième vue.
+
+* **Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom
+  et valider avec *ENTREE*.
+
+Les vues sont enregistrées avec l'état de session de la base de données et
+restaurées à sa réouverture.
+
 .. _configuration:
 
 Configuration
@@ -285,6 +315,17 @@ filtré. Cocher un tournoi coche automatiquement (et grise) ses matchs membres
 dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
 l'ensemble de ses matchs.
 
+Le panneau de recherche comporte trois onglets sur son bord gauche :
+*Recherche* (les filtres), *Historique* et *Enregistrés*. L'onglet
+**Historique** liste les recherches passées avec leur date et leur commande :
+un clic sélectionne une recherche et affiche la position associée sur le
+plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
+dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
+supprimée. L'onglet **Enregistrés** contient la **bibliothèque de filtres** :
+double-cliquer sur un filtre enregistré pour relancer la recherche
+correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
+``hi``) ouvre le panneau de recherche.
+
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
    disponibles.
 
@@ -325,6 +366,15 @@ L'utilisateur peut:
 La dernière position visitée dans chaque match est mémorisée et restaurée
 automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match``
 pour afficher ou masquer le panneau.
+
+Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
+bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du match.
+
+Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
+fenêtre listant tous les noms de joueurs de la base avec leur nombre de
+matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
+nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
+par joueur lorsqu'un même joueur apparaît sous plusieurs noms.
 
 Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)

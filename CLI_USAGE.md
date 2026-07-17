@@ -273,6 +273,7 @@ Search for positions in the database using filters.
 - `--individual` - Only positions imported on their own — the ones you added yourself, not the ones a match import brought in
 - `--match-ids` - Filter by match IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
 - `--tournament-ids` - Filter by tournament IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
+- `--position-ids` - Filter by position IDs: a two-value range e.g. `2,7` (2 through 7), OR an explicit semicolon list e.g. `5;10;15`
 
 ### Examples
 

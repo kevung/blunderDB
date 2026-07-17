@@ -142,6 +142,22 @@ Steps:
    the French prose first. Keep each file ≤500 lines (project rule); split if
    needed.
 
+   **Also audit the developer docs** — they have no other forcing function and
+   have drifted for whole release cycles before. Re-verify each factual claim
+   in `CLAUDE.md` against the code, minimally:
+
+   ```bash
+   grep -n "DatabaseVersion =" pkg/blunderdb/domain/domain.go   # vs CLAUDE.md
+   grep -nE "go-version|node-version|version: v2" .github/workflows/build.yml
+   sed -n '20,45p' main.go                                      # mode dispatch list
+   ```
+
+   Check that `CLAUDE.md`'s toolchain versions, `DatabaseVersion`, mode list,
+   and any named files/symbols still exist (`grep` a few). Same for
+   `CLI_USAGE.md` vs `internal/cli/` (every subcommand and flag), and the
+   package doc of `pkg/blunderdb/storage/storage.go` (it is the architecture
+   reference). Fix drift *now*, in this release's doc commit.
+
 3. Regenerate **all** translation catalogs so new/changed French strings get
    fresh `msgid` entries, then translate them. The repo's `doc/README.txt`
    documents the workflow:

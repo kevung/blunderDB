@@ -148,15 +148,26 @@ blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
 Quelles ont été les principes de conception de blunderDB?
 ---------------------------------------------------------
 
-L'ergonomie de blunderDB privilégie une utilisation au clavier : une ligne de
-commande, ouverte d'un appui sur la barre d'*ESPACE*, et des raccourcis clavier
-permettent une prise en main rapide et fluide, sans quitter le clavier. Je
-souhaitais par ailleurs blunderDB léger, autonome, sans installation et
+Je voulais une interface accessible, mais pensée pour un usage avancé et
+soutenu, où l'on enchaîne les positions et les recherches. La ligne de
+commande, ouverte d'un appui sur la barre d'*ESPACE*, et les raccourcis clavier
+servent cet usage, sans être un passage obligé.
+
+Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et
 disponible pour différentes plateformes,
 d'où mon choix du langage Go et de la bibliothèque Svelte. Pour la
 sérialisation de la base de données, le format de fichiers doit être
 multi-plateforme et adapté pour contenir une base de données. Le format de
 fichier sqlite semblait tout indiqué.
+
+Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut copier,
+sauvegarder ou envoyer à un autre joueur.
+
+Enfin, blunderDB ne se limite plus à l'application de bureau : le même binaire
+offre une interface en ligne de commande et un mode serveur facultatif, qui
+peut s'appuyer sur PostgreSQL pour les déploiements multi-utilisateurs. L'usage
+normal reste toutefois l'application de bureau. Voir :ref:`cli` et
+:ref:`headless`.
 
 
 Quel est l'architecture logicielle de blunderDB?
@@ -170,9 +181,14 @@ Quel est l'architecture logicielle de blunderDB?
   rendu de l'interface graphique et du board de Backgammon.
 
 * L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant la
-  production d'applications Desktop natives, déclinables sous Windows et Linux.
+  production d'applications Desktop natives, déclinables sous Windows, Linux et
+  macOS.
 
 * La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_.
+
+* Le mode serveur facultatif peut s'appuyer sur `PostgreSQL
+  <https://www.postgresql.org/>`_ à la place de Sqlite pour les déploiements
+  multi-utilisateurs.
 
 Pour plus d'informations, voir le `dépôt Github de blunderDB <https://github.com/kevung/blunderDB>`_.
 
