@@ -125,6 +125,8 @@ export function GetPositionIDsByTournament(arg1:number):Promise<Array<number>>;
 
 export function GetPositionIndexMap():Promise<Record<number, number>>;
 
+export function GetPositionProvenance(arg1:number):Promise<Array<domain.Match>>;
+
 export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
@@ -146,6 +148,8 @@ export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
+
+export function IsReadOnly():Promise<boolean>;
 
 export function LoadAllPositions():Promise<Array<domain.Position>>;
 

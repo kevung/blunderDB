@@ -86,14 +86,7 @@
     // Optional metadata fields, in display order, empties omitted. Tournament
     // name leads (it is the broadest provenance), then event/location/round/date/length.
     let metaParts = $derived(
-        [
-            match?.tournament_name,
-            match?.event,
-            match?.location,
-            match?.round,
-            formatDate(match?.match_date),
-            match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : ''
-        ]
+        [match?.tournament_name, match?.event, match?.location, match?.round, formatDate(match?.match_date), match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : '']
             .map((s) => (s == null ? '' : String(s).trim()))
             .filter((s) => s.length > 0)
     );
