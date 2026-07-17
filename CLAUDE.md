@@ -38,6 +38,22 @@ Full CLI reference lives in `CLI_USAGE.md`. Example:
 ./blunderDB list --db mymatches.db --type stats
 ```
 
+## Claude Code setup
+
+`.claude/` is checked in so every machine working on this project gets the same
+tooling:
+
+- `.claude/settings.json` — shared config. Registers the `mattpocock`
+  marketplace and enables the `mattpocock-skills` plugin (~22 engineering
+  skills, invoked as `/mattpocock-skills:<name>`). Claude Code offers to
+  install it once you trust the folder, so a fresh clone needs network access
+  the first time.
+- `.claude/skills/` — project skills committed directly (e.g.
+  `release-blunderdb`). No settings needed; they are auto-discovered.
+- `.claude/settings.local.json` — personal, per-machine overrides. Gitignored;
+  keep machine-specific preferences (model, theme, extra permissions) there and
+  out of `settings.json`.
+
 ## Development Workflow
 
 For **every new modification**, work in an isolated git worktree to avoid conflicts — never edit directly on the shared checkout. The cycle is: create a worktree, do the work and commit there, merge the branch back, then remove the worktree to clean up.
