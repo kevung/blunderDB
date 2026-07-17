@@ -66,7 +66,8 @@ var wantIndexes = []string{
 	"idx_match_hash", "idx_move_game", "idx_move_position",
 	"idx_position_cube_response",
 	"idx_position_decision_dice", "idx_position_decision_pip",
-	"idx_position_dice", "idx_position_off", "idx_position_pip_diff",
+	"idx_position_dice", "idx_position_individual", "idx_position_off",
+	"idx_position_pip_diff",
 	"idx_position_score", "idx_position_score_cube", "idx_position_zobrist",
 }
 
