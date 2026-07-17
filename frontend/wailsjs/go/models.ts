@@ -1127,6 +1127,7 @@ export namespace domain {
 	    cubeResponseFilter: string;
 	    diceRollFilter: boolean;
 	    diceRollMode: string;
+	    exceptDiceFilter: string;
 	    movePatternFilter: string;
 	    dateFilter: string;
 	    player1OutfieldBlotFilter: string;
@@ -1174,6 +1175,7 @@ export namespace domain {
 	        this.cubeResponseFilter = source["cubeResponseFilter"];
 	        this.diceRollFilter = source["diceRollFilter"];
 	        this.diceRollMode = source["diceRollMode"];
+	        this.exceptDiceFilter = source["exceptDiceFilter"];
 	        this.movePatternFilter = source["movePatternFilter"];
 	        this.dateFilter = source["dateFilter"];
 	        this.player1OutfieldBlotFilter = source["player1OutfieldBlotFilter"];

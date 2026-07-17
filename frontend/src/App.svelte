@@ -1,6 +1,7 @@
 <script>
     import { logger } from './utils/logger.js';
     import { onMount, onDestroy, untrack } from 'svelte';
+    import { get } from 'svelte/store';
     import { fade } from 'svelte/transition';
 
     // Wails runtime
@@ -216,11 +217,24 @@
         }
     });
 
-    // Navigate to the current position when index changes. The cancelled flag
-    // guards against stale async callbacks when the index changes rapidly.
+    // Navigate to the current position when the library index changes. The
+    // cancelled flag guards against stale async callbacks when the index
+    // changes rapidly.
+    //
+    // Bug 1: in MATCH mode the board is driven directly by the match navigation
+    // (matchContextStore + showPosition in positionService), and
+    // currentPositionIndexStore is a STALE library index. Selecting an analysed
+    // move re-runs this effect via a downstream index notification; without this
+    // guard it would call showPosition(positions[value]) and snap the board to
+    // the last library position instead of staying on the studied match move.
+    // Read the mode with get() (non-reactive) so mode / match-context changes do
+    // not add themselves as dependencies of this effect. Exiting match mode sets
+    // the mode back to NORMAL *before* the index redraw (see loadAllPositions /
+    // exitEditMode), so this guard never blocks the return-to-library redraw.
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
+        if (get(statusBarModeStore) === 'MATCH') return;
         if (positions.length > 0 && value >= 0 && value < positions.length) {
             showPosition(positions[value]).then(() => {
                 if (cancelled) return;

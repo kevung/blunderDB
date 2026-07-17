@@ -177,6 +177,8 @@
         "dbCreated": "New database created successfully",
         "dbMigrated": "Database migrated to version {version} successfully.",
         "dbOpened": "Database opened successfully",
+        "dbReadOnly": "Opened read-only — this database is already open in another blunderDB window.",
+        "readOnlySuffix": "[read-only]",
         "dbVersion": "Database version: {version}",
         "dbVersionMismatch": "Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: {dbVersion}\nExpected version: {modelVersion}",
         "epcErrorComputing": "EPC: Error computing",

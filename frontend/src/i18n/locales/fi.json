@@ -177,6 +177,8 @@
         "dbCreated": "Uusi tietokanta luotu onnistuneesti",
         "dbMigrated": "Tietokanta päivitetty versioon {version} onnistuneesti.",
         "dbOpened": "Tietokanta avattu onnistuneesti",
+        "dbReadOnly": "Avattu vain luku -tilassa — tämä tietokanta on jo auki toisessa blunderDB-ikkunassa.",
+        "readOnlySuffix": "[vain luku]",
         "dbVersion": "Tietokannan versio: {version}",
         "dbVersionMismatch": "Tietokannan pääversio ei täsmää. Tietokannan rakenne saattaa olla yhteensopimaton nykyisen blunderDB-version kanssa. Tietokannan muokkaamista jatketaan omalla vastuulla. Varmuuskopioi tiedostosi ennen jatkamista.\nTietokannan versio: {dbVersion}\nOdotettu versio: {modelVersion}",
         "epcErrorComputing": "EPC: Laskentavirhe",

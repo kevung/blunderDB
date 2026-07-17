@@ -36,6 +36,16 @@ import { tMsg } from '../i18n';
 let savedPositionBeforeEPC = null;
 let savedPositionIndexBeforeEPC = -1;
 let savedPositionsBeforeEPC = null;
+// The match context when EPC was entered from a match, so exiting EPC returns to
+// the studied match position instead of dropping to NORMAL (bug 2).
+let savedMatchContextBeforeEPC = null;
+let savedModeBeforeEPC = null;
+
+// The match context when the search/EDIT tab was entered from a match, so leaving
+// search returns to the studied match position instead of the last of all
+// positions (bug 2). Valid only for the current EDIT session: enterEditMode resets
+// it on every entry based on the mode it was entered from.
+let savedMatchBeforeEdit = null;
 
 // Module-level state for COLLECTION mode save/restore
 let _savedPositionBeforeCollection = null;
@@ -863,6 +873,11 @@ export async function enterEditMode() {
     logger.log('enterEditMode');
     if (!get(databasePathStore)) return;
 
+    // Snapshot the studied match (if any) so leaving the search tab restores it.
+    // Reset on every entry so a stale snapshot from an earlier match-entered EDIT
+    // session can never be restored into a later NORMAL-entered one.
+    savedMatchBeforeEdit = get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode ? { ...get(matchContextStore) } : null;
+
     if (get(statusBarModeStore) === 'MATCH') {
         logger.log('Exiting MATCH mode to enter EDIT');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
@@ -880,7 +895,12 @@ export async function enterEditMode() {
             player1Name: '',
             player2Name: ''
         });
-        loadAllPositions();
+        // Deliberately NOT loadAllPositions() here (bug 2): it runs async without
+        // await and, on resolving, sets mode NORMAL and flips activeTab to
+        // 'matches' — racing this function and bouncing the user off the search
+        // tab (the studied match position was lost). EDIT clears the board below
+        // to build a query and positionsStore isn't consulted in EDIT, so there is
+        // nothing to load; exitEditMode restores the snapshot taken above.
     }
 
     if (get(statusBarModeStore) === 'COLLECTION') {
@@ -908,8 +928,22 @@ export async function enterEditMode() {
     }
 }
 
-export function exitEditMode() {
+export async function exitEditMode() {
     if (get(statusBarModeStore) === 'EDIT') {
+        // If we entered search from a match, return to that studied position
+        // rather than dropping into the flat "all positions" list (bug 2).
+        if (savedMatchBeforeEdit && savedMatchBeforeEdit.isMatchMode) {
+            const snap = savedMatchBeforeEdit;
+            savedMatchBeforeEdit = null;
+            matchContextStore.set(snap);
+            statusBarModeStore.set('MATCH');
+            const movePos = snap.movePositions?.[snap.currentIndex];
+            if (movePos) {
+                await showPosition(movePos.position);
+                statusBarTextStore.set(`${snap.player1Name} vs ${snap.player2Name}`);
+            }
+            return;
+        }
         statusBarModeStore.set('NORMAL');
         const currentIndex = get(currentPositionIndexStore);
         currentPositionIndexStore.set(-1);
@@ -932,6 +966,9 @@ export function enterEPCMode() {
     savedPositionBeforeEPC = get(positionStore) ? { ...get(positionStore) } : null;
     savedPositionIndexBeforeEPC = get(currentPositionIndexStore);
     savedPositionsBeforeEPC = get(positionsStore) ? [...get(positionsStore)] : null;
+    // Remember whether EPC was opened from a match so exit can return to it.
+    savedModeBeforeEPC = get(statusBarModeStore);
+    savedMatchContextBeforeEPC = { ...get(matchContextStore) };
 
     const epcPoints = Array(26).fill({ checkers: 0, color: -1 });
     epcPoints[1] = { checkers: 2, color: 0 };
@@ -965,9 +1002,21 @@ export function enterEPCMode() {
 export function exitEPCMode() {
     if (get(statusBarModeStore) !== 'EPC') return;
 
-    statusBarModeStore.set('NORMAL');
+    // Return to the match if EPC was opened from one, instead of dropping to
+    // NORMAL while matchContext still says a match is active (bug 2): that left
+    // an inconsistent MATCH state that broke match navigation.
+    const returnToMatch = savedModeBeforeEPC === 'MATCH' && savedMatchContextBeforeEPC && savedMatchContextBeforeEPC.isMatchMode;
     statusBarTextStore.set('');
     epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
+
+    if (returnToMatch) {
+        matchContextStore.set(savedMatchContextBeforeEPC);
+        statusBarModeStore.set('MATCH');
+        statusBarTextStore.set(`${savedMatchContextBeforeEPC.player1Name} vs ${savedMatchContextBeforeEPC.player2Name}`);
+    } else {
+        statusBarModeStore.set('NORMAL');
+    }
+
     if (savedPositionsBeforeEPC) {
         positionsStore.set(savedPositionsBeforeEPC);
         if (savedPositionBeforeEPC) {
@@ -980,6 +1029,8 @@ export function exitEPCMode() {
     } else {
         loadAllPositions();
     }
+    savedMatchContextBeforeEPC = null;
+    savedModeBeforeEPC = null;
 }
 
 export async function updateEPC(position) {

@@ -242,6 +242,10 @@ export function GetPositionIndexMap() {
   return window['go']['database']['Database']['GetPositionIndexMap']();
 }
 
+export function GetPositionProvenance(arg1) {
+  return window['go']['database']['Database']['GetPositionProvenance'](arg1);
+}
+
 export function GetRandomAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['GetRandomAnkiCard'](arg1, arg2);
 }
@@ -284,6 +288,10 @@ export function ImportXGMatch(arg1) {
 
 export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
+}
+
+export function IsReadOnly() {
+  return window['go']['database']['Database']['IsReadOnly']();
 }
 
 export function LoadAllPositions() {
