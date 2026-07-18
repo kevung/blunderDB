@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{17 de julio de 2026}
-\release{0.28.0}
+\date{18 de julio de 2026}
+\release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Versión}
@@ -693,7 +693,7 @@ Modo servidor (headless): dos nuevos métodos para reconstruir una posición sin
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d’une barre d’informations au\sphinxhyphen{}dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des onglets de vues multiples : plusieurs espaces de travail indépendants (liste de positions, position courante, recherche) avec les raccourcis \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} (nouvelle vue), \sphinxstyleemphasis{CTRL\sphinxhyphen{}W} (fermer), \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp}/\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (changer de vue) et renommage par double\sphinxhyphen{}clic sur l’onglet. Voir {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuración}}}}} et {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Onglets de vues}}}}}.
+Ajustes de visualización de la interfaz en la ventana de configuración: un control deslizante de escala para agrandar o reducir toda la interfaz, y una opción de posición de los paneles (abajo, al lado o automática) para aprovechar mejor las pantallas anchas. Añadida una barra de información sobre el tablero que indica los jugadores y el contexto de la partida (evento, lugar, ronda, fecha, longitud). Al abrir una base, el panel de partidas se muestra de inmediato y la revisión comienza en la primera posición. Los atajos de teclado ahora son independientes de la disposición del teclado (AZERTY, QWERTY, QWERTZ…). Corrección de la decodificación XGID (indicadores Jacoby/Beaver y valor del cubo). Añadidas las pestañas de vistas múltiples: varios espacios de trabajo independientes (lista de posiciones, posición actual, búsqueda) con los atajos \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} (nueva vista), \sphinxstyleemphasis{CTRL\sphinxhyphen{}W} (cerrar), \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp}/\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (cambiar de vista) y renombrado con doble clic en la pestaña. Ver {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Configuración}}}}} y {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Pestañas de vistas}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -729,6 +729,22 @@ Panel de búsqueda: filtro unificado « Partidas y Torneos » que sustituye los 
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.29.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+18 de julio de 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Exportación de una partida en formato Jellyfish/gnubg (\sphinxcode{\sphinxupquote{.mat}}) desde la interfaz (panel Partidas) y desde la línea de comandos, con la ruta de servidor correspondiente — práctico para volver a jugar una partida en otro programa de backgammon. Búsqueda: nuevo discriminador « dados excluidos » (token \sphinxcode{\sphinxupquote{xD65}}, se permiten varios) que descarta las posiciones cuya tirada coincide con un lanzamiento dado. Apertura concurrente segura: una base ya abierta en escritura en otra ventana de blunderDB ahora se abre en modo de solo lectura (navegación, búsqueda y análisis posibles, modificaciones desactivadas, mención « {[}solo lectura{]} » en la barra de título) en lugar de arriesgar una corrupción. Procedencia de las posiciones: fuera del modo partida, la barra de información sobre el tablero indica la partida —y su torneo— de la que procede la posición estudiada, con una insignia « +N » cuando aparece en varias partidas. Mayor robustez frente al entorno: repliegue automático cuando una fuente, el portapapeles o la última base abierta no están disponibles. Una recarga explícita de la biblioteca (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}R}}, botón de la barra de herramientas o comando \sphinxcode{\sphinxupquote{e}}) vuelve a abrir el panel de análisis de la posición mostrada. Correcciones destacadas: eliminación de un bloqueo al exportar bases grandes, botón « Ninguno » de la exportación que en realidad no dejaba de exportar ninguna partida, filtro por comentario de varias palabras, deduplicación del evento y del torneo en la barra de información, y varios ajustes de visualización. Ver {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Lista de comandos}}}}}, {\hyperref[\detokenize{manuel:panneau-matchs}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Panel de Partidas}}}}} y {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Manual}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -750,15 +766,15 @@ La última versión de blunderDB está disponible bajo licencia MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-para Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
+para Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-para Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
+para Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
 
 \item {} 
 \sphinxAtStartPar
-para Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
+para Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
 
 \end{itemize}
 
@@ -810,7 +826,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binario sin procesar (método avanzado)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-El binario sin procesar \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} sigue estando disponible. Como un navegador elimina el bit de ejecución al descargar, debe restablecerlo antes de la primera ejecución:
+El binario sin procesar \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} sigue estando disponible. Como un navegador elimina el bit de ejecución al descargar, debe restablecerlo antes de la primera ejecución:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -818,7 +834,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Se publican dos variantes de Linux según la versión de la biblioteca webkit2gtk. Si obtiene el error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, su distribución utiliza webkit2gtk\sphinxhyphen{}4.1: utilice el paquete \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, el paquete AUR o descargue la versión dedicada \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Los paquetes nativos seleccionan la dependencia correcta automáticamente.
+Se publican dos variantes de Linux según la versión de la biblioteca webkit2gtk. Si obtiene el error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, su distribución utiliza webkit2gtk\sphinxhyphen{}4.1: utilice el paquete \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, el paquete AUR o descargue la versión dedicada \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Los paquetes nativos seleccionan la dependencia correcta automáticamente.
 \end{sphinxadmonition}
 
 
@@ -1033,44 +1049,31 @@ En el caso de posiciones resultantes de una búsqueda del usuario, el número de
 \end{sphinxadmonition}
 
 
-\subsection{Onglets de vues}
+\subsection{Pestañas de vistas}
 \label{\detokenize{manuel:onglets-de-vues}}\label{\detokenize{manuel:onglets-vues}}
 \sphinxAtStartPar
-Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs \sphinxstylestrong{vues} en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.
+Bajo la barra de herramientas, una barra de pestañas permite trabajar con varias \sphinxstylestrong{vistas} en paralelo. Cada vista es un espacio de trabajo independiente que conserva su propia lista de posiciones, el índice de la posición actual, la posición mostrada, el análisis y la jugada seleccionada, el panel activo, el comentario en curso, así como el contexto de navegación en una partida. Así es posible, por ejemplo, mantener una búsqueda abierta en una vista mientras se recorre una partida en otra.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Créer une vue} : cliquer sur le bouton \sphinxstyleemphasis{+} de la barre d’onglets ou
-appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}. La nouvelle vue démarre comme une copie de la vue
-courante.
+\sphinxstylestrong{Crear una vista}: hacer clic en el botón \sphinxstyleemphasis{+} de la barra de pestañas o pulsar \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}. La nueva vista comienza como una copia de la vista actual.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Fermer une vue} : cliquer sur la croix de l’onglet ou appuyer sur
-\sphinxstyleemphasis{CTRL\sphinxhyphen{}W}. La dernière vue ne peut pas être fermée.
+\sphinxstylestrong{Cerrar una vista}: hacer clic en la cruz de la pestaña o pulsar \sphinxstyleemphasis{CTRL\sphinxhyphen{}W}. La última vista no se puede cerrar.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Changer de vue} : cliquer sur un onglet, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp} /
-\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (ou \sphinxstyleemphasis{MAJ\sphinxhyphen{}J} / \sphinxstyleemphasis{MAJ\sphinxhyphen{}K}) pour passer à la vue précédente /
-suivante, ou \sphinxstyleemphasis{CTRL\sphinxhyphen{}1} à \sphinxstyleemphasis{CTRL\sphinxhyphen{}9} pour atteindre directement la n\sphinxhyphen{}ième vue.
+\sphinxstylestrong{Cambiar de vista}: hacer clic en una pestaña, pulsar \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp} / \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (o \sphinxstyleemphasis{MAJ\sphinxhyphen{}J} / \sphinxstyleemphasis{MAJ\sphinxhyphen{}K}) para pasar a la vista anterior / siguiente, o \sphinxstyleemphasis{CTRL\sphinxhyphen{}1} a \sphinxstyleemphasis{CTRL\sphinxhyphen{}9} para ir directamente a la n\sphinxhyphen{}ésima vista.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Renommer une vue} : double\sphinxhyphen{}cliquer sur l’onglet, saisir le nouveau nom
-et valider avec \sphinxstyleemphasis{ENTREE}.
+\sphinxstylestrong{Renombrar una vista}: hacer doble clic en la pestaña, escribir el nuevo nombre y validar con \sphinxstyleemphasis{INTRO}.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.
+Las vistas se guardan con el estado de sesión de la base de datos y se restauran al reabrirla.
 
 
 \subsection{Configuración}
@@ -1177,16 +1180,7 @@ El panel ofrece un control explícito del \sphinxstylestrong{tipo de decisión} 
 El filtro \sphinxstylestrong{Partidas y Torneos} se apoya en un selector común (ventana modal) en lugar de la introducción de identificadores numéricos: dos listas de casillas, una para las partidas y otra para los torneos, cada una filtrable por texto (jugador, fecha, evento para las partidas; nombre, fecha, lugar para los torneos), con botones \sphinxstyleemphasis{Todo} / \sphinxstyleemphasis{Ninguno} que solo actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca automáticamente (y atenúa) sus partidas miembro en la lista de partidas, dejando patente que un torneo equivale al conjunto de sus partidas.
 
 \sphinxAtStartPar
-Le panneau de recherche comporte trois onglets sur son bord gauche :
-\sphinxstyleemphasis{Recherche} (les filtres), \sphinxstyleemphasis{Historique} et \sphinxstyleemphasis{Enregistrés}. L’onglet
-\sphinxstylestrong{Historique} liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double\sphinxhyphen{}clic la ré\sphinxhyphen{}exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet \sphinxstylestrong{Enregistrés} contient la \sphinxstylestrong{bibliothèque de filtres} :
-double\sphinxhyphen{}cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir {\hyperref[\detokenize{annexe_filtres:annexe-filtres}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anexo: Uso avanzado de los filtros}}}}}). La commande \sphinxcode{\sphinxupquote{history}} (alias
-\sphinxcode{\sphinxupquote{hi}}) ouvre le panneau de recherche.
+El panel de búsqueda cuenta con tres pestañas en su borde izquierdo: \sphinxstyleemphasis{Búsqueda} (los filtros), \sphinxstyleemphasis{Historial} y \sphinxstyleemphasis{Guardados}. La pestaña \sphinxstylestrong{Historial} enumera las búsquedas anteriores con su fecha y su comando: un clic selecciona una búsqueda y muestra la posición asociada en el tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o eliminarse. La pestaña \sphinxstylestrong{Guardados} contiene la \sphinxstylestrong{biblioteca de filtros}: hacer doble clic en un filtro guardado para relanzar la búsqueda correspondiente (véase {\hyperref[\detokenize{annexe_filtres:annexe-filtres}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anexo: Uso avanzado de los filtros}}}}}). El comando \sphinxcode{\sphinxupquote{history}} (alias \sphinxcode{\sphinxupquote{hi}}) abre el panel de búsqueda.
 
 \begin{sphinxadmonition}{tip}{Truco:}
 \sphinxAtStartPar
@@ -1234,21 +1228,21 @@ ver la jugada realmente jugada resaltada en el análisis.
 La última posición visitada en cada partida se guarda y se restaura automáticamente. Pulse \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} o ejecute el comando \sphinxcode{\sphinxupquote{match}} para mostrar u ocultar el panel.
 
 \sphinxAtStartPar
-Chaque match peut être exporté en transcription Jellyfish \sphinxcode{\sphinxupquote{.mat}} via le
-bouton ⬇ de la liste des matchs ou le bouton \sphinxstyleemphasis{.mat} de la fiche du match.
+Cada partida puede exportarse en transcripción Jellyfish \sphinxcode{\sphinxupquote{.mat}} mediante el botón ⬇ de la lista de partidas o el botón \sphinxstyleemphasis{.mat} de la ficha de la partida.
 
 \sphinxAtStartPar
-Le bouton \sphinxstylestrong{Fusionner les joueurs} de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.
+El botón \sphinxstylestrong{Fusionar jugadores} de la barra de herramientas del panel abre una ventana que enumera todos los nombres de jugadores de la base con su número de partidas: seleccionar las variantes de ortografía de un mismo jugador, elegir el nombre canónico que se desea conservar y, a continuación, fusionar. Útil para unificar las estadísticas por jugador cuando un mismo jugador aparece con varios nombres.
 
 \sphinxAtStartPar
-Cuando hay una partida abierta, aparece una \sphinxstylestrong{barra de información} sobre el tablero: indica los jugadores presentes (\sphinxstyleemphasis{jugador 1} contra \sphinxstyleemphasis{jugador 2}) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esta información está disponible).
+Cuando una partida está abierta, aparece una \sphinxstylestrong{barra de información} sobre el tablero: recuerda los jugadores presentes (\sphinxstyleemphasis{jugador 1} contra \sphinxstyleemphasis{jugador 2}) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esa información está disponible). Esta barra también se muestra fuera del modo partida: cuando una posición estudiada (procedente de una búsqueda, de una colección o de un acceso directo) proviene de una o varias partidas, indica su \sphinxstylestrong{procedencia} — la primera partida implicada y, en su caso, una insignia « +N » que enumera las demás al pasar el cursor. Una posición importada por separado, que ninguna partida referencia, no muestra nada.
 
 \sphinxAtStartPar
 Al abrir una base que contiene partidas, el panel \sphinxstylestrong{Partidas} se muestra de inmediato y la revisión comienza directamente en la primera posición, para empezar a navegar de inmediato.
+
+\begin{sphinxadmonition}{note}{Nota:}
+\sphinxAtStartPar
+Una base de datos solo puede abrirse en escritura por una única ventana a la vez. Si abre una base ya abierta en otra ventana de blunderDB, se abre en modo de \sphinxstylestrong{solo lectura}: la navegación, la búsqueda y el análisis siguen siendo posibles, pero toda modificación queda desactivada y la barra de título muestra « {[}solo lectura{]} ».
+\end{sphinxadmonition}
 
 \begin{sphinxadmonition}{tip}{Truco:}
 \sphinxAtStartPar
@@ -2633,7 +2627,7 @@ history, hi
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (l’historique de recherche se trouve dans son onglet \sphinxstyleemphasis{Historique}).
+Abrir el panel de búsqueda (el historial de búsqueda se encuentra en su pestaña \sphinxstyleemphasis{Historial}).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2644,7 +2638,7 @@ stats, st
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/masquer le panneau de statistiques.
+Mostrar/ocultar el panel de estadísticas.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2943,7 +2937,7 @@ xD65
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position n’a \sphinxstylestrong{pas} été jouée avec le lancer 6\sphinxhyphen{}5 (peu importe l’ordre). La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs lancers (\sphinxcode{\sphinxupquote{xD65 xD54}}).
+La posición \sphinxstylestrong{no} se jugó con la tirada 6\sphinxhyphen{}5 (sin importar el orden). El valor se indica en el token; repetible para excluir varias tiradas (\sphinxcode{\sphinxupquote{xD65 xD54}}).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4472,7 +4466,7 @@ Mostrar/ocultar la ayuda.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Onglets de vues}
+\subsection{Pestañas de vistas}
 \label{\detokenize{raccourcis:onglets-de-vues}}\label{\detokenize{raccourcis:raccourcis-vues}}
 
 \begin{savenotes}\sphinxattablestart
@@ -4499,7 +4493,7 @@ CTRL\sphinxhyphen{}T
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Créer une nouvelle vue (copie de la vue courante).
+Crear una nueva vista (copia de la vista actual).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4510,29 +4504,29 @@ CTRL\sphinxhyphen{}W
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Fermer la vue courante.
+Cerrar la vista actual.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}PageUp, MAJ\sphinxhyphen{}J
+CTRL\sphinxhyphen{}AvPág, MAYÚS\sphinxhyphen{}J
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Vue précédente.
+Vista anterior.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}PageDown, MAJ\sphinxhyphen{}K
+CTRL\sphinxhyphen{}RePág, MAYÚS\sphinxhyphen{}K
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Vue suivante.
+Vista siguiente.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4543,18 +4537,18 @@ CTRL\sphinxhyphen{}1 … CTRL\sphinxhyphen{}9
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Aller directement à la n\sphinxhyphen{}ième vue.
+Ir directamente a la n\sphinxhyphen{}ésima vista.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Double\sphinxhyphen{}clic sur l’onglet
+Doble clic en la pestaña
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Renommer la vue.
+Renombrar la vista.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4612,11 +4606,10 @@ Recorrer el historial de comandos hacia abajo.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Historique de recherche}
+\subsection{Historial de búsqueda}
 \label{\detokenize{raccourcis:historique-de-recherche}}\label{\detokenize{raccourcis:raccourcis-search-history}}
 \sphinxAtStartPar
-L’historique de recherche est l’onglet \sphinxstyleemphasis{Historique} du panneau de recherche
-(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+El historial de búsqueda es la pestaña \sphinxstyleemphasis{Historial} del panel de búsqueda (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} o \sphinxstyleemphasis{TAB}).
 
 
 \begin{savenotes}\sphinxattablestart
@@ -4654,7 +4647,7 @@ Doble clic
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Exécuter la recherche.
+Ejecutar la búsqueda.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4664,11 +4657,10 @@ Exécuter la recherche.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Bibliothèque de filtres}
+\subsection{Biblioteca de filtros}
 \label{\detokenize{raccourcis:bibliotheque-de-filtres}}\label{\detokenize{raccourcis:raccourcis-filter-library}}
 \sphinxAtStartPar
-La bibliothèque de filtres est l’onglet \sphinxstyleemphasis{Enregistrés} du panneau de recherche
-(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+La biblioteca de filtros es la pestaña \sphinxstyleemphasis{Guardados} del panel de búsqueda (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} o \sphinxstyleemphasis{TAB}).
 
 
 \begin{savenotes}\sphinxattablestart
@@ -5319,20 +5311,15 @@ Exporta el contenido de la base de datos a archivos.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type d’export: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}}, \sphinxcode{\sphinxupquote{matches}} ou
-\sphinxcode{\sphinxupquote{mat}} (export d’un ou plusieurs matchs en transcription Jellyfish
-\sphinxcode{\sphinxupquote{.mat}}) (obligatoire).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Tipo de exportación: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}}, \sphinxcode{\sphinxupquote{matches}} o \sphinxcode{\sphinxupquote{mat}} (exportación de una o varias partidas en transcripción Jellyfish \sphinxcode{\sphinxupquote{.mat}}) (obligatorio).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Fichier de sortie (obligatoire, sauf pour \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type mat}}
-utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Archivo de salida (obligatorio, salvo para \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type mat}} utilizado con \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Répertoire de sortie pour l’export \sphinxcode{\sphinxupquote{.mat}} par lot (plusieurs
-matchs, un fichier par match ; sans \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}}, tous les matchs sont
-exportés).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Directorio de salida para la exportación \sphinxcode{\sphinxupquote{.mat}} por lotes (varias partidas, un archivo por partida; sin \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}}, se exportan todas las partidas).
 
 \item {} 
 \sphinxAtStartPar
@@ -5481,9 +5468,7 @@ Busca posiciones en la base de datos según criterios combinables.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}position\sphinxhyphen{}ids}} — Filtrer par IDs de positions : intervalle \sphinxcode{\sphinxupquote{2,7}}
-(positions 2 à 7) ou liste explicite séparée par des points\sphinxhyphen{}virgules
-\sphinxcode{\sphinxupquote{5;10;15}}.
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}position\sphinxhyphen{}ids}} — Filtrar por IDs de posiciones: intervalo \sphinxcode{\sphinxupquote{2,7}} (posiciones 2 a 7) o lista explícita separada por puntos y comas \sphinxcode{\sphinxupquote{5;10;15}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -5544,45 +5529,40 @@ Muestra el contenido de la base de datos.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{stats}} — Rapport de statistiques de performance : PR / Snowie ER / MWC
-(global, pions, videau), PR glissant sur les N dernières décisions, top
-blunders, répartition par action de videau et histogramme des magnitudes
-d’erreur.
+\sphinxcode{\sphinxupquote{stats}} — Informe de estadísticas de rendimiento: PR / Snowie ER / MWC (global, fichas, cubo), PR deslizante sobre las N últimas decisiones, peores errores, reparto por acción de cubo e histograma de las magnitudes de error.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Options (type ``stats`` uniquement):}
+\sphinxstylestrong{Opciones (solo para el tipo ``stats``):}
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metric}} — Métrique affichée: \sphinxcode{\sphinxupquote{pr}} ou \sphinxcode{\sphinxupquote{mwc}} (défaut: \sphinxcode{\sphinxupquote{pr}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metric}} — Métrica mostrada: \sphinxcode{\sphinxupquote{pr}} o \sphinxcode{\sphinxupquote{mwc}} (por defecto: \sphinxcode{\sphinxupquote{pr}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}player}} — Restreindre au joueur indiqué.
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}player}} — Restringir al jugador indicado.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament}} — Restreindre à un ou plusieurs IDs de tournois (séparés
-par des virgules).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament}} — Restringir a uno o varios IDs de torneos (separados por comas).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from}} — Date de début (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from}} — Fecha de inicio (AAAA\sphinxhyphen{}MM\sphinxhyphen{}DD).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to}} — Date de fin (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to}} — Fecha de fin (AAAA\sphinxhyphen{}MM\sphinxhyphen{}DD).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision\sphinxhyphen{}type}} — Type de décision: \sphinxcode{\sphinxupquote{all}}, \sphinxcode{\sphinxupquote{checker}} ou \sphinxcode{\sphinxupquote{cube}}
-(défaut: \sphinxcode{\sphinxupquote{all}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision\sphinxhyphen{}type}} — Tipo de decisión: \sphinxcode{\sphinxupquote{all}}, \sphinxcode{\sphinxupquote{checker}} o \sphinxcode{\sphinxupquote{cube}} (por defecto: \sphinxcode{\sphinxupquote{all}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}top\sphinxhyphen{}blunders}} — Nombre de pires erreurs listées (défaut: 10).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}top\sphinxhyphen{}blunders}} — Número de peores errores listados (por defecto: 10).
 
 \item {} 
 \sphinxAtStartPar
@@ -6360,13 +6340,10 @@ Dos métodos de la familia \sphinxcode{\sphinxupquote{positions}} decodifican un
 La familia \sphinxcode{\sphinxupquote{anki}} gana seis métodos que amplían el planificador de repetición espaciada (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (registro de cada revisión — calificación y resultado FSRS — para las estadísticas de retención y un historial fiel), \sphinxcode{\sphinxupquote{anki.forecast}} (proyección del número de tarjetas que vencen en los próximos días, incluidas las atrasadas), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (retirar una tarjeta de la cola de revisión temporal o definitivamente) y \sphinxcode{\sphinxupquote{anki.optimizeParams}} (ajusta la tasa de retención objetivo de un mazo hacia la tasa de acierto observada en sus revisiones).
 
 
-\subsubsection{Déploiement avec Docker}
+\subsubsection{Despliegue con Docker}
 \label{\detokenize{mode_headless:deploiement-avec-docker}}\label{\detokenize{mode_headless:headless-docker}}
 \sphinxAtStartPar
-Le dépôt fournit un \sphinxcode{\sphinxupquote{Dockerfile.serve}} qui construit une image conteneur
-minimale du démon : seul le binaire \sphinxcode{\sphinxupquote{serve}} est compilé (Go pur, sans
-interface graphique et sans CGO, donc lié statiquement), puis placé dans une
-image \sphinxstyleemphasis{distroless}.
+El repositorio proporciona un \sphinxcode{\sphinxupquote{Dockerfile.serve}} que construye una imagen de contenedor mínima del demonio: solo se compila el binario \sphinxcode{\sphinxupquote{serve}} (Go puro, sin interfaz gráfica y sin CGO, por lo que está enlazado estáticamente), que luego se coloca en una imagen \sphinxstyleemphasis{distroless}.
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Construire l\PYGZsq{}image (depuis la racine du dépôt)}
@@ -6379,16 +6356,11 @@ docker\PYG{+w}{ }run\PYG{+w}{ }\PYGZhy{}\PYGZhy{}rm\PYG{+w}{ }\PYGZhy{}p\PYG{+w}
 \end{sphinxVerbatim}
 
 \sphinxAtStartPar
-L’image écoute sur le port 8080 et se configure par variables d’environnement
-(\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+La imagen escucha en el puerto 8080 y se configura mediante variables de entorno (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
 
 \begin{sphinxadmonition}{warning}{Advertencia:}
 \sphinxAtStartPar
-Comme le démon lui\sphinxhyphen{}même, le conteneur n’effectue \sphinxstylestrong{aucune
-authentification} : il doit être placé derrière un reverse\sphinxhyphen{}proxy chargé de
-l’authentification et ne jamais être exposé directement sur l’Internet
-public.
+Al igual que el propio demonio, el contenedor no realiza \sphinxstylestrong{ninguna autenticación}: debe colocarse detrás de un reverse\sphinxhyphen{}proxy encargado de la autenticación y no exponerse nunca directamente en la Internet pública.
 \end{sphinxadmonition}
 
 
@@ -6778,20 +6750,19 @@ Para añadir un filtro a la biblioteca,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Lancer la recherche à conserver (commande \sphinxcode{\sphinxupquote{s}} suivie de filtres).
+Lanzar la búsqueda que se desea conservar (comando \sphinxcode{\sphinxupquote{s}} seguido de filtros).
 
 \item {} 
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
-l’onglet \sphinxstyleemphasis{Historique}.
+Abrir el panel de búsqueda (\sphinxcode{\sphinxupquote{TAB}} o \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) y seleccionar la pestaña \sphinxstyleemphasis{Historial}.
 
 \item {} 
 \sphinxAtStartPar
-Cliquer sur l’icône signet de la recherche à enregistrer.
+Hacer clic en el icono de marcador de la búsqueda que se desea guardar.
 
 \item {} 
 \sphinxAtStartPar
-Donner un nom au filtre et valider.
+Dar un nombre al filtro y validar.
 
 \end{enumerate}
 
@@ -6801,8 +6772,7 @@ Para utilizar un filtro guardado en la biblioteca,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
-l’onglet \sphinxstyleemphasis{Enregistrés}.
+Abrir el panel de búsqueda (\sphinxcode{\sphinxupquote{TAB}} o \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) y seleccionar la pestaña \sphinxstyleemphasis{Guardados}.
 
 \item {} 
 \sphinxAtStartPar

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Descarga e instalación &mdash; documentación de blunderDB - 0.28.0</title>
+  <title>1. Descarga e instalación &mdash; documentación de blunderDB - 0.29.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=36f6a36b"></script>
+      <script src="_static/documentation_options.js?v=4723e932"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -101,11 +101,11 @@
 <p>blunderDB es un único ejecutable que no requiere ninguna instalación.</p>
 <p>La última versión de blunderDB está disponible bajo licencia MIT:</p>
 <ul class="simple">
-<li><p>para Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe</a></p></li>
-<li><p>para Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0</a></p></li>
-<li><p>para Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip</a></p></li>
+<li><p>para Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe</a></p></li>
+<li><p>para Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0</a></p></li>
+<li><p>para Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip</a></p></li>
 </ul>
-<p>Para una consulta sin conexión, también puede descargar esta documentación en formato PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.28.0-es.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.28.0-es.pdf</a></p>
+<p>Para una consulta sin conexión, también puede descargar esta documentación en formato PDF: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.29.0-es.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.29.0-es.pdf</a></p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
 <p>blunderDB utiliza Webview2 para renderizar la interfaz gráfica. Es muy probable que Webview2 ya esté presente de forma nativa en su sistema operativo. Si no es así, la primera ejecución de blunderDB propondrá descargarlo e instalarlo. No se espera ninguna acción por parte del usuario.</p>
@@ -139,13 +139,13 @@ sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> <
 </section>
 <section id="binaire-brut-methode-avancee">
 <h3><span class="section-number">1.1.4. </span>Binario sin procesar (método avanzado)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
-<p>El binario sin procesar <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0</a> sigue estando disponible. Como un navegador elimina el bit de ejecución al descargar, debe restablecerlo antes de la primera ejecución:</p>
+<p>El binario sin procesar <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0</a> sigue estando disponible. Como un navegador elimina el bit de ejecución al descargar, debe restablecerlo antes de la primera ejecución:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Se publican dos variantes de Linux según la versión de la biblioteca webkit2gtk. Si obtiene el error <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, su distribución utiliza webkit2gtk-4.1: utilice el paquete <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, el paquete AUR o descargue la versión dedicada <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0</a>. Los paquetes nativos seleccionan la dependencia correcta automáticamente.</p>
+<p>Se publican dos variantes de Linux según la versión de la biblioteca webkit2gtk. Si obtiene el error <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, su distribución utiliza webkit2gtk-4.1: utilice el paquete <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, el paquete AUR o descargue la versión dedicada <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0</a>. Los paquetes nativos seleccionan la dependencia correcta automáticamente.</p>
 </div>
 </section>
 </section>

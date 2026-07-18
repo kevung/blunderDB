@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. マニュアル &mdash; blunderDB 0.28.0 ドキュメント</title>
+  <title>2. マニュアル &mdash; blunderDB 0.29.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=147e8489"></script>
+      <script src="_static/documentation_options.js?v=65abced0"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. はじめに</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. 主な操作</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. インターフェースの説明</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. ビュータブ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. 設定</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. ガイドツアーとサンプルデータベース</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. ポジションのナビゲーション</a></li>
@@ -210,28 +210,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
-<p>Sous la barre d'outils, une barre d'onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l'index de la position
-courante, la position affichée, l'analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>ビュータブ<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>ツールバーの下にあるタブバーを使うと、複数の<strong>ビュー</strong>を並行して扱えます。各ビューは独立したワークスペースであり、独自のポジションリスト、現在のポジションのインデックス、表示中のポジション、解析と選択中の手、アクティブなパネル、編集中のコメント、そしてマッチ内のナビゲーション状態を保持します。これにより、例えば、あるビューで検索を開いたまま、別のビューでマッチを閲覧するといったことが可能になります。</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d'onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l'onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l'onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>ビューを作成する</strong>：タブバーの<em>+</em>ボタンをクリックするか、<em>CTRL-T</em>を押します。新しいビューは現在のビューのコピーとして始まります。</p></li>
+<li><p><strong>ビューを閉じる</strong>：タブの×印をクリックするか、<em>CTRL-W</em>を押します。最後のビューは閉じることができません。</p></li>
+<li><p><strong>ビューを切り替える</strong>：タブをクリックするか、<em>CTRL-PageUp</em> / <em>CTRL-PageDown</em>（または<em>MAJ-J</em> / <em>MAJ-K</em>）を押して前／次のビューに移動するか、<em>CTRL-1</em>から<em>CTRL-9</em>でn番目のビューに直接移動します。</p></li>
+<li><p><strong>ビューの名前を変更する</strong>：タブをダブルクリックし、新しい名前を入力して<em>ENTREE</em>で確定します。</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l'état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>ビューはデータベースのセッション状態とともに保存され、再オープン時に復元されます。</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>設定<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -290,16 +277,7 @@ restaurées à sa réouverture.</p>
 <p>現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドを使用します（例：<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。検索パネルには同じ機能のための <em>Search in current results</em> チェックボックスも用意されています。</p>
 <p>このパネルでは、検索する <strong>判断タイプ</strong> を明示的に制御できます。 <em>指定なし</em> （フィルタなし）、 <em>チェッカー</em> （チェッカーの判断）、または <em>キューブ</em> （キューブの判断）です。 <em>キューブ</em> を選択すると、2つ目のリストでサブタイプを指定できます。 <em>すべて</em> 、 <em>ダブル / ノーダブル</em> （手番のプレイヤーがダブルするかを判断する）、または <em>テイク / パス</em> （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 <em>テイク / パス</em> モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。</p>
 <p><strong>マッチ＆トーナメント</strong> フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。<em>すべて</em> / <em>なし</em> ボタンは、現在絞り込まれているサブセットにのみ作用します。トーナメントをチェックすると、そのメンバーであるマッチがマッチリスト内で自動的にチェックされ（グレー表示になり）、トーナメントがそのマッチ全体の集合に相当することが視覚的にわかります。</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L'onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L'onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">付録: フィルターの高度な使い方</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>検索パネルの左端には3つのタブがあります：<em>検索</em>（フィルター）、<em>履歴</em>、<em>保存済み</em>。<strong>履歴</strong>タブには、過去の検索がその日付とコマンドとともに一覧表示されます：クリックすると検索が選択され、関連するポジションがボード上に表示されます。ダブルクリックすると再実行されます。各エントリはフィルターライブラリに保存する（ブックマークアイコン、フィルターに名前を付けて）か、削除できます。<strong>保存済み</strong>タブには<strong>フィルターライブラリ</strong>が含まれます：保存済みのフィルターをダブルクリックすると、対応する検索を再実行できます（<a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">付録: フィルターの高度な使い方</span></a>を参照）。<code class="docutils literal notranslate"><span class="pre">history</span></code>コマンド（エイリアス <code class="docutils literal notranslate"><span class="pre">hi</span></code>）は検索パネルを開きます。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なフィルターの一覧については <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">4 章</span></a> を参照してください。</p>
@@ -321,15 +299,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>分析の中で実際にプレイされた手が強調表示されているのを確認する。</p></li>
 </ul>
 <p>各マッチで最後に閲覧したポジションは記憶され、自動的に復元されます。パネルを表示または非表示にするには、<em>CTRL-Tab</em> を押すか <code class="docutils literal notranslate"><span class="pre">match</span></code> コマンドを実行します。</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d'outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu'un même joueur apparaît sous plusieurs noms.</p>
-<p>マッチを開くと、ボードの上に <strong>情報バー</strong> が表示されます： 対戦している両プレイヤー（<em>プレイヤー 1</em> 対 <em>プレイヤー 2</em>）と、マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）が示されます。</p>
+<p>各マッチは、マッチリストの ⬇ ボタン、またはマッチカードの<em>.mat</em>ボタンを使って、Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> トランスクリプションでエクスポートできます。</p>
+<p>パネルのツールバーにある<strong>プレイヤーを統合</strong>ボタンを押すと、データベース内のすべてのプレイヤー名とそのマッチ数を一覧表示するウィンドウが開きます：同一プレイヤーの表記のバリエーションを選択し、残す正規の名前を選んでから統合します。同じプレイヤーが複数の名前で現れる場合に、プレイヤーごとの統計を統一するのに便利です。</p>
+<p>マッチが開かれると、ボードの上に<strong>情報バー</strong>が表示されます：対戦しているプレイヤー（<em>プレイヤー1</em>対<em>プレイヤー2</em>）と、マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）を示します。このバーはマッチモード以外でも表示されます：研究中のポジション（検索、コレクション、または直接アクセスによるもの）が1つまたは複数のマッチから来ている場合、その<strong>由来</strong> ―― 最初に該当するマッチと、必要に応じてマウスを合わせると他を一覧表示する「+N」バッジ ―― を示します。どのマッチも参照しない、単独でインポートされたポジションは何も表示しません。</p>
 <p>マッチを含むデータベースを開くと、<strong>マッチ</strong> パネルがすぐに表示され、レビューは直接最初のポジションから始まるため、すぐにナビゲーションを開始できます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>データベースは、一度に1つのウィンドウでのみ書き込みモードで開くことができます。別のblunderDBウィンドウで既に開かれているデータベースを開くと、<strong>読み取り専用</strong>で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>

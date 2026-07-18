@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Käyttöopas &mdash; blunderDB 0.28.0 documentation</title>
+  <title>2. Käyttöopas &mdash; blunderDB 0.29.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9c514921"></script>
+      <script src="_static/documentation_options.js?v=ed840378"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Johdanto</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Päätoiminnot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Käyttöliittymän kuvaus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Näkymävälilehdet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. Asetukset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. Opastetut kierrokset ja esimerkkitietokanta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. Asemien selaaminen</a></li>
@@ -210,28 +210,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
-<p>Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Näkymävälilehdet<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Työkalupalkin alla oleva välilehtipalkki mahdollistaa työskentelyn useiden <strong>näkymien</strong> kanssa rinnakkain. Jokainen näkymä on itsenäinen työtila, joka säilyttää oman asemaluettelonsa, nykyisen aseman indeksin, näytetyn aseman, analyysin ja valitun siirron, aktiivisen paneelin, käynnissä olevan kommentin sekä ottelun navigointikontekstin. Näin voi esimerkiksi pitää haun auki yhdessä näkymässä ja selata samalla ottelua toisessa.</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d’onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l’onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l’onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>Näkymän luominen</strong>: napsauta välilehtipalkin <em>+</em>-painiketta tai paina <em>CTRL-T</em>. Uusi näkymä käynnistyy nykyisen näkymän kopiona.</p></li>
+<li><p><strong>Näkymän sulkeminen</strong>: napsauta välilehden ruksia tai paina <em>CTRL-W</em>. Viimeistä näkymää ei voi sulkea.</p></li>
+<li><p><strong>Näkymän vaihtaminen</strong>: napsauta välilehteä, paina <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (tai <em>SHIFT-J</em> / <em>SHIFT-K</em>) siirtyäksesi edelliseen / seuraavaan näkymään, tai <em>CTRL-1</em> – <em>CTRL-9</em> siirtyäksesi suoraan n:nteen näkymään.</p></li>
+<li><p><strong>Näkymän uudelleennimeäminen</strong>: kaksoisnapsauta välilehteä, kirjoita uusi nimi ja vahvista painamalla <em>ENTER</em>.</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Asetukset<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -290,16 +277,7 @@ restaurées à sa réouverture.</p>
 <p>Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä komentoa <code class="docutils literal notranslate"><span class="pre">ss</span></code>, jota seuraavat suodattimet (esim. <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Hakupaneeli tarjoaa samaa toimintoa varten myös valintaruudun <em>Search in current results</em>.</p>
 <p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
 <p><strong>Ottelut ja turnaukset</strong> -suodatin perustuu yhteiseen valitsimeen (modaali-ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä <em>Kaikki</em> / <em>Ei mitään</em> -painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L’onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Liite: Suodattimien edistynyt käyttö</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>Hakupaneelissa on vasemmassa reunassaan kolme välilehteä: <em>Recherche</em> (suodattimet), <em>Historique</em> ja <em>Enregistrés</em>. <strong>Historique</strong>-välilehti luettelee aiemmat haut päivämäärineen ja komentoineen: napsautus valitsee haun ja näyttää siihen liittyvän aseman laudalla, kaksoisnapsautus suorittaa sen uudelleen. Kunkin merkinnän voi tallentaa suodatinkirjastoon (kirjanmerkkikuvake, antamalla suodattimelle nimen) tai poistaa. <strong>Enregistrés</strong>-välilehti sisältää <strong>suodatinkirjaston</strong>: kaksoisnapsauta tallennettua suodatinta suorittaaksesi vastaavan haun uudelleen (katso <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Liite: Suodattimien edistynyt käyttö</span></a>). Komento <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) avaa hakupaneelin.</p>
 <div class="admonition tip">
 <p class="admonition-title">Vihje</p>
 <p>Katso saatavilla olevien suodattimien luettelo kohdasta <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a>.</p>
@@ -321,15 +299,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>nähdä todella pelatun siirron korostettuna analyysissä.</p></li>
 </ul>
 <p>Kunkin ottelun viimeksi katsottu asema tallennetaan ja palautetaan automaattisesti. Näytä tai piilota paneeli painamalla <em>CTRL-Tab</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
-<p>Kun ottelu on avattuna, laudan yläpuolelle ilmestyy <strong>tietopalkki</strong>: se näyttää mukana olevat pelaajat (<em>pelaaja 1</em> vastaan <em>pelaaja 2</em>) sekä ottelun taustatiedot (tapahtuma, paikka, kierros, päivämäärä ja ottelun pituus, kun nämä tiedot ovat saatavilla).</p>
+<p>Jokaisen ottelun voi viedä Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> -transkriptioksi otteluluettelon ⬇-painikkeella tai ottelun tietolomakkeen <em>.mat</em>-painikkeella.</p>
+<p>Paneelin työkalupalkin <strong>Fusionner les joueurs</strong> -painike avaa ikkunan, joka luettelee kaikki tietokannan pelaajanimet otteluidensa määrän kanssa: valitse saman pelaajan eri kirjoitusasut, valitse säilytettävä kanoninen nimi ja yhdistä sitten. Hyödyllinen pelaajakohtaisten tilastojen yhtenäistämiseen, kun sama pelaaja esiintyy useilla nimillä.</p>
+<p>Kun ottelu on avattu, laudan yläpuolelle ilmestyy <strong>tietopalkki</strong>: se muistuttaa läsnä olevista pelaajista (<em>pelaaja 1</em> vastaan <em>pelaaja 2</em>) sekä ottelun taustatiedoista (tapahtuma, paikka, kierros, päivämäärä ja ottelun pituus, kun nämä tiedot ovat saatavilla). Tämä palkki näytetään myös ottelutilan ulkopuolella: kun tutkittava asema (haun, kokoelman tai suoran haun tuloksena) on peräisin yhdestä tai useammasta ottelusta, palkki ilmoittaa sen <strong>alkuperän</strong> — ensimmäisen kyseessä olevan ottelun ja tarvittaessa « +N »-merkin, joka luettelee muut osoitettaessa. Erikseen tuotu asema, johon mikään ottelu ei viittaa, ei näytä mitään.</p>
 <p>Avattaessa otteluita sisältävää tietokantaa <strong>Ottelut</strong>-paneeli näytetään heti ja tarkastelu alkaa suoraan ensimmäisestä asemasta, jotta navigoinnin voi aloittaa välittömästi.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tietokannan voi avata kirjoitustilassa vain yksi ikkuna kerrallaan. Jos avaat tietokannan, joka on jo avattu toisessa blunderDB-ikkunassa, se avautuu <strong>vain luku</strong> -tilassa: selaus, haku ja analyysi ovat edelleen mahdollisia, mutta kaikki muokkaus on poistettu käytöstä ja otsikkopalkissa lukee « [vain luku] ».</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Vihje</p>
 <p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>

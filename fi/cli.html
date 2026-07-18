@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. Komentoriviliittymä (CLI) &mdash; blunderDB 0.28.0 documentation</title>
+  <title>6. Komentoriviliittymä (CLI) &mdash; blunderDB 0.29.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9c514921"></script>
+      <script src="_static/documentation_options.js?v=ed840378"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -259,14 +259,9 @@
 <p><strong>Valitsimet:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Lähdetietokanta (pakollinen).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ou
-<code class="docutils literal notranslate"><span class="pre">mat</span></code> (export d’un ou plusieurs matchs en transcription Jellyfish
-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatoire).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire, sauf pour <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>
-utilisé avec <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire de sortie pour l’export <code class="docutils literal notranslate"><span class="pre">.mat</span></code> par lot (plusieurs
-matchs, un fichier par match ; sans <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, tous les matchs sont
-exportés).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Vientityyppi: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> tai <code class="docutils literal notranslate"><span class="pre">mat</span></code> (yhden tai useamman ottelun vienti Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> -transkriptioon) (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Tulostiedosto (pakollinen, paitsi <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> -vaihtoehdolle yhdessä <code class="docutils literal notranslate"><span class="pre">--dir</span></code> kanssa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Erävientinä tehtävän <code class="docutils literal notranslate"><span class="pre">.mat</span></code>-viennin tulostushakemisto (useita otteluita, yksi tiedosto ottelua kohden; ilman <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> viedään kaikki ottelut).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Sisällytä analyysit (oletus: kyllä).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Sisällytä kommentit (oletus: kyllä).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Sisällytä suodatinkirjasto (oletus: kyllä).</p></li>
@@ -324,9 +319,7 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Vähimmäismäärä ulospelattuja nappuloita (pelaaja 1/2).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Suodata otteluiden tunnusten mukaan (pilkulla eroteltuna).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Suodata turnausten tunnusten mukaan (pilkulla eroteltuna).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filtrer par IDs de positions : intervalle <code class="docutils literal notranslate"><span class="pre">2,7</span></code>
-(positions 2 à 7) ou liste explicite séparée par des points-virgules
-<code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Suodata asemien tunnusten mukaan: väli <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (asemat 2–7) tai puolipisteillä eroteltu eksplisiittinen luettelo <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Vain erikseen tuodut asemat, eli ne jotka lisäsit itse, eikä niitä jotka ottelun tuonti toi mukanaan.</p></li>
 </ul>
 <p><strong>Esimerkkejä:</strong></p>
@@ -364,22 +357,17 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Luettelo tuoduista otteluista.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Luettelo turnauksista.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Luettelo asemista (oletuksena rajoitettu 10:een).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Rapport de statistiques de performance : PR / Snowie ER / MWC
-(global, pions, videau), PR glissant sur les N dernières décisions, top
-blunders, répartition par action de videau et histogramme des magnitudes
-d’erreur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Suorituskykytilastojen raportti: PR / Snowie ER / MWC (kokonais, nappulat, kuutio), liukuva PR viimeisten N päätöksen osalta, pahimmat virheet, jakauma kuutiotoiminnoittain ja virhesuuruuksien histogrammi.</p></li>
 </ul>
-<p><strong>Options (type ``stats`` uniquement):</strong></p>
+<p><strong>Valinnat (vain ``stats``-tyyppi):</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Métrique affichée: <code class="docutils literal notranslate"><span class="pre">pr</span></code> ou <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restreindre au joueur indiqué.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois (séparés
-par des virgules).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Date de début (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Date de fin (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>
-(défaut: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Nombre de pires erreurs listées (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Näytettävä mittari: <code class="docutils literal notranslate"><span class="pre">pr</span></code> tai <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Rajaa ilmoitettuun pelaajaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Rajaa yhteen tai useampaan turnauksen tunnukseen (pilkulla eroteltuna).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Aloituspäivä (VVVV-KK-PP).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Lopetuspäivä (VVVV-KK-PP).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Päätöstyyppi: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> tai <code class="docutils literal notranslate"><span class="pre">cube</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Lueteltavien pahimpien virheiden määrä (oletus: 10).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
 </ul>
 <p><strong>Esimerkkejä:</strong></p>

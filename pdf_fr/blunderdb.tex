@@ -80,8 +80,8 @@
 
 
 \title{blunderDB}
-\date{17 juillet 2026}
-\release{0.28.0}
+\date{18 juillet 2026}
+\release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -742,6 +742,22 @@ Panneau de recherche : filtre unifié « Matchs \& Tournois » remplaçant les c
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.29.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+18/07/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Export d’un match au format Jellyfish/gnubg (\sphinxcode{\sphinxupquote{.mat}}) depuis l’interface (panneau Matchs) comme en ligne de commande, avec la route serveur correspondante — pratique pour rejouer un match dans un autre logiciel de backgammon. Recherche : nouveau discriminateur « dés exclus » (jeton \sphinxcode{\sphinxupquote{xD65}}, plusieurs autorisés) qui écarte les positions dont le lancer correspond à un jet donné. Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans une autre fenêtre de blunderDB s’ouvre désormais en lecture seule (navigation, recherche et analyse possibles, modifications désactivées, mention « {[}lecture seule{]} » dans la barre de titre) au lieu de risquer une corruption. Provenance des positions : hors mode match, la barre d’informations au\sphinxhyphen{}dessus du plateau indique le match — et son tournoi — d’où provient la position étudiée, avec un badge « +N » lorsqu’elle apparaît dans plusieurs matchs. Robustesse accrue face à l’environnement : repli automatique lorsqu’une police, le presse\sphinxhyphen{}papier ou la dernière base ouverte ne sont pas disponibles. Un rechargement explicite de la bibliothèque (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}R}}, bouton de la barre d’outils ou commande \sphinxcode{\sphinxupquote{e}}) rouvre le panneau d’analyse de la position affichée. Corrections notables : suppression d’un blocage à l’export de grosses bases, bouton « Aucun » de l’export qui n’exportait pas réellement aucun match, filtre par commentaire multi\sphinxhyphen{}mots, dédoublonnage de l’événement et du tournoi dans la barre d’informations, et divers ajustements d’affichage. Voir {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste des commandes}}}}}, {\hyperref[\detokenize{manuel:panneau-matchs}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Panneau Matchs}}}}} et {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Manuel}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -763,15 +779,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
 
 \end{itemize}
 
@@ -836,7 +852,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binaire brut (méthode avancée)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} reste disponible. Comme un navigateur retire
+Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} reste disponible. Comme un navigateur retire
 le bit exécutable au téléchargement, il faut le rétablir avant la première
 exécution :
 
@@ -851,7 +867,7 @@ bibliothèque webkit2gtk. Si vous obtenez l’erreur
 \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, votre
 distribution utilise webkit2gtk\sphinxhyphen{}4.1 : utilisez le paquet \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}},
 le paquet AUR, ou téléchargez la version dédiée
-\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Les paquets natifs choisissent
+\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Les paquets natifs choisissent
 automatiquement la bonne dépendance.
 \end{sphinxadmonition}
 
@@ -1394,12 +1410,26 @@ par joueur lorsqu’un même joueur apparaît sous plusieurs noms.
 Lorsqu’un match est ouvert, une \sphinxstylestrong{barre d’informations} apparaît au\sphinxhyphen{}dessus du
 plateau : elle rappelle les joueurs en présence (\sphinxstyleemphasis{joueur 1} contre \sphinxstyleemphasis{joueur 2})
 ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
-match, lorsque ces informations sont disponibles).
+match, lorsque ces informations sont disponibles). Cette barre s’affiche aussi
+en dehors du mode match : lorsqu’une position étudiée (issue d’une recherche,
+d’une collection ou d’un accès direct) provient d’un ou de plusieurs matchs,
+elle en indique la \sphinxstylestrong{provenance} — le premier match concerné et, le cas
+échéant, un badge « +N » listant les autres au survol. Une position importée
+seule, qu’aucun match ne référence, n’affiche rien.
 
 \sphinxAtStartPar
 À l’ouverture d’une base contenant des matchs, le panneau \sphinxstylestrong{Matchs} est affiché
 d’emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Une base de données ne peut être ouverte en écriture que par une seule
+fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre
+fenêtre de blunderDB, elle s’ouvre en \sphinxstylestrong{lecture seule} : la navigation, la
+recherche et l’analyse restent possibles, mais toute modification est
+désactivée et la barre de titre affiche « {[}lecture seule{]} ».
+\end{sphinxadmonition}
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar

@@ -13,8 +13,8 @@
 \contentsline {subsection}{\numberline {2.2.1}Einführung}{6}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Wichtigste Interaktionen}{7}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}Beschreibung der Benutzeroberfläche}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Onglets de vues}{8}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}Konfiguration}{8}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.4}Ansichts\sphinxhyphen {}Reiter}{8}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Konfiguration}{9}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Geführte Touren und Beispieldatenbank}{9}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Navigation durch die Stellungen}{9}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}Stellungen bearbeiten}{9}{subsection.2.2.8}%
@@ -28,8 +28,8 @@
 \contentsline {subsection}{\numberline {2.2.16}Stats\sphinxhyphen {}Panel}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Einführung}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Öffnen des Panels}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Filterleiste}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Spielerperspektive}{12}{paragraph*.10}%
+\contentsline {subsubsection}{Filterleiste}{13}{subsubsection*.9}%
+\contentsline {paragraph}{Spielerperspektive}{13}{paragraph*.10}%
 \contentsline {paragraph}{Verfügbare Filter}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Umschalter PR / MWC}{13}{subsubsection*.12}%
 \contentsline {subsubsection}{Tab Dashboard}{14}{subsubsection*.13}%
@@ -38,13 +38,13 @@
 \contentsline {paragraph}{Top\sphinxhyphen {}Blunder}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Tab Progression}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Liniendiagramm pro Turnier}{14}{paragraph*.18}%
-\contentsline {paragraph}{Streudiagramm pro Match}{14}{paragraph*.19}%
+\contentsline {paragraph}{Streudiagramm pro Match}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Tab Fehler}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Aufteilung nach Doppler\sphinxhyphen {}Aktion}{15}{paragraph*.21}%
 \contentsline {paragraph}{Aufteilung Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Histogramm der Fehlergrößen}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Aggregationsregel}{15}{subsubsection*.24}%
-\contentsline {subsubsection}{MWC: Einschränkungen}{15}{subsubsection*.25}%
+\contentsline {subsubsection}{MWC: Einschränkungen}{16}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}EPC\sphinxhyphen {}Panel}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{16}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadaten\sphinxhyphen {}Panel}{17}{subsection.2.2.19}%
@@ -52,9 +52,9 @@
 \contentsline {section}{\numberline {2.3}Benutzerhandbuch}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{17}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Eine Datenbank importieren und zusammenführen}{17}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Eine Datenbank importieren und zusammenführen}{18}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{18}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}Eine Position zur Datenbank hinzufügen}{18}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.5}Eine Position zur Datenbank hinzufügen}{19}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Eine Position mit einem Tag versehen}{19}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Eine Position löschen}{19}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Eine Position aus XG importieren}{19}{subsection.2.3.8}%
@@ -65,11 +65,11 @@
 \contentsline {subsection}{\numberline {2.3.13}Das Match\sphinxhyphen {}Panel verwalten}{21}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Sammlungen verwalten}{21}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Turniere verwalten}{21}{subsection.2.3.15}%
-\contentsline {subsection}{\numberline {2.3.16}Leistungsstatistiken anzeigen}{21}{subsection.2.3.16}%
+\contentsline {subsection}{\numberline {2.3.16}Leistungsstatistiken anzeigen}{22}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Den EPC berechnen}{22}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Die Analyse einer aus XG importierten Position anzeigen}{22}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Eine Position nach XG exportieren}{22}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Die verschiedenen Positionen anzeigen}{22}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.20}Die verschiedenen Positionen anzeigen}{23}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Positionen nach Kriterien suchen}{23}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Liste der Befehle}{23}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Globale Operationen}{24}{subsection.2.4.1}%
@@ -84,10 +84,10 @@
 \contentsline {subsection}{\numberline {2.5.4}Anzeige}{30}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Aktionen}{30}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Werkzeuge}{30}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Onglets de vues}{30}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.7}Ansichts\sphinxhyphen {}Reiter}{30}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Befehlszeile}{30}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Historique de recherche}{31}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Bibliothèque de filtres}{31}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.9}Suchverlauf}{31}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}Filterbibliothek}{31}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Analyse\sphinxhyphen {}Fenster}{31}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Match\sphinxhyphen {}Fenster}{31}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Anki\sphinxhyphen {}Fenster (verteiltes Wiederholen)}{31}{subsection.2.5.13}%
@@ -133,7 +133,7 @@
 \contentsline {subsection}{\numberline {2.8.1}Überblick}{43}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Der Daemon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%
 \contentsline {subsubsection}{Endpunkte}{44}{subsubsection*.33}%
-\contentsline {subsubsection}{Déploiement avec Docker}{45}{subsubsection*.34}%
+\contentsline {subsubsection}{Bereitstellung mit Docker}{45}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}Backend und Mehrbenutzerbetrieb}{45}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Eine SQLite\sphinxhyphen {}Datenbank nach PostgreSQL migrieren}{45}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Der generische Dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{46}{subsection.2.8.5}%

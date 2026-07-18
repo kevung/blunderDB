@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. コマンドラインインターフェース（CLI） &mdash; blunderDB 0.28.0 ドキュメント</title>
+  <title>6. コマンドラインインターフェース（CLI） &mdash; blunderDB 0.29.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=147e8489"></script>
+      <script src="_static/documentation_options.js?v=65abced0"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -259,14 +259,9 @@
 <p><strong>オプション：</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — ソースデータベース（必須）。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d'export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ou
-<code class="docutils literal notranslate"><span class="pre">mat</span></code> (export d'un ou plusieurs matchs en transcription Jellyfish
-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatoire).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire, sauf pour <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>
-utilisé avec <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire de sortie pour l'export <code class="docutils literal notranslate"><span class="pre">.mat</span></code> par lot (plusieurs
-matchs, un fichier par match ; sans <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, tous les matchs sont
-exportés).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — エクスポートの種類：<code class="docutils literal notranslate"><span class="pre">database</span></code>、<code class="docutils literal notranslate"><span class="pre">positions</span></code>、<code class="docutils literal notranslate"><span class="pre">matches</span></code>、または <code class="docutils literal notranslate"><span class="pre">mat</span></code>（1つまたは複数のマッチをJellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> トランスクリプションでエクスポート）（必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — 出力ファイル（<code class="docutils literal notranslate"><span class="pre">--dir</span></code>と併用する <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> を除き必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — バッチ <code class="docutils literal notranslate"><span class="pre">.mat</span></code> エクスポートの出力ディレクトリ（複数のマッチ、マッチごとに1ファイル。<code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>なしの場合、すべてのマッチがエクスポートされます）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — 分析を含める（デフォルト：はい）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — コメントを含める（デフォルト：はい）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — フィルターライブラリを含める（デフォルト：はい）。</p></li>
@@ -324,9 +319,7 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — ベアオフした最小チェッカー数（プレイヤー1/2）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — マッチIDでフィルタリングする（カンマ区切り）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — トーナメントIDでフィルタリングする（カンマ区切り）。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filtrer par IDs de positions : intervalle <code class="docutils literal notranslate"><span class="pre">2,7</span></code>
-(positions 2 à 7) ou liste explicite séparée par des points-virgules
-<code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — ポジションIDでフィルタリングする：範囲 <code class="docutils literal notranslate"><span class="pre">2,7</span></code>（ポジション2から7）、またはセミコロン区切りの明示的なリスト <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — 単独でインポートされた局面のみ。つまり、マッチのインポートで入ったものではなく、自分で追加した局面です。</p></li>
 </ul>
 <p><strong>例：</strong></p>
@@ -364,22 +357,17 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — インポートされたマッチのリスト。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — トーナメントのリスト。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — ポジションのリスト（デフォルトで10件に制限）。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Rapport de statistiques de performance : PR / Snowie ER / MWC
-(global, pions, videau), PR glissant sur les N dernières décisions, top
-blunders, répartition par action de videau et histogramme des magnitudes
-d'erreur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — パフォーマンス統計レポート：PR / Snowie ER / MWC（全体、チェッカー、ダブリングキューブ）、直近N手の決定に対する移動平均PR、トップブランダー、ダブリングキューブアクション別の内訳、エラーの大きさのヒストグラム。</p></li>
 </ul>
-<p><strong>Options (type ``stats`` uniquement):</strong></p>
+<p><strong>オプション（``stats`` タイプのみ）：</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Métrique affichée: <code class="docutils literal notranslate"><span class="pre">pr</span></code> ou <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restreindre au joueur indiqué.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois (séparés
-par des virgules).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Date de début (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Date de fin (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>
-(défaut: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Nombre de pires erreurs listées (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — 表示するメトリック：<code class="docutils literal notranslate"><span class="pre">pr</span></code> または <code class="docutils literal notranslate"><span class="pre">mwc</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">pr</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — 指定したプレイヤーに限定する。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — 1つまたは複数のトーナメントIDに限定する（カンマ区切り）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — 開始日（YYYY-MM-DD）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — 終了日（YYYY-MM-DD）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — 決定の種類：<code class="docutils literal notranslate"><span class="pre">all</span></code>、<code class="docutils literal notranslate"><span class="pre">checker</span></code> または <code class="docutils literal notranslate"><span class="pre">cube</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">all</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — リストする最悪のエラーの数（デフォルト：10）。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
 </ul>
 <p><strong>例：</strong></p>

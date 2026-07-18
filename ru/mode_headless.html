@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Безголовый режим (сервер) &mdash; документация blunderDB 0.28.0</title>
+  <title>8. Безголовый режим (сервер) &mdash; документация blunderDB 0.29.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e3621de8"></script>
+      <script src="_static/documentation_options.js?v=92b757b1"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -59,7 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Обзор</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. Демон <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Точки доступа</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">8.2.2. Déploiement avec Docker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">8.2.2. Развёртывание с помощью Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. Бэкенд PostgreSQL и многопользовательский режим</a></li>
@@ -199,11 +199,8 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <p>Семейство <code class="docutils literal notranslate"><span class="pre">anki</span></code> получает шесть методов, расширяющих планировщик интервального повторения (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (журнал каждого повторения — оценка и результат FSRS — для статистики удержания и достоверной истории), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (прогноз числа карточек, наступающих к повторению в ближайшие дни, включая просроченные), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (убрать карточку из очереди повторения временно или навсегда) и <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (подстраивает целевой коэффициент удержания колоды к фактическому проценту успешных повторений).</p>
 </section>
 <section id="deploiement-avec-docker">
-<span id="headless-docker"></span><h3><span class="section-number">8.2.2. </span>Déploiement avec Docker<a class="headerlink" href="#deploiement-avec-docker" title="Ссылка на этот заголовок"></a></h3>
-<p>Le dépôt fournit un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> qui construit une image conteneur
-minimale du démon : seul le binaire <code class="docutils literal notranslate"><span class="pre">serve</span></code> est compilé (Go pur, sans
-interface graphique et sans CGO, donc lié statiquement), puis placé dans une
-image <em>distroless</em>.</p>
+<span id="headless-docker"></span><h3><span class="section-number">8.2.2. </span>Развёртывание с помощью Docker<a class="headerlink" href="#deploiement-avec-docker" title="Ссылка на этот заголовок"></a></h3>
+<p>Репозиторий содержит <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, который собирает минимальный контейнерный образ демона: компилируется только двоичный файл <code class="docutils literal notranslate"><span class="pre">serve</span></code> (чистый Go, без графического интерфейса и без CGO, то есть со статической компоновкой), после чего он помещается в образ <em>distroless</em>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Construire l&#39;image (depuis la racine du dépôt)</span>
 docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
 
@@ -213,15 +210,10 @@ docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </
 <span class="w">    </span>blunderdb-serve
 </pre></div>
 </div>
-<p>L’image écoute sur le port 8080 et se configure par variables d’environnement
-(<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
-<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<p>Образ слушает порт 8080 и настраивается через переменные окружения (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
 <div class="admonition warning">
 <p class="admonition-title">Предупреждение</p>
-<p>Comme le démon lui-même, le conteneur n’effectue <strong>aucune
-authentification</strong> : il doit être placé derrière un reverse-proxy chargé de
-l’authentification et ne jamais être exposé directement sur l’Internet
-public.</p>
+<p>Как и сам демон, контейнер <strong>не выполняет никакой аутентификации</strong>: его следует размещать за обратным прокси, отвечающим за аутентификацию, и никогда не выставлять напрямую в публичный Интернет.</p>
 </div>
 </section>
 </section>

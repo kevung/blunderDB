@@ -23,32 +23,32 @@
 \contentsline {subsection}{\numberline {2.2.12}Panneau Recherche}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Panneau Collections}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Panneau Matchs}{11}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Panneau Tournois}{11}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.15}Panneau Tournois}{12}{subsection.2.2.15}%
 \contentsline {subsection}{\numberline {2.2.16}Panneau Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introduction}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Ouverture du panneau}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Barre de filtre}{12}{subsubsection*.9}%
 \contentsline {paragraph}{Perspective joueur}{12}{paragraph*.10}%
-\contentsline {paragraph}{Filtres disponibles}{12}{paragraph*.11}%
+\contentsline {paragraph}{Filtres disponibles}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Toggle PR / MWC}{13}{subsubsection*.12}%
-\contentsline {subsubsection}{Onglet Dashboard}{13}{subsubsection*.13}%
-\contentsline {paragraph}{Cartes de niveau}{13}{paragraph*.14}%
+\contentsline {subsubsection}{Onglet Dashboard}{14}{subsubsection*.13}%
+\contentsline {paragraph}{Cartes de niveau}{14}{paragraph*.14}%
 \contentsline {paragraph}{PR glissant sur N dernières décisions}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Onglet Progression}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Courbe par tournoi}{14}{paragraph*.18}%
 \contentsline {paragraph}{Scatter plot par match}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Onglet Erreurs}{14}{subsubsection*.20}%
-\contentsline {paragraph}{Répartition par action de videau}{14}{paragraph*.21}%
+\contentsline {subsubsection}{Onglet Erreurs}{15}{subsubsection*.20}%
+\contentsline {paragraph}{Répartition par action de videau}{15}{paragraph*.21}%
 \contentsline {paragraph}{Répartition Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Histogramme des magnitudes d’erreur}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Règle d’agrégation}{15}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC : limitations}{15}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Panneau EPC}{15}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.17}Panneau EPC}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Panneau Anki}{16}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Panneau Métadonnées}{16}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Panneau Journal}{16}{subsection.2.2.20}%
-\contentsline {section}{\numberline {2.3}Guide utilisateur}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.20}Panneau Journal}{17}{subsection.2.2.20}%
+\contentsline {section}{\numberline {2.3}Guide utilisateur}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Créer une nouvelle base de données}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Ouvrir une base de donnée existante}{17}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Importer et fusionner une base de données}{17}{subsection.2.3.3}%

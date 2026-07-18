@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 23:16
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.18)  18 JUL 2026 04:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1020,19 +1020,19 @@ eaux.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 645.
 [3]
-Overfull \vbox (2267.11995pt too high) has occurred while \output is active []
+Overfull \vbox (2543.11995pt too high) has occurred while \output is active []
 
 
 [4]
 Chapter 2.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 806.
+(Font)              scaled to size 4.49997pt on input line 822.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 807.
+(Font)              scaled to size 8.99994pt on input line 823.
 [5
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 838--842
+Underfull \hbox (badness 10000) in paragraph at lines 854--858
 \TU/FreeSerif(0)/m/n/10 Le binaire brut [][]$[][][][][] [] [] [] [][][][][][] [
 ] [][][] [] [][][][][][] [] [][][][][][][][][] [] [][][][][][][][] [] [][][][][
 ][] [] [][][][][][][][] [] [][][][][][][][][][][][][][][][][][][] [] [][] [] []
@@ -1041,77 +1041,77 @@ $[][] reste
 
 [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
 [22] [23] [24] [25] [26]
-Underfull \vbox (badness 1831) detected at line 4150
+Underfull \vbox (badness 1831) detected at line 4180
  []
 
 [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6234.
+(Font)              scaled to size 8.99994pt on input line 6264.
  [39] [40] [41]
 [42]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6586.
+(Font)              scaled to size 10.79993pt on input line 6616.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6675--6677
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6705--6707
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6678
+Overfull \hbox (11.423pt too wide) detected at line 6708
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6734--6736
+Underfull \hbox (badness 10000) in paragraph at lines 6764--6766
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 8151) in paragraph at lines 6803--6807
+Underfull \hbox (badness 8151) in paragraph at lines 6833--6837
 []\TU/FreeSerif(0)/m/n/10 La plupart des options peuvent aussi être fournies pa
 r variable d’environnement (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
 [43] [44]
-Underfull \hbox (badness 10000) in paragraph at lines 7008--7010
+Underfull \hbox (badness 10000) in paragraph at lines 7038--7040
 []\TU/FreeSerif(0)/m/n/10 scope de tenant de destination (obligatoire sauf en
  []
 
 [45]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7147--7149
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7177--7179
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7150
+Overfull \hbox (1.06567pt too wide) detected at line 7180
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [46]
-Underfull \hbox (badness 10000) in paragraph at lines 7507--7509
+Underfull \hbox (badness 10000) in paragraph at lines 7537--7539
 []\TU/FreeSerif(0)/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7583--7585
+Underfull \hbox (badness 10000) in paragraph at lines 7613--7615
 []\TU/FreeSerif(0)/m/n/10 Double avec au moins
  []
 
 [47]
-Underfull \hbox (badness 7851) in paragraph at lines 7742--7750
+Underfull \hbox (badness 7851) in paragraph at lines 7772--7780
 \TU/FreeSerif(0)/m/n/10 de certifier numériquement leurs applications voire de 
 distribuer via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7742--7750
+Underfull \hbox (badness 10000) in paragraph at lines 7772--7780
 \TU/FreeSerif(0)/m/n/10 préconisé de faire appel à des sociétés extérieures pou
 r obtenir un certificat numérique au prix
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7742--7750
+Underfull \hbox (badness 10000) in paragraph at lines 7772--7780
 \TU/FreeSerif(0)/m/n/10 de plusieurs centaines d’euros (voir par exemple [][]$[
 ][][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] [
 ] [][][][][][][] [] [][][][][] [] [][] [] [][] []
@@ -1163,7 +1163,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  18970 strings out of 476443
  377887 string characters out of 5793962
- 2008627 words of memory out of 5000000
+ 2016627 words of memory out of 5000000
  40543 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191

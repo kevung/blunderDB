@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.17)  17 JUL 2026 23:17
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.18)  18 JUL 2026 04:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1046,6 +1046,32 @@ nelli.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 632.
 
+Underfull \hbox (badness 10000) in paragraph at lines 695--697
+[]\TU/FreeSerif(0)/m/n/10 Impostazioni di visualizzazione dell’interfaccia nell
+a finestra di
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 695--697
+\TU/FreeSerif(0)/m/it/10 CTRL-T \TU/FreeSerif(0)/m/n/10 (nuova vista), \TU/Free
+Serif(0)/m/it/10 CTRL-W \TU/FreeSerif(0)/m/n/10 (chiudi), \TU/FreeSerif(0)/m/it
+/10 CTRL-PageUp\TU/FreeSerif(0)/m/n/10 /\TU/FreeSerif(0)/m/it/10 CTRL-
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 698
+\TU/FreeSerif(0)/m/it/10 CTRL-T \TU/FreeSerif(0)/m/n/10 (nuova vista), \TU/Free
+Serif(0)/m/it/10 CTRL-W \TU/FreeSerif(0)/m/n/10 (chiudi), \TU/FreeSerif(0)/m/it
+/10 CTRL-PageUp\TU/FreeSerif(0)/m/n/10 /\TU/FreeSerif(0)/m/it/10 CTRL-
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 698
+[]\TU/FreeSerif(0)/m/n/10 Impostazioni di visualizzazione dell’interfaccia nell
+a finestra di
+ []
+
+
 Underfull \hbox (badness 5878) in paragraph at lines 727--729
 \TU/FreeSerif(0)/m/n/10 di un tenant su un deployment PostgreSQL multiutente; n
 uovi
@@ -1057,20 +1083,32 @@ Underfull \hbox (badness 5878) detected at line 730
 uovi
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 743--745
+[]\TU/FreeSerif(0)/m/n/10 Esportazione di un match nel formato Jellyfish/gnubg 
+(\TU/FreeMono(0)/m/n/10 .mat\TU/FreeSerif(0)/m/n/10 )
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 746
+[]\TU/FreeSerif(0)/m/n/10 Esportazione di un match nel formato Jellyfish/gnubg 
+(\TU/FreeMono(0)/m/n/10 .mat\TU/FreeSerif(0)/m/n/10 )
+ []
+
 [3]
-Overfull \vbox (2291.11995pt too high) has occurred while \output is active []
+Overfull \vbox (2567.11995pt too high) has occurred while \output is active []
 
 
 [4]
 Capitolo 2.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 782.
+(Font)              scaled to size 4.49997pt on input line 798.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 783.
+(Font)              scaled to size 8.99994pt on input line 799.
 [5
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 812--814
+Underfull \hbox (badness 10000) in paragraph at lines 828--830
 []\TU/FreeSerif(0)/m/n/10 Il binario grezzo [][]$[][][][][] [] [] [] [][][][][]
 [] [] [][][] [] [][][][][][] [] [][][][][][][][][] [] [][][][][][][][] [] [][][
 ][][][] [] [][][][][][][][] [] [][][][][][][][][][][][][][][][][][][] [] [][] [
@@ -1078,79 +1116,86 @@ Underfull \hbox (badness 10000) in paragraph at lines 812--814
  []
 
 [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
-[22] [23] [24] [25] [26]
-Underfull \vbox (badness 1831) detected at line 3806
+[22] [23] [24] [25] [26] [27] [28] [29]
+Underfull \hbox (badness 10000) in paragraph at lines 4523--4525
+[]\TU/FreeSerif(0)/m/n/10 CTRL-PageDown,
  []
 
-[27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38]
+[30] [31] [32] [33] [34] [35] [36] [37] [38]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5852.
- [39] [40] [41]
-[42]
+(Font)              scaled to size 8.99994pt on input line 5832.
+ [39] [40] [41] [42]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6119.
+(Font)              scaled to size 10.79993pt on input line 6099.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6203--6205
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6183--6185
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6206
+Overfull \hbox (11.423pt too wide) detected at line 6186
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6262--6264
+Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
-[43] [44] [45]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6623--6625
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 6358--6360
+[]\TU/FreeSerif(0)/m/n/10 L’immagine ascolta sulla porta 8080 e si configura tr
+amite variabili d’ambiente (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
+if(0)/m/n/10 ,
+ []
+
+[44] [45]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6595--6597
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6626
+Overfull \hbox (1.06567pt too wide) detected at line 6598
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [46]
-Underfull \hbox (badness 6412) in paragraph at lines 6910--6912
+Underfull \hbox (badness 6412) in paragraph at lines 6880--6882
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 6913
+Underfull \hbox (badness 6412) detected at line 6883
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6926--6928
+Underfull \hbox (badness 6412) in paragraph at lines 6896--6898
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6942--6944
+Underfull \hbox (badness 10000) in paragraph at lines 6912--6914
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6953--6955
+Underfull \hbox (badness 10000) in paragraph at lines 6923--6925
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6967--6969
+Underfull \hbox (badness 10000) in paragraph at lines 6937--6939
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7032--7034
+Underfull \hbox (badness 10000) in paragraph at lines 7002--7004
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7048--7050
+Underfull \hbox (badness 6412) in paragraph at lines 7018--7020
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
@@ -1196,12 +1241,12 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 480E923FB98D00A421497F943EFBF422;33657.
+(rerunfilecheck)             Checksum: D9A0BF836A3BE9BC987381BC7F30360E;33636.
  ) 
 Here is how much of TeX's memory you used:
  19377 strings out of 476443
  395434 string characters out of 5793962
- 2008627 words of memory out of 5000000
+ 2016627 words of memory out of 5000000
  40934 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191

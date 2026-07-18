@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.28.0 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.29.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8d643f27"></script>
+      <script src="_static/documentation_options.js?v=fcb1757e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -53,7 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Main Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Description of the interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. View Tabs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. Guided tours and sample database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. Browsing positions</a></li>
@@ -209,28 +209,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
-<p>Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>View Tabs<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Below the toolbar, a tab bar lets you work with several <strong>views</strong> in parallel. Each view is an independent workspace that keeps its own position list, the index of the current position, the displayed position, the analysis and the selected move, the active panel, the comment being edited, as well as the navigation context within a match. This makes it possible, for example, to keep a search open in one view while browsing a match in another.</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d’onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l’onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l’onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>Create a view</strong>: click the <em>+</em> button of the tab bar or press <em>CTRL-T</em>. The new view starts as a copy of the current view.</p></li>
+<li><p><strong>Close a view</strong>: click the cross on the tab or press <em>CTRL-W</em>. The last view cannot be closed.</p></li>
+<li><p><strong>Switch view</strong>: click a tab, press <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (or <em>SHIFT-J</em> / <em>SHIFT-K</em>) to move to the previous / next view, or <em>CTRL-1</em> to <em>CTRL-9</em> to jump directly to the n-th view.</p></li>
+<li><p><strong>Rename a view</strong>: double-click the tab, type the new name and confirm with <em>ENTER</em>.</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>Views are saved with the database session state and restored when it is reopened.</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -289,16 +276,7 @@ restaurées à sa réouverture.</p>
 <p>To refine a search among the currently filtered positions, use the <code class="docutils literal notranslate"><span class="pre">ss</span></code> command followed by filters (e.g.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). The search panel also offers a <em>Search in current results</em> checkbox for the same functionality.</p>
 <p>The panel offers an explicit control over the <strong>decision type</strong> searched for: <em>Indifferent</em> (no filter), <em>Checker</em> (checker decisions) or <em>Cube</em> (cube decisions). When <em>Cube</em> is selected, a second list specifies the sub-type: <em>All</em>, <em>Double / No double</em> (the player on roll has to decide whether to double) or <em>Take / Pass</em> (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In <em>Take / Pass</em> mode, the cube is shown in the centre of the board at the offered value; that value remains editable.</p>
 <p>The <strong>Matches &amp; Tournaments</strong> filter is backed by a shared picker (a modal window) instead of typed numeric IDs: two checkbox lists, one for matches and one for tournaments, each text-filterable (player, date, event for matches; name, date, location for tournaments), with <em>All</em> / <em>None</em> buttons that act only on the currently filtered subset. Checking a tournament automatically checks (and greys out) its member matches in the match list, making visible the fact that a tournament is equivalent to the set of its matches.</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L’onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Annex: Advanced Filter Usage</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>The search panel has three tabs along its left edge: <em>Search</em> (the filters), <em>History</em> and <em>Saved</em>. The <strong>History</strong> tab lists past searches with their date and command: a click selects a search and displays the associated position on the board, a double-click re-runs it. Each entry can be saved to the filter library (bookmark icon, by giving the filter a name) or deleted. The <strong>Saved</strong> tab contains the <strong>filter library</strong>: double-click a saved filter to re-run the corresponding search (see <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Annex: Advanced Filter Usage</span></a>). The <code class="docutils literal notranslate"><span class="pre">history</span></code> command (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) opens the search panel.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available filters.</p>
@@ -320,15 +298,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>see the actually played move highlighted in the analysis.</p></li>
 </ul>
 <p>The last visited position in each match is saved and restored automatically. Press <em>CTRL-Tab</em> or run the <code class="docutils literal notranslate"><span class="pre">match</span></code> command to show or hide the panel.</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
-<p>When a match is open, an <strong>information bar</strong> appears above the board: it shows the players involved (<em>player 1</em> versus <em>player 2</em>) along with the match context (event, location, round, date and match length, when this information is available).</p>
+<p>Each match can be exported as a Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> transcript via the ⬇ button in the match list or the <em>.mat</em> button of the match sheet.</p>
+<p>The <strong>Merge players</strong> button in the panel toolbar opens a window listing all the player names in the database with their number of matches: select the spelling variants of the same player, choose the canonical name to keep, then merge. Useful to unify per-player statistics when the same player appears under several names.</p>
+<p>When a match is open, an <strong>information bar</strong> appears above the board: it recalls the players involved (<em>player 1</em> versus <em>player 2</em>) as well as the match context (event, location, round, date and match length, when this information is available). This bar is also shown outside match mode: when a studied position (from a search, a collection or a direct access) comes from one or several matches, it indicates its <strong>provenance</strong> — the first match concerned and, where applicable, a “+N” badge listing the others on hover. A position imported on its own, which no match references, shows nothing.</p>
 <p>When opening a database that contains matches, the <strong>Matches</strong> panel is shown right away and the review starts directly on the first position, so you can begin navigating immediately.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A database can be opened for writing by only one window at a time. If you open a database already open in another blunderDB window, it opens <strong>read-only</strong>: navigation, search and analysis remain possible, but any modification is disabled and the title bar shows “[read-only]”.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>

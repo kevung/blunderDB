@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Handbuch &mdash; blunderDB 0.28.0 Dokumentation</title>
+  <title>2. Handbuch &mdash; blunderDB 0.29.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f01be42d"></script>
+      <script src="_static/documentation_options.js?v=81ceae74"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Einführung</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Wichtigste Interaktionen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Beschreibung der Benutzeroberfläche</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Ansichts-Reiter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. Konfiguration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. Geführte Touren und Beispieldatenbank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. Navigation durch die Stellungen</a></li>
@@ -210,28 +210,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
-<p>Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Ansichts-Reiter<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Unter der Werkzeugleiste ermöglicht eine Reiterleiste, mit mehreren <strong>Ansichten</strong> parallel zu arbeiten. Jede Ansicht ist ein unabhängiger Arbeitsbereich, der seine eigene Positionsliste, den Index der aktuellen Position, die angezeigte Position, die Analyse und den ausgewählten Zug, das aktive Panel, den aktuellen Kommentar sowie den Navigationskontext in einem Match behält. So ist es zum Beispiel möglich, eine Suche in einer Ansicht offen zu halten, während man in einer anderen ein Match durchgeht.</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d’onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l’onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l’onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>Eine Ansicht erstellen</strong>: auf die Schaltfläche <em>+</em> der Reiterleiste klicken oder <em>CTRL-T</em> drücken. Die neue Ansicht startet als Kopie der aktuellen Ansicht.</p></li>
+<li><p><strong>Eine Ansicht schließen</strong>: auf das Kreuz des Reiters klicken oder <em>CTRL-W</em> drücken. Die letzte Ansicht kann nicht geschlossen werden.</p></li>
+<li><p><strong>Die Ansicht wechseln</strong>: auf einen Reiter klicken, <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (oder <em>UMSCHALT-J</em> / <em>UMSCHALT-K</em>) drücken, um zur vorherigen / nächsten Ansicht zu wechseln, oder <em>CTRL-1</em> bis <em>CTRL-9</em>, um direkt die n-te Ansicht zu erreichen.</p></li>
+<li><p><strong>Eine Ansicht umbenennen</strong>: auf den Reiter doppelklicken, den neuen Namen eingeben und mit <em>EINGABE</em> bestätigen.</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>Die Ansichten werden mit dem Sitzungszustand der Datenbank gespeichert und beim erneuten Öffnen wiederhergestellt.</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Konfiguration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -290,16 +277,7 @@ restaurées à sa réouverture.</p>
 <p>Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl <code class="docutils literal notranslate"><span class="pre">ss</span></code> gefolgt von Filtern (z. B.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen <em>Search in current results</em>.</p>
 <p>Das Panel bietet eine explizite Steuerung des gesuchten <strong>Entscheidungstyps</strong>: <em>Egal</em> (kein Filter), <em>Zug</em> (Zugentscheidungen) oder <em>Dopplung</em> (Doppler-Entscheidungen). Wenn <em>Dopplung</em> ausgewählt ist, gibt eine zweite Liste den Untertyp an: <em>Alle</em>, <em>Dopplung / Kein Doppel</em> (der Spieler am Zug muss über das Doppeln entscheiden) oder <em>Annehmen / Aufgeben</em> (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus <em>Annehmen / Aufgeben</em> wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.</p>
 <p>Der Filter <strong>Matches &amp; Turniere</strong> stützt sich auf einen gemeinsamen Auswahldialog (modales Fenster) anstelle der Eingabe numerischer Kennungen: zwei Kontrollkästchen-Listen, eine für Matches und eine für Turniere, jeweils per Text filterbar (Spieler, Datum, Ereignis für Matches; Name, Datum, Ort für Turniere), mit den Schaltflächen <em>Alle</em> / <em>Keine</em>, die nur auf die aktuell gefilterte Teilmenge wirken. Das Ankreuzen eines Turniers kreuzt automatisch dessen zugehörige Matches in der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein Turnier der Gesamtheit seiner Matches entspricht.</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L’onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anhang: Fortgeschrittene Nutzung der Filter</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>Das Suchpanel enthält an seinem linken Rand drei Reiter: <em>Suche</em> (die Filter), <em>Verlauf</em> und <em>Gespeichert</em>. Der Reiter <strong>Verlauf</strong> listet die vergangenen Suchen mit ihrem Datum und ihrem Befehl auf: Ein Klick wählt eine Suche aus und zeigt die zugehörige Position auf dem Brett an, ein Doppelklick führt sie erneut aus. Jeder Eintrag kann in der Filterbibliothek gespeichert (Lesezeichen-Symbol, durch Angabe eines Filternamens) oder gelöscht werden. Der Reiter <strong>Gespeichert</strong> enthält die <strong>Filterbibliothek</strong>: Doppelklicken Sie auf einen gespeicherten Filter, um die entsprechende Suche erneut zu starten (siehe <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anhang: Fortgeschrittene Nutzung der Filter</span></a>). Der Befehl <code class="docutils literal notranslate"><span class="pre">history</span></code> (Alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) öffnet das Suchpanel.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tipp</p>
 <p>Siehe <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Abschnitt 4</span></a> für die Liste der verfügbaren Filter.</p>
@@ -321,15 +299,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>den tatsächlich gespielten Zug in der Analyse hervorgehoben sehen.</p></li>
 </ul>
 <p>Die zuletzt besuchte Stellung in jedem Match wird gespeichert und automatisch wiederhergestellt. Drücken Sie <em>CTRL-Tab</em> oder führen Sie den Befehl <code class="docutils literal notranslate"><span class="pre">match</span></code> aus, um das Panel ein- oder auszublenden.</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
-<p>Wenn ein Match geöffnet ist, erscheint über dem Brett eine <strong>Informationsleiste</strong>: Sie zeigt die beteiligten Spieler (<em>Spieler 1</em> gegen <em>Spieler 2</em>) sowie den Match-Kontext (Ereignis, Ort, Runde, Datum und Match-Länge, sofern diese Informationen verfügbar sind).</p>
+<p>Jedes Match kann über die Schaltfläche ⬇ in der Matchliste oder die Schaltfläche <em>.mat</em> auf der Match-Karte als Jellyfish-Transkription <code class="docutils literal notranslate"><span class="pre">.mat</span></code> exportiert werden.</p>
+<p>Die Schaltfläche <strong>Spieler zusammenführen</strong> in der Werkzeugleiste des Panels öffnet ein Fenster, das alle Spielernamen der Datenbank mit ihrer Anzahl an Matches auflistet: die Schreibvarianten desselben Spielers auswählen, den beizubehaltenden kanonischen Namen wählen und dann zusammenführen. Nützlich, um die Statistiken pro Spieler zu vereinheitlichen, wenn derselbe Spieler unter mehreren Namen erscheint.</p>
+<p>Wenn ein Match geöffnet ist, erscheint über dem Brett eine <strong>Informationsleiste</strong>: Sie zeigt die beteiligten Spieler (<em>Spieler 1</em> gegen <em>Spieler 2</em>) sowie den Kontext des Matches (Ereignis, Ort, Runde, Datum und Matchlänge, sofern diese Informationen verfügbar sind). Diese Leiste wird auch außerhalb des Match-Modus angezeigt: Wenn eine untersuchte Position (aus einer Suche, einer Sammlung oder einem direkten Zugriff) aus einem oder mehreren Matches stammt, gibt sie deren <strong>Herkunft</strong> an — das erste betroffene Match und gegebenenfalls ein Badge „+N“, das die übrigen beim Überfahren auflistet. Eine einzeln importierte Position, auf die kein Match verweist, zeigt nichts an.</p>
 <p>Beim Öffnen einer Datenbank, die Matchs enthält, wird das Panel <strong>Matchs</strong> sofort angezeigt und die Durchsicht beginnt direkt bei der ersten Stellung, sodass Sie unmittelbar mit der Navigation beginnen können.</p>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Eine Datenbank kann jeweils nur von einem einzigen Fenster zum Schreiben geöffnet werden. Wenn Sie eine Datenbank öffnen, die bereits in einem anderen blunderDB-Fenster geöffnet ist, wird sie <strong>schreibgeschützt</strong> geöffnet: Navigation, Suche und Analyse bleiben möglich, aber jede Änderung ist deaktiviert und die Titelleiste zeigt „[schreibgeschützt]“ an.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tipp</p>
 <p>Siehe <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Tastenkürzel</span></a> für die verfügbaren Tastenkürzel.</p>

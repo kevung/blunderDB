@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuale &mdash; Documentazione blunderDB 0.28.0 </title>
+  <title>2. Manuale &mdash; Documentazione blunderDB 0.29.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=eb9ae177"></script>
+      <script src="_static/documentation_options.js?v=9a4fab2e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Introduzione</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Interazioni principali</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Descrizione dell’interfaccia</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Schede delle viste</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. Configurazione</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. Visite guidate e database di esempio</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. Navigazione tra le posizioni</a></li>
@@ -210,28 +210,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
-<p>Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Schede delle viste<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Sotto la barra degli strumenti, una barra delle schede consente di lavorare con più <strong>viste</strong> in parallelo. Ogni vista è uno spazio di lavoro indipendente che conserva il proprio elenco di posizioni, l’indice della posizione corrente, la posizione visualizzata, l’analisi e la mossa selezionata, il pannello attivo, il commento in corso nonché il contesto di navigazione in un match. È così possibile, ad esempio, tenere aperta una ricerca in una vista mentre si scorre un match in un’altra.</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d’onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l’onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l’onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>Creare una vista</strong> : fare clic sul pulsante <em>+</em> della barra delle schede o premere <em>CTRL-T</em>. La nuova vista parte come copia della vista corrente.</p></li>
+<li><p><strong>Chiudere una vista</strong> : fare clic sulla croce della scheda o premere <em>CTRL-W</em>. L’ultima vista non può essere chiusa.</p></li>
+<li><p><strong>Cambiare vista</strong> : fare clic su una scheda, premere <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (o <em>MAIUSC-J</em> / <em>MAIUSC-K</em>) per passare alla vista precedente / successiva, oppure da <em>CTRL-1</em> a <em>CTRL-9</em> per raggiungere direttamente l’n-esima vista.</p></li>
+<li><p><strong>Rinominare una vista</strong> : fare doppio clic sulla scheda, inserire il nuovo nome e confermare con <em>INVIO</em>.</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>Le viste vengono salvate con lo stato di sessione del database e ripristinate alla sua riapertura.</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Configurazione<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
@@ -290,16 +277,7 @@ restaurées à sa réouverture.</p>
 <p>Per affinare una ricerca tra le posizioni attualmente filtrate, usare il comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguito da filtri (es.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Il pannello di ricerca offre anche una casella di spunta <em>Search in current results</em> per la stessa funzionalità.</p>
 <p>Il pannello offre un controllo esplicito del <strong>tipo di decisione</strong> ricercato: <em>Indifferente</em> (nessun filtro), <em>Pedine</em> (decisioni di mossa) o <em>Cubo</em> (decisioni di cubo). Quando è selezionato <em>Cubo</em>, un secondo elenco precisa il sotto-tipo: <em>Tutti</em>, <em>Raddoppio / No raddoppio</em> (il giocatore di turno deve decidere se raddoppiare) o <em>Accetta / Passa</em> (risposta a un raddoppio avversario). Il controllo è sincronizzato con il board: modificare i dadi o il cubo sul board aggiorna il tipo di decisione, e viceversa. In modalità <em>Accetta / Passa</em>, il cubo è mostrato al centro del board al valore offerto; tale valore resta modificabile.</p>
 <p>Il filtro <strong>Match &amp; Tornei</strong> si basa su un selettore comune (finestra modale) anziché sull’inserimento di identificativi numerici: due elenchi con caselle di spunta, uno per i match e uno per i tornei, ciascuno filtrabile per testo (giocatore, data, evento per i match; nome, data, luogo per i tornei), con pulsanti <em>Tutti</em> / <em>Nessuno</em> che agiscono solo sul sottoinsieme attualmente filtrato. Selezionare un torneo seleziona automaticamente (e disabilita, mostrandoli in grigio) i match che ne fanno parte nell’elenco dei match, rendendo visibile il fatto che un torneo equivale all’insieme dei suoi match.</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L’onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Appendice: Utilizzo avanzato dei filtri</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>Il pannello di ricerca presenta tre schede sul bordo sinistro: <em>Ricerca</em> (i filtri), <em>Cronologia</em> e <em>Salvati</em>. La scheda <strong>Cronologia</strong> elenca le ricerche passate con la loro data e il loro comando: un clic seleziona una ricerca e mostra la posizione associata sul tavoliere, un doppio clic la riesegue. Ogni voce può essere salvata nella libreria di filtri (icona segnalibro, assegnando un nome al filtro) o eliminata. La scheda <strong>Salvati</strong> contiene la <strong>libreria di filtri</strong> : fare doppio clic su un filtro salvato per rilanciare la ricerca corrispondente (vedere <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Appendice: Utilizzo avanzato dei filtri</span></a>). Il comando <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) apre il pannello di ricerca.</p>
 <div class="admonition tip">
 <p class="admonition-title">Suggerimento</p>
 <p>Fare riferimento a <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Sezione 4</span></a> per l’elenco dei filtri disponibili.</p>
@@ -321,15 +299,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>vedere la mossa effettivamente giocata evidenziata nell’analisi.</p></li>
 </ul>
 <p>L’ultima posizione visitata in ciascun match viene memorizzata e ripristinata automaticamente. Premere <em>CTRL-Tab</em> o eseguire il comando <code class="docutils literal notranslate"><span class="pre">match</span></code> per mostrare o nascondere il pannello.</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
-<p>Quando un match è aperto, una <strong>barra delle informazioni</strong> appare sopra il tavoliere: ricorda i giocatori coinvolti (<em>giocatore 1</em> contro <em>giocatore 2</em>) nonché il contesto del match (evento, luogo, turno, data e lunghezza del match, quando queste informazioni sono disponibili).</p>
+<p>Ogni match può essere esportato in trascrizione Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> tramite il pulsante ⬇ dell’elenco dei match o il pulsante <em>.mat</em> della scheda del match.</p>
+<p>Il pulsante <strong>Unisci giocatori</strong> della barra degli strumenti del pannello apre una finestra che elenca tutti i nomi dei giocatori del database con il loro numero di match: selezionare le varianti di ortografia di uno stesso giocatore, scegliere il nome canonico da conservare, quindi unire. Utile per unificare le statistiche per giocatore quando uno stesso giocatore compare con più nomi.</p>
+<p>Quando un match è aperto, una <strong>barra delle informazioni</strong> compare sopra il tavoliere: ricorda i giocatori presenti (<em>giocatore 1</em> contro <em>giocatore 2</em>) nonché il contesto del match (evento, luogo, turno, data e lunghezza del match, quando queste informazioni sono disponibili). Questa barra viene mostrata anche al di fuori della modalità match: quando una posizione studiata (proveniente da una ricerca, da una collezione o da un accesso diretto) proviene da uno o più match, ne indica la <strong>provenienza</strong> — il primo match interessato e, se del caso, un badge « +N » che elenca gli altri al passaggio del mouse. Una posizione importata da sola, che nessun match referenzia, non mostra nulla.</p>
 <p>All’apertura di un database contenente match, il pannello <strong>Match</strong> viene mostrato subito e la revisione inizia direttamente sulla prima posizione, così da cominciare immediatamente la navigazione.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Un database può essere aperto in scrittura da una sola finestra alla volta. Se si apre un database già aperto in un’altra finestra di blunderDB, esso si apre in <strong>sola lettura</strong> : la navigazione, la ricerca e l’analisi restano possibili, ma qualsiasi modifica è disattivata e la barra del titolo mostra « [sola lettura] ».</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Suggerimento</p>
 <p>Fare riferimento a <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Scorciatoie da tastiera</span></a> per le scorciatoie disponibili.</p>

@@ -13,64 +13,64 @@
 \contentsline {subsection}{\numberline {2.2.1}Введение}{6}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Основные взаимодействия}{7}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}Описание интерфейса}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Onglets de vues}{8}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}Конфигурация}{8}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.4}Вкладки представлений}{8}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Конфигурация}{9}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Обучающие туры и образец базы данных}{9}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Навигация по позициям}{9}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}Редактирование позиций}{9}{subsection.2.2.8}%
-\contentsline {subsection}{\numberline {2.2.9}Командная строка}{9}{subsection.2.2.9}%
+\contentsline {subsection}{\numberline {2.2.9}Командная строка}{10}{subsection.2.2.9}%
 \contentsline {subsection}{\numberline {2.2.10}Панель анализа}{10}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Панель комментариев}{10}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Панель поиска}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Панель коллекций}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Панель матчей}{11}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Панель турниров}{11}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.15}Панель турниров}{12}{subsection.2.2.15}%
 \contentsline {subsection}{\numberline {2.2.16}Панель Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Введение}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Открытие панели}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Панель фильтров}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Перспектива игрока}{12}{paragraph*.10}%
-\contentsline {paragraph}{Доступные фильтры}{12}{paragraph*.11}%
+\contentsline {subsubsection}{Панель фильтров}{13}{subsubsection*.9}%
+\contentsline {paragraph}{Перспектива игрока}{13}{paragraph*.10}%
+\contentsline {paragraph}{Доступные фильтры}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Переключение PR / MWC}{13}{subsubsection*.12}%
-\contentsline {subsubsection}{Вкладка Dashboard}{13}{subsubsection*.13}%
-\contentsline {paragraph}{Карточки уровня}{13}{paragraph*.14}%
+\contentsline {subsubsection}{Вкладка Dashboard}{14}{subsubsection*.13}%
+\contentsline {paragraph}{Карточки уровня}{14}{paragraph*.14}%
 \contentsline {paragraph}{Скользящий PR за последние N решений}{14}{paragraph*.15}%
 \contentsline {paragraph}{Топ грубых ошибок}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Вкладка Progression}{14}{subsubsection*.17}%
 \contentsline {paragraph}{График по турнирам}{14}{paragraph*.18}%
-\contentsline {paragraph}{Диаграмма рассеяния по матчам}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Вкладка Erreurs}{14}{subsubsection*.20}%
-\contentsline {paragraph}{Разбивка по действиям куба}{14}{paragraph*.21}%
+\contentsline {paragraph}{Диаграмма рассеяния по матчам}{15}{paragraph*.19}%
+\contentsline {subsubsection}{Вкладка Erreurs}{15}{subsubsection*.20}%
+\contentsline {paragraph}{Разбивка по действиям куба}{15}{paragraph*.21}%
 \contentsline {paragraph}{Сравнение Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Гистограмма величин ошибок}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Правило агрегации}{15}{subsubsection*.24}%
-\contentsline {subsubsection}{MWC: ограничения}{15}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Панель EPC}{15}{subsection.2.2.17}%
+\contentsline {subsubsection}{MWC: ограничения}{16}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {2.2.17}Панель EPC}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Панель Anki}{16}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Панель метаданных}{16}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Панель журнала}{16}{subsection.2.2.20}%
-\contentsline {section}{\numberline {2.3}Руководство пользователя}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.19}Панель метаданных}{17}{subsection.2.2.19}%
+\contentsline {subsection}{\numberline {2.2.20}Панель журнала}{17}{subsection.2.2.20}%
+\contentsline {section}{\numberline {2.3}Руководство пользователя}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{17}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Импорт и слияние базы данных}{17}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Добавление позиции в базу данных}{18}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Добавление тега к позиции}{18}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Удаление позиции}{18}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Добавление тега к позиции}{19}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Удаление позиции}{19}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Импорт позиции из XG}{19}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Импорт матча}{19}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Импорт папки с матчами}{20}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Перетаскивание}{20}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Навигация по матчу}{20}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Управление панелью матчей}{20}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Управление панелью матчей}{21}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Управление коллекциями}{21}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Управление турнирами}{21}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Просмотр статистики производительности}{21}{subsection.2.3.16}%
-\contentsline {subsection}{\numberline {2.3.17}Вычисление EPC}{21}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.17}Вычисление EPC}{22}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Просмотр анализа позиции, импортированной из XG}{22}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Экспорт позиции в XG}{22}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Просмотр различных позиций}{22}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}Поиск позиций по критериям}{22}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.21}Поиск позиций по критериям}{23}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Список команд}{23}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Глобальные операции}{24}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Позиции и навигация}{24}{subsection.2.4.2}%
@@ -84,10 +84,10 @@
 \contentsline {subsection}{\numberline {2.5.4}Отображение}{30}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Действия}{30}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Инструменты}{30}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Onglets de vues}{30}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.7}Вкладки представлений}{30}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Командная строка}{30}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Historique de recherche}{31}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Bibliothèque de filtres}{31}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.9}История поиска}{31}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}Библиотека фильтров}{31}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Панель анализа}{31}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Панель матчей}{31}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Панель Anki (интервальное повторение)}{31}{subsection.2.5.13}%
@@ -133,7 +133,7 @@
 \contentsline {subsection}{\numberline {2.8.1}Обзор}{43}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Демон \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%
 \contentsline {subsubsection}{Точки доступа}{44}{subsubsection*.33}%
-\contentsline {subsubsection}{Déploiement avec Docker}{45}{subsubsection*.34}%
+\contentsline {subsubsection}{Развёртывание с помощью Docker}{45}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{45}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{45}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{46}{subsection.2.8.5}%

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Lataaminen ja asentaminen &mdash; blunderDB 0.28.0 documentation</title>
+  <title>1. Lataaminen ja asentaminen &mdash; blunderDB 0.29.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9c514921"></script>
+      <script src="_static/documentation_options.js?v=ed840378"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -101,11 +101,11 @@
 <p>blunderDB on yksittäinen suoritettava tiedosto, joka ei vaadi asennusta.</p>
 <p>Uusin blunderDB-versio on saatavilla MIT-lisenssillä:</p>
 <ul class="simple">
-<li><p>Windowsille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe</a></p></li>
-<li><p>Linuxille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0</a></p></li>
-<li><p>Macille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip</a></p></li>
+<li><p>Windowsille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe</a></p></li>
+<li><p>Linuxille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0</a></p></li>
+<li><p>Macille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip</a></p></li>
 </ul>
-<p>Voit myös ladata tämän dokumentaation PDF-muodossa offline-käyttöä varten: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.28.0-fi.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.28.0-fi.pdf</a></p>
+<p>Voit myös ladata tämän dokumentaation PDF-muodossa offline-käyttöä varten: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.29.0-fi.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.29.0-fi.pdf</a></p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
 <p>blunderDB käyttää Webview2:ta graafisen käyttöliittymän piirtämiseen. On todennäköistä, että Webview2 on jo valmiiksi asennettuna käyttöjärjestelmässäsi. Jos näin ei ole, blunderDB:n ensimmäinen suorituskerta tarjoaa sen lataamista ja asentamista. Käyttäjältä ei odoteta mitään toimenpiteitä.</p>
@@ -139,13 +139,13 @@ sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> <
 </section>
 <section id="binaire-brut-methode-avancee">
 <h3><span class="section-number">1.1.4. </span>Raaka binääri (edistynyt menetelmä)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
-<p>Raaka binääri <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0</a> on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:</p>
+<p>Raaka binääri <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0</a> on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Julkaistaan kaksi Linux-versiota webkit2gtk-kirjaston version mukaan. Jos saat virheen <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, jakelusi käyttää webkit2gtk-4.1:tä: käytä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-pakettia, AUR-pakettia tai lataa erillinen versio <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0</a>. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.</p>
+<p>Julkaistaan kaksi Linux-versiota webkit2gtk-kirjaston version mukaan. Jos saat virheen <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, jakelusi käyttää webkit2gtk-4.1:tä: käytä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-pakettia, AUR-pakettia tai lataa erillinen versio <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0</a>. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.</p>
 </div>
 </section>
 </section>

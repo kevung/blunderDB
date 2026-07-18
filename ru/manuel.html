@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Руководство &mdash; документация blunderDB 0.28.0</title>
+  <title>2. Руководство &mdash; документация blunderDB 0.29.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e3621de8"></script>
+      <script src="_static/documentation_options.js?v=92b757b1"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Введение</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Основные взаимодействия</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Описание интерфейса</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">2.4. Вкладки представлений</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">2.5. Конфигурация</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">2.6. Обучающие туры и образец базы данных</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.7. Навигация по позициям</a></li>
@@ -210,28 +210,15 @@
 </div>
 </section>
 <section id="onglets-de-vues">
-<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Onglets de vues<a class="headerlink" href="#onglets-de-vues" title="Ссылка на этот заголовок"></a></h2>
-<p>Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs <strong>vues</strong> en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.</p>
+<span id="onglets-vues"></span><h2><span class="section-number">2.4. </span>Вкладки представлений<a class="headerlink" href="#onglets-de-vues" title="Ссылка на этот заголовок"></a></h2>
+<p>Под панелью инструментов панель вкладок позволяет работать с несколькими <strong>представлениями</strong> параллельно. Каждое представление — это независимое рабочее пространство, которое сохраняет собственный список позиций, индекс текущей позиции, отображаемую позицию, анализ и выбранный ход, активную панель, текущий комментарий, а также контекст навигации по матчу. Так, например, можно держать открытым поиск в одном представлении, просматривая матч в другом.</p>
 <ul class="simple">
-<li><p><strong>Créer une vue</strong> : cliquer sur le bouton <em>+</em> de la barre d’onglets ou
-appuyer sur <em>CTRL-T</em>. La nouvelle vue démarre comme une copie de la vue
-courante.</p></li>
-<li><p><strong>Fermer une vue</strong> : cliquer sur la croix de l’onglet ou appuyer sur
-<em>CTRL-W</em>. La dernière vue ne peut pas être fermée.</p></li>
-<li><p><strong>Changer de vue</strong> : cliquer sur un onglet, appuyer sur <em>CTRL-PageUp</em> /
-<em>CTRL-PageDown</em> (ou <em>MAJ-J</em> / <em>MAJ-K</em>) pour passer à la vue précédente /
-suivante, ou <em>CTRL-1</em> à <em>CTRL-9</em> pour atteindre directement la n-ième vue.</p></li>
-<li><p><strong>Renommer une vue</strong> : double-cliquer sur l’onglet, saisir le nouveau nom
-et valider avec <em>ENTREE</em>.</p></li>
+<li><p><strong>Создать представление</strong>: нажать кнопку <em>+</em> на панели вкладок или клавиши <em>CTRL-T</em>. Новое представление создаётся как копия текущего.</p></li>
+<li><p><strong>Закрыть представление</strong>: нажать крестик на вкладке или клавиши <em>CTRL-W</em>. Последнее представление закрыть нельзя.</p></li>
+<li><p><strong>Переключить представление</strong>: нажать на вкладку, нажать <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (или <em>SHIFT-J</em> / <em>SHIFT-K</em>) для перехода к предыдущему / следующему представлению, либо <em>CTRL-1</em>–<em>CTRL-9</em> для прямого перехода к n-му представлению.</p></li>
+<li><p><strong>Переименовать представление</strong>: дважды щёлкнуть по вкладке, ввести новое имя и подтвердить клавишей <em>ENTER</em>.</p></li>
 </ul>
-<p>Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.</p>
+<p>Представления сохраняются вместе с состоянием сессии базы данных и восстанавливаются при её повторном открытии.</p>
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Конфигурация<a class="headerlink" href="#configuration" title="Ссылка на этот заголовок"></a></h2>
@@ -290,16 +277,7 @@ restaurées à sa réouverture.</p>
 <p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Search in current results</em> для той же функциональности.</p>
 <p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
 <p>Фильтр <strong>Матчи и турниры</strong> опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками <em>Все</em> / <em>Ничего</em>, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи-участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.</p>
-<p>Le panneau de recherche comporte trois onglets sur son bord gauche :
-<em>Recherche</em> (les filtres), <em>Historique</em> et <em>Enregistrés</em>. L’onglet
-<strong>Historique</strong> liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet <strong>Enregistrés</strong> contient la <strong>bibliothèque de filtres</strong> :
-double-cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). La commande <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias
-<code class="docutils literal notranslate"><span class="pre">hi</span></code>) ouvre le panneau de recherche.</p>
+<p>Панель поиска содержит три вкладки на левом крае: <em>Recherche</em> (фильтры), <em>Historique</em> и <em>Enregistrés</em>. Вкладка <strong>Historique</strong> перечисляет прошлые поиски с их датой и командой: щелчок выбирает поиск и показывает связанную позицию на доске, двойной щелчок выполняет его повторно. Каждую запись можно сохранить в библиотеку фильтров (значок закладки, задав имя фильтру) или удалить. Вкладка <strong>Enregistrés</strong> содержит <strong>библиотеку фильтров</strong>: дважды щёлкните по сохранённому фильтру, чтобы заново выполнить соответствующий поиск (см. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). Команда <code class="docutils literal notranslate"><span class="pre">history</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">hi</span></code>) открывает панель поиска.</p>
 <div class="admonition tip">
 <p class="admonition-title">Совет</p>
 <p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Раздел 4</span></a> для списка доступных фильтров.</p>
@@ -321,15 +299,14 @@ correspondante (voir <a class="reference internal" href="annexe_filtres.html#ann
 <li><p>видеть фактически сыгранный ход, выделенный в анализе.</p></li>
 </ul>
 <p>Последняя посещённая позиция в каждом матче запоминается и восстанавливается автоматически. Нажмите <em>CTRL-Tab</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">match</span></code> для отображения или скрытия панели.</p>
-<p>Chaque match peut être exporté en transcription Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> via le
-bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
-<p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
-<p>Когда матч открыт, над доской появляется <strong>информационная панель</strong>: она показывает участвующих игроков (<em>игрок 1</em> против <em>игрока 2</em>), а также контекст матча (событие, место, раунд, дату и длину матча, когда эта информация доступна).</p>
+<p>Каждый матч можно экспортировать в транскрипцию Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> с помощью кнопки ⬇ в списке матчей или кнопки <em>.mat</em> в карточке матча.</p>
+<p>Кнопка <strong>Объединить игроков</strong> на панели инструментов этой панели открывает окно со списком всех имён игроков в базе и числом их матчей: выберите варианты написания одного и того же игрока, укажите каноническое имя для сохранения, затем объедините. Полезно для унификации статистики по игроку, когда один игрок фигурирует под несколькими именами.</p>
+<p>Когда матч открыт, над доской появляется <strong>информационная панель</strong>: она напоминает об играющих сторонах (<em>игрок 1</em> против <em>игрок 2</em>), а также о контексте матча (событие, место, раунд, дата и длина матча, если эти сведения доступны). Эта панель отображается и вне режима матча: когда изучаемая позиция (полученная из поиска, коллекции или прямого доступа) происходит из одного или нескольких матчей, она указывает её <strong>происхождение</strong> — первый соответствующий матч и, при необходимости, бейдж «+N», перечисляющий остальные при наведении. Позиция, импортированная отдельно и не связанная ни с одним матчем, ничего не показывает.</p>
 <p>При открытии базы данных, содержащей матчи, панель <strong>Матчи</strong> отображается сразу же, а разбор начинается прямо с первой позиции, чтобы можно было немедленно приступить к навигации.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Базу данных можно открыть на запись только в одном окне одновременно. Если вы открываете базу, уже открытую в другом окне blunderDB, она открывается в режиме <strong>только для чтения</strong>: навигация, поиск и анализ остаются возможными, но любые изменения отключены, а в строке заголовка отображается «[только чтение]».</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Совет</p>
 <p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>

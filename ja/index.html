@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.28.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.29.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=147e8489"></script>
+      <script src="_static/documentation_options.js?v=65abced0"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -267,7 +267,7 @@
 </tr>
 <tr class="row-odd"><td><p>0.26.0</p></td>
 <td><p>2026/06/09</p></td>
-<td><p>Réglages d'affichage de l'interface dans la fenêtre de configuration : un curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d'une barre d'informations au-dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des onglets de vues multiples : plusieurs espaces de travail indépendants (liste de positions, position courante, recherche) avec les raccourcis <em>CTRL-T</em> (nouvelle vue), <em>CTRL-W</em> (fermer), <em>CTRL-PageUp</em>/<em>CTRL-PageDown</em> (changer de vue) et renommage par double-clic sur l'onglet. Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> et <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Onglets de vues</span></a>.</p></td>
+<td><p>設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大または縮小する拡大率スライダーと、横長の画面をより有効に活用するためのパネルの位置の選択（下、横または自動）。ボードの上に、両プレイヤーとマッチの背景情報（イベント、開催地、ラウンド、日付、長さ）を示す情報バーを追加。データベースを開くと、マッチパネルがすぐに表示され、レビューは最初のポジションから始まります。キーボードショートカットがキーボードレイアウトに依存しなくなりました（AZERTY、QWERTY、QWERTZ…）。XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。複数ビュータブを追加：独立した複数のワークスペース（ポジションリスト、現在のポジション、検索）を、<em>CTRL-T</em>（新しいビュー）、<em>CTRL-W</em>（閉じる）、<em>CTRL-PageUp</em>/<em>CTRL-PageDown</em>（ビューの切り替え）のショートカットで操作でき、タブをダブルクリックして名前を変更できます。<a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a> および <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">ビュータブ</span></a> を参照。</p></td>
 </tr>
 <tr class="row-even"><td><p>0.27.0</p></td>
 <td><p>2026/06/13</p></td>
@@ -276,6 +276,10 @@
 <tr class="row-odd"><td><p>0.28.0</p></td>
 <td><p>2026/07/15</p></td>
 <td><p>検索パネル：識別子入力欄を選択ウィンドウ（テキストで絞り込めるチェックボックスリスト、<em>すべて</em>/<em>なし</em> ボタン、トーナメントをチェックするとそのメンバーであるマッチもチェックされる）に置き換えた統合「マッチ＆トーナメント」フィルター —— 大規模なデータベースでも高速に動作するようになり、マッチタブとトーナメントビューは表示中のマッチについてのみ PR/MWC 指標を再計算するようになりました；<code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> がこれに対応するパリティの差を埋めます。新しい「個別インポート」フィルター（その他グループのチェックボックス、またはコマンドラインの <code class="docutils literal notranslate"><span class="pre">i</span></code> トークン、<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>；CLI では <code class="docutils literal notranslate"><span class="pre">--individual</span></code> でも利用可能）は、マッチのインポートに埋もれてしまうのではなく、単独で保存またはインポートされたポジションを見つけるためのものです。データ消失の不具合を修正：マッチを削除しても、そのマッチに含まれていた個別インポート済み、コレクションに追加済み、またはAnkiパッケージに組み込み済みのポジションは、もう削除されなくなりました。サーバー（ヘッドレス）モード：間隔反復（Anki）スケジューラ向けの新しいメソッドを6つ追加 —— 復習ログ（<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>）、期限到来カードの予測（<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>）、カードの一時停止・保留・削除（<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>）、そしてデッキの目標保持率を観測された成功率に自動調整する（<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>）；複数ユーザー向けPostgreSQL環境でテナントのデータを完全に削除する新しいメソッド <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>；フィルタリング／ソート／ページネーションに対応した新しいメソッド <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>、および 指定したマッチの一覧に限定した PR/MWC 指標を返す <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code>。Linuxネイティブ配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> パッケージ。インポート：マッチをインポートすると、マッチタブが表示され、インポートされたポジションがすぐに確認できるようになりました；単一のポジション（XGPファイル、BGBlitzポジション、ポジションテキストファイル、貼り付けたポジション、またはポジションの一括インポート）をインポートした場合は、マッチタブではなく、インポートしたポジションが表示された解析タブが直接開くようになりました；macOSからフランス語またはドイツ語のeXtreme Gammon解析を貼り付けると空になっていた不具合（システムのクリップボードによりアクセント記号が分解されていたため）を修正しました。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>、<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、および <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a> を参照。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.29.0</p></td>
+<td><p>2026/07/18</p></td>
+<td><p>インターフェース（マッチパネル）からもコマンドラインからも、マッチをJellyfish/gnubg形式（<code class="docutils literal notranslate"><span class="pre">.mat</span></code>）でエクスポートできるようになりました。対応するサーバールートも追加 —— 別のバックギャモンソフトでマッチを再生するのに便利です。検索：出目が指定したロールに一致する局面を除外する新しい「除外ダイス」判別子（<code class="docutils literal notranslate"><span class="pre">xD65</span></code>トークン、複数指定可）。安全な同時オープン：別のblunderDBウィンドウで既に書き込みモードで開かれているデータベースは、破損の危険を冒す代わりに、読み取り専用で開くようになりました（ナビゲーション、検索、解析は可能、編集は無効、タイトルバーに「[読み取り専用]」と表示）。局面の由来：マッチモード以外では、ボード上部の情報バーに、研究中の局面がどのマッチ ―― およびそのトーナメント ―― から来たのかが表示され、複数のマッチに現れる場合は「+N」バッジが付きます。環境に対する堅牢性の向上：フォント、クリップボード、または最後に開いたデータベースが利用できない場合の自動フォールバック。ライブラリの明示的な再読み込み（<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>、ツールバーのボタン、または <code class="docutils literal notranslate"><span class="pre">e</span></code> コマンド）で、表示中の局面の解析パネルが再び開きます。主な修正：大規模なデータベースのエクスポート時のフリーズを解消、実際にはどのマッチもエクスポートしていなかったエクスポートの「なし」ボタン、複数単語によるコメントフィルター、情報バーでのイベントとトーナメントの重複排除、およびさまざまな表示の調整。<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a> および <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照。</p></td>
 </tr>
 </tbody>
 </table>
@@ -293,7 +297,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. はじめに</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. 主な操作</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. インターフェースの説明</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#onglets-de-vues">2.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#onglets-de-vues">2.4. ビュータブ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.5. 設定</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">2.6. ガイドツアーとサンプルデータベース</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.7. ポジションのナビゲーション</a></li>
@@ -351,10 +355,10 @@
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. 表示</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. アクション</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. ツール</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#onglets-de-vues">5.7. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#onglets-de-vues">5.7. ビュータブ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.8. コマンドライン</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#historique-de-recherche">5.9. Historique de recherche</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#bibliotheque-de-filtres">5.10. Bibliothèque de filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#historique-de-recherche">5.9. 検索履歴</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#bibliotheque-de-filtres">5.10. フィルターライブラリ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.11. 分析パネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.12. マッチパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.13. Ankiパネル（間隔反復）</a></li>

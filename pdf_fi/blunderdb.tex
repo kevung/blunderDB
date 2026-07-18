@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{17.07.2026}
-\release{0.28.0}
+\date{18.07.2026}
+\release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -693,7 +693,7 @@ Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen tallentamatta 
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges. Ajout d’une barre d’informations au\sphinxhyphen{}dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur). À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position. Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des onglets de vues multiples : plusieurs espaces de travail indépendants (liste de positions, position courante, recherche) avec les raccourcis \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} (nouvelle vue), \sphinxstyleemphasis{CTRL\sphinxhyphen{}W} (fermer), \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp}/\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (changer de vue) et renommage par double\sphinxhyphen{}clic sur l’onglet. Voir {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Asetukset}}}}} et {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Onglets de vues}}}}}.
+Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko käyttöliittymän suurentamiseksi tai pienentämiseksi sekä paneelien sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden näyttöjen parempaa hyödyntämistä varten. Lisätty laudan yläpuolelle tietopalkki, joka näyttää pelaajat ja ottelun taustatiedot (tapahtuma, paikka, kierros, päivämäärä, pituus). Kun tietokanta avataan, otteluiden paneeli näytetään heti ja tarkastelu alkaa ensimmäisestä asemasta. Näppäimistöoikotiet ovat nyt riippumattomia näppäimistöasettelusta (AZERTY, QWERTY, QWERTZ…). Korjattu XGID\sphinxhyphen{}purku (Jacoby/Beaver\sphinxhyphen{}liput ja kuution arvo). Lisätty useiden näkymien välilehdet: useita itsenäisiä työtiloja (asemaluettelo, nykyinen asema, haku) oikoteineen \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} (uusi näkymä), \sphinxstyleemphasis{CTRL\sphinxhyphen{}W} (sulje), \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp}/\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (vaihda näkymää) sekä uudelleennimeäminen välilehteä kaksoisnapsauttamalla. Katso {\hyperref[\detokenize{manuel:configuration}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Asetukset}}}}} ja {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Näkymävälilehdet}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -729,6 +729,22 @@ Hakupaneeli: yhtenäinen « Ottelut ja turnaukset » \sphinxhyphen{}suodatin, jo
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.29.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+18.7.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ottelun vienti Jellyfish/gnubg\sphinxhyphen{}muodossa (\sphinxcode{\sphinxupquote{.mat}}) käyttöliittymästä (ottelupaneeli) samoin kuin komentoriviltä, sekä vastaava palvelinreitti — kätevä ottelun uudelleenpelaamiseen toisessa backgammon\sphinxhyphen{}ohjelmassa. Haku: uusi « poissuljetut nopat » \sphinxhyphen{}erottelija (tunnus \sphinxcode{\sphinxupquote{xD65}}, useita sallittu), joka jättää pois asemat, joiden heitto vastaa annettua noppaparia. Turvattu samanaikainen avaus: toisessa blunderDB\sphinxhyphen{}ikkunassa jo kirjoitustilassa avattu tietokanta avautuu nyt vain luku \sphinxhyphen{}tilassa (selaus, haku ja analyysi ovat mahdollisia, muokkaukset poissa käytöstä, maininta « {[}vain luku{]} » otsikkopalkissa) korruptioriskin sijaan. Asemien alkuperä: ottelutilan ulkopuolella laudan yläpuolinen tietopalkki näyttää ottelun — ja sen turnauksen — josta tutkittava asema on peräisin, sekä « +N »\sphinxhyphen{}merkin, kun asema esiintyy useissa otteluissa. Parempi kestävyys ympäristöolosuhteita vastaan: automaattinen varautuminen, kun fontti, leikepöytä tai viimeksi avattu tietokanta ei ole käytettävissä. Kirjaston nimenomainen uudelleenlataus (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}R}}, työkalupalkin painike tai komento \sphinxcode{\sphinxupquote{e}}) avaa näytetyn aseman analyysipaneelin uudelleen. Merkittäviä korjauksia: poistettu jumiutuminen suurten tietokantojen viennissä, viennin « Aucun »\sphinxhyphen{}painike, joka ei todellisuudessa jättänyt kaikkia otteluita pois, monisanainen kommenttisuodatin, tapahtuman ja turnauksen kaksoiskappaleiden poisto tietopalkista sekä erilaisia näyttösäätöjä. Katso {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoluettelo}}}}}, {\hyperref[\detokenize{manuel:panneau-matchs}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ottelupaneeli}}}}} ja {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Käyttöopas}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -750,15 +766,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.28.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.28.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
 
 \end{itemize}
 
@@ -810,7 +826,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raaka binääri (edistynyt menetelmä)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.28.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
+Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -818,7 +834,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.28.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
+Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
 \end{sphinxadmonition}
 
 
@@ -1033,44 +1049,31 @@ Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien mä
 \end{sphinxadmonition}
 
 
-\subsection{Onglets de vues}
+\subsection{Näkymävälilehdet}
 \label{\detokenize{manuel:onglets-de-vues}}\label{\detokenize{manuel:onglets-vues}}
 \sphinxAtStartPar
-Sous la barre d’outils, une barre d’onglets permet de travailler avec
-plusieurs \sphinxstylestrong{vues} en parallèle. Chaque vue est un espace de travail
-indépendant qui conserve sa propre liste de positions, l’index de la position
-courante, la position affichée, l’analyse et le coup sélectionné, le panneau
-actif, le commentaire en cours ainsi que le contexte de navigation dans un
-match. Il est ainsi possible, par exemple, de garder une recherche ouverte
-dans une vue tout en parcourant un match dans une autre.
+Työkalupalkin alla oleva välilehtipalkki mahdollistaa työskentelyn useiden \sphinxstylestrong{näkymien} kanssa rinnakkain. Jokainen näkymä on itsenäinen työtila, joka säilyttää oman asemaluettelonsa, nykyisen aseman indeksin, näytetyn aseman, analyysin ja valitun siirron, aktiivisen paneelin, käynnissä olevan kommentin sekä ottelun navigointikontekstin. Näin voi esimerkiksi pitää haun auki yhdessä näkymässä ja selata samalla ottelua toisessa.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Créer une vue} : cliquer sur le bouton \sphinxstyleemphasis{+} de la barre d’onglets ou
-appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}. La nouvelle vue démarre comme une copie de la vue
-courante.
+\sphinxstylestrong{Näkymän luominen}: napsauta välilehtipalkin \sphinxstyleemphasis{+}\sphinxhyphen{}painiketta tai paina \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}. Uusi näkymä käynnistyy nykyisen näkymän kopiona.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Fermer une vue} : cliquer sur la croix de l’onglet ou appuyer sur
-\sphinxstyleemphasis{CTRL\sphinxhyphen{}W}. La dernière vue ne peut pas être fermée.
+\sphinxstylestrong{Näkymän sulkeminen}: napsauta välilehden ruksia tai paina \sphinxstyleemphasis{CTRL\sphinxhyphen{}W}. Viimeistä näkymää ei voi sulkea.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Changer de vue} : cliquer sur un onglet, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp} /
-\sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (ou \sphinxstyleemphasis{MAJ\sphinxhyphen{}J} / \sphinxstyleemphasis{MAJ\sphinxhyphen{}K}) pour passer à la vue précédente /
-suivante, ou \sphinxstyleemphasis{CTRL\sphinxhyphen{}1} à \sphinxstyleemphasis{CTRL\sphinxhyphen{}9} pour atteindre directement la n\sphinxhyphen{}ième vue.
+\sphinxstylestrong{Näkymän vaihtaminen}: napsauta välilehteä, paina \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageUp} / \sphinxstyleemphasis{CTRL\sphinxhyphen{}PageDown} (tai \sphinxstyleemphasis{SHIFT\sphinxhyphen{}J} / \sphinxstyleemphasis{SHIFT\sphinxhyphen{}K}) siirtyäksesi edelliseen / seuraavaan näkymään, tai \sphinxstyleemphasis{CTRL\sphinxhyphen{}1} – \sphinxstyleemphasis{CTRL\sphinxhyphen{}9} siirtyäksesi suoraan n:nteen näkymään.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Renommer une vue} : double\sphinxhyphen{}cliquer sur l’onglet, saisir le nouveau nom
-et valider avec \sphinxstyleemphasis{ENTREE}.
+\sphinxstylestrong{Näkymän uudelleennimeäminen}: kaksoisnapsauta välilehteä, kirjoita uusi nimi ja vahvista painamalla \sphinxstyleemphasis{ENTER}.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Les vues sont enregistrées avec l’état de session de la base de données et
-restaurées à sa réouverture.
+Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.
 
 
 \subsection{Asetukset}
@@ -1177,16 +1180,7 @@ Paneeli tarjoaa nimenomaisen hallinnan haettavalle \sphinxstylestrong{päätöst
 \sphinxstylestrong{Ottelut ja turnaukset} \sphinxhyphen{}suodatin perustuu yhteiseen valitsimeen (modaali\sphinxhyphen{}ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä \sphinxstyleemphasis{Kaikki} / \sphinxstyleemphasis{Ei mitään} \sphinxhyphen{}painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.
 
 \sphinxAtStartPar
-Le panneau de recherche comporte trois onglets sur son bord gauche :
-\sphinxstyleemphasis{Recherche} (les filtres), \sphinxstyleemphasis{Historique} et \sphinxstyleemphasis{Enregistrés}. L’onglet
-\sphinxstylestrong{Historique} liste les recherches passées avec leur date et leur commande :
-un clic sélectionne une recherche et affiche la position associée sur le
-plateau, un double\sphinxhyphen{}clic la ré\sphinxhyphen{}exécute. Chaque entrée peut être enregistrée
-dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) ou
-supprimée. L’onglet \sphinxstylestrong{Enregistrés} contient la \sphinxstylestrong{bibliothèque de filtres} :
-double\sphinxhyphen{}cliquer sur un filtre enregistré pour relancer la recherche
-correspondante (voir {\hyperref[\detokenize{annexe_filtres:annexe-filtres}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liite: Suodattimien edistynyt käyttö}}}}}). La commande \sphinxcode{\sphinxupquote{history}} (alias
-\sphinxcode{\sphinxupquote{hi}}) ouvre le panneau de recherche.
+Hakupaneelissa on vasemmassa reunassaan kolme välilehteä: \sphinxstyleemphasis{Recherche} (suodattimet), \sphinxstyleemphasis{Historique} ja \sphinxstyleemphasis{Enregistrés}. \sphinxstylestrong{Historique}\sphinxhyphen{}välilehti luettelee aiemmat haut päivämäärineen ja komentoineen: napsautus valitsee haun ja näyttää siihen liittyvän aseman laudalla, kaksoisnapsautus suorittaa sen uudelleen. Kunkin merkinnän voi tallentaa suodatinkirjastoon (kirjanmerkkikuvake, antamalla suodattimelle nimen) tai poistaa. \sphinxstylestrong{Enregistrés}\sphinxhyphen{}välilehti sisältää \sphinxstylestrong{suodatinkirjaston}: kaksoisnapsauta tallennettua suodatinta suorittaaksesi vastaavan haun uudelleen (katso {\hyperref[\detokenize{annexe_filtres:annexe-filtres}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liite: Suodattimien edistynyt käyttö}}}}}). Komento \sphinxcode{\sphinxupquote{history}} (alias \sphinxcode{\sphinxupquote{hi}}) avaa hakupaneelin.
 
 \begin{sphinxadmonition}{tip}{Vihje:}
 \sphinxAtStartPar
@@ -1234,21 +1228,21 @@ nähdä todella pelatun siirron korostettuna analyysissä.
 Kunkin ottelun viimeksi katsottu asema tallennetaan ja palautetaan automaattisesti. Näytä tai piilota paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} tai suorittamalla komento \sphinxcode{\sphinxupquote{match}}.
 
 \sphinxAtStartPar
-Chaque match peut être exporté en transcription Jellyfish \sphinxcode{\sphinxupquote{.mat}} via le
-bouton ⬇ de la liste des matchs ou le bouton \sphinxstyleemphasis{.mat} de la fiche du match.
+Jokaisen ottelun voi viedä Jellyfish \sphinxcode{\sphinxupquote{.mat}} \sphinxhyphen{}transkriptioksi otteluluettelon ⬇\sphinxhyphen{}painikkeella tai ottelun tietolomakkeen \sphinxstyleemphasis{.mat}\sphinxhyphen{}painikkeella.
 
 \sphinxAtStartPar
-Le bouton \sphinxstylestrong{Fusionner les joueurs} de la barre d’outils du panneau ouvre une
-fenêtre listant tous les noms de joueurs de la base avec leur nombre de
-matchs : sélectionner les variantes d’orthographe d’un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu’un même joueur apparaît sous plusieurs noms.
+Paneelin työkalupalkin \sphinxstylestrong{Fusionner les joueurs} \sphinxhyphen{}painike avaa ikkunan, joka luettelee kaikki tietokannan pelaajanimet otteluidensa määrän kanssa: valitse saman pelaajan eri kirjoitusasut, valitse säilytettävä kanoninen nimi ja yhdistä sitten. Hyödyllinen pelaajakohtaisten tilastojen yhtenäistämiseen, kun sama pelaaja esiintyy useilla nimillä.
 
 \sphinxAtStartPar
-Kun ottelu on avattuna, laudan yläpuolelle ilmestyy \sphinxstylestrong{tietopalkki}: se näyttää mukana olevat pelaajat (\sphinxstyleemphasis{pelaaja 1} vastaan \sphinxstyleemphasis{pelaaja 2}) sekä ottelun taustatiedot (tapahtuma, paikka, kierros, päivämäärä ja ottelun pituus, kun nämä tiedot ovat saatavilla).
+Kun ottelu on avattu, laudan yläpuolelle ilmestyy \sphinxstylestrong{tietopalkki}: se muistuttaa läsnä olevista pelaajista (\sphinxstyleemphasis{pelaaja 1} vastaan \sphinxstyleemphasis{pelaaja 2}) sekä ottelun taustatiedoista (tapahtuma, paikka, kierros, päivämäärä ja ottelun pituus, kun nämä tiedot ovat saatavilla). Tämä palkki näytetään myös ottelutilan ulkopuolella: kun tutkittava asema (haun, kokoelman tai suoran haun tuloksena) on peräisin yhdestä tai useammasta ottelusta, palkki ilmoittaa sen \sphinxstylestrong{alkuperän} — ensimmäisen kyseessä olevan ottelun ja tarvittaessa « +N »\sphinxhyphen{}merkin, joka luettelee muut osoitettaessa. Erikseen tuotu asema, johon mikään ottelu ei viittaa, ei näytä mitään.
 
 \sphinxAtStartPar
 Avattaessa otteluita sisältävää tietokantaa \sphinxstylestrong{Ottelut}\sphinxhyphen{}paneeli näytetään heti ja tarkastelu alkaa suoraan ensimmäisestä asemasta, jotta navigoinnin voi aloittaa välittömästi.
+
+\begin{sphinxadmonition}{note}{Muista:}
+\sphinxAtStartPar
+Tietokannan voi avata kirjoitustilassa vain yksi ikkuna kerrallaan. Jos avaat tietokannan, joka on jo avattu toisessa blunderDB\sphinxhyphen{}ikkunassa, se avautuu \sphinxstylestrong{vain luku} \sphinxhyphen{}tilassa: selaus, haku ja analyysi ovat edelleen mahdollisia, mutta kaikki muokkaus on poistettu käytöstä ja otsikkopalkissa lukee « {[}vain luku{]} ».
+\end{sphinxadmonition}
 
 \begin{sphinxadmonition}{tip}{Vihje:}
 \sphinxAtStartPar
@@ -2633,7 +2627,7 @@ history, hi
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (l’historique de recherche se trouve dans son onglet \sphinxstyleemphasis{Historique}).
+Avaa hakupaneeli (hakuhistoria löytyy sen \sphinxstyleemphasis{Historique}\sphinxhyphen{}välilehdeltä).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2644,7 +2638,7 @@ stats, st
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/masquer le panneau de statistiques.
+Näytä/piilota tilastopaneeli.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2943,7 +2937,7 @@ xD65
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position n’a \sphinxstylestrong{pas} été jouée avec le lancer 6\sphinxhyphen{}5 (peu importe l’ordre). La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs lancers (\sphinxcode{\sphinxupquote{xD65 xD54}}).
+Asemaa \sphinxstylestrong{ei} ole pelattu heitolla 6\sphinxhyphen{}5 (järjestyksestä riippumatta). Arvo ilmoitetaan tunnuksessa; toistettavissa useiden heittojen poissulkemiseksi (\sphinxcode{\sphinxupquote{xD65 xD54}}).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4472,7 +4466,7 @@ Näytä/piilota ohje.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Onglets de vues}
+\subsection{Näkymävälilehdet}
 \label{\detokenize{raccourcis:onglets-de-vues}}\label{\detokenize{raccourcis:raccourcis-vues}}
 
 \begin{savenotes}\sphinxattablestart
@@ -4499,7 +4493,7 @@ CTRL\sphinxhyphen{}T
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Créer une nouvelle vue (copie de la vue courante).
+Luo uusi näkymä (nykyisen näkymän kopio).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4510,29 +4504,29 @@ CTRL\sphinxhyphen{}W
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Fermer la vue courante.
+Sulje nykyinen näkymä.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}PageUp, MAJ\sphinxhyphen{}J
+CTRL\sphinxhyphen{}PageUp, SHIFT\sphinxhyphen{}J
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Vue précédente.
+Edellinen näkymä.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}PageDown, MAJ\sphinxhyphen{}K
+CTRL\sphinxhyphen{}PageDown, SHIFT\sphinxhyphen{}K
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Vue suivante.
+Seuraava näkymä.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4543,18 +4537,18 @@ CTRL\sphinxhyphen{}1 … CTRL\sphinxhyphen{}9
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Aller directement à la n\sphinxhyphen{}ième vue.
+Siirry suoraan n:nteen näkymään.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Double\sphinxhyphen{}clic sur l’onglet
+Välilehden kaksoisnapsautus
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Renommer la vue.
+Nimeä näkymä uudelleen.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4612,11 +4606,10 @@ Selaa komentohistoriaa alaspäin.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Historique de recherche}
+\subsection{Hakuhistoria}
 \label{\detokenize{raccourcis:historique-de-recherche}}\label{\detokenize{raccourcis:raccourcis-search-history}}
 \sphinxAtStartPar
-L’historique de recherche est l’onglet \sphinxstyleemphasis{Historique} du panneau de recherche
-(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+Hakuhistoria on hakupaneelin (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} tai \sphinxstyleemphasis{TAB}) \sphinxstyleemphasis{Historique}\sphinxhyphen{}välilehti.
 
 
 \begin{savenotes}\sphinxattablestart
@@ -4654,7 +4647,7 @@ Kaksoisnapsautus
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Exécuter la recherche.
+Suorita haku.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4664,11 +4657,10 @@ Exécuter la recherche.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Bibliothèque de filtres}
+\subsection{Suodatinkirjasto}
 \label{\detokenize{raccourcis:bibliotheque-de-filtres}}\label{\detokenize{raccourcis:raccourcis-filter-library}}
 \sphinxAtStartPar
-La bibliothèque de filtres est l’onglet \sphinxstyleemphasis{Enregistrés} du panneau de recherche
-(\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}).
+Suodatinkirjasto on hakupaneelin (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} tai \sphinxstyleemphasis{TAB}) \sphinxstyleemphasis{Enregistrés}\sphinxhyphen{}välilehti.
 
 
 \begin{savenotes}\sphinxattablestart
@@ -5319,20 +5311,15 @@ Vie tietokannan sisältö tiedostoihin.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type d’export: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}}, \sphinxcode{\sphinxupquote{matches}} ou
-\sphinxcode{\sphinxupquote{mat}} (export d’un ou plusieurs matchs en transcription Jellyfish
-\sphinxcode{\sphinxupquote{.mat}}) (obligatoire).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Vientityyppi: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}}, \sphinxcode{\sphinxupquote{matches}} tai \sphinxcode{\sphinxupquote{mat}} (yhden tai useamman ottelun vienti Jellyfish \sphinxcode{\sphinxupquote{.mat}} \sphinxhyphen{}transkriptioon) (pakollinen).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Fichier de sortie (obligatoire, sauf pour \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type mat}}
-utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Tulostiedosto (pakollinen, paitsi \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type mat}} \sphinxhyphen{}vaihtoehdolle yhdessä \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} kanssa).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Répertoire de sortie pour l’export \sphinxcode{\sphinxupquote{.mat}} par lot (plusieurs
-matchs, un fichier par match ; sans \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}}, tous les matchs sont
-exportés).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Erävientinä tehtävän \sphinxcode{\sphinxupquote{.mat}}\sphinxhyphen{}viennin tulostushakemisto (useita otteluita, yksi tiedosto ottelua kohden; ilman \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}} viedään kaikki ottelut).
 
 \item {} 
 \sphinxAtStartPar
@@ -5481,9 +5468,7 @@ Hae asemia tietokannasta yhdisteltävien kriteerien avulla.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}position\sphinxhyphen{}ids}} — Filtrer par IDs de positions : intervalle \sphinxcode{\sphinxupquote{2,7}}
-(positions 2 à 7) ou liste explicite séparée par des points\sphinxhyphen{}virgules
-\sphinxcode{\sphinxupquote{5;10;15}}.
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}position\sphinxhyphen{}ids}} — Suodata asemien tunnusten mukaan: väli \sphinxcode{\sphinxupquote{2,7}} (asemat 2–7) tai puolipisteillä eroteltu eksplisiittinen luettelo \sphinxcode{\sphinxupquote{5;10;15}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -5544,45 +5529,40 @@ Näytä tietokannan sisältö.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{stats}} — Rapport de statistiques de performance : PR / Snowie ER / MWC
-(global, pions, videau), PR glissant sur les N dernières décisions, top
-blunders, répartition par action de videau et histogramme des magnitudes
-d’erreur.
+\sphinxcode{\sphinxupquote{stats}} — Suorituskykytilastojen raportti: PR / Snowie ER / MWC (kokonais, nappulat, kuutio), liukuva PR viimeisten N päätöksen osalta, pahimmat virheet, jakauma kuutiotoiminnoittain ja virhesuuruuksien histogrammi.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Options (type ``stats`` uniquement):}
+\sphinxstylestrong{Valinnat (vain ``stats``\sphinxhyphen{}tyyppi):}
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metric}} — Métrique affichée: \sphinxcode{\sphinxupquote{pr}} ou \sphinxcode{\sphinxupquote{mwc}} (défaut: \sphinxcode{\sphinxupquote{pr}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}metric}} — Näytettävä mittari: \sphinxcode{\sphinxupquote{pr}} tai \sphinxcode{\sphinxupquote{mwc}} (oletus: \sphinxcode{\sphinxupquote{pr}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}player}} — Restreindre au joueur indiqué.
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}player}} — Rajaa ilmoitettuun pelaajaan.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament}} — Restreindre à un ou plusieurs IDs de tournois (séparés
-par des virgules).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament}} — Rajaa yhteen tai useampaan turnauksen tunnukseen (pilkulla eroteltuna).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from}} — Date de début (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}from}} — Aloituspäivä (VVVV\sphinxhyphen{}KK\sphinxhyphen{}PP).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to}} — Date de fin (AAAA\sphinxhyphen{}MM\sphinxhyphen{}JJ).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}to}} — Lopetuspäivä (VVVV\sphinxhyphen{}KK\sphinxhyphen{}PP).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision\sphinxhyphen{}type}} — Type de décision: \sphinxcode{\sphinxupquote{all}}, \sphinxcode{\sphinxupquote{checker}} ou \sphinxcode{\sphinxupquote{cube}}
-(défaut: \sphinxcode{\sphinxupquote{all}}).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision\sphinxhyphen{}type}} — Päätöstyyppi: \sphinxcode{\sphinxupquote{all}}, \sphinxcode{\sphinxupquote{checker}} tai \sphinxcode{\sphinxupquote{cube}} (oletus: \sphinxcode{\sphinxupquote{all}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}top\sphinxhyphen{}blunders}} — Nombre de pires erreurs listées (défaut: 10).
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}top\sphinxhyphen{}blunders}} — Lueteltavien pahimpien virheiden määrä (oletus: 10).
 
 \item {} 
 \sphinxAtStartPar
@@ -6360,13 +6340,10 @@ Kaksi \sphinxcode{\sphinxupquote{positions}}\sphinxhyphen{}perheen metodia purka
 \sphinxcode{\sphinxupquote{anki}}\sphinxhyphen{}perhe saa kuusi uutta metodia, jotka laajentavat aikaväliin perustuvaa kertausajastinta (FSRS): \sphinxcode{\sphinxupquote{anki.reviewLog}} (loki jokaisesta kertauksesta — arvosana ja FSRS\sphinxhyphen{}tulos — säilytystilastoja ja tarkkaa historiaa varten), \sphinxcode{\sphinxupquote{anki.forecast}} (ennuste erääntyvien korttien määrästä tulevina päivinä, myöhässä olevat kortit mukaan lukien), \sphinxcode{\sphinxupquote{anki.suspendCard}} / \sphinxcode{\sphinxupquote{anki.buryCard}} / \sphinxcode{\sphinxupquote{anki.removeCard}} (kortin poistaminen kertausjonosta väliaikaisesti tai pysyvästi) sekä \sphinxcode{\sphinxupquote{anki.optimizeParams}} (säätää pakan tavoitesäilytysastetta kohti sen kertauksissa havaittua onnistumisastetta).
 
 
-\subsubsection{Déploiement avec Docker}
+\subsubsection{Käyttöönotto Dockerilla}
 \label{\detokenize{mode_headless:deploiement-avec-docker}}\label{\detokenize{mode_headless:headless-docker}}
 \sphinxAtStartPar
-Le dépôt fournit un \sphinxcode{\sphinxupquote{Dockerfile.serve}} qui construit une image conteneur
-minimale du démon : seul le binaire \sphinxcode{\sphinxupquote{serve}} est compilé (Go pur, sans
-interface graphique et sans CGO, donc lié statiquement), puis placé dans une
-image \sphinxstyleemphasis{distroless}.
+Arkisto tarjoaa \sphinxcode{\sphinxupquote{Dockerfile.serve}}\sphinxhyphen{}tiedoston, joka rakentaa demonista minimaalisen konttikuvan: vain \sphinxcode{\sphinxupquote{serve}}\sphinxhyphen{}binääri käännetään (puhdas Go, ilman graafista käyttöliittymää ja ilman CGO:ta, siis staattisesti linkitetty) ja sijoitetaan sitten \sphinxstyleemphasis{distroless}\sphinxhyphen{}kuvaan.
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{} Construire l\PYGZsq{}image (depuis la racine du dépôt)}
@@ -6379,16 +6356,11 @@ docker\PYG{+w}{ }run\PYG{+w}{ }\PYGZhy{}\PYGZhy{}rm\PYG{+w}{ }\PYGZhy{}p\PYG{+w}
 \end{sphinxVerbatim}
 
 \sphinxAtStartPar
-L’image écoute sur le port 8080 et se configure par variables d’environnement
-(\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+Kuva kuuntelee porttia 8080 ja konfiguroidaan ympäristömuuttujilla (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
 \sphinxAtStartPar
-Comme le démon lui\sphinxhyphen{}même, le conteneur n’effectue \sphinxstylestrong{aucune
-authentification} : il doit être placé derrière un reverse\sphinxhyphen{}proxy chargé de
-l’authentification et ne jamais être exposé directement sur l’Internet
-public.
+Kuten demoni itsekin, kontti ei suorita \sphinxstylestrong{minkäänlaista todennusta}: se on sijoitettava todennuksesta huolehtivan käänteisvälityspalvelimen taakse eikä sitä saa koskaan altistaa suoraan julkiseen internetiin.
 \end{sphinxadmonition}
 
 
@@ -6778,20 +6750,19 @@ Lisätäksesi suodattimen kirjastoon,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Lancer la recherche à conserver (commande \sphinxcode{\sphinxupquote{s}} suivie de filtres).
+Käynnistä säilytettävä haku (komento \sphinxcode{\sphinxupquote{s}}, jonka perässä suodattimet).
 
 \item {} 
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
-l’onglet \sphinxstyleemphasis{Historique}.
+Avaa hakupaneeli (\sphinxcode{\sphinxupquote{TAB}} tai \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) ja valitse \sphinxstyleemphasis{Historique}\sphinxhyphen{}välilehti.
 
 \item {} 
 \sphinxAtStartPar
-Cliquer sur l’icône signet de la recherche à enregistrer.
+Napsauta tallennettavan haun kirjanmerkkikuvaketta.
 
 \item {} 
 \sphinxAtStartPar
-Donner un nom au filtre et valider.
+Anna suodattimelle nimi ja vahvista.
 
 \end{enumerate}
 
@@ -6801,8 +6772,7 @@ Käyttääksesi kirjastoon tallennettua suodatinta,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Ouvrir le panneau de recherche (\sphinxcode{\sphinxupquote{TAB}} ou \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) et sélectionner
-l’onglet \sphinxstyleemphasis{Enregistrés}.
+Avaa hakupaneeli (\sphinxcode{\sphinxupquote{TAB}} tai \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) ja valitse \sphinxstyleemphasis{Enregistrés}\sphinxhyphen{}välilehti.
 
 \item {} 
 \sphinxAtStartPar

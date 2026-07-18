@@ -379,11 +379,22 @@ par joueur lorsqu'un même joueur apparaît sous plusieurs noms.
 Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)
 ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
-match, lorsque ces informations sont disponibles).
+match, lorsque ces informations sont disponibles). Cette barre s'affiche aussi
+en dehors du mode match : lorsqu'une position étudiée (issue d'une recherche,
+d'une collection ou d'un accès direct) provient d'un ou de plusieurs matchs,
+elle en indique la **provenance** — le premier match concerné et, le cas
+échéant, un badge « +N » listant les autres au survol. Une position importée
+seule, qu'aucun match ne référence, n'affiche rien.
 
 À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
 d'emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.
+
+.. note:: Une base de données ne peut être ouverte en écriture que par une seule
+   fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre
+   fenêtre de blunderDB, elle s'ouvre en **lecture seule** : la navigation, la
+   recherche et l'analyse restent possibles, mais toute modification est
+   désactivée et la barre de titre affiche « [lecture seule] ».
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 

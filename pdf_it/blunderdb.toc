@@ -13,7 +13,7 @@
 \contentsline {subsection}{\numberline {2.2.1}Introduzione}{6}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Interazioni principali}{7}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}Descrizione dell’interfaccia}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Onglets de vues}{8}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.4}Schede delle viste}{8}{subsection.2.2.4}%
 \contentsline {subsection}{\numberline {2.2.5}Configurazione}{8}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Visite guidate e database di esempio}{9}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Navigazione tra le posizioni}{9}{subsection.2.2.7}%
@@ -24,32 +24,32 @@
 \contentsline {subsection}{\numberline {2.2.12}Pannello Ricerca}{10}{subsection.2.2.12}%
 \contentsline {subsection}{\numberline {2.2.13}Pannello Raccolte}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Pannello Match}{11}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Pannello Tornei}{11}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Pannello Stats}{11}{subsection.2.2.16}%
-\contentsline {subsubsection}{Introduzione}{11}{subsubsection*.7}%
+\contentsline {subsection}{\numberline {2.2.15}Pannello Tornei}{12}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.16}Pannello Stats}{12}{subsection.2.2.16}%
+\contentsline {subsubsection}{Introduzione}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Apertura del pannello}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Barra dei filtri}{12}{subsubsection*.9}%
 \contentsline {paragraph}{Prospettiva del giocatore}{12}{paragraph*.10}%
-\contentsline {paragraph}{Filtri disponibili}{12}{paragraph*.11}%
+\contentsline {paragraph}{Filtri disponibili}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Commutazione PR / MWC}{13}{subsubsection*.12}%
 \contentsline {subsubsection}{Scheda Dashboard}{13}{subsubsection*.13}%
-\contentsline {paragraph}{Schede di livello}{13}{paragraph*.14}%
+\contentsline {paragraph}{Schede di livello}{14}{paragraph*.14}%
 \contentsline {paragraph}{PR mobile sulle ultime N decisioni}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunder}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Scheda Progressione}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Grafico a linee per torneo}{14}{paragraph*.18}%
 \contentsline {paragraph}{Scatter plot per match}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Scheda Errori}{14}{subsubsection*.20}%
-\contentsline {paragraph}{Ripartizione per azione di cubo}{14}{paragraph*.21}%
+\contentsline {subsubsection}{Scheda Errori}{15}{subsubsection*.20}%
+\contentsline {paragraph}{Ripartizione per azione di cubo}{15}{paragraph*.21}%
 \contentsline {paragraph}{Confronto Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Istogramma delle magnitudo d’errore}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Regola di aggregazione}{15}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: limitazioni}{15}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Pannello EPC}{15}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.17}Pannello EPC}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Pannello Anki}{16}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Pannello Metadati}{16}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Pannello Registro}{16}{subsection.2.2.20}%
-\contentsline {section}{\numberline {2.3}Guida utente}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.20}Pannello Registro}{17}{subsection.2.2.20}%
+\contentsline {section}{\numberline {2.3}Guida utente}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{17}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{17}{subsection.2.3.3}%
@@ -84,10 +84,10 @@
 \contentsline {subsection}{\numberline {2.5.4}Visualizzazione}{30}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Azioni}{30}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Strumenti}{30}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Onglets de vues}{30}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.7}Schede delle viste}{30}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Riga di comando}{30}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Historique de recherche}{31}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Bibliothèque de filtres}{31}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.9}Cronologia di ricerca}{31}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}Libreria di filtri}{31}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Pannello di analisi}{31}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Pannello dei match}{31}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Pannello Anki (ripetizione dilazionata)}{31}{subsection.2.5.13}%
@@ -133,7 +133,7 @@
 \contentsline {subsection}{\numberline {2.8.1}Panoramica}{42}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Il demone \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%
 \contentsline {subsubsection}{Punti di accesso}{43}{subsubsection*.33}%
-\contentsline {subsubsection}{Déploiement avec Docker}{44}{subsubsection*.34}%
+\contentsline {subsubsection}{Deployment con Docker}{44}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL e multiutente}{44}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Migrare un database SQLite verso PostgreSQL}{45}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Il dispatcher generico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{45}{subsection.2.8.5}%

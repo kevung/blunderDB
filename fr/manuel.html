@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuel &mdash; Documentation blunderDB 0.28.0</title>
+  <title>2. Manuel &mdash; Documentation blunderDB 0.29.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=05e8d325"></script>
+      <script src="_static/documentation_options.js?v=743d997c"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -439,10 +439,23 @@ par joueur lorsqu’un même joueur apparaît sous plusieurs noms.</p>
 <p>Lorsqu’un match est ouvert, une <strong>barre d’informations</strong> apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>)
 ainsi que le contexte du match (événement, lieu, ronde, date et longueur du
-match, lorsque ces informations sont disponibles).</p>
+match, lorsque ces informations sont disponibles). Cette barre s’affiche aussi
+en dehors du mode match : lorsqu’une position étudiée (issue d’une recherche,
+d’une collection ou d’un accès direct) provient d’un ou de plusieurs matchs,
+elle en indique la <strong>provenance</strong> — le premier match concerné et, le cas
+échéant, un badge « +N » listant les autres au survol. Une position importée
+seule, qu’aucun match ne référence, n’affiche rien.</p>
 <p>À l’ouverture d’une base contenant des matchs, le panneau <strong>Matchs</strong> est affiché
 d’emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Une base de données ne peut être ouverte en écriture que par une seule
+fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre
+fenêtre de blunderDB, elle s’ouvre en <strong>lecture seule</strong> : la navigation, la
+recherche et l’analyse restent possibles, mais toute modification est
+désactivée et la barre de titre affiche « [lecture seule] ».</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
 <p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Raccourcis clavier</span></a> pour les raccourcis disponibles.</p>

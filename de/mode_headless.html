@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.28.0 Dokumentation</title>
+  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.29.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f01be42d"></script>
+      <script src="_static/documentation_options.js?v=81ceae74"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -59,7 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">8.1. Überblick</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">8.2. Der Daemon <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#points-d-acces">8.2.1. Endpunkte</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">8.2.2. Déploiement avec Docker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">8.2.2. Bereitstellung mit Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">8.3. PostgreSQL-Backend und Mehrbenutzerbetrieb</a></li>
@@ -199,11 +199,8 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <p>Die Familie <code class="docutils literal notranslate"><span class="pre">anki</span></code> gewinnt sechs Methoden hinzu, die den Planer für verteilte Wiederholung (FSRS) erweitern: <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (ein Protokoll jeder Wiederholung — Bewertung und FSRS-Ergebnis — als Grundlage für Retentionsstatistiken und eine originalgetreue Historie), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (eine Vorausschau auf die Anzahl der in den kommenden Tagen fälligen Karten, überfällige Karten eingeschlossen), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (eine Karte vorübergehend oder endgültig aus der Wiederholungswarteschlange entfernen) sowie <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> (verschiebt die Zielretention eines Decks in Richtung der auf seinen Wiederholungen beobachteten Erfolgsquote).</p>
 </section>
 <section id="deploiement-avec-docker">
-<span id="headless-docker"></span><h3><span class="section-number">8.2.2. </span>Déploiement avec Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
-<p>Le dépôt fournit un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> qui construit une image conteneur
-minimale du démon : seul le binaire <code class="docutils literal notranslate"><span class="pre">serve</span></code> est compilé (Go pur, sans
-interface graphique et sans CGO, donc lié statiquement), puis placé dans une
-image <em>distroless</em>.</p>
+<span id="headless-docker"></span><h3><span class="section-number">8.2.2. </span>Bereitstellung mit Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>Das Repository stellt eine <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> bereit, die ein minimales Container-Image des Daemons erstellt: Nur das <code class="docutils literal notranslate"><span class="pre">serve</span></code>-Binary wird kompiliert (reines Go, ohne grafische Oberfläche und ohne CGO, also statisch gelinkt) und anschließend in ein <em>distroless</em>-Image gelegt.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Construire l&#39;image (depuis la racine du dépôt)</span>
 docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
 
@@ -213,15 +210,10 @@ docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </
 <span class="w">    </span>blunderdb-serve
 </pre></div>
 </div>
-<p>L’image écoute sur le port 8080 et se configure par variables d’environnement
-(<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
-<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<p>Das Image lauscht auf Port 8080 und wird über Umgebungsvariablen konfiguriert (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warnung</p>
-<p>Comme le démon lui-même, le conteneur n’effectue <strong>aucune
-authentification</strong> : il doit être placé derrière un reverse-proxy chargé de
-l’authentification et ne jamais être exposé directement sur l’Internet
-public.</p>
+<p>Wie der Daemon selbst führt der Container <strong>keinerlei Authentifizierung</strong> durch: Er muss hinter einem Reverse-Proxy platziert werden, der für die Authentifizierung zuständig ist, und darf niemals direkt dem öffentlichen Internet ausgesetzt werden.</p>
 </div>
 </section>
 </section>

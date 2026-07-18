@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. Command Line Interface (CLI) &mdash; blunderDB 0.28.0 documentation</title>
+  <title>6. Command Line Interface (CLI) &mdash; blunderDB 0.29.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8d643f27"></script>
+      <script src="_static/documentation_options.js?v=fcb1757e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -258,14 +258,9 @@
 <p><strong>Options:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Source database (required).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ou
-<code class="docutils literal notranslate"><span class="pre">mat</span></code> (export d’un ou plusieurs matchs en transcription Jellyfish
-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatoire).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire, sauf pour <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>
-utilisé avec <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire de sortie pour l’export <code class="docutils literal notranslate"><span class="pre">.mat</span></code> par lot (plusieurs
-matchs, un fichier par match ; sans <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, tous les matchs sont
-exportés).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Export type: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> or <code class="docutils literal notranslate"><span class="pre">mat</span></code> (export of one or more matches as a Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> transcript) (required).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Output file (required, except for <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> used with <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Output directory for batch <code class="docutils literal notranslate"><span class="pre">.mat</span></code> export (several matches, one file per match; without <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, all matches are exported).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Include analysis (default: yes).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Include comments (default: yes).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Include filter library (default: yes).</p></li>
@@ -323,9 +318,7 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Minimum checkers off (player 1/2).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Filter by match IDs (comma-separated).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Filter by tournament IDs (comma-separated).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filtrer par IDs de positions : intervalle <code class="docutils literal notranslate"><span class="pre">2,7</span></code>
-(positions 2 à 7) ou liste explicite séparée par des points-virgules
-<code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filter by position IDs: range <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (positions 2 to 7) or explicit semicolon-separated list <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Only positions imported on their own, that is, the ones you added yourself and not the ones a match import brought in.</p></li>
 </ul>
 <p><strong>Examples:</strong></p>
@@ -363,22 +356,17 @@ exportés).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — List of imported matches.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — List of tournaments.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — List of positions (limited to 10 by default).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Rapport de statistiques de performance : PR / Snowie ER / MWC
-(global, pions, videau), PR glissant sur les N dernières décisions, top
-blunders, répartition par action de videau et histogramme des magnitudes
-d’erreur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Performance statistics report: PR / Snowie ER / MWC (overall, checker, cube), rolling PR over the last N decisions, top blunders, breakdown by cube action and error magnitude histogram.</p></li>
 </ul>
-<p><strong>Options (type ``stats`` uniquement):</strong></p>
+<p><strong>Options (``stats`` type only):</strong></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Métrique affichée: <code class="docutils literal notranslate"><span class="pre">pr</span></code> ou <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restreindre au joueur indiqué.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois (séparés
-par des virgules).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Date de début (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Date de fin (AAAA-MM-JJ).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>
-(défaut: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Nombre de pires erreurs listées (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Displayed metric: <code class="docutils literal notranslate"><span class="pre">pr</span></code> or <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (default: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restrict to the given player.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restrict to one or more tournament IDs (comma-separated).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Start date (YYYY-MM-DD).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — End date (YYYY-MM-DD).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Decision type: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> or <code class="docutils literal notranslate"><span class="pre">cube</span></code> (default: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Number of worst errors listed (default: 10).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Output format: <code class="docutils literal notranslate"><span class="pre">text</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code> (default: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
 </ul>
 <p><strong>Examples:</strong></p>

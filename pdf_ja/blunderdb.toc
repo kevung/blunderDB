@@ -11,7 +11,7 @@
 \contentsline {subsection}{\numberline {2.2.1}はじめに}{9}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}主な操作}{9}{subsection.2.2.2}%
 \contentsline {subsection}{\numberline {2.2.3}インターフェースの説明}{9}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Onglets de vues}{11}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.4}ビュータブ}{11}{subsection.2.2.4}%
 \contentsline {subsection}{\numberline {2.2.5}設定}{11}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}ガイドツアーとサンプルデータベース}{12}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}ポジションのナビゲーション}{12}{subsection.2.2.7}%
@@ -26,28 +26,28 @@
 \contentsline {subsection}{\numberline {2.2.16}Stats パネル}{15}{subsection.2.2.16}%
 \contentsline {subsubsection}{はじめに}{15}{subsubsection*.7}%
 \contentsline {subsubsection}{パネルを開く}{15}{subsubsection*.8}%
-\contentsline {subsubsection}{フィルターバー}{15}{subsubsection*.9}%
+\contentsline {subsubsection}{フィルターバー}{16}{subsubsection*.9}%
 \contentsline {paragraph}{プレイヤーの視点}{16}{paragraph*.10}%
 \contentsline {paragraph}{利用可能なフィルター}{16}{paragraph*.11}%
 \contentsline {subsubsection}{PR / MWC の切り替え}{16}{subsubsection*.12}%
 \contentsline {subsubsection}{Dashboard タブ}{17}{subsubsection*.13}%
 \contentsline {paragraph}{レベルカード}{17}{paragraph*.14}%
 \contentsline {paragraph}{直近 N 回の判断にわたる移動 PR}{17}{paragraph*.15}%
-\contentsline {paragraph}{Top blunders}{17}{paragraph*.16}%
-\contentsline {subsubsection}{Progression タブ}{17}{subsubsection*.17}%
+\contentsline {paragraph}{Top blunders}{18}{paragraph*.16}%
+\contentsline {subsubsection}{Progression タブ}{18}{subsubsection*.17}%
 \contentsline {paragraph}{トーナメントごとの曲線}{18}{paragraph*.18}%
 \contentsline {paragraph}{マッチごとの散布図}{18}{paragraph*.19}%
 \contentsline {subsubsection}{Erreurs タブ}{18}{subsubsection*.20}%
 \contentsline {paragraph}{キューブのアクションごとの内訳}{18}{paragraph*.21}%
 \contentsline {paragraph}{Checker / Cube の内訳}{18}{paragraph*.22}%
-\contentsline {paragraph}{エラーの大きさのヒストグラム}{18}{paragraph*.23}%
-\contentsline {subsubsection}{集計ルール}{18}{subsubsection*.24}%
+\contentsline {paragraph}{エラーの大きさのヒストグラム}{19}{paragraph*.23}%
+\contentsline {subsubsection}{集計ルール}{19}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC：制限事項}{19}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}EPC パネル}{19}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Anki パネル}{20}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}メタデータパネル}{20}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}ログパネル}{20}{subsection.2.2.20}%
-\contentsline {section}{\numberline {2.3}ユーザーガイド}{20}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.20}ログパネル}{21}{subsection.2.2.20}%
+\contentsline {section}{\numberline {2.3}ユーザーガイド}{21}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}新しいデータベースを作成する}{21}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}既存のデータベースを開く}{21}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}データベースをインポートして統合する}{21}{subsection.2.3.3}%
@@ -82,10 +82,10 @@
 \contentsline {subsection}{\numberline {2.5.4}表示}{35}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}アクション}{35}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}ツール}{36}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Onglets de vues}{36}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.7}ビュータブ}{36}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}コマンドライン}{36}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Historique de recherche}{36}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Biblioth^^c3^^a8que de filtres}{37}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.9}検索履歴}{36}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}フィルターライブラリ}{37}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}分析パネル}{37}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}マッチパネル}{37}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Ankiパネル（間隔反復）}{37}{subsection.2.5.13}%
@@ -131,7 +131,7 @@
 \contentsline {subsection}{\numberline {2.8.1}概要}{50}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}デーモン \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{51}{subsection.2.8.2}%
 \contentsline {subsubsection}{エンドポイント}{52}{subsubsection*.33}%
-\contentsline {subsubsection}{D^^c3^^a9ploiement avec Docker}{52}{subsubsection*.34}%
+\contentsline {subsubsection}{Docker によるデプロイ}{52}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQLバックエンドとマルチユーザー}{53}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}SQLiteデータベースをPostgreSQLへ移行する}{53}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}汎用ディスパッチャ \sphinxstyleliteralintitle {\sphinxupquote {call}}}{54}{subsection.2.8.5}%
