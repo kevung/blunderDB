@@ -171,6 +171,9 @@ type Tournament struct {
 	Comment    string  `json:"comment"`
 	PR         float64 `json:"pr"`
 	MWCLoss    float64 `json:"mwc_loss"`
+	// RefPlayer is the player whose PR/MWCLoss the badge reports: the person
+	// present in the most of the tournament's matches. Empty when unknown.
+	RefPlayer string `json:"ref_player"`
 }
 
 // CommentEntry represents a comment for display in the comment wall

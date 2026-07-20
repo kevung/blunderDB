@@ -408,6 +408,7 @@
         "notesPlaceholder": "Muistiinpanot…",
         "player1": "Pelaaja 1",
         "player2": "Pelaaja 2",
+        "prReferencePlayer": "Pelaajan {player} PR",
         "pts": "Pist",
         "remove": "Poista",
         "swap": "Vaihda",

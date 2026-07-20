@@ -102,31 +102,54 @@ func TestMatchBadgesScopedByIDs(t *testing.T) {
 	}
 }
 
-// TestTournamentBadgesEqualComputeStats checks the tournament list-row badge PR
-// matches the per-tournament PR from ComputeStats (the panel view).
-func TestTournamentBadgesEqualComputeStats(t *testing.T) {
+// TestTournamentBadgesReferencePlayer checks the tournament list-row badge
+// reports the reference player's own PR (the person present in the most of the
+// tournament's matches), not a both-players pool. Here player "A" plays in both
+// matches (vs B, then vs C), so A is the reference; the badge PR must equal
+// ComputeStats filtered on A — never the pooled value that blends in B and C.
+func TestTournamentBadgesReferencePlayer(t *testing.T) {
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "TB", "2025-07-01")
+	// Match 1: A (player1) plays badly, B (player2) plays a little.
 	m1 := createMatch(t, db, "A", "B", "2025-07-02", 7, tid)
 	g1 := createGame(t, db, m1)
 	for i := range 50 {
-		insertStatsFixtureRow(t, db, m1, g1, 12, 0, 0, i+1)
+		insertStatsFixtureRow(t, db, m1, g1, 12, 0, 0, i+1) // A moves
 	}
-	m2 := createMatch(t, db, "A", "B", "2025-07-03", 7, tid)
+	for i := range 10 {
+		insertStatsFixtureRow(t, db, m1, g1, 4, 0, 1, 100+i) // B moves
+	}
+	// Match 2: A (player1) again, opponent C (player2).
+	m2 := createMatch(t, db, "A", "C", "2025-07-03", 7, tid)
 	g2 := createGame(t, db, m2)
 	for i := range 30 {
-		insertStatsFixtureRow(t, db, m2, g2, 8, 0, 1, i+1)
+		insertStatsFixtureRow(t, db, m2, g2, 8, 0, 0, i+1) // A moves
+	}
+	for i := range 40 {
+		insertStatsFixtureRow(t, db, m2, g2, 20, 0, 1, 100+i) // C moves (worst)
 	}
 
-	res, err := db.ComputeStats(StatsFilter{TournamentIDs: []int64{tid}, DecisionType: -1})
+	// Expected badge = A's own PR across the tournament (A appears in 2 matches;
+	// B and C in 1 each), which is exactly ComputeStats filtered on A.
+	res, err := db.ComputeStats(StatsFilter{PlayerName: "A", TournamentIDs: []int64{tid}, DecisionType: -1})
 	if err != nil {
-		t.Fatalf("ComputeStats: %v", err)
+		t.Fatalf("ComputeStats(A): %v", err)
 	}
 	if len(res.PerTournament) != 1 {
 		t.Fatalf("expected 1 tournament, got %d", len(res.PerTournament))
 	}
 	wantPR := res.PerTournament[0].PR
+
+	// Sanity: the pooled PR (both players) must differ, else the test proves
+	// nothing about the reference-player split.
+	pooled, err := db.ComputeStats(StatsFilter{TournamentIDs: []int64{tid}, DecisionType: -1})
+	if err != nil {
+		t.Fatalf("ComputeStats(pooled): %v", err)
+	}
+	if math.Abs(pooled.PerTournament[0].PR-wantPR) < 1e-6 {
+		t.Fatalf("test setup invalid: pooled PR == A's PR (%.4f)", wantPR)
+	}
 
 	tournaments, err := db.GetAllTournaments()
 	if err != nil {
@@ -141,7 +164,10 @@ func TestTournamentBadgesEqualComputeStats(t *testing.T) {
 	if got == nil {
 		t.Fatalf("tournament %d not returned by GetTournaments", tid)
 	}
+	if got.RefPlayer != "A" {
+		t.Errorf("reference player = %q, want %q", got.RefPlayer, "A")
+	}
 	if math.Abs(got.PR-wantPR) > 1e-9 {
-		t.Errorf("tournament badge PR %.6f != ComputeStats PR %.6f", got.PR, wantPR)
+		t.Errorf("tournament badge PR %.6f != A's ComputeStats PR %.6f", got.PR, wantPR)
 	}
 }

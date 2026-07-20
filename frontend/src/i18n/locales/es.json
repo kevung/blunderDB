@@ -408,6 +408,7 @@
         "notesPlaceholder": "Notas…",
         "player1": "Jugador 1",
         "player2": "Jugador 2",
+        "prReferencePlayer": "PR de {player}",
         "pts": "Pts",
         "remove": "Quitar",
         "swap": "Intercambiar",

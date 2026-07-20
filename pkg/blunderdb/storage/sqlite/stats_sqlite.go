@@ -919,12 +919,15 @@ func (s *statsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 	return out, nil
 }
 
-// TournamentBadges computes the aggregate PR and total MWC loss for every
-// tournament (all matches pooled, both players), keyed by tournament id.
+// TournamentBadges computes each tournament's reference-player PR and total MWC
+// loss, keyed by tournament id. See storage.TournamentBadge for why the badge is
+// the reference player's own PR rather than a both-players pool.
 func (s *statsStore) TournamentBadges(ctx context.Context, scope string) (map[int64]storage.TournamentBadge, error) {
 	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
+		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0),
+		COALESCE(CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player2_name END, ''),
+		g.match_id ` +
 		statsBaseJoin +
 		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
 		AND m.tournament_id IS NOT NULL AND ` + statsCountedExpr
@@ -935,31 +938,35 @@ func (s *statsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 	}
 	defer rows.Close()
 
-	type tournAcc struct {
-		sumErr int64
-		cnt    int
-		mwc    float64
-	}
-	acc := make(map[int64]*tournAcc)
+	// Accumulate per (tournament, player). The badge reports the reference
+	// player's own PR, not a both-players pool — see storage.TournamentBadge.
+	acc := make(map[int64]map[string]*storage.TournamentPlayerAcc)
 	for rows.Next() {
-		var tournamentID, errMP int64
+		var tournamentID, errMP, matchID int64
 		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
-		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+		var moverName string
+		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength, &moverName, &matchID); err != nil {
 			continue
 		}
-		a := acc[tournamentID]
+		byPlayer := acc[tournamentID]
+		if byPlayer == nil {
+			byPlayer = make(map[string]*storage.TournamentPlayerAcc)
+			acc[tournamentID] = byPlayer
+		}
+		a := byPlayer[moverName]
 		if a == nil {
-			a = &tournAcc{}
-			acc[tournamentID] = a
+			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{})}
+			byPlayer[moverName] = a
 		}
 		fMove := 0
 		if rawPlayer == -1 {
 			fMove = 1
 		}
-		a.sumErr += errMP
-		a.cnt++
+		a.SumErr += errMP
+		a.Cnt++
+		a.Matches[matchID] = struct{}{}
 		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
-			a.mwc += mwcLoss
+			a.MWC += mwcLoss
 		}
 	}
 	if err := rows.Err(); err != nil {
@@ -967,8 +974,8 @@ func (s *statsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 	}
 
 	out := make(map[int64]storage.TournamentBadge, len(acc))
-	for tournamentID, a := range acc {
-		out[tournamentID] = storage.TournamentBadge{PR: pr(a.sumErr, a.cnt), MWCLoss: a.mwc}
+	for tournamentID, byPlayer := range acc {
+		out[tournamentID] = storage.PickReferencePlayer(byPlayer)
 	}
 	return out, nil
 }
