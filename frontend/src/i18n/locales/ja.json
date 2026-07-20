@@ -408,6 +408,7 @@
         "notesPlaceholder": "メモ…",
         "player1": "プレイヤー 1",
         "player2": "プレイヤー 2",
+        "prReferencePlayer": "{player}のPR",
         "pts": "Pts",
         "remove": "削除",
         "swap": "入れ替え",

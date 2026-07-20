@@ -231,6 +231,7 @@ func (d *Database) applyTournamentBadges(tournaments []Tournament) error {
 		if b, ok := badges[tournaments[i].ID]; ok {
 			tournaments[i].PR = b.PR
 			tournaments[i].MWCLoss = b.MWCLoss
+			tournaments[i].RefPlayer = b.RefPlayer
 		}
 	}
 	return nil

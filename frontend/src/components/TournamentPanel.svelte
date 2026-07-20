@@ -672,7 +672,11 @@
                                         <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
                                         <td class="narrow-col no-select">{tournament.date || ''}</td>
                                         <td class="no-select">{tournament.location || ''}</td>
-                                        <td class="narrow-col no-select stat-col">{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td>
+                                        <td
+                                            class="narrow-col no-select stat-col"
+                                            title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
+                                            >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
+                                        >
                                         <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">

@@ -166,11 +166,67 @@ type MatchBadge struct {
 	MWCLoss2 float64 `json:"mwc_loss2"`
 }
 
-// TournamentBadge is the aggregate PR/MWC (across all of a tournament's
-// matches, both players pooled) shown on each tournament-list row.
+// TournamentBadge is the PR/MWC shown on each tournament-list row. Unlike a
+// match (two fixed players), a tournament groups matches against varying
+// opponents, so a pooled PR would blend the reference player's decisions with
+// every opponent's. Instead the badge reports the reference player's own PR:
+// RefPlayer is the person appearing in the most of the tournament's matches
+// (see PickReferencePlayer), and PR/MWCLoss cover only that player's decisions.
 type TournamentBadge struct {
-	PR      float64 `json:"pr"`
-	MWCLoss float64 `json:"mwc_loss"`
+	PR        float64 `json:"pr"`
+	MWCLoss   float64 `json:"mwc_loss"`
+	RefPlayer string  `json:"ref_player"`
+}
+
+// TournamentPlayerAcc accumulates one player's counted decisions within a single
+// tournament. Backends fill one per (tournament, player) and hand the per-player
+// map to PickReferencePlayer. Matches holds the distinct match IDs in which the
+// player made a counted decision (used to rank frequency).
+type TournamentPlayerAcc struct {
+	SumErr  int64
+	Cnt     int
+	MWC     float64
+	Matches map[int64]struct{}
+}
+
+// PickReferencePlayer selects a tournament's reference player and returns its
+// badge. The reference player is the person present in the most of the
+// tournament's matches; ties break on the most counted decisions, then on the
+// lexicographically smallest non-empty name (deterministic across backends).
+// An empty map yields the zero badge.
+func PickReferencePlayer(players map[string]*TournamentPlayerAcc) TournamentBadge {
+	var best *TournamentPlayerAcc
+	var bestName string
+	for name, pa := range players {
+		if best == nil || refPlayerBetter(name, pa, bestName, best) {
+			best, bestName = pa, name
+		}
+	}
+	if best == nil {
+		return TournamentBadge{}
+	}
+	pr := 0.0
+	if best.Cnt > 0 {
+		pr = 500 * float64(best.SumErr) / 1000 / float64(best.Cnt)
+	}
+	return TournamentBadge{PR: pr, MWCLoss: best.MWC, RefPlayer: bestName}
+}
+
+// refPlayerBetter reports whether candidate (name, pa) outranks the current best
+// (bestName, best) as reference player, applying the tie-break order documented
+// on PickReferencePlayer.
+func refPlayerBetter(name string, pa *TournamentPlayerAcc, bestName string, best *TournamentPlayerAcc) bool {
+	if len(pa.Matches) != len(best.Matches) {
+		return len(pa.Matches) > len(best.Matches)
+	}
+	if pa.Cnt != best.Cnt {
+		return pa.Cnt > best.Cnt
+	}
+	// Prefer a named player over an empty/unknown name, then order by name.
+	if (name == "") != (bestName == "") {
+		return bestName == ""
+	}
+	return name < bestName
 }
 
 // StatsStore computes aggregate statistics over stored decisions.

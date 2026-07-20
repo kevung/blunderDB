@@ -408,6 +408,7 @@
         "notesPlaceholder": "Заметки…",
         "player1": "Игрок 1",
         "player2": "Игрок 2",
+        "prReferencePlayer": "PR игрока {player}",
         "pts": "Очк.",
         "remove": "Удалить",
         "swap": "Поменять местами",

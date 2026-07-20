@@ -408,6 +408,7 @@
         "notesPlaceholder": "Σημειώσεις…",
         "player1": "Παίκτης 1",
         "player2": "Παίκτης 2",
+        "prReferencePlayer": "PR του {player}",
         "pts": "Πόντοι",
         "remove": "Αφαίρεση",
         "swap": "Εναλλαγή",

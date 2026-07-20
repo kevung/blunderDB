@@ -409,6 +409,13 @@ peuvent être créés, renommés et supprimés ; les matchs peuvent leur être
 assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi.
 Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
+La colonne **PR** de chaque tournoi affiche le PR du **joueur de référence** —
+c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
+(en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
+pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
+reflète votre performance seule. Le nom du joueur de référence apparaît en
+infobulle au survol de la valeur.
+
 .. _stats:
 
 Panneau Stats
