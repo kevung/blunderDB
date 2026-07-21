@@ -1,0 +1,10 @@
+# Keep the Docker build context lean for Dockerfile.serve and Dockerfile.hostile.
+# Everything the Go builds need (sources, go.mod/sum, embedded *.bd assets) stays;
+# only heavy generated/VCS trees are excluded. frontend/dist is regenerated as a
+# stub inside Dockerfile.hostile, so excluding the (usually symlinked) node_modules
+# and any stale dist is safe.
+.git
+frontend/node_modules
+frontend/dist
+build/bin
+doc/build

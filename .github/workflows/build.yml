@@ -42,6 +42,22 @@ jobs:
         run: go test -timeout 1200s -race -count=1 ./...
         shell: bash
 
+  # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
+  # capability (no clipboard tool, no fonts, an exotic locale). Catches code
+  # that inline-assumes a host facility and only fails when it is truly absent —
+  # what the per-policy unit tests forgot to simulate. See Dockerfile.hostile.
+  hostile-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build & run the hostile backstop image
+        run: docker build -f Dockerfile.hostile -t blunderdb-hostile .
+        shell: bash
+
   frontend-test:
     runs-on: ubuntu-latest
     steps:

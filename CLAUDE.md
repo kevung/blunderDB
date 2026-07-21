@@ -192,7 +192,7 @@ Violating one of these is a bug even if all tests pass:
   a test in `migration_test.go`.
 - **The serve daemon performs NO authentication** — it trusts `X-Tenant-ID` and
   must run behind an authenticating reverse proxy. Never "fix" this by adding
-  auth to the engine, and never weaken the warnings. See ADR-0004.
+  auth to the engine, and never weaken the warnings. See ADR-0005.
 - **Concurrency**: `Database.mu` is an RWMutex over the legacy wrapper; the
   Storage backends have **no** global lock — they rely on pooled connections and
   per-operation transactions. Import cancellation is context-based
