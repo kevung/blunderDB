@@ -35,107 +35,107 @@
 \contentsline {subsubsection}{Tab Dashboard}{14}{subsubsection*.13}%
 \contentsline {paragraph}{Niveau\sphinxhyphen {}Karten}{14}{paragraph*.14}%
 \contentsline {paragraph}{Gleitender PR über die letzten N Entscheidungen}{14}{paragraph*.15}%
-\contentsline {paragraph}{Top\sphinxhyphen {}Blunder}{14}{paragraph*.16}%
-\contentsline {subsubsection}{Tab Progression}{14}{subsubsection*.17}%
-\contentsline {paragraph}{Liniendiagramm pro Turnier}{14}{paragraph*.18}%
+\contentsline {paragraph}{Top\sphinxhyphen {}Blunder}{15}{paragraph*.16}%
+\contentsline {subsubsection}{Tab Progression}{15}{subsubsection*.17}%
+\contentsline {paragraph}{Liniendiagramm pro Turnier}{15}{paragraph*.18}%
 \contentsline {paragraph}{Streudiagramm pro Match}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Tab Fehler}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Aufteilung nach Doppler\sphinxhyphen {}Aktion}{15}{paragraph*.21}%
 \contentsline {paragraph}{Aufteilung Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Histogramm der Fehlergrößen}{15}{paragraph*.23}%
-\contentsline {subsubsection}{Aggregationsregel}{15}{subsubsection*.24}%
+\contentsline {subsubsection}{Aggregationsregel}{16}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: Einschränkungen}{16}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}EPC\sphinxhyphen {}Panel}{16}{subsection.2.2.17}%
-\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{16}{subsection.2.2.18}%
+\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{17}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadaten\sphinxhyphen {}Panel}{17}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Protokoll\sphinxhyphen {}Panel}{17}{subsection.2.2.20}%
 \contentsline {section}{\numberline {2.3}Benutzerhandbuch}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{17}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{17}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{18}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Eine Datenbank importieren und zusammenführen}{18}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Eine Position zur Datenbank hinzufügen}{19}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Eine Position mit einem Tag versehen}{19}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Eine Position löschen}{19}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Eine Position aus XG importieren}{19}{subsection.2.3.8}%
-\contentsline {subsection}{\numberline {2.3.9}Ein Match importieren}{19}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.9}Ein Match importieren}{20}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Einen Ordner mit Matches importieren}{20}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Ziehen und Ablegen (Drag and Drop)}{20}{subsection.2.3.11}%
-\contentsline {subsection}{\numberline {2.3.12}Durch ein Match navigieren}{20}{subsection.2.3.12}%
+\contentsline {subsection}{\numberline {2.3.12}Durch ein Match navigieren}{21}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Das Match\sphinxhyphen {}Panel verwalten}{21}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Sammlungen verwalten}{21}{subsection.2.3.14}%
-\contentsline {subsection}{\numberline {2.3.15}Turniere verwalten}{21}{subsection.2.3.15}%
+\contentsline {subsection}{\numberline {2.3.15}Turniere verwalten}{22}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Leistungsstatistiken anzeigen}{22}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Den EPC berechnen}{22}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Die Analyse einer aus XG importierten Position anzeigen}{22}{subsection.2.3.18}%
-\contentsline {subsection}{\numberline {2.3.19}Eine Position nach XG exportieren}{22}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.19}Eine Position nach XG exportieren}{23}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Die verschiedenen Positionen anzeigen}{23}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Positionen nach Kriterien suchen}{23}{subsection.2.3.21}%
-\contentsline {section}{\numberline {2.4}Liste der Befehle}{23}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Liste der Befehle}{24}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Globale Operationen}{24}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Positionen und Navigation}{24}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.2}Positionen und Navigation}{25}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}Bearbeitung und Suche}{25}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Suchfilter}{25}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Verschiedene Befehle}{28}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}Tastenkürzel}{28}{section.2.5}%
+\contentsline {subsection}{\numberline {2.4.5}Verschiedene Befehle}{29}{subsection.2.4.5}%
+\contentsline {section}{\numberline {2.5}Tastenkürzel}{29}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Datenbank}{29}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Position}{29}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}Navigation}{29}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{30}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Navigation}{30}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Anzeige}{30}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Aktionen}{30}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Werkzeuge}{30}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}Ansichts\sphinxhyphen {}Reiter}{30}{subsection.2.5.7}%
-\contentsline {subsection}{\numberline {2.5.8}Befehlszeile}{30}{subsection.2.5.8}%
+\contentsline {subsection}{\numberline {2.5.6}Werkzeuge}{31}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Ansichts\sphinxhyphen {}Reiter}{31}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.8}Befehlszeile}{31}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Suchverlauf}{31}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Filterbibliothek}{31}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}Analyse\sphinxhyphen {}Fenster}{31}{subsection.2.5.11}%
-\contentsline {subsection}{\numberline {2.5.12}Match\sphinxhyphen {}Fenster}{31}{subsection.2.5.12}%
-\contentsline {subsection}{\numberline {2.5.13}Anki\sphinxhyphen {}Fenster (verteiltes Wiederholen)}{31}{subsection.2.5.13}%
+\contentsline {subsection}{\numberline {2.5.11}Analyse\sphinxhyphen {}Fenster}{32}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.12}Match\sphinxhyphen {}Fenster}{32}{subsection.2.5.12}%
+\contentsline {subsection}{\numberline {2.5.13}Anki\sphinxhyphen {}Fenster (verteiltes Wiederholen)}{32}{subsection.2.5.13}%
 \contentsline {section}{\numberline {2.6}Befehlszeilenschnittstelle (CLI)}{32}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Einführung}{32}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Allgemeine Syntax}{32}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}Verfügbare Befehle}{32}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.2}Allgemeine Syntax}{33}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Verfügbare Befehle}{33}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Eine Datenbank erstellen}{33}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Daten importieren}{33}{subsection.2.6.5}%
-\contentsline {subsubsection}{Ein Match importieren}{33}{subsubsection*.27}%
-\contentsline {subsubsection}{Positionen importieren}{33}{subsubsection*.28}%
-\contentsline {subsubsection}{Stapelimport}{33}{subsubsection*.29}%
+\contentsline {subsection}{\numberline {2.6.5}import — Daten importieren}{34}{subsection.2.6.5}%
+\contentsline {subsubsection}{Ein Match importieren}{34}{subsubsection*.27}%
+\contentsline {subsubsection}{Positionen importieren}{34}{subsubsection*.28}%
+\contentsline {subsubsection}{Stapelimport}{34}{subsubsection*.29}%
 \contentsline {subsection}{\numberline {2.6.6}export — Daten exportieren}{34}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Positionen suchen}{35}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}list — Inhalt auflisten}{36}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}match — Ein Match anzeigen}{37}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}info — Datenbank\sphinxhyphen {}Metadaten}{37}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.10}info — Datenbank\sphinxhyphen {}Metadaten}{38}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}edit — Metadaten ändern}{38}{subsection.2.6.11}%
-\contentsline {subsection}{\numberline {2.6.12}verify — Integrität prüfen}{38}{subsection.2.6.12}%
+\contentsline {subsection}{\numberline {2.6.12}verify — Integrität prüfen}{39}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Daten löschen}{39}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Workflow\sphinxhyphen {}Beispiele}{39}{subsection.2.6.14}%
-\contentsline {subsubsection}{Ein Turnierverzeichnis importieren}{39}{subsubsection*.30}%
-\contentsline {subsubsection}{Regelmäßige Sicherung}{39}{subsubsection*.31}%
-\contentsline {subsubsection}{Fehleranalyse}{39}{subsubsection*.32}%
+\contentsline {subsection}{\numberline {2.6.14}Workflow\sphinxhyphen {}Beispiele}{40}{subsection.2.6.14}%
+\contentsline {subsubsection}{Ein Turnierverzeichnis importieren}{40}{subsubsection*.30}%
+\contentsline {subsubsection}{Regelmäßige Sicherung}{40}{subsubsection*.31}%
+\contentsline {subsubsection}{Fehleranalyse}{40}{subsubsection*.32}%
 \contentsline {subsection}{\numberline {2.6.15}Rückgabecodes}{40}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Häufig gestellte Fragen (FAQ)}{40}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Wozu dient blunderDB?}{40}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Was hat die Entwicklung von blunderDB motiviert?}{40}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Wie speichert man den Zustand der aktuellen Datenbank?}{40}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Sollte ich für verschiedene Kategorien von Positionen unterschiedliche Datenbanken anlegen?}{40}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.2}Was hat die Entwicklung von blunderDB motiviert?}{41}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Wie speichert man den Zustand der aktuellen Datenbank?}{41}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Sollte ich für verschiedene Kategorien von Positionen unterschiedliche Datenbanken anlegen?}{41}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}Wie führt man mehrere Datenbanken zusammen?}{41}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Welche Match\sphinxhyphen {}Dateiformate werden unterstützt?}{41}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Was ist eine Sammlung?}{41}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.6}Welche Match\sphinxhyphen {}Dateiformate werden unterstützt?}{42}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}Was ist eine Sammlung?}{42}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Was ist der EPC?}{42}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}Verfügt blunderDB über eine Befehlszeilen\sphinxhyphen {}Schnittstelle?}{42}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}Darf ich blunderDB verändern, kopieren und weitergeben?}{42}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Welches Datenformat verwendet blunderDB?}{42}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Was waren die Entwurfsprinzipien von blunderDB?}{42}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Wie ist die Softwarearchitektur von blunderDB aufgebaut?}{42}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.13}Wie ist die Softwarearchitektur von blunderDB aufgebaut?}{43}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Auf welchen Plattformen läuft blunderDB?}{43}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Woher stammt das Symbol von blunderDB?}{43}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}Modus (Server)}{43}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Überblick}{43}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Der Daemon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.2}Der Daemon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{44}{subsection.2.8.2}%
 \contentsline {subsubsection}{Endpunkte}{44}{subsubsection*.33}%
 \contentsline {subsubsection}{Bereitstellung mit Docker}{45}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}Backend und Mehrbenutzerbetrieb}{45}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Eine SQLite\sphinxhyphen {}Datenbank nach PostgreSQL migrieren}{45}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.4}Eine SQLite\sphinxhyphen {}Datenbank nach PostgreSQL migrieren}{46}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Der generische Dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{46}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Anhang: Fortgeschrittene Nutzung der Filter}{47}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Positionssuche über die Befehlszeile}{47}{subsection.2.9.1}%

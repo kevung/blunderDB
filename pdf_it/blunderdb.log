@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.18)  18 JUL 2026 04:26
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.21)  21 JUL 2026 00:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1117,85 +1117,85 @@ Underfull \hbox (badness 10000) in paragraph at lines 828--830
 
 [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21]
 [22] [23] [24] [25] [26] [27] [28] [29]
-Underfull \hbox (badness 10000) in paragraph at lines 4523--4525
+Underfull \hbox (badness 10000) in paragraph at lines 4531--4533
 []\TU/FreeSerif(0)/m/n/10 CTRL-PageDown,
  []
 
 [30] [31] [32] [33] [34] [35] [36] [37] [38]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5832.
+(Font)              scaled to size 8.99994pt on input line 5840.
  [39] [40] [41] [42]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6099.
+(Font)              scaled to size 10.79993pt on input line 6107.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6183--6185
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6191--6193
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6186
+Overfull \hbox (11.423pt too wide) detected at line 6194
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
+Underfull \hbox (badness 10000) in paragraph at lines 6250--6252
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [43]
-Underfull \hbox (badness 10000) in paragraph at lines 6358--6360
+Underfull \hbox (badness 10000) in paragraph at lines 6366--6368
 []\TU/FreeSerif(0)/m/n/10 L’immagine ascolta sulla porta 8080 e si configura tr
 amite variabili d’ambiente (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
 [44] [45]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6595--6597
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6603--6605
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6598
+Overfull \hbox (1.06567pt too wide) detected at line 6606
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [46]
-Underfull \hbox (badness 6412) in paragraph at lines 6880--6882
+Underfull \hbox (badness 6412) in paragraph at lines 6888--6890
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 6883
+Underfull \hbox (badness 6412) detected at line 6891
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6896--6898
+Underfull \hbox (badness 6412) in paragraph at lines 6904--6906
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6912--6914
+Underfull \hbox (badness 10000) in paragraph at lines 6920--6922
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6923--6925
+Underfull \hbox (badness 10000) in paragraph at lines 6931--6933
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6937--6939
+Underfull \hbox (badness 10000) in paragraph at lines 6945--6947
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7002--7004
+Underfull \hbox (badness 10000) in paragraph at lines 7010--7012
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7018--7020
+Underfull \hbox (badness 6412) in paragraph at lines 7026--7028
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 

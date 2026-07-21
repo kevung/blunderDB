@@ -37,16 +37,16 @@
 \contentsline {paragraph}{Top blunders}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Onglet Progression}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Courbe par tournoi}{14}{paragraph*.18}%
-\contentsline {paragraph}{Scatter plot par match}{14}{paragraph*.19}%
+\contentsline {paragraph}{Scatter plot par match}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Onglet Erreurs}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Répartition par action de videau}{15}{paragraph*.21}%
 \contentsline {paragraph}{Répartition Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Histogramme des magnitudes d’erreur}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Règle d’agrégation}{15}{subsubsection*.24}%
-\contentsline {subsubsection}{MWC : limitations}{15}{subsubsection*.25}%
+\contentsline {subsubsection}{MWC : limitations}{16}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}Panneau EPC}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Panneau Anki}{16}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Panneau Métadonnées}{16}{subsection.2.2.19}%
+\contentsline {subsection}{\numberline {2.2.19}Panneau Métadonnées}{17}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Panneau Journal}{17}{subsection.2.2.20}%
 \contentsline {section}{\numberline {2.3}Guide utilisateur}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Créer une nouvelle base de données}{17}{subsection.2.3.1}%
@@ -54,22 +54,22 @@
 \contentsline {subsection}{\numberline {2.3.3}Importer et fusionner une base de données}{17}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Editer une position}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Ajouter une position à la base de données}{18}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Etiqueter une position}{18}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Supprimer une position}{18}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Etiqueter une position}{19}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Supprimer une position}{19}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Import une position depuis XG}{19}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Importer un match}{19}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Importer un dossier de matchs}{20}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Glisser\sphinxhyphen {}déposer}{20}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Naviguer dans un match}{20}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Gérer le panneau des matchs}{20}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Gérer le panneau des matchs}{21}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Gérer les collections}{21}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Gérer les tournois}{21}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Afficher les statistiques de performance}{21}{subsection.2.3.16}%
-\contentsline {subsection}{\numberline {2.3.17}Calculer l’EPC}{21}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.17}Calculer l’EPC}{22}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Afficher l’analyse d’une position importée depuis XG}{22}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Exporter une position vers XG}{22}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Visualiser les différentes positions}{22}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}Rechercher des positions selon des critères}{22}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.21}Rechercher des positions selon des critères}{23}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Liste des commandes}{23}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Opérations globales}{24}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Positions et navigation}{24}{subsection.2.4.2}%

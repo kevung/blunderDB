@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.18)  18 JUL 2026 04:26
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.21)  21 JUL 2026 00:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1149,59 +1149,59 @@ LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/it' will be
 [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35]
 [36] [37] [38]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 5832.
+(Font)              scaled to size 8.99994pt on input line 5840.
  [39] [40] [41] [42]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6099.
+(Font)              scaled to size 10.79993pt on input line 6107.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6099.
+(Font)              scaled to size 10.79993pt on input line 6107.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6183--6185
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6191--6193
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6186
+Overfull \hbox (11.423pt too wide) detected at line 6194
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6242--6244
+Underfull \hbox (badness 10000) in paragraph at lines 6250--6252
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 [43] [44] [45]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6595--6597
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6603--6605
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6598
+Overfull \hbox (1.06567pt too wide) detected at line 6606
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [46]
-Underfull \hbox (badness 10000) in paragraph at lines 6891--6893
+Underfull \hbox (badness 10000) in paragraph at lines 6899--6901
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6937--6939
+Underfull \hbox (badness 10000) in paragraph at lines 6945--6947
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 6951--6953
+Underfull \hbox (badness 6876) in paragraph at lines 6959--6961
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7002--7004
+Underfull \hbox (badness 10000) in paragraph at lines 7010--7012
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
 [47]
-Underfull \hbox (badness 7221) in paragraph at lines 7172--7174
+Underfull \hbox (badness 7221) in paragraph at lines 7180--7182
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
@@ -1230,7 +1230,7 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [55] [56] [57] [58]
-Underfull \hbox (badness 6741) in paragraph at lines 7483--7485
+Underfull \hbox (badness 6741) in paragraph at lines 7491--7493
 []\TU/FreeSerif(1)/b/n/10 Colecciones\TU/FreeSerif(1)/m/n/10 : \TU/FreeMono(1)/
 m/n/10 collection \TU/FreeSerif(1)/m/n/10 y \TU/FreeMono(1)/m/n/10 collection_p
 osition \TU/FreeSerif(1)/m/n/10 (tabla de enlace) agrupan posiciones elegidas

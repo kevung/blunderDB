@@ -29,25 +29,25 @@
 \contentsline {subsubsection}{Introduzione}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Apertura del pannello}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Barra dei filtri}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Prospettiva del giocatore}{12}{paragraph*.10}%
+\contentsline {paragraph}{Prospettiva del giocatore}{13}{paragraph*.10}%
 \contentsline {paragraph}{Filtri disponibili}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Commutazione PR / MWC}{13}{subsubsection*.12}%
-\contentsline {subsubsection}{Scheda Dashboard}{13}{subsubsection*.13}%
+\contentsline {subsubsection}{Scheda Dashboard}{14}{subsubsection*.13}%
 \contentsline {paragraph}{Schede di livello}{14}{paragraph*.14}%
 \contentsline {paragraph}{PR mobile sulle ultime N decisioni}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunder}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Scheda Progressione}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Grafico a linee per torneo}{14}{paragraph*.18}%
-\contentsline {paragraph}{Scatter plot per match}{14}{paragraph*.19}%
+\contentsline {paragraph}{Scatter plot per match}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Scheda Errori}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Ripartizione per azione di cubo}{15}{paragraph*.21}%
 \contentsline {paragraph}{Confronto Checker / Cube}{15}{paragraph*.22}%
 \contentsline {paragraph}{Istogramma delle magnitudo d’errore}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Regola di aggregazione}{15}{subsubsection*.24}%
-\contentsline {subsubsection}{MWC: limitazioni}{15}{subsubsection*.25}%
+\contentsline {subsubsection}{MWC: limitazioni}{16}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}Pannello EPC}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Pannello Anki}{16}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Pannello Metadati}{16}{subsection.2.2.19}%
+\contentsline {subsection}{\numberline {2.2.19}Pannello Metadati}{17}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Pannello Registro}{17}{subsection.2.2.20}%
 \contentsline {section}{\numberline {2.3}Guida utente}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{17}{subsection.2.3.1}%
@@ -55,22 +55,22 @@
 \contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{17}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Modificare una posizione}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Aggiungere una posizione al database}{18}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{18}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Eliminare una posizione}{18}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{19}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Eliminare una posizione}{19}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Importare una posizione da XG}{19}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Importare un match}{19}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Importare una cartella di match}{20}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Trascina e rilascia}{20}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navigare in un match}{20}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{20}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{21}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Gestire le collezioni}{21}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Gestire i tornei}{21}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Visualizzare le statistiche di performance}{21}{subsection.2.3.16}%
-\contentsline {subsection}{\numberline {2.3.17}Calcolare l’EPC}{21}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.17}Calcolare l’EPC}{22}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Visualizzare l’analisi di una posizione importata da XG}{22}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Esportare una posizione verso XG}{22}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Visualizzare le diverse posizioni}{22}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}Cercare posizioni in base a criteri}{22}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.21}Cercare posizioni in base a criteri}{23}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Elenco dei comandi}{23}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operazioni globali}{24}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posizioni e navigazione}{24}{subsection.2.4.2}%

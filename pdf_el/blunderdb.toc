@@ -25,37 +25,37 @@
 \contentsline {subsection}{\numberline {2.2.13}Πίνακας Συλλογών}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Πίνακας Αγώνων}{11}{subsection.2.2.14}%
 \contentsline {subsection}{\numberline {2.2.15}Πίνακας Τουρνουά}{12}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Πίνακας Stats}{12}{subsection.2.2.16}%
-\contentsline {subsubsection}{Εισαγωγή}{12}{subsubsection*.7}%
+\contentsline {subsection}{\numberline {2.2.16}Πίνακας Stats}{13}{subsection.2.2.16}%
+\contentsline {subsubsection}{Εισαγωγή}{13}{subsubsection*.7}%
 \contentsline {subsubsection}{Άνοιγμα του πίνακα}{13}{subsubsection*.8}%
 \contentsline {subsubsection}{Γραμμή φίλτρου}{13}{subsubsection*.9}%
 \contentsline {paragraph}{Οπτική γωνία παίκτη}{13}{paragraph*.10}%
 \contentsline {paragraph}{Διαθέσιμα φίλτρα}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Εναλλαγή PR / MWC}{14}{subsubsection*.12}%
 \contentsline {subsubsection}{Καρτέλα Dashboard}{14}{subsubsection*.13}%
-\contentsline {paragraph}{Κάρτες επιπέδου}{14}{paragraph*.14}%
+\contentsline {paragraph}{Κάρτες επιπέδου}{15}{paragraph*.14}%
 \contentsline {paragraph}{Κυλιόμενο PR στις τελευταίες N αποφάσεις}{15}{paragraph*.15}%
 \contentsline {paragraph}{Κορυφαία σφάλματα (Top blunders)}{15}{paragraph*.16}%
 \contentsline {subsubsection}{Καρτέλα Progression}{15}{subsubsection*.17}%
 \contentsline {paragraph}{Γραμμικό γράφημα ανά τουρνουά}{15}{paragraph*.18}%
 \contentsline {paragraph}{Διάγραμμα διασποράς ανά αγώνα}{15}{paragraph*.19}%
-\contentsline {subsubsection}{Καρτέλα Erreurs}{15}{subsubsection*.20}%
-\contentsline {paragraph}{Κατανομή ανά ενέργεια κύβου}{15}{paragraph*.21}%
+\contentsline {subsubsection}{Καρτέλα Erreurs}{16}{subsubsection*.20}%
+\contentsline {paragraph}{Κατανομή ανά ενέργεια κύβου}{16}{paragraph*.21}%
 \contentsline {paragraph}{Σύγκριση Checker / Cube}{16}{paragraph*.22}%
 \contentsline {paragraph}{Ιστόγραμμα των μεγεθών σφάλματος}{16}{paragraph*.23}%
 \contentsline {subsubsection}{Κανόνας συνάθροισης}{16}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: περιορισμοί}{16}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Πίνακας EPC}{16}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.17}Πίνακας EPC}{17}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Πίνακας Anki}{17}{subsection.2.2.18}%
-\contentsline {subsection}{\numberline {2.2.19}Πίνακας Μεταδεδομένων}{17}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Πίνακας Καταγραφής}{17}{subsection.2.2.20}%
+\contentsline {subsection}{\numberline {2.2.19}Πίνακας Μεταδεδομένων}{18}{subsection.2.2.19}%
+\contentsline {subsection}{\numberline {2.2.20}Πίνακας Καταγραφής}{18}{subsection.2.2.20}%
 \contentsline {section}{\numberline {2.3}Οδηγός χρήσης}{18}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Δημιουργία νέας βάσης δεδομένων}{18}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Άνοιγμα υπάρχουσας βάσης δεδομένων}{18}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Εισαγωγή και συγχώνευση βάσης δεδομένων}{18}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Επεξεργασία θέσης}{19}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Προσθήκη θέσης στη βάση δεδομένων}{19}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Προσθήκη ετικέτας σε μια θέση}{19}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.6}Προσθήκη ετικέτας σε μια θέση}{20}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Διαγραφή θέσης}{20}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Εισαγωγή θέσης από το XG}{20}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Εισαγωγή αγώνα}{20}{subsection.2.3.9}%
@@ -68,7 +68,7 @@
 \contentsline {subsection}{\numberline {2.3.16}Εμφάνιση στατιστικών επιδόσεων}{23}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Υπολογισμός του EPC}{23}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Εμφάνιση της ανάλυσης μιας θέσης που εισήχθη από το XG}{23}{subsection.2.3.18}%
-\contentsline {subsection}{\numberline {2.3.19}Εξαγωγή θέσης στο XG}{23}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.19}Εξαγωγή θέσης στο XG}{24}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Προβολή των διαφόρων θέσεων}{24}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Αναζήτηση θέσεων με βάση κριτήρια}{24}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Λίστα εντολών}{25}{section.2.4}%
