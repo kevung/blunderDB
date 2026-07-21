@@ -1,6 +1,6 @@
 module github.com/kevung/blunderdb
 
-go 1.25.10
+go 1.25.12
 
 require (
 	github.com/adrg/xdg v0.5.3
