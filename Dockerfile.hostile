@@ -1,0 +1,65 @@
+# Dockerfile.hostile — the ADR-0004 backstop image.
+#
+# A deliberately minimal environment stripped of every OPTIONAL host capability
+# (see docs/adr/0004-host-capabilities-are-detected-and-fall-back-never-assumed.md):
+#
+#   - no clipboard tool          (xclip / wl-copy are NOT installed)
+#   - no system / CJK fonts      (bare golang base ships none)
+#   - an exotic, non-app locale  (tr_TR.UTF-8 — the classic i/İ casing trap)
+#
+# It then runs the whole Go suite in that environment. The per-capability
+# Fallback policies are already exhaustively unit-tested with hand-written fact
+# values (functional core, e.g. TestChooseClipboardRungExhaustive). This image
+# is the *backstop* decision 4 of the ADR calls for: it catches what those unit
+# tests forgot to simulate — code that inline-assumes a host facility and only
+# fails when it is genuinely absent — without trying to reproduce any one user's
+# workstation.
+#
+# NOT a GUI smoke: WebKit rendering and the image-clipboard shell-out cannot run
+# headless here. Those decisions live in the pure policies under internal/gui/
+# and are covered by their unit tests; this image exists so the *rest* of the
+# product is proven to survive a host that provides none of the optional extras.
+#
+# Run it (from the repo root) as a pre-release smoke test:
+#   docker build -f Dockerfile.hostile -t blunderdb-hostile .
+# A green build == the suite passes with no clipboard tool, no fonts, an exotic
+# locale. CI runs it via the `hostile-smoke` job in .github/workflows/build.yml.
+
+FROM golang:1.25-bookworm
+
+# Fail the build if the base image ever starts shipping the optional tools we
+# rely on being ABSENT — the whole point is a hostile, stripped host. Then
+# generate an exotic locale (glibc still needs the definition compiled in for
+# LANG to resolve; we install ONLY locales, never fonts or clipboard tools).
+RUN set -eux; \
+    ! command -v xclip; \
+    ! command -v wl-copy; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends locales; \
+    sed -i 's/^# *tr_TR.UTF-8/tr_TR.UTF-8/' /etc/locale.gen; \
+    locale-gen; \
+    rm -rf /var/lib/apt/lists/*
+
+# An exotic locale the app must be immune to (ADR-0004 non-goal #5: blunderDB
+# never reads the host locale — it formats with hard-coded fr-FR / sv-SE).
+ENV LANG=tr_TR.UTF-8 \
+    LC_ALL=tr_TR.UTF-8 \
+    CGO_ENABLED=1
+
+WORKDIR /src
+
+# Cache module downloads independently of the source tree.
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+# Wails' generated frontend/dist is absent in a source checkout, but main.go's
+# //go:embed needs the directory to exist. Mirror the CI `test` job's stub.
+RUN mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+
+# The backstop assertion: the entire Go suite must pass with nothing optional
+# installed. No webkit build tag — internal/gui compiles its non-GUI path,
+# exactly as the ubuntu-latest `test` job does. (-race is left to that job; here
+# the environment, not the scheduler, is what is under test.)
+RUN go vet ./... && go test -timeout 1200s -count=1 ./...
