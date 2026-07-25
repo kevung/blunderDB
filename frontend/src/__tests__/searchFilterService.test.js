@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
+import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, buildSearchFilterPayload } from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -530,5 +530,52 @@ describe('shared token classification (parseFilterTokens ↔ parseSearchCommand)
             expect(sc[b]).toBe(ft[a]);
             expect(sc[b]).toBeTruthy(); // each token was actually classified
         }
+    });
+});
+
+// Regression guard for #111: AnkiPanel used to call the LoadPositionsByFilters
+// binding with ~30 positional arguments. The binding takes one, so every filter
+// was dropped and the backend received a Position where it expects a
+// SearchFilters — an all-zero struct, i.e. no filter, i.e. the whole database.
+describe('buildSearchFilterPayload', () => {
+    const board = { id: 7, board: { points: [], bearoff: [15, 15] }, player_on_roll: 0 };
+
+    test('returns a single object carrying the board under `filter`', () => {
+        const payload = buildSearchFilterPayload(board);
+        expect(payload).toBeTypeOf('object');
+        expect(Array.isArray(payload)).toBe(false);
+        expect(payload.filter).toBe(board);
+    });
+
+    test('the board is passed through untouched (already normalised upstream)', () => {
+        const payload = buildSearchFilterPayload(board);
+        expect(payload.filter).toEqual(board);
+    });
+
+    test('parsed filter flags reach the payload instead of being dropped', () => {
+        const pf = parseFilters(['nc', 'p>30', 'i'], 's nc p>30 i');
+        const payload = buildSearchFilterPayload(board, pf, ['nc', 'p>30', 'i']);
+        expect(payload.noContactFilter).toBe(true);
+        expect(payload.pipCountFilter).toBe('p>30');
+        expect(payload.individuallyImportedFilter).toBe(true);
+    });
+
+    test('token-derived fields are computed, not read off pf', () => {
+        expect(buildSearchFilterPayload(board, {}, ['dr']).cubeResponseFilter).toBe('takepass');
+        expect(buildSearchFilterPayload(board, {}, ['dd']).cubeResponseFilter).toBe('double');
+        expect(buildSearchFilterPayload(board, {}, []).cubeResponseFilter).toBe('');
+    });
+
+    test('the comment filter survives the round trip', () => {
+        const pf = parseFilters(['co'], 's co');
+        expect(buildSearchFilterPayload(board, pf, ['co']).commentFilter).toBe('has');
+    });
+
+    test('with no filters every field is a defined empty value, never undefined', () => {
+        const payload = buildSearchFilterPayload(board);
+        for (const [key, value] of Object.entries(payload)) {
+            expect(value, `${key} must not be undefined`).toBeDefined();
+        }
+        expect(payload.excludeFilter).toBeTypeOf('object');
     });
 });

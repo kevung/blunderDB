@@ -8,6 +8,7 @@
     import { positionsStore, positionStore } from '../stores/positionStore';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { parseFilters } from '../commandProcessor';
+    import { buildSearchFilterPayload } from '../services/searchFilterService.js';
     import { t, tMsg } from '../i18n';
     import {
         CreateAnkiDeck,
@@ -377,41 +378,8 @@
 
             let searchIds = [];
             if (command === 's') {
-                const results = await LoadPositionsByFilters(
-                    position,
-                    false,
-                    false,
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    false,
-                    false,
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    false,
-                    false,
-                    '',
-                    '',
-                    '',
-                    ''
-                );
+                // Bare `s`: the board structure is the whole filter.
+                const results = await LoadPositionsByFilters(buildSearchFilterPayload(position));
                 searchIds = (results || []).map((p) => p.id);
             } else {
                 const filters = command
@@ -421,41 +389,7 @@
                     .map((f) => f.trim());
                 const pf = parseFilters(filters, command);
 
-                const results = await LoadPositionsByFilters(
-                    position,
-                    pf.includeCube,
-                    pf.includeScore,
-                    pf.pipCountFilter || '',
-                    pf.winRateFilter || '',
-                    pf.gammonRateFilter || '',
-                    pf.backgammonRateFilter || '',
-                    pf.player2WinRateFilter || '',
-                    pf.player2GammonRateFilter || '',
-                    pf.player2BackgammonRateFilter || '',
-                    pf.player1CheckerOffFilter || '',
-                    pf.player2CheckerOffFilter || '',
-                    pf.player1BackCheckerFilter || '',
-                    pf.player2BackCheckerFilter || '',
-                    pf.player1CheckerInZoneFilter || '',
-                    pf.player2CheckerInZoneFilter || '',
-                    pf.searchText || '',
-                    pf.player1AbsolutePipCountFilter || '',
-                    pf.equityFilter || '',
-                    pf.decisionTypeFilter || false,
-                    pf.diceRollFilter || false,
-                    pf.movePatternFilter || '',
-                    pf.dateFilter || '',
-                    pf.player1OutfieldBlotFilter || '',
-                    pf.player2OutfieldBlotFilter || '',
-                    pf.player1JanBlotFilter || '',
-                    pf.player2JanBlotFilter || '',
-                    pf.noContactFilter || false,
-                    pf.mirrorPositionFilter || false,
-                    pf.moveErrorFilter || '',
-                    pf.matchIDsFilter || '',
-                    pf.tournamentIDsFilter || '',
-                    ''
-                );
+                const results = await LoadPositionsByFilters(buildSearchFilterPayload(position, pf, filters));
                 searchIds = (results || []).map((p) => p.id);
             }
 

@@ -1,3 +1,5 @@
+import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
+
 // searchFilterService — shared logic that turns the search UI's active filter
 // labels + their option/min/max/range state into the backend command tokens
 // (`cube`, `p>12`, `e10,50`, `t"foo"`, `T>2026/01/01`, …).
@@ -545,4 +547,70 @@ export function filterTokenHint(label) {
         default:
             return token;
     }
+}
+
+/**
+ * Build the SearchFilters object the LoadPositionsByFilters binding expects.
+ *
+ * The binding takes exactly one argument, so every filter has to travel inside a
+ * single object. Passing them positionally — as AnkiPanel did — leaves all of
+ * them behind and hands the backend a Position where it expects a SearchFilters:
+ * that deserialises to an all-zero struct, i.e. no filter at all, and the search
+ * answers with the whole database (#111).
+ *
+ * `position` is sent as-is. Callers pass the board recorded in lastSearchStore,
+ * which positionService already normalised and mirrored; normalising it a second
+ * time would flip an already-mirrored board.
+ *
+ * @param {object} position - the search board, already normalised.
+ * @param {object} [pf] - parsed filter flags, as returned by `parseFilters`.
+ * @param {string[]} [filters] - raw filter tokens, for the token-derived fields.
+ * @returns {object} the SearchFilters payload.
+ */
+export function buildSearchFilterPayload(position, pf = {}, filters = []) {
+    const tokens = Array.isArray(filters) ? filters : [];
+    return {
+        filter: position,
+        excludeFilter: emptySearchBoardPosition(),
+        includeCube: pf.includeCube || false,
+        includeScore: pf.includeScore || false,
+        pipCountFilter: pf.pipCountFilter || '',
+        winRateFilter: pf.winRateFilter || '',
+        gammonRateFilter: pf.gammonRateFilter || '',
+        backgammonRateFilter: pf.backgammonRateFilter || '',
+        player2WinRateFilter: pf.player2WinRateFilter || '',
+        player2GammonRateFilter: pf.player2GammonRateFilter || '',
+        player2BackgammonRateFilter: pf.player2BackgammonRateFilter || '',
+        player1CheckerOffFilter: pf.player1CheckerOffFilter || '',
+        player2CheckerOffFilter: pf.player2CheckerOffFilter || '',
+        player1BackCheckerFilter: pf.player1BackCheckerFilter || '',
+        player2BackCheckerFilter: pf.player2BackCheckerFilter || '',
+        player1CheckerInZoneFilter: pf.player1CheckerInZoneFilter || '',
+        player2CheckerInZoneFilter: pf.player2CheckerInZoneFilter || '',
+        searchText: pf.searchText || '',
+        commentFilter: pf.commentFilter || '',
+        player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
+        equityFilter: pf.equityFilter || '',
+        decisionTypeFilter: pf.decisionTypeFilter || false,
+        // Derived from the tokens, exactly as positionService does.
+        cubeResponseFilter: tokens.includes('dr') ? 'takepass' : tokens.includes('dd') ? 'double' : '',
+        diceRollFilter: pf.diceRollFilter || false,
+        diceRollMode: pf.diceRollMode || 'both',
+        exceptDiceFilter: pf.exceptDiceFilter || '',
+        movePatternFilter: pf.movePatternFilter || '',
+        dateFilter: pf.dateFilter || '',
+        player1OutfieldBlotFilter: pf.player1OutfieldBlotFilter || '',
+        player2OutfieldBlotFilter: pf.player2OutfieldBlotFilter || '',
+        player1JanBlotFilter: pf.player1JanBlotFilter || '',
+        player2JanBlotFilter: pf.player2JanBlotFilter || '',
+        noContactFilter: pf.noContactFilter || false,
+        mirrorFilter: pf.mirrorPositionFilter || false,
+        individuallyImportedFilter: pf.individuallyImportedFilter || false,
+        moveErrorFilter: pf.moveErrorFilter || '',
+        matchIDsFilter: pf.matchIDsFilter || '',
+        tournamentIDsFilter: pf.tournamentIDsFilter || '',
+        playerFilter: pf.playerFilter || '',
+        positionIDsFilter: pf.positionIDsFilter || '',
+        restrictToPositionIDs: ''
+    };
 }
