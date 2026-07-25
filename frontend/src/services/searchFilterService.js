@@ -103,6 +103,7 @@ export function buildFilterTokens(activeFilters, options) {
         player2CheckerInZoneRangeMin,
         player2CheckerInZoneRangeMax,
         searchText,
+        commentMode = 'contains',
         movePattern,
         creationDateOption,
         creationDateMin,
@@ -218,8 +219,11 @@ export function buildFilterTokens(activeFilters, options) {
                     : player2CheckerInZoneOption === 'max'
                       ? `Z<${player2CheckerInZoneMax}`
                       : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
-            case 'Search Text':
-                return `t"${searchText}"`;
+            // One filter, three modes: `t"…"` searches comment content, `co` /
+            // `xco` ask only whether a comment is there at all. The modes are
+            // mutually exclusive here, so the token is never ambiguous.
+            case 'Comment':
+                return commentMode === 'has' ? 'co' : commentMode === 'none' ? 'xco' : `t"${searchText}"`;
             case 'Player':
                 return `pl"${playerName}"`;
             case 'Best Move or Cube Decision':
@@ -368,6 +372,9 @@ export function parseFilterTokens(tokens) {
         dtFilter: tokens.includes('d'),
         drFilter: tokens.includes('D') || tokens.includes('D1'),
         drMode: tokens.includes('D1') ? 'first' : 'both',
+        // Comment-presence mode; 'contains' is the text-search mode, whose value
+        // travels separately as the t"…" token.
+        commentMode: tokens.includes('xco') ? 'none' : tokens.includes('co') ? 'has' : 'contains',
         cdFilter: find('cd')
     };
 }
@@ -502,7 +509,8 @@ const FILTER_TOKENS = {
     'Opponent Outfield Blot': { token: 'BO', type: 'range' },
     'Player Jan Blot': { token: 'bj', type: 'range' },
     'Opponent Jan Blot': { token: 'BJ', type: 'range' },
-    'Search Text': { token: 't', type: 'text' },
+    // Three modes, so the hint spells all three rather than the `t"…"` form alone.
+    Comment: { token: 't', type: 'comment' },
     'Best Move or Cube Decision': { token: 'm', type: 'text' },
     Player: { token: 'pl', type: 'text' },
     'Creation Date': { token: 'T', type: 'date' }
@@ -527,6 +535,8 @@ export function filterTokenHint(label) {
             return `${token}>n · ${token}<n · ${token}n,m`;
         case 'text':
             return `${token}"…"`;
+        case 'comment':
+            return `${token}"…" · co · xco`;
         case 'date':
             return `${token}>YYYY/MM/DD · ${token}<YYYY/MM/DD`;
         case 'dice':

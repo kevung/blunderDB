@@ -74,6 +74,9 @@ CREATE TABLE IF NOT EXISTS comment (
     modified_at  TIMESTAMPTZ
 );
 
+-- Supports the comment-presence search filter's EXISTS subquery (see 006).
+CREATE INDEX IF NOT EXISTS idx_comment_position ON comment (tenant_id, position_id);
+
 -- Database-level infrastructure: schema version, etc. Not tenant-scoped.
 CREATE TABLE IF NOT EXISTS metadata (
     key    TEXT PRIMARY KEY,

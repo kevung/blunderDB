@@ -245,6 +245,11 @@
             "cubeDouble": "Дабл / Без дабла",
             "cubeTakePass": "Тейк / Пас"
         },
+        "comment": {
+            "contains": "содержит текст",
+            "has": "есть комментарий",
+            "none": "без комментария"
+        },
         "filters": {
             "includeCube": "Включить куб",
             "includeScore": "Включить счёт",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Блот аутфилда соперника",
             "playerJanBlot": "Блот яна игрока",
             "opponentJanBlot": "Блот яна соперника",
-            "searchText": "Текст поиска",
+            "comment": "Комментарий",
             "bestMoveOrCubeDecision": "Лучший ход или решение по кубу",
             "creationDate": "Дата создания",
             "matchesTournaments": "Матчи и турниры",

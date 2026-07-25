@@ -245,6 +245,11 @@
             "cubeDouble": "Doblar / No doblar",
             "cubeTakePass": "Aceptar / Pasar"
         },
+        "comment": {
+            "contains": "contiene el texto",
+            "has": "tiene un comentario",
+            "none": "sin comentario"
+        },
         "filters": {
             "includeCube": "Incluir cubo",
             "includeScore": "Incluir marcador",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Blot del outfield del rival",
             "playerJanBlot": "Blot del jan del jugador",
             "opponentJanBlot": "Blot del jan del rival",
-            "searchText": "Texto de búsqueda",
+            "comment": "Comentario",
             "bestMoveOrCubeDecision": "Mejor jugada o decisión de cubo",
             "creationDate": "Fecha de creación",
             "matchesTournaments": "Partidas y torneos",

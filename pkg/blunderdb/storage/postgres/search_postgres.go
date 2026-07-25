@@ -61,6 +61,27 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		where.WriteString(" AND p.individually_imported")
 	}
 
+	// Whether a position carries a comment is likewise a property of the row and
+	// not of the board, so this too stays in SQL even in mirror search. The
+	// subquery carries tenant_id as well as position_id: it is what
+	// idx_comment_position is keyed on, and RLS aside, a scope must never read
+	// across tenants.
+	//
+	// COALESCE is deliberate: comment.text is nullable, and a bare
+	// `c.text <> ''` evaluates to NULL — not false — on a NULL row, which would
+	// silently drop it from EXISTS and keep it in NOT EXISTS. Empty text counts
+	// as no comment either way (see CONTEXT.md).
+	switch f.CommentFilter {
+	case "has":
+		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c" +
+			" WHERE c.tenant_id = ? AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+		args = append(args, tenant)
+	case "none":
+		where.WriteString(" AND NOT EXISTS (SELECT 1 FROM comment c" +
+			" WHERE c.tenant_id = ? AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+		args = append(args, tenant)
+	}
+
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
 		var allMatchIDs []int64
 		if f.MatchIDsFilter != "" {

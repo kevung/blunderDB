@@ -245,6 +245,11 @@
             "cubeDouble": "Tuplaus / Ei tuplausta",
             "cubeTakePass": "Hyväksy / Luovuta"
         },
+        "comment": {
+            "contains": "sisältää tekstin",
+            "has": "on kommentti",
+            "none": "ei kommenttia"
+        },
         "filters": {
             "includeCube": "Sisällytä tuplauskuutio",
             "includeScore": "Sisällytä pistetilanne",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Vastustajan outfield-blotti",
             "playerJanBlot": "Pelaajan jan-blotti",
             "opponentJanBlot": "Vastustajan jan-blotti",
-            "searchText": "Hakuteksti",
+            "comment": "Kommentti",
             "bestMoveOrCubeDecision": "Paras siirto tai kuutiopäätös",
             "creationDate": "Luontipäivä",
             "matchesTournaments": "Ottelut ja turnaukset",

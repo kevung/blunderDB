@@ -29,11 +29,19 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
 - `002_is_cube_response.sql` — `position.is_cube_response` column + index, with a
   take/pass backfill from `move.cube_action` (mirrors
   `engine.IsResponseCubeAction`).
+- `006_comment_position_index.sql` — `comment(tenant_id, position_id)` index for
+  the comment-presence search filter (`co` / `xco`).
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in
 `metadata`, bump `domain.DatabaseVersion` if schema-visible, and extend the
 migration test.
+
+An **index-only** migration is the exception: it changes no column, no table and
+no data, so nothing is schema-visible. It bumps neither `database_version` nor
+`domain.DatabaseVersion` — recording a version with no counterpart in the Go
+constant would desynchronise the two — and needs no migration-test entry.
+`006` is one such migration.
 
 ## Multi-tenancy
 

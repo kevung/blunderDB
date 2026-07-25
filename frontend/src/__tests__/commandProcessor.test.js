@@ -288,6 +288,32 @@ describe('parseFilters', () => {
         expect(result.searchText).toBe("t'hello'");
     });
 
+    // -- comment presence ----------------------------------------------------
+    test('co asks for positions carrying a comment', () => {
+        expect(parseFilters(['co'], 's co').commentFilter).toBe('has');
+    });
+
+    test('xco asks for positions carrying none', () => {
+        expect(parseFilters(['xco'], 's xco').commentFilter).toBe('none');
+    });
+
+    test('no comment token leaves the filter off', () => {
+        expect(parseFilters(['p>30'], 's p>30').commentFilter).toBe('');
+    });
+
+    test('the comment tokens are exact, so `coll` or `x` do not trigger them', () => {
+        expect(parseFilters(['coll'], 's coll').commentFilter).toBe('');
+        expect(parseFilters(['x'], 's x').commentFilter).toBe('');
+    });
+
+    // Presence and content are independent AND clauses: the command line can
+    // express a contradiction, and it comes back empty rather than rejected.
+    test('presence and content tokens coexist', () => {
+        const r = parseFilters(['co', 't"blot"'], 's co t"blot"');
+        expect(r.commentFilter).toBe('has');
+        expect(r.searchText).toBe('t"blot"');
+    });
+
     test('move pattern with double quotes', () => {
         const result = parseFilters(['m"24/23"'], 's m"24/23"');
         expect(result.movePatternFilter).toBe('m"24/23"');

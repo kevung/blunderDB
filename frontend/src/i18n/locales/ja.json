@@ -245,6 +245,11 @@
             "cubeDouble": "ダブル / ノーダブル",
             "cubeTakePass": "テイク / パス"
         },
+        "comment": {
+            "contains": "テキストを含む",
+            "has": "コメントあり",
+            "none": "コメントなし"
+        },
         "filters": {
             "includeCube": "キューブを含める",
             "includeScore": "スコアを含める",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "相手のアウトフィールドブロット",
             "playerJanBlot": "プレイヤーのジャンブロット",
             "opponentJanBlot": "相手のジャンブロット",
-            "searchText": "検索テキスト",
+            "comment": "コメント",
             "bestMoveOrCubeDecision": "最善手またはキューブ判断",
             "creationDate": "作成日",
             "matchesTournaments": "マッチとトーナメント",

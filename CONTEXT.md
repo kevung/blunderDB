@@ -57,6 +57,15 @@ one row per note found in the source file), but the GUI treats a Position as hav
 single comment: it loads and edits whichever row comes back first. Known debt — a Position
 that arrived with two comments shows only one of them, arbitrarily.
 
+A Comment carries no provenance: text the user typed and text an importer lifted from a
+source file are indistinguishable. So "the Position is commented" means only *some* non-empty
+text is attached — never "the user annotated it". Empty text is not a Comment: a row whose
+text is `''` counts as absent everywhere (search, listing, export).
+
+Match and Tournament each carry their own comment field. Those are annotations of the Match
+or the Tournament, not of its Positions: a commented Match does not make its 300 Positions
+commented, and no Position-level rule in this glossary reads them.
+
 ### Who owns the data
 
 **Tenant**:

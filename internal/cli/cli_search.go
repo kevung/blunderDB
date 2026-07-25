@@ -43,6 +43,8 @@ func (cli *CLI) runSearch(args []string) error {
 	positionIDsFlag := searchCmd.String("position-ids", "", "Filter by position IDs (range '2,7' or explicit list '5;10;15')")
 	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
 	individual := searchCmd.Bool("individual", false, "Only positions imported on their own, not as part of a match")
+	hasComment := searchCmd.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)")
+	noComment := searchCmd.Bool("no-comment", false, "Only positions carrying no comment")
 
 	searchCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb search [options]")
@@ -85,6 +87,12 @@ func (cli *CLI) runSearch(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Search positions where a 6 was rolled on either die")
 		fmt.Println("  blunderdb search --db database.db --dice 6")
+		fmt.Println()
+		fmt.Println("  # Find every commented position")
+		fmt.Println("  blunderdb search --db database.db --has-comment")
+		fmt.Println()
+		fmt.Println("  # Blunders still waiting to be annotated")
+		fmt.Println("  blunderdb search --db database.db --no-comment --error-min 0.1")
 	}
 
 	if err := searchCmd.Parse(args); err != nil {
@@ -225,6 +233,19 @@ func (cli *CLI) runSearch(args []string) error {
 		}
 	}
 
+	// Comment-presence filter. The two flags are the CLI spelling of one
+	// tri-state, so asking for both at once is a user error worth naming rather
+	// than an empty result set to puzzle over.
+	commentFilter := ""
+	switch {
+	case *hasComment && *noComment:
+		return fmt.Errorf("--has-comment and --no-comment are mutually exclusive")
+	case *hasComment:
+		commentFilter = "has"
+	case *noComment:
+		commentFilter = "none"
+	}
+
 	// Use the core implementation to get analysis data in the same query, avoiding
 	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
 	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(SearchFilters{
@@ -244,6 +265,7 @@ func (cli *CLI) runSearch(args []string) error {
 		PositionIDsFilter:       *positionIDsFlag,
 
 		IndividuallyImportedFilter: *individual,
+		CommentFilter:              commentFilter,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

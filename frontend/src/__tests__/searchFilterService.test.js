@@ -193,9 +193,14 @@ describe('buildFilterTokens — range filters', () => {
 });
 
 describe('buildFilterTokens — text, date, id filters', () => {
-    test('Search Text and Best Move are quoted', () => {
-        expect(token('Search Text', { searchText: 'foo bar' })).toBe('t"foo bar"');
+    test('Comment text and Best Move are quoted', () => {
+        expect(token('Comment', { searchText: 'foo bar' })).toBe('t"foo bar"');
         expect(token('Best Move or Cube Decision', { movePattern: '24/18' })).toBe('m"24/18"');
+    });
+
+    test('the Comment filter emits a bare token in its presence modes', () => {
+        expect(token('Comment', { commentMode: 'has', searchText: 'ignored' })).toBe('co');
+        expect(token('Comment', { commentMode: 'none', searchText: 'ignored' })).toBe('xco');
     });
 
     test('Creation Date converts yyyy-mm-dd to yyyy/mm/dd', () => {
@@ -238,7 +243,7 @@ describe('buildSearchCommand', () => {
 // search components against commandProcessor.
 describe('round-trip against parseFilters', () => {
     test('a multi-filter selection recovers its tokens', () => {
-        const labels = ['Include Cube', 'Pipcount Difference', 'Win Rate', 'Search Text', 'Creation Date'];
+        const labels = ['Include Cube', 'Pipcount Difference', 'Win Rate', 'Comment', 'Creation Date'];
         const opts = baseOptions({
             pipCountOption: 'min',
             pipCountMin: 7,
@@ -365,7 +370,7 @@ describe('filterTokenHint', () => {
 
     test('dice, text and date filters show their special forms', () => {
         expect(filterTokenHint('Include Dice Roll')).toBe('D · D1');
-        expect(filterTokenHint('Search Text')).toBe('t"…"');
+        expect(filterTokenHint('Comment')).toBe('t"…" · co · xco');
         expect(filterTokenHint('Creation Date')).toBe('T>YYYY/MM/DD · T<YYYY/MM/DD');
     });
 

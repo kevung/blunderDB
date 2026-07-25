@@ -245,6 +245,11 @@
             "cubeDouble": "Double / Pas de double",
             "cubeTakePass": "Prise / Passe"
         },
+        "comment": {
+            "contains": "contient le texte",
+            "has": "a un commentaire",
+            "none": "sans commentaire"
+        },
         "filters": {
             "includeCube": "Inclure le videau",
             "includeScore": "Inclure le score",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Blot de l'outfield de l'adversaire",
             "playerJanBlot": "Blot du jan du joueur",
             "opponentJanBlot": "Blot du jan de l'adversaire",
-            "searchText": "Texte de recherche",
+            "comment": "Commentaire",
             "bestMoveOrCubeDecision": "Meilleur coup ou décision de videau",
             "creationDate": "Date de création",
             "matchesTournaments": "Matchs et tournois",

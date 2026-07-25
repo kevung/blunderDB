@@ -239,6 +239,21 @@ type SearchFilters struct {
 	Player1CheckerInZoneFilter    string   `json:"player1CheckerInZoneFilter"`
 	Player2CheckerInZoneFilter    string   `json:"player2CheckerInZoneFilter"`
 	SearchText                    string   `json:"searchText"`
+
+	// CommentFilter keeps only positions that carry a comment ("has") or that
+	// carry none ("none"); "" applies no comment filter. It asks about the mere
+	// *presence* of a comment, where SearchText asks about its content — and the
+	// two are independent AND clauses here, even though the GUI offers them as
+	// mutually exclusive modes of one filter. So `xco t"blot"` legitimately
+	// yields nothing rather than being rejected as contradictory.
+	//
+	// "Carries a comment" means any non-empty row in the comment table,
+	// whatever its provenance: the table records none, so a note the user typed
+	// and one an importer lifted from an XG/gnuBG file are indistinguishable.
+	// Match and tournament comments annotate the match or the tournament, not
+	// its positions, and are never consulted. See CONTEXT.md.
+	CommentFilter string `json:"commentFilter"`
+
 	Player1AbsolutePipCountFilter string   `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string   `json:"equityFilter"`
 	DecisionTypeFilter            bool     `json:"decisionTypeFilter"`
