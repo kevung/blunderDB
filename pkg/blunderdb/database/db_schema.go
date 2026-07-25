@@ -371,6 +371,11 @@ func (d *Database) ensureAllTablesExist() error {
 		`CREATE INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		// The comment-presence filter (`co`/`xco`) probes this table once per
+		// search with an EXISTS subquery; without the index that is a full
+		// comment scan. Non-unique, so it is safe on existing DBs and needs no
+		// DatabaseVersion bump — nothing schema-visible changes.
+		`CREATE INDEX IF NOT EXISTS idx_comment_position        ON comment(position_id)`,
 		// Range filters that previously had no supporting index (full scans).
 		`CREATE INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position(back_checkers_1)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position(back_checkers_2)`,

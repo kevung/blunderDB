@@ -245,6 +245,11 @@
             "cubeDouble": "Διπλασιασμός / Όχι",
             "cubeTakePass": "Αποδοχή / Πάσο"
         },
+        "comment": {
+            "contains": "περιέχει κείμενο",
+            "has": "έχει σχόλιο",
+            "none": "χωρίς σχόλιο"
+        },
         "filters": {
             "includeCube": "Συμπερίληψη κύβου",
             "includeScore": "Συμπερίληψη σκορ",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Blot outfield αντιπάλου",
             "playerJanBlot": "Blot jan παίκτη",
             "opponentJanBlot": "Blot jan αντιπάλου",
-            "searchText": "Κείμενο αναζήτησης",
+            "comment": "Σχόλιο",
             "bestMoveOrCubeDecision": "Καλύτερη κίνηση ή απόφαση κύβου",
             "creationDate": "Ημερομηνία δημιουργίας",
             "matchesTournaments": "Αγώνες & Τουρνουά",

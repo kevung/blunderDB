@@ -271,6 +271,12 @@ export function parseFilters(filters, command) {
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
+    // Comment presence: `co` (has one) / `xco` (has none). Exact matches, so
+    // they collide neither with each other nor with the `co` alias of the
+    // `comment` command — filter tokens only exist after the `s ` prefix.
+    // Asking for both is contradictory rather than ambiguous; 'none' wins and
+    // the search comes back empty, which is the honest answer.
+    const commentFilter = filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '';
     // Exclude `pl"…"` (player filter) — it starts with 'p' but is not a pipcount.
     const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
@@ -372,6 +378,7 @@ export function parseFilters(filters, command) {
         dateFilter,
         movePatternFilter,
         searchText,
+        commentFilter,
         player1OutfieldBlotFilter,
         player2OutfieldBlotFilter,
         player1JanBlotFilter,

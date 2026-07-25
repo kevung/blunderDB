@@ -251,6 +251,9 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,
+	// The comment-presence filter (`co`/`xco`) probes this table once per search
+	// with an EXISTS subquery; without the index that is a full comment scan.
+	`CREATE        INDEX IF NOT EXISTS idx_comment_position        ON comment(position_id)`,
 	// Range filters that previously had no supporting index (full scans).
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position(back_checkers_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position(back_checkers_2)`,

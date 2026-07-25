@@ -245,6 +245,11 @@
             "cubeDouble": "Dopplung / Kein Doppel",
             "cubeTakePass": "Annehmen / Aufgeben"
         },
+        "comment": {
+            "contains": "enthält Text",
+            "has": "hat einen Kommentar",
+            "none": "ohne Kommentar"
+        },
         "filters": {
             "includeCube": "Dopplerwürfel einbeziehen",
             "includeScore": "Spielstand einbeziehen",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Outfield-Blot des Gegners",
             "playerJanBlot": "Jan-Blot des Spielers",
             "opponentJanBlot": "Jan-Blot des Gegners",
-            "searchText": "Suchtext",
+            "comment": "Kommentar",
             "bestMoveOrCubeDecision": "Bester Zug oder Dopplerentscheidung",
             "creationDate": "Erstellungsdatum",
             "matchesTournaments": "Matches & Turniere",

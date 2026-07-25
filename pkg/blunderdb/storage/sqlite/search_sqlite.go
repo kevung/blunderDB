@@ -65,6 +65,26 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		where.WriteString(" AND p.individually_imported = 1")
 	}
 
+	// Whether a position carries a comment is likewise a property of the row and
+	// not of the board, so this too stays in SQL even in mirror search. Keeping
+	// it here rather than in the Go phase also matters for cost: the Go-side
+	// SearchText check runs one query per candidate position, which is fine for
+	// a rarely-used content filter but not for a presence filter that is
+	// routinely the only thing narrowing the scan.
+	//
+	// COALESCE is deliberate: comment.text is nullable, and a bare
+	// `c.text <> ''` evaluates to NULL — not false — on a NULL row, which would
+	// silently drop it from EXISTS and keep it in NOT EXISTS. Empty text counts
+	// as no comment either way (see CONTEXT.md).
+	switch f.CommentFilter {
+	case "has":
+		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c" +
+			" WHERE c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+	case "none":
+		where.WriteString(" AND NOT EXISTS (SELECT 1 FROM comment c" +
+			" WHERE c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+	}
+
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
 		var allMatchIDs []int64
 		if f.MatchIDsFilter != "" {

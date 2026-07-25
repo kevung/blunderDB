@@ -42,6 +42,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/UpdatePreservesId", testPositionUpdatePreservesId},
 		{"Position/ProvenanceIsSticky", testPositionProvenanceSticky},
 		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
+		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
@@ -1481,4 +1482,78 @@ func testSearchFilterByIndividuallyImported(t *testing.T, s storage.Storage) {
 	if all != 3 {
 		t.Errorf("unfiltered search returned %d positions, want 3", all)
 	}
+}
+
+// testSearchFilterByCommentPresence pins the comment-presence filter (issue
+// #109): "has" and "none" partition the database, empty text counts as no
+// comment at all, and the filter combines with the content filter as a plain
+// AND rather than as a contradiction the backend has to arbitrate.
+func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	save := func(n int) int64 {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	comment := func(id int64, text string) {
+		if _, err := s.Comments().Add(ctx, "", id, text); err != nil {
+			t.Fatalf("Add comment on %d: %v", id, err)
+		}
+	}
+
+	commented := save(1)
+	comment(commented, "big blunder, should have hit")
+	bare := save(2)
+	// An empty comment row is not a comment: it must land on the "none" side,
+	// exactly as the rest of the code treats text = '' as absent.
+	blank := save(3)
+	comment(blank, "")
+
+	find := func(f domain.SearchFilters) []int64 {
+		t.Helper()
+		var got []int64
+		for pos, err := range s.Search().Find(ctx, "", f) {
+			if err != nil {
+				t.Fatalf("Find: %v", err)
+			}
+			got = append(got, pos.ID)
+		}
+		return got
+	}
+
+	if got := find(domain.SearchFilters{CommentFilter: "has"}); len(got) != 1 || got[0] != commented {
+		t.Errorf(`CommentFilter "has" returned %v, want exactly [%d]`, got, commented)
+	}
+
+	none := find(domain.SearchFilters{CommentFilter: "none"})
+	wantNone := map[int64]bool{bare: true, blank: true}
+	if len(none) != 2 {
+		t.Errorf(`CommentFilter "none" returned %v, want the 2 uncommented positions`, none)
+	}
+	for _, id := range none {
+		if !wantNone[id] {
+			t.Errorf(`CommentFilter "none" returned position %d, which carries a comment`, id)
+		}
+	}
+
+	// "has" and "none" partition the database: nothing is in both, nothing in
+	// neither.
+	if all := find(domain.SearchFilters{}); len(all) != 3 {
+		t.Errorf("unfiltered search returned %d positions, want 3", len(all))
+	}
+
+	// Combining CommentFilter with SearchText is deliberately NOT asserted here.
+	// The content filter is evaluated in the Go phase, which issues a query per
+	// candidate row while the main cursor is still open; against the :memory:
+	// database this suite uses — pinned to a single connection by
+	// sqlite.ConfigurePool — that second query waits forever on a connection the
+	// cursor holds. The deadlock predates this filter (SearchText, DateFilter
+	// and MoveErrorFilter all take that path) and is tracked separately.
+	//
+	// CommentFilter itself is immune precisely because it is a SQL clause rather
+	// than a Go predicate, which is why it is written that way.
 }

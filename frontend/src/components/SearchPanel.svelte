@@ -25,6 +25,12 @@
     let openInNewTab = $state(false);
 
     let searchText = $state('');
+    // Comment filter mode: 'contains' searches the text (t"…"), 'has'/'none'
+    // only ask whether a comment is there at all (co / xco). Mutually exclusive
+    // by construction — the backend treats presence and content as independent
+    // AND clauses, but offering both at once would only allow redundant or
+    // contradictory searches.
+    let commentMode = $state('contains');
     let movePattern = $state('');
     let matchIDsSelected = $state([]);
     let tournamentIDsSelected = $state([]);
@@ -184,7 +190,7 @@
         'Opponent Outfield Blot',
         'Player Jan Blot',
         'Opponent Jan Blot',
-        'Search Text',
+        'Comment',
         'Best Move or Cube Decision',
         'Creation Date',
         'Match IDs',
@@ -225,7 +231,7 @@
         'Opponent Outfield Blot': 'opponentOutfieldBlot',
         'Player Jan Blot': 'playerJanBlot',
         'Opponent Jan Blot': 'opponentJanBlot',
-        'Search Text': 'searchText',
+        Comment: 'comment',
         'Best Move or Cube Decision': 'bestMoveOrCubeDecision',
         'Creation Date': 'creationDate',
         'Matches & Tournaments': 'matchesTournaments',
@@ -261,7 +267,7 @@
         { name: 'Opponent Rates', filters: ['Opponent Win Rate', 'Opponent Gammon Rate', 'Opponent Backgammon Rate'] },
         { name: 'Checkers', filters: ['Player Checker-Off', 'Opponent Checker-Off', 'Player Back Checker', 'Opponent Back Checker', 'Player Checker in the Zone', 'Opponent Checker in the Zone'] },
         { name: 'Blots', filters: ['Player Outfield Blot', 'Opponent Outfield Blot', 'Player Jan Blot', 'Opponent Jan Blot'] },
-        { name: 'Text / Pattern', filters: ['Search Text', 'Best Move or Cube Decision'] },
+        { name: 'Text / Pattern', filters: ['Comment', 'Best Move or Cube Decision'] },
         { name: 'Other', filters: ['Creation Date', 'Matches & Tournaments', 'Player', 'Individually Imported'] }
     ];
 
@@ -531,6 +537,7 @@
             player2CheckerInZoneRangeMin,
             player2CheckerInZoneRangeMax,
             searchText,
+            commentMode,
             movePattern,
             creationDateOption,
             creationDateMin,
@@ -636,7 +643,10 @@
             player2BackCheckerFilter: p2bcFilter,
             player1CheckerInZoneFilter: p1czFilter,
             player2CheckerInZoneFilter: p2czFilter,
-            searchText: searchText ? `t"${searchText}"` : '',
+            // Only the 'contains' mode carries text. In 'has'/'none' the box is
+            // disabled but may still hold what the user typed before switching,
+            // and sending it would AND a content filter onto a presence one.
+            searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
             player1AbsolutePipCountFilter: p1apcFilter,
             equityFilter: eqFilter,
             decisionTypeFilter: dtFilter,
@@ -748,6 +758,7 @@
         moveErrorRangeMin = 0;
         moveErrorRangeMax = 1000;
         searchText = '';
+        commentMode = 'contains';
         movePattern = '';
         player1OutfieldBlotOption = 'min';
         player1OutfieldBlotMin = 0;
@@ -981,6 +992,7 @@
             filterEnabled: { ...filterEnabled },
             searchInCurrentResults,
             searchText,
+            commentMode,
             movePattern,
             matchIDsSelected,
             tournamentIDsSelected,
@@ -1120,6 +1132,7 @@
         filterEnabled = { ...saved.filterEnabled };
         searchInCurrentResults = saved.searchInCurrentResults;
         searchText = saved.searchText;
+        commentMode = saved.commentMode ?? 'contains';
         movePattern = saved.movePattern;
         matchIDsSelected = Array.isArray(saved.matchIDsSelected) ? saved.matchIDsSelected : [];
         tournamentIDsSelected = Array.isArray(saved.tournamentIDsSelected) ? saved.tournamentIDsSelected : [];
@@ -1539,8 +1552,24 @@
                                                     min={0}
                                                     max={15}
                                                 />
-                                            {:else if filter === 'Search Text'}
-                                                <div class="text-control"><span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" /></div>
+                                            {:else if filter === 'Comment'}
+                                                <div class="minmax-controls">
+                                                    <label
+                                                        ><input type="radio" name="commentMode" value="contains" checked={commentMode === 'contains'} onchange={() => (commentMode = 'contains')} />
+                                                        {$t('search.comment.contains')}</label
+                                                    ><label
+                                                        ><input type="radio" name="commentMode" value="has" checked={commentMode === 'has'} onchange={() => (commentMode = 'has')} />
+                                                        {$t('search.comment.has')}</label
+                                                    ><label
+                                                        ><input type="radio" name="commentMode" value="none" checked={commentMode === 'none'} onchange={() => (commentMode = 'none')} />
+                                                        {$t('search.comment.none')}</label
+                                                    >
+                                                </div>
+                                                {#if commentMode === 'contains'}
+                                                    <div class="text-control">
+                                                        <span class="hint">{$t('search.searchTextHint')}</span><input type="text" bind:value={searchText} class="text-input" />
+                                                    </div>
+                                                {/if}
                                             {:else if filter === 'Best Move or Cube Decision'}
                                                 <div class="text-control">
                                                     <span class="hint">{$t('search.movePatternHint')}</span><input type="text" bind:value={movePattern} class="text-input" />

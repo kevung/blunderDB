@@ -271,6 +271,8 @@ Search for positions in the database using filters.
 - `--has-analysis` - Only positions with analysis
 - `--off1-min` / `--off2-min` - Minimum checkers off for player 1/2
 - `--individual` - Only positions imported on their own — the ones you added yourself, not the ones a match import brought in
+- `--has-comment` - Only positions carrying a comment. Origin is not recorded, so a note you typed and one a match import lifted from the source file both count. Match and tournament comments are not consulted
+- `--no-comment` - Only positions carrying no comment. Mutually exclusive with `--has-comment`
 - `--match-ids` - Filter by match IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
 - `--tournament-ids` - Filter by tournament IDs: comma-separated list e.g. `1,3,5`, OR a two-value range e.g. `2,7` (2 through 7), OR a semicolon list e.g. `2;7`
 - `--position-ids` - Filter by position IDs: a two-value range e.g. `2,7` (2 through 7), OR an explicit semicolon list e.g. `5;10;15`
@@ -301,6 +303,12 @@ Search for positions in the database using filters.
 
 # Output as JSON
 ./blunderDB search --db database.db --format json --limit 10
+
+# Every commented position
+./blunderDB search --db database.db --has-comment
+
+# Blunders still waiting to be annotated
+./blunderDB search --db database.db --no-comment --error-min 0.1
 ```
 
 ## List Command

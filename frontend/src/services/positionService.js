@@ -435,6 +435,11 @@ export async function loadPositionsByFilters({
         // from the filter tokens so both the panel and the command line share it.
         const cubeResponseFilter = Array.isArray(filters) ? (filters.includes('dr') ? 'takepass' : filters.includes('dd') ? 'double' : '') : '';
 
+        // Comment presence: `co` = has a comment, `xco` = has none. Derived from
+        // the tokens like cubeResponseFilter above, so the panel, the command
+        // line and replayed history entries all go through one code path.
+        const commentFilter = Array.isArray(filters) ? (filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '') : '';
+
         const loadedPositions = await LoadPositionsByFilters({
             filter: currentPosition,
             excludeFilter: excludePosition,
@@ -454,6 +459,7 @@ export async function loadPositionsByFilters({
             player1CheckerInZoneFilter,
             player2CheckerInZoneFilter,
             searchText,
+            commentFilter,
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,

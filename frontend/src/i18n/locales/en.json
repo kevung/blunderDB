@@ -245,6 +245,11 @@
             "cubeDouble": "Double / No double",
             "cubeTakePass": "Take / Pass"
         },
+        "comment": {
+            "contains": "contains text",
+            "has": "has a comment",
+            "none": "no comment"
+        },
         "filters": {
             "includeCube": "Include Cube",
             "includeScore": "Include Score",
@@ -272,7 +277,7 @@
             "opponentOutfieldBlot": "Opponent Outfield Blot",
             "playerJanBlot": "Player Jan Blot",
             "opponentJanBlot": "Opponent Jan Blot",
-            "searchText": "Search Text",
+            "comment": "Comment",
             "bestMoveOrCubeDecision": "Best Move or Cube Decision",
             "creationDate": "Creation Date",
             "matchesTournaments": "Matches & Tournaments",
