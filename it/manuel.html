@@ -276,6 +276,22 @@
 <p>Il pannello <strong>Ricerca</strong> (<em>CTRL-F</em> o <em>TAB</em>) permette di filtrare le posizioni secondo criteri liberamente combinabili: struttura delle pedine, tipo di decisione di cubo, magnitudo dell’errore, date, tag, ecc. Il tasto <em>TAB</em> apre contemporaneamente il pannello di ricerca e l’editor di posizione, consentendo di definire una struttura di pedine da cercare direttamente sul board.</p>
 <p>Per affinare una ricerca tra le posizioni attualmente filtrate, usare il comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguito da filtri (es.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Il pannello di ricerca offre anche una casella di spunta <em>Search in current results</em> per la stessa funzionalità.</p>
 <p>Il pannello offre un controllo esplicito del <strong>tipo di decisione</strong> ricercato: <em>Indifferente</em> (nessun filtro), <em>Pedine</em> (decisioni di mossa) o <em>Cubo</em> (decisioni di cubo). Quando è selezionato <em>Cubo</em>, un secondo elenco precisa il sotto-tipo: <em>Tutti</em>, <em>Raddoppio / No raddoppio</em> (il giocatore di turno deve decidere se raddoppiare) o <em>Accetta / Passa</em> (risposta a un raddoppio avversario). Il controllo è sincronizzato con il board: modificare i dadi o il cubo sul board aggiorna il tipo di decisione, e viceversa. In modalità <em>Accetta / Passa</em>, il cubo è mostrato al centro del board al valore offerto; tale valore resta modificabile.</p>
+<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
+selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
+moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
+un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
+<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.</p>
+</div>
 <p>Il filtro <strong>Match &amp; Tornei</strong> si basa su un selettore comune (finestra modale) anziché sull’inserimento di identificativi numerici: due elenchi con caselle di spunta, uno per i match e uno per i tornei, ciascuno filtrabile per testo (giocatore, data, evento per i match; nome, data, luogo per i tornei), con pulsanti <em>Tutti</em> / <em>Nessuno</em> che agiscono solo sul sottoinsieme attualmente filtrato. Selezionare un torneo seleziona automaticamente (e disabilita, mostrandoli in grigio) i match che ne fanno parte nell’elenco dei match, rendendo visibile il fatto che un torneo equivale all’insieme dei suoi match.</p>
 <p>Il pannello di ricerca presenta tre schede sul bordo sinistro: <em>Ricerca</em> (i filtri), <em>Cronologia</em> e <em>Salvati</em>. La scheda <strong>Cronologia</strong> elenca le ricerche passate con la loro data e il loro comando: un clic seleziona una ricerca e mostra la posizione associata sul tavoliere, un doppio clic la riesegue. Ogni voce può essere salvata nella libreria di filtri (icona segnalibro, assegnando un nome al filtro) o eliminata. La scheda <strong>Salvati</strong> contiene la <strong>libreria di filtri</strong> : fare doppio clic su un filtro salvato per rilanciare la ricerca corrispondente (vedere <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Appendice: Utilizzo avanzato dei filtri</span></a>). Il comando <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) apre il pannello di ricerca.</p>
 <div class="admonition tip">

@@ -379,6 +379,22 @@ de doubler) ou <em>Prise / Passe</em> (réponse à un doublement adverse). Le co
 synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
 jour le type de décision, et inversement. En mode <em>Prise / Passe</em>, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.</p>
+<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
+selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
+moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
+un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
+<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.</p>
+</div>
 <p>Le filtre <strong>Matchs &amp; Tournois</strong> s’appuie sur un sélecteur commun (fenêtre modale)
 plutôt que sur la saisie d’identifiants numériques : deux listes à cocher, une
 pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,

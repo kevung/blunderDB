@@ -63,7 +63,7 @@
 
 
 \title{blunderDB}
-\date{21 Ιουλίου 2026}
+\date{26 Ιουλίου 2026}
 \release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1157,6 +1157,25 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \sphinxAtStartPar
 Το πάνελ προσφέρει έναν ρητό έλεγχο του \sphinxstylestrong{τύπου απόφασης} που αναζητείται: \sphinxstyleemphasis{Αδιάφορο} (κανένα φίλτρο), \sphinxstyleemphasis{Πιόνια} (αποφάσεις κίνησης) ή \sphinxstyleemphasis{Κύβος} (αποφάσεις κύβου). Όταν είναι επιλεγμένο το \sphinxstyleemphasis{Κύβος}, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: \sphinxstyleemphasis{Όλα}, \sphinxstyleemphasis{Διπλασιασμός / Όχι} (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή \sphinxstyleemphasis{Αποδοχή / Πάσο} (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία \sphinxstyleemphasis{Αποδοχή / Πάσο}, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.
+
+\begin{sphinxadmonition}{note}{Σημείωση:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 Το φίλτρο \sphinxstylestrong{Αγώνες \& Τουρνουά} στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά \sphinxstyleemphasis{Όλα} / \sphinxstyleemphasis{Κανένα} που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες\sphinxhyphen{}μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.
@@ -3643,6 +3662,28 @@ t’word1;word2;…”
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Τα σχόλια της θέσης περιέχουν τουλάχιστον μία από τις λέξεις.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu’en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

@@ -80,7 +80,7 @@
 
 
 \title{blunderDB}
-\date{21 juillet 2026}
+\date{26 juillet 2026}
 \release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1316,6 +1316,25 @@ de doubler) ou \sphinxstyleemphasis{Prise / Passe} (réponse à un doublement ad
 synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met à
 jour le type de décision, et inversement. En mode \sphinxstyleemphasis{Prise / Passe}, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 Le filtre \sphinxstylestrong{Matchs \& Tournois} s’appuie sur un sélecteur commun (fenêtre modale)
@@ -4037,6 +4056,28 @@ t’mot1;mot2;…”
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Les commentaires de la position contiennent au moins un des mots.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu’en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

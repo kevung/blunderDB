@@ -22,45 +22,45 @@
 \contentsline {subsection}{\numberline {2.2.10}Analysis Panel}{10}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Comments Panel}{10}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Search Panel}{10}{subsection.2.2.12}%
-\contentsline {subsection}{\numberline {2.2.13}Collections Panel}{10}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.13}Collections Panel}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Matches Panel}{11}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Tournaments Panel}{11}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.15}Tournaments Panel}{12}{subsection.2.2.15}%
 \contentsline {subsection}{\numberline {2.2.16}Stats Panel}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introduction}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Opening the panel}{12}{subsubsection*.8}%
 \contentsline {subsubsection}{Filter bar}{12}{subsubsection*.9}%
 \contentsline {paragraph}{Player perspective}{12}{paragraph*.10}%
-\contentsline {paragraph}{Available filters}{12}{paragraph*.11}%
+\contentsline {paragraph}{Available filters}{13}{paragraph*.11}%
 \contentsline {subsubsection}{PR / MWC toggle}{13}{subsubsection*.12}%
 \contentsline {subsubsection}{Dashboard tab}{13}{subsubsection*.13}%
-\contentsline {paragraph}{Level cards}{13}{paragraph*.14}%
+\contentsline {paragraph}{Level cards}{14}{paragraph*.14}%
 \contentsline {paragraph}{Rolling PR over last N decisions}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{14}{paragraph*.16}%
 \contentsline {subsubsection}{Progression tab}{14}{subsubsection*.17}%
 \contentsline {paragraph}{Tournament line chart}{14}{paragraph*.18}%
 \contentsline {paragraph}{Match scatter plot}{14}{paragraph*.19}%
-\contentsline {subsubsection}{Errors tab}{14}{subsubsection*.20}%
-\contentsline {paragraph}{Breakdown by cube action}{14}{paragraph*.21}%
-\contentsline {paragraph}{Checker / Cube comparison}{14}{paragraph*.22}%
+\contentsline {subsubsection}{Errors tab}{15}{subsubsection*.20}%
+\contentsline {paragraph}{Breakdown by cube action}{15}{paragraph*.21}%
+\contentsline {paragraph}{Checker / Cube comparison}{15}{paragraph*.22}%
 \contentsline {paragraph}{Error magnitude histogram}{15}{paragraph*.23}%
 \contentsline {subsubsection}{Aggregation rule}{15}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: limitations}{15}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}EPC Panel}{15}{subsection.2.2.17}%
+\contentsline {subsection}{\numberline {2.2.17}EPC Panel}{16}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Anki Panel}{16}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadata Panel}{16}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Log Panel}{16}{subsection.2.2.20}%
-\contentsline {section}{\numberline {2.3}User Guide}{16}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Create a new database}{16}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.2.20}Log Panel}{17}{subsection.2.2.20}%
+\contentsline {section}{\numberline {2.3}User Guide}{17}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Create a new database}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Open an existing database}{17}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Import and merge a database}{17}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Edit a position}{17}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Edit a position}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Add a position to the database}{18}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Tag a position}{18}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Delete a position}{18}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Import a position from XG}{18}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Import a position from XG}{19}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Import a match}{19}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Import a folder of matches}{19}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Drag and drop}{19}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Drag and drop}{20}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navigate through a match}{20}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Manage the match panel}{20}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Manage collections}{20}{subsection.2.3.14}%

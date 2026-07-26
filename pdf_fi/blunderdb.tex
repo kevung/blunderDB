@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{21.07.2026}
+\date{26.07.2026}
 \release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1175,6 +1175,25 @@ Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä 
 
 \sphinxAtStartPar
 Paneeli tarjoaa nimenomaisen hallinnan haettavalle \sphinxstylestrong{päätöstyypille}: \sphinxstyleemphasis{Indifférent} (ei suodatinta), \sphinxstyleemphasis{Siirto} (siirtopäätökset) tai \sphinxstyleemphasis{Tuplaus} (kuutiopäätökset). Kun \sphinxstyleemphasis{Tuplaus} on valittuna, toinen luettelo tarkentaa alityypin: \sphinxstyleemphasis{Kaikki}, \sphinxstyleemphasis{Tuplaus / Ei tuplausta} (vuorossa olevan pelaajan on päätettävä, tuplaako) tai \sphinxstyleemphasis{Hyväksy / Luovuta} (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. \sphinxstyleemphasis{Hyväksy / Luovuta} \sphinxhyphen{}tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.
+
+\begin{sphinxadmonition}{note}{Muista:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 \sphinxstylestrong{Ottelut ja turnaukset} \sphinxhyphen{}suodatin perustuu yhteiseen valitsimeen (modaali\sphinxhyphen{}ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä \sphinxstyleemphasis{Kaikki} / \sphinxstyleemphasis{Ei mitään} \sphinxhyphen{}painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.
@@ -3661,6 +3680,28 @@ t’sana1;sana2;…’
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Aseman kommentit sisältävät vähintään yhden sanoista.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu’en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

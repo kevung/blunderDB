@@ -54,7 +54,7 @@
 
 
 \title{blunderDB}
-\date{2026年07月21日}
+\date{2026年07月26日}
 \release{0.29.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1148,6 +1148,25 @@ blunderDB は、ユーザーが送信したリクエストが有効である限�
 
 \sphinxAtStartPar
 このパネルでは、検索する \sphinxstylestrong{判断タイプ} を明示的に制御できます。 \sphinxstyleemphasis{指定なし} （フィルタなし）、 \sphinxstyleemphasis{チェッカー} （チェッカーの判断）、または \sphinxstyleemphasis{キューブ} （キューブの判断）です。 \sphinxstyleemphasis{キューブ} を選択すると、2つ目のリストでサブタイプを指定できます。 \sphinxstyleemphasis{すべて} 、 \sphinxstyleemphasis{ダブル / ノーダブル} （手番のプレイヤーがダブルするかを判断する）、または \sphinxstyleemphasis{テイク / パス} （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 \sphinxstyleemphasis{テイク / パス} モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu\textquotesingle{}en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d\textquotesingle{}erreur ou de
+date, pour dresser la liste de ce qu\textquotesingle{}il reste à commenter.
+
+\begin{sphinxadmonition}{note}{注釈:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d\textquotesingle{}une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 \sphinxstylestrong{マッチ＆トーナメント} フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。\sphinxstyleemphasis{すべて} / \sphinxstyleemphasis{なし} ボタンは、現在絞り込まれているサブセットにのみ作用します。トーナメントをチェックすると、そのメンバーであるマッチがマッチリスト内で自動的にチェックされ（グレー表示になり）、トーナメントがそのマッチ全体の集合に相当することが視覚的にわかります。
@@ -3634,6 +3653,28 @@ t\textquotesingle{}mot1;mot2;...\textquotesingle{}
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 局面のコメントに単語のうち少なくとも 1 つが含まれます。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu\textquotesingle{}en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

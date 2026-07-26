@@ -27,8 +27,8 @@
 \contentsline {subsection}{\numberline {2.2.16}Panneau Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introduction}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Ouverture du panneau}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Barre de filtre}{12}{subsubsection*.9}%
-\contentsline {paragraph}{Perspective joueur}{12}{paragraph*.10}%
+\contentsline {subsubsection}{Barre de filtre}{13}{subsubsection*.9}%
+\contentsline {paragraph}{Perspective joueur}{13}{paragraph*.10}%
 \contentsline {paragraph}{Filtres disponibles}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Toggle PR / MWC}{13}{subsubsection*.12}%
 \contentsline {subsubsection}{Onglet Dashboard}{14}{subsubsection*.13}%

@@ -276,6 +276,22 @@
 <p>El panel <strong>Búsqueda</strong> (<em>CTRL-F</em> o <em>TAB</em>) permite filtrar las posiciones según criterios libremente combinables: estructura de fichas, tipo de decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla <em>TAB</em> abre simultáneamente el panel de búsqueda y el editor de posición, lo que permite definir una estructura de fichas que buscar directamente en el tablero.</p>
 <p>Para afinar una búsqueda entre las posiciones filtradas actualmente, use el comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguido de filtros (p. ej.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). El panel de búsqueda ofrece también una casilla <em>Search in current results</em> para la misma funcionalidad.</p>
 <p>El panel ofrece un control explícito del <strong>tipo de decisión</strong> buscado: <em>Indiferente</em> (ningún filtro), <em>Fichas</em> (decisiones de jugada) o <em>Cubo</em> (decisiones de cubo). Cuando se selecciona <em>Cubo</em>, una segunda lista precisa el subtipo: <em>Todos</em>, <em>Doblar / No doblar</em> (el jugador con el turno debe decidir si doblar) o <em>Aceptar / Pasar</em> (respuesta a un doblaje del rival). El control está sincronizado con el tablero: modificar los dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa. En modo <em>Aceptar / Pasar</em>, el cubo se muestra en el centro del tablero con el valor ofrecido; ese valor sigue siendo editable.</p>
+<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
+selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
+moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
+un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
+<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.</p>
+</div>
 <p>El filtro <strong>Partidas y Torneos</strong> se apoya en un selector común (ventana modal) en lugar de la introducción de identificadores numéricos: dos listas de casillas, una para las partidas y otra para los torneos, cada una filtrable por texto (jugador, fecha, evento para las partidas; nombre, fecha, lugar para los torneos), con botones <em>Todo</em> / <em>Ninguno</em> que solo actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca automáticamente (y atenúa) sus partidas miembro en la lista de partidas, dejando patente que un torneo equivale al conjunto de sus partidas.</p>
 <p>El panel de búsqueda cuenta con tres pestañas en su borde izquierdo: <em>Búsqueda</em> (los filtros), <em>Historial</em> y <em>Guardados</em>. La pestaña <strong>Historial</strong> enumera las búsquedas anteriores con su fecha y su comando: un clic selecciona una búsqueda y muestra la posición asociada en el tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o eliminarse. La pestaña <strong>Guardados</strong> contiene la <strong>biblioteca de filtros</strong>: hacer doble clic en un filtro guardado para relanzar la búsqueda correspondiente (véase <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anexo: Uso avanzado de los filtros</span></a>). El comando <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) abre el panel de búsqueda.</p>
 <div class="admonition tip">

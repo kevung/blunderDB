@@ -38,7 +38,7 @@
 \contentsline {paragraph}{トーナメントごとの曲線}{18}{paragraph*.18}%
 \contentsline {paragraph}{マッチごとの散布図}{18}{paragraph*.19}%
 \contentsline {subsubsection}{Erreurs タブ}{18}{subsubsection*.20}%
-\contentsline {paragraph}{キューブのアクションごとの内訳}{18}{paragraph*.21}%
+\contentsline {paragraph}{キューブのアクションごとの内訳}{19}{paragraph*.21}%
 \contentsline {paragraph}{Checker / Cube の内訳}{19}{paragraph*.22}%
 \contentsline {paragraph}{エラーの大きさのヒストグラム}{19}{paragraph*.23}%
 \contentsline {subsubsection}{集計ルール}{19}{subsubsection*.24}%
@@ -50,7 +50,7 @@
 \contentsline {section}{\numberline {2.3}ユーザーガイド}{21}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}新しいデータベースを作成する}{21}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}既存のデータベースを開く}{21}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}データベースをインポートして統合する}{21}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}データベースをインポートして統合する}{22}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}ポジションを編集する}{22}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}ポジションをデータベースに追加する}{23}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}ポジションにタグを付ける}{23}{subsection.2.3.6}%

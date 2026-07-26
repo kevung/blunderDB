@@ -276,6 +276,22 @@
 <p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
 <p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Search in current results</em> для той же функциональности.</p>
 <p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
+<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
+selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
+moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
+un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
+<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.</p>
+</div>
 <p>Фильтр <strong>Матчи и турниры</strong> опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками <em>Все</em> / <em>Ничего</em>, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи-участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.</p>
 <p>Панель поиска содержит три вкладки на левом крае: <em>Recherche</em> (фильтры), <em>Historique</em> и <em>Enregistrés</em>. Вкладка <strong>Historique</strong> перечисляет прошлые поиски с их датой и командой: щелчок выбирает поиск и показывает связанную позицию на доске, двойной щелчок выполняет его повторно. Каждую запись можно сохранить в библиотеку фильтров (значок закладки, задав имя фильтру) или удалить. Вкладка <strong>Enregistrés</strong> содержит <strong>библиотеку фильтров</strong>: дважды щёлкните по сохранённому фильтру, чтобы заново выполнить соответствующий поиск (см. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). Команда <code class="docutils literal notranslate"><span class="pre">history</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">hi</span></code>) открывает панель поиска.</p>
 <div class="admonition tip">

@@ -28,7 +28,7 @@
 \contentsline {subsection}{\numberline {2.2.16}Pannello Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introduzione}{12}{subsubsection*.7}%
 \contentsline {subsubsection}{Apertura del pannello}{12}{subsubsection*.8}%
-\contentsline {subsubsection}{Barra dei filtri}{12}{subsubsection*.9}%
+\contentsline {subsubsection}{Barra dei filtri}{13}{subsubsection*.9}%
 \contentsline {paragraph}{Prospettiva del giocatore}{13}{paragraph*.10}%
 \contentsline {paragraph}{Filtri disponibili}{13}{paragraph*.11}%
 \contentsline {subsubsection}{Commutazione PR / MWC}{13}{subsubsection*.12}%

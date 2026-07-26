@@ -306,6 +306,21 @@ synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met
 jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
+Le filtre **Commentaire** interroge les commentaires attachés aux positions
+selon trois modes exclusifs. *contient le texte* recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par ``;``, au
+moins un doit correspondre) ; *a un commentaire* retient toute position portant
+un commentaire, quel qu'en soit le contenu ; *sans commentaire* retient au
+contraire les positions non annotées — utile, combiné à un filtre d'erreur ou de
+date, pour dresser la liste de ce qu'il reste à commenter.
+
+.. note:: Les commentaires importés depuis un fichier de match (XG, GNUbg)
+   comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+   peut donc pas distinguer une note que vous avez saisie d'une note reprise du
+   fichier source. Par ailleurs, les commentaires attachés à un *match* ou à un
+   *tournoi* ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+   positions.
+
 Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre modale)
 plutôt que sur la saisie d'identifiants numériques : deux listes à cocher, une
 pour les matchs et une pour les tournois, chacune filtrable par texte (joueur,

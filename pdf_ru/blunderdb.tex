@@ -63,7 +63,7 @@
 
 
 \title{blunderDB}
-\date{июл. 21, 2026}
+\date{июл. 26, 2026}
 \release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1157,6 +1157,25 @@ blunderDB выполняет запросы пользователя при ус
 
 \sphinxAtStartPar
 Панель предлагает явное управление искомым \sphinxstylestrong{типом решения}: \sphinxstyleemphasis{Безразлично} (без фильтра), \sphinxstyleemphasis{Шашки} (решения по ходу) или \sphinxstyleemphasis{Куб} (решения по кубу). Когда выбран \sphinxstyleemphasis{Куб}, второй список уточняет подтип: \sphinxstyleemphasis{Все}, \sphinxstyleemphasis{Дабл / Без дабла} (игрок на ходу должен решить, удваивать ли) или \sphinxstyleemphasis{Тейк / Пас} (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме \sphinxstyleemphasis{Тейк / Пас} куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.
+
+\begin{sphinxadmonition}{note}{Примечание:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 Фильтр \sphinxstylestrong{Матчи и турниры} опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками \sphinxstyleemphasis{Все} / \sphinxstyleemphasis{Ничего}, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи\sphinxhyphen{}участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.
@@ -3643,6 +3662,28 @@ t’mot1;mot2;…“
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Комментарии к позиции содержат как минимум одно из слов.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu’en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

@@ -79,7 +79,7 @@
 
 
 \title{blunderDB}
-\date{Jul 21, 2026}
+\date{Jul 26, 2026}
 \release{0.29.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1173,6 +1173,25 @@ To refine a search among the currently filtered positions, use the \sphinxcode{\
 
 \sphinxAtStartPar
 The panel offers an explicit control over the \sphinxstylestrong{decision type} searched for: \sphinxstyleemphasis{Indifferent} (no filter), \sphinxstyleemphasis{Checker} (checker decisions) or \sphinxstyleemphasis{Cube} (cube decisions). When \sphinxstyleemphasis{Cube} is selected, a second list specifies the sub\sphinxhyphen{}type: \sphinxstyleemphasis{All}, \sphinxstyleemphasis{Double / No double} (the player on roll has to decide whether to double) or \sphinxstyleemphasis{Take / Pass} (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In \sphinxstyleemphasis{Take / Pass} mode, the cube is shown in the centre of the board at the offered value; that value remains editable.
+
+\sphinxAtStartPar
+Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
+selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
+dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
+moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
+un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
+contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
+date, pour dresser la liste de ce qu’il reste à commenter.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Les commentaires importés depuis un fichier de match (XG, GNUbg)
+comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
+peut donc pas distinguer une note que vous avez saisie d’une note reprise du
+fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
+\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
+positions.
+\end{sphinxadmonition}
 
 \sphinxAtStartPar
 The \sphinxstylestrong{Matches \& Tournaments} filter is backed by a shared picker (a modal window) instead of typed numeric IDs: two checkbox lists, one for matches and one for tournaments, each text\sphinxhyphen{}filterable (player, date, event for matches; name, date, location for tournaments), with \sphinxstyleemphasis{All} / \sphinxstyleemphasis{None} buttons that act only on the currently filtered subset. Checking a tournament automatically checks (and greys out) its member matches in the match list, making visible the fact that a tournament is equivalent to the set of its matches.
@@ -3659,6 +3678,28 @@ t’word1;word2;…’
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position comments contain at least one of the words.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+co
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position porte un commentaire, quel qu’en soit le contenu.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+xco
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position ne porte aucun commentaire.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
