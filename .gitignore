@@ -19,6 +19,10 @@ frontend/.playwright-browsers/
 *.db
 *.db-wal
 *.db-shm
+# Single-instance lock next to the database file (database/db.go: path + ".lock").
+# Not covered by *.db, so it used to show up as untracked next to every database
+# opened at the repo root — and once slipped into a commit.
+*.db.lock
 
 messages.mo
 
