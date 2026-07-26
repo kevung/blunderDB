@@ -25,24 +25,24 @@
 \contentsline {subsection}{\numberline {2.2.13}Панель коллекций}{11}{subsection.2.2.13}%
 \contentsline {subsection}{\numberline {2.2.14}Панель матчей}{11}{subsection.2.2.14}%
 \contentsline {subsection}{\numberline {2.2.15}Панель турниров}{12}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Панель Stats}{12}{subsection.2.2.16}%
-\contentsline {subsubsection}{Введение}{12}{subsubsection*.7}%
+\contentsline {subsection}{\numberline {2.2.16}Панель Stats}{13}{subsection.2.2.16}%
+\contentsline {subsubsection}{Введение}{13}{subsubsection*.7}%
 \contentsline {subsubsection}{Открытие панели}{13}{subsubsection*.8}%
 \contentsline {subsubsection}{Панель фильтров}{13}{subsubsection*.9}%
 \contentsline {paragraph}{Перспектива игрока}{13}{paragraph*.10}%
 \contentsline {paragraph}{Доступные фильтры}{13}{paragraph*.11}%
-\contentsline {subsubsection}{Переключение PR / MWC}{13}{subsubsection*.12}%
+\contentsline {subsubsection}{Переключение PR / MWC}{14}{subsubsection*.12}%
 \contentsline {subsubsection}{Вкладка Dashboard}{14}{subsubsection*.13}%
 \contentsline {paragraph}{Карточки уровня}{14}{paragraph*.14}%
-\contentsline {paragraph}{Скользящий PR за последние N решений}{14}{paragraph*.15}%
+\contentsline {paragraph}{Скользящий PR за последние N решений}{15}{paragraph*.15}%
 \contentsline {paragraph}{Топ грубых ошибок}{15}{paragraph*.16}%
 \contentsline {subsubsection}{Вкладка Progression}{15}{subsubsection*.17}%
 \contentsline {paragraph}{График по турнирам}{15}{paragraph*.18}%
 \contentsline {paragraph}{Диаграмма рассеяния по матчам}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Вкладка Erreurs}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Разбивка по действиям куба}{15}{paragraph*.21}%
-\contentsline {paragraph}{Сравнение Checker / Cube}{15}{paragraph*.22}%
-\contentsline {paragraph}{Гистограмма величин ошибок}{15}{paragraph*.23}%
+\contentsline {paragraph}{Сравнение Checker / Cube}{16}{paragraph*.22}%
+\contentsline {paragraph}{Гистограмма величин ошибок}{16}{paragraph*.23}%
 \contentsline {subsubsection}{Правило агрегации}{16}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: ограничения}{16}{subsubsection*.25}%
 \contentsline {subsection}{\numberline {2.2.17}Панель EPC}{16}{subsection.2.2.17}%
@@ -50,123 +50,123 @@
 \contentsline {subsection}{\numberline {2.2.19}Панель метаданных}{17}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Панель журнала}{17}{subsection.2.2.20}%
 \contentsline {section}{\numberline {2.3}Руководство пользователя}{17}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{17}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{18}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{18}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Импорт и слияние базы данных}{18}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{18}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{19}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Добавление позиции в базу данных}{19}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Добавление тега к позиции}{19}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Удаление позиции}{19}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Импорт позиции из XG}{19}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Импорт позиции из XG}{20}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Импорт матча}{20}{subsection.2.3.9}%
-\contentsline {subsection}{\numberline {2.3.10}Импорт папки с матчами}{20}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Перетаскивание}{20}{subsection.2.3.11}%
-\contentsline {subsection}{\numberline {2.3.12}Навигация по матчу}{20}{subsection.2.3.12}%
+\contentsline {subsection}{\numberline {2.3.10}Импорт папки с матчами}{21}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.11}Перетаскивание}{21}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.12}Навигация по матчу}{21}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Управление панелью матчей}{21}{subsection.2.3.13}%
-\contentsline {subsection}{\numberline {2.3.14}Управление коллекциями}{21}{subsection.2.3.14}%
+\contentsline {subsection}{\numberline {2.3.14}Управление коллекциями}{22}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Управление турнирами}{22}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Просмотр статистики производительности}{22}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Вычисление EPC}{22}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Просмотр анализа позиции, импортированной из XG}{22}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Просмотр анализа позиции, импортированной из XG}{23}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Экспорт позиции в XG}{23}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Просмотр различных позиций}{23}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Поиск позиций по критериям}{23}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Список команд}{24}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Глобальные операции}{24}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.1}Глобальные операции}{25}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Позиции и навигация}{25}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Редактирование и поиск}{25}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}Фильтры поиска}{25}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.3}Редактирование и поиск}{26}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Фильтры поиска}{26}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Прочие команды}{29}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Горячие клавиши}{29}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}База данных}{29}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Позиция}{29}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.1}База данных}{30}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Позиция}{30}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Навигация}{30}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Отображение}{30}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Действия}{30}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Инструменты}{30}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.5}Действия}{31}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}Инструменты}{31}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Вкладки представлений}{31}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Командная строка}{31}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}История поиска}{31}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Библиотека фильтров}{31}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}Панель анализа}{31}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.10}Библиотека фильтров}{32}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}Панель анализа}{32}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Панель матчей}{32}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Панель Anki (интервальное повторение)}{32}{subsection.2.5.13}%
 \contentsline {section}{\numberline {2.6}Интерфейс командной строки (CLI)}{32}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Введение}{32}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Общий синтаксис}{32}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.2}Общий синтаксис}{33}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Доступные команды}{33}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Создать базу данных}{33}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Импорт данных}{33}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.5}import — Импорт данных}{34}{subsection.2.6.5}%
 \contentsline {subsubsection}{Импорт матча}{34}{subsubsection*.27}%
 \contentsline {subsubsection}{Импорт позиций}{34}{subsubsection*.28}%
 \contentsline {subsubsection}{Пакетный импорт}{34}{subsubsection*.29}%
-\contentsline {subsection}{\numberline {2.6.6}export — Экспорт данных}{34}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.6}export — Экспорт данных}{35}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}search — Поиск позиций}{35}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — Список содержимого}{36}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Отобразить матч}{37}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.8}list — Список содержимого}{37}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}match — Отобразить матч}{38}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}info — Метаданные базы данных}{38}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}edit — Изменить метаданные}{38}{subsection.2.6.11}%
-\contentsline {subsection}{\numberline {2.6.12}verify — Проверка целостности}{38}{subsection.2.6.12}%
+\contentsline {subsection}{\numberline {2.6.12}verify — Проверка целостности}{39}{subsection.2.6.12}%
 \contentsline {subsection}{\numberline {2.6.13}delete — Удалить данные}{39}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Примеры рабочих процессов}{39}{subsection.2.6.14}%
-\contentsline {subsubsection}{Импорт каталога турнира}{39}{subsubsection*.30}%
+\contentsline {subsection}{\numberline {2.6.14}Примеры рабочих процессов}{40}{subsection.2.6.14}%
+\contentsline {subsubsection}{Импорт каталога турнира}{40}{subsubsection*.30}%
 \contentsline {subsubsection}{Регулярное резервное копирование}{40}{subsubsection*.31}%
 \contentsline {subsubsection}{Анализ ошибок}{40}{subsubsection*.32}%
 \contentsline {subsection}{\numberline {2.6.15}Коды возврата}{40}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Часто задаваемые вопросы}{40}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Для чего нужен blunderDB?}{40}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Что побудило создать blunderDB?}{40}{subsection.2.7.2}%
+\contentsline {section}{\numberline {2.7}Часто задаваемые вопросы}{41}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Для чего нужен blunderDB?}{41}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Что побудило создать blunderDB?}{41}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Как сохранить текущую базу данных?}{41}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Нужно ли создавать разные базы данных для разных категорий позиций?}{41}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Как объединить несколько баз данных?}{41}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Какие форматы файлов матчей поддерживаются?}{41}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.5}Как объединить несколько баз данных?}{42}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}Какие форматы файлов матчей поддерживаются?}{42}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Что такое коллекция?}{42}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Что такое EPC?}{42}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}Есть ли у blunderDB интерфейс командной строки?}{42}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Можно ли изменять, копировать, распространять blunderDB?}{42}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}Какой формат данных использует blunderDB?}{42}{subsection.2.7.11}%
-\contentsline {subsection}{\numberline {2.7.12}Каковы были принципы проектирования blunderDB?}{42}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Какова программная архитектура blunderDB?}{42}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.10}Можно ли изменять, копировать, распространять blunderDB?}{43}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}Какой формат данных использует blunderDB?}{43}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}Каковы были принципы проектирования blunderDB?}{43}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.13}Какова программная архитектура blunderDB?}{43}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}На каких платформах работает blunderDB?}{43}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Откуда взята иконка blunderDB?}{43}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Безголовый режим (сервер)}{43}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Обзор}{43}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Демон \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{43}{subsection.2.8.2}%
-\contentsline {subsubsection}{Точки доступа}{44}{subsubsection*.33}%
-\contentsline {subsubsection}{Развёртывание с помощью Docker}{45}{subsubsection*.34}%
-\contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{45}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{45}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{46}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}Приложение: Расширенное использование фильтров}{47}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Поиск позиций в командной строке}{47}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Поиск в текущих результатах}{48}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Библиотека фильтров}{48}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Примеры}{48}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения}{49}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Предупреждение Windows SmartScreen}{50}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Блокировка Windows Defender}{50}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Проверка целостности загрузки (SHA256)}{56}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Приложение Mac: возможная блокировка blunderDB}{59}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Установка blunderDB}{59}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Разрешение на запуск blunderDB}{59}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}Приложение: Схема базы данных}{59}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Версионирование и миграции}{59}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Основные таблицы}{60}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Принципы проектирования}{60}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB}{60}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Формальные определения}{61}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{61}{subsubsection*.48}%
-\contentsline {subsubsection}{Snowie Error Rate}{61}{subsubsection*.49}%
-\contentsline {subsubsection}{Потеря MWC (Match Winning Chance)}{62}{subsubsection*.50}%
-\contentsline {subsection}{\numberline {2.13.2}Засчитанные решения в знаменателе PR}{62}{subsection.2.13.2}%
-\contentsline {subsubsection}{Ходы шашками — засчитанные решения}{62}{subsubsection*.51}%
-\contentsline {subsubsection}{Решения по кубу — засчитанные решения}{62}{subsubsection*.52}%
-\contentsline {subsubsection}{Сводка фильтра}{62}{subsubsection*.53}%
-\contentsline {subsection}{\numberline {2.13.3}Соответствие blunderDB ↔ XG ↔ gnuBG}{62}{subsection.2.13.3}%
-\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{62}{subsubsection*.54}%
-\contentsline {subsubsection}{Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)}{63}{subsubsection*.55}%
-\contentsline {subsection}{\numberline {2.13.4}Проверка собственных данных}{63}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}Ссылки gnuBG}{63}{subsection.2.13.5}%
+\contentsline {subsection}{\numberline {2.8.1}Обзор}{44}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Демон \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{44}{subsection.2.8.2}%
+\contentsline {subsubsection}{Точки доступа}{45}{subsubsection*.33}%
+\contentsline {subsubsection}{Развёртывание с помощью Docker}{46}{subsubsection*.34}%
+\contentsline {subsection}{\numberline {2.8.3}Бэкенд PostgreSQL и многопользовательский режим}{46}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Миграция базы SQLite в PostgreSQL}{46}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Универсальный диспетчер \sphinxstyleliteralintitle {\sphinxupquote {call}}}{47}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}Приложение: Расширенное использование фильтров}{48}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Поиск позиций в командной строке}{48}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Поиск в текущих результатах}{49}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Библиотека фильтров}{49}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Примеры}{49}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения}{50}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Предупреждение Windows SmartScreen}{51}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Блокировка Windows Defender}{51}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Проверка целостности загрузки (SHA256)}{57}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Приложение Mac: возможная блокировка blunderDB}{60}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Установка blunderDB}{60}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Разрешение на запуск blunderDB}{60}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Приложение: Схема базы данных}{60}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Версионирование и миграции}{60}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Основные таблицы}{61}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Принципы проектирования}{61}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB}{61}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Формальные определения}{62}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{62}{subsubsection*.48}%
+\contentsline {subsubsection}{Snowie Error Rate}{62}{subsubsection*.49}%
+\contentsline {subsubsection}{Потеря MWC (Match Winning Chance)}{63}{subsubsection*.50}%
+\contentsline {subsection}{\numberline {2.13.2}Засчитанные решения в знаменателе PR}{63}{subsection.2.13.2}%
+\contentsline {subsubsection}{Ходы шашками — засчитанные решения}{63}{subsubsection*.51}%
+\contentsline {subsubsection}{Решения по кубу — засчитанные решения}{63}{subsubsection*.52}%
+\contentsline {subsubsection}{Сводка фильтра}{63}{subsubsection*.53}%
+\contentsline {subsection}{\numberline {2.13.3}Соответствие blunderDB ↔ XG ↔ gnuBG}{63}{subsection.2.13.3}%
+\contentsline {subsubsection}{Сравнение XG ↔ blunderDB (один движок анализа)}{63}{subsubsection*.54}%
+\contentsline {subsubsection}{Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)}{64}{subsubsection*.55}%
+\contentsline {subsection}{\numberline {2.13.4}Проверка собственных данных}{64}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}Ссылки gnuBG}{64}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Контакты}{65}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Сделать пожертвование}{67}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Благодарности}{69}{chapter.5}%

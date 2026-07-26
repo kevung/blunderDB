@@ -1150,6 +1150,25 @@ blunderDB は、ユーザーが送信したリクエストが有効である限�
 このパネルでは、検索する \sphinxstylestrong{判断タイプ} を明示的に制御できます。 \sphinxstyleemphasis{指定なし} （フィルタなし）、 \sphinxstyleemphasis{チェッカー} （チェッカーの判断）、または \sphinxstyleemphasis{キューブ} （キューブの判断）です。 \sphinxstyleemphasis{キューブ} を選択すると、2つ目のリストでサブタイプを指定できます。 \sphinxstyleemphasis{すべて} 、 \sphinxstyleemphasis{ダブル / ノーダブル} （手番のプレイヤーがダブルするかを判断する）、または \sphinxstyleemphasis{テイク / パス} （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 \sphinxstyleemphasis{テイク / パス} モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。
 
 \sphinxAtStartPar
+Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
+le logiciel d\textquotesingle{}origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l\textquotesingle{}import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.
+
+\begin{sphinxadmonition}{note}{注釈:}
+\sphinxAtStartPar
+Le marquage n\textquotesingle{}est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu\textquotesingle{}elle n\textquotesingle{}existe que dans les
+fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
+l\textquotesingle{}import détecte le doublon et n\textquotesingle{}ajoute rien d\textquotesingle{}autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
 Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
 selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
@@ -2971,6 +2990,17 @@ i
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 この局面は単独でインポートされたもので、マッチのインポートで入ったものではありません。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+fl
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d\textquotesingle{}origine, lors de l\textquotesingle{}import d\textquotesingle{}un match eXtreme Gammon.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

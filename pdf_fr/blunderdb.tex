@@ -1318,6 +1318,25 @@ jour le type de décision, et inversement. En mode \sphinxstyleemphasis{Prise / 
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
 \sphinxAtStartPar
+Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
+le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l’import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le marquage n’est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu’elle n’existe que dans les
+fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
+l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
 Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
 selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
@@ -3374,6 +3393,17 @@ i
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position a été importée seule, et non apportée par l’import d’un match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+fl
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d’origine, lors de l’import d’un match eXtreme Gammon.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

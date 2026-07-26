@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.26)  26 JUL 2026 09:01
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.7.26)  26 JUL 2026 14:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1444,150 +1444,150 @@ Underfull \hbox (badness 5711) in paragraph at lines 818--820
  []
 
 [6] [7] [8] [9] [10] [11] [12]
-Underfull \hbox (badness 6542) in paragraph at lines 1256--1258
+Underfull \hbox (badness 6542) in paragraph at lines 1275--1277
 []\TU/FreeSerif(2)/m/n/10 Ο πίνακας \TU/FreeSerif(2)/b/n/10 Τουρνουά \TU/FreeSe
 rif(2)/m/n/10 (\TU/FreeSerif(2)/m/it/10 CTRL-Y\TU/FreeSerif(2)/m/n/10 ) επιτρέπ
 ει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη
  []
 
 [13] [14] [15] [16] [17] [18] [19] [20]
-Underfull \hbox (badness 8019) in paragraph at lines 1929--1931
+Underfull \hbox (badness 8019) in paragraph at lines 1948--1950
 []\TU/FreeSerif(2)/m/n/10 Ένα παράθυρο προόδου εμφανίζει τον αριθμό των αρχείων
  που εισήχθησαν, απέτυχαν και
  []
 
 [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35]
-[36] [37] [38] [39] [40] [41] [42] [43] [44]
-Underfull \hbox (badness 5954) in paragraph at lines 6146--6148
+[36] [37] [38] [39] [40] [41] [42] [43] [44] [45]
+Underfull \hbox (badness 5954) in paragraph at lines 6176--6178
 []\TU/FreeSerif(2)/b/n/10 Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας. 
 \TU/FreeSerif(2)/m/n/10 Εμπιστεύεται την κεφαλίδα αιτήματος
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 6214--6216
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 6244--6246
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 6217
+Overfull \hbox (19.82352pt too wide) detected at line 6247
 []\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6273--6275
+Underfull \hbox (badness 10000) in paragraph at lines 6303--6305
 [][][]\TU/FreeMono(2)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6283--6285
+Underfull \hbox (badness 10000) in paragraph at lines 6313--6315
 []\TU/FreeSerif(2)/m/n/10 ενεργοποιεί CORS για αυτή την προέλευση
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6305--6307
+Underfull \hbox (badness 10000) in paragraph at lines 6335--6337
 [][][]\TU/FreeMono(2)/m/n/10 rate[]limit[]burst
  []
 
-[45]
-Underfull \hbox (badness 10000) in paragraph at lines 6341--6343
+[46]
+Underfull \hbox (badness 10000) in paragraph at lines 6371--6373
 []\TU/FreeSerif(2)/m/n/10 Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθού
 ν μέσω μεταβλητής περιβάλλοντος
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6341--6343
+Underfull \hbox (badness 10000) in paragraph at lines 6371--6373
 \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(2)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(
 2)/m/n/10 , \TU/FreeMono(2)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(2)/m/n/10 , \TU/F
 reeMono(2)/m/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(2)/m/n/1
 0 BLUNDERDB_LOG_LEVEL\TU/FreeSerif(2)/m/n/10 ,
  []
 
-[46] [47]
-Underfull \hbox (badness 7595) in paragraph at lines 6495--6497
+[47] [48]
+Underfull \hbox (badness 7595) in paragraph at lines 6525--6527
 []\TU/FreeSerif(2)/m/n/10 scope tenant προορισμού (υποχρεωτικό εκτός από
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6517--6519
+Underfull \hbox (badness 10000) in paragraph at lines 6547--6549
 [][][]\TU/FreeMono(2)/m/n/10 on[]conflict
  []
 
-[48]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 6626--6628
-[]\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
- []
-
-
-Overfull \hbox (9.46619pt too wide) detected at line 6629
-[]\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
- []
-
 [49]
-Underfull \hbox (badness 10000) in paragraph at lines 6922--6924
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 6656--6658
+[]\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (9.46619pt too wide) detected at line 6659
+[]\TU/FreeMono(2)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+[50]
+Underfull \hbox (badness 10000) in paragraph at lines 6952--6954
 []\TU/FreeSerif(2)/m/n/10 Πολύ καλό για
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6943--6945
+Underfull \hbox (badness 10000) in paragraph at lines 6973--6975
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6946
+Underfull \hbox (badness 10000) detected at line 6976
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6954--6956
+Underfull \hbox (badness 10000) in paragraph at lines 6984--6986
 []\TU/FreeSerif(2)/m/n/10 Λάθη του παίκτη 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6954--6956
+Underfull \hbox (badness 10000) in paragraph at lines 6984--6986
 \TU/FreeSerif(2)/m/n/10 μεγαλύτερα από 40
  []
 
 
-Underfull \hbox (badness 5288) in paragraph at lines 6982--6984
+Underfull \hbox (badness 5288) in paragraph at lines 7012--7014
 []\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7012--7014
+Underfull \hbox (badness 10000) in paragraph at lines 7042--7044
 []\TU/FreeSerif(2)/m/n/10 Φράγμα εναντίον
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7044--7046
+Underfull \hbox (badness 10000) in paragraph at lines 7074--7076
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7044--7046
+Underfull \hbox (badness 10000) in paragraph at lines 7074--7076
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7047
+Underfull \hbox (badness 10000) detected at line 7077
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7047
+Underfull \hbox (badness 10000) detected at line 7077
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
-[50] [51]
+[51] [52]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
- [52]
+ [53]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
 File: win1.png Graphic file (type bmp)
 <win1.png>
- [53] [54]
+ [54] [55]
 File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
@@ -1600,26 +1600,26 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [55] [56] [57] [58] [59] [60] [61] [62] [63] [64]
-[65]
-Underfull \hbox (badness 7522) in paragraph at lines 8012--8014
+ [56] [57] [58] [59] [60] [61] [62] [63] [64] [65]
+[66]
+Underfull \hbox (badness 7522) in paragraph at lines 8042--8044
 []\TU/FreeMono(2)/m/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
 
-[66]
-Κεφάλαιο 3.
-[67
-
-] [68
+[67] [68
 
 ]
-Κεφάλαιο 4.
+Κεφάλαιο 3.
 [69] [70
 
 ]
+Κεφάλαιο 4.
+[71] [72
+
+]
 Κεφάλαιο 5.
-(./blunderdb.ind) [71] (./blunderdb.aux)
+(./blunderdb.ind) [73] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1636,4 +1636,4 @@ Here is how much of TeX's memory you used:
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3356b,667s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (75 pages).
+Output written on blunderdb.pdf (77 pages).

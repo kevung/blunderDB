@@ -276,6 +276,22 @@
 <p>Ο πίνακας <strong>Αναζήτησης</strong> (<em>CTRL-F</em> ή <em>TAB</em>) επιτρέπει το φιλτράρισμα των θέσεων σύμφωνα με κριτήρια που συνδυάζονται ελεύθερα: δομή πουλιών, τύπος απόφασης κύβου, μέγεθος σφάλματος, ημερομηνίες, ετικέτες κ.λπ. Το πλήκτρο <em>TAB</em> ανοίγει ταυτόχρονα τον πίνακα αναζήτησης και τον επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς αναζήτηση πάνω στο ταμπλό.</p>
 <p>Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> ακολουθούμενη από φίλτρα (π.χ.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου <em>Search in current results</em> για την ίδια λειτουργία.</p>
 <p>Το πάνελ προσφέρει έναν ρητό έλεγχο του <strong>τύπου απόφασης</strong> που αναζητείται: <em>Αδιάφορο</em> (κανένα φίλτρο), <em>Πιόνια</em> (αποφάσεις κίνησης) ή <em>Κύβος</em> (αποφάσεις κύβου). Όταν είναι επιλεγμένο το <em>Κύβος</em>, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: <em>Όλα</em>, <em>Διπλασιασμός / Όχι</em> (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή <em>Αποδοχή / Πάσο</em> (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία <em>Αποδοχή / Πάσο</em>, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.</p>
+<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
+le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu’elle n’existe que dans les
+fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
+l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.</p>
+</div>
 <p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
 selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au

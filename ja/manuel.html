@@ -276,6 +276,22 @@
 <p><strong>検索</strong> パネル（<em>CTRL-F</em> または <em>TAB</em>）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。<em>TAB</em> キーは検索パネルとポジションエディターを同時に開き、ボード上で検索するチェッカーの構造を定義できます。</p>
 <p>現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドを使用します（例：<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。検索パネルには同じ機能のための <em>Search in current results</em> チェックボックスも用意されています。</p>
 <p>このパネルでは、検索する <strong>判断タイプ</strong> を明示的に制御できます。 <em>指定なし</em> （フィルタなし）、 <em>チェッカー</em> （チェッカーの判断）、または <em>キューブ</em> （キューブの判断）です。 <em>キューブ</em> を選択すると、2つ目のリストでサブタイプを指定できます。 <em>すべて</em> 、 <em>ダブル / ノーダブル</em> （手番のプレイヤーがダブルするかを判断する）、または <em>テイク / パス</em> （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 <em>テイク / パス</em> モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。</p>
+<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
+le logiciel d'origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l'import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>Le marquage n'est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu'elle n'existe que dans les
+fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
+l'import détecte le doublon et n'ajoute rien d'autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.</p>
+</div>
 <p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
 selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au

@@ -1175,6 +1175,25 @@ To refine a search among the currently filtered positions, use the \sphinxcode{\
 The panel offers an explicit control over the \sphinxstylestrong{decision type} searched for: \sphinxstyleemphasis{Indifferent} (no filter), \sphinxstyleemphasis{Checker} (checker decisions) or \sphinxstyleemphasis{Cube} (cube decisions). When \sphinxstyleemphasis{Cube} is selected, a second list specifies the sub\sphinxhyphen{}type: \sphinxstyleemphasis{All}, \sphinxstyleemphasis{Double / No double} (the player on roll has to decide whether to double) or \sphinxstyleemphasis{Take / Pass} (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In \sphinxstyleemphasis{Take / Pass} mode, the cube is shown in the centre of the board at the offered value; that value remains editable.
 
 \sphinxAtStartPar
+Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
+le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l’import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le marquage n’est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu’elle n’existe que dans les
+fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
+l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
 Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
 selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
@@ -2996,6 +3015,17 @@ i
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position was imported on its own, not brought in by a match import.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+fl
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d’origine, lors de l’import d’un match eXtreme Gammon.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

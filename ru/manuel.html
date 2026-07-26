@@ -276,6 +276,22 @@
 <p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
 <p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Search in current results</em> для той же функциональности.</p>
 <p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
+<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
+le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu’elle n’existe que dans les
+fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
+l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.</p>
+</div>
 <p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
 selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au

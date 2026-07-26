@@ -306,6 +306,21 @@ synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met
 jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
+Le filtre **Marquée** retient les positions que vous avez marquées (*flag*) dans
+le logiciel d'origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier ``.xg`` ; blunderDB la lit à l'import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.
+
+.. note:: Le marquage n'est pas rétroactif : les matchs déjà présents dans la
+   base ne portent pas cette information, puisqu'elle n'existe que dans les
+   fichiers source. Il suffit de réimporter le fichier ``.xg`` concerné —
+   l'import détecte le doublon et n'ajoute rien d'autre que les marques, sans
+   toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+   être posé ni être retiré depuis blunderDB : pour une liste de travail
+   temporaire, utilisez plutôt une collection.
+
 Le filtre **Commentaire** interroge les commentaires attachés aux positions
 selon trois modes exclusifs. *contient le texte* recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par ``;``, au

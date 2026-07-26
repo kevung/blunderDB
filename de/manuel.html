@@ -276,6 +276,22 @@
 <p>Das Panel <strong>Suche</strong> (<em>CTRL-F</em> oder <em>TAB</em>) ermöglicht es, Stellungen nach frei kombinierbaren Kriterien zu filtern: Steinstruktur, Typ der Doppler-Entscheidung, Fehlergröße, Datum, Tags usw. Die Taste <em>TAB</em> öffnet gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu suchende Steinstruktur direkt auf dem Brett definiert werden kann.</p>
 <p>Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl <code class="docutils literal notranslate"><span class="pre">ss</span></code> gefolgt von Filtern (z. B.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen <em>Search in current results</em>.</p>
 <p>Das Panel bietet eine explizite Steuerung des gesuchten <strong>Entscheidungstyps</strong>: <em>Egal</em> (kein Filter), <em>Zug</em> (Zugentscheidungen) oder <em>Dopplung</em> (Doppler-Entscheidungen). Wenn <em>Dopplung</em> ausgewählt ist, gibt eine zweite Liste den Untertyp an: <em>Alle</em>, <em>Dopplung / Kein Doppel</em> (der Spieler am Zug muss über das Doppeln entscheiden) oder <em>Annehmen / Aufgeben</em> (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus <em>Annehmen / Aufgeben</em> wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.</p>
+<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
+le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
+enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
+et la conserve. Une décision de videau marquée donne deux positions marquées, le
+double et la prise/passe, blunderDB scindant en deux ce que le fichier source
+enregistre comme une seule décision.</p>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
+base ne portent pas cette information, puisqu’elle n’existe que dans les
+fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
+l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
+toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
+être posé ni être retiré depuis blunderDB : pour une liste de travail
+temporaire, utilisez plutôt une collection.</p>
+</div>
 <p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
 selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
 dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au

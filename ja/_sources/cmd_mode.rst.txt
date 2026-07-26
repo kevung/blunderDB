@@ -135,6 +135,7 @@ c'est-à-dire après le début de commande ``s``.
    "nc", "La position est sans contact."
    "M", "La position ou celle miroir vérifie les filtres."
    "i", "La position a été importée seule, et non apportée par l'import d'un match."
+   "fl", "La position a été marquée (*flag*) dans le logiciel d'origine, lors de l'import d'un match eXtreme Gammon."
    "x", "La position ne contient aucun pion de la structure d'exclusion (onglet « Except » du panneau de recherche)."
    "p>x", "Le joueur a au moins x pips de retard à la course."
    "p<x", "Le joueur a au plus x pips de retard à la course."

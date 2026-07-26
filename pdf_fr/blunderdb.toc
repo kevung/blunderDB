@@ -26,7 +26,7 @@
 \contentsline {subsection}{\numberline {2.2.15}Panneau Tournois}{12}{subsection.2.2.15}%
 \contentsline {subsection}{\numberline {2.2.16}Panneau Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introduction}{12}{subsubsection*.7}%
-\contentsline {subsubsection}{Ouverture du panneau}{12}{subsubsection*.8}%
+\contentsline {subsubsection}{Ouverture du panneau}{13}{subsubsection*.8}%
 \contentsline {subsubsection}{Barre de filtre}{13}{subsubsection*.9}%
 \contentsline {paragraph}{Perspective joueur}{13}{paragraph*.10}%
 \contentsline {paragraph}{Filtres disponibles}{13}{paragraph*.11}%
@@ -35,8 +35,8 @@
 \contentsline {paragraph}{Cartes de niveau}{14}{paragraph*.14}%
 \contentsline {paragraph}{PR glissant sur N dernières décisions}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{14}{paragraph*.16}%
-\contentsline {subsubsection}{Onglet Progression}{14}{subsubsection*.17}%
-\contentsline {paragraph}{Courbe par tournoi}{14}{paragraph*.18}%
+\contentsline {subsubsection}{Onglet Progression}{15}{subsubsection*.17}%
+\contentsline {paragraph}{Courbe par tournoi}{15}{paragraph*.18}%
 \contentsline {paragraph}{Scatter plot par match}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Onglet Erreurs}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Répartition par action de videau}{15}{paragraph*.21}%
@@ -51,7 +51,7 @@
 \contentsline {section}{\numberline {2.3}Guide utilisateur}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Créer une nouvelle base de données}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Ouvrir une base de donnée existante}{17}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Importer et fusionner une base de données}{17}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Importer et fusionner une base de données}{18}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Editer une position}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Ajouter une position à la base de données}{18}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Etiqueter une position}{19}{subsection.2.3.6}%

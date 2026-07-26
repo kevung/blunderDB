@@ -27,7 +27,7 @@
 \contentsline {subsection}{\numberline {2.2.15}Panel de Torneos}{12}{subsection.2.2.15}%
 \contentsline {subsection}{\numberline {2.2.16}Panel Stats}{12}{subsection.2.2.16}%
 \contentsline {subsubsection}{Introducción}{12}{subsubsection*.7}%
-\contentsline {subsubsection}{Apertura del panel}{12}{subsubsection*.8}%
+\contentsline {subsubsection}{Apertura del panel}{13}{subsubsection*.8}%
 \contentsline {subsubsection}{Barra de filtro}{13}{subsubsection*.9}%
 \contentsline {paragraph}{Perspectiva del jugador}{13}{paragraph*.10}%
 \contentsline {paragraph}{Filtros disponibles}{13}{paragraph*.11}%
@@ -36,8 +36,8 @@
 \contentsline {paragraph}{Tarjetas de nivel}{14}{paragraph*.14}%
 \contentsline {paragraph}{PR deslizante sobre las últimas N decisiones}{14}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{14}{paragraph*.16}%
-\contentsline {subsubsection}{Pestaña Progresión}{14}{subsubsection*.17}%
-\contentsline {paragraph}{Curva por torneo}{14}{paragraph*.18}%
+\contentsline {subsubsection}{Pestaña Progresión}{15}{subsubsection*.17}%
+\contentsline {paragraph}{Curva por torneo}{15}{paragraph*.18}%
 \contentsline {paragraph}{Gráfico de dispersión por partida}{15}{paragraph*.19}%
 \contentsline {subsubsection}{Pestaña Errores}{15}{subsubsection*.20}%
 \contentsline {paragraph}{Reparto por acción de cubo}{15}{paragraph*.21}%
@@ -52,7 +52,7 @@
 \contentsline {section}{\numberline {2.3}Guía del usuario}{17}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Crear una nueva base de datos}{17}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Abrir una base de datos existente}{17}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Importar y fusionar una base de datos}{17}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Importar y fusionar una base de datos}{18}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Editar una posición}{18}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Añadir una posición a la base de datos}{18}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Etiquetar una posición}{19}{subsection.2.3.6}%
