@@ -307,7 +307,28 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	}
 	defer rows.Close()
 
-	var positions []domain.Position
+	// Drain the cursor before filtering. A cursor holds a pooled connection
+	// until it is exhausted, and the Go-side predicates below open queries of
+	// their own (comment text, creation date, played-move error, take/pass cube
+	// action). Running them inside the scan loop therefore needs a second
+	// connection for the whole duration of the scan — which an ":memory:"
+	// database can never provide, being pinned to exactly one connection
+	// (ConfigurePool): the nested query waits for a connection only the cursor
+	// can release, and the cursor only advances once the nested query answers.
+	// A file or PostgreSQL pool merely postpones the same shape: once enough
+	// concurrent searches each hold a cursor, every connection is a cursor
+	// waiting for a connection that will never come.
+	//
+	// Buffering costs nothing here: find already materialises its whole result
+	// set, so these rows were going to be held in memory regardless.
+	type scannedRow struct {
+		pos domain.Position
+		ana *domain.PositionAnalysis
+		// is_cube_response, read from its own column rather than the position
+		// blob, so it has to travel with the row to the filter phase.
+		isCubeResponse bool
+	}
+	var scanned []scannedRow
 
 	for rows.Next() {
 		var posID int64
@@ -349,6 +370,21 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			}
 		}
 
+		scanned = append(scanned, scannedRow{pos: position, ana: ana, isCubeResponse: pICR.Int64 == 1})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: search rows: %w", err)
+	}
+	// Hand the connection back before the predicates start querying.
+	if err := rows.Close(); err != nil {
+		return nil, fmt.Errorf("sqlite: search rows close: %w", err)
+	}
+
+	var positions []domain.Position
+
+	for _, row := range scanned {
+		position, ana := row.pos, row.ana
+
 		matchesGoFilters := func(pos domain.Position) bool {
 			if hasBoardFilter(effInclude.Board) {
 				if !useSQLFilters || bitboardTight {
@@ -382,7 +418,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 				// Cube sub-type (take/pass vs double/no-double) lives in the
 				// is_cube_response column, scanned separately above.
 				if f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
-					isResp := pICR.Int64 == 1
+					isResp := row.isCubeResponse
 					if f.CubeResponseFilter == "double" && isResp {
 						return false
 					}
@@ -567,9 +603,6 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 				}
 			}
 		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("sqlite: search rows: %w", err)
 	}
 
 	return positions, nil

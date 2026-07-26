@@ -299,7 +299,26 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 	}
 	defer rows.Close()
 
-	var positions []domain.Position
+	// Drain the cursor before filtering. A cursor holds a pooled connection
+	// until it is exhausted, and the Go-side predicates below open queries of
+	// their own (comment text, creation date, played-move error, take/pass cube
+	// action). Running them inside the scan loop therefore needs a second
+	// connection for the whole duration of the scan, so once enough concurrent
+	// searches each hold a cursor, every connection in the pool is a cursor
+	// waiting for a connection that will never come. (The same shape deadlocks
+	// the SQLite backend outright on an ":memory:" database, which is pinned to
+	// a single connection.)
+	//
+	// Buffering costs nothing here: find already materialises its whole result
+	// set, so these rows were going to be held in memory regardless.
+	type scannedRow struct {
+		pos domain.Position
+		ana *domain.PositionAnalysis
+		// is_cube_response, read from its own column rather than the position
+		// state blob, so it has to travel with the row to the filter phase.
+		isCubeResponse bool
+	}
+	var scanned []scannedRow
 
 	for rows.Next() {
 		var posID int64
@@ -330,6 +349,19 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 				ana = &a
 			}
 		}
+
+		scanned = append(scanned, scannedRow{pos: position, ana: ana, isCubeResponse: pICR != nil && *pICR})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: search rows: %w", err)
+	}
+	// Hand the connection back before the predicates start querying.
+	rows.Close()
+
+	var positions []domain.Position
+
+	for _, row := range scanned {
+		position, ana := row.pos, row.ana
 
 		matchesGoFilters := func(pos domain.Position) bool {
 			if hasBoardFilter(effInclude.Board) {
@@ -364,7 +396,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 				// Cube sub-type (take/pass vs double/no-double) lives in the
 				// is_cube_response column, scanned separately above.
 				if f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
-					isResp := pICR != nil && *pICR
+					isResp := row.isCubeResponse
 					if f.CubeResponseFilter == "double" && isResp {
 						return false
 					}
@@ -549,9 +581,6 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 				}
 			}
 		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("postgres: search rows: %w", err)
 	}
 
 	return positions, nil
