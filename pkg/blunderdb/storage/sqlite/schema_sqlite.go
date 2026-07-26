@@ -42,7 +42,8 @@ var schemaStatements = []string{
 		is_cube_response  INTEGER NOT NULL DEFAULT 0,
 		-- Provenance: set when the position entered the database on its own
 		-- rather than inside a match. Sticky — see ADR-0001.
-		individually_imported INTEGER NOT NULL DEFAULT 0
+		individually_imported INTEGER NOT NULL DEFAULT 0,
+		flagged INTEGER NOT NULL DEFAULT 0
 	)`,
 	`CREATE TABLE IF NOT EXISTS analysis (
 		id                          INTEGER PRIMARY KEY,
@@ -239,6 +240,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_cube_response  ON position(decision_type, is_cube_response)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_individual     ON position(individually_imported) WHERE individually_imported = 1`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_flagged        ON position(flagged) WHERE flagged = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,

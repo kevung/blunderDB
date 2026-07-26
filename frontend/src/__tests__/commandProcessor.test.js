@@ -288,6 +288,19 @@ describe('parseFilters', () => {
         expect(result.searchText).toBe("t'hello'");
     });
 
+    // -- source-tool study mark ----------------------------------------------
+    test('fl selects positions flagged in the source tool', () => {
+        expect(parseFilters(['fl'], 's fl').flaggedFilter).toBe(true);
+    });
+
+    test('no fl token leaves the filter off', () => {
+        expect(parseFilters(['p>30'], 's p>30').flaggedFilter).toBe(false);
+    });
+
+    test('the fl token is exact, so it does not swallow other f-words', () => {
+        expect(parseFilters(['flop'], 's flop').flaggedFilter).toBe(false);
+    });
+
     // -- comment presence ----------------------------------------------------
     test('co asks for positions carrying a comment', () => {
         expect(parseFilters(['co'], 's co').commentFilter).toBe('has');

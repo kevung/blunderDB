@@ -29,6 +29,17 @@ _Avoid_: manual position, hand-added position, favourite, marked position
 A Position reachable from a Match through the `move` → `game` → `match` chain. Not the
 complement of "individually imported": a Position can be both.
 
+**Flagged Position**:
+A Position the user marked as worth studying *in the tool the match came from* — today
+only eXtreme Gammon, which records it per move. Like the individually-imported property it
+is sticky, never part of the Zobrist hash, and never set or cleared by a gesture inside
+blunderDB: it is a fact of the source file. So a Position flagged in one Match stays flagged
+even when a later import brings the same Position in unflagged.
+A flagged cube decision marks *both* Positions blunderDB derives from it — the double and
+the take/pass — because the source records one decision and blunderDB splits it in two.
+_Avoid_: bookmark, starred, favourite — a Flagged Position is durable and read-only; a
+transient "come back to this" list is a Collection.
+
 **Orphan purge**:
 The sweep that runs when a Match is deleted: each Position the Match referenced is removed
 unless something else still holds it. What "holds" a Position is a deliberate list — another

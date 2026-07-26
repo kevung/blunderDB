@@ -289,10 +289,14 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 //     A note the user wrote on a match position is therefore still lost when the
 //     match is deleted — to keep such a position, put it in a collection or save
 //     it, which marks it individually imported.
+//   - the user flagged it for study in the source tool: same reasoning as
+//     individually_imported — deleting a match must not delete the very
+//     positions the `fl` filter exists to surface (docs/adr/0006).
 const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = $1)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = $1)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = $1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = $1 AND individually_imported)`
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = $1 AND individually_imported)
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = $1 AND flagged)`
 
 // DeleteCascade removes a match and all of its games, moves and move analyses
 // (via ON DELETE CASCADE), then deletes any position the match referenced that

@@ -282,7 +282,8 @@
             "creationDate": "作成日",
             "matchesTournaments": "マッチとトーナメント",
             "player": "プレイヤー",
-            "individuallyImported": "個別にインポート"
+            "individuallyImported": "個別にインポート",
+            "flagged": "フラグ付き"
         },
         "filterGroups": {
             "display": "表示",

@@ -3,6 +3,7 @@ package ingest
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -40,7 +41,8 @@ type MoveGraph struct {
 // WriteResult summarises a WriteMatch call.
 type WriteResult struct {
 	MatchID        int64
-	Skipped        bool // true when an exact same-format duplicate was found (nothing written)
+	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
+	FlagsApplied   int  // source-tool study marks raised on already-stored positions of a skipped duplicate
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	SavedPositions int
 }
@@ -72,7 +74,18 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			return res, err
 		}
 		if found {
-			return WriteResult{MatchID: id, Skipped: true}, nil
+			// Still deliver the source-tool study marks. A flag added in XG
+			// after the match was imported does not change the match hash (it
+			// is computed from the play, not the file), so without this the
+			// mark could only ever reach the database by deleting the match and
+			// importing it again — which purges positions and destroys the
+			// comments the user wrote on them. Save ORs the flag, so this can
+			// only ever add (docs/adr/0006).
+			n, err := applyFlags(ctx, tx, scope, g)
+			if err != nil {
+				return res, err
+			}
+			return WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}, nil
 		}
 	}
 
@@ -193,4 +206,28 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 		}
 	}
 	return posID, nil
+}
+
+// applyFlags raises the source-tool study mark on the positions of a graph
+// whose match is already stored, and returns how many it touched.
+//
+// It is the one thing an exact duplicate still writes. Only flagged positions
+// are saved — an unflagged one would be a pure no-op — and PositionStore.Save
+// deduplicates by Zobrist hash and ORs the mark, so an existing position is
+// updated in place and never duplicated or cleared.
+func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph) (int, error) {
+	n := 0
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			pos := g.Games[gi].Moves[mi].Position
+			if pos == nil || !pos.Flagged {
+				continue
+			}
+			if _, err := tx.Positions().Save(ctx, scope, pos); err != nil {
+				return n, fmt.Errorf("ingest: apply flag to duplicate match position: %w", err)
+			}
+			n++
+		}
+	}
+	return n, nil
 }

@@ -363,6 +363,7 @@ describe('filterTokenHint', () => {
     });
 
     test('flag filters show the bare token', () => {
+        expect(filterTokenHint('Flagged')).toBe('fl');
         expect(filterTokenHint('No Contact')).toBe('nc');
         expect(filterTokenHint('Include Cube')).toBe('cube');
         expect(filterTokenHint('Mirror Position')).toBe('M');

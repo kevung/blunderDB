@@ -1460,6 +1460,32 @@ func (d *Database) migrate_2_12_0_to_2_13_0() error {
 	return nil
 }
 
+// migrate_2_13_0_to_2_14_0 adds position.flagged (docs/adr/0006): the mark the
+// user put on a position in the tool the match came from — today only eXtreme
+// Gammon, which records it per move.
+//
+// There is deliberately NO backfill. Unlike individually_imported, which could
+// be reconstructed from the move graph, nothing in an existing database records
+// a source-file flag: the information only exists in the .xg files themselves.
+// Existing positions therefore start unflagged and gain the mark when their
+// match is imported again — which is why ingest applies flags even to an exact
+// duplicate that is otherwise skipped.
+func (d *Database) migrate_2_13_0_to_2_14_0() error {
+	_, _ = d.db.Exec(`ALTER TABLE position ADD COLUMN flagged INTEGER NOT NULL DEFAULT 0`) // may already exist
+
+	if _, err := d.db.Exec(
+		`CREATE INDEX IF NOT EXISTS idx_position_flagged ON position(flagged) WHERE flagged = 1`); err != nil {
+		return fmt.Errorf("migrate 2.14.0 create index: %w", err)
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.14.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.14.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.13.0", "to", "2.14.0")
+	return nil
+}
+
 // runMigrationChain reads the recorded schema version and applies the
 // sequential upgrade steps up to the current DatabaseVersion, then verifies
 // the expected tables and metadata keys exist. It is shared by the GUI/CLI
@@ -1951,6 +1977,15 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			return fmt.Errorf("migration 2.12.0→2.13.0 failed: %w", err)
 		}
 		dbVersion = "2.13.0"
+	}
+
+	// Auto-migrate from 2.13.0 to 2.14.0
+	// Adds position.flagged (source-tool study mark). No backfill is possible.
+	if dbVersion == "2.13.0" {
+		if err := d.migrate_2_13_0_to_2_14_0(); err != nil {
+			return fmt.Errorf("migration 2.13.0→2.14.0 failed: %w", err)
+		}
+		dbVersion = "2.14.0"
 	}
 
 	// Ensure all required tables and columns exist.

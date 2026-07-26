@@ -282,7 +282,8 @@
             "creationDate": "Дата создания",
             "matchesTournaments": "Матчи и турниры",
             "player": "Игрок",
-            "individuallyImported": "Импортирована отдельно"
+            "individuallyImported": "Импортирована отдельно",
+            "flagged": "Отмеченная"
         },
         "filterGroups": {
             "display": "Отображение",

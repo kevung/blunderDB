@@ -268,6 +268,9 @@ export function parseFilters(filters, command) {
     // Positions the user imported on their own rather than inside a match.
     // An exact match, so it does not collide with the id<ids> token.
     const individuallyImportedFilter = filters.includes('i');
+    // Positions the user marked for study in the tool the match came from
+    // (eXtreme Gammon flags). An exact match, like 'i'.
+    const flaggedFilter = filters.includes('fl');
     // 'x' marks that an exclusion ("Sauf") structure is active. The structure
     // itself is carried by the exclude board (store), like the include structure.
     const excludeStructure = filters.includes('x');
@@ -359,6 +362,7 @@ export function parseFilters(filters, command) {
         exceptDiceFilter,
         mirrorPositionFilter,
         individuallyImportedFilter,
+        flaggedFilter,
         excludeStructure,
         pipCountFilter,
         winRateFilter,

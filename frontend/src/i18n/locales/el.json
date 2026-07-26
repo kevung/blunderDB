@@ -282,7 +282,8 @@
             "creationDate": "Ημερομηνία δημιουργίας",
             "matchesTournaments": "Αγώνες & Τουρνουά",
             "player": "Παίκτης",
-            "individuallyImported": "Μεμονωμένη εισαγωγή"
+            "individuallyImported": "Μεμονωμένη εισαγωγή",
+            "flagged": "Επισημασμένη"
         },
         "filterGroups": {
             "display": "Εμφάνιση",

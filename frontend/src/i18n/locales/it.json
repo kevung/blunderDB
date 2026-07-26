@@ -282,7 +282,8 @@
             "creationDate": "Data di creazione",
             "matchesTournaments": "Match e tornei",
             "player": "Giocatore",
-            "individuallyImported": "Importata singolarmente"
+            "individuallyImported": "Importata singolarmente",
+            "flagged": "Contrassegnata"
         },
         "filterGroups": {
             "display": "Visualizzazione",

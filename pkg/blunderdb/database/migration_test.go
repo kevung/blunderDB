@@ -1822,3 +1822,53 @@ func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
 		t.Errorf("a position a move references came from a match, got individually_imported=%d", got)
 	}
 }
+
+// TestMigrate_2_13_0_to_2_14_0_Flagged checks that an existing database gains
+// position.flagged. There is deliberately nothing to backfill: unlike
+// individually_imported, no signal inside an already-imported database records a
+// source-file mark, so every existing position starts unflagged and only gains
+// the mark when its match is imported again (docs/adr/0006).
+func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test_v2130.db")
+	createOldDatabase(t, dbPath, "2.13.0")
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	if _, err := raw.Exec(`ALTER TABLE position ADD COLUMN individually_imported INTEGER NOT NULL DEFAULT 0`); err != nil {
+		t.Fatalf("prepare v2.13.0 position table: %v", err)
+	}
+	res, err := raw.Exec(`INSERT INTO position (state) VALUES ('{}')`)
+	if err != nil {
+		t.Fatalf("insert position: %v", err)
+	}
+	posID, _ := res.LastInsertId()
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.13.0 database: %v", err)
+	}
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !columnExists(d.db, "position", "flagged") {
+		t.Fatal("position.flagged should exist after migration")
+	}
+
+	var flagged int
+	if err := d.db.QueryRow(`SELECT flagged FROM position WHERE id = ?`, posID).Scan(&flagged); err != nil {
+		t.Fatalf("read flagged: %v", err)
+	}
+	if flagged != 0 {
+		t.Errorf("migration must not invent marks: got flagged=%d, want 0", flagged)
+	}
+}
