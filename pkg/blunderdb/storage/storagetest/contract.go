@@ -1546,14 +1546,19 @@ func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
 		t.Errorf("unfiltered search returned %d positions, want 3", len(all))
 	}
 
-	// Combining CommentFilter with SearchText is deliberately NOT asserted here.
-	// The content filter is evaluated in the Go phase, which issues a query per
-	// candidate row while the main cursor is still open; against the :memory:
-	// database this suite uses — pinned to a single connection by
-	// sqlite.ConfigurePool — that second query waits forever on a connection the
-	// cursor holds. The deadlock predates this filter (SearchText, DateFilter
-	// and MoveErrorFilter all take that path) and is tracked separately.
+	// The presence and content filters are independent AND clauses, so a
+	// contradictory pair is answered with an empty set rather than an error or
+	// a precedence rule.
 	//
-	// CommentFilter itself is immune precisely because it is a SQL clause rather
-	// than a Go predicate, which is why it is written that way.
+	// These two also stand as the regression guard for the cursor deadlock: they
+	// are the only assertions in the suite that reach a Go-phase predicate
+	// (SearchText), which used to query the database while the search cursor was
+	// still open and hung forever against this suite's single-connection
+	// :memory: database.
+	if got := find(domain.SearchFilters{CommentFilter: "none", SearchText: `t"blunder"`}); len(got) != 0 {
+		t.Errorf("none + content filter returned %v, want nothing", got)
+	}
+	if got := find(domain.SearchFilters{CommentFilter: "has", SearchText: `t"blunder"`}); len(got) != 1 || got[0] != commented {
+		t.Errorf("has + matching content filter returned %v, want exactly [%d]", got, commented)
+	}
 }
