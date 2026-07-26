@@ -37,6 +37,7 @@ func MapXG(path string) (*MatchGraph, error) {
 	}
 
 	rawCubeInfo := parseRawCubeInfo(segments)
+	rawFlags := parseRawFlags(segments)
 
 	graph := &MatchGraph{
 		Match: domain.Match{
@@ -64,7 +65,7 @@ func MapXG(path string) (*MatchGraph, error) {
 				PointsWon:    game.PointsWon,
 				MoveCount:    len(game.Moves),
 			},
-			Moves: mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo),
+			Moves: mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawFlags),
 		}
 		graph.Games = append(graph.Games, gg)
 	}
@@ -115,11 +116,71 @@ func parseRawCubeInfo(segments []*xgparser.Segment) map[string]*rawCubeAction {
 	return rawCubeInfo
 }
 
+// flagKey identifies one decision inside the parsed match: a game index and the
+// index of the move within that game, both 0-based and numbered exactly as
+// xgparser.ParseXG numbers them.
+type flagKey struct {
+	game int
+	move int
+}
+
+// parseRawFlags replays the XG game-file segments to recover the "flagged"
+// marks the user set in eXtreme Gammon, which the lightweight xgparser.Match
+// drops on conversion (neither Move, CheckerMove nor CubeMove carries them).
+//
+// The keys mirror ParseXG's own record→Move mapping so they line up with
+// Game.Moves index-for-index: it appends one Move per MoveEntry and one per
+// CubeEntry, skipping only the Double == -2 entries that mark initial positions.
+// Reproducing that rule exactly is what makes the index valid; any divergence
+// would silently attach a flag to the wrong decision.
+//
+// Games are numbered by HeaderGameEntry but only reach Match.Games on their
+// FooterGameEntry, so an unfinished trailing game would shift the numbering. It
+// cannot: an interrupted game is the last one, so every key it would produce is
+// simply out of range and ignored by the caller.
+func parseRawFlags(segments []*xgparser.Segment) map[flagKey]bool {
+	flags := make(map[flagKey]bool)
+	gameIdx := -1
+	moveIdx := 0
+	inGame := false
+	for _, seg := range segments {
+		if seg.Type != xgparser.SegmentXGGameFile {
+			continue
+		}
+		records, _ := xgparser.ParseGameFile(seg.Data, -1)
+		for _, rec := range records {
+			switch r := rec.(type) {
+			case *xgparser.HeaderGameEntry:
+				gameIdx++
+				moveIdx = 0
+				inGame = true
+			case *xgparser.CubeEntry:
+				if inGame && r.Double != -2 {
+					if r.FlaggedDouble {
+						flags[flagKey{gameIdx, moveIdx}] = true
+					}
+					moveIdx++
+				}
+			case *xgparser.MoveEntry:
+				if inGame {
+					if r.Flagged {
+						flags[flagKey{gameIdx, moveIdx}] = true
+					}
+					moveIdx++
+				}
+			case *xgparser.FooterGameEntry:
+				inGame = false
+			}
+		}
+	}
+	return flags
+}
+
 // mapGameMoves replicates database.importXGGamesAndMoves' per-move loop:
 // associating raw cube records with moves, carrying a skipped "No Double"
 // comment forward to the next checker move, and flattening each XG move into
 // the one or two MoveGraphs it produces.
-func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction) []MoveGraph {
+func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, rawFlags map[flagKey]bool) []MoveGraph {
 	var out []MoveGraph
 
 	cubeIdx := 0
@@ -161,7 +222,19 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 			}
 		}
 
-		out = append(out, mapMove(int32(moveIdx), &move, game, matchLength, rawCube)...)
+		mgs := mapMove(int32(moveIdx), &move, game, matchLength, rawCube)
+		// A flagged decision marks every position it yields. For a checker move
+		// that is one position; for a Double/Take it is two — the double and the
+		// take/pass — because XG records one decision where blunderDB stores two
+		// sides of it, and the user marked the moment, not one side of it.
+		if rawFlags[flagKey{gameIdx, moveIdx}] {
+			for i := range mgs {
+				if mgs[i].Position != nil {
+					mgs[i].Position.Flagged = true
+				}
+			}
+		}
+		out = append(out, mgs...)
 	}
 
 	return out

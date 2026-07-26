@@ -61,6 +61,12 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		where.WriteString(" AND p.individually_imported")
 	}
 
+	// The source-tool study mark is likewise a property of the row, so it too
+	// stays in SQL even in mirror search.
+	if f.FlaggedFilter {
+		where.WriteString(" AND p.flagged")
+	}
+
 	// Whether a position carries a comment is likewise a property of the row and
 	// not of the board, so this too stays in SQL even in mirror search. The
 	// subquery carries tenant_id as well as position_id: it is what
@@ -288,6 +294,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
+		p.individually_imported, p.flagged,
 		a.id, a.data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
@@ -326,12 +333,14 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2 *int64
 		var pHJ, pHB *bool
 		var pICR *bool
+		var pII, pFlag *bool
 		var anaID *int64
 		var anaData []byte
 
 		if err := rows.Scan(
 			&posID, &posState,
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pICR,
+			&pII, &pFlag,
 			&anaID, &anaData,
 		); err != nil {
 			return nil, fmt.Errorf("postgres: search scan: %w", err)
@@ -341,6 +350,12 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 			derefInt(pDT), derefInt(pPOR), derefInt(pD1), derefInt(pD2),
 			derefInt(pCV), derefInt(pCO), derefInt(pS1), derefInt(pS2),
 			boolToIntPtr(pHJ), boolToIntPtr(pHB))
+		// Row properties rather than board identity, so they are applied on top
+		// of the reconstructed position (ADR-0001, docs/adr/0006). Without this
+		// a searched position always came back unmarked, unlike the same
+		// position read through PositionStore.Load.
+		position.IndividuallyImported = pII != nil && *pII
+		position.Flagged = pFlag != nil && *pFlag
 
 		var ana *domain.PositionAnalysis
 		if anaID != nil && len(anaData) > 0 {

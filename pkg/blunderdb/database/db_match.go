@@ -349,10 +349,14 @@ func (d *Database) DeleteMatch(matchID int64) error {
 // This mirrors the identical predicate in the SQLite and Postgres stores. The
 // GUI and the CLI both delete matches through this wrapper rather than through
 // the store, so the rule has to be stated here too — the three must not drift.
+//   - the user flagged it for study in the source tool: same reasoning as
+//     individually_imported — deleting a match must not delete the very
+//     positions the `fl` filter exists to surface (docs/adr/0006).
 const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)`
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)
+	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND flagged = 1)`
 
 // GetMatchMovePositions returns all positions from a match in chronological order
 // Positions are returned as they were stored (from player on roll POV)

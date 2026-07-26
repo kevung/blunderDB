@@ -196,7 +196,8 @@
         'Match IDs',
         'Tournament IDs',
         'Player',
-        'Individually Imported'
+        'Individually Imported',
+        'Flagged'
     ];
 
     // Canonical filter/group names stay in English because they double as logic
@@ -211,6 +212,7 @@
         'No Contact': 'noContact',
         'Mirror Position': 'mirrorPosition',
         'Individually Imported': 'individuallyImported',
+        Flagged: 'flagged',
         'Pipcount Difference': 'pipcountDifference',
         'Player Absolute Pipcount': 'playerAbsolutePipcount',
         'Equity (millipoints)': 'equity',
@@ -268,7 +270,7 @@
         { name: 'Checkers', filters: ['Player Checker-Off', 'Opponent Checker-Off', 'Player Back Checker', 'Opponent Back Checker', 'Player Checker in the Zone', 'Opponent Checker in the Zone'] },
         { name: 'Blots', filters: ['Player Outfield Blot', 'Opponent Outfield Blot', 'Player Jan Blot', 'Opponent Jan Blot'] },
         { name: 'Text / Pattern', filters: ['Comment', 'Best Move or Cube Decision'] },
-        { name: 'Other', filters: ['Creation Date', 'Matches & Tournaments', 'Player', 'Individually Imported'] }
+        { name: 'Other', filters: ['Creation Date', 'Matches & Tournaments', 'Player', 'Individually Imported', 'Flagged'] }
     ];
 
     // Which structure the main board is currently editing: 'include' (au moins)
@@ -582,6 +584,7 @@
             ncFilter,
             mirFilter,
             iiFilter,
+            flFilter,
             pcFilter,
             wrFilter,
             grFilter,
@@ -660,6 +663,7 @@
             noContactFilter: ncFilter,
             mirrorPositionFilter: mirFilter,
             individuallyImportedFilter: iiFilter,
+            flaggedFilter: flFilter,
             moveErrorFilter: meFilter,
             searchCommand,
             matchIDsFilter: matchIDs,
@@ -865,6 +869,7 @@
                 noContactFilter: f.nc,
                 mirrorPositionFilter: f.mp,
                 individuallyImportedFilter: f.ii,
+                flaggedFilter: f.fl,
                 moveErrorFilter: f.me,
                 searchCommand: command,
                 matchIDsFilter: f.matchIDs,

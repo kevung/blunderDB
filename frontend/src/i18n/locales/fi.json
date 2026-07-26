@@ -282,7 +282,8 @@
             "creationDate": "Luontipäivä",
             "matchesTournaments": "Ottelut ja turnaukset",
             "player": "Pelaaja",
-            "individuallyImported": "Erikseen tuotu"
+            "individuallyImported": "Erikseen tuotu",
+            "flagged": "Merkitty"
         },
         "filterGroups": {
             "display": "Näyttö",

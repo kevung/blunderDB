@@ -153,6 +153,8 @@ export function buildFilterTokens(activeFilters, options) {
                 return 'M';
             case 'Individually Imported':
                 return 'i';
+            case 'Flagged':
+                return 'fl';
             case 'Pipcount Difference':
                 return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
             case 'Player Absolute Pipcount':
@@ -346,6 +348,7 @@ export function parseFilterTokens(tokens) {
         ncFilter: tokens.includes('nc'),
         mirFilter: tokens.includes('M'),
         iiFilter: tokens.includes('i'),
+        flFilter: tokens.includes('fl'),
         pcFilter: find('pc'),
         plFilter: tokens.find((f) => f.startsWith('pl')),
         wrFilter: find('wr'),
@@ -442,6 +445,7 @@ export function parseSearchCommand(command) {
         mp: cmdFilters.includes('M'),
         // Exact match, so it never collides with the id<ids> position-id token.
         ii: cmdFilters.includes('i'),
+        fl: cmdFilters.includes('fl'),
         pc: find('pc'),
         wr: find('wr'),
         gr: find('gr'),
@@ -491,6 +495,7 @@ const FILTER_TOKENS = {
     'No Contact': { token: 'nc', type: 'flag' },
     'Mirror Position': { token: 'M', type: 'flag' },
     'Individually Imported': { token: 'i', type: 'flag' },
+    Flagged: { token: 'fl', type: 'flag' },
     'Pipcount Difference': { token: 'p', type: 'range' },
     'Player Absolute Pipcount': { token: 'P', type: 'range' },
     'Equity (millipoints)': { token: 'e', type: 'range' },
@@ -606,6 +611,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         noContactFilter: pf.noContactFilter || false,
         mirrorFilter: pf.mirrorPositionFilter || false,
         individuallyImportedFilter: pf.individuallyImportedFilter || false,
+        flaggedFilter: pf.flaggedFilter || false,
         moveErrorFilter: pf.moveErrorFilter || '',
         matchIDsFilter: pf.matchIDsFilter || '',
         tournamentIDsFilter: pf.tournamentIDsFilter || '',

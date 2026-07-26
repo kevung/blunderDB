@@ -31,6 +31,9 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   `engine.IsResponseCubeAction`).
 - `006_comment_position_index.sql` — `comment(tenant_id, position_id)` index for
   the comment-presence search filter (`co` / `xco`).
+- `007_flagged.sql` — `position.flagged` column + index, the source-tool study
+  mark (docs/adr/0006). No backfill is possible: the flag exists only in the
+  source files, never in an already-imported database.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

@@ -37,7 +37,7 @@ func tenantID(scope string) int64 {
 // individually_imported is applied on top (provenance, not identity — see
 // docs/adr/0001).
 const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, ` +
-	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported`
+	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
 
 // scanPosition reconstructs a Position from a row selected with
 // positionSelectCols. The denormalised integer columns are nullable, so they
@@ -47,8 +47,8 @@ func scanPosition(sc scanner) (domain.Position, error) {
 	var state string
 	var dt, por, d1, d2, cv, co, s1, s2 *int64
 	var hj, hb *bool
-	var individual *bool
-	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual); err != nil {
+	var individual, flagged *bool
+	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged); err != nil {
 		return domain.Position{}, err
 	}
 	p := engine.ReconstructPosition(id, state,
@@ -56,6 +56,7 @@ func scanPosition(sc scanner) (domain.Position, error) {
 		derefInt(cv), derefInt(co), derefInt(s1), derefInt(s2),
 		boolToIntPtr(hj), boolToIntPtr(hb))
 	p.IndividuallyImported = individual != nil && *individual
+	p.Flagged = flagged != nil && *flagged
 	return p, nil
 }
 
@@ -80,8 +81,8 @@ const positionInsertSQL = `INSERT INTO position (
 	pip_1, pip_2, pip_diff, off_1, off_2,
 	back_checkers_1, back_checkers_2, no_contact,
 	occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-	state, individually_imported
-) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20, $21,$22,$23,$24, $25,$26)
+	state, individually_imported, flagged
+) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20, $21,$22,$23,$24, $25,$26,$27)
 ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING
 RETURNING id`
 
@@ -90,12 +91,20 @@ RETURNING id`
 const markIndividualSQL = `UPDATE position SET individually_imported = TRUE
 	WHERE tenant_id = $1 AND zobrist_hash = $2 AND NOT individually_imported`
 
+// markFlaggedSQL raises the source-tool study mark on an already-stored
+// position. Like markIndividualSQL it only ever sets, never clears — that is
+// what makes the mark sticky across re-imports and across matches sharing the
+// position (docs/adr/0006).
+const markFlaggedSQL = `UPDATE position SET flagged = TRUE
+	WHERE tenant_id = $1 AND zobrist_hash = $2 AND NOT flagged`
+
 // Save stores p, deduplicated per tenant by Zobrist hash: a position whose
 // (tenant_id, zobrist_hash) is already present is not re-inserted and Save
 // returns the existing id. p is updated in place with the storage-normalised
 // board and the resulting id.
 //
-// p.IndividuallyImported is ORed into the stored value rather than assigned
+// p.IndividuallyImported and p.Flagged are ORed into the stored value rather
+// than assigned
 // (docs/adr/0001): a match import (which never sets it) cannot clear the flag on
 // a position the user had already imported on its own, and an individual import
 // of a position a match had already brought in still marks it. The flag is
@@ -113,7 +122,7 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact,
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported).Scan(&id)
+		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported, norm.Flagged).Scan(&id)
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
 		// Hash already present for this tenant: keep the existing row, but let
@@ -122,6 +131,14 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		if norm.IndividuallyImported {
 			if _, err := s.db.Exec(ctx, markIndividualSQL, tenant, int64(cols.ZobristHash)); err != nil {
 				return 0, fmt.Errorf("postgres: mark position individually imported: %w", err)
+			}
+		}
+		// Same for the source-tool mark: a match import that carries a flag
+		// must raise it on the existing row. This is what lets a re-import of an
+		// already-known match deliver newly added flags.
+		if norm.Flagged {
+			if _, err := s.db.Exec(ctx, markFlaggedSQL, tenant, int64(cols.ZobristHash)); err != nil {
+				return 0, fmt.Errorf("postgres: mark position flagged: %w", err)
 			}
 		}
 		if err = s.db.QueryRow(ctx,

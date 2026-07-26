@@ -65,6 +65,12 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		where.WriteString(" AND p.individually_imported = 1")
 	}
 
+	// The source-tool study mark is likewise a property of the row, so it too
+	// stays in SQL even in mirror search.
+	if f.FlaggedFilter {
+		where.WriteString(" AND p.flagged = 1")
+	}
+
 	// Whether a position carries a comment is likewise a property of the row and
 	// not of the board, so this too stays in SQL even in mirror search. Keeping
 	// it here rather than in the Go phase also matters for cost: the Go-side
@@ -292,6 +298,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
+		p.individually_imported, p.flagged,
 		a.id, a.data,
 		a.cube_error, a.best_move_equity_error,
 		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
@@ -335,6 +342,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		var posJSON string
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
 		var pICR sql.NullInt64
+		var pII, pFlag sql.NullBool
 		var anaID sql.NullInt64
 		var anaJSON sql.NullString
 		var cubeError, moveError sql.NullFloat64
@@ -344,6 +352,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		if err := rows.Scan(
 			&posID, &posJSON,
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pICR,
+			&pII, &pFlag,
 			&anaID, &anaJSON,
 			&cubeError, &moveError,
 			&p1Win, &p1Gammon, &p1BG,
@@ -357,6 +366,12 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
 			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
 			int(pHJ.Int64), int(pHB.Int64))
+		// Row properties rather than board identity, so they are applied on top
+		// of the reconstructed position (ADR-0001, docs/adr/0006). Without this
+		// a searched position always came back unmarked, unlike the same
+		// position read through PositionStore.Load.
+		position.IndividuallyImported = pII.Bool
+		position.Flagged = pFlag.Bool
 
 		var ana *domain.PositionAnalysis
 		if needAnalysis && anaID.Valid && anaJSON.Valid && anaJSON.String != "" {

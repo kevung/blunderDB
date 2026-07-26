@@ -43,6 +43,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/ProvenanceIsSticky", testPositionProvenanceSticky},
 		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
 		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
+		{"Search/FilterByFlagged", testSearchFilterByFlagged},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
@@ -1560,5 +1561,76 @@ func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
 	}
 	if got := find(domain.SearchFilters{CommentFilter: "has", SearchText: `t"blunder"`}); len(got) != 1 || got[0] != commented {
 		t.Errorf("has + matching content filter returned %v, want exactly [%d]", got, commented)
+	}
+}
+
+// testSearchFilterByFlagged pins the source-tool study mark (docs/adr/0006):
+// the filter selects exactly the marked positions, and the mark is sticky — a
+// later save of the same position without it must not clear it, since that is
+// what an ordinary match import looks like.
+func testSearchFilterByFlagged(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	save := func(n int, flagged bool) int64 {
+		p := provenancePos(n)
+		p.Flagged = flagged
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	marked := save(1, true)
+	plain := save(2, false)
+	save(3, false)
+
+	find := func(f domain.SearchFilters) []int64 {
+		t.Helper()
+		var got []int64
+		for pos, err := range s.Search().Find(ctx, "", f) {
+			if err != nil {
+				t.Fatalf("Find: %v", err)
+			}
+			got = append(got, pos.ID)
+		}
+		return got
+	}
+
+	if got := find(domain.SearchFilters{FlaggedFilter: true}); len(got) != 1 || got[0] != marked {
+		t.Errorf("flagged search returned %v, want exactly [%d]", got, marked)
+	}
+	if all := find(domain.SearchFilters{}); len(all) != 3 {
+		t.Errorf("unfiltered search returned %d positions, want 3", len(all))
+	}
+
+	// Sticky: re-saving the marked position unflagged — exactly what a match
+	// import that does not carry the mark does — must not clear it.
+	again := provenancePos(1)
+	again.Flagged = false
+	if _, err := s.Positions().Save(ctx, "", &again); err != nil {
+		t.Fatalf("re-save unflagged: %v", err)
+	}
+	if got := find(domain.SearchFilters{FlaggedFilter: true}); len(got) != 1 || got[0] != marked {
+		t.Errorf("an unflagged re-save cleared the mark: flagged search returned %v", got)
+	}
+
+	// And the converse: marking a position that was stored unflagged raises it.
+	promote := provenancePos(2)
+	promote.Flagged = true
+	if _, err := s.Positions().Save(ctx, "", &promote); err != nil {
+		t.Fatalf("re-save flagged: %v", err)
+	}
+	got := find(domain.SearchFilters{FlaggedFilter: true})
+	if len(got) != 2 {
+		t.Errorf("flagged search returned %v, want both %d and %d", got, marked, plain)
+	}
+
+	// The mark reads back on the position itself, not just through the filter.
+	p, err := s.Positions().Load(ctx, "", marked)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if !p.Flagged {
+		t.Error("Load returned the marked position with Flagged=false")
 	}
 }

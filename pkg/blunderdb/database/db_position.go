@@ -106,10 +106,10 @@ var (
 // Use with reconstructPosition after scanning the values. individually_imported
 // trails the identity columns: it is provenance, applied on top of the
 // reconstructed position rather than part of it (ADR-0001).
-const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported`
+const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
 
 // positionSelectColsP is positionSelectCols with "p." table prefix for JOINs.
-const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver, p.individually_imported`
+const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver, p.individually_imported, p.flagged`
 
 // scanPositionRow scans a sql.Row / sql.Rows into a Position using the column
 // order from positionSelectCols. NULLs are treated as zero (safe for v2+).
@@ -119,8 +119,8 @@ func scanPositionRow(scanner interface {
 	var id int64
 	var state string
 	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
-	var individual sql.NullBool
-	err := scanner.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual)
+	var individual, flagged sql.NullBool
+	err := scanner.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged)
 	if err != nil {
 		return Position{}, err
 	}
@@ -129,6 +129,7 @@ func scanPositionRow(scanner interface {
 		int(cv.Int64), int(co.Int64), int(s1.Int64), int(s2.Int64),
 		int(hj.Int64), int(hb.Int64))
 	pos.IndividuallyImported = individual.Bool
+	pos.Flagged = flagged.Bool
 	return pos, nil
 }
 
@@ -143,10 +144,12 @@ func fullPositionJSON(pos Position) string {
 // The legacy .db importer keys a lookup map on this string, so any Position field
 // that is *not* part of the position's identity has to be zeroed here or the two
 // sides of the comparison stop matching. Today that is the row id and the
-// individually-imported provenance flag (ADR-0001).
+// individually-imported provenance flag (ADR-0001) and the source-tool study
+// mark (docs/adr/0006).
 func positionIdentityJSON(pos Position) (string, error) {
 	pos.ID = 0
 	pos.IndividuallyImported = false
+	pos.Flagged = false
 	data, err := json.Marshal(pos)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal JSON: %w", err)

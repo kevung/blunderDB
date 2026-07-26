@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.13.0"
+	DatabaseVersion = "2.14.0"
 )
 
 // Anki deck source types
@@ -217,6 +217,15 @@ type Position struct {
 	// PositionStore.Save ORs it into the stored value, so a match import can
 	// never clear it. See CONTEXT.md.
 	IndividuallyImported bool `json:"individually_imported"`
+
+	// Flagged records that the user marked this position as worth studying in
+	// the tool the match came from — today only eXtreme Gammon, which stores the
+	// mark per move. Like IndividuallyImported it is a fact of the source file
+	// and NOT part of the position's identity: never folded into the Zobrist
+	// hash, and ORed into the stored value by PositionStore.Save, so a later
+	// import of the same position unmarked can never clear it. Nothing in
+	// blunderDB sets or clears it. See CONTEXT.md and docs/adr/0006.
+	Flagged bool `json:"flagged"`
 }
 
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
@@ -276,6 +285,11 @@ type SearchFilters struct {
 	// among thousands. Unlike every other filter here it is a property of the
 	// stored row, not of the board, so mirror search does not re-evaluate it.
 	IndividuallyImportedFilter bool `json:"individuallyImportedFilter"`
+
+	// FlaggedFilter keeps only positions the user marked in the source tool.
+	// Like IndividuallyImportedFilter it is a property of the stored row rather
+	// than of the board, so mirror search does not re-evaluate it.
+	FlaggedFilter bool `json:"flaggedFilter"`
 
 	MoveErrorFilter               string   `json:"moveErrorFilter"`
 	MatchIDsFilter                string   `json:"matchIDsFilter"`

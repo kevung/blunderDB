@@ -43,6 +43,7 @@ func (cli *CLI) runSearch(args []string) error {
 	positionIDsFlag := searchCmd.String("position-ids", "", "Filter by position IDs (range '2,7' or explicit list '5;10;15')")
 	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
 	individual := searchCmd.Bool("individual", false, "Only positions imported on their own, not as part of a match")
+	flagged := searchCmd.Bool("flagged", false, "Only positions you marked for study in the source tool (eXtreme Gammon flags)")
 	hasComment := searchCmd.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)")
 	noComment := searchCmd.Bool("no-comment", false, "Only positions carrying no comment")
 
@@ -87,6 +88,9 @@ func (cli *CLI) runSearch(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Search positions where a 6 was rolled on either die")
 		fmt.Println("  blunderdb search --db database.db --dice 6")
+		fmt.Println()
+		fmt.Println("  # Positions flagged for study in XG")
+		fmt.Println("  blunderdb search --db database.db --flagged")
 		fmt.Println()
 		fmt.Println("  # Find every commented position")
 		fmt.Println("  blunderdb search --db database.db --has-comment")
@@ -265,6 +269,7 @@ func (cli *CLI) runSearch(args []string) error {
 		PositionIDsFilter:       *positionIDsFlag,
 
 		IndividuallyImportedFilter: *individual,
+		FlaggedFilter:              *flagged,
 		CommentFilter:              commentFilter,
 	})
 	if err != nil {
