@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-15 00:10+0200\n"
+"POT-Creation-Date: 2026-07-26 22:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -254,19 +254,21 @@ msgid "Afficher/écrire des commentaires."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "filter, fl"
-msgstr ""
-
-#: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
-msgstr ""
-
-#: ../../source/cmd_mode.rst:1
 msgid "history, hi"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "Afficher/cacher l'historique de recherche."
+msgid ""
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "stats, st"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/masquer le panneau de statistiques."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -456,6 +458,17 @@ msgid ""
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
+msgid "xD65"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
 msgid "nc"
 msgstr ""
 
@@ -477,6 +490,16 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position a été importée seule, et non apportée par l'import d'un match."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "fl"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
+"l'import d'un match eXtreme Gammon."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -986,6 +1009,22 @@ msgid "Les commentaires de la position contiennent au moins un des mots."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
+msgid "co"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position porte un commentaire, quel qu'en soit le contenu."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "xco"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position ne porte aucun commentaire."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
 msgid "m'motif1,motif2,...\\'"
 msgstr ""
 
@@ -1085,7 +1124,7 @@ msgid ""
 "sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:213
+#: ../../source/cmd_mode.rst:217
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1094,7 +1133,7 @@ msgid ""
 "l'autre des deux dés du lancer)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:219
+#: ../../source/cmd_mode.rst:223
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1103,7 +1142,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:225
+#: ../../source/cmd_mode.rst:229
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1111,14 +1150,14 @@ msgid ""
 "positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:230
+#: ../../source/cmd_mode.rst:234
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
 "tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:238
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1128,7 +1167,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
 msgstr ""
 
@@ -1140,7 +1179,7 @@ msgstr ""
 msgid "Efface l'historique des commandes."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:253
+#: ../../source/cmd_mode.rst:257
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1647,5 +1686,14 @@ msgstr ""
 #~ "Charger les pires erreurs (équité/MWC) "
 #~ "dans la vue d'analyse, selon le "
 #~ "filtre courant des statistiques."
+#~ msgstr ""
+
+#~ msgid "filter, fl"
+#~ msgstr ""
+
+#~ msgid "Afficher/cacher la bibliothèque de filtres."
+#~ msgstr ""
+
+#~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr ""
 

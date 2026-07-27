@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-07-26 22:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fi\n"
 "Language-Team: fi <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -25,16 +25,16 @@ msgstr "Komentoluettelo"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
-"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
+"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
-"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
+" *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
 "Komentorivi, joka sijaitsee tilarivillä, avataan painamalla "
-"*VÄLILYÖNTI*-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy"
-" automaattisesti: *TAB*-näppäin (tai *VAIHTO-TAB*) selaa ehdotuksia ja "
+"*VÄLILYÖNTI*-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy "
+"automaattisesti: *TAB*-näppäin (tai *VAIHTO-TAB*) selaa ehdotuksia ja "
 "täydentää komennon, kun taas *ESC* sulkee luettelon (toinen *ESC* sulkee "
 "komentorivin). *YLÖS*- ja *ALAS*-näppäimet on edelleen varattu "
 "komentohistorialle."
@@ -156,8 +156,10 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgstr ""
+"Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
@@ -180,8 +182,10 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgstr ""
+"Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
@@ -225,11 +229,11 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
-" txt, bgf)."
-msgstr ""
-"Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, "
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
 "txt, bgf)."
+msgstr ""
+"Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, txt, "
+"bgf)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -269,10 +273,9 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
-"son onglet *Historique*)."
-msgstr ""
-"Avaa hakupaneeli (hakuhistoria löytyy sen *Historique*-välilehdeltä)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
+" onglet *Historique*)."
+msgstr "Avaa hakupaneeli (hakuhistoria löytyy sen *Historique*-välilehdeltä)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "stats, st"
@@ -379,29 +382,29 @@ msgstr "Hakusuodattimet"
 
 #: ../../source/cmd_mode.rst:91
 msgid ""
-"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
-"c'est-à-dire après le début de commande ``s``."
+"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-"
+"à-dire après le début de commande ``s``."
 msgstr ""
-"Alla olevat suodattimet on asetettava peräkkäin haun aikana, eli komennon"
-" ``s`` aloituksen jälkeen."
+"Alla olevat suodattimet on asetettava peräkkäin haun aikana, eli komennon "
+"``s`` aloituksen jälkeen."
 
 #: ../../source/cmd_mode.rst:96
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
-"structure de pions courante, ignore la position du videau, du score et "
-"des dés. Pour prendre en compte la position du videau, du score, des dés,"
-" il faut le mentionner explicitement dans la recherche."
+"structure de pions courante, ignore la position du videau, du score et des "
+"dés. Pour prendre en compte la position du videau, du score, des dés, il "
+"faut le mentionner explicitement dans la recherche."
 msgstr ""
-"Asemien haussa blunderDB ottaa oletuksena huomioon nykyisen "
-"nappularakenteen ja jättää huomiotta kuution aseman, pistetilanteen ja "
-"nopat. Jotta kuution asema, pistetilanne ja nopat otetaan huomioon, ne on"
-" mainittava nimenomaisesti haussa."
+"Asemien haussa blunderDB ottaa oletuksena huomioon nykyisen nappularakenteen"
+" ja jättää huomiotta kuution aseman, pistetilanteen ja nopat. Jotta kuution "
+"asema, pistetilanne ja nopat otetaan huomioon, ne on mainittava "
+"nimenomaisesti haussa."
 
 #: ../../source/cmd_mode.rst:102
 msgid ""
-"La commande de recherche ``s`` est disponible dans le panneau de "
-"recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
-"les résultats actuellement filtrés."
+"La commande de recherche ``s`` est disponible dans le panneau de recherche "
+"(touche ``TAB``). La commande ``ss`` permet de chercher parmi les résultats "
+"actuellement filtrés."
 msgstr ""
 "Hakukomento ``s`` on käytettävissä hakupaneelissa (``TAB``-näppäin). "
 "Komennon ``ss`` avulla voi etsiä tällä hetkellä suodatettujen tulosten "
@@ -409,8 +412,8 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:107
 msgid ""
-"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
-"entre le point 24 et le point 19."
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre"
+" le point 24 et le point 19."
 msgstr ""
 "blunderDB pitää takanappulana (backchecker) nappulaa, joka sijaitsee "
 "pisteiden 24 ja 19 välissä."
@@ -425,9 +428,9 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:115
 msgid ""
-"blunderDB considère que l'outfield s'étend entre le point 18 et le point "
-"7."
-msgstr "blunderDB pitää ulkokentän (outfield) ulottuvan pisteiden 18 ja 7 välillä."
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point 7."
+msgstr ""
+"blunderDB pitää ulkokentän (outfield) ulottuvan pisteiden 18 ja 7 välillä."
 
 #: ../../source/cmd_mode.rst:118
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
@@ -472,8 +475,10 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
-msgstr "Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta)."
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr ""
+"Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -481,11 +486,11 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la "
-"valeur du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
+" du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
-"Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen "
-"nopan arvo esiintyy jommassakummassa aseman nopassa)."
+"Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen nopan "
+"arvo esiintyy jommassakummassa aseman nopassa)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -493,9 +498,9 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
-"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
-"plusieurs lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
+"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
+"lancers (``xD65 xD54``)."
 msgstr ""
 "Asemaa **ei** ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo "
 "ilmoitetaan tunnuksessa; toistettavissa useiden heittojen poissulkemiseksi "
@@ -522,8 +527,21 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a été importée seule, et non apportée par l'import d'un match."
+msgid ""
+"La position a été importée seule, et non apportée par l'import d'un match."
 msgstr "Asema on tuotu erikseen, eikä se tullut ottelun tuonnin mukana."
+
+#: ../../source/cmd_mode.rst:1
+msgid "fl"
+msgstr "fl"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
+"l'import d'un match eXtreme Gammon."
+msgstr ""
+"Asema on merkitty lähdeohjelmassa eXtreme Gammon -ottelun tuonnin "
+"yhteydessä."
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -614,7 +632,8 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on suurempi kuin x."
 
 #: ../../source/cmd_mode.rst:1
@@ -622,7 +641,8 @@ msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on pienempi kuin x."
 
 #: ../../source/cmd_mode.rst:1
@@ -631,8 +651,8 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
-" x et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
+"et y."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on välillä x–y."
 
 #: ../../source/cmd_mode.rst:1
@@ -1034,6 +1054,22 @@ msgid "Les commentaires de la position contiennent au moins un des mots."
 msgstr "Aseman kommentit sisältävät vähintään yhden sanoista."
 
 #: ../../source/cmd_mode.rst:1
+msgid "co"
+msgstr "co"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position porte un commentaire, quel qu'en soit le contenu."
+msgstr "Asemassa on kommentti, sisällöstä riippumatta."
+
+#: ../../source/cmd_mode.rst:1
+msgid "xco"
+msgstr "xco"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position ne porte aucun commentaire."
+msgstr "Asemassa ei ole kommenttia."
+
+#: ../../source/cmd_mode.rst:1
 msgid "m'motif1,motif2,...\\'"
 msgstr "m'kuvio1,kuvio2,...\\'"
 
@@ -1129,77 +1165,76 @@ msgstr "pl'nimi'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
+" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:214
+#: ../../source/cmd_mode.rst:217
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
-" *a fortiori* de filtrer les positions en fonction du type de décision "
-"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
-"du premier dé est utilisée pour matcher les positions (sur l'un ou "
-"l'autre des deux dés du lancer)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique *a"
+" fortiori* de filtrer les positions en fonction du type de décision (`d`). "
+"Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur du premier "
+"dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés"
+" du lancer)."
 msgstr ""
 "Asemien suodattaminen nopanheiton perusteella (`D` tai `D1`) merkitsee "
 "*sitäkin suuremmalla syyllä* asemien suodattamista päätöstyypin (`d`) "
 "perusteella. Suodatin `D1` jättää huomiotta toisen nopan arvon: vain "
-"ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman "
-"heiton nopan kanssa)."
+"ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman heiton "
+"nopan kanssa)."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:223
 msgid ""
-"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
-" le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
-"et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips "
-"d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de "
-"retard à la course."
+"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`), le"
+" joueur est en retard à la course par rapport à l'adversaire si `x>0` et en "
+"avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips d'avance à "
+"la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à la course."
 msgstr ""
-"Kilpajuoksun suhteellisen eron suodattimessa (`p>x`, `p<x`, `px,y`) "
-"pelaaja on kilpajuoksussa vastustajaan nähden jäljessä, jos `x>0`, ja "
-"edellä, jos `x<0`. Esimerkki: `p<-10` : pelaaja on kilpajuoksussa "
-"vähintään 10 pippiä edellä. `p50,70` : pelaaja on kilpajuoksussa 50–70 "
-"pippiä jäljessä."
+"Kilpajuoksun suhteellisen eron suodattimessa (`p>x`, `p<x`, `px,y`) pelaaja "
+"on kilpajuoksussa vastustajaan nähden jäljessä, jos `x>0`, ja edellä, jos "
+"`x<0`. Esimerkki: `p<-10` : pelaaja on kilpajuoksussa vähintään 10 pippiä "
+"edellä. `p50,70` : pelaaja on kilpajuoksussa 50–70 pippiä jäljessä."
 
-#: ../../source/cmd_mode.rst:226
+#: ../../source/cmd_mode.rst:229
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
-"même principe s'applique pour les tournois avec ``tn`` et pour les "
-"positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
+"même principe s'applique pour les tournois avec ``tn`` et pour les positions"
+" avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
 msgstr ""
-"Useista ei-peräkkäisistä otteluista hakeaksesi toista suodatin ``ma`` "
-"useita kertoja (esim. ``s ma23 ma43`` otteluille 23 ja 43). Sama periaate"
-" pätee turnauksiin suodattimella ``tn`` ja asemiin suodattimella ``id`` "
-"(esim. ``s id5 id10`` asemille 5 ja 10)."
+"Useista ei-peräkkäisistä otteluista hakeaksesi toista suodatin ``ma`` useita"
+" kertoja (esim. ``s ma23 ma43`` otteluille 23 ja 43). Sama periaate pätee "
+"turnauksiin suodattimella ``tn`` ja asemiin suodattimella ``id`` (esim. ``s "
+"id5 id10`` asemille 5 ja 10)."
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:234
 msgid ""
-"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
-"des matchs du tournoi concerné. Les identifiants des matchs et des "
-"tournois sont visibles dans les colonnes ID des panneaux correspondants."
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble des"
+" matchs du tournoi concerné. Les identifiants des matchs et des tournois "
+"sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
 "Turnauksesta etsiminen (``tn``) tarkoittaa etsimistä kyseisen turnauksen "
-"kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät "
-"vastaavien paneelien ID-sarakkeissa."
+"kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät vastaavien "
+"paneelien ID-sarakkeissa."
 
-#: ../../source/cmd_mode.rst:235
+#: ../../source/cmd_mode.rst:238
+#, python-format
 msgid ""
-"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
-"les positions en prenant en compte la structure des pions, le score et le"
-" cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
-"la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
-"la zone, et l'adversaire a entre 2 et 3 pions arriérés."
+"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les "
+"positions en prenant en compte la structure des pions, le score et le cube "
+"de la position éditée où le joueur a entre 20 et 5 pips d'avance à la "
+"course, avec au moins 60% de chances de gain, au moins 10 pions dans la "
+"zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
-"Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki "
-"asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen "
-"ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, "
-"vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa "
-"ja voittomahdollisuudet ovat vähintään 60%."
+"Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki asemat"
+" ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja "
+"kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä "
+"on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja "
+"voittomahdollisuudet ovat vähintään 60%."
 
-#: ../../source/cmd_mode.rst:245
+#: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1211,16 +1246,16 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Tyhjentää komentohistorian."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:257
 msgid ""
-"Les migrations de base de données sont désormais effectuées "
-"automatiquement lors de l'ouverture d'une base de données."
+"Les migrations de base de données sont désormais effectuées automatiquement "
+"lors de l'ouverture d'une base de données."
 msgstr ""
 "Tietokantojen migraatiot suoritetaan nyt automaattisesti tietokantaa "
 "avattaessa."
 
 #~ msgid "blunders, bl"
-#~ msgstr ""
+#~ msgstr "blunders, bl"
 
 #~ msgid "filter, fl"
 #~ msgstr "filter, fl"
@@ -1230,4 +1265,3 @@ msgstr ""
 
 #~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr "Näytä/piilota hakuhistoria."
-

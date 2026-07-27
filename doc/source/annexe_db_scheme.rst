@@ -11,7 +11,7 @@ Versionnage et migrations
 -------------------------
 
 Le schéma de la base de données est **versionné**. La version courante du
-schéma est **2.13.0** ; elle est indépendante de la version de l'application et
+schéma est **2.14.0** ; elle est indépendante de la version de l'application et
 n'est incrémentée que lorsque la structure interne évolue. La version du schéma
 d'une base ouverte est visible dans le panneau **Métadonnées** (commande
 ``meta``).

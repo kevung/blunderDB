@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 02:23+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -387,6 +387,58 @@ msgid "Afficher/cacher l'aide."
 msgstr ""
 
 #: ../../source/raccourcis.rst:121
+msgid "Onglets de vues"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-T"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Créer une nouvelle vue (copie de la vue courante)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-W"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer la vue courante."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageUp, MAJ-J"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue précédente."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-PageDown, MAJ-K"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Vue suivante."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-1 … CTRL-9"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Aller directement à la n-ième vue."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic sur l'onglet"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Renommer la vue."
+msgstr ""
+
+#: ../../source/raccourcis.rst:138
 msgid "Ligne de commande"
 msgstr ""
 
@@ -406,8 +458,14 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:134
-msgid "Panneau historique de recherche"
+#: ../../source/raccourcis.rst:151
+msgid "Historique de recherche"
+msgstr ""
+
+#: ../../source/raccourcis.rst:153
+msgid ""
+"L'historique de recherche est l'onglet *Historique* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -423,29 +481,17 @@ msgid "Double-clic"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Exécuter la recherche et fermer le panneau."
+msgid "Exécuter la recherche."
 msgstr ""
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+#: ../../source/raccourcis.rst:167
+msgid "Bibliothèque de filtres"
 msgstr ""
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "Esc"
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
+#: ../../source/raccourcis.rst:169
 msgid ""
-"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
-"panneau."
-msgstr ""
-
-#: ../../source/raccourcis.rst:150
-msgid "Panneau bibliothèque de filtres"
+"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
+"recherche (*CTRL-F* ou *TAB*)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -456,19 +502,7 @@ msgstr ""
 msgid "Exécuter la recherche du filtre."
 msgstr ""
 
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
-msgstr ""
-
-#: ../../source/raccourcis.rst:166
+#: ../../source/raccourcis.rst:183
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -495,10 +529,14 @@ msgid ""
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:182
+#: ../../source/raccourcis.rst:199
 msgid "Panneau des matchs"
 msgstr ""
 
@@ -534,7 +572,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:217
 msgid "Panneau Anki (répétition espacée)"
 msgstr ""
 
@@ -809,5 +847,36 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "CTRL-T"
+#~ msgstr ""
+
+#~ msgid "Panneau historique de recherche"
+#~ msgstr ""
+
+#~ msgid "Exécuter la recherche et fermer le panneau."
+#~ msgstr ""
+
+#~ msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+#~ msgstr ""
+
+#~ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Désélectionner la recherche. Si aucune "
+#~ "recherche sélectionnée, fermer le panneau."
+#~ msgstr ""
+
+#~ msgid "Panneau bibliothèque de filtres"
+#~ msgstr ""
+
+#~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+#~ msgstr ""
+
+#~ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Désélectionner le filtre. Si aucun "
+#~ "filtre sélectionné, fermer le panneau."
 #~ msgstr ""
 

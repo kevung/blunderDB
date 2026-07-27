@@ -5,17 +5,17 @@
 # SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-07-26 22:09+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
-"Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -24,19 +24,18 @@ msgstr "List of commands"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
-"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
+"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
-"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
+" *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
-"The command line, located in the status bar, opens by pressing the "
-"*SPACE* key. As you type a command, a list of suggestions appears "
-"automatically: the *TAB* key (or *SHIFT-TAB*) cycles through the "
-"suggestions and completes the command, while *ESC* closes the list (a "
-"second *ESC* closes the command line). The *UP* and *DOWN* keys remain "
-"reserved for the command history."
+"The command line, located in the status bar, opens by pressing the *SPACE* "
+"key. As you type a command, a list of suggestions appears automatically: the"
+" *TAB* key (or *SHIFT-TAB*) cycles through the suggestions and completes the"
+" command, while *ESC* closes the list (a second *ESC* closes the command "
+"line). The *UP* and *DOWN* keys remain reserved for the command history."
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -115,8 +114,7 @@ msgid ""
 "Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
 "l'outil."
 msgstr ""
-"Loads a sample database (matches, tournament, analyses) to explore the "
-"tool."
+"Loads a sample database (matches, tournament, analyses) to explore the tool."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -155,7 +153,8 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgid ""
+"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
 msgstr "Open the takepoint table with a 2-cube for long race positions."
 
 #: ../../source/cmd_mode.rst:1
@@ -179,7 +178,8 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgid ""
+"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
 msgstr "Open the takepoint table with a 4-cube for long race positions."
 
 #: ../../source/cmd_mode.rst:1
@@ -224,8 +224,8 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
-" txt, bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
+"txt, bgf)."
 msgstr ""
 "Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, "
 "bgf)."
@@ -268,10 +268,9 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
-"son onglet *Historique*)."
-msgstr ""
-"Open the search panel (the search history is in its *History* tab)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
+" onglet *Historique*)."
+msgstr "Open the search panel (the search history is in its *History* tab)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "stats, st"
@@ -323,10 +322,10 @@ msgid ""
 "filtre courant des statistiques. Un nombre optionnel choisit combien en "
 "charger (``bl 50``) ; par défaut 10."
 msgstr ""
-"Load the worst mistakes (equity/MWC) into the analysis view, according to"
-" the current statistics filter. An optional number chooses how many to "
-"load (``bl 50``); 10 by default.Load the worst mistakes (equity/MWC) into"
-" the analysis view, according to the current statistics filter."
+"Load the worst mistakes (equity/MWC) into the analysis view, according to "
+"the current statistics filter. An optional number chooses how many to load "
+"(``bl 50``); 10 by default.Load the worst mistakes (equity/MWC) into the "
+"analysis view, according to the current statistics filter."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -378,54 +377,54 @@ msgstr "Search Filters"
 
 #: ../../source/cmd_mode.rst:91
 msgid ""
-"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
-"c'est-à-dire après le début de commande ``s``."
+"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-"
+"à-dire après le début de commande ``s``."
 msgstr ""
-"The filters below must be juxtaposed during a search, i.e., after the "
-"start of the ``s`` command."
+"The filters below must be juxtaposed during a search, i.e., after the start "
+"of the ``s`` command."
 
 #: ../../source/cmd_mode.rst:96
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
-"structure de pions courante, ignore la position du videau, du score et "
-"des dés. Pour prendre en compte la position du videau, du score, des dés,"
-" il faut le mentionner explicitement dans la recherche."
+"structure de pions courante, ignore la position du videau, du score et des "
+"dés. Pour prendre en compte la position du videau, du score, des dés, il "
+"faut le mentionner explicitement dans la recherche."
 msgstr ""
-"In the position search, by default, blunderDB takes into account the "
-"current checker structure, ignoring the position of the cube, the score, "
-"and the dice. To consider the position of the cube, the score, and the "
-"dice, it must be explicitly mentioned in the search."
+"In the position search, by default, blunderDB takes into account the current"
+" checker structure, ignoring the position of the cube, the score, and the "
+"dice. To consider the position of the cube, the score, and the dice, it must"
+" be explicitly mentioned in the search."
 
 #: ../../source/cmd_mode.rst:102
 msgid ""
-"La commande de recherche ``s`` est disponible dans le panneau de "
-"recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
-"les résultats actuellement filtrés."
+"La commande de recherche ``s`` est disponible dans le panneau de recherche "
+"(touche ``TAB``). La commande ``ss`` permet de chercher parmi les résultats "
+"actuellement filtrés."
 msgstr ""
-"The search command ``s`` is available in the search panel (``TAB`` key). "
-"The ``ss`` command allows searching among the currently filtered results."
+"The search command ``s`` is available in the search panel (``TAB`` key). The"
+" ``ss`` command allows searching among the currently filtered results."
 
 #: ../../source/cmd_mode.rst:107
 msgid ""
-"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
-"entre le point 24 et le point 19."
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre"
+" le point 24 et le point 19."
 msgstr ""
-"blunderDB considers that a backchecker is a checker located between point"
-" 24 and point 19."
+"blunderDB considers that a backchecker is a checker located between point 24"
+" and point 19."
 
 #: ../../source/cmd_mode.rst:111
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
-"blunderDB considers that the number of checkers in the zone is the number"
-" of checkers located between point 12 and point 1."
+"blunderDB considers that the number of checkers in the zone is the number of"
+" checkers located between point 12 and point 1."
 
 #: ../../source/cmd_mode.rst:115
 msgid ""
-"blunderDB considère que l'outfield s'étend entre le point 18 et le point "
-"7."
-msgstr "blunderDB considers the outfield to extend between point 18 and point 7."
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point 7."
+msgstr ""
+"blunderDB considers the outfield to extend between point 18 and point 7."
 
 #: ../../source/cmd_mode.rst:118
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
@@ -470,7 +469,8 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "The position matches the dice roll (both dice, any order)."
 
 #: ../../source/cmd_mode.rst:1
@@ -479,11 +479,11 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la "
-"valeur du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
+" du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
-"The position matches the dice roll on the first die only (the first die's"
-" value appears on either die of the position)."
+"The position matches the dice roll on the first die only (the first die's "
+"value appears on either die of the position)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -491,13 +491,12 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
-"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
-"plusieurs lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
+"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
+"lancers (``xD65 xD54``)."
 msgstr ""
-"The position was **not** played with the 6-5 roll (any order). The value "
-"is given in the token; repeatable to exclude several rolls (``xD65 "
-"xD54``)."
+"The position was **not** played with the 6-5 roll (any order). The value is "
+"given in the token; repeatable to exclude several rolls (``xD65 xD54``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -520,8 +519,22 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a été importée seule, et non apportée par l'import d'un match."
-msgstr "The position was imported on its own, not brought in by a match import."
+msgid ""
+"La position a été importée seule, et non apportée par l'import d'un match."
+msgstr ""
+"The position was imported on its own, not brought in by a match import."
+
+#: ../../source/cmd_mode.rst:1
+msgid "fl"
+msgstr "fl"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
+"l'import d'un match eXtreme Gammon."
+msgstr ""
+"The position was flagged in the source software, when importing an eXtreme "
+"Gammon match."
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -532,8 +545,8 @@ msgid ""
 "La position ne contient aucun pion de la structure d'exclusion (onglet « "
 "Except » du panneau de recherche)."
 msgstr ""
-"The position contains none of the checkers of the exclusion structure "
-"(the \"Except\" tab of the search panel)."
+"The position contains none of the checkers of the exclusion structure (the "
+"\"Except\" tab of the search panel)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -612,18 +625,20 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr ""
-"The error of the move played by player 1 (in millipoints) is greater than"
-" x."
+"The error of the move played by player 1 (in millipoints) is greater than x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
-msgstr "The error of the move played by player 1 (in millipoints) is less than x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgstr ""
+"The error of the move played by player 1 (in millipoints) is less than x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -631,11 +646,11 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
-" x et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
+"et y."
 msgstr ""
-"The error of the move played by player 1 (in millipoints) is between x "
-"and y."
+"The error of the move played by player 1 (in millipoints) is between x and "
+"y."
 
 #: ../../source/cmd_mode.rst:1
 msgid "w>x"
@@ -1036,6 +1051,22 @@ msgid "Les commentaires de la position contiennent au moins un des mots."
 msgstr "The position comments contain at least one of the words."
 
 #: ../../source/cmd_mode.rst:1
+msgid "co"
+msgstr "co"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position porte un commentaire, quel qu'en soit le contenu."
+msgstr "The position carries a comment, whatever its content."
+
+#: ../../source/cmd_mode.rst:1
+msgid "xco"
+msgstr "xco"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position ne porte aucun commentaire."
+msgstr "The position carries no comment."
+
+#: ../../source/cmd_mode.rst:1
 msgid "m'motif1,motif2,...\\'"
 msgstr "m'pattern1,pattern2,...\\'"
 
@@ -1131,76 +1162,75 @@ msgstr "pl'name'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
+" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. pl'Alice'). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:214
+#: ../../source/cmd_mode.rst:217
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
-" *a fortiori* de filtrer les positions en fonction du type de décision "
-"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
-"du premier dé est utilisée pour matcher les positions (sur l'un ou "
-"l'autre des deux dés du lancer)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique *a"
+" fortiori* de filtrer les positions en fonction du type de décision (`d`). "
+"Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur du premier "
+"dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés"
+" du lancer)."
 msgstr ""
-"Filtering positions based on the dice roll (`D` or `D1`) necessarily "
-"implies filtering positions based on the type of decision (`d`). The `D1`"
-" filter ignores the second die: only the first die's value is used to "
-"match positions (against either die of the roll)."
+"Filtering positions based on the dice roll (`D` or `D1`) necessarily implies"
+" filtering positions based on the type of decision (`d`). The `D1` filter "
+"ignores the second die: only the first die's value is used to match "
+"positions (against either die of the roll)."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:223
 msgid ""
-"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
-" le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
-"et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips "
-"d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de "
-"retard à la course."
+"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`), le"
+" joueur est en retard à la course par rapport à l'adversaire si `x>0` et en "
+"avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips d'avance à "
+"la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à la course."
 msgstr ""
-"For the relative difference filter in the race (`p>x`, `p<x`, `px,y`), "
-"the player is behind in the race compared to the opponent if `x>0` and "
-"ahead if `x<0`. For example: `p<-10`: the player is at least 10 pips "
-"ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
-"in the race."
+"For the relative difference filter in the race (`p>x`, `p<x`, `px,y`), the "
+"player is behind in the race compared to the opponent if `x>0` and ahead if "
+"`x<0`. For example: `p<-10`: the player is at least 10 pips ahead in the "
+"race. `p50,70`: the player is between 50 and 70 pips behind in the race."
 
-#: ../../source/cmd_mode.rst:226
+#: ../../source/cmd_mode.rst:229
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
-"même principe s'applique pour les tournois avec ``tn`` et pour les "
-"positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
+"même principe s'applique pour les tournois avec ``tn`` et pour les positions"
+" avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
 msgstr ""
-"To search across several non-contiguous matches, repeat the ``ma`` filter"
-" (e.g. ``s ma23 ma43`` for matches 23 and 43). The same principle applies"
-" to tournaments with ``tn`` and to positions with ``id`` (e.g. ``s id5 "
-"id10`` for positions 5 and 10)."
+"To search across several non-contiguous matches, repeat the ``ma`` filter "
+"(e.g. ``s ma23 ma43`` for matches 23 and 43). The same principle applies to "
+"tournaments with ``tn`` and to positions with ``id`` (e.g. ``s id5 id10`` "
+"for positions 5 and 10)."
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:234
 msgid ""
-"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
-"des matchs du tournoi concerné. Les identifiants des matchs et des "
-"tournois sont visibles dans les colonnes ID des panneaux correspondants."
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble des"
+" matchs du tournoi concerné. Les identifiants des matchs et des tournois "
+"sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
 "Searching in a tournament (``tn``) means searching in all the matches of "
-"that tournament. Match and tournament IDs are visible in the ID columns "
-"of the corresponding panels."
+"that tournament. Match and tournament IDs are visible in the ID columns of "
+"the corresponding panels."
 
-#: ../../source/cmd_mode.rst:235
+#: ../../source/cmd_mode.rst:238
+#, python-format
 msgid ""
-"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
-"les positions en prenant en compte la structure des pions, le score et le"
-" cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
-"la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
-"la zone, et l'adversaire a entre 2 et 3 pions arriérés."
+"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les "
+"positions en prenant en compte la structure des pions, le score et le cube "
+"de la position éditée où le joueur a entre 20 et 5 pips d'avance à la "
+"course, avec au moins 60% de chances de gain, au moins 10 pions dans la "
+"zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 "For example, the command ``s s c p-20,-5 w>60 z>10 K2,3`` filters all "
-"positions taking into account the checker structure, the score, and the "
-"cube of the edited position where the player has between 20 and 5 pips "
-"ahead in the race, with at least 60% winning chances, at least 10 "
-"checkers in the zone, and the opponent has between 2 and 3 backcheckers."
+"positions taking into account the checker structure, the score, and the cube"
+" of the edited position where the player has between 20 and 5 pips ahead in "
+"the race, with at least 60% winning chances, at least 10 checkers in the "
+"zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:245
+#: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1212,13 +1242,12 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Clear the command history."
 
-#: ../../source/cmd_mode.rst:254
+#: ../../source/cmd_mode.rst:257
 msgid ""
-"Les migrations de base de données sont désormais effectuées "
-"automatiquement lors de l'ouverture d'une base de données."
+"Les migrations de base de données sont désormais effectuées automatiquement "
+"lors de l'ouverture d'une base de données."
 msgstr ""
-"Database migrations are now performed automatically when opening a "
-"database."
+"Database migrations are now performed automatically when opening a database."
 
 #~ msgid ":n"
 #~ msgstr ":n"
@@ -1245,8 +1274,7 @@ msgstr ""
 #~ msgstr ":w!"
 
 #~ msgid ""
-#~ "Après édition d'une position existante, "
-#~ "modifie cette dernière dans la base "
+#~ "Après édition d'une position existante, modifie cette dernière dans la base "
 #~ "de données."
 #~ msgstr "After editing an existing position, modify it in the database."
 
@@ -1254,8 +1282,7 @@ msgstr ""
 #~ msgstr ":w *toto* *titi* ..."
 
 #~ msgid ""
-#~ "Enregistre la position courante dans les"
-#~ " bibliothèques *toto*, *titi*, ..."
+#~ "Enregistre la position courante dans les bibliothèques *toto*, *titi*, ..."
 #~ msgstr "Save the current position in the libraries *toto*, *titi*, ..."
 
 #~ msgid ":w -*toto*"
@@ -1382,7 +1409,8 @@ msgstr ""
 #~ msgstr ":s e800,1200"
 
 #~ msgid "Filtre les positions où le joueur 1 a une équité entre 800 et 1200."
-#~ msgstr "Filter the positions where player 1 has an equity between 800 and 1200."
+#~ msgstr ""
+#~ "Filter the positions where player 1 has an equity between 800 and 1200."
 
 #~ msgid ":s e<200"
 #~ msgstr ":s e<200"
@@ -1400,116 +1428,87 @@ msgstr ""
 #~ msgstr ":s w40,60"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gains entre "
-#~ "40% et 60%."
+#~ "Filtre les positions où le joueur 1 a des chances de gains entre 40% et 60%."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has winning chances between 40% and "
-#~ "60%."
+#~ "Filter the positions where player 1 has winning chances between 40% and 60%."
 
 #~ msgid ":s w<25"
 #~ msgstr ":s w<25"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gain "
-#~ "inférieures à 25."
+#~ "Filtre les positions où le joueur 1 a des chances de gain inférieures à 25."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has winning chances of less than "
-#~ "25%."
+#~ "Filter the positions where player 1 has winning chances of less than 25%."
 
 #~ msgid ":s w>68"
 #~ msgstr ":s w>68"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gain "
-#~ "supérieures à 68%."
-#~ msgstr ""
+#~ "Filtre les positions où le joueur 1 a des chances de gain supérieures à 68%."
+#~ msgstr "Filters positions where player 1 has winning chances above 68%."
 
 #~ msgid ":s g14,22"
 #~ msgstr ":s g14,22"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gammon entre"
-#~ " 14% et 22%."
-#~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has gammon chances between 14% and "
+#~ "Filtre les positions où le joueur 1 a des chances de gammon entre 14% et "
 #~ "22%."
+#~ msgstr ""
+#~ "Filter the positions where player 1 has gammon chances between 14% and 22%."
 
 #~ msgid ":s g<27"
 #~ msgstr ":s g<27"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gammon "
-#~ "inférieures à 27%."
-#~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has gammon chances of less than "
+#~ "Filtre les positions où le joueur 1 a des chances de gammon inférieures à "
 #~ "27%."
+#~ msgstr ""
+#~ "Filter the positions where player 1 has gammon chances of less than 27%."
 
 #~ msgid ":s g>45"
 #~ msgstr ":s g>45"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de gammon "
-#~ "supérieures à 45%."
+#~ "Filtre les positions où le joueur 1 a des chances de gammon supérieures à "
+#~ "45%."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has gammon chances greater than 45%."
+#~ "Filter the positions where player 1 has gammon chances greater than 45%."
 
 #~ msgid ":s bg4,8"
 #~ msgstr ":s bg4,8"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de backgammon "
-#~ "entre 4% et 8%."
+#~ "Filtre les positions où le joueur 1 a des chances de backgammon entre 4% et "
+#~ "8%."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has backgammon chances between 4% and"
-#~ " 8%."
+#~ "Filter the positions where player 1 has backgammon chances between 4% and "
+#~ "8%."
 
 #~ msgid ":s bg<10"
 #~ msgstr ":s bg<10"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de backgammon "
-#~ "inférieures à 10%."
+#~ "Filtre les positions où le joueur 1 a des chances de backgammon inférieures "
+#~ "à 10%."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has backgammon chances of less than "
-#~ "10%."
+#~ "Filter the positions where player 1 has backgammon chances of less than 10%."
 
 #~ msgid ":s bg>5"
 #~ msgstr ":s bg>5"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "1 a des chances de backgammon "
-#~ "supérieures à 5%."
+#~ "Filtre les positions où le joueur 1 a des chances de backgammon supérieures "
+#~ "à 5%."
 #~ msgstr ""
-#~ "Filter the positions where player 1 "
-#~ "has backgammon chances greater than 5%."
+#~ "Filter the positions where player 1 has backgammon chances greater than 5%."
 
 #~ msgid ":s W40,60"
 #~ msgstr ":s W40,60"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "2 a des chances de gains entre "
-#~ "40% et 60%."
+#~ "Filtre les positions où le joueur 2 a des chances de gains entre 40% et 60%."
 #~ msgstr ""
-#~ "Filter the positions where player 2 "
-#~ "has winning chances between 40% and "
-#~ "60%."
+#~ "Filter the positions where player 2 has winning chances between 40% and 60%."
 
 #~ msgid ":s W<25"
 #~ msgstr ":s W<25"
@@ -1521,13 +1520,10 @@ msgstr ""
 #~ msgstr ":s G14,22"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "2 a des chances de gammon entre"
-#~ " 14% et 22%."
-#~ msgstr ""
-#~ "Filter the positions where player 2 "
-#~ "has gammon chances between 14% and "
+#~ "Filtre les positions où le joueur 2 a des chances de gammon entre 14% et "
 #~ "22%."
+#~ msgstr ""
+#~ "Filter the positions where player 2 has gammon chances between 14% and 22%."
 
 #~ msgid ":s G<27"
 #~ msgstr ":s G<27"
@@ -1539,13 +1535,11 @@ msgstr ""
 #~ msgstr ":s BG4,8"
 
 #~ msgid ""
-#~ "Filtre les positions où le joueur "
-#~ "2 a des chances de backgammon "
-#~ "entre 4% et 8%."
+#~ "Filtre les positions où le joueur 2 a des chances de backgammon entre 4% et "
+#~ "8%."
 #~ msgstr ""
-#~ "Filter the positions where player 2 "
-#~ "has backgammon chances between 4% and"
-#~ " 8%."
+#~ "Filter the positions where player 2 has backgammon chances between 4% and "
+#~ "8%."
 
 #~ msgid ":s BG<10"
 #~ msgstr ":s BG<10"
@@ -1605,7 +1599,7 @@ msgstr ""
 #~ msgstr "EDIT Mode"
 
 #~ msgid "blunders, bl"
-#~ msgstr ""
+#~ msgstr "blunders, bl"
 
 #~ msgid "filter, fl"
 #~ msgstr "filter, fl"
@@ -1615,4 +1609,3 @@ msgstr ""
 
 #~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr "Show/hide the search history."
-

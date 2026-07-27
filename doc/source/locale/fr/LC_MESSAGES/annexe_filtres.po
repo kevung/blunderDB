@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 00:25+0200\n"
+"POT-Creation-Date: 2026-07-18 01:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+#: ../../source/annexe_filtres.rst:24
 msgid "Editer la position courante."
 msgstr ""
 
@@ -121,48 +121,46 @@ msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:58
-msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
-msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+#: ../../source/annexe_filtres.rst:59
+msgid ""
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Historique*."
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:61
-msgid "Donner un nom au filtre."
+msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:62
-msgid "Editer la commande de recherche."
+msgid "Donner un nom au filtre et valider."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:63
-msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+#: ../../source/annexe_filtres.rst:64
+msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:66
 msgid ""
-"Lors de l'édition de la commande, il est possible d'utiliser les touches "
-"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
+"Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
+"l'onglet *Enregistrés*."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:69
-msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
-msgstr ""
-
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:68
 msgid "Rechercher le filtre souhaité."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:73
+#: ../../source/annexe_filtres.rst:69
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:76
+#: ../../source/annexe_filtres.rst:72
 msgid "Exemples"
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:78
+#: ../../source/annexe_filtres.rst:74
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr ""
 
@@ -359,7 +357,7 @@ msgstr ""
 msgid "s tn2 E>40"
 msgstr ""
 
-#: ../../source/annexe_filtres.rst:105
+#: ../../source/annexe_filtres.rst:101
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr ""
 
@@ -545,5 +543,27 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "s d p<-20"
+#~ msgstr ""
+
+#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+#~ msgstr ""
+
+#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+#~ msgstr ""
+
+#~ msgid "Donner un nom au filtre."
+#~ msgstr ""
+
+#~ msgid "Editer la commande de recherche."
+#~ msgstr ""
+
+#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Lors de l'édition de la commande, "
+#~ "il est possible d'utiliser les touches"
+#~ " ``HAUT`` et ``BAS`` pour naviguer "
+#~ "dans l'historique des commandes."
 #~ msgstr ""
 

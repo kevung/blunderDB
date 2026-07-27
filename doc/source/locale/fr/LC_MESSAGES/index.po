@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-15 02:17+0200\n"
+"POT-Creation-Date: 2026-07-26 22:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -666,8 +666,12 @@ msgid ""
 "base, le panneau des matchs est affiché d'emblée et la revue débute sur "
 "la première position. Les raccourcis clavier sont désormais indépendants "
 "de la disposition du clavier (AZERTY, QWERTY, QWERTZ…). Correction du "
-"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Voir "
-":ref:`configuration`."
+"décodage XGID (indicateurs Jacoby/Beaver et valeur du videau). Ajout des "
+"onglets de vues multiples : plusieurs espaces de travail indépendants "
+"(liste de positions, position courante, recherche) avec les raccourcis "
+"*CTRL-T* (nouvelle vue), *CTRL-W* (fermer), *CTRL-PageUp*/*CTRL-PageDown*"
+" (changer de vue) et renommage par double-clic sur l'onglet. Voir "
+":ref:`configuration` et :ref:`onglets_vues`."
 msgstr ""
 
 #: ../../source/index.rst:1
@@ -743,21 +747,87 @@ msgid ""
 ":ref:`telecharge_install`."
 msgstr ""
 
-#: ../../source/index.rst:154
+#: ../../source/index.rst:1
+msgid "0.29.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "18/07/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
+" (panneau Matchs) comme en ligne de commande, avec la route serveur "
+"correspondante — pratique pour rejouer un match dans un autre logiciel de"
+" backgammon. Recherche : nouveau discriminateur « dés exclus » (jeton "
+"``xD65``, plusieurs autorisés) qui écarte les positions dont le lancer "
+"correspond à un jet donné. Ouverture concurrente sécurisée : une base "
+"déjà ouverte en écriture dans une autre fenêtre de blunderDB s'ouvre "
+"désormais en lecture seule (navigation, recherche et analyse possibles, "
+"modifications désactivées, mention « [lecture seule] » dans la barre de "
+"titre) au lieu de risquer une corruption. Provenance des positions : hors"
+" mode match, la barre d'informations au-dessus du plateau indique le "
+"match — et son tournoi — d'où provient la position étudiée, avec un badge"
+" « +N » lorsqu'elle apparaît dans plusieurs matchs. Robustesse accrue "
+"face à l'environnement : repli automatique lorsqu'une police, le presse-"
+"papier ou la dernière base ouverte ne sont pas disponibles. Un "
+"rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la barre"
+" d'outils ou commande ``e``) rouvre le panneau d'analyse de la position "
+"affichée. Corrections notables : suppression d'un blocage à l'export de "
+"grosses bases, bouton « Aucun » de l'export qui n'exportait pas "
+"réellement aucun match, filtre par commentaire multi-mots, dédoublonnage "
+"de l'événement et du tournoi dans la barre d'informations, et divers "
+"ajustements d'affichage. Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et "
+":ref:`manuel`."
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "0.30.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "26/07/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Recherche par commentaire : le filtre « Texte de recherche » devient le "
+"filtre « Commentaire » et propose trois modes exclusifs — *contient le "
+"texte* (comportement précédent, jeton ``t\"mot1;mot2\"``), *a un "
+"commentaire* (jeton ``co``) et *sans commentaire* (jeton ``xco``) — pour "
+"retrouver d'un geste les positions annotées, ou au contraire celles qu'il"
+" reste à commenter. Positions marquées dans eXtreme Gammon : les marques "
+"(*flags*) posées lors de l'analyse d'un match XG sont désormais lues à "
+"l'import et retrouvables par le filtre « Marquée » (jeton ``fl``), "
+"combinable avec tous les autres critères ; une décision de videau marquée"
+" donne deux positions marquées, le double et la prise/passe. Le marquage "
+"n'étant pas rétroactif, il suffit de réimporter le fichier ``.xg`` "
+"concerné pour que ses marques rejoignent la base, sans toucher aux "
+"commentaires ni aux analyses existants. Corrections notables : le PR "
+"affiché sur le badge d'un tournoi se rapporte au joueur de référence et "
+"non plus au cumul des deux joueurs, les paquets Anki fondés sur une "
+"recherche respectent de nouveau les filtres de cette recherche au lieu de"
+" reprendre toute la base, et un blocage de la recherche combinant "
+"certains filtres (texte, date, erreur du coup joué) est corrigé. Voir "
+":ref:`cmd_mode` et :ref:`manuel`."
+msgstr ""
+
+#: ../../source/index.rst:156
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:189
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:191
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:194
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -767,65 +837,65 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:201
 msgid "Voici plusieurs manières de discuter:"
 msgstr ""
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:203
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:205
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:207
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:209
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:211
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:213
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:217
 msgid "Faire un don"
 msgstr ""
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:219
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr ""
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:221
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr ""
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:223
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:226
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:228
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:231
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -833,7 +903,7 @@ msgid ""
 "jouer."
 msgstr ""
 
-#: ../../source/index.rst:234
+#: ../../source/index.rst:236
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1007,5 +1077,28 @@ msgstr ""
 #~ "``positions.epc`` (Effective Pip Count des "
 #~ "deux joueurs). Voir :ref:`mode_anki` et "
 #~ ":ref:`cmd_mode`."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Réglages d'affichage de l'interface dans "
+#~ "la fenêtre de configuration : un "
+#~ "curseur d'échelle pour agrandir ou "
+#~ "réduire l'ensemble de l'interface, et un"
+#~ " choix de position des panneaux (en"
+#~ " bas, sur le côté ou automatique) "
+#~ "afin de mieux exploiter les écrans "
+#~ "larges. Ajout d'une barre d'informations "
+#~ "au-dessus du plateau rappelant les "
+#~ "joueurs et le contexte du match "
+#~ "(événement, lieu, ronde, date, longueur). "
+#~ "À l'ouverture d'une base, le panneau "
+#~ "des matchs est affiché d'emblée et "
+#~ "la revue débute sur la première "
+#~ "position. Les raccourcis clavier sont "
+#~ "désormais indépendants de la disposition "
+#~ "du clavier (AZERTY, QWERTY, QWERTZ…). "
+#~ "Correction du décodage XGID (indicateurs "
+#~ "Jacoby/Beaver et valeur du videau). Voir"
+#~ " :ref:`configuration`."
 #~ msgstr ""
 
