@@ -126,4 +126,17 @@ elif _doc_lang in ('el', 'ru'):
 \setsansfont{FreeSans}
 \setmonofont{FreeMono}
 '''
+    if _doc_lang == 'el':
+        # Greek monospace: some builds of FreeMonoBold.otf carry the Greek
+        # glyphs but declare no `grek` OpenType script tag (checked with
+        # `otfinfo -s`). polyglossia tests that tag, not the glyph coverage, and
+        # aborts the run with "The current main monospace font, FreeMono Bold,
+        # does not contain the Greek script!" as soon as Greek text appears in a
+        # bold literal (a `` `` role inside a section title). Define the family
+        # polyglossia asks for and use the regular cut — which does declare
+        # `grek` — as its bold face. Greek inside code spans therefore renders
+        # upright rather than bold; Latin monospace keeps its real bold.
+        latex_elements['fontpkg'] += r'''
+\newfontfamily\greekfonttt{FreeMono}[BoldFont=FreeMono]
+'''
 

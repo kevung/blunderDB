@@ -13,7 +13,7 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.42.0
 	github.com/wailsapp/wails/v2 v2.10.1
 	golang.org/x/sys v0.45.0
-	golang.org/x/text v0.37.0
+	golang.org/x/text v0.39.0
 	modernc.org/sqlite v1.49.1
 )
 
@@ -93,7 +93,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.41.0 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
