@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.29.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=743d997c"></script>
+      <script src="_static/documentation_options.js?v=2f66b175"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -289,6 +289,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>18/07/2026</p></td>
 <td><p>Export d’un match au format Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) depuis l’interface (panneau Matchs) comme en ligne de commande, avec la route serveur correspondante — pratique pour rejouer un match dans un autre logiciel de backgammon. Recherche : nouveau discriminateur « dés exclus » (jeton <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, plusieurs autorisés) qui écarte les positions dont le lancer correspond à un jet donné. Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans une autre fenêtre de blunderDB s’ouvre désormais en lecture seule (navigation, recherche et analyse possibles, modifications désactivées, mention « [lecture seule] » dans la barre de titre) au lieu de risquer une corruption. Provenance des positions : hors mode match, la barre d’informations au-dessus du plateau indique le match — et son tournoi — d’où provient la position étudiée, avec un badge « +N » lorsqu’elle apparaît dans plusieurs matchs. Robustesse accrue face à l’environnement : repli automatique lorsqu’une police, le presse-papier ou la dernière base ouverte ne sont pas disponibles. Un rechargement explicite de la bibliothèque (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, bouton de la barre d’outils ou commande <code class="docutils literal notranslate"><span class="pre">e</span></code>) rouvre le panneau d’analyse de la position affichée. Corrections notables : suppression d’un blocage à l’export de grosses bases, bouton « Aucun » de l’export qui n’exportait pas réellement aucun match, filtre par commentaire multi-mots, dédoublonnage de l’événement et du tournoi dans la barre d’informations, et divers ajustements d’affichage. Voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Panneau Matchs</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>26/07/2026</p></td>
+<td><p>Recherche par commentaire : le filtre « Texte de recherche » devient le filtre « Commentaire » et propose trois modes exclusifs — <em>contient le texte</em> (comportement précédent, jeton <code class="docutils literal notranslate"><span class="pre">t&quot;mot1;mot2&quot;</span></code>), <em>a un commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">co</span></code>) et <em>sans commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — pour retrouver d’un geste les positions annotées, ou au contraire celles qu’il reste à commenter. Positions marquées dans eXtreme Gammon : les marques (<em>flags</em>) posées lors de l’analyse d’un match XG sont désormais lues à l’import et retrouvables par le filtre « Marquée » (jeton <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable avec tous les autres critères ; une décision de videau marquée donne deux positions marquées, le double et la prise/passe. Le marquage n’étant pas rétroactif, il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné pour que ses marques rejoignent la base, sans toucher aux commentaires ni aux analyses existants. Corrections notables : le PR affiché sur le badge d’un tournoi se rapporte au joueur de référence et non plus au cumul des deux joueurs, les paquets Anki fondés sur une recherche respectent de nouveau les filtres de cette recherche au lieu de reprendre toute la base, et un blocage de la recherche combinant certains filtres (texte, date, erreur du coup joué) est corrigé. Voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

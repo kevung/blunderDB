@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.29.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.30.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ed840378"></script>
+      <script src="_static/documentation_options.js?v=b6df2b71"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -280,6 +280,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>18.7.2026</p></td>
 <td><p>Ottelun vienti Jellyfish/gnubg-muodossa (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) käyttöliittymästä (ottelupaneeli) samoin kuin komentoriviltä, sekä vastaava palvelinreitti — kätevä ottelun uudelleenpelaamiseen toisessa backgammon-ohjelmassa. Haku: uusi « poissuljetut nopat » -erottelija (tunnus <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, useita sallittu), joka jättää pois asemat, joiden heitto vastaa annettua noppaparia. Turvattu samanaikainen avaus: toisessa blunderDB-ikkunassa jo kirjoitustilassa avattu tietokanta avautuu nyt vain luku -tilassa (selaus, haku ja analyysi ovat mahdollisia, muokkaukset poissa käytöstä, maininta « [vain luku] » otsikkopalkissa) korruptioriskin sijaan. Asemien alkuperä: ottelutilan ulkopuolella laudan yläpuolinen tietopalkki näyttää ottelun — ja sen turnauksen — josta tutkittava asema on peräisin, sekä « +N »-merkin, kun asema esiintyy useissa otteluissa. Parempi kestävyys ympäristöolosuhteita vastaan: automaattinen varautuminen, kun fontti, leikepöytä tai viimeksi avattu tietokanta ei ole käytettävissä. Kirjaston nimenomainen uudelleenlataus (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, työkalupalkin painike tai komento <code class="docutils literal notranslate"><span class="pre">e</span></code>) avaa näytetyn aseman analyysipaneelin uudelleen. Merkittäviä korjauksia: poistettu jumiutuminen suurten tietokantojen viennissä, viennin « Aucun »-painike, joka ei todellisuudessa jättänyt kaikkia otteluita pois, monisanainen kommenttisuodatin, tapahtuman ja turnauksen kaksoiskappaleiden poisto tietopalkista sekä erilaisia näyttösäätöjä. Katso <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Ottelupaneeli</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>26.7.2026</p></td>
+<td><p>Kommenttihaku: suodatin ”Hakuteksti” muuttuu suodattimeksi ”Kommentti” ja tarjoaa kolme toisensa poissulkevaa tilaa — <em>sisältää tekstin</em> (aiempi toiminta, tunnus <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;sana1;sana2&quot;&quot;</span></code>), <em>on kommentti</em> (tunnus <code class="docutils literal notranslate"><span class="pre">co</span></code>) ja <em>ei kommenttia</em> (tunnus <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — jotta löydät yhdellä liikkeellä kommentoidut asemat tai päinvastoin ne, jotka on vielä kommentoitava. eXtreme Gammonissa merkityt asemat: XG-ottelun analysoinnin aikana asetetut merkinnät luetaan nyt tuonnin yhteydessä ja löytyvät suodattimella ”Merkitty” (tunnus <code class="docutils literal notranslate"><span class="pre">fl</span></code>), joka on yhdistettävissä kaikkiin muihin ehtoihin; merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen. Merkintä ei ole takautuva: riittää, että tuot kyseisen <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston uudelleen, jotta sen merkinnät päätyvät tietokantaan koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkittäviä korjauksia: turnauksen tunnuksessa näkyvä PR koskee viitepelaajaa eikä enää molempien pelaajien yhdistelmää, hakuun perustuvat Anki-pakat noudattavat jälleen kyseisen haun suodattimia sen sijaan että ottaisivat koko tietokannan, ja haun jumiutuminen tiettyjä suodattimia yhdistettäessä (teksti, päivämäärä, pelatun siirron virhe) on korjattu. Katso <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

@@ -63,8 +63,8 @@
 
 
 \title{blunderDB}
-\date{26 Ιουλίου 2026}
-\release{0.29.0}
+\date{27 Ιουλίου 2026}
+\release{0.30.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -115,10 +115,14 @@
 \chapter{Ιστορικό εκδόσεων}
 \label{\detokenize{index:historique-des-versions}}
 
-\begin{savenotes}\sphinxattablestart
+\begin{savenotes}
+\sphinxatlongtablestart
 \sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
+\makeatletter
+  \LTleft \@totalleftmargin plus1fill
+  \LTright\dimexpr\columnwidth-\@totalleftmargin-\linewidth\relax plus1fill
+\makeatother
+\begin{longtable}{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
@@ -137,7 +141,40 @@
 \end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\endfirsthead
+
+\multicolumn{3}{c}{\sphinxnorowcolor
+    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} συνεχίζεται από την προηγούμενη σελίδα}}%
+}\\
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Έκδοση
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Ημερομηνία
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Αιτία ή/και φύση των αλλαγών
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\endhead
+
+\sphinxbottomrule
+\multicolumn{3}{r}{\sphinxnorowcolor
+    \makebox[0pt][r]{\sphinxtablecontinued{συνέχεια στην επόμενη σελίδα}}%
+}\\
+\endfoot
+
+\endlastfoot
+\sphinxtableatstartofbodyhook
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
 \sphinxbeforeendvarwidth
@@ -727,10 +764,27 @@
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.30.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+26/07/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Αναζήτηση με σχόλιο: το φίλτρο «Κείμενο αναζήτησης» γίνεται φίλτρο «Σχόλιο» και προσφέρει τρεις αποκλειστικές λειτουργίες — \sphinxstyleemphasis{περιέχει κείμενο} (προηγούμενη συμπεριφορά, σύμβολο \sphinxcode{\sphinxupquote{t""λέξη1;λέξη2""}}), \sphinxstyleemphasis{έχει σχόλιο} (σύμβολο \sphinxcode{\sphinxupquote{co}}) και \sphinxstyleemphasis{χωρίς σχόλιο} (σύμβολο \sphinxcode{\sphinxupquote{xco}}) — για να βρίσκετε με μια κίνηση τις σχολιασμένες θέσεις, ή αντιθέτως εκείνες που απομένουν προς σχολιασμό. Θέσεις επισημασμένες στο eXtreme Gammon: οι επισημάνσεις που τίθενται κατά την ανάλυση ενός αγώνα XG διαβάζονται πλέον κατά την εισαγωγή και εντοπίζονται με το φίλτρο «Επισημασμένη» (σύμβολο \sphinxcode{\sphinxupquote{fl}}), συνδυαζόμενο με όλα τα άλλα κριτήρια· μια επισημασμένη απόφαση κύβου δίνει δύο επισημασμένες θέσεις, τον διπλασιασμό και την αποδοχή/πάσο. Η επισήμανση δεν είναι αναδρομική: αρκεί να εισαγάγετε ξανά το σχετικό αρχείο \sphinxcode{\sphinxupquote{.xg}} ώστε οι επισημάνσεις του να περάσουν στη βάση, χωρίς να θιγούν τα υπάρχοντα σχόλια και οι αναλύσεις. Αξιοσημείωτες διορθώσεις: το PR που εμφανίζεται στο σήμα ενός τουρνουά αφορά τον παίκτη αναφοράς και όχι πλέον το σύνολο των δύο παικτών, οι συλλογές Anki που βασίζονται σε μια αναζήτηση σέβονται ξανά τα φίλτρα αυτής αντί να παίρνουν όλη τη βάση, και διορθώθηκε μια εμπλοκή της αναζήτησης με ορισμένους συνδυασμούς φίλτρων (κείμενο, ημερομηνία, σφάλμα της κίνησης που παίχτηκε). Βλέπε {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Λίστα εντολών}}}}} και {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Εγχειρίδιο}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
+\end{longtable}
+\sphinxtableafterendhook
+\sphinxatlongtableend
+\end{savenotes}
 
 
 \chapter{Πίνακας περιεχομένων}
@@ -748,15 +802,15 @@
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
 
 \end{itemize}
 
@@ -808,7 +862,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
+Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -816,7 +870,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
+Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
 \end{sphinxadmonition}
 
 
@@ -1159,41 +1213,19 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 Το πάνελ προσφέρει έναν ρητό έλεγχο του \sphinxstylestrong{τύπου απόφασης} που αναζητείται: \sphinxstyleemphasis{Αδιάφορο} (κανένα φίλτρο), \sphinxstyleemphasis{Πιόνια} (αποφάσεις κίνησης) ή \sphinxstyleemphasis{Κύβος} (αποφάσεις κύβου). Όταν είναι επιλεγμένο το \sphinxstyleemphasis{Κύβος}, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: \sphinxstyleemphasis{Όλα}, \sphinxstyleemphasis{Διπλασιασμός / Όχι} (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή \sphinxstyleemphasis{Αποδοχή / Πάσο} (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία \sphinxstyleemphasis{Αποδοχή / Πάσο}, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.
+Το φίλτρο \sphinxstylestrong{Επισημασμένη} διατηρεί τις θέσεις που επισημάνατε στο λογισμικό προέλευσης του αγώνα. Μόνο το eXtreme Gammon παράγει αυτή την πληροφορία, καταγεγραμμένη κίνηση προς κίνηση στο αρχείο \sphinxcode{\sphinxupquote{.xg}}· το blunderDB τη διαβάζει κατά την εισαγωγή και τη διατηρεί. Μια επισημασμένη απόφαση κύβου δίνει δύο επισημασμένες θέσεις, τον διπλασιασμό και την αποδοχή/πάσο, καθώς το blunderDB χωρίζει στα δύο ό,τι το αρχείο προέλευσης καταγράφει ως μία απόφαση.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.
+Η επισήμανση δεν είναι αναδρομική: οι αγώνες που βρίσκονται ήδη στη βάση δεν φέρουν αυτή την πληροφορία, καθώς υπάρχει μόνο στα αρχεία προέλευσης. Αρκεί να εισαγάγετε ξανά το σχετικό αρχείο \sphinxcode{\sphinxupquote{.xg}} — η εισαγωγή εντοπίζει το διπλότυπο και δεν προσθέτει τίποτε άλλο πέρα από τις επισημάνσεις, χωρίς να θίγει τα υπάρχοντα σχόλια ή τις αναλύσεις. Η επισήμανση δεν μπορεί ούτε να τεθεί ούτε να αφαιρεθεί από το blunderDB: για έναν προσωρινό κατάλογο εργασίας, χρησιμοποιήστε καλύτερα μια συλλογή.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
-selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
-moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
-un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.
+Το φίλτρο \sphinxstylestrong{Σχόλιο} ερευνά τα σχόλια που συνδέονται με τις θέσεις σε τρεις αποκλειστικές λειτουργίες. \sphinxstyleemphasis{περιέχει κείμενο} αναζητά μία ή περισσότερες λέξεις στο κείμενο των σχολίων (πεδίο εισαγωγής, λέξεις χωρισμένες με \sphinxcode{\sphinxupquote{;}}, τουλάχιστον μία πρέπει να ταιριάζει)· \sphinxstyleemphasis{έχει σχόλιο} διατηρεί κάθε θέση που φέρει σχόλιο, ανεξάρτητα από το περιεχόμενό του· \sphinxstyleemphasis{χωρίς σχόλιο} διατηρεί αντιθέτως τις μη σχολιασμένες θέσεις — χρήσιμο, σε συνδυασμό με φίλτρο σφάλματος ή ημερομηνίας, για να καταρτίσετε τον κατάλογο όσων απομένουν προς σχολιασμό.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
-\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.
+Τα σχόλια που εισάγονται από αρχείο αγώνα (XG, GNUbg) μετρούν ως σχόλια: το blunderDB δεν διατηρεί την προέλευσή τους και επομένως δεν μπορεί να διακρίνει μια σημείωση που πληκτρολογήσατε από μια σημείωση που προέρχεται από το αρχείο προέλευσης. Εξάλλου, τα σχόλια που συνδέονται με έναν \sphinxstyleemphasis{αγώνα} ή ένα \sphinxstyleemphasis{τουρνουά} δεν αφορούν αυτό το φίλτρο: σχολιάζουν τον αγώνα ή το τουρνουά, όχι τις θέσεις του.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
@@ -1276,12 +1308,7 @@ positions.
 Ο πίνακας \sphinxstylestrong{Τουρνουά} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} για να εμφανίσετε ή να αποκρύψετε τον πίνακα.
 
 \sphinxAtStartPar
-La colonne \sphinxstylestrong{PR} de chaque tournoi affiche le PR du \sphinxstylestrong{joueur de référence} —
-c’est\sphinxhyphen{}à\sphinxhyphen{}dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.
+Η στήλη \sphinxstylestrong{PR} κάθε τουρνουά εμφανίζει το PR του \sphinxstylestrong{παίκτη αναφοράς} — δηλαδή του παίκτη που συμμετέχει στους περισσότερους αγώνες του τουρνουά (σε περίπτωση ισοπαλίας, εκείνου που πήρε τις περισσότερες αποφάσεις). Το PR δεν αναμειγνύει επομένως το δικό σας παιχνίδι με εκείνο των αντιπάλων σας: για τα δικά σας τουρνουά, αντικατοπτρίζει μόνο τη δική σας απόδοση. Το όνομα του παίκτη αναφοράς εμφανίζεται σε πλαίσιο υπόδειξης όταν περνάτε πάνω από την τιμή.
 
 
 \subsection{Πίνακας Stats}
@@ -3009,7 +3036,7 @@ fl
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d’origine, lors de l’import d’un match eXtreme Gammon.
+Η θέση επισημάνθηκε στο λογισμικό προέλευσης, κατά την εισαγωγή ενός αγώνα eXtreme Gammon.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3702,7 +3729,7 @@ co
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position porte un commentaire, quel qu’en soit le contenu.
+Η θέση φέρει σχόλιο, ανεξάρτητα από το περιεχόμενό του.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3713,7 +3740,7 @@ xco
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position ne porte aucun commentaire.
+Η θέση δεν φέρει κανένα σχόλιο.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -7514,7 +7541,7 @@ shasum\PYG{+w}{ }\PYGZhy{}a\PYG{+w}{ }\PYG{l+m}{256}\PYG{+w}{ }\PYGZhy{}c\PYG{+w
 \subsection{Εκδόσεις και μεταβάσεις}
 \label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
 \sphinxAtStartPar
-Το σχήμα της βάσης δεδομένων είναι \sphinxstylestrong{εκδοσιοποιημένο}. Η τρέχουσα έκδοση του σχήματος είναι \sphinxstylestrong{2.13.0}· είναι ανεξάρτητη από την έκδοση της εφαρμογής και αυξάνεται μόνο όταν εξελίσσεται η εσωτερική δομή. Η έκδοση του σχήματος μιας ανοιχτής βάσης είναι ορατή στον πίνακα \sphinxstylestrong{Μεταδεδομένων} (εντολή \sphinxcode{\sphinxupquote{meta}}).
+Το σχήμα της βάσης δεδομένων είναι \sphinxstylestrong{εκδοσιοποιημένο}. Η τρέχουσα έκδοση του σχήματος είναι \sphinxstylestrong{2.14.0}· είναι ανεξάρτητη από την έκδοση της εφαρμογής και αυξάνεται μόνο όταν εξελίσσεται η εσωτερική δομή. Η έκδοση του σχήματος μιας ανοιχτής βάσης είναι ορατή στον πίνακα \sphinxstylestrong{Μεταδεδομένων} (εντολή \sphinxcode{\sphinxupquote{meta}}).
 
 \begin{sphinxadmonition}{important}{Σημαντικό:}
 \sphinxAtStartPar

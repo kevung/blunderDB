@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.29.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.30.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fcb1757e"></script>
+      <script src="_static/documentation_options.js?v=a7ea5d77"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -279,6 +279,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>July 18, 2026</p></td>
 <td><p>Export of a match to the Jellyfish/gnubg format (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) from the interface (Matches panel) as well as from the command line, with the corresponding server route — handy for replaying a match in another backgammon program. Search: a new “excluded dice” discriminator (<code class="docutils literal notranslate"><span class="pre">xD65</span></code> token, several allowed) that discards positions whose roll matches a given throw. Safe concurrent opening: a database already open for writing in another blunderDB window now opens read-only (navigation, search and analysis still possible, edits disabled, “[read-only]” shown in the title bar) instead of risking corruption. Position provenance: outside match mode, the information bar above the board indicates the match — and its tournament — the studied position comes from, with a “+N” badge when it appears in several matches. Increased robustness to the environment: automatic fallback when a font, the clipboard or the last opened database is unavailable. An explicit reload of the library (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, toolbar button or <code class="docutils literal notranslate"><span class="pre">e</span></code> command) reopens the analysis panel of the displayed position. Notable fixes: removal of a freeze when exporting large databases, the export “None” button that did not actually export zero matches, multi-word comment filter, deduplication of the event and tournament in the information bar, and various display adjustments. See <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">List of commands</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Matches Panel</span></a> and <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>July 26, 2026</p></td>
+<td><p>Comment search: the “Search Text” filter becomes the “Comment” filter and offers three exclusive modes — <em>contains text</em> (previous behaviour, token <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;word1;word2&quot;&quot;</span></code>), <em>has a comment</em> (token <code class="docutils literal notranslate"><span class="pre">co</span></code>) and <em>no comment</em> (token <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — to find annotated positions at a glance, or on the contrary those left to comment. Positions flagged in eXtreme Gammon: the flags set while analysing an XG match are now read on import and found again with the “Flagged” filter (token <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable with every other criterion; a flagged cube decision yields two flagged positions, the double and the take/pass. Flagging is not retroactive, so simply import the relevant <code class="docutils literal notranslate"><span class="pre">.xg</span></code> file again for its flags to join the database, leaving existing comments and analyses untouched. Notable fixes: the PR shown on a tournament badge refers to the reference player rather than the two players combined, Anki decks based on a search again honour that search’s filters instead of taking in the whole database, and a search hang combining certain filters (text, date, played-move error) is fixed. See <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">List of commands</span></a> and <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

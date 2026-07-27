@@ -81,8 +81,8 @@
 
 
 \title{blunderDB}
-\date{26.07.2026}
-\release{0.29.0}
+\date{27.07.2026}
+\release{0.30.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -133,10 +133,14 @@ Tämä dokumentaatio on rakennettu seuraavasti:
 \chapter{Versiohistoria}
 \label{\detokenize{index:historique-des-versions}}
 
-\begin{savenotes}\sphinxattablestart
+\begin{savenotes}
+\sphinxatlongtablestart
 \sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
+\makeatletter
+  \LTleft \@totalleftmargin plus1fill
+  \LTright\dimexpr\columnwidth-\@totalleftmargin-\linewidth\relax plus1fill
+\makeatother
+\begin{longtable}{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
@@ -155,7 +159,40 @@ Muutosten syy ja/tai luonne
 \end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\endfirsthead
+
+\multicolumn{3}{c}{\sphinxnorowcolor
+    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} continued from previous page}}%
+}\\
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Versio
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Päivämäärä
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Muutosten syy ja/tai luonne
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\endhead
+
+\sphinxbottomrule
+\multicolumn{3}{r}{\sphinxnorowcolor
+    \makebox[0pt][r]{\sphinxtablecontinued{continues on next page}}%
+}\\
+\endfoot
+
+\endlastfoot
+\sphinxtableatstartofbodyhook
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
 \sphinxbeforeendvarwidth
@@ -745,10 +782,27 @@ Ottelun vienti Jellyfish/gnubg\sphinxhyphen{}muodossa (\sphinxcode{\sphinxupquot
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.30.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+26.7.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Kommenttihaku: suodatin ”Hakuteksti” muuttuu suodattimeksi ”Kommentti” ja tarjoaa kolme toisensa poissulkevaa tilaa — \sphinxstyleemphasis{sisältää tekstin} (aiempi toiminta, tunnus \sphinxcode{\sphinxupquote{t""sana1;sana2""}}), \sphinxstyleemphasis{on kommentti} (tunnus \sphinxcode{\sphinxupquote{co}}) ja \sphinxstyleemphasis{ei kommenttia} (tunnus \sphinxcode{\sphinxupquote{xco}}) — jotta löydät yhdellä liikkeellä kommentoidut asemat tai päinvastoin ne, jotka on vielä kommentoitava. eXtreme Gammonissa merkityt asemat: XG\sphinxhyphen{}ottelun analysoinnin aikana asetetut merkinnät luetaan nyt tuonnin yhteydessä ja löytyvät suodattimella ”Merkitty” (tunnus \sphinxcode{\sphinxupquote{fl}}), joka on yhdistettävissä kaikkiin muihin ehtoihin; merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen. Merkintä ei ole takautuva: riittää, että tuot kyseisen \sphinxcode{\sphinxupquote{.xg}}\sphinxhyphen{}tiedoston uudelleen, jotta sen merkinnät päätyvät tietokantaan koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkittäviä korjauksia: turnauksen tunnuksessa näkyvä PR koskee viitepelaajaa eikä enää molempien pelaajien yhdistelmää, hakuun perustuvat Anki\sphinxhyphen{}pakat noudattavat jälleen kyseisen haun suodattimia sen sijaan että ottaisivat koko tietokannan, ja haun jumiutuminen tiettyjä suodattimia yhdistettäessä (teksti, päivämäärä, pelatun siirron virhe) on korjattu. Katso {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Komentoluettelo}}}}} ja {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Käyttöopas}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
+\end{longtable}
+\sphinxtableafterendhook
+\sphinxatlongtableend
+\end{savenotes}
 
 
 \chapter{Sisällysluettelo}
@@ -766,15 +820,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
 
 \end{itemize}
 
@@ -826,7 +880,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raaka binääri (edistynyt menetelmä)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
+Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -834,7 +888,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
+Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
 \end{sphinxadmonition}
 
 
@@ -1177,41 +1231,19 @@ Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä 
 Paneeli tarjoaa nimenomaisen hallinnan haettavalle \sphinxstylestrong{päätöstyypille}: \sphinxstyleemphasis{Indifférent} (ei suodatinta), \sphinxstyleemphasis{Siirto} (siirtopäätökset) tai \sphinxstyleemphasis{Tuplaus} (kuutiopäätökset). Kun \sphinxstyleemphasis{Tuplaus} on valittuna, toinen luettelo tarkentaa alityypin: \sphinxstyleemphasis{Kaikki}, \sphinxstyleemphasis{Tuplaus / Ei tuplausta} (vuorossa olevan pelaajan on päätettävä, tuplaako) tai \sphinxstyleemphasis{Hyväksy / Luovuta} (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. \sphinxstyleemphasis{Hyväksy / Luovuta} \sphinxhyphen{}tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.
+Suodatin \sphinxstylestrong{Merkitty} säilyttää asemat, jotka olet merkinnyt ottelun lähdeohjelmassa. Vain eXtreme Gammon tuottaa tämän tiedon, joka tallennetaan siirto siirrolta \sphinxcode{\sphinxupquote{.xg}}\sphinxhyphen{}tiedostoon; blunderDB lukee sen tuonnin yhteydessä ja säilyttää sen. Merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen, koska blunderDB jakaa kahtia sen, minkä lähdetiedosto tallentaa yhtenä päätöksenä.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.
+Merkintä ei ole takautuva: tietokannassa jo olevat ottelut eivät sisällä tätä tietoa, koska se on olemassa vain lähdetiedostoissa. Riittää, että tuot kyseisen \sphinxcode{\sphinxupquote{.xg}}\sphinxhyphen{}tiedoston uudelleen — tuonti tunnistaa kaksoiskappaleen eikä lisää muuta kuin merkinnät, koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkintää ei voi asettaa eikä poistaa blunderDB:stä: väliaikaista työlistaa varten käytä mieluummin kokoelmaa.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
-selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
-moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
-un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.
+Suodatin \sphinxstylestrong{Kommentti} tutkii asemiin liitettyjä kommentteja kolmessa toisensa poissulkevassa tilassa. \sphinxstyleemphasis{sisältää tekstin} etsii yhtä tai useampaa sanaa kommenttien tekstistä (syöttökenttä, sanat erotettuna merkillä \sphinxcode{\sphinxupquote{;}}, vähintään yhden on täsmättävä); \sphinxstyleemphasis{on kommentti} säilyttää jokaisen aseman, jossa on kommentti, sisällöstä riippumatta; \sphinxstyleemphasis{ei kommenttia} säilyttää päinvastoin kommentoimattomat asemat — hyödyllistä yhdessä virhe\sphinxhyphen{} tai päivämääräsuodattimen kanssa laadittaessa luetteloa siitä, mitä on vielä kommentoitava.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
-\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.
+Ottelutiedostosta (XG, GNUbg) tuodut kommentit lasketaan kommenteiksi: blunderDB ei säilytä niiden alkuperää eikä siksi voi erottaa itse kirjoittamaasi muistiinpanoa lähdetiedostosta peräisin olevasta. Lisäksi \sphinxstyleemphasis{otteluun} tai \sphinxstyleemphasis{turnaukseen} liitetyt kommentit eivät kuulu tähän: ne kommentoivat ottelua tai turnausta, eivät sen asemia.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
@@ -1294,12 +1326,7 @@ Katso saatavilla olevat pikanäppäimet kohdasta {\hyperref[\detokenize{raccourc
 \sphinxstylestrong{Turnauspaneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats\sphinxhyphen{}paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}.
 
 \sphinxAtStartPar
-La colonne \sphinxstylestrong{PR} de chaque tournoi affiche le PR du \sphinxstylestrong{joueur de référence} —
-c’est\sphinxhyphen{}à\sphinxhyphen{}dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.
+Kunkin turnauksen \sphinxstylestrong{PR}\sphinxhyphen{}sarake näyttää \sphinxstylestrong{viitepelaajan} PR\sphinxhyphen{}arvon — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.
 
 
 \subsection{Stats\sphinxhyphen{}paneeli}
@@ -3027,7 +3054,7 @@ fl
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d’origine, lors de l’import d’un match eXtreme Gammon.
+Asema on merkitty lähdeohjelmassa eXtreme Gammon \sphinxhyphen{}ottelun tuonnin yhteydessä.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3720,7 +3747,7 @@ co
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position porte un commentaire, quel qu’en soit le contenu.
+Asemassa on kommentti, sisällöstä riippumatta.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3731,7 +3758,7 @@ xco
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position ne porte aucun commentaire.
+Asemassa ei ole kommenttia.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -7532,7 +7559,7 @@ blunderDB\sphinxhyphen{}tietokanta on yksinkertainen SQLite\sphinxhyphen{}tiedos
 \subsection{Versiointi ja migraatiot}
 \label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
 \sphinxAtStartPar
-Tietokannan skeema on \sphinxstylestrong{versioitu}. Skeeman nykyinen versio on \sphinxstylestrong{2.13.0}; se on riippumaton sovelluksen versiosta ja sitä kasvatetaan vain, kun sisäinen rakenne muuttuu. Avatun tietokannan skeeman versio näkyy \sphinxstylestrong{Metatiedot}\sphinxhyphen{}paneelissa (komento \sphinxcode{\sphinxupquote{meta}}).
+Tietokannan skeema on \sphinxstylestrong{versioitu}. Skeeman nykyinen versio on \sphinxstylestrong{2.14.0}; se on riippumaton sovelluksen versiosta ja sitä kasvatetaan vain, kun sisäinen rakenne muuttuu. Avatun tietokannan skeeman versio näkyy \sphinxstylestrong{Metatiedot}\sphinxhyphen{}paneelissa (komento \sphinxcode{\sphinxupquote{meta}}).
 
 \begin{sphinxadmonition}{important}{Tärkeä:}
 \sphinxAtStartPar

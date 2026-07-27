@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentazione blunderDB 0.29.0 </title>
+  <title>blunderDB &mdash; Documentazione blunderDB 0.30.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9a4fab2e"></script>
+      <script src="_static/documentation_options.js?v=c1148327"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -280,6 +280,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>18 luglio 2026</p></td>
 <td><p>Esportazione di un match nel formato Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) dall’interfaccia (pannello Partite) come da riga di comando, con la corrispondente route del server — pratico per rigiocare un match in un altro software di backgammon. Ricerca: nuovo discriminatore « dadi esclusi » (token <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, se ne possono usare più di uno) che scarta le posizioni il cui lancio corrisponde a un tiro dato. Apertura concorrente sicura: un database già aperto in scrittura in un’altra finestra di blunderDB si apre ora in sola lettura (navigazione, ricerca e analisi possibili, modifiche disattivate, dicitura « [sola lettura] » nella barra del titolo) invece di rischiare una corruzione. Provenienza delle posizioni: fuori dalla modalità match, la barra delle informazioni sopra il tavoliere indica il match — e il suo torneo — da cui proviene la posizione studiata, con un badge « +N » quando compare in più match. Maggiore robustezza rispetto all’ambiente: ripiego automatico quando un font, gli appunti o l’ultimo database aperto non sono disponibili. Un ricaricamento esplicito della libreria (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, pulsante della barra degli strumenti o comando <code class="docutils literal notranslate"><span class="pre">e</span></code>) riapre il pannello di analisi della posizione visualizzata. Correzioni degne di nota: rimozione di un blocco durante l’esportazione di database di grandi dimensioni, pulsante « Nessuno » dell’esportazione che in realtà non esportava alcun match, filtro per commento multi-parola, deduplicazione dell’evento e del torneo nella barra delle informazioni, e vari aggiustamenti di visualizzazione. Vedere <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Elenco dei comandi</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Pannello Match</span></a> e <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuale</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>26/07/2026</p></td>
+<td><p>Ricerca per commento: il filtro «Testo da cercare» diventa il filtro «Commento» e propone tre modalità esclusive — <em>contiene il testo</em> (comportamento precedente, token <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;parola1;parola2&quot;&quot;</span></code>), <em>ha un commento</em> (token <code class="docutils literal notranslate"><span class="pre">co</span></code>) e <em>senza commento</em> (token <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — per ritrovare con un gesto le posizioni annotate, o al contrario quelle che restano da commentare. Posizioni contrassegnate in eXtreme Gammon: i contrassegni posti durante l’analisi di una partita XG vengono ora letti all’importazione e ritrovati con il filtro «Contrassegnata» (token <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinabile con tutti gli altri criteri; una decisione di cubo contrassegnata dà due posizioni contrassegnate, il raddoppio e l’accetta/passa. La marcatura non è retroattiva: è sufficiente reimportare il file <code class="docutils literal notranslate"><span class="pre">.xg</span></code> interessato perché i suoi contrassegni raggiungano il database, senza toccare i commenti né le analisi esistenti. Correzioni degne di nota: il PR mostrato sul distintivo di un torneo si riferisce al giocatore di riferimento e non più all’insieme dei due giocatori, i mazzi Anki basati su una ricerca rispettano nuovamente i filtri di tale ricerca invece di prendere l’intero database, ed è corretto un blocco della ricerca combinando certi filtri (testo, data, errore della mossa giocata). Vedere <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Elenco dei comandi</span></a> e <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuale</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>12. 付録: データベーススキーマ &mdash; blunderDB 0.29.0 ドキュメント</title>
+  <title>12. 付録: データベーススキーマ &mdash; blunderDB 0.30.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=65abced0"></script>
+      <script src="_static/documentation_options.js?v=3ef0e6d9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -96,7 +96,7 @@
 <p>blunderDB のデータベースは単純な SQLite ファイル（拡張子 <em>.db</em>）です。そのため、blunderDB がなくても、任意の SQLite ファイルエディターやブラウザーで開いて中身を確認できます。</p>
 <section id="versionnage-et-migrations">
 <h2><span class="section-number">12.1. </span>バージョン管理と移行<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
-<p>データベースのスキーマは <strong>バージョン管理されています</strong>。現在のスキーマのバージョンは <strong>2.13.0</strong> です ；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、<strong>メタデータ</strong> パネル（<code class="docutils literal notranslate"><span class="pre">meta</span></code> コマンド）で確認できます。</p>
+<p>データベースのスキーマは <strong>バージョン管理されています</strong>。現在のスキーマのバージョンは <strong>2.14.0</strong> です ；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、<strong>メタデータ</strong> パネル（<code class="docutils literal notranslate"><span class="pre">meta</span></code> コマンド）で確認できます。</p>
 <div class="admonition important">
 <p class="admonition-title">重要</p>
 <p>以前のバージョンの blunderDB で作成したデータベースを開く前に、必ず <em>.db</em> ファイルをバックアップしてください。</p>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.29.0</title>
+  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e2a87746"></script>
+      <script src="_static/documentation_options.js?v=b9f35f4f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -276,37 +276,15 @@
 <p>Ο πίνακας <strong>Αναζήτησης</strong> (<em>CTRL-F</em> ή <em>TAB</em>) επιτρέπει το φιλτράρισμα των θέσεων σύμφωνα με κριτήρια που συνδυάζονται ελεύθερα: δομή πουλιών, τύπος απόφασης κύβου, μέγεθος σφάλματος, ημερομηνίες, ετικέτες κ.λπ. Το πλήκτρο <em>TAB</em> ανοίγει ταυτόχρονα τον πίνακα αναζήτησης και τον επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς αναζήτηση πάνω στο ταμπλό.</p>
 <p>Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> ακολουθούμενη από φίλτρα (π.χ.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου <em>Search in current results</em> για την ίδια λειτουργία.</p>
 <p>Το πάνελ προσφέρει έναν ρητό έλεγχο του <strong>τύπου απόφασης</strong> που αναζητείται: <em>Αδιάφορο</em> (κανένα φίλτρο), <em>Πιόνια</em> (αποφάσεις κίνησης) ή <em>Κύβος</em> (αποφάσεις κύβου). Όταν είναι επιλεγμένο το <em>Κύβος</em>, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: <em>Όλα</em>, <em>Διπλασιασμός / Όχι</em> (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή <em>Αποδοχή / Πάσο</em> (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία <em>Αποδοχή / Πάσο</em>, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.</p>
-<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.</p>
+<p>Το φίλτρο <strong>Επισημασμένη</strong> διατηρεί τις θέσεις που επισημάνατε στο λογισμικό προέλευσης του αγώνα. Μόνο το eXtreme Gammon παράγει αυτή την πληροφορία, καταγεγραμμένη κίνηση προς κίνηση στο αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code>· το blunderDB τη διαβάζει κατά την εισαγωγή και τη διατηρεί. Μια επισημασμένη απόφαση κύβου δίνει δύο επισημασμένες θέσεις, τον διπλασιασμό και την αποδοχή/πάσο, καθώς το blunderDB χωρίζει στα δύο ό,τι το αρχείο προέλευσης καταγράφει ως μία απόφαση.</p>
 <div class="admonition note">
 <p class="admonition-title">Σημείωση</p>
-<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.</p>
+<p>Η επισήμανση δεν είναι αναδρομική: οι αγώνες που βρίσκονται ήδη στη βάση δεν φέρουν αυτή την πληροφορία, καθώς υπάρχει μόνο στα αρχεία προέλευσης. Αρκεί να εισαγάγετε ξανά το σχετικό αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code> — η εισαγωγή εντοπίζει το διπλότυπο και δεν προσθέτει τίποτε άλλο πέρα από τις επισημάνσεις, χωρίς να θίγει τα υπάρχοντα σχόλια ή τις αναλύσεις. Η επισήμανση δεν μπορεί ούτε να τεθεί ούτε να αφαιρεθεί από το blunderDB: για έναν προσωρινό κατάλογο εργασίας, χρησιμοποιήστε καλύτερα μια συλλογή.</p>
 </div>
-<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
-selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
-moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
-un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<p>Το φίλτρο <strong>Σχόλιο</strong> ερευνά τα σχόλια που συνδέονται με τις θέσεις σε τρεις αποκλειστικές λειτουργίες. <em>περιέχει κείμενο</em> αναζητά μία ή περισσότερες λέξεις στο κείμενο των σχολίων (πεδίο εισαγωγής, λέξεις χωρισμένες με <code class="docutils literal notranslate"><span class="pre">;</span></code>, τουλάχιστον μία πρέπει να ταιριάζει)· <em>έχει σχόλιο</em> διατηρεί κάθε θέση που φέρει σχόλιο, ανεξάρτητα από το περιεχόμενό του· <em>χωρίς σχόλιο</em> διατηρεί αντιθέτως τις μη σχολιασμένες θέσεις — χρήσιμο, σε συνδυασμό με φίλτρο σφάλματος ή ημερομηνίας, για να καταρτίσετε τον κατάλογο όσων απομένουν προς σχολιασμό.</p>
 <div class="admonition note">
 <p class="admonition-title">Σημείωση</p>
-<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
-<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.</p>
+<p>Τα σχόλια που εισάγονται από αρχείο αγώνα (XG, GNUbg) μετρούν ως σχόλια: το blunderDB δεν διατηρεί την προέλευσή τους και επομένως δεν μπορεί να διακρίνει μια σημείωση που πληκτρολογήσατε από μια σημείωση που προέρχεται από το αρχείο προέλευσης. Εξάλλου, τα σχόλια που συνδέονται με έναν <em>αγώνα</em> ή ένα <em>τουρνουά</em> δεν αφορούν αυτό το φίλτρο: σχολιάζουν τον αγώνα ή το τουρνουά, όχι τις θέσεις του.</p>
 </div>
 <p>Το φίλτρο <strong>Αγώνες &amp; Τουρνουά</strong> στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά <em>Όλα</em> / <em>Κανένα</em> που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες-μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.</p>
 <p>Ο πίνακας αναζήτησης διαθέτει τρεις καρτέλες στο αριστερό του άκρο: <em>Recherche</em> (τα φίλτρα), <em>Historique</em> και <em>Enregistrés</em>. Η καρτέλα <strong>Historique</strong> παραθέτει τις προηγούμενες αναζητήσεις με την ημερομηνία και την εντολή τους: ένα κλικ επιλέγει μια αναζήτηση και εμφανίζει τη σχετική θέση στο ταμπλό, ένα διπλό κλικ την εκτελεί ξανά. Κάθε καταχώριση μπορεί να αποθηκευτεί στη βιβλιοθήκη φίλτρων (εικονίδιο σελιδοδείκτη, δίνοντας ένα όνομα στο φίλτρο) ή να διαγραφεί. Η καρτέλα <strong>Enregistrés</strong> περιέχει τη <strong>βιβλιοθήκη φίλτρων</strong>: κάντε διπλό κλικ σε ένα αποθηκευμένο φίλτρο για να εκτελέσετε ξανά την αντίστοιχη αναζήτηση (βλ. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Παράρτημα: Προχωρημένη χρήση των φίλτρων</span></a>). Η εντολή <code class="docutils literal notranslate"><span class="pre">history</span></code> (ψευδώνυμο <code class="docutils literal notranslate"><span class="pre">hi</span></code>) ανοίγει τον πίνακα αναζήτησης.</p>
@@ -347,12 +325,7 @@ positions.</p>
 <section id="panneau-tournois">
 <span id="id8"></span><h2><span class="section-number">2.15. </span>Πίνακας Τουρνουά<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>Ο πίνακας <strong>Τουρνουά</strong> (<em>CTRL-Y</em>) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε <em>CTRL-Y</em> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
-<p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> —
-c’est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.</p>
+<p>Η στήλη <strong>PR</strong> κάθε τουρνουά εμφανίζει το PR του <strong>παίκτη αναφοράς</strong> — δηλαδή του παίκτη που συμμετέχει στους περισσότερους αγώνες του τουρνουά (σε περίπτωση ισοπαλίας, εκείνου που πήρε τις περισσότερες αποφάσεις). Το PR δεν αναμειγνύει επομένως το δικό σας παιχνίδι με εκείνο των αντιπάλων σας: για τα δικά σας τουρνουά, αντικατοπτρίζει μόνο τη δική σας απόδοση. Το όνομα του παίκτη αναφοράς εμφανίζεται σε πλαίσιο υπόδειξης όταν περνάτε πάνω από την τιμή.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.16. </span>Πίνακας Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>

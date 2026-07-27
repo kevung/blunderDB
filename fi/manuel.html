@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Käyttöopas &mdash; blunderDB 0.29.0 documentation</title>
+  <title>2. Käyttöopas &mdash; blunderDB 0.30.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ed840378"></script>
+      <script src="_static/documentation_options.js?v=b6df2b71"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -276,37 +276,15 @@
 <p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
 <p>Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä komentoa <code class="docutils literal notranslate"><span class="pre">ss</span></code>, jota seuraavat suodattimet (esim. <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Hakupaneeli tarjoaa samaa toimintoa varten myös valintaruudun <em>Search in current results</em>.</p>
 <p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
-<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.</p>
+<p>Suodatin <strong>Merkitty</strong> säilyttää asemat, jotka olet merkinnyt ottelun lähdeohjelmassa. Vain eXtreme Gammon tuottaa tämän tiedon, joka tallennetaan siirto siirrolta <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedostoon; blunderDB lukee sen tuonnin yhteydessä ja säilyttää sen. Merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen, koska blunderDB jakaa kahtia sen, minkä lähdetiedosto tallentaa yhtenä päätöksenä.</p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.</p>
+<p>Merkintä ei ole takautuva: tietokannassa jo olevat ottelut eivät sisällä tätä tietoa, koska se on olemassa vain lähdetiedostoissa. Riittää, että tuot kyseisen <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston uudelleen — tuonti tunnistaa kaksoiskappaleen eikä lisää muuta kuin merkinnät, koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkintää ei voi asettaa eikä poistaa blunderDB:stä: väliaikaista työlistaa varten käytä mieluummin kokoelmaa.</p>
 </div>
-<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
-selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
-moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
-un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<p>Suodatin <strong>Kommentti</strong> tutkii asemiin liitettyjä kommentteja kolmessa toisensa poissulkevassa tilassa. <em>sisältää tekstin</em> etsii yhtä tai useampaa sanaa kommenttien tekstistä (syöttökenttä, sanat erotettuna merkillä <code class="docutils literal notranslate"><span class="pre">;</span></code>, vähintään yhden on täsmättävä); <em>on kommentti</em> säilyttää jokaisen aseman, jossa on kommentti, sisällöstä riippumatta; <em>ei kommenttia</em> säilyttää päinvastoin kommentoimattomat asemat — hyödyllistä yhdessä virhe- tai päivämääräsuodattimen kanssa laadittaessa luetteloa siitä, mitä on vielä kommentoitava.</p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
-<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.</p>
+<p>Ottelutiedostosta (XG, GNUbg) tuodut kommentit lasketaan kommenteiksi: blunderDB ei säilytä niiden alkuperää eikä siksi voi erottaa itse kirjoittamaasi muistiinpanoa lähdetiedostosta peräisin olevasta. Lisäksi <em>otteluun</em> tai <em>turnaukseen</em> liitetyt kommentit eivät kuulu tähän: ne kommentoivat ottelua tai turnausta, eivät sen asemia.</p>
 </div>
 <p><strong>Ottelut ja turnaukset</strong> -suodatin perustuu yhteiseen valitsimeen (modaali-ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä <em>Kaikki</em> / <em>Ei mitään</em> -painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.</p>
 <p>Hakupaneelissa on vasemmassa reunassaan kolme välilehteä: <em>Recherche</em> (suodattimet), <em>Historique</em> ja <em>Enregistrés</em>. <strong>Historique</strong>-välilehti luettelee aiemmat haut päivämäärineen ja komentoineen: napsautus valitsee haun ja näyttää siihen liittyvän aseman laudalla, kaksoisnapsautus suorittaa sen uudelleen. Kunkin merkinnän voi tallentaa suodatinkirjastoon (kirjanmerkkikuvake, antamalla suodattimelle nimen) tai poistaa. <strong>Enregistrés</strong>-välilehti sisältää <strong>suodatinkirjaston</strong>: kaksoisnapsauta tallennettua suodatinta suorittaaksesi vastaavan haun uudelleen (katso <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Liite: Suodattimien edistynyt käyttö</span></a>). Komento <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) avaa hakupaneelin.</p>
@@ -347,12 +325,7 @@ positions.</p>
 <section id="panneau-tournois">
 <span id="id8"></span><h2><span class="section-number">2.15. </span>Turnauspaneeli<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p><strong>Turnauspaneeli</strong> (<em>CTRL-Y</em>) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats-paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla <em>CTRL-Y</em>.</p>
-<p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> —
-c’est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.</p>
+<p>Kunkin turnauksen <strong>PR</strong>-sarake näyttää <strong>viitepelaajan</strong> PR-arvon — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.16. </span>Stats-paneeli<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>

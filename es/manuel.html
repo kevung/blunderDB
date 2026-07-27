@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; documentación de blunderDB - 0.29.0</title>
+  <title>2. Manual &mdash; documentación de blunderDB - 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4723e932"></script>
+      <script src="_static/documentation_options.js?v=1c78c13b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -276,37 +276,15 @@
 <p>El panel <strong>Búsqueda</strong> (<em>CTRL-F</em> o <em>TAB</em>) permite filtrar las posiciones según criterios libremente combinables: estructura de fichas, tipo de decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla <em>TAB</em> abre simultáneamente el panel de búsqueda y el editor de posición, lo que permite definir una estructura de fichas que buscar directamente en el tablero.</p>
 <p>Para afinar una búsqueda entre las posiciones filtradas actualmente, use el comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguido de filtros (p. ej.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). El panel de búsqueda ofrece también una casilla <em>Search in current results</em> para la misma funcionalidad.</p>
 <p>El panel ofrece un control explícito del <strong>tipo de decisión</strong> buscado: <em>Indiferente</em> (ningún filtro), <em>Fichas</em> (decisiones de jugada) o <em>Cubo</em> (decisiones de cubo). Cuando se selecciona <em>Cubo</em>, una segunda lista precisa el subtipo: <em>Todos</em>, <em>Doblar / No doblar</em> (el jugador con el turno debe decidir si doblar) o <em>Aceptar / Pasar</em> (respuesta a un doblaje del rival). El control está sincronizado con el tablero: modificar los dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa. En modo <em>Aceptar / Pasar</em>, el cubo se muestra en el centro del tablero con el valor ofrecido; ese valor sigue siendo editable.</p>
-<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.</p>
+<p>El filtro <strong>Marcada</strong> conserva las posiciones que ha marcado en el programa de origen de la partida. Solo eXtreme Gammon produce esta información, registrada jugada a jugada en el archivo <code class="docutils literal notranslate"><span class="pre">.xg</span></code>; blunderDB la lee al importar y la conserva. Una decisión de cubo marcada da dos posiciones marcadas, el doblez y la aceptación/paso, ya que blunderDB divide en dos lo que el archivo de origen registra como una sola decisión.</p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.</p>
+<p>El marcado no es retroactivo: las partidas ya presentes en la base no contienen esta información, puesto que solo existe en los archivos de origen. Basta con volver a importar el archivo <code class="docutils literal notranslate"><span class="pre">.xg</span></code> correspondiente — la importación detecta el duplicado y no añade nada más que las marcas, sin tocar los comentarios ni los análisis existentes. El marcado no puede ponerse ni quitarse desde blunderDB: para una lista de trabajo temporal, utilice más bien una colección.</p>
 </div>
-<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
-selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
-moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
-un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<p>El filtro <strong>Comentario</strong> consulta los comentarios asociados a las posiciones según tres modos exclusivos. <em>contiene el texto</em> busca una o varias palabras en el texto de los comentarios (campo de entrada, palabras separadas por <code class="docutils literal notranslate"><span class="pre">;</span></code>, al menos una debe coincidir); <em>tiene un comentario</em> conserva toda posición que lleve un comentario, sea cual sea su contenido; <em>sin comentario</em> conserva por el contrario las posiciones no anotadas — útil, combinado con un filtro de error o de fecha, para elaborar la lista de lo que queda por comentar.</p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
-<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
-<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.</p>
+<p>Los comentarios importados desde un archivo de partida (XG, GNUbg) cuentan como comentarios: blunderDB no conserva su origen y por tanto no puede distinguir una nota que usted haya escrito de una nota tomada del archivo de origen. Por otra parte, los comentarios asociados a una <em>partida</em> o a un <em>torneo</em> no se ven afectados: anotan la partida o el torneo, no sus posiciones.</p>
 </div>
 <p>El filtro <strong>Partidas y Torneos</strong> se apoya en un selector común (ventana modal) en lugar de la introducción de identificadores numéricos: dos listas de casillas, una para las partidas y otra para los torneos, cada una filtrable por texto (jugador, fecha, evento para las partidas; nombre, fecha, lugar para los torneos), con botones <em>Todo</em> / <em>Ninguno</em> que solo actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca automáticamente (y atenúa) sus partidas miembro en la lista de partidas, dejando patente que un torneo equivale al conjunto de sus partidas.</p>
 <p>El panel de búsqueda cuenta con tres pestañas en su borde izquierdo: <em>Búsqueda</em> (los filtros), <em>Historial</em> y <em>Guardados</em>. La pestaña <strong>Historial</strong> enumera las búsquedas anteriores con su fecha y su comando: un clic selecciona una búsqueda y muestra la posición asociada en el tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o eliminarse. La pestaña <strong>Guardados</strong> contiene la <strong>biblioteca de filtros</strong>: hacer doble clic en un filtro guardado para relanzar la búsqueda correspondiente (véase <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anexo: Uso avanzado de los filtros</span></a>). El comando <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) abre el panel de búsqueda.</p>
@@ -347,12 +325,7 @@ positions.</p>
 <section id="panneau-tournois">
 <span id="id8"></span><h2><span class="section-number">2.15. </span>Panel de Torneos<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>El panel <strong>Torneos</strong> (<em>CTRL-Y</em>) permite agrupar partidas en torneos para un seguimiento organizado y un análisis estadístico por evento. Los torneos pueden crearse, renombrarse y eliminarse; las partidas pueden asignarse a ellos. Las estadísticas del panel Stats pueden filtrarse por torneo. Pulse <em>CTRL-Y</em> para mostrar u ocultar el panel.</p>
-<p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> —
-c’est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.</p>
+<p>La columna <strong>PR</strong> de cada torneo muestra el PR del <strong>jugador de referencia</strong> — es decir, el jugador presente en el mayor número de partidas del torneo (en caso de empate, el que haya tomado más decisiones). El PR no mezcla por tanto su juego con el de sus adversarios: para sus propios torneos, refleja únicamente su rendimiento. El nombre del jugador de referencia aparece en un cuadro emergente al pasar por encima del valor.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.16. </span>Panel Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>

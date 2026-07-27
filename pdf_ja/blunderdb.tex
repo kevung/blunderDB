@@ -54,8 +54,8 @@
 
 
 \title{blunderDB}
-\date{2026年07月26日}
-\release{0.29.0}
+\date{2026年07月27日}
+\release{0.30.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{リリース}
@@ -106,10 +106,14 @@ blunderDBは、バックギャモンのポジションのデータベースを�
 \chapter{バージョン履歴}
 \label{\detokenize{index:historique-des-versions}}
 
-\begin{savenotes}\sphinxattablestart
+\begin{savenotes}
+\sphinxatlongtablestart
 \sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
+\makeatletter
+  \LTleft \@totalleftmargin plus1fill
+  \LTright\dimexpr\columnwidth-\@totalleftmargin-\linewidth\relax plus1fill
+\makeatother
+\begin{longtable}{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
@@ -128,7 +132,40 @@ blunderDBは、バックギャモンのポジションのデータベースを�
 \end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\endfirsthead
+
+\multicolumn{3}{c}{\sphinxnorowcolor
+    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} 前のページからの続き}}%
+}\\
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+バージョン
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+日付
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+変更の理由および内容
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\endhead
+
+\sphinxbottomrule
+\multicolumn{3}{r}{\sphinxnorowcolor
+    \makebox[0pt][r]{\sphinxtablecontinued{次のページに続く}}%
+}\\
+\endfoot
+
+\endlastfoot
+\sphinxtableatstartofbodyhook
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
 \sphinxbeforeendvarwidth
@@ -718,10 +755,27 @@ Anki パネル：\sphinxstyleemphasis{Study} の隣の \sphinxstyleemphasis{Cram
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.30.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+2026/07/26
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+コメントによる検索：「検索テキスト」フィルターが「コメント」フィルターとなり、3 つの排他的なモードを備えました。\sphinxstyleemphasis{テキストを含む}（従来の動作、トークン \sphinxcode{\sphinxupquote{t""語1;語2""}}）、\sphinxstyleemphasis{コメントあり}（トークン \sphinxcode{\sphinxupquote{co}}）、\sphinxstyleemphasis{コメントなし}（トークン \sphinxcode{\sphinxupquote{xco}}）です。注釈済みの局面、あるいは逆にこれから注釈を付けるべき局面を、ひと手間で見つけられます。eXtreme Gammon でフラグを付けた局面：XG のマッチ分析中に付けたフラグをインポート時に読み取るようになり、「フラグ付き」フィルター（トークン \sphinxcode{\sphinxupquote{fl}}）で再び見つけられます。他のすべての条件と組み合わせ可能です。フラグ付きのキューブ判断は 2 つのフラグ付き局面、すなわちダブルとテイク/パスを生成します。フラグは遡及しないため、該当する \sphinxcode{\sphinxupquote{.xg}} ファイルを再インポートするだけで、既存のコメントや解析に触れることなくフラグがデータベースに加わります。主な修正：トーナメントのバッジに表示される PR が、両プレイヤーの合算ではなく基準プレイヤーのものになりました。検索に基づく Anki デッキが、データベース全体を取り込むのではなく、その検索の絞り込み条件を再び尊重するようになりました。特定の絞り込み条件（テキスト、日付、着手の誤差）を組み合わせた際の検索の停止を修正しました。{\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{コマンド一覧}}}}} および {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{マニュアル}}}}} を参照してください。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
+\end{longtable}
+\sphinxtableafterendhook
+\sphinxatlongtableend
+\end{savenotes}
 
 
 \chapter{目次}
@@ -739,15 +793,15 @@ blunderDB の最新バージョンは MIT ライセンスの下で利用可能�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
+Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
+Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
 
 \item {} 
 \sphinxAtStartPar
-Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
+Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
 
 \end{itemize}
 
@@ -799,7 +853,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{生のバイナリ (上級者向けの方法)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
+生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -807,7 +861,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
+webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
 \end{sphinxadmonition}
 
 
@@ -1150,41 +1204,19 @@ blunderDB は、ユーザーが送信したリクエストが有効である限�
 このパネルでは、検索する \sphinxstylestrong{判断タイプ} を明示的に制御できます。 \sphinxstyleemphasis{指定なし} （フィルタなし）、 \sphinxstyleemphasis{チェッカー} （チェッカーの判断）、または \sphinxstyleemphasis{キューブ} （キューブの判断）です。 \sphinxstyleemphasis{キューブ} を選択すると、2つ目のリストでサブタイプを指定できます。 \sphinxstyleemphasis{すべて} 、 \sphinxstyleemphasis{ダブル / ノーダブル} （手番のプレイヤーがダブルするかを判断する）、または \sphinxstyleemphasis{テイク / パス} （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 \sphinxstyleemphasis{テイク / パス} モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
-le logiciel d\textquotesingle{}origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l\textquotesingle{}import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.
+\sphinxstylestrong{フラグ付き}フィルターは、マッチの元となったソフトウェアでフラグを付けた局面を抽出します。この情報を生成するのは eXtreme Gammon のみで、\sphinxcode{\sphinxupquote{.xg}} ファイルに手ごとに記録されます。blunderDB はインポート時にこれを読み取り、保持します。フラグ付きのキューブ判断は 2 つのフラグ付き局面、すなわちダブルとテイク/パスを生成します。これは、元ファイルが 1 つの判断として記録するものを blunderDB が 2 つに分割するためです。
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Le marquage n\textquotesingle{}est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu\textquotesingle{}elle n\textquotesingle{}existe que dans les
-fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
-l\textquotesingle{}import détecte le doublon et n\textquotesingle{}ajoute rien d\textquotesingle{}autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.
+フラグは遡及しません。すでにデータベースにあるマッチはこの情報を持ちません。この情報は元ファイルにしか存在しないためです。該当する \sphinxcode{\sphinxupquote{.xg}} ファイルを再インポートするだけで十分です。インポートは重複を検出し、フラグ以外は何も追加せず、既存のコメントや解析には手を触れません。フラグは blunderDB から付けることも外すこともできません。一時的な作業リストには、コレクションをお使いください。
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
-selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
-moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
-un commentaire, quel qu\textquotesingle{}en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
-contraire les positions non annotées — utile, combiné à un filtre d\textquotesingle{}erreur ou de
-date, pour dresser la liste de ce qu\textquotesingle{}il reste à commenter.
+\sphinxstylestrong{コメント}フィルターは、局面に付けられたコメントを 3 つの排他的なモードで検索します。\sphinxstyleemphasis{テキストを含む}はコメント本文から 1 つ以上の語を検索します（入力欄、語は \sphinxcode{\sphinxupquote{;}} で区切り、いずれか 1 つが一致すれば可）。\sphinxstyleemphasis{コメントあり}は内容を問わずコメントの付いた局面をすべて残します。\sphinxstyleemphasis{コメントなし}は逆に注釈のない局面を残します。誤差やデータの日付による絞り込みと組み合わせると、これから注釈を付けるべき局面の一覧を作るのに便利です。
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d\textquotesingle{}une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
-\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.
+マッチファイル（XG、GNUbg）からインポートされたコメントもコメントとして数えられます。blunderDB はその由来を保持しないため、ご自身が入力したメモと元ファイルから取り込まれたメモを区別できません。また、\sphinxstyleemphasis{マッチ}や\sphinxstyleemphasis{トーナメント}に付けられたコメントは対象外です。それらはマッチやトーナメントに対する注釈であり、その局面に対するものではありません。
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
@@ -1267,12 +1299,7 @@ positions.
 \sphinxstylestrong{トーナメント} パネル（\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}）では、整理された記録管理とイベントごとの統計分析のために、マッチをトーナメントにまとめることができます。トーナメントは作成、名前変更、削除ができ、マッチを割り当てられます。Stats パネルの統計はトーナメントごとにフィルターできます。パネルを表示または非表示にするには、\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} を押します。
 
 \sphinxAtStartPar
-La colonne \sphinxstylestrong{PR} de chaque tournoi affiche le PR du \sphinxstylestrong{joueur de référence} —
-c\textquotesingle{}est\sphinxhyphen{}à\sphinxhyphen{}dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d\textquotesingle{}égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.
+各トーナメントの \sphinxstylestrong{PR} 列は、\sphinxstylestrong{基準プレイヤー}の PR を表示します。基準プレイヤーとは、そのトーナメントで最も多くのマッチに出場したプレイヤーです（同数の場合は、より多くの判断を行った方）。したがって PR にご自身の対局と対戦相手の対局が混ざることはありません。ご自身のトーナメントでは、あなた自身の成績のみを反映します。基準プレイヤーの名前は、値にマウスを重ねるとツールチップに表示されます。
 
 
 \subsection{Stats パネル}
@@ -3000,7 +3027,7 @@ fl
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d\textquotesingle{}origine, lors de l\textquotesingle{}import d\textquotesingle{}un match eXtreme Gammon.
+eXtreme Gammon のマッチをインポートした際、元のソフトウェアでフラグが付けられた局面。
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3693,7 +3720,7 @@ co
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position porte un commentaire, quel qu\textquotesingle{}en soit le contenu.
+内容を問わず、局面にコメントが付いている。
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3704,7 +3731,7 @@ xco
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position ne porte aucun commentaire.
+局面にコメントが付いていない。
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -7505,7 +7532,7 @@ blunderDB のデータベースは単純な SQLite ファイル（拡張子 \sph
 \subsection{バージョン管理と移行}
 \label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
 \sphinxAtStartPar
-データベースのスキーマは \sphinxstylestrong{バージョン管理されています}。現在のスキーマのバージョンは \sphinxstylestrong{2.13.0} です ；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、\sphinxstylestrong{メタデータ} パネル（\sphinxcode{\sphinxupquote{meta}} コマンド）で確認できます。
+データベースのスキーマは \sphinxstylestrong{バージョン管理されています}。現在のスキーマのバージョンは \sphinxstylestrong{2.14.0} です ；これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ増加します。開いているデータベースのスキーマのバージョンは、\sphinxstylestrong{メタデータ} パネル（\sphinxcode{\sphinxupquote{meta}} コマンド）で確認できます。
 
 \begin{sphinxadmonition}{important}{重要:}
 \sphinxAtStartPar

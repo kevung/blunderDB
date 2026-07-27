@@ -80,8 +80,8 @@
 
 
 \title{blunderDB}
-\date{26 juillet 2026}
-\release{0.29.0}
+\date{27 juillet 2026}
+\release{0.30.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -146,10 +146,14 @@ la \sphinxstylestrong{FAQ} fournit quelques réponses aux interrogations les plu
 \chapter{Historique des versions}
 \label{\detokenize{index:historique-des-versions}}
 
-\begin{savenotes}\sphinxattablestart
+\begin{savenotes}
+\sphinxatlongtablestart
 \sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
+\makeatletter
+  \LTleft \@totalleftmargin plus1fill
+  \LTright\dimexpr\columnwidth-\@totalleftmargin-\linewidth\relax plus1fill
+\makeatother
+\begin{longtable}{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
@@ -168,7 +172,40 @@ Cause et/ou nature des évolutions
 \end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\endfirsthead
+
+\multicolumn{3}{c}{\sphinxnorowcolor
+    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} suite de la page précédente}}%
+}\\
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Version
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Date
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Cause et/ou nature des évolutions
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\endhead
+
+\sphinxbottomrule
+\multicolumn{3}{r}{\sphinxnorowcolor
+    \makebox[0pt][r]{\sphinxtablecontinued{suite sur la page suivante}}%
+}\\
+\endfoot
+
+\endlastfoot
+\sphinxtableatstartofbodyhook
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
 \sphinxbeforeendvarwidth
@@ -758,10 +795,27 @@ Export d’un match au format Jellyfish/gnubg (\sphinxcode{\sphinxupquote{.mat}}
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.30.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+26/07/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Recherche par commentaire : le filtre « Texte de recherche » devient le filtre « Commentaire » et propose trois modes exclusifs — \sphinxstyleemphasis{contient le texte} (comportement précédent, jeton \sphinxcode{\sphinxupquote{t"mot1;mot2"}}), \sphinxstyleemphasis{a un commentaire} (jeton \sphinxcode{\sphinxupquote{co}}) et \sphinxstyleemphasis{sans commentaire} (jeton \sphinxcode{\sphinxupquote{xco}}) — pour retrouver d’un geste les positions annotées, ou au contraire celles qu’il reste à commenter. Positions marquées dans eXtreme Gammon : les marques (\sphinxstyleemphasis{flags}) posées lors de l’analyse d’un match XG sont désormais lues à l’import et retrouvables par le filtre « Marquée » (jeton \sphinxcode{\sphinxupquote{fl}}), combinable avec tous les autres critères ; une décision de videau marquée donne deux positions marquées, le double et la prise/passe. Le marquage n’étant pas rétroactif, il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné pour que ses marques rejoignent la base, sans toucher aux commentaires ni aux analyses existants. Corrections notables : le PR affiché sur le badge d’un tournoi se rapporte au joueur de référence et non plus au cumul des deux joueurs, les paquets Anki fondés sur une recherche respectent de nouveau les filtres de cette recherche au lieu de reprendre toute la base, et un blocage de la recherche combinant certains filtres (texte, date, erreur du coup joué) est corrigé. Voir {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Liste des commandes}}}}} et {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Manuel}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
+\end{longtable}
+\sphinxtableafterendhook
+\sphinxatlongtableend
+\end{savenotes}
 
 
 \chapter{Sommaire}
@@ -779,15 +833,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
 
 \end{itemize}
 
@@ -852,7 +906,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binaire brut (méthode avancée)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} reste disponible. Comme un navigateur retire
+Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} reste disponible. Comme un navigateur retire
 le bit exécutable au téléchargement, il faut le rétablir avant la première
 exécution :
 
@@ -867,7 +921,7 @@ bibliothèque webkit2gtk. Si vous obtenez l’erreur
 \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, votre
 distribution utilise webkit2gtk\sphinxhyphen{}4.1 : utilisez le paquet \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}},
 le paquet AUR, ou téléchargez la version dédiée
-\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Les paquets natifs choisissent
+\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0}. Les paquets natifs choisissent
 automatiquement la bonne dépendance.
 \end{sphinxadmonition}
 
@@ -8171,7 +8225,7 @@ n’importe quel éditeur ou navigateur de fichiers SQLite.
 \label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
 \sphinxAtStartPar
 Le schéma de la base de données est \sphinxstylestrong{versionné}. La version courante du
-schéma est \sphinxstylestrong{2.13.0} ; elle est indépendante de la version de l’application et
+schéma est \sphinxstylestrong{2.14.0} ; elle est indépendante de la version de l’application et
 n’est incrémentée que lorsque la structure interne évolue. La version du schéma
 d’une base ouverte est visible dans le panneau \sphinxstylestrong{Métadonnées} (commande
 \sphinxcode{\sphinxupquote{meta}}).

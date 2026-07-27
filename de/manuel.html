@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Handbuch &mdash; blunderDB 0.29.0 Dokumentation</title>
+  <title>2. Handbuch &mdash; blunderDB 0.30.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=81ceae74"></script>
+      <script src="_static/documentation_options.js?v=da95867d"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -276,37 +276,15 @@
 <p>Das Panel <strong>Suche</strong> (<em>CTRL-F</em> oder <em>TAB</em>) ermöglicht es, Stellungen nach frei kombinierbaren Kriterien zu filtern: Steinstruktur, Typ der Doppler-Entscheidung, Fehlergröße, Datum, Tags usw. Die Taste <em>TAB</em> öffnet gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu suchende Steinstruktur direkt auf dem Brett definiert werden kann.</p>
 <p>Um eine Suche unter den aktuell gefilterten Stellungen zu verfeinern, verwenden Sie den Befehl <code class="docutils literal notranslate"><span class="pre">ss</span></code> gefolgt von Filtern (z. B.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Das Suchpanel bietet für dieselbe Funktion auch ein Kontrollkästchen <em>Search in current results</em>.</p>
 <p>Das Panel bietet eine explizite Steuerung des gesuchten <strong>Entscheidungstyps</strong>: <em>Egal</em> (kein Filter), <em>Zug</em> (Zugentscheidungen) oder <em>Dopplung</em> (Doppler-Entscheidungen). Wenn <em>Dopplung</em> ausgewählt ist, gibt eine zweite Liste den Untertyp an: <em>Alle</em>, <em>Dopplung / Kein Doppel</em> (der Spieler am Zug muss über das Doppeln entscheiden) oder <em>Annehmen / Aufgeben</em> (Antwort auf ein gegnerisches Doppel). Die Steuerung ist mit dem Brett synchronisiert: Ändert man die Würfel oder den Dopplerwürfel auf dem Brett, wird der Entscheidungstyp aktualisiert und umgekehrt. Im Modus <em>Annehmen / Aufgeben</em> wird der Dopplerwürfel mit dem angebotenen Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar.</p>
-<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.</p>
+<p>Der Filter <strong>Markiert</strong> behält die Positionen, die Sie in der Ursprungssoftware der Partie markiert haben. Nur eXtreme Gammon erzeugt diese Information, die zugweise in der <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-Datei gespeichert wird; blunderDB liest sie beim Import und behält sie bei. Eine markierte Dopplungsentscheidung ergibt zwei markierte Positionen, die Dopplung und das Annehmen/Aufgeben, da blunderDB in zwei Teile zerlegt, was die Quelldatei als eine einzige Entscheidung speichert.</p>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.</p>
+<p>Die Markierung wirkt nicht rückwirkend: Bereits in der Datenbank vorhandene Partien tragen diese Information nicht, da sie nur in den Quelldateien existiert. Importieren Sie einfach die betreffende <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-Datei erneut — der Import erkennt das Duplikat und fügt nichts außer den Markierungen hinzu, ohne vorhandene Kommentare oder Analysen anzutasten. Eine Markierung kann in blunderDB weder gesetzt noch entfernt werden: Für eine temporäre Arbeitsliste verwenden Sie besser eine Sammlung.</p>
 </div>
-<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
-selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
-moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
-un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<p>Der Filter <strong>Kommentar</strong> durchsucht die den Positionen zugeordneten Kommentare in drei sich ausschließenden Modi. <em>enthält Text</em> sucht ein oder mehrere Wörter im Kommentartext (Eingabefeld, Wörter durch <code class="docutils literal notranslate"><span class="pre">;</span></code> getrennt, mindestens eines muss zutreffen); <em>hat einen Kommentar</em> behält jede Position mit einem Kommentar, unabhängig vom Inhalt; <em>ohne Kommentar</em> behält im Gegenteil die nicht kommentierten Positionen — nützlich in Kombination mit einem Fehler- oder Datumsfilter, um die Liste dessen zu erstellen, was noch zu kommentieren ist.</p>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
-<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.</p>
+<p>Aus einer Partiedatei (XG, GNUbg) importierte Kommentare zählen als Kommentare: blunderDB speichert ihre Herkunft nicht und kann daher eine von Ihnen eingegebene Notiz nicht von einer aus der Quelldatei übernommenen unterscheiden. Außerdem sind Kommentare, die einer <em>Partie</em> oder einem <em>Turnier</em> zugeordnet sind, nicht betroffen: Sie kommentieren die Partie oder das Turnier, nicht deren Positionen.</p>
 </div>
 <p>Der Filter <strong>Matches &amp; Turniere</strong> stützt sich auf einen gemeinsamen Auswahldialog (modales Fenster) anstelle der Eingabe numerischer Kennungen: zwei Kontrollkästchen-Listen, eine für Matches und eine für Turniere, jeweils per Text filterbar (Spieler, Datum, Ereignis für Matches; Name, Datum, Ort für Turniere), mit den Schaltflächen <em>Alle</em> / <em>Keine</em>, die nur auf die aktuell gefilterte Teilmenge wirken. Das Ankreuzen eines Turniers kreuzt automatisch dessen zugehörige Matches in der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein Turnier der Gesamtheit seiner Matches entspricht.</p>
 <p>Das Suchpanel enthält an seinem linken Rand drei Reiter: <em>Suche</em> (die Filter), <em>Verlauf</em> und <em>Gespeichert</em>. Der Reiter <strong>Verlauf</strong> listet die vergangenen Suchen mit ihrem Datum und ihrem Befehl auf: Ein Klick wählt eine Suche aus und zeigt die zugehörige Position auf dem Brett an, ein Doppelklick führt sie erneut aus. Jeder Eintrag kann in der Filterbibliothek gespeichert (Lesezeichen-Symbol, durch Angabe eines Filternamens) oder gelöscht werden. Der Reiter <strong>Gespeichert</strong> enthält die <strong>Filterbibliothek</strong>: Doppelklicken Sie auf einen gespeicherten Filter, um die entsprechende Suche erneut zu starten (siehe <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anhang: Fortgeschrittene Nutzung der Filter</span></a>). Der Befehl <code class="docutils literal notranslate"><span class="pre">history</span></code> (Alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) öffnet das Suchpanel.</p>
@@ -347,12 +325,7 @@ positions.</p>
 <section id="panneau-tournois">
 <span id="id8"></span><h2><span class="section-number">2.15. </span>Turnier-Panel<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
 <p>Das Panel <strong>Turniere</strong> (<em>CTRL-Y</em>) ermöglicht es, Matches in Turnieren zu gruppieren, um eine organisierte Nachverfolgung und eine statistische Analyse pro Veranstaltung zu ermöglichen. Turniere können erstellt, umbenannt und gelöscht werden; Matches können ihnen zugeordnet werden. Die Statistiken des Stats-Panels können nach Turnier gefiltert werden. Drücken Sie <em>CTRL-Y</em>, um das Panel ein- oder auszublenden.</p>
-<p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> —
-c’est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.</p>
+<p>Die Spalte <strong>PR</strong> jedes Turniers zeigt den PR des <strong>Referenzspielers</strong> — also des Spielers, der in den meisten Partien des Turniers vorkommt (bei Gleichstand derjenige mit den meisten Entscheidungen). Der PR vermischt Ihr Spiel also nicht mit dem Ihrer Gegner: Bei Ihren eigenen Turnieren spiegelt er allein Ihre Leistung wider. Der Name des Referenzspielers erscheint als Tooltip, wenn Sie den Wert überfahren.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.16. </span>Stats-Panel<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; documentación de blunderDB - 0.29.0</title>
+  <title>blunderDB &mdash; documentación de blunderDB - 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4723e932"></script>
+      <script src="_static/documentation_options.js?v=1c78c13b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -280,6 +280,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>18 de julio de 2026</p></td>
 <td><p>Exportación de una partida en formato Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) desde la interfaz (panel Partidas) y desde la línea de comandos, con la ruta de servidor correspondiente — práctico para volver a jugar una partida en otro programa de backgammon. Búsqueda: nuevo discriminador « dados excluidos » (token <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, se permiten varios) que descarta las posiciones cuya tirada coincide con un lanzamiento dado. Apertura concurrente segura: una base ya abierta en escritura en otra ventana de blunderDB ahora se abre en modo de solo lectura (navegación, búsqueda y análisis posibles, modificaciones desactivadas, mención « [solo lectura] » en la barra de título) en lugar de arriesgar una corrupción. Procedencia de las posiciones: fuera del modo partida, la barra de información sobre el tablero indica la partida —y su torneo— de la que procede la posición estudiada, con una insignia « +N » cuando aparece en varias partidas. Mayor robustez frente al entorno: repliegue automático cuando una fuente, el portapapeles o la última base abierta no están disponibles. Una recarga explícita de la biblioteca (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, botón de la barra de herramientas o comando <code class="docutils literal notranslate"><span class="pre">e</span></code>) vuelve a abrir el panel de análisis de la posición mostrada. Correcciones destacadas: eliminación de un bloqueo al exportar bases grandes, botón « Ninguno » de la exportación que en realidad no dejaba de exportar ninguna partida, filtro por comentario de varias palabras, deduplicación del evento y del torneo en la barra de información, y varios ajustes de visualización. Ver <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Lista de comandos</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Panel de Partidas</span></a> y <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>26/07/2026</p></td>
+<td><p>Búsqueda por comentario: el filtro «Texto de búsqueda» pasa a ser el filtro «Comentario» y ofrece tres modos exclusivos — <em>contiene el texto</em> (comportamiento anterior, token <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;palabra1;palabra2&quot;&quot;</span></code>), <em>tiene un comentario</em> (token <code class="docutils literal notranslate"><span class="pre">co</span></code>) y <em>sin comentario</em> (token <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — para encontrar de un vistazo las posiciones anotadas, o por el contrario las que quedan por comentar. Posiciones marcadas en eXtreme Gammon: las marcas puestas al analizar una partida XG se leen ahora en la importación y se recuperan con el filtro «Marcada» (token <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable con todos los demás criterios; una decisión de cubo marcada da dos posiciones marcadas, el doblez y la aceptación/paso. El marcado no es retroactivo: basta con volver a importar el archivo <code class="docutils literal notranslate"><span class="pre">.xg</span></code> correspondiente para que sus marcas se incorporen a la base, sin tocar los comentarios ni los análisis existentes. Correcciones destacables: el PR mostrado en la insignia de un torneo se refiere al jugador de referencia y ya no al conjunto de los dos jugadores, los mazos Anki basados en una búsqueda respetan de nuevo los filtros de esa búsqueda en lugar de tomar toda la base, y se ha corregido un bloqueo de la búsqueda al combinar ciertos filtros (texto, fecha, error de la jugada realizada). Véase <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Lista de comandos</span></a> y <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

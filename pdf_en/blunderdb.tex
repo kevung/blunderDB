@@ -79,8 +79,8 @@
 
 
 \title{blunderDB}
-\date{Jul 26, 2026}
-\release{0.29.0}
+\date{Jul 27, 2026}
+\release{0.30.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -131,10 +131,14 @@ The \sphinxstylestrong{FAQ} provides answers to the most frequently asked questi
 \chapter{Version history}
 \label{\detokenize{index:historique-des-versions}}
 
-\begin{savenotes}\sphinxattablestart
+\begin{savenotes}
+\sphinxatlongtablestart
 \sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
+\makeatletter
+  \LTleft \@totalleftmargin plus1fill
+  \LTright\dimexpr\columnwidth-\@totalleftmargin-\linewidth\relax plus1fill
+\makeatother
+\begin{longtable}{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
@@ -153,7 +157,40 @@ Cause and/or nature of changes
 \end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\endfirsthead
+
+\multicolumn{3}{c}{\sphinxnorowcolor
+    \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} continued from previous page}}%
+}\\
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Version
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Date
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Cause and/or nature of changes
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\endhead
+
+\sphinxbottomrule
+\multicolumn{3}{r}{\sphinxnorowcolor
+    \makebox[0pt][r]{\sphinxtablecontinued{continues on next page}}%
+}\\
+\endfoot
+
+\endlastfoot
+\sphinxtableatstartofbodyhook
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
 \sphinxbeforeendvarwidth
@@ -743,10 +780,27 @@ Export of a match to the Jellyfish/gnubg format (\sphinxcode{\sphinxupquote{.mat
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.30.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+July 26, 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Comment search: the “Search Text” filter becomes the “Comment” filter and offers three exclusive modes — \sphinxstyleemphasis{contains text} (previous behaviour, token \sphinxcode{\sphinxupquote{t""word1;word2""}}), \sphinxstyleemphasis{has a comment} (token \sphinxcode{\sphinxupquote{co}}) and \sphinxstyleemphasis{no comment} (token \sphinxcode{\sphinxupquote{xco}}) — to find annotated positions at a glance, or on the contrary those left to comment. Positions flagged in eXtreme Gammon: the flags set while analysing an XG match are now read on import and found again with the “Flagged” filter (token \sphinxcode{\sphinxupquote{fl}}), combinable with every other criterion; a flagged cube decision yields two flagged positions, the double and the take/pass. Flagging is not retroactive, so simply import the relevant \sphinxcode{\sphinxupquote{.xg}} file again for its flags to join the database, leaving existing comments and analyses untouched. Notable fixes: the PR shown on a tournament badge refers to the reference player rather than the two players combined, Anki decks based on a search again honour that search’s filters instead of taking in the whole database, and a search hang combining certain filters (text, date, played\sphinxhyphen{}move error) is fixed. See {\hyperref[\detokenize{cmd_mode:cmd-mode}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{List of commands}}}}} and {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Manual}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
+\end{longtable}
+\sphinxtableafterendhook
+\sphinxatlongtableend
+\end{savenotes}
 
 
 \chapter{Table of contents}
@@ -764,15 +818,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.29.0.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.29.0.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
 
 \end{itemize}
 
@@ -824,7 +878,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raw binary (advanced method)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.29.0} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
+The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -832,7 +886,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.29.0}. Native packages select the correct dependency automatically.
+Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0}. Native packages select the correct dependency automatically.
 \end{sphinxadmonition}
 
 
@@ -1175,41 +1229,19 @@ To refine a search among the currently filtered positions, use the \sphinxcode{\
 The panel offers an explicit control over the \sphinxstylestrong{decision type} searched for: \sphinxstyleemphasis{Indifferent} (no filter), \sphinxstyleemphasis{Checker} (checker decisions) or \sphinxstyleemphasis{Cube} (cube decisions). When \sphinxstyleemphasis{Cube} is selected, a second list specifies the sub\sphinxhyphen{}type: \sphinxstyleemphasis{All}, \sphinxstyleemphasis{Double / No double} (the player on roll has to decide whether to double) or \sphinxstyleemphasis{Take / Pass} (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In \sphinxstyleemphasis{Take / Pass} mode, the cube is shown in the centre of the board at the offered value; that value remains editable.
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Marquée} retient les positions que vous avez marquées (\sphinxstyleemphasis{flag}) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier \sphinxcode{\sphinxupquote{.xg}} ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.
+The \sphinxstylestrong{Flagged} filter keeps the positions you flagged in the software the match came from. Only eXtreme Gammon produces this information, recorded move by move in the \sphinxcode{\sphinxupquote{.xg}} file; blunderDB reads it on import and keeps it. A flagged cube decision yields two flagged positions, the double and the take/pass, blunderDB splitting in two what the source file records as a single decision.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier \sphinxcode{\sphinxupquote{.xg}} concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.
+Flagging is not retroactive: matches already in the database do not carry this information, since it exists only in the source files. Simply import the relevant \sphinxcode{\sphinxupquote{.xg}} file again — the import detects the duplicate and adds nothing but the flags, leaving existing comments and analyses untouched. A flag can neither be set nor removed from within blunderDB: for a temporary working list, use a collection instead.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le filtre \sphinxstylestrong{Commentaire} interroge les commentaires attachés aux positions
-selon trois modes exclusifs. \sphinxstyleemphasis{contient le texte} recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par \sphinxcode{\sphinxupquote{;}}, au
-moins un doit correspondre) ; \sphinxstyleemphasis{a un commentaire} retient toute position portant
-un commentaire, quel qu’en soit le contenu ; \sphinxstyleemphasis{sans commentaire} retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.
+The \sphinxstylestrong{Comment} filter queries the comments attached to positions in three exclusive modes. \sphinxstyleemphasis{contains text} searches for one or more words in the comment text (input field, words separated by \sphinxcode{\sphinxupquote{;}}, at least one must match); \sphinxstyleemphasis{has a comment} keeps any position carrying a comment, whatever its content; \sphinxstyleemphasis{no comment} keeps, on the contrary, the positions that are not annotated — useful, combined with an error or date filter, to draw up the list of what remains to be commented.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un \sphinxstyleemphasis{match} ou à un
-\sphinxstyleemphasis{tournoi} ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.
+Comments imported from a match file (XG, GNUbg) count as comments: blunderDB does not record their origin and therefore cannot tell a note you typed from one taken over from the source file. Moreover, comments attached to a \sphinxstyleemphasis{match} or a \sphinxstyleemphasis{tournament} are not concerned: they annotate the match or the tournament, not its positions.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
@@ -1292,12 +1324,7 @@ Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{
 The \sphinxstylestrong{Tournaments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) groups matches into tournaments for organised tracking and per\sphinxhyphen{}event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} to show or hide the panel.
 
 \sphinxAtStartPar
-La colonne \sphinxstylestrong{PR} de chaque tournoi affiche le PR du \sphinxstylestrong{joueur de référence} —
-c’est\sphinxhyphen{}à\sphinxhyphen{}dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.
+The \sphinxstylestrong{PR} column of each tournament shows the PR of the \sphinxstylestrong{reference player} — that is, the player appearing in the greatest number of the tournament’s matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents’: for your own tournaments, it reflects your performance alone. The reference player’s name appears in a tooltip when hovering over the value.
 
 
 \subsection{Stats Panel}
@@ -3025,7 +3052,7 @@ fl
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position a été marquée (\sphinxstyleemphasis{flag}) dans le logiciel d’origine, lors de l’import d’un match eXtreme Gammon.
+The position was flagged in the source software, when importing an eXtreme Gammon match.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3718,7 +3745,7 @@ co
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position porte un commentaire, quel qu’en soit le contenu.
+The position carries a comment, whatever its content.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3729,7 +3756,7 @@ xco
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-La position ne porte aucun commentaire.
+The position carries no comment.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -7530,7 +7557,7 @@ A blunderDB database is a plain SQLite file (extension \sphinxstyleemphasis{.db}
 \subsection{Versioning and migrations}
 \label{\detokenize{annexe_db_scheme:versionnage-et-migrations}}
 \sphinxAtStartPar
-The database schema is \sphinxstylestrong{versioned}. The current schema version is \sphinxstylestrong{2.13.0}; it is independent of the application version and is incremented only when the internal structure changes. The schema version of an open database is shown in the \sphinxstylestrong{Metadata} panel (\sphinxcode{\sphinxupquote{meta}} command).
+The database schema is \sphinxstylestrong{versioned}. The current schema version is \sphinxstylestrong{2.14.0}; it is independent of the application version and is incremented only when the internal structure changes. The schema version of an open database is shown in the \sphinxstylestrong{Metadata} panel (\sphinxcode{\sphinxupquote{meta}} command).
 
 \begin{sphinxadmonition}{important}{Important:}
 \sphinxAtStartPar

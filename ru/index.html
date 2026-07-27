@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.29.0</title>
+  <title>blunderDB &mdash; документация blunderDB 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=92b757b1"></script>
+      <script src="_static/documentation_options.js?v=c9ec7fb8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -280,6 +280,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>18/07/2026</p></td>
 <td><p>Экспорт матча в формате Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) из интерфейса (панель Матчи), как и из командной строки, с соответствующим серверным маршрутом — удобно для повторного проигрывания матча в другой программе для нардов. Поиск: новый дискриминатор «исключённые кости» (жетон <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, допускается несколько), отсеивающий позиции, бросок которых соответствует заданному. Безопасное одновременное открытие: база, уже открытая на запись в другом окне blunderDB, теперь открывается в режиме только для чтения (навигация, поиск и анализ доступны, изменения отключены, в строке заголовка указано «[только чтение]») вместо риска повреждения. Происхождение позиций: вне режима матча информационная панель над доской показывает матч — и его турнир, — из которого происходит изучаемая позиция, с бейджем «+N», когда она встречается в нескольких матчах. Повышенная устойчивость к окружению: автоматический откат, когда шрифт, буфер обмена или последняя открытая база недоступны. Явная перезагрузка библиотеки (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, кнопка панели инструментов или команда <code class="docutils literal notranslate"><span class="pre">e</span></code>) заново открывает панель анализа отображаемой позиции. Заметные исправления: устранена блокировка при экспорте больших баз, кнопка «Aucun» экспорта, которая на деле не экспортировала ни одного матча, фильтр по многословному комментарию, устранение дублирования события и турнира в информационной панели, а также различные улучшения отображения. См. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Панель матчей</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>26/07/2026</p></td>
+<td><p>Поиск по комментарию: фильтр «Текст поиска» становится фильтром «Комментарий» и предлагает три взаимоисключающих режима — <em>содержит текст</em> (прежнее поведение, токен <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;слово1;слово2&quot;&quot;</span></code>), <em>есть комментарий</em> (токен <code class="docutils literal notranslate"><span class="pre">co</span></code>) и <em>без комментария</em> (токен <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — чтобы одним движением находить аннотированные позиции или, наоборот, те, которые осталось прокомментировать. Позиции, отмеченные в eXtreme Gammon: отметки, поставленные при разборе матча XG, теперь читаются при импорте и находятся фильтром «Отмеченная» (токен <code class="docutils literal notranslate"><span class="pre">fl</span></code>), сочетающимся со всеми прочими критериями; отмеченное решение по кубу даёт две отмеченные позиции — дабл и тейк/пас. Отметка не действует задним числом: достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>, чтобы его отметки попали в базу, не затрагивая существующие комментарии и анализы. Заметные исправления: PR, показываемый на значке турнира, относится к основному игроку, а не к сумме обоих игроков; колоды Anki, построенные на поиске, снова учитывают фильтры этого поиска вместо того, чтобы брать всю базу; устранено зависание поиска при сочетании некоторых фильтров (текст, дата, ошибка сыгранного хода). См. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

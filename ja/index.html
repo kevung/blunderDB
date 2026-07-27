@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.29.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.30.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=65abced0"></script>
+      <script src="_static/documentation_options.js?v=3ef0e6d9"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -280,6 +280,10 @@
 <tr class="row-even"><td><p>0.29.0</p></td>
 <td><p>2026/07/18</p></td>
 <td><p>インターフェース（マッチパネル）からもコマンドラインからも、マッチをJellyfish/gnubg形式（<code class="docutils literal notranslate"><span class="pre">.mat</span></code>）でエクスポートできるようになりました。対応するサーバールートも追加 —— 別のバックギャモンソフトでマッチを再生するのに便利です。検索：出目が指定したロールに一致する局面を除外する新しい「除外ダイス」判別子（<code class="docutils literal notranslate"><span class="pre">xD65</span></code>トークン、複数指定可）。安全な同時オープン：別のblunderDBウィンドウで既に書き込みモードで開かれているデータベースは、破損の危険を冒す代わりに、読み取り専用で開くようになりました（ナビゲーション、検索、解析は可能、編集は無効、タイトルバーに「[読み取り専用]」と表示）。局面の由来：マッチモード以外では、ボード上部の情報バーに、研究中の局面がどのマッチ ―― およびそのトーナメント ―― から来たのかが表示され、複数のマッチに現れる場合は「+N」バッジが付きます。環境に対する堅牢性の向上：フォント、クリップボード、または最後に開いたデータベースが利用できない場合の自動フォールバック。ライブラリの明示的な再読み込み（<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>、ツールバーのボタン、または <code class="docutils literal notranslate"><span class="pre">e</span></code> コマンド）で、表示中の局面の解析パネルが再び開きます。主な修正：大規模なデータベースのエクスポート時のフリーズを解消、実際にはどのマッチもエクスポートしていなかったエクスポートの「なし」ボタン、複数単語によるコメントフィルター、情報バーでのイベントとトーナメントの重複排除、およびさまざまな表示の調整。<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a>、<a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a> および <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.30.0</p></td>
+<td><p>2026/07/26</p></td>
+<td><p>コメントによる検索：「検索テキスト」フィルターが「コメント」フィルターとなり、3 つの排他的なモードを備えました。<em>テキストを含む</em>（従来の動作、トークン <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;語1;語2&quot;&quot;</span></code>）、<em>コメントあり</em>（トークン <code class="docutils literal notranslate"><span class="pre">co</span></code>）、<em>コメントなし</em>（トークン <code class="docutils literal notranslate"><span class="pre">xco</span></code>）です。注釈済みの局面、あるいは逆にこれから注釈を付けるべき局面を、ひと手間で見つけられます。eXtreme Gammon でフラグを付けた局面：XG のマッチ分析中に付けたフラグをインポート時に読み取るようになり、「フラグ付き」フィルター（トークン <code class="docutils literal notranslate"><span class="pre">fl</span></code>）で再び見つけられます。他のすべての条件と組み合わせ可能です。フラグ付きのキューブ判断は 2 つのフラグ付き局面、すなわちダブルとテイク/パスを生成します。フラグは遡及しないため、該当する <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルを再インポートするだけで、既存のコメントや解析に触れることなくフラグがデータベースに加わります。主な修正：トーナメントのバッジに表示される PR が、両プレイヤーの合算ではなく基準プレイヤーのものになりました。検索に基づく Anki デッキが、データベース全体を取り込むのではなく、その検索の絞り込み条件を再び尊重するようになりました。特定の絞り込み条件（テキスト、日付、着手の誤差）を組み合わせた際の検索の停止を修正しました。<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> および <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></td>
 </tr>
 </tbody>
 </table>

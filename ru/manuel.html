@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Руководство &mdash; документация blunderDB 0.29.0</title>
+  <title>2. Руководство &mdash; документация blunderDB 0.30.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=92b757b1"></script>
+      <script src="_static/documentation_options.js?v=c9ec7fb8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -276,37 +276,15 @@
 <p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
 <p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Search in current results</em> для той же функциональности.</p>
 <p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
-<p>Le filtre <strong>Marquée</strong> retient les positions que vous avez marquées (<em>flag</em>) dans
-le logiciel d’origine du match. Seul eXtreme Gammon produit cette information,
-enregistrée coup par coup dans le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ; blunderDB la lit à l’import
-et la conserve. Une décision de videau marquée donne deux positions marquées, le
-double et la prise/passe, blunderDB scindant en deux ce que le fichier source
-enregistre comme une seule décision.</p>
+<p>Фильтр <strong>Отмеченная</strong> оставляет позиции, которые вы отметили в исходной программе матча. Эту информацию создаёт только eXtreme Gammon, записывая её ход за ходом в файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>; blunderDB читает её при импорте и сохраняет. Отмеченное решение по кубу даёт две отмеченные позиции — дабл и тейк/пас, поскольку blunderDB разделяет надвое то, что исходный файл записывает как одно решение.</p>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Le marquage n’est pas rétroactif : les matchs déjà présents dans la
-base ne portent pas cette information, puisqu’elle n’existe que dans les
-fichiers source. Il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné —
-l’import détecte le doublon et n’ajoute rien d’autre que les marques, sans
-toucher aux commentaires ni aux analyses existants. Le marquage ne peut ni
-être posé ni être retiré depuis blunderDB : pour une liste de travail
-temporaire, utilisez plutôt une collection.</p>
+<p>Отметка не действует задним числом: матчи, уже находящиеся в базе, не содержат этой информации, поскольку она существует только в исходных файлах. Достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code> — импорт обнаружит дубликат и не добавит ничего, кроме отметок, не затрагивая существующие комментарии и анализы. Отметку нельзя ни поставить, ни снять из blunderDB: для временного рабочего списка используйте лучше коллекцию.</p>
 </div>
-<p>Le filtre <strong>Commentaire</strong> interroge les commentaires attachés aux positions
-selon trois modes exclusifs. <em>contient le texte</em> recherche un ou plusieurs mots
-dans le texte des commentaires (champ de saisie, mots séparés par <code class="docutils literal notranslate"><span class="pre">;</span></code>, au
-moins un doit correspondre) ; <em>a un commentaire</em> retient toute position portant
-un commentaire, quel qu’en soit le contenu ; <em>sans commentaire</em> retient au
-contraire les positions non annotées — utile, combiné à un filtre d’erreur ou de
-date, pour dresser la liste de ce qu’il reste à commenter.</p>
+<p>Фильтр <strong>Комментарий</strong> обращается к комментариям, привязанным к позициям, в трёх взаимоисключающих режимах. <em>содержит текст</em> ищет одно или несколько слов в тексте комментариев (поле ввода, слова разделяются знаком <code class="docutils literal notranslate"><span class="pre">;</span></code>, достаточно совпадения одного); <em>есть комментарий</em> оставляет любую позицию с комментарием, независимо от его содержания; <em>без комментария</em> оставляет, напротив, позиции без аннотаций — удобно в сочетании с фильтром по ошибке или дате, чтобы составить список того, что осталось прокомментировать.</p>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Les commentaires importés depuis un fichier de match (XG, GNUbg)
-comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-peut donc pas distinguer une note que vous avez saisie d’une note reprise du
-fichier source. Par ailleurs, les commentaires attachés à un <em>match</em> ou à un
-<em>tournoi</em> ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-positions.</p>
+<p>Комментарии, импортированные из файла матча (XG, GNUbg), считаются комментариями: blunderDB не сохраняет их происхождение и поэтому не может отличить заметку, которую вы ввели, от заметки, взятой из исходного файла. Кроме того, комментарии, привязанные к <em>матчу</em> или <em>турниру</em>, здесь не учитываются: они аннотируют матч или турнир, а не его позиции.</p>
 </div>
 <p>Фильтр <strong>Матчи и турниры</strong> опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками <em>Все</em> / <em>Ничего</em>, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи-участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.</p>
 <p>Панель поиска содержит три вкладки на левом крае: <em>Recherche</em> (фильтры), <em>Historique</em> и <em>Enregistrés</em>. Вкладка <strong>Historique</strong> перечисляет прошлые поиски с их датой и командой: щелчок выбирает поиск и показывает связанную позицию на доске, двойной щелчок выполняет его повторно. Каждую запись можно сохранить в библиотеку фильтров (значок закладки, задав имя фильтру) или удалить. Вкладка <strong>Enregistrés</strong> содержит <strong>библиотеку фильтров</strong>: дважды щёлкните по сохранённому фильтру, чтобы заново выполнить соответствующий поиск (см. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). Команда <code class="docutils literal notranslate"><span class="pre">history</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">hi</span></code>) открывает панель поиска.</p>
@@ -347,12 +325,7 @@ positions.</p>
 <section id="panneau-tournois">
 <span id="id8"></span><h2><span class="section-number">2.15. </span>Панель турниров<a class="headerlink" href="#panneau-tournois" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>Турниры</strong> (<em>CTRL-Y</em>) группирует матчи в турниры для организованного отслеживания и статистического анализа по событиям. Турниры можно создавать, переименовывать и удалять; матчи можно назначать им. Статистика панели Stats может фильтроваться по турниру. Нажмите <em>CTRL-Y</em> для отображения или скрытия панели.</p>
-<p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> —
-c’est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
-(en cas d’égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
-pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
-reflète votre performance seule. Le nom du joueur de référence apparaît en
-infobulle au survol de la valeur.</p>
+<p>Столбец <strong>PR</strong> каждого турнира показывает PR <strong>основного игрока</strong> — то есть игрока, участвующего в наибольшем числе матчей турнира (при равенстве — того, кто принял больше решений). Таким образом, PR не смешивает вашу игру с игрой соперников: для ваших собственных турниров он отражает только вашу результативность. Имя основного игрока показывается во всплывающей подсказке при наведении на значение.</p>
 </section>
 <section id="panneau-stats">
 <span id="stats"></span><h2><span class="section-number">2.16. </span>Панель Stats<a class="headerlink" href="#panneau-stats" title="Ссылка на этот заголовок"></a></h2>
