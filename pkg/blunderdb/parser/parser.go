@@ -36,8 +36,10 @@ type Result struct {
 
 // ErrNoXGID / ErrEmpty mirror the JS throws so callers can map them to 4xx.
 var (
-	reMu    = newRegexCache()
-	leadNum = regexp.MustCompile(`^[+-]?(?:\d+\.?\d*|\.\d+)`)
+	reMu = newRegexCache()
+	// leadNum mirrors what JS parseFloat() consumes, exponent notation included
+	// (parseFloat("5.55e-17") is 5.55e-17, and JS prints small floats that way).
+	leadNum = regexp.MustCompile(`^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?`)
 )
 
 // ParsePosition is the inverse of the clipboard text builders. It never panics;
@@ -205,8 +207,27 @@ func parseInternalDoubling(content, engineName string, a *domain.PositionAnalysi
 	}
 }
 
+// internalNumber matches a number the way JavaScript prints one, since this
+// block is written by the GUI's clipboardService: an optional sign, digits with
+// an optional decimal point, and the exponent notation JS falls back to for very
+// small magnitudes (an equity subtraction yields 5.55e-17 easily enough).
+const internalNumber = `[-+]?[\d.]+(?:[eE][-+]?\d+)?`
+
+// parseInternalChecker reads the checker block blunderDB itself writes to the
+// clipboard. Two of its lines are optional, and treating them as mandatory used
+// to silently drop the move they belong to:
+//   - "Equity Error:" is absent for the best move — its EquityError is nil by
+//     design (see ingest.sortCheckerMovesByEquity) and the JSON field is
+//     omitempty, so the writer skips the line. Requiring it cost the best move
+//     on every copy/paste from one database to another.
+//   - the depth may be empty (`Analysis Depth: ""`) for analyses whose import
+//     route left it blank.
 func parseInternalChecker(content, engineName string, a *domain.PositionAnalysis) {
-	re := reMu.get(`(?m)^Move (\d+): (.+)\nAnalysis Depth: "(.+)"\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%`)
+	re := reMu.get(`(?m)^Move (\d+): (.*)\nAnalysis Depth: "(.*)"\nEquity: (` + internalNumber +
+		`)\n(?:Equity Error: (` + internalNumber + `)\n)?Player Win Chance: (` + internalNumber +
+		`)%\nPlayer Gammon Chance: (` + internalNumber + `)%\nPlayer Backgammon Chance: (` + internalNumber +
+		`)%\nOpponent Win Chance: (` + internalNumber + `)%\nOpponent Gammon Chance: (` + internalNumber +
+		`)%\nOpponent Backgammon Chance: (` + internalNumber + `)%`)
 	matches := re.FindAllStringSubmatch(content, -1)
 	if len(matches) == 0 {
 		return
@@ -214,13 +235,20 @@ func parseInternalChecker(content, engineName string, a *domain.PositionAnalysis
 	a.AnalysisType = "CheckerMove"
 	moves := make([]domain.CheckerMove, 0, len(matches))
 	for _, m := range matches {
+		// An unmatched optional group is "", which the number pattern can never
+		// produce — so an empty group 5 unambiguously means "line absent", i.e.
+		// no error to record rather than an error of zero.
+		var equityError *float64
+		if m[5] != "" {
+			equityError = ptr(pf(m[5]))
+		}
 		moves = append(moves, domain.CheckerMove{
 			Index:                    atoiOne(m[1]),
 			Move:                     strings.TrimSpace(m[2]),
 			AnalysisDepth:            strings.TrimSpace(m[3]),
 			AnalysisEngine:           engineName,
 			Equity:                   pf(m[4]),
-			EquityError:              ptr(pf(m[5])),
+			EquityError:              equityError,
 			PlayerWinChance:          pf(m[6]),
 			PlayerGammonChance:       pf(m[7]),
 			PlayerBackgammonChance:   pf(m[8]),
