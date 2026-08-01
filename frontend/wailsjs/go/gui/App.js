@@ -18,10 +18,6 @@ export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
 }
 
-export function PathExists(arg1) {
-  return window['go']['gui']['App']['PathExists'](arg1);
-}
-
 export function OpenDatabaseDialog() {
   return window['go']['gui']['App']['OpenDatabaseDialog']();
 }
@@ -52,6 +48,10 @@ export function OpenPositionFolderDialog() {
 
 export function OpenXGFileDialog() {
   return window['go']['gui']['App']['OpenXGFileDialog']();
+}
+
+export function PathExists(arg1) {
+  return window['go']['gui']['App']['PathExists'](arg1);
 }
 
 export function PrepareDemoDatabase() {

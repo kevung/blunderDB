@@ -10,8 +10,6 @@ export function DeleteFile(arg1:string):Promise<void>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;
 
-export function PathExists(arg1:string):Promise<boolean>;
-
 export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenExportDatabaseDialog():Promise<string>;
@@ -27,6 +25,8 @@ export function OpenPositionFilesDialog():Promise<Array<string>>;
 export function OpenPositionFolderDialog():Promise<string>;
 
 export function OpenXGFileDialog():Promise<string>;
+
+export function PathExists(arg1:string):Promise<boolean>;
 
 export function PrepareDemoDatabase():Promise<string>;
 

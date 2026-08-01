@@ -608,6 +608,7 @@ export namespace domain {
 	    has_jacoby: number;
 	    has_beaver: number;
 	    individually_imported: boolean;
+	    flagged: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Position(source);
@@ -625,6 +626,7 @@ export namespace domain {
 	        this.has_jacoby = source["has_jacoby"];
 	        this.has_beaver = source["has_beaver"];
 	        this.individually_imported = source["individually_imported"];
+	        this.flagged = source["flagged"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1121,6 +1123,7 @@ export namespace domain {
 	    player1CheckerInZoneFilter: string;
 	    player2CheckerInZoneFilter: string;
 	    searchText: string;
+	    commentFilter: string;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
@@ -1137,6 +1140,7 @@ export namespace domain {
 	    noContactFilter: boolean;
 	    mirrorFilter: boolean;
 	    individuallyImportedFilter: boolean;
+	    flaggedFilter: boolean;
 	    moveErrorFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
@@ -1169,6 +1173,7 @@ export namespace domain {
 	        this.player1CheckerInZoneFilter = source["player1CheckerInZoneFilter"];
 	        this.player2CheckerInZoneFilter = source["player2CheckerInZoneFilter"];
 	        this.searchText = source["searchText"];
+	        this.commentFilter = source["commentFilter"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];
@@ -1185,6 +1190,7 @@ export namespace domain {
 	        this.noContactFilter = source["noContactFilter"];
 	        this.mirrorFilter = source["mirrorFilter"];
 	        this.individuallyImportedFilter = source["individuallyImportedFilter"];
+	        this.flaggedFilter = source["flaggedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
@@ -1224,6 +1230,7 @@ export namespace domain {
 	    comment: string;
 	    pr: number;
 	    mwc_loss: number;
+	    ref_player: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Tournament(source);
@@ -1242,6 +1249,7 @@ export namespace domain {
 	        this.comment = source["comment"];
 	        this.pr = source["pr"];
 	        this.mwc_loss = source["mwc_loss"];
+	        this.ref_player = source["ref_player"];
 	    }
 	}
 
