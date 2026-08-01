@@ -33,6 +33,20 @@ import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clip
 
 let lastCtrlXTime = 0;
 
+// Ctrl-combos the WebView implements on an editable field: clipboard, select
+// all, undo/redo, and word-wise navigation or deletion. blunderDB binds some of
+// the same combos to board actions (Ctrl-C copies the position, Ctrl-Delete
+// would delete it), so while a field has focus these have to go to the field.
+// Letters are matched by the character produced, like every other letter
+// shortcut here, so the rule holds on AZERTY and QWERTZ too.
+const TEXT_EDITING_LETTERS = new Set(['a', 'c', 'v', 'x', 'y', 'z']);
+const TEXT_EDITING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Backspace', 'Delete', 'Insert']);
+
+function isTextEditingCombo(event) {
+    if (event.key.length === 1) return TEXT_EDITING_LETTERS.has(event.key.toLowerCase());
+    return TEXT_EDITING_KEYS.has(event.key);
+}
+
 export function toggleHelpModal() {
     const wasOpen = get(activeModal) === MODAL.HELP;
     if (wasOpen) {
@@ -94,8 +108,20 @@ export function handleKeyDown(event) {
         return;
     }
 
+    const inTextField = document.activeElement.matches('input, textarea, [contenteditable]');
+
+    // Text editing wins over the board shortcuts. While focus sits in an
+    // editable field, the clipboard/selection/undo combos belong to the field:
+    // Ctrl-C there copies the selected text, not the position on the board.
+    // Returning without preventDefault() is the point — the WebView performs its
+    // own copy/cut/paste/select-all/undo, which the panel guard further down
+    // used to suppress for every Ctrl combo it saw.
+    if (inTextField && event.ctrlKey && !event.altKey && isTextEditingCombo(event)) {
+        return;
+    }
+
     // Allow normal typing in input fields
-    if (document.activeElement.matches('input, textarea, [contenteditable]') && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
+    if (inTextField && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
         return;
     }
 
