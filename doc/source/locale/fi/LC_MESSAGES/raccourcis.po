@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB \n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-08-01 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fi\n"
 "Language-Team: fi <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/raccourcis.rst:4
@@ -25,15 +25,29 @@ msgstr "Näppäimistöoikotiet"
 
 #: ../../source/raccourcis.rst:8
 msgid ""
-"Les raccourcis clavier sont indépendants de la disposition du clavier : "
-"ils restent accessibles de la même manière quelle que soit la disposition"
-" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+"Les raccourcis clavier sont indépendants de la disposition du clavier : ils "
+"restent accessibles de la même manière quelle que soit la disposition "
+"utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
 msgstr ""
-"Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne "
-"pysyvät käytettävissä samalla tavalla riippumatta käytetystä asettelusta "
-"(AZERTY, QWERTY, QWERTZ jne.)."
+"Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne pysyvät "
+"käytettävissä samalla tavalla riippumatta käytetystä asettelusta (AZERTY, "
+"QWERTY, QWERTZ jne.)."
 
-#: ../../source/raccourcis.rst:15
+#: ../../source/raccourcis.rst:14
+msgid ""
+"Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de "
+"recherche, ligne de commande), les raccourcis d'édition de texte habituels "
+"s'appliquent au texte et non à la position : CTRL-C, CTRL-X et CTRL-V "
+"copient, coupent et collent la sélection, CTRL-A la sélectionne entièrement,"
+" CTRL-Z et CTRL-Y annulent et rétablissent."
+msgstr ""
+"Kun kohdistin on tekstikentässä (kommentti, hakukenttä, komentorivi), "
+"tavalliset tekstinmuokkauksen pikanäppäimet kohdistuvat tekstiin eivätkä "
+"asemaan: CTRL-C, CTRL-X ja CTRL-V kopioivat, leikkaavat ja liittävät "
+"valinnan, CTRL-A valitsee sen kokonaan, CTRL-Z ja CTRL-Y kumoavat ja tekevät"
+" uudelleen."
+
+#: ../../source/raccourcis.rst:23
 msgid "Base de données"
 msgstr "Tietokanta"
 
@@ -93,7 +107,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Muokkaa tietokannan metatietoja."
 
-#: ../../source/raccourcis.rst:32
+#: ../../source/raccourcis.rst:40
 msgid "Position"
 msgstr "Asema"
 
@@ -103,11 +117,10 @@ msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
-"mat, txt, bgf)."
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
+"txt, bgf)."
 msgstr ""
-"Tuo yksi tai useampi asema/ottelu tiedostosta (xg, xgp, sgf, mat, txt, "
-"bgf)."
+"Tuo yksi tai useampi asema/ottelu tiedostosta (xg, xgp, sgf, mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-F"
@@ -191,7 +204,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Näytä aseman metatiedot."
 
-#: ../../source/raccourcis.rst:54
+#: ../../source/raccourcis.rst:62
 msgid "Navigation"
 msgstr "Navigointi"
 
@@ -259,7 +272,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Lataa satunnainen asema."
 
-#: ../../source/raccourcis.rst:73
+#: ../../source/raccourcis.rst:81
 msgid "Affichage"
 msgstr "Näyttö"
 
@@ -287,7 +300,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Näytä/piilota pip-laskuri."
 
-#: ../../source/raccourcis.rst:87
+#: ../../source/raccourcis.rst:95
 msgid "Actions"
 msgstr "Toiminnot"
 
@@ -307,7 +320,7 @@ msgstr "VÄLILYÖNTI"
 msgid "Ouvrir la ligne de commande."
 msgstr "Avaa komentorivi."
 
-#: ../../source/raccourcis.rst:100
+#: ../../source/raccourcis.rst:108
 msgid "Outils"
 msgstr "Työkalut"
 
@@ -391,7 +404,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:121
+#: ../../source/raccourcis.rst:129
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
@@ -443,7 +456,7 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:138
+#: ../../source/raccourcis.rst:146
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -463,14 +476,14 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:151
+#: ../../source/raccourcis.rst:159
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:161
 msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
+"L'historique de recherche est l'onglet *Historique* du panneau de recherche "
+"(*CTRL-F* ou *TAB*)."
 msgstr ""
 "Hakuhistoria on hakupaneelin (*CTRL-F* tai *TAB*) *Historique*-välilehti."
 
@@ -490,11 +503,11 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:167
+#: ../../source/raccourcis.rst:175
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:177
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -510,7 +523,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:183
+#: ../../source/raccourcis.rst:191
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -532,8 +545,7 @@ msgstr "d"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Basculer entre l'analyse des coups et du cube (navigation match "
-"uniquement)."
+"Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
 msgstr ""
 "Vaihda nappuloiden ja tuplauskuution analyysin välillä (vain "
 "ottelunavigoinnissa)."
@@ -544,9 +556,10 @@ msgstr "Esc"
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
+msgstr ""
+"Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:199
+#: ../../source/raccourcis.rst:207
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -582,7 +595,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:217
+#: ../../source/raccourcis.rst:225
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -619,7 +632,8 @@ msgid "Évaluer : Facile."
 msgstr "Arvioi: Helppo."
 
 #: ../../source/raccourcis.rst:1
-msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgid ""
+"Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
 #~ msgid "Exécuter la recherche et fermer le panneau."
@@ -632,8 +646,8 @@ msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 #~ msgstr "Valitse seuraava haku (vanhempi, alempana)."
 
 #~ msgid ""
-#~ "Désélectionner la recherche. Si aucune "
-#~ "recherche sélectionnée, fermer le panneau."
+#~ "Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
+#~ "panneau."
 #~ msgstr "Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
 
 #~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
@@ -643,10 +657,7 @@ msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 #~ msgstr "Valitse seuraava suodatin (kun suodatin on valittu)."
 
 #~ msgid ""
-#~ "Désélectionner le filtre. Si aucun "
-#~ "filtre sélectionné, fermer le panneau."
+#~ "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 #~ msgstr ""
-#~ "Poista suodattimen valinta. Jos mitään "
-#~ "suodatinta ei ole valittu, sulje "
+#~ "Poista suodattimen valinta. Jos mitään suodatinta ei ole valittu, sulje "
 #~ "paneeli."
-

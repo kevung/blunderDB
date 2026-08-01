@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-08-01 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -30,7 +30,16 @@ msgid ""
 " utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
 msgstr ""
 
-#: ../../source/raccourcis.rst:15
+#: ../../source/raccourcis.rst:14
+msgid ""
+"Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ "
+"de recherche, ligne de commande), les raccourcis d'édition de texte "
+"habituels s'appliquent au texte et non à la position : CTRL-C, CTRL-X et "
+"CTRL-V copient, coupent et collent la sélection, CTRL-A la sélectionne "
+"entièrement, CTRL-Z et CTRL-Y annulent et rétablissent."
+msgstr ""
+
+#: ../../source/raccourcis.rst:23
 msgid "Base de données"
 msgstr ""
 
@@ -90,7 +99,7 @@ msgstr ""
 msgid "Modifier les métadonnées de la base de données."
 msgstr ""
 
-#: ../../source/raccourcis.rst:32
+#: ../../source/raccourcis.rst:40
 msgid "Position"
 msgstr ""
 
@@ -186,7 +195,7 @@ msgstr ""
 msgid "Afficher les métadonnées de la position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:54
+#: ../../source/raccourcis.rst:62
 msgid "Navigation"
 msgstr ""
 
@@ -254,7 +263,7 @@ msgstr ""
 msgid "Charger une position aléatoire."
 msgstr ""
 
-#: ../../source/raccourcis.rst:73
+#: ../../source/raccourcis.rst:81
 msgid "Affichage"
 msgstr ""
 
@@ -282,7 +291,7 @@ msgstr ""
 msgid "Afficher/cacher le compte de course."
 msgstr ""
 
-#: ../../source/raccourcis.rst:87
+#: ../../source/raccourcis.rst:95
 msgid "Actions"
 msgstr ""
 
@@ -302,7 +311,7 @@ msgstr ""
 msgid "Ouvrir la ligne de commande."
 msgstr ""
 
-#: ../../source/raccourcis.rst:100
+#: ../../source/raccourcis.rst:108
 msgid "Outils"
 msgstr ""
 
@@ -386,7 +395,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:121
+#: ../../source/raccourcis.rst:129
 msgid "Onglets de vues"
 msgstr ""
 
@@ -438,7 +447,7 @@ msgstr ""
 msgid "Renommer la vue."
 msgstr ""
 
-#: ../../source/raccourcis.rst:138
+#: ../../source/raccourcis.rst:146
 msgid "Ligne de commande"
 msgstr ""
 
@@ -458,11 +467,11 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:151
+#: ../../source/raccourcis.rst:159
 msgid "Historique de recherche"
 msgstr ""
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:161
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -484,11 +493,11 @@ msgstr ""
 msgid "Exécuter la recherche."
 msgstr ""
 
-#: ../../source/raccourcis.rst:167
+#: ../../source/raccourcis.rst:175
 msgid "Bibliothèque de filtres"
 msgstr ""
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:177
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -502,7 +511,7 @@ msgstr ""
 msgid "Exécuter la recherche du filtre."
 msgstr ""
 
-#: ../../source/raccourcis.rst:183
+#: ../../source/raccourcis.rst:191
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -536,7 +545,7 @@ msgstr ""
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:199
+#: ../../source/raccourcis.rst:207
 msgid "Panneau des matchs"
 msgstr ""
 
@@ -572,7 +581,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:217
+#: ../../source/raccourcis.rst:225
 msgid "Panneau Anki (répétition espacée)"
 msgstr ""
 
