@@ -1,6 +1,7 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { CopyImageToClipboard } from '../../wailsjs/go/gui/App.js';
+import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, clipboardPositionStore } from '../stores/positionStore.js';
@@ -128,8 +129,7 @@ export function copyPosition() {
         clipboardContent += `eXtreme Gammon Version: ${analysis.analysisEngineVersion}\n`;
     }
 
-    navigator.clipboard
-        .writeText(clipboardContent)
+    writeTextToClipboard(clipboardContent)
         .then(() => {
             logger.log('Position, analysis, and comment copied to clipboard');
             setStatusBarMessage(tMsg('status.positionCopied'));
@@ -138,6 +138,24 @@ export function copyPosition() {
             logger.error('Error copying to clipboard:', err);
             setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
         });
+}
+
+// Put text on the system clipboard through the Go backend rather than
+// navigator.clipboard. navigator.clipboard.writeText() needs transient user
+// activation; a keydown carrying Ctrl is treated as a shortcut and grants none
+// in the WebView, which is exactly the difference between the toolbar button (a
+// click, always activated — it worked) and Ctrl-C (it did not). The backend has
+// no such requirement, and it is the same clipboard the paste side already reads
+// with ClipboardGetText(). The WebView call stays as a fallback for hosts where
+// the backend one is unavailable.
+async function writeTextToClipboard(text) {
+    try {
+        if (await ClipboardSetText(text)) return;
+        throw new Error('backend clipboard write returned false');
+    } catch (err) {
+        logger.log('Backend clipboard write unavailable, falling back to the WebView:', err);
+        await navigator.clipboard.writeText(text);
+    }
 }
 
 export async function copyBoardImage() {
