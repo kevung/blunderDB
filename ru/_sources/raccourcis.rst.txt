@@ -9,6 +9,14 @@ Raccourcis clavier
    restent accessibles de la même manière quelle que soit la disposition
    utilisée (AZERTY, QWERTY, QWERTZ, etc.).
 
+.. note::
+
+   Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de
+   recherche, ligne de commande), les raccourcis d'édition de texte habituels
+   s'appliquent au texte et non à la position : CTRL-C, CTRL-X et CTRL-V
+   copient, coupent et collent la sélection, CTRL-A la sélectionne
+   entièrement, CTRL-Z et CTRL-Y annulent et rétablissent.
+
 .. _raccourcis_generaux:
 
 Base de données
