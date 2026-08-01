@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{01 ago 2026}
-\release{0.30.0}
+\release{0.30.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -820,15 +820,15 @@ L’ultima versione di blunderDB è disponibile con licenza MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
+per Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
 
 \item {} 
 \sphinxAtStartPar
-per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
+per Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
 
 \item {} 
 \sphinxAtStartPar
-per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
+per Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
 
 \end{itemize}
 
@@ -880,7 +880,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binario grezzo (metodo avanzato)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Il binario grezzo \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} rimane disponibile. Poiché un browser rimuove il bit di esecuzione durante il download, è necessario ripristinarlo prima della prima esecuzione:
+Il binario grezzo \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} rimane disponibile. Poiché un browser rimuove il bit di esecuzione durante il download, è necessario ripristinarlo prima della prima esecuzione:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -888,7 +888,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Vengono pubblicate due varianti Linux a seconda della versione della libreria webkit2gtk. Se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1: utilizzare il pacchetto \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, il pacchetto AUR oppure scaricare la versione dedicata \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0}. I pacchetti nativi selezionano automaticamente la dipendenza corretta.
+Vengono pubblicate due varianti Linux a seconda della versione della libreria webkit2gtk. Se si ottiene l’errore \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, la distribuzione utilizza webkit2gtk\sphinxhyphen{}4.1: utilizzare il pacchetto \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, il pacchetto AUR oppure scaricare la versione dedicata \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1}. I pacchetti nativi selezionano automaticamente la dipendenza corretta.
 \end{sphinxadmonition}
 
 
@@ -3977,11 +3977,7 @@ Le scorciatoie da tastiera sono indipendenti dal layout della tastiera: restano 
 
 \begin{sphinxadmonition}{note}{Nota:}
 \sphinxAtStartPar
-Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de
-recherche, ligne de commande), les raccourcis d’édition de texte habituels
-s’appliquent au texte et non à la position : CTRL\sphinxhyphen{}C, CTRL\sphinxhyphen{}X et CTRL\sphinxhyphen{}V
-copient, coupent et collent la sélection, CTRL\sphinxhyphen{}A la sélectionne
-entièrement, CTRL\sphinxhyphen{}Z et CTRL\sphinxhyphen{}Y annulent et rétablissent.
+Quando il cursore si trova in un campo di testo (commento, campo di ricerca, riga di comando), le consuete scorciatoie di modifica del testo si applicano al testo e non alla posizione: CTRL\sphinxhyphen{}C, CTRL\sphinxhyphen{}X e CTRL\sphinxhyphen{}V copiano, tagliano e incollano la selezione, CTRL\sphinxhyphen{}A la seleziona interamente, CTRL\sphinxhyphen{}Z e CTRL\sphinxhyphen{}Y annullano e ripristinano.
 \end{sphinxadmonition}
 
 

@@ -55,7 +55,7 @@
 
 \title{blunderDB}
 \date{2026年08月01日}
-\release{0.30.0}
+\release{0.30.1}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{リリース}
@@ -793,15 +793,15 @@ blunderDB の最新バージョンは MIT ライセンスの下で利用可能�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.0.exe}
+Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0}
+Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
 
 \item {} 
 \sphinxAtStartPar
-Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.0.zip}
+Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
 
 \end{itemize}
 
@@ -853,7 +853,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{生のバイナリ (上級者向けの方法)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
+生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -861,7 +861,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
+webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
 \end{sphinxadmonition}
 
 
@@ -3950,11 +3950,7 @@ clear, cl
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de
-recherche, ligne de commande), les raccourcis d\textquotesingle{}édition de texte habituels
-s\textquotesingle{}appliquent au texte et non à la position : CTRL\sphinxhyphen{}C, CTRL\sphinxhyphen{}X et CTRL\sphinxhyphen{}V
-copient, coupent et collent la sélection, CTRL\sphinxhyphen{}A la sélectionne
-entièrement, CTRL\sphinxhyphen{}Z et CTRL\sphinxhyphen{}Y annulent et rétablissent.
+カーソルが入力欄（コメント、検索欄、コマンドライン）にあるときは、通常のテキスト編集ショートカットが局面ではなくテキストに適用されます： CTRL\sphinxhyphen{}C、CTRL\sphinxhyphen{}X、CTRL\sphinxhyphen{}V は選択範囲をコピー・切り取り・貼り付けし、CTRL\sphinxhyphen{}A はすべてを選択し、CTRL\sphinxhyphen{}Z と CTRL\sphinxhyphen{}Y は元に戻す・やり直しを行います。
 \end{sphinxadmonition}
 
 

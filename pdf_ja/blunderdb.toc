@@ -78,15 +78,15 @@
 \contentsline {section}{\numberline {2.5}キーボードショートカット}{39}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}データベース}{40}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}ポジション}{40}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}ナビゲーション}{41}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.3}ナビゲーション}{40}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}表示}{41}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}アクション}{41}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}ツール}{41}{subsection.2.5.6}%
-\contentsline {subsection}{\numberline {2.5.7}ビュータブ}{42}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.7}ビュータブ}{41}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}コマンドライン}{42}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}検索履歴}{42}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}フィルターライブラリ}{42}{subsection.2.5.10}%
-\contentsline {subsection}{\numberline {2.5.11}分析パネル}{43}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.11}分析パネル}{42}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}マッチパネル}{43}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Ankiパネル（間隔反復）}{43}{subsection.2.5.13}%
 \contentsline {section}{\numberline {2.6}コマンドラインインターフェース（CLI）}{43}{section.2.6}%
@@ -116,11 +116,11 @@
 \contentsline {subsection}{\numberline {2.7.2}blunderDB 作成の動機は何ですか？}{53}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}現在のデータベースを保存するにはどうすればよいですか？}{53}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？}{53}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{54}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.5}複数のデータベースを統合するにはどうすればよいですか？}{53}{subsection.2.7.5}%
 \contentsline {subsection}{\numberline {2.7.6}どのマッチファイル形式がサポートされていますか？}{54}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}コレクションとは何ですか？}{54}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}EPC とは何ですか？}{54}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{55}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.9}blunderDB にはコマンドラインインターフェースがありますか？}{54}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}blunderDB を変更、コピー、共有できますか？}{55}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}blunderDB はどのデータ形式を使用していますか？}{55}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}blunderDB の設計原則は何でしたか？}{55}{subsection.2.7.12}%
