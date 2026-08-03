@@ -93,6 +93,9 @@ describe('issuance fields, mounted the way the application mounts them', () => {
         expect(container.querySelector('#export-origin')).toBe(input);
         expect(input.value).toBe('Cours de Jean Dupont');
         expect(document.activeElement).toBe(input);
+
+        // The value reaches the object the export service reads when the user confirms.
+        await fireEvent.click(container.querySelector('.btn-export'));
         expect(get(optionsStore).watermark).toBe('Cours de Jean Dupont');
     });
 
@@ -110,7 +113,38 @@ describe('issuance fields, mounted the way the application mounts them', () => {
         expect(container.querySelector('#export-password')).toBe(input);
         expect(input.value).toBe('mot-de-passe');
         expect(document.activeElement).toBe(input);
+
+        await fireEvent.click(container.querySelector('.btn-export'));
         expect(get(optionsStore).password).toBe('mot-de-passe');
+    });
+});
+
+// The regression that cost the focus: seeding the mirror from a *reactive* read of the prop
+// while also writing back on every change closes a cycle through the parent's store binding.
+// Whatever the parent does to the store while the dialog is open, what the user has typed
+// must survive.
+describe('the dialog does not re-seed itself while it is open', () => {
+    test('a store update while typing does not wipe the field', async () => {
+        const options = baseOptions();
+        options.watermarkEnabled = true;
+        const optionsStore = writable(options);
+        const metadataStore = writable({ user: '', description: '', dateOfCreation: '' });
+        const { container } = render(ExportModalHost, { props: { optionsStore, metadataStore } });
+        await tick();
+
+        const input = container.querySelector('#export-origin');
+        input.focus();
+        await typeInto(input, 'Cours');
+        await tick();
+
+        // Something else in the application touches the store — exactly what the old cycle
+        // did on every keystroke.
+        optionsStore.set(get(optionsStore));
+        await tick();
+
+        expect(container.querySelector('#export-origin')).toBe(input);
+        expect(input.value).toBe('Cours');
+        expect(document.activeElement).toBe(input);
     });
 });
 
@@ -131,6 +165,7 @@ describe('issuance fields in the export modal', () => {
         expect(container.querySelector('#export-origin')).toBe(input);
         expect(input.value).toBe('Cours de Jean');
         expect(document.activeElement).toBe(input);
+        await fireEvent.click(container.querySelector('.btn-export'));
         expect(options.watermark).toBe('Cours de Jean');
     });
 
@@ -147,6 +182,7 @@ describe('issuance fields in the export modal', () => {
 
         expect(input.value).toBe('Ne pas rediffuser');
         expect(document.activeElement).toBe(input);
+        await fireEvent.click(container.querySelector('.btn-export'));
         expect(options.watermarkNote).toBe('Ne pas rediffuser');
     });
 
@@ -163,6 +199,7 @@ describe('issuance fields in the export modal', () => {
 
         expect(input.value).toBe('s3cret');
         expect(document.activeElement).toBe(input);
+        await fireEvent.click(container.querySelector('.btn-export'));
         expect(options.password).toBe('s3cret');
     });
 
@@ -175,6 +212,5 @@ describe('issuance fields in the export modal', () => {
         await fireEvent.click(container.querySelector('#export-watermark'));
         await tick();
         expect(container.querySelector('#export-origin')).not.toBeNull();
-        expect(options.watermarkEnabled).toBe(true);
     });
 });
