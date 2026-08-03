@@ -24,6 +24,17 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		return fmt.Errorf("no database is currently open")
 	}
 
+	// Resolve the selection from identifiers when the caller sent those rather than whole
+	// positions. Reading them here costs one query on a database that is already open, and
+	// spares the caller from serialising the entire set across the bridge.
+	if len(opts.Positions) == 0 && len(opts.PositionIDs) > 0 {
+		loaded, err := d.positionsByIDsLocked(opts.PositionIDs)
+		if err != nil {
+			return fmt.Errorf("cannot read the positions to export: %w", err)
+		}
+		opts.Positions = loaded
+	}
+
 	// Seal the watermark before writing anything: it is the producer's statement about this
 	// file, and a failure to sign must not leave a half-made export behind.
 	watermarkDocument, err := sealWatermark(strings.TrimSpace(opts.Watermark), strings.TrimSpace(opts.WatermarkNote))
@@ -908,4 +919,55 @@ func DeleteFile(filePath string) error {
 		return err
 	}
 	return nil
+}
+
+// positionsByIDsLocked reads the given positions from the open database, in the order the
+// caller listed them, so an export is byte-identical whichever way its selection arrived.
+// Unknown identifiers are skipped rather than failing the export: a position deleted between
+// the moment the user chose it and the moment they confirmed is not a reason to lose the
+// rest.
+//
+// The caller already holds d.mu, hence the suffix.
+func (d *Database) positionsByIDsLocked(ids []int64) ([]Position, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	// One statement, chunked: SQLite's default parameter limit is 32766, and a real
+	// selection runs to tens of thousands of positions.
+	const chunk = 900
+	byID := make(map[int64]Position, len(ids))
+	for start := 0; start < len(ids); start += chunk {
+		end := min(start+chunk, len(ids))
+		batch := ids[start:end]
+		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
+		args := make([]any, len(batch))
+		for i, id := range batch {
+			args[i] = id
+		}
+		rows, err := d.db.Query(`SELECT `+positionSelectCols+` FROM position WHERE id IN (`+placeholders+`)`, args...)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			position, err := scanPositionRow(rows)
+			if err != nil {
+				rows.Close()
+				return nil, err
+			}
+			byID[position.ID] = position
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		rows.Close()
+	}
+
+	out := make([]Position, 0, len(ids))
+	for _, id := range ids {
+		if position, ok := byID[id]; ok {
+			out = append(out, position)
+		}
+	}
+	return out, nil
 }

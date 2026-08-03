@@ -110,7 +110,12 @@ export async function handleExportCommit() {
 
         const baseOptions = {
             exportPath: pendingExportPath,
-            positions: positions,
+            // Send identifiers, not positions. Shipping the whole set was 73 MB of JSON for
+            // a real database — seconds of JSON.stringify on the browser's only thread,
+            // which left the progress dialog blank, then the same volume across the bridge
+            // and decoded again. The exporter reads them from the database it already has
+            // open. See ExportOptions.PositionIDs.
+            positionIDs: positions.map((p) => p.id),
             metadata: {
                 user: metadata.user || '',
                 description: metadata.description || '',
