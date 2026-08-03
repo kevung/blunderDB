@@ -234,201 +234,203 @@
 
 {#if visible}
     <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
-        <div class="modal-content">
-            {#if mode === 'preparing'}
-                <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
-                <p class="status-text">{$t('export.countingPositions')}</p>
+        <div class="modal-scroll">
+            <div class="modal-content">
+                {#if mode === 'preparing'}
+                    <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
+                    <p class="status-text">{$t('export.countingPositions')}</p>
 
-                <div class="button-group">
-                    <button onclick={onCancel}>{$t('common.cancel')}</button>
-                </div>
-            {:else if mode === 'metadata'}
-                <h2>{$t('export.titleExport')}</h2>
+                    <div class="button-group">
+                        <button onclick={onCancel}>{$t('common.cancel')}</button>
+                    </div>
+                {:else if mode === 'metadata'}
+                    <h2>{$t('export.titleExport')}</h2>
 
-                <div class="summary">
-                    <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
-                </div>
+                    <div class="summary">
+                        <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
+                    </div>
 
-                <div class="form-group">
-                    <label for="export-user">{$t('export.user')}</label>
-                    <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
-                </div>
+                    <div class="form-group">
+                        <label for="export-user">{$t('export.user')}</label>
+                        <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
+                    </div>
 
-                <div class="form-group">
-                    <label for="export-description">{$t('export.description')}</label>
-                    <textarea id="export-description" bind:value={metadata.description} placeholder={$t('export.descriptionPlaceholder')}></textarea>
-                </div>
+                    <div class="form-group">
+                        <label for="export-description">{$t('export.description')}</label>
+                        <textarea id="export-description" bind:value={metadata.description} placeholder={$t('export.descriptionPlaceholder')}></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="export-date">{$t('export.creationDate')}</label>
-                    <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
-                </div>
+                    <div class="form-group">
+                        <label for="export-date">{$t('export.creationDate')}</label>
+                        <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
+                    </div>
 
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
-                        <label for="export-analysis">{$t('export.includeAnalysis')}</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
+                            <label for="export-analysis">{$t('export.includeAnalysis')}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
+                            <label for="export-comments">{$t('export.includeComments')}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                            <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
+                            <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
+                            <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
+                            <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
+                            <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
+                        </div>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
-                        <label for="export-comments">{$t('export.includeComments')}</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
-                        <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
-                        <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
-                        <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
-                        <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
-                        <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
-                    </div>
-                </div>
 
-                <!-- Two independent, optional mechanisms, both the producer's choice and
+                    <!-- Two independent, optional mechanisms, both the producer's choice and
                      both off by default: mark where the file comes from, and protect it
                      with a password. Neither makes the recipient's side record anything.
                      See ADR-0007. -->
-                <div class="checkbox-group issuance-toggle">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
-                        <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
-                        <span class="info-tip" title={$t('issuance.watermarkNote')} aria-label={$t('issuance.watermarkNote')} role="note">?</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
-                        <label for="export-protect">{$t('issuance.enablePassword')}</label>
-                        <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
-                    </div>
-                </div>
-
-                {#if exportOptions.watermarkEnabled}
-                    <div class="issuance-section">
-                        <div class="form-group">
-                            <label for="export-origin">{$t('issuance.originLabel')}</label>
-                            <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
-                            {#if missingOrigin}
-                                <p class="issuance-required">{$t('issuance.originRequired')}</p>
-                            {/if}
+                    <div class="checkbox-group issuance-toggle">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
+                            <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
+                            <span class="info-tip" title={$t('issuance.watermarkNote')} aria-label={$t('issuance.watermarkNote')} role="note">?</span>
                         </div>
-                        <div class="form-group">
-                            <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
-                            <input id="export-watermark-note" type="text" bind:value={exportOptions.watermarkNote} placeholder={$t('issuance.notePlaceholder')} />
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
+                            <label for="export-protect">{$t('issuance.enablePassword')}</label>
+                            <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
                         </div>
                     </div>
-                {/if}
 
-                {#if exportOptions.passwordEnabled}
-                    <div class="issuance-section">
-                        <div class="form-group">
-                            <label for="export-password">
-                                {$t('issuance.passwordLabel')}
-                                <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
-                            </label>
-                            <input id="export-password" type="text" bind:value={exportOptions.password} />
-                            {#if missingPassword}
-                                <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
-                            {/if}
-                        </div>
-                    </div>
-                {/if}
-
-                {#if exportOptions.includeMatches && matches.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>{$t('export.selectMatches')}</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllMatches}>{$t('export.all')}</button>
-                                <button type="button" class="small-btn" onclick={selectNoMatches}>{$t('export.none')}</button>
+                    {#if exportOptions.watermarkEnabled}
+                        <div class="issuance-section">
+                            <div class="form-group">
+                                <label for="export-origin">{$t('issuance.originLabel')}</label>
+                                <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
+                                {#if missingOrigin}
+                                    <p class="issuance-required">{$t('issuance.originRequired')}</p>
+                                {/if}
+                            </div>
+                            <div class="form-group">
+                                <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
+                                <input id="export-watermark-note" type="text" bind:value={exportOptions.watermarkNote} placeholder={$t('issuance.notePlaceholder')} />
                             </div>
                         </div>
-                        <div class="collections-list">
-                            {#each matches as match (match.id)}
-                                <label class="collection-checkbox">
-                                    <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
-                                    <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
-                                    <span class="coll-count">({match.game_count}g)</span>
-                                </label>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
+                    {/if}
 
-                {#if exportOptions.includeTournaments && tournaments.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>{$t('export.selectTournaments')}</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllTournaments}>{$t('export.all')}</button>
-                                <button type="button" class="small-btn" onclick={selectNoTournaments}>{$t('export.none')}</button>
+                    {#if exportOptions.passwordEnabled}
+                        <div class="issuance-section">
+                            <div class="form-group">
+                                <label for="export-password">
+                                    {$t('issuance.passwordLabel')}
+                                    <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
+                                </label>
+                                <input id="export-password" type="text" bind:value={exportOptions.password} />
+                                {#if missingPassword}
+                                    <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
+                                {/if}
                             </div>
                         </div>
-                        <div class="collections-list">
-                            {#each tournaments as tournament (tournament.id)}
-                                <label class="collection-checkbox">
-                                    <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
-                                    <span class="coll-name">{tournament.name}</span>
-                                    <span class="coll-count">({tournament.matchCount})</span>
-                                </label>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
+                    {/if}
 
-                {#if exportOptions.includeCollections && collections.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>{$t('export.selectCollections')}</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" onclick={selectAllCollections}>{$t('export.all')}</button>
-                                <button type="button" class="small-btn" onclick={selectNoCollections}>{$t('export.none')}</button>
+                    {#if exportOptions.includeMatches && matches.length > 0}
+                        <div class="collections-section">
+                            <div class="collections-header">
+                                <span>{$t('export.selectMatches')}</span>
+                                <div class="collections-buttons">
+                                    <button type="button" class="small-btn" onclick={selectAllMatches}>{$t('export.all')}</button>
+                                    <button type="button" class="small-btn" onclick={selectNoMatches}>{$t('export.none')}</button>
+                                </div>
+                            </div>
+                            <div class="collections-list">
+                                {#each matches as match (match.id)}
+                                    <label class="collection-checkbox">
+                                        <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
+                                        <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
+                                        <span class="coll-count">({match.game_count}g)</span>
+                                    </label>
+                                {/each}
                             </div>
                         </div>
-                        <div class="collections-list">
-                            {#each collections as collection (collection.id)}
-                                <label class="collection-checkbox">
-                                    <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
-                                    <span class="coll-name">{collection.name}</span>
-                                    <span class="coll-count">({collection.positionCount})</span>
-                                </label>
-                            {/each}
+                    {/if}
+
+                    {#if exportOptions.includeTournaments && tournaments.length > 0}
+                        <div class="collections-section">
+                            <div class="collections-header">
+                                <span>{$t('export.selectTournaments')}</span>
+                                <div class="collections-buttons">
+                                    <button type="button" class="small-btn" onclick={selectAllTournaments}>{$t('export.all')}</button>
+                                    <button type="button" class="small-btn" onclick={selectNoTournaments}>{$t('export.none')}</button>
+                                </div>
+                            </div>
+                            <div class="collections-list">
+                                {#each tournaments as tournament (tournament.id)}
+                                    <label class="collection-checkbox">
+                                        <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
+                                        <span class="coll-name">{tournament.name}</span>
+                                        <span class="coll-count">({tournament.matchCount})</span>
+                                    </label>
+                                {/each}
+                            </div>
                         </div>
+                    {/if}
+
+                    {#if exportOptions.includeCollections && collections.length > 0}
+                        <div class="collections-section">
+                            <div class="collections-header">
+                                <span>{$t('export.selectCollections')}</span>
+                                <div class="collections-buttons">
+                                    <button type="button" class="small-btn" onclick={selectAllCollections}>{$t('export.all')}</button>
+                                    <button type="button" class="small-btn" onclick={selectNoCollections}>{$t('export.none')}</button>
+                                </div>
+                            </div>
+                            <div class="collections-list">
+                                {#each collections as collection (collection.id)}
+                                    <label class="collection-checkbox">
+                                        <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
+                                        <span class="coll-name">{collection.name}</span>
+                                        <span class="coll-count">({collection.positionCount})</span>
+                                    </label>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
+
+                    <div class="button-group">
+                        <button onclick={onCancel}>{$t('common.cancel')}</button>
+                        <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
+                    </div>
+                {:else if mode === 'exporting'}
+                    <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
+                    <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
+                    <p class="status-text">{$t('export.mayTakeMoments')}</p>
+
+                    <div class="button-group">
+                        <button onclick={onCancel}>{$t('common.cancel')}</button>
+                    </div>
+                {:else if mode === 'completed'}
+                    <h2>{$t('export.completedTitle')}</h2>
+
+                    <div class="summary">
+                        <p>{$t('export.exportSuccessDetail', { count: positionCount })}</p>
+                    </div>
+
+                    <div class="button-group">
+                        <button onclick={onClose}>{$t('common.close')}</button>
                     </div>
                 {/if}
-
-                <div class="button-group">
-                    <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
-                </div>
-            {:else if mode === 'exporting'}
-                <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
-                <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
-                <p class="status-text">{$t('export.mayTakeMoments')}</p>
-
-                <div class="button-group">
-                    <button onclick={onCancel}>{$t('common.cancel')}</button>
-                </div>
-            {:else if mode === 'completed'}
-                <h2>{$t('export.completedTitle')}</h2>
-
-                <div class="summary">
-                    <p>{$t('export.exportSuccessDetail', { count: positionCount })}</p>
-                </div>
-
-                <div class="button-group">
-                    <button onclick={onClose}>{$t('common.close')}</button>
-                </div>
-            {/if}
+            </div>
         </div>
     </div>
 {/if}
@@ -441,17 +443,27 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
         /* The dialog must stay reachable when it is taller than the window, but it must not
            be a scroll container itself: WebKitGTK failed to repaint it when its box changed
            size sharply between branches (560x819 for the form, 560x237 for the completion
            screen), leaving an empty white box that even a window resize would not refresh.
-           Scrolling the overlay — whose box never changes — avoids that entirely, and
-           `margin: auto` on the child keeps it centred whenever there is room. */
-        align-items: flex-start;
+           So the overlay scrolls — its own box never changes — and .modal-scroll below does
+           the centring. Auto margins were tried first and left the dialog stuck at the top:
+           they do not resolve to centred inside a scrolling container. */
         overflow-y: auto;
         z-index: 2000;
+    }
+
+    /* min-height rather than height: it fills the window when the dialog is short, so the
+       dialog is centred, and grows past it when the dialog is tall, so the top stays
+       reachable instead of being clipped. */
+    .modal-scroll {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
     .modal-content {
@@ -463,9 +475,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        /* Centred when it fits, pushed to the top and scrolled by the overlay when it does
-           not. No max-height and no scrolling here: see .modal-overlay. */
-        margin: auto;
+        /* No max-height and no scrolling here: see .modal-overlay and .modal-scroll. */
         flex: none;
     }
 
