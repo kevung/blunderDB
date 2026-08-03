@@ -36,7 +36,19 @@
         "colorDice": "Dadi",
         "colorDiceDot": "Punti dei dadi",
         "colorCube": "Cubo del raddoppio",
-        "resetColors": "Ripristina"
+        "resetColors": "Ripristina",
+        "identityTitle": "Identità dell'emittente",
+        "identityIntro": "La chiave con cui sono firmate le tue marche. Appartiene a te, non a un database, e si crea da sola la prima volta che marchi un file.",
+        "identityName": "Nome visualizzato",
+        "identityFingerprint": "Impronta pubblica",
+        "identityNone": "Nessuna identità per ora: verrà creata alla prima esportazione marcata con la sua origine. Puoi anche crearla adesso salvandola.",
+        "identityPassphrase": "Passphrase (facoltativa)",
+        "identityWarning": "Chi possiede il file salvato può firmare a tuo nome. Non condividerlo.",
+        "identityExport": "Salva identità…",
+        "identityImport": "Carica identità…",
+        "identityExported": "Identità salvata in {path}",
+        "identityImported": "Identità installata: {name}",
+        "identityPassphraseNeeded": "Questo file è protetto: inserisci la passphrase sopra e riprova."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

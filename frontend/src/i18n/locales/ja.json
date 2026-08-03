@@ -36,7 +36,19 @@
         "colorDice": "ダイス",
         "colorDiceDot": "ダイスの目",
         "colorCube": "ダブリングキューブ",
-        "resetColors": "デフォルトに戻す"
+        "resetColors": "デフォルトに戻す",
+        "identityTitle": "発行者の識別情報",
+        "identityIntro": "透かしの署名に使う鍵です。データベースではなくあなたに属し、初めてファイルを記載したときに自動で作成されます。",
+        "identityName": "表示名",
+        "identityFingerprint": "公開フィンガープリント",
+        "identityNone": "まだ識別情報はありません。出所を記載した最初のエクスポート時に作成されます。今すぐ保存して作成することもできます。",
+        "identityPassphrase": "パスフレーズ（任意）",
+        "identityWarning": "保存したファイルを持つ人は、あなたの名前で署名できます。共有しないでください。",
+        "identityExport": "識別情報を保存…",
+        "identityImport": "識別情報を読み込む…",
+        "identityExported": "{path} に保存しました",
+        "identityImported": "識別情報を設定しました: {name}",
+        "identityPassphraseNeeded": "このファイルは保護されています。上にパスフレーズを入力して再試行してください。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

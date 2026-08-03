@@ -896,6 +896,22 @@ export namespace domain {
 	        this.move_count = source["move_count"];
 	    }
 	}
+	export class IdentityFilePick {
+	    path: string;
+	    needsPassphrase: boolean;
+	    cancelled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new IdentityFilePick(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.needsPassphrase = source["needsPassphrase"];
+	        this.cancelled = source["cancelled"];
+	    }
+	}
 	export class WatermarkInfo {
 	    origin: string;
 	    issuerName: string;
@@ -955,6 +971,24 @@ export namespace domain {
 		    }
 		    return a;
 		}
+	}
+	export class IssuerIdentityInfo {
+	    present: boolean;
+	    name: string;
+	    fingerprint: string;
+	    path: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new IssuerIdentityInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.present = source["present"];
+	        this.name = source["name"];
+	        this.fingerprint = source["fingerprint"];
+	        this.path = source["path"];
+	    }
 	}
 	export class Match {
 	    id: number;

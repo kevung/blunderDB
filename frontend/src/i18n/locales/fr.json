@@ -36,7 +36,19 @@
         "colorDice": "Dés",
         "colorDiceDot": "Points des dés",
         "colorCube": "Videau",
-        "resetColors": "Réinitialiser"
+        "resetColors": "Réinitialiser",
+        "identityTitle": "Identité d'émetteur",
+        "identityIntro": "La clé avec laquelle vos filigranes sont signés. Elle vous appartient, pas à une base, et se crée toute seule la première fois que vous marquez un fichier.",
+        "identityName": "Nom affiché",
+        "identityFingerprint": "Empreinte publique",
+        "identityNone": "Aucune identité pour l'instant — elle sera créée au premier export marqué de son origine. Vous pouvez aussi la créer maintenant en l'enregistrant.",
+        "identityPassphrase": "Phrase secrète (facultative)",
+        "identityWarning": "Le fichier enregistré permet à quiconque le détient de signer en votre nom. Ne le partagez pas.",
+        "identityExport": "Enregistrer l'identité…",
+        "identityImport": "Charger une identité…",
+        "identityExported": "Identité enregistrée dans {path}",
+        "identityImported": "Identité installée : {name}",
+        "identityPassphraseNeeded": "Ce fichier est protégé : saisissez sa phrase secrète ci-dessus, puis réessayez."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
