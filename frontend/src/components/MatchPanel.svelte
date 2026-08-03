@@ -34,7 +34,7 @@
         activeTabStore
     } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
-    import { commentTextStore } from '../stores/uiStore';
+    import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
 
@@ -660,6 +660,13 @@
     }
 
     function handleClickOutside(event) {
+        // This listener lives on `document` for the whole life of the panel, so it also sees
+        // clicks that have nothing to do with it — including every click inside a modal. It
+        // used to blur whatever was focused, which made text fields in the export and
+        // settings dialogs impossible to click into: the field took focus on mousedown and
+        // lost it on the click that followed. Tab still worked, which is what made the
+        // symptom so confusing.
+        if (get(isAnyModalOpen)) return;
         // Don't interfere while the merge players modal is open
         if (showMergePlayersModal) return;
         // Close tournament dropdown if clicking outside
