@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
@@ -363,23 +366,88 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		}
 	}()
 
-	// Export all positions with their analysis and comments
+	// Export all positions with their analysis and comments.
+	//
+	// The loop below used to ask the source database three questions about every single
+	// position — its analysis, its played moves, its comment. On a real database that is
+	// ~264 000 statements for 88 000 positions, and it dominated the export: 8.3 s of the
+	// 14.8 s measured, more than half. The positions are therefore walked in batches, and
+	// each batch's analyses, moves and comments are read in one statement each. The body of
+	// the loop is unchanged apart from reading those three from the prefetched maps.
+	//
+	// Batching rather than prefetching everything keeps the memory bounded: analyses are
+	// compressed blobs, and a whole database's worth would be hundreds of megabytes.
 	idMapping := make(map[int64]int64) // map old position ID to new position ID
 
-	for _, position := range opts.Positions {
+	// Prepare the three statements the loop runs for every position. Passing SQL text to
+	// tx.Exec makes database/sql prepare, execute and close a statement each time: 88 000
+	// positions meant parsing the same three statements 88 000 times, and it showed up as
+	// the largest cost left on the sequential path once the analyses were decoded in
+	// parallel.
+	insertPosition, err := tx.Prepare(`INSERT INTO position (state, individually_imported) VALUES (?, ?)`)
+	if err != nil {
+		return fmt.Errorf("cannot prepare the position insert: %w", err)
+	}
+	defer insertPosition.Close()
+	insertAnalysis, err := tx.Prepare(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`)
+	if err != nil {
+		return fmt.Errorf("cannot prepare the analysis insert: %w", err)
+	}
+	defer insertAnalysis.Close()
+	insertComment, err := tx.Prepare(`INSERT INTO comment (position_id, text) VALUES (?, ?)`)
+	if err != nil {
+		return fmt.Errorf("cannot prepare the comment insert: %w", err)
+	}
+	defer insertComment.Close()
+
+	const prefetchBatch = 1000
+	var analysisByPosition map[int64][]byte
+	var decodedByPosition map[int64]*PositionAnalysis
+	var movesByPosition map[int64][]exportedMove
+	var commentByPosition map[int64]string
+
+	for positionIndex, position := range opts.Positions {
+		if positionIndex%prefetchBatch == 0 {
+			end := min(positionIndex+prefetchBatch, len(opts.Positions))
+			batch := make([]int64, 0, end-positionIndex)
+			for _, p := range opts.Positions[positionIndex:end] {
+				batch = append(batch, p.ID)
+			}
+			var prefetchErr error
+			if opts.IncludeAnalysis {
+				if analysisByPosition, prefetchErr = d.analysisForPositions(batch); prefetchErr != nil {
+					return fmt.Errorf("cannot read analyses to export: %w", prefetchErr)
+				}
+				decodedByPosition = decodeAnalysesConcurrently(analysisByPosition)
+				if opts.IncludePlayedMoves {
+					if movesByPosition, prefetchErr = d.movesForPositions(batch); prefetchErr != nil {
+						return fmt.Errorf("cannot read played moves to export: %w", prefetchErr)
+					}
+				}
+			}
+			if opts.IncludeComments {
+				if commentByPosition, prefetchErr = d.commentsForPositions(batch); prefetchErr != nil {
+					return fmt.Errorf("cannot read comments to export: %w", prefetchErr)
+				}
+			}
+		}
+
 		oldPositionID := position.ID
 
 		// Reset the ID for the new database
 		position.ID = 0
 
-		// Marshal the full position (export uses full JSON for backward compatibility)
+		// Marshal the full position (export uses full JSON for backward compatibility).
+		//
+		// Measured, not assumed: doing this for a whole batch across every core made the
+		// export *slower* (4.56 s against 4.34 s on an 88 000-position database). The
+		// coordination and the extra batch of strings cost more than the marshalling saved,
+		// which already overlaps with the analysis decoding.
 		positionJSON := fullPositionJSON(position)
 
 		// Insert the position into the export database
 		// Carry provenance so the export round-trips (ADR-0001).
-		result, err := tx.Exec(
-			`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
-			positionJSON, position.IndividuallyImported)
+		result, err := insertPosition.Exec(positionJSON, position.IndividuallyImported)
 		if err != nil {
 			slog.Warn("inserting position into export database", "positionID", oldPositionID, "err", err)
 			continue
@@ -396,24 +464,17 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 
 		// Export analysis if it exists and if includeAnalysis is true
 		if opts.IncludeAnalysis {
-			var analysisData []byte
-			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisData)
-			if analysisErr == nil {
-				// Update position_id in the analysis JSON
-				analysis, unmarshalErr := decodeAnalysisFromStorage(analysisData)
-				if unmarshalErr == nil {
+			decoded, hasAnalysis := decodedByPosition[oldPositionID]
+			if hasAnalysis {
+				if decoded != nil {
+					analysis := *decoded
 					analysis.PositionID = int(newPositionID)
 
 					// Handle played moves
 					if opts.IncludePlayedMoves {
 						// Load played moves from the move table and merge with existing
-						moveRows, moveErr := d.db.Query(`
-							SELECT checker_move, cube_action 
-							FROM move 
-							WHERE position_id = ?
-						`, oldPositionID)
-
-						if moveErr == nil {
+						{
+							playedMoves := movesByPosition[oldPositionID]
 
 							// Collect all moves from the database
 							existingMoves := make(map[string]bool)
@@ -440,10 +501,10 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 							}
 
 							// Add moves from move table
-							for moveRows.Next() {
-								var checkerMove sql.NullString
-								var cubeAction sql.NullString
-								if scanErr := moveRows.Scan(&checkerMove, &cubeAction); scanErr == nil {
+							for _, played := range playedMoves {
+								{
+									checkerMove := played.checkerMove
+									cubeAction := played.cubeAction
 									if checkerMove.Valid && checkerMove.String != "" {
 										existingMoves[normalizeMove(checkerMove.String)] = true
 									}
@@ -452,10 +513,6 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 									}
 								}
 							}
-							if err := moveRows.Err(); err != nil {
-								return err
-							}
-							moveRows.Close()
 
 							// Convert to slices
 							analysis.PlayedMoves = make([]string, 0, len(existingMoves))
@@ -483,25 +540,20 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 						return fmt.Errorf("failed to marshal JSON: %w", err)
 					}
 
-					if _, insertErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON)); insertErr != nil {
+					if _, insertErr := insertAnalysis.Exec(newPositionID, string(updatedAnalysisJSON)); insertErr != nil {
 						slog.Warn("inserting analysis for position", "newID", newPositionID, "oldID", oldPositionID, "err", insertErr)
 					}
 				}
-			} else if analysisErr != sql.ErrNoRows {
-				slog.Warn("querying analysis for position", "positionID", oldPositionID, "err", analysisErr)
 			}
 		}
 
 		// Export comment if it exists and if includeComments is true
 		if opts.IncludeComments {
-			var comment string
-			commentErr := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, oldPositionID).Scan(&comment)
-			if commentErr == nil && comment != "" {
-				if _, insertErr := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newPositionID, comment); insertErr != nil {
+			comment := commentByPosition[oldPositionID]
+			if comment != "" {
+				if _, insertErr := insertComment.Exec(newPositionID, comment); insertErr != nil {
 					slog.Warn("inserting comment for position", "newID", newPositionID, "oldID", oldPositionID, "err", insertErr)
 				}
-			} else if commentErr != nil && commentErr != sql.ErrNoRows {
-				slog.Warn("querying comment for position", "positionID", oldPositionID, "err", commentErr)
 			}
 		}
 	}
@@ -970,4 +1022,146 @@ func (d *Database) positionsByIDsLocked(ids []int64) ([]Position, error) {
 		}
 	}
 	return out, nil
+}
+
+// exportedMove is one row of the `move` table as the export needs it: the played checker
+// move and cube action recorded against a position.
+type exportedMove struct {
+	checkerMove sql.NullString
+	cubeAction  sql.NullString
+}
+
+// analysisForPositions reads the stored analysis blob of every position in the batch.
+func (d *Database) analysisForPositions(ids []int64) (map[int64][]byte, error) {
+	out := make(map[int64][]byte, len(ids))
+	err := d.forEachInBatch(ids, `SELECT position_id, data FROM analysis WHERE position_id IN `, func(rows *sql.Rows) error {
+		var id int64
+		var data []byte
+		if err := rows.Scan(&id, &data); err != nil {
+			return err
+		}
+		out[id] = data
+		return nil
+	})
+	return out, err
+}
+
+// movesForPositions reads the played moves of every position in the batch, keeping the
+// database's own order within a position.
+func (d *Database) movesForPositions(ids []int64) (map[int64][]exportedMove, error) {
+	out := make(map[int64][]exportedMove, len(ids))
+	err := d.forEachInBatch(ids, `SELECT position_id, checker_move, cube_action FROM move WHERE position_id IN `, func(rows *sql.Rows) error {
+		var id int64
+		var move exportedMove
+		if err := rows.Scan(&id, &move.checkerMove, &move.cubeAction); err != nil {
+			return err
+		}
+		out[id] = append(out[id], move)
+		return nil
+	})
+	return out, err
+}
+
+// commentsForPositions reads the comment of every position in the batch. A position with
+// several comments keeps the first one, which is what the per-position query it replaces
+// did.
+func (d *Database) commentsForPositions(ids []int64) (map[int64]string, error) {
+	out := make(map[int64]string, len(ids))
+	err := d.forEachInBatch(ids, `SELECT position_id, text FROM comment WHERE position_id IN `, func(rows *sql.Rows) error {
+		var id int64
+		var text string
+		if err := rows.Scan(&id, &text); err != nil {
+			return err
+		}
+		if _, seen := out[id]; !seen {
+			out[id] = text
+		}
+		return nil
+	})
+	return out, err
+}
+
+// forEachInBatch runs prefix + an IN list over the identifiers, splitting them so the
+// statement stays under SQLite's parameter limit, and hands every row to scan.
+func (d *Database) forEachInBatch(ids []int64, prefix string, scan func(*sql.Rows) error) error {
+	const chunk = 900
+	for start := 0; start < len(ids); start += chunk {
+		end := min(start+chunk, len(ids))
+		batch := ids[start:end]
+		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
+		args := make([]any, len(batch))
+		for i, id := range batch {
+			args[i] = id
+		}
+		rows, err := d.db.Query(prefix+`(`+placeholders+`)`, args...)
+		if err != nil {
+			return err
+		}
+		for rows.Next() {
+			if err := scan(rows); err != nil {
+				rows.Close()
+				return err
+			}
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return err
+		}
+		rows.Close()
+	}
+	return nil
+}
+
+// decodeAnalysesConcurrently decodes a batch of stored analyses in parallel.
+//
+// Decoding is decompression followed by a JSON unmarshal — pure computation, independent
+// from one position to the next, and 38% of the export's time once the per-position queries
+// were gone. Spreading a batch across the machine's cores is the whole optimisation; the
+// writes stay sequential inside their single transaction.
+//
+// An analysis that fails to decode maps to nil, which the caller treats as "no analysis to
+// export" — the same outcome the sequential version produced when the unmarshal failed.
+func decodeAnalysesConcurrently(raw map[int64][]byte) map[int64]*PositionAnalysis {
+	out := make(map[int64]*PositionAnalysis, len(raw))
+	if len(raw) == 0 {
+		return out
+	}
+
+	type job struct {
+		id   int64
+		data []byte
+	}
+	jobs := make([]job, 0, len(raw))
+	for id, data := range raw {
+		jobs = append(jobs, job{id: id, data: data})
+	}
+
+	workers := min(runtime.NumCPU(), len(jobs))
+	decoded := make([]*PositionAnalysis, len(jobs))
+	var wg sync.WaitGroup
+	var next atomic.Int64
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				i := int(next.Add(1)) - 1
+				if i >= len(jobs) {
+					return
+				}
+				analysis, err := decodeAnalysisFromStorage(jobs[i].data)
+				if err != nil {
+					slog.Warn("decoding analysis for export", "positionID", jobs[i].id, "err", err)
+					continue
+				}
+				decoded[i] = &analysis
+			}
+		}()
+	}
+	wg.Wait()
+
+	for i, j := range jobs {
+		out[j.id] = decoded[i]
+	}
+	return out
 }

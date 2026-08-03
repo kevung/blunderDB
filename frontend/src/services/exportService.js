@@ -156,13 +156,16 @@ export async function handleExportCommit() {
     } catch (error) {
         logger.error('Error committing export:', error);
         closeModal();
+        resetExportState();
+        exportMatchesStore.set([]);
+        pendingExportPath = null;
         setStatusBarMessage(tMsg('status.errorCommittingExport', { error }));
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
-    } finally {
-        resetExportState();
-        exportMatchesStore.set([]);
     }
+    // No reset on success: it would wipe the 'completed' state the moment it was set, and
+    // the dialog would fall back to its 'preparing' screen — a spinner that never resolves,
+    // with no way out but Cancel. handleExportClose resets when the user closes it.
 }
 
 export function handleExportCancel() {
