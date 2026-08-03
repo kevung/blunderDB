@@ -1,9 +1,10 @@
 <script>
+    import { get } from 'svelte/store';
     import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
-    import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
+    import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore, isAnyModalOpen } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
@@ -337,6 +338,9 @@
     }
 
     function handleClickOutside(event) {
+        // Same reason as in MatchPanel: this document-wide listener also sees clicks inside
+        // modals, and blurring there makes their text fields impossible to click into.
+        if (get(isAnyModalOpen)) return;
         // Don't close if the save dialog is open and click is within save dialog or overlay
         if (showSaveDialog) {
             const saveDialogOverlay = document.querySelector('.save-dialog-overlay');
