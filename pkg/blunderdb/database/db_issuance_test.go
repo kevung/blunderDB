@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
-// isolateIdentity points the Issuer identity at a throwaway config directory. Without it a
+// isolateIdentity points the signing identity at a throwaway config directory. Without it a
 // test run would create — or worse, reuse — the identity of whoever is running the suite.
 func isolateIdentity(t *testing.T) {
 	t.Helper()
@@ -19,116 +19,82 @@ func isolateIdentity(t *testing.T) {
 	t.Cleanup(xdg.Reload)
 }
 
-func issuedCopy(t *testing.T, source *Database, iss IssuanceOptions) IssuedCopy {
+func exportTo(t *testing.T, source *Database, path string, opts ExportOptions) string {
 	t.Helper()
-	copies, err := source.IssueCopies(ExportOptions{
-		ExportPath: filepath.Join(t.TempDir(), "copy.db"),
-		Metadata:   map[string]string{"user": "Jean Dupont", "description": "Cours"},
-	}, iss)
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
+	opts.ExportPath = path
+	if opts.Metadata == nil {
+		opts.Metadata = map[string]string{"user": "Jean Dupont", "description": "Cours"}
 	}
-	if len(copies) != 1 {
-		t.Fatalf("expected one copy, got %d", len(copies))
+	if err := source.ExportDatabase(opts); err != nil {
+		t.Fatalf("ExportDatabase: %v", err)
 	}
-	return copies[0]
+	return path
 }
 
-func TestIssueCopyCarriesAVerifiableWatermark(t *testing.T) {
+func TestWatermarkedExportCarriesAVerifiableOrigin(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
 
-	copy := issuedCopy(t, source, IssuanceOptions{Distribution: "Cours du 12 mars", Recipients: []string{"Kévin Unger"}})
+	path := exportTo(t, source, filepath.Join(t.TempDir(), "cours.db"), ExportOptions{
+		Watermark:     "Cours de Jean Dupont — 12 mars 2026",
+		WatermarkNote: "Merci de ne pas rediffuser.",
+	})
 
-	info, err := InspectIssuance(copy.Path)
+	info, err := InspectIssuance(path)
 	if err != nil {
 		t.Fatalf("InspectIssuance: %v", err)
 	}
-	if !info.IsIssuedCopy || info.Watermark == nil {
-		t.Fatal("the produced file must be an issued copy")
+	if !info.Watermarked || info.Watermark == nil {
+		t.Fatal("the exported file must carry a watermark")
 	}
-	if !info.Watermark.SignatureValid {
-		t.Fatal("the watermark must verify")
+	if !info.Watermark.SignatureValid || !info.Watermark.IssuedByYou {
+		t.Fatalf("the producer must recognise their own mark: %+v", info.Watermark)
 	}
-	if !info.Watermark.IssuedByYou {
-		t.Fatal("the issuer must recognise their own copy")
+	if info.Watermark.Origin != "Cours de Jean Dupont — 12 mars 2026" {
+		t.Fatalf("unexpected origin: %q", info.Watermark.Origin)
 	}
-	if info.Watermark.Recipient != "Kévin Unger" || !info.Watermark.Nominative {
-		t.Fatalf("unexpected watermark: %+v", info.Watermark)
-	}
-	if len(info.Holders) != 0 {
-		t.Fatal("a freshly issued copy has no holders yet")
+	if info.Watermark.Note != "Merci de ne pas rediffuser." {
+		t.Fatalf("the note must travel: %q", info.Watermark.Note)
 	}
 }
 
-// The leak the design has to avoid: the issue register lists every recipient of a course
-// and the password of every distribution.
-func TestIssuedCopyNeverCarriesTheIssueRegister(t *testing.T) {
+// An export without a watermark must be exactly what it always was.
+func TestPlainExportCarriesNothing(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
+	path := exportTo(t, source, filepath.Join(t.TempDir(), "cours.db"), ExportOptions{})
 
-	first := issuedCopy(t, source, IssuanceOptions{
-		Distribution: "Cours du 12 mars",
-		Recipients:   []string{"Kévin Unger"},
-		Password:     "",
-	})
-	_ = first
-
-	// A second emission, so the source register is non-empty when the third copy is made.
-	second := issuedCopy(t, source, IssuanceOptions{
-		Distribution: "Cours du 12 mars",
-		Recipients:   []string{"Marie Durand"},
-	})
-
-	opened := NewDatabase()
-	if err := opened.OpenDatabase(second.Path); err != nil {
-		t.Fatalf("OpenDatabase: %v", err)
-	}
-	t.Cleanup(func() { _ = opened.Close() })
-
-	raw, err := opened.readMeta(issuance.KeyIssued)
+	info, err := InspectIssuance(path)
 	if err != nil {
-		t.Fatalf("readMeta: %v", err)
+		t.Fatalf("InspectIssuance: %v", err)
 	}
-	if raw != "" {
-		t.Fatalf("the issue register leaked into an issued copy: %s", raw)
+	if info.Watermarked || info.Watermark != nil {
+		t.Fatalf("an ordinary export must carry no watermark: %+v", info)
 	}
-	info, err := opened.GetIssuanceInfo()
+	// …and exporting without a watermark must not have created a signing identity.
+	id, err := issuance.LoadIdentity(issuance.ConfigDir())
 	if err != nil {
-		t.Fatalf("GetIssuanceInfo: %v", err)
+		t.Fatalf("LoadIdentity: %v", err)
 	}
-	if len(info.Issued) != 0 {
-		t.Fatalf("an issued copy must show no issue register, got %d records", len(info.Issued))
-	}
-
-	// …while the issuer's own database has both records, with the recipients.
-	sourceInfo, err := source.GetIssuanceInfo()
-	if err != nil {
-		t.Fatalf("GetIssuanceInfo (source): %v", err)
-	}
-	if len(sourceInfo.Issued) != 2 {
-		t.Fatalf("the issuer's register must list both copies, got %d", len(sourceInfo.Issued))
+	if id != nil {
+		t.Fatal("no identity should exist until the first watermark")
 	}
 }
 
-func TestUnknownMetadataIsNotCarriedIntoACopy(t *testing.T) {
+func TestUnknownMetadataIsNotCarriedIntoAnExport(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
 
-	copies, err := source.IssueCopies(ExportOptions{
-		ExportPath: filepath.Join(t.TempDir(), "copy.db"),
+	path := exportTo(t, source, filepath.Join(t.TempDir(), "cours.db"), ExportOptions{
 		Metadata: map[string]string{
 			"user":        "Jean",
 			"description": "Cours",
 			"surprise":    "a document added six months from now",
 		},
-	}, IssuanceOptions{Distribution: "Cours", Recipients: []string{"Kévin"}})
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
-	}
+	})
 
 	opened := NewDatabase()
-	if err := opened.OpenDatabase(copies[0].Path); err != nil {
+	if err := opened.OpenDatabase(path); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
 	t.Cleanup(func() { _ = opened.Close() })
@@ -141,314 +107,121 @@ func TestUnknownMetadataIsNotCarriedIntoACopy(t *testing.T) {
 	}
 }
 
-func TestBatchIssuesOneCopyPerRecipient(t *testing.T) {
+// The design's central promise: the recipient's side records nothing. Opening a watermarked
+// database must leave every issuance row exactly as the producer wrote it, and must not
+// create any of the rows earlier iterations used to keep (holders, lineage, register).
+//
+// Note that opening a database is not a read-only act in general — blunderDB applies WAL
+// pragmas and may run ANALYZE to build query-planner statistics — so this asserts on the
+// metadata rows rather than on the file's bytes.
+func TestOpeningAWatermarkedDatabaseRecordsNothing(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
-	dir := t.TempDir()
-
-	copies, err := source.IssueCopies(ExportOptions{Metadata: map[string]string{}}, IssuanceOptions{
-		Distribution: "Cours du 12 mars",
-		Recipients:   []string{"Kévin Unger", "Marie Durand", "  ", "Léo Martin"},
-		OutputDir:    dir,
+	path := exportTo(t, source, filepath.Join(t.TempDir(), "cours.db"), ExportOptions{
+		Watermark: "Cours de Jean Dupont",
 	})
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
-	}
-	if len(copies) != 3 {
-		t.Fatalf("blank recipients must be dropped: %d copies", len(copies))
-	}
 
-	seen := map[string]bool{}
-	salts := map[string]bool{}
-	for i, c := range copies {
-		if c.Number != i+1 || c.Total != 3 {
-			t.Fatalf("copy %d numbered %d/%d", i, c.Number, c.Total)
+	// Retired keys: they must never reappear, whatever happens on the recipient's side.
+	retired := []string{"holders", "lineage", "issued"}
+
+	var sealed string
+	for i := 0; i < 3; i++ {
+		opened := NewDatabase()
+		if err := opened.OpenDatabase(path); err != nil {
+			t.Fatalf("OpenDatabase: %v", err)
 		}
-		if seen[c.Path] {
-			t.Fatalf("two recipients landed on the same file: %s", c.Path)
+		if _, err := opened.GetIssuanceInfo(); err != nil {
+			t.Fatalf("GetIssuanceInfo: %v", err)
 		}
-		seen[c.Path] = true
-		if !strings.HasPrefix(filepath.Base(c.Path), "cours-du-12-mars_") {
-			t.Fatalf("unexpected file name: %s", filepath.Base(c.Path))
+		if _, err := InspectIssuance(path); err != nil {
+			t.Fatalf("InspectIssuance: %v", err)
 		}
-		info, err := InspectIssuance(c.Path)
+		got, err := opened.readMeta(issuance.KeyWatermark)
 		if err != nil {
-			t.Fatalf("InspectIssuance: %v", err)
+			t.Fatalf("readMeta: %v", err)
 		}
-		if info.Watermark.Recipient != c.Recipient {
-			t.Fatalf("copy for %q names %q", c.Recipient, info.Watermark.Recipient)
+		if i == 0 {
+			sealed = got
+		} else if got != sealed {
+			t.Fatal("the watermark must not change when the file is opened")
 		}
-		salts[saltOf(t, c.Path)] = true
-	}
-	if len(salts) != 1 {
-		t.Fatalf("copies of one distribution must share a salt, got %d distinct", len(salts))
-	}
-}
-
-// A second batch for the same course must continue the first, not restart it — otherwise
-// two different students both hold "copy 1 of 12".
-func TestSecondBatchContinuesTheDistribution(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-
-	firstDir, secondDir := t.TempDir(), t.TempDir()
-	first, err := source.IssueCopies(ExportOptions{}, IssuanceOptions{
-		Distribution: "Cours", Recipients: []string{"A", "B"}, OutputDir: firstDir,
-	})
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
-	}
-	second, err := source.IssueCopies(ExportOptions{}, IssuanceOptions{
-		Distribution: "Cours", Recipients: []string{"C"}, OutputDir: secondDir,
-	})
-	if err != nil {
-		t.Fatalf("IssueCopies (second batch): %v", err)
-	}
-	if second[0].Number != 3 {
-		t.Fatalf("the second batch must continue at 3, got %d", second[0].Number)
-	}
-	if saltOf(t, first[0].Path) != saltOf(t, second[0].Path) {
-		t.Fatal("both batches belong to one distribution and must share its salt")
-	}
-}
-
-func saltOf(t *testing.T, path string) string {
-	t.Helper()
-	env, _, err := readIssuanceFrom(path)
-	if err != nil {
-		t.Fatalf("readIssuanceFrom: %v", err)
-	}
-	w, err := env.Open()
-	if err != nil {
-		t.Fatalf("Open: %v", err)
-	}
-	return w.Salt
-}
-
-func TestCollectiveCopyNamesNoRecipient(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-
-	copy := issuedCopy(t, source, IssuanceOptions{Distribution: "Promotion 2026"})
-	info, err := InspectIssuance(copy.Path)
-	if err != nil {
-		t.Fatalf("InspectIssuance: %v", err)
-	}
-	if info.Watermark.Nominative || info.Watermark.Recipient != "" {
-		t.Fatalf("a collective copy names no recipient: %+v", info.Watermark)
-	}
-	if info.Watermark.Distribution != "Promotion 2026" {
-		t.Fatalf("unexpected distribution: %q", info.Watermark.Distribution)
-	}
-}
-
-func TestIssuingRequiresADistributionName(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-	if _, err := source.IssueCopies(ExportOptions{ExportPath: filepath.Join(t.TempDir(), "x.db")}, IssuanceOptions{}); err == nil {
-		t.Fatal("a copy without a distribution cannot be attributed to anything")
-	}
-}
-
-func TestRecordHolderCountsMachinesAndOnlyForIssuedCopies(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-	copy := issuedCopy(t, source, IssuanceOptions{Distribution: "Cours", Recipients: []string{"Kévin"}})
-
-	held := NewDatabase()
-	if err := held.OpenDatabase(copy.Path); err != nil {
-		t.Fatalf("OpenDatabase: %v", err)
-	}
-	t.Cleanup(func() { _ = held.Close() })
-
-	for i := 0; i < 3; i++ {
-		if err := held.RecordHolder(); err != nil {
-			t.Fatalf("RecordHolder: %v", err)
+		for _, key := range retired {
+			if value, _ := opened.readMeta(key); value != "" {
+				t.Fatalf("opening wrote %q = %q", key, value)
+			}
+		}
+		if err := opened.Close(); err != nil {
+			t.Fatalf("Close: %v", err)
 		}
 	}
-	info, err := held.GetIssuanceInfo()
-	if err != nil {
-		t.Fatalf("GetIssuanceInfo: %v", err)
-	}
-	if len(info.Holders) != 1 {
-		t.Fatalf("one machine must produce one entry, got %d", len(info.Holders))
-	}
-	if info.Holders[0].Openings != 3 {
-		t.Fatalf("expected 3 openings, got %d", info.Holders[0].Openings)
-	}
-	if !info.ChainIntact {
-		t.Fatal("a registry blunderDB wrote must read as intact")
-	}
-
-	// An ordinary database is left completely alone.
-	plain := newTestDB(t)
-	if err := plain.RecordHolder(); err != nil {
-		t.Fatalf("RecordHolder on an ordinary database: %v", err)
-	}
-	raw, err := plain.readMeta(issuance.KeyHolders)
-	if err != nil {
-		t.Fatalf("readMeta: %v", err)
-	}
-	if raw != "" {
-		t.Fatalf("a database that was never issued must carry no holder registry: %s", raw)
+	if sealed == "" {
+		t.Fatal("test setup: the export carried no watermark")
 	}
 }
 
-// The forensic rule: examining a copy that came back must not write the examiner's own
-// machine into the evidence.
-func TestInspectingACopyDoesNotContaminateIt(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-	copy := issuedCopy(t, source, IssuanceOptions{Distribution: "Cours", Recipients: []string{"Kévin"}})
-
-	for i := 0; i < 3; i++ {
-		if _, err := InspectIssuance(copy.Path); err != nil {
-			t.Fatalf("InspectIssuance: %v", err)
-		}
-	}
-	info, err := InspectIssuance(copy.Path)
-	if err != nil {
-		t.Fatalf("InspectIssuance: %v", err)
-	}
-	if len(info.Holders) != 0 {
-		t.Fatalf("inspection must not add holders, got %d", len(info.Holders))
-	}
-
-	// Opening it read-only through the wrapper must not either.
-	opened := NewDatabase()
-	if err := opened.OpenDatabase(copy.Path); err != nil {
-		t.Fatalf("OpenDatabase: %v", err)
-	}
-	t.Cleanup(func() { _ = opened.Close() })
-	if _, err := opened.GetIssuanceInfo(); err != nil {
-		t.Fatalf("GetIssuanceInfo: %v", err)
-	}
-	after, err := InspectIssuance(copy.Path)
-	if err != nil {
-		t.Fatalf("InspectIssuance: %v", err)
-	}
-	if len(after.Holders) != 0 {
-		t.Fatal("opening and reading must not record a holder — only the GUI does that")
-	}
-}
-
-// The laundering path the whole lineage mechanism exists for.
-func TestImportingAnIssuedCopyCarriesItsWatermarkForward(t *testing.T) {
+// Importing a watermarked database into one's own must leave no trace of it either: the
+// recipient's database is theirs, and blunderDB records nothing about where its contents
+// came from.
+func TestImportingAWatermarkedDatabaseLeavesNoTrace(t *testing.T) {
 	isolateIdentity(t)
 	teacher := newTestDB(t)
-	copy := issuedCopy(t, teacher, IssuanceOptions{Distribution: "Cours du 12 mars", Recipients: []string{"Kévin Unger"}})
+	path := exportTo(t, teacher, filepath.Join(t.TempDir(), "cours.db"), ExportOptions{
+		Watermark: "Cours de Jean Dupont",
+	})
 
 	student := newTestDB(t)
-	if _, err := student.CommitImportDatabase(copy.Path); err != nil {
+	if _, err := student.CommitImportDatabase(path); err != nil {
 		t.Fatalf("CommitImportDatabase: %v", err)
 	}
-
 	info, err := student.GetIssuanceInfo()
 	if err != nil {
 		t.Fatalf("GetIssuanceInfo: %v", err)
 	}
-	if info.IsIssuedCopy {
-		t.Fatal("the student's own database is not an issued copy")
+	if info.Watermarked || info.Watermark != nil {
+		t.Fatalf("importing must not stamp the receiving database: %+v", info)
 	}
-	if len(info.Lineage) != 1 {
-		t.Fatalf("the import must leave one lineage entry, got %d", len(info.Lineage))
-	}
-	if !info.Lineage[0].SignatureValid {
-		t.Fatal("an inherited watermark must still verify against its original issuer")
-	}
-	if info.Lineage[0].Recipient != "Kévin Unger" {
-		t.Fatalf("unexpected inherited recipient: %q", info.Lineage[0].Recipient)
-	}
-
-	// Re-importing the same copy must not grow the list.
-	if _, err := student.CommitImportDatabase(copy.Path); err != nil {
-		t.Fatalf("CommitImportDatabase (again): %v", err)
-	}
-	again, err := student.GetIssuanceInfo()
-	if err != nil {
-		t.Fatalf("GetIssuanceInfo: %v", err)
-	}
-	if len(again.Lineage) != 1 {
-		t.Fatalf("re-importing must be idempotent, got %d entries", len(again.Lineage))
-	}
-
-	// …and re-exporting from the student's database carries the trace on.
-	relayed, err := student.IssueCopies(ExportOptions{ExportPath: filepath.Join(t.TempDir(), "relayed.db")},
-		IssuanceOptions{Distribution: "Mon partage", Recipients: []string{"Un ami"}})
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
-	}
-	relayedInfo, err := InspectIssuance(relayed[0].Path)
-	if err != nil {
-		t.Fatalf("InspectIssuance: %v", err)
-	}
-	if len(relayedInfo.Lineage) != 1 || relayedInfo.Lineage[0].Recipient != "Kévin Unger" {
-		t.Fatalf("the original watermark must survive one more hop: %+v", relayedInfo.Lineage)
+	for _, key := range []string{"watermark", "holders", "lineage", "issued"} {
+		if got, _ := student.readMeta(key); got != "" {
+			t.Fatalf("importing wrote %q = %q", key, got)
+		}
 	}
 }
 
-func TestImportingAnOrdinaryDatabaseLeavesNoLineage(t *testing.T) {
+func TestPasswordProtectedExport(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
-	plainPath := filepath.Join(t.TempDir(), "plain.db")
-	if err := source.ExportDatabase(ExportOptions{ExportPath: plainPath, Metadata: map[string]string{}}); err != nil {
-		t.Fatalf("ExportDatabase: %v", err)
-	}
-
-	target := newTestDB(t)
-	if _, err := target.CommitImportDatabase(plainPath); err != nil {
-		t.Fatalf("CommitImportDatabase: %v", err)
-	}
-	raw, err := target.readMeta(issuance.KeyLineage)
-	if err != nil {
-		t.Fatalf("readMeta: %v", err)
-	}
-	if raw != "" {
-		t.Fatalf("importing an ordinary database must leave no lineage: %s", raw)
-	}
-}
-
-func TestEncryptedCopyStaysIdentifiableWithoutItsPassword(t *testing.T) {
-	isolateIdentity(t)
-	source := newTestDB(t)
-
 	dir := t.TempDir()
-	copies, err := source.IssueCopies(ExportOptions{Metadata: map[string]string{"user": "Jean"}}, IssuanceOptions{
-		Distribution: "Cours du 12 mars",
-		Recipients:   []string{"Kévin Unger"},
-		OutputDir:    dir,
-		Password:     "le-mot-de-passe",
+	container := filepath.Join(dir, "cours.bdbx")
+
+	exportTo(t, source, container, ExportOptions{
+		Watermark: "Cours de Jean Dupont — 12 mars 2026",
+		Password:  "le-mot-de-passe",
 	})
-	if err != nil {
-		t.Fatalf("IssueCopies: %v", err)
-	}
-	produced := copies[0]
-	if !produced.Encrypted || !strings.HasSuffix(produced.Path, issuance.ContainerExtension) {
-		t.Fatalf("expected an encrypted copy, got %s", produced.Path)
-	}
-	if !issuance.IsContainer(produced.Path) {
-		t.Fatal("the produced file must be a container")
-	}
 
-	// The forensic property: identifiable without decrypting.
-	info, err := InspectIssuance(produced.Path)
-	if err != nil {
-		t.Fatalf("InspectIssuance: %v", err)
+	if !issuance.IsContainer(container) {
+		t.Fatal("the produced file must be a protected container")
 	}
-	if !info.IsIssuedCopy || info.Watermark.Recipient != "Kévin Unger" || !info.Watermark.IssuedByYou {
-		t.Fatalf("an encrypted copy must stay identifiable: %+v", info.Watermark)
-	}
-
 	// The intermediate plain export must not have been left behind: it is the whole
 	// database, unprotected, next to the protected copy.
 	if entries, _ := filepath.Glob(filepath.Join(dir, "*.plain")); len(entries) > 0 {
 		t.Fatalf("the intermediate export was left on disk: %v", entries)
 	}
 
-	// And it opens back into an ordinary database.
-	opened := filepath.Join(dir, "opened.db")
-	if _, err := issuance.UnwrapContainer(produced.Path, opened, "le-mot-de-passe"); err != nil {
-		t.Fatalf("UnwrapContainer: %v", err)
+	// The origin stays readable without the password.
+	info, err := InspectIssuance(container)
+	if err != nil {
+		t.Fatalf("InspectIssuance: %v", err)
+	}
+	if info.Watermark == nil || !strings.HasPrefix(info.Watermark.Origin, "Cours de Jean Dupont") {
+		t.Fatalf("a protected copy must keep its origin readable: %+v", info.Watermark)
+	}
+
+	if _, err := OpenProtectedCopy(container, "wrong"); err == nil {
+		t.Fatal("a wrong password must be rejected")
+	}
+	opened, err := OpenProtectedCopy(container, "le-mot-de-passe")
+	if err != nil {
+		t.Fatalf("OpenProtectedCopy: %v", err)
 	}
 	db := NewDatabase()
 	if err := db.OpenDatabase(opened); err != nil {
@@ -459,47 +232,68 @@ func TestEncryptedCopyStaysIdentifiableWithoutItsPassword(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetIssuanceInfo: %v", err)
 	}
-	if !openedInfo.IsIssuedCopy || openedInfo.Watermark.Recipient != "Kévin Unger" {
+	if openedInfo.Watermark == nil || !openedInfo.Watermark.SignatureValid {
 		t.Fatalf("the watermark must survive unwrapping: %+v", openedInfo.Watermark)
 	}
 }
 
-// Producing copies that exist in no register is worse than producing none: the issuer would
-// have handed out files they can no longer look up. A read-only source must be refused
-// before any file is written.
-func TestIssuingFromAReadOnlyDatabaseIsRefusedUpFront(t *testing.T) {
+// A password with no watermark, and a watermark with no password, are both valid: the two
+// mechanisms are independent.
+func TestPasswordWithoutAWatermark(t *testing.T) {
 	isolateIdentity(t)
-	path := filepath.Join(t.TempDir(), "cours.db")
-	source := NewDatabase()
-	if err := source.SetupDatabase(path); err != nil {
-		t.Fatalf("SetupDatabase: %v", err)
-	}
-	t.Cleanup(func() { _ = source.Close() })
+	source := newTestDB(t)
+	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	exportTo(t, source, container, ExportOptions{Password: "pw"})
 
-	// A second handle on the same file loses the single-writer lock and opens read-only,
-	// exactly as a second blunderDB instance would.
-	second := NewDatabase()
-	if err := second.OpenDatabase(path); err != nil {
+	if !issuance.IsContainer(container) {
+		t.Fatal("the produced file must be a protected container")
+	}
+	info, err := InspectIssuance(container)
+	if err != nil {
+		t.Fatalf("InspectIssuance: %v", err)
+	}
+	if info.Watermarked {
+		t.Fatal("no watermark was asked for")
+	}
+	opened, err := OpenProtectedCopy(container, "pw")
+	if err != nil {
+		t.Fatalf("OpenProtectedCopy: %v", err)
+	}
+	db := NewDatabase()
+	if err := db.OpenDatabase(opened); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
-	t.Cleanup(func() { _ = second.Close() })
-	if !second.readOnly {
-		t.Skip("the platform did not grant the single-writer lock; nothing to assert here")
-	}
+	_ = db.Close()
+}
 
-	dir := t.TempDir()
-	copies, err := second.IssueCopies(ExportOptions{}, IssuanceOptions{
-		Distribution: "Cours", Recipients: []string{"Kévin"}, OutputDir: dir,
-	})
-	if err == nil {
-		t.Fatal("issuing from a read-only database must be refused")
+// Opening a protected copy twice must not discard the work done in the first result.
+func TestOpeningAProtectedCopyTwiceKeepsTheFirstResult(t *testing.T) {
+	isolateIdentity(t)
+	source := newTestDB(t)
+	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	exportTo(t, source, container, ExportOptions{Password: "pw"})
+
+	first, err := OpenProtectedCopy(container, "pw")
+	if err != nil {
+		t.Fatalf("OpenProtectedCopy: %v", err)
 	}
-	if len(copies) != 0 {
-		t.Fatalf("no copy may be reported, got %d", len(copies))
+	marker := []byte("work done by the recipient")
+	if err := os.WriteFile(first, marker, 0o644); err != nil {
+		t.Fatalf("write: %v", err)
 	}
-	entries, _ := os.ReadDir(dir)
-	if len(entries) != 0 {
-		t.Fatalf("no file may be written, got %v", entries)
+	second, err := OpenProtectedCopy(container, "pw")
+	if err != nil {
+		t.Fatalf("OpenProtectedCopy (again): %v", err)
+	}
+	if second != first {
+		t.Fatalf("expected the same path, got %q then %q", first, second)
+	}
+	got, err := os.ReadFile(first)
+	if err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	if string(got) != string(marker) {
+		t.Fatal("a second open must not overwrite the database already in use")
 	}
 }
 
@@ -510,14 +304,10 @@ func TestGetIssuanceInfoOnAnOrdinaryDatabase(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetIssuanceInfo: %v", err)
 	}
-	if info.IsIssuedCopy || info.Watermark != nil || len(info.Holders) != 0 || len(info.Issued) != 0 {
+	if info.Watermarked || info.Watermark != nil {
 		t.Fatalf("an ordinary database reports nothing: %+v", info)
 	}
-	// Looking at the panel must not have created an identity as a side effect.
 	if info.IssuerFingerprint != "" {
-		t.Fatalf("no identity should exist before the first emission, got %q", info.IssuerFingerprint)
-	}
-	if _, err := issuance.LoadIdentity(issuance.ConfigDir()); err != nil {
-		t.Fatalf("LoadIdentity: %v", err)
+		t.Fatalf("no identity should exist before the first watermark, got %q", info.IssuerFingerprint)
 	}
 }

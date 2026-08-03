@@ -31,7 +31,6 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `create` - Create a new database with optional metadata
 - `import` - Import data into the database (match, position, batch)
 - `export` - Export data from the database
-- `issue` - Produce watermarked copies of a database to hand out
 - `identity` - Show or move your issuer identity
 - `open` - Open a password-protected copy into an ordinary database
 - `search` - Search positions with filters
@@ -249,53 +248,29 @@ Export one or more matches as Jellyfish/gnubg `.mat` text transcripts (the forma
 
 Auto-named files follow the scheme `Player1_Player2_YYYY-MM-DD_Np.mat` (money games use `unlimited` instead of `Np`); the match id is appended on a name collision. Passing `--file` with more than one match is an error. Analysis and comments are not part of the `.mat` format (it is a pure move transcript).
 
-## Issue Command
+## Marking and protecting an export
 
-Produce watermarked copies of a database to hand out — the emission path. A watermark can only be posed here: editing a database in place and sending the file cannot produce an issued copy, because nothing in that gesture says who it is for.
+`export` can do two extra, independent things, both optional and freely combined:
 
-**The promise, stated plainly:** a watermark is **tamper-evident and unforgeable, never unremovable**. It prevents nothing. It lets a copy that leaks be traced back to one emission, and it makes it impossible to pin a copy on the wrong person. A holder determined to strip it will succeed. See `docs/adr/0007-issued-copies-are-attributable-never-unshareable.md`.
-
-### Options
-
-- `--db <path>` - Database to issue from (required)
-- `--distribution <name>` - The occasion: a lesson, a course session (required)
-- `--to <names>` - Comma-separated recipients, one copy each
-- `--to-file <path>` - Recipient list, one per line (`#` comments allowed)
-- `--dir <path>` - Folder to write the copies into (required beyond one recipient)
-- `--file <path>` - Path of the single copy, when there is only one
-- `--password <pw>` - Protect each copy in transit (see below)
-- `--contents <text>` - What this emission holds, noted in your issue register
-- `--analysis`, `--comments`, `--filters`, `--played-moves`, `--matches` - as for `export`
-
-### Two regimes
-
-- **Nominative** (`--to` / `--to-file`): one file per recipient, each attributable from the moment it is produced.
-- **Collective** (neither flag): a single file for a whole group, watermarked with the distribution rather than a person. Its only attribution vector is the holder registry.
-
-### Examples
+- `--watermark "<origin>"` writes a **signed statement of where the file comes from** into it, with `--watermark-note` for free text (terms of use, a contact address).
+- `--password <pw>` wraps the result in an encrypted container (`.bdbx`).
 
 ```bash
-# One copy per student
-./blunderDB issue --db cours.db --distribution "Cours du 12 mars" \
-    --to "Kévin Unger,Marie Durand" --dir ./exemplaires
-
-# From a recipient list
-./blunderDB issue --db cours.db --distribution "Cours du 12 mars" \
-    --to-file eleves.txt --dir ./exemplaires
-
-# A single collective copy
-./blunderDB issue --db cours.db --distribution "Promotion 2026" --file cours-promo.db
-
-# Protected in transit
-./blunderDB issue --db cours.db --distribution "Cours du 12 mars" \
-    --to-file eleves.txt --dir ./exemplaires --password secret
+./blunderDB export --db cours.db --type database --file cours-diffusion.bdbx \
+    --watermark "Cours de Jean Dupont — 12 mars 2026" \
+    --watermark-note "Merci de ne pas rediffuser." \
+    --password secret
 ```
 
-Every emission is recorded in the **issue register** of the source database, which lists recipients and distribution passwords. That register never travels inside an issued copy. Issuing a second batch for the same distribution continues the numbering and reuses its salt, so the copies stay comparable with each other.
+**What a watermark is.** It is signed with your issuer identity, so it is **tamper-evident and unforgeable**: nobody can alter it, and nobody can fabricate one in your name. It is **not unremovable** — the file is a plain SQLite database and blunderDB is free software — and it prevents nothing. It says where the file came from.
+
+**What a password protects.** The file *in transit*: the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database — whoever you gave the password to can open it. The container's header is cleartext, so `blunderdb info` reads the origin without the password.
+
+**What neither does.** Nothing is tracked. blunderDB records nothing on the recipient's side: no registry of who opened a file, no log, no trace carried into a database that imports one. See `docs/adr/0007-watermarks-mark-origin-and-nothing-else.md`.
 
 ## Identity Command
 
-Show or move your **issuer identity** — the Ed25519 key every watermark is signed with. It is created by itself on your first emission; there is nothing to set up. It belongs to a person, not to a database, so all your copies carry one public fingerprint.
+Show or move your **issuer identity** — the Ed25519 key every watermark is signed with. It is created by itself the first time you watermark a file; there is nothing to set up. It belongs to a person, not to a database, so everything you mark carries one public fingerprint.
 
 ```bash
 ./blunderDB identity                                        # show name and fingerprint
@@ -306,20 +281,20 @@ Show or move your **issuer identity** — the Ed25519 key every watermark is sig
 
 The exported file lets anyone holding it sign in your name — do not share it. The passphrase is optional and applies only to that transferred file; the local one is deliberately unprotected, so an ordinary user never meets a secret they did not ask for.
 
-Renaming changes only a label: copies already issued keep the name they were sealed with, and keep verifying.
+Renaming changes only a label: files already marked keep the name they were sealed with, and keep verifying.
 
 ## Open Command
 
-Turn a password-protected copy (`.bdbx`) into an ordinary database. The password is asked for once; from then on it is a normal file.
+Turn a password-protected file (`.bdbx`) into an ordinary database. The password is asked for once; from then on it is a normal file.
 
 ```bash
 ./blunderDB open --db cours.bdbx --password secret
 ./blunderDB open --db cours.bdbx --password secret --file ./mon-cours.db
 ```
 
-**What the password protects:** the *transport* of the file — the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database: the legitimate recipient holds the password, and they are the actual source of leaks. That is what the watermark is for.
+**What the password protects:** the *transport* of the file — the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database: whoever the password was given to can open it.
 
-The container's header is **cleartext**, so `blunderdb info` identifies a protected copy without its password.
+The container's header is **cleartext**, so `blunderdb info` reads a protected file's origin without its password.
 
 ## Search Command
 
@@ -670,27 +645,21 @@ Statistics:
   Moves: 3421
 ```
 
-### Identifying a copy that came back
+### Reading where a file came from
 
-`info` is the forensic entry point and is **non-mutating by construction**: it never records a holder, so examining a suspect file cannot write your own machine into the evidence. It reads a protected `.bdbx` copy too, from its cleartext header, without the password.
+`info` never writes: reading a database's origin leaves it untouched. It reads a protected `.bdbx` file too, from its cleartext header, without the password.
 
-Nothing is printed for an ordinary database — a file that was never issued and never imported an issued copy shows exactly what it always did.
+Nothing is printed for an ordinary database — a file that was never watermarked shows exactly what it always did.
 
 ```
-Issued copy:
-  Distribution:     Cours du 12 mars
-  Issued by:        Jean Dupont  (A961-A612-4420-7D68)  ✓ signature verified — issued by you
-  Issued to:        Kévin Unger   — copy 1 of 24
-  Issued on:        2026-03-12
-  Holders:          3 distinct machines
-    9f2c1a4b8e07d135  2026-03-12 → 2026-09-04  (142 openings)
-    1a7b93e5c2064f88  2026-04-02 → 2026-04-02  (1 openings)
-    e304aa19b7f52d60  2026-05-17 → 2026-08-21  (23 openings)
+Origin:
+  Cours de Jean Dupont — 12 mars 2026
+  Produced by:  Jean Dupont  (A961-A612-4420-7D68)  ✓ signature verified — marked by you
+  Marked on:    2026-03-12
+  Note:         Merci de ne pas rediffuser.
 ```
 
-One entry per **distinct machine**, never one per opening: what matters in a dispute is how far a copy travelled. The fingerprints are one-way and salted per distribution — they name nobody, and they are comparable only with the fingerprints of another copy of the same distribution.
-
-`Copies issued from this database` lists your own issue register, which exists in no other file.
+There is nothing else to show: no recipient, no holder, no history. blunderDB records none of it.
 
 ## Edit Command
 

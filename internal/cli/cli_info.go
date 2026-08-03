@@ -34,8 +34,8 @@ func (cli *CLI) runInfo(args []string) error {
 		fmt.Println("  # Output as JSON")
 		fmt.Println("  blunderdb info --db database.db --format json")
 		fmt.Println()
-		fmt.Println("  # Identify a copy that came back to you (never writes to the file)")
-		fmt.Println("  blunderdb info --db suspect.db")
+		fmt.Println("  # See where a database came from (works on a protected .bdbx too)")
+		fmt.Println("  blunderdb info --db cours.db")
 	}
 
 	if err := infoCmd.Parse(args); err != nil {
@@ -55,9 +55,8 @@ func (cli *CLI) runInfo(args []string) error {
 		return reportContainer(*dbPath, strings.ToLower(*format) == "json")
 	}
 
-	// This command is the forensic entry point and must stay non-mutating: it never records
-	// a holder, so examining a suspect file cannot write the examiner's own machine into the
-	// evidence.
+	// Reading a database's origin never writes to it — nothing anywhere records that a file
+	// was opened, read or inspected (ADR-0007).
 	iss, issErr := database.InspectIssuance(*dbPath)
 	if issErr != nil {
 		iss = domain.IssuanceInfo{}
@@ -135,78 +134,37 @@ func (cli *CLI) runInfo(args []string) error {
 	return nil
 }
 
-// printIssuance reports how a database was handed out and where its contents came from. It
-// prints nothing at all for the overwhelmingly common case — a database that was never
-// issued and never imported an issued copy — which is what "discreet" means here.
+// printIssuance reports where a database says it comes from. It prints nothing at all for
+// the overwhelmingly common case — a database that was never watermarked — and there is
+// nothing else to print: no recipient, no holder, no history. See ADR-0007.
 func printIssuance(iss domain.IssuanceInfo) {
-	if iss.Watermark != nil {
-		fmt.Println("\nIssued copy:")
-		printWatermark(iss.Watermark, "  ")
-		if len(iss.Holders) == 0 {
-			fmt.Println("  Holders:          none recorded yet")
-		} else {
-			label := "machines"
-			if len(iss.Holders) == 1 {
-				label = "machine"
-			}
-			fmt.Printf("  Holders:          %d distinct %s\n", len(iss.Holders), label)
-			for _, h := range iss.Holders {
-				fmt.Printf("    %s  %s → %s  (%d openings)\n",
-					h.Fingerprint, shortDate(h.FirstSeen), shortDate(h.LastSeen), h.Openings)
-			}
-			if !iss.ChainIntact {
-				fmt.Println("    !! the holder registry has been altered — an entry was removed or reordered")
-			}
-		}
+	if iss.Watermark == nil {
+		return
 	}
-
-	if len(iss.Lineage) > 0 {
-		fmt.Println("\nContains material from issued copies:")
-		for _, w := range iss.Lineage {
-			printWatermark(&w, "  ")
-			fmt.Println()
-		}
-	}
-
-	if len(iss.Issued) > 0 {
-		fmt.Printf("\nCopies issued from this database (%d):\n", len(iss.Issued))
-		for _, r := range iss.Issued {
-			who := r.Recipient
-			if who == "" {
-				who = "(collective)"
-			}
-			fmt.Printf("  %3d/%-3d  %-24s  %s  %s\n", r.Number, r.Total, who, shortDate(r.IssuedAt), r.FileName)
-		}
-		fmt.Println("  (this register never travels inside an issued copy)")
-	}
+	fmt.Println("\nOrigin:")
+	printWatermark(iss.Watermark, "  ")
 }
 
 func printWatermark(w *domain.WatermarkInfo, indent string) {
-	fmt.Printf("%sDistribution:     %s\n", indent, w.Distribution)
-	fmt.Printf("%sIssued by:        %s  (%s)  %s\n", indent, w.IssuerName, w.IssuerFingerprint, verdict(w))
-	if w.Nominative {
-		fmt.Printf("%sIssued to:        %s", indent, w.Recipient)
-		if w.Total > 0 {
-			fmt.Printf("   — copy %d of %d", w.Number, w.Total)
-		}
-		fmt.Println()
-	} else {
-		fmt.Printf("%sIssued to:        the distribution as a whole (no recipient named)\n", indent)
+	fmt.Printf("%s%s\n", indent, w.Origin)
+	fmt.Printf("%sProduced by:  %s  (%s)  %s\n", indent, w.IssuerName, w.IssuerFingerprint, verdict(w))
+	fmt.Printf("%sMarked on:    %s\n", indent, shortDate(w.IssuedAt))
+	if w.Note != "" {
+		fmt.Printf("%sNote:         %s\n", indent, w.Note)
 	}
-	fmt.Printf("%sIssued on:        %s\n", indent, shortDate(w.IssuedAt))
 }
 
-// verdict states what verification concluded. "issued by you" is the case that closes the
-// loop locally: the person examining a copy that came back is normally the person who signed
-// it, so no fingerprint ever had to be published.
+// verdict states what verification concluded. A watermark proves the file was marked by the
+// holder of that key and has not been altered; matching it against a published fingerprint
+// is what ties the key to a person.
 func verdict(w *domain.WatermarkInfo) string {
 	switch {
 	case !w.SignatureValid:
 		return "!! SIGNATURE INVALID — altered or forged"
 	case w.IssuedByYou:
-		return "✓ signature verified — issued by you"
+		return "✓ signature verified — marked by you"
 	default:
-		return "✓ signature verified — issued by another key"
+		return "✓ signature verified"
 	}
 }
 
@@ -233,11 +191,11 @@ func reportContainer(path string, asJSON bool) error {
 		fmt.Println(string(jsonData))
 		return nil
 	}
-	fmt.Println("Protected blunderDB copy")
+	fmt.Println("Protected blunderDB file")
 	fmt.Println(strings.Repeat("=", 50))
 	fmt.Printf("Path: %s\n\n", path)
-	fmt.Println("The database itself is encrypted; the watermark below is readable without")
-	fmt.Println("the password, so a copy found in the wild stays identifiable.")
+	fmt.Println("The database itself is encrypted. Its origin, below, is readable without the")
+	fmt.Println("password.")
 	fmt.Println()
 	if iss.Watermark == nil {
 		fmt.Println("This file carries no watermark.")

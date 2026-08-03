@@ -302,10 +302,6 @@ export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
 }
 
-export function IssueCopies(arg1, arg2) {
-  return window['go']['database']['Database']['IssueCopies'](arg1, arg2);
-}
-
 export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
 }
@@ -392,10 +388,6 @@ export function ParsePositionText(arg1) {
 
 export function PositionExists(arg1) {
   return window['go']['database']['Database']['PositionExists'](arg1);
-}
-
-export function RecordHolder() {
-  return window['go']['database']['Database']['RecordHolder']();
 }
 
 export function RemoveMatchFromTournament(arg1) {

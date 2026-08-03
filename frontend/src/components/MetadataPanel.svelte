@@ -12,12 +12,9 @@
     let databaseVersion = $state('');
     let loaded = $state(false);
 
-    // Issuance stays discreet: the sections below appear only when this database really is
-    // an issued copy, carries material from one, or has issued copies itself. An ordinary
-    // database shows the panel exactly as it always was. See ADR-0007.
+    // The origin block appears only when this database was watermarked by its producer. An
+    // ordinary database shows the panel exactly as it always was. See ADR-0007.
     let issuance = $state(null);
-    let showIssued = $state(false);
-    let showLineage = $state(false);
 
     async function loadMetadata() {
         try {
@@ -96,14 +93,15 @@
     </div>
 
     {#if issuance?.watermark}
-        <!-- Sealed: written by the issuer, read-only for the holder. The fields above belong
-             to whoever holds the file; this block belongs to whoever issued it. -->
-        <section class="issuance sealed">
-            <h3>{$t('issuance.issuedCopy')}</h3>
+        <!-- Sealed: written by the producer, read-only for everyone else. The fields above
+             belong to whoever holds the file; this block states where the file came from.
+             Nothing here is derived from this machine — see ADR-0007. -->
+        <section class="issuance">
+            <h3>{$t('issuance.origin')}</h3>
             <dl>
-                <dt>{$t('issuance.distribution')}</dt>
-                <dd>{issuance.watermark.distribution}</dd>
-                <dt>{$t('issuance.issuedBy')}</dt>
+                <dt>{$t('issuance.originLabel')}</dt>
+                <dd>{issuance.watermark.origin}</dd>
+                <dt>{$t('issuance.producedBy')}</dt>
                 <dd>
                     {issuance.watermark.issuerName}
                     <span class="fingerprint">{issuance.watermark.issuerFingerprint}</span>
@@ -111,103 +109,13 @@
                         {verdictOf(issuance.watermark)}
                     </span>
                 </dd>
-                <dt>{$t('issuance.issuedTo')}</dt>
-                <dd>
-                    {#if issuance.watermark.nominative}
-                        {issuance.watermark.recipient}
-                        {#if issuance.watermark.total > 0}
-                            <span class="muted"
-                                >{$t('issuance.copyOf', {
-                                    number: issuance.watermark.number,
-                                    total: issuance.watermark.total
-                                })}</span
-                            >
-                        {/if}
-                    {:else}
-                        <span class="muted">{$t('issuance.collective')}</span>
-                    {/if}
-                </dd>
-                <dt>{$t('issuance.issuedOn')}</dt>
+                <dt>{$t('issuance.markedOn')}</dt>
                 <dd>{shortDate(issuance.watermark.issuedAt)}</dd>
-                <dt>{$t('issuance.holders')}</dt>
-                <dd>
-                    {#if !issuance.holders?.length}
-                        <span class="muted">{$t('issuance.holdersNone')}</span>
-                    {:else}
-                        {$t('issuance.holdersCount', { count: issuance.holders.length })}
-                        <ul class="holders">
-                            {#each issuance.holders as holder (holder.fingerprint)}
-                                <li>
-                                    <span class="fingerprint">{holder.fingerprint}</span>
-                                    {shortDate(holder.firstSeen)} → {shortDate(holder.lastSeen)}
-                                    <span class="muted">{$t('issuance.openings', { count: holder.openings })}</span>
-                                </li>
-                            {/each}
-                        </ul>
-                        {#if !issuance.chainIntact}
-                            <p class="warn">{$t('issuance.chainBroken')}</p>
-                        {/if}
-                    {/if}
-                </dd>
+                {#if issuance.watermark.note}
+                    <dt>{$t('issuance.note')}</dt>
+                    <dd>{issuance.watermark.note}</dd>
+                {/if}
             </dl>
-        </section>
-    {/if}
-
-    {#if issuance?.lineage?.length}
-        <section class="issuance">
-            <h3>
-                <button type="button" class="disclosure" onclick={() => (showLineage = !showLineage)}>
-                    {showLineage ? '▾' : '▸'}
-                    {$t('issuance.lineage', { count: issuance.lineage.length })}
-                </button>
-            </h3>
-            {#if showLineage}
-                <ul class="records">
-                    {#each issuance.lineage as entry, i (i)}
-                        <li>
-                            <strong>{entry.distribution}</strong>
-                            — {$t('issuance.issuedBy')}
-                            {entry.issuerName}
-                            {#if entry.nominative}
-                                — {$t('issuance.issuedTo')}
-                                {entry.recipient}
-                            {/if}
-                            <span class="muted">{shortDate(entry.issuedAt)}</span>
-                            <span class="verdict" class:invalid={!entry.signatureValid}>{verdictOf(entry)}</span>
-                        </li>
-                    {/each}
-                </ul>
-            {/if}
-        </section>
-    {/if}
-
-    {#if issuance?.issued?.length}
-        <!-- The issue register. It never travels inside an issued copy: it lists every
-             recipient of a distribution and its password. -->
-        <section class="issuance">
-            <h3>
-                <button type="button" class="disclosure" onclick={() => (showIssued = !showIssued)}>
-                    {showIssued ? '▾' : '▸'}
-                    {$t('issuance.issuedCopies', { count: issuance.issued.length })}
-                </button>
-            </h3>
-            {#if showIssued}
-                <ul class="records">
-                    {#each issuance.issued as record (record.signature)}
-                        <li>
-                            <span class="muted">{record.number}/{record.total}</span>
-                            <strong>{record.recipient || $t('issuance.collectiveShort')}</strong>
-                            — {record.distribution}
-                            <span class="muted">{shortDate(record.issuedAt)}</span>
-                            {#if record.fileName}<span class="muted">{record.fileName}</span>{/if}
-                            {#if record.password}
-                                <span class="password">{$t('issuance.password')}: {record.password}</span>
-                            {/if}
-                        </li>
-                    {/each}
-                </ul>
-                <p class="muted note">{$t('issuance.registerStaysHere')}</p>
-            {/if}
         </section>
     {/if}
 </div>
@@ -287,21 +195,6 @@
         -webkit-user-select: none;
     }
 
-    .issuance.sealed h3::before {
-        content: '🔒 ';
-    }
-
-    .disclosure {
-        background: none;
-        border: none;
-        padding: 0;
-        font: inherit;
-        color: inherit;
-        text-transform: inherit;
-        letter-spacing: inherit;
-        cursor: pointer;
-    }
-
     .issuance dl {
         display: grid;
         grid-template-columns: max-content 1fr;
@@ -329,36 +222,5 @@
     .verdict.invalid {
         color: #b3261e;
         font-weight: 600;
-    }
-
-    .muted {
-        color: #888;
-    }
-
-    .warn {
-        color: #b3261e;
-        margin: 2px 0 0;
-    }
-
-    .password {
-        font-family: monospace;
-    }
-
-    .holders,
-    .records {
-        list-style: none;
-        margin: 2px 0 0;
-        padding: 0;
-    }
-
-    .holders li,
-    .records li {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .note {
-        margin: 2px 0 0;
     }
 </style>
