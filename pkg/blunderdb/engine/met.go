@@ -306,6 +306,18 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 	n0 := matchTo - (score0 + notWhoWins*nPoints) - 1
 	n1 := matchTo - (score1 + fWhoWins*nPoints) - 1
 
+	// The MET only covers matches up to gnuBGMaxScore points, so an away score beyond the
+	// table has no entry. Callers are expected to filter those out — ConvertEMGLossToMWCLoss
+	// does — but this lookup must not be able to panic on data it is handed: blunderDB
+	// stores 99999 as the match length of a money game, and one such row reaching here used
+	// to take down every call that computed match badges.
+	if n0 >= gnuBGMaxScore {
+		n0 = gnuBGMaxScore - 1
+	}
+	if n1 >= gnuBGMaxScore {
+		n1 = gnuBGMaxScore - 1
+	}
+
 	// Check if either player has won the match
 	if n0 < 0 {
 		// Player 0 has won
@@ -357,10 +369,21 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 // The conversion applies identically to checker and cube errors because the
 // NEMG mapping is simply a change of unit.
 //
-// Returns math.NaN() for money-game positions (matchLength ≤ 0) or when the
-// cube/score makes the denominator degenerate (e.g. dead cube).
+// Returns math.NaN() for money-game positions or when the cube/score makes the
+// denominator degenerate (e.g. dead cube).
+//
+// A money game has no match equity table, so there is no MWC to lose. blunderDB spells
+// "money game" two ways on disk — a match length of 0 (or negative), and the sentinel 99999
+// that the importers write — so anything the MET cannot represent is treated as money.
+// Without that second case the sentinel reached GnuBGGetME and indexed a 64-entry table at
+// ~99997, panicking inside GetAllMatches and hanging the caller.
 func ConvertEMGLossToMWCLoss(emgMillipoints, score0, score1, fMove, cubeValue, matchLength int) float64 {
-	if matchLength <= 0 {
+	if matchLength <= 0 || matchLength > gnuBGMaxScore {
+		return math.NaN()
+	}
+	// Scores outside the match are equally unrepresentable — a position carrying the money
+	// sentinel in its score, or simply corrupt, must not produce a fabricated MWC.
+	if score0 < 0 || score1 < 0 || score0 >= matchLength || score1 >= matchLength {
 		return math.NaN()
 	}
 	// Use float32 to match GNUbg's internal MET arithmetic precision.
