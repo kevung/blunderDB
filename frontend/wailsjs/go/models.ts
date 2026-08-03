@@ -817,6 +817,7 @@ export namespace domain {
 	export class ExportOptions {
 	    exportPath: string;
 	    positions: Position[];
+	    positionIDs: number[];
 	    metadata: Record<string, string>;
 	    includeAnalysis: boolean;
 	    includeComments: boolean;
@@ -839,6 +840,7 @@ export namespace domain {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.exportPath = source["exportPath"];
 	        this.positions = this.convertValues(source["positions"], Position);
+	        this.positionIDs = source["positionIDs"];
 	        this.metadata = source["metadata"];
 	        this.includeAnalysis = source["includeAnalysis"];
 	        this.includeComments = source["includeComments"];
