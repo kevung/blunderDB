@@ -346,8 +346,20 @@ func MatchOrderByClause(sort string) string {
 
 // ExportOptions bundles all parameters for ExportDatabase.
 type ExportOptions struct {
-	ExportPath           string            `json:"exportPath"`
-	Positions            []Position        `json:"positions"`
+	ExportPath string     `json:"exportPath"`
+	Positions  []Position `json:"positions"`
+	// PositionIDs is the preferred way for a caller to say *which* positions to export:
+	// the exporter reads them straight from the source database, in the order given.
+	//
+	// The GUI used to ship every Position through the IPC instead. For a real database that
+	// is 73 MB of JSON for 88 000 positions — several seconds of JSON.stringify on the
+	// browser's only thread (which is why the progress dialog stayed blank), a message of
+	// that size across the bridge, and the same work again to decode it. The identifiers
+	// are two orders of magnitude smaller and the exporter already has the database open.
+	//
+	// Positions still wins when it is set, so callers holding positions that are not in the
+	// database keep working.
+	PositionIDs          []int64           `json:"positionIDs"`
 	Metadata             map[string]string `json:"metadata"`
 	IncludeAnalysis      bool              `json:"includeAnalysis"`
 	IncludeComments      bool              `json:"includeComments"`
