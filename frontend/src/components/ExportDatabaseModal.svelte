@@ -261,6 +261,36 @@
                     </div>
                 </div>
 
+                <!-- Issuance. Off by default: an ordinary export stays exactly what it was.
+                     A watermark can only be posed here, because nothing else in the product
+                     states who a copy is for. See ADR-0007. -->
+                <div class="checkbox-group issuance-toggle">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermark} />
+                        <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
+                    </div>
+                </div>
+
+                {#if exportOptions.watermark}
+                    <div class="issuance-section">
+                        <p class="issuance-note">{$t('issuance.watermarkNote')}</p>
+                        <div class="form-group">
+                            <label for="export-distribution">{$t('issuance.distributionLabel')}</label>
+                            <input id="export-distribution" type="text" bind:value={exportOptions.distribution} placeholder={$t('issuance.distributionPlaceholder')} />
+                        </div>
+                        <div class="form-group">
+                            <label for="export-recipients">{$t('issuance.recipientsLabel')}</label>
+                            <textarea id="export-recipients" rows="4" bind:value={exportOptions.recipients}></textarea>
+                            <p class="issuance-hint">{$t('issuance.recipientsHint')}</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="export-password">{$t('issuance.passwordLabel')}</label>
+                            <input id="export-password" type="text" bind:value={exportOptions.password} />
+                            <p class="issuance-hint">{$t('issuance.passwordHint')}</p>
+                        </div>
+                    </div>
+                {/if}
+
                 {#if exportOptions.includeMatches && matches.length > 0}
                     <div class="collections-section">
                         <div class="collections-header">
@@ -597,5 +627,24 @@
     .coll-count {
         color: #888;
         font-size: 12px;
+    }
+
+    .issuance-toggle {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 8px;
+    }
+
+    .issuance-section {
+        border-left: 3px solid #1a73e8;
+        padding-left: 10px;
+        margin-bottom: 8px;
+    }
+
+    .issuance-note,
+    .issuance-hint {
+        font-size: 11px;
+        color: #666;
+        margin: 2px 0 6px;
+        line-height: 1.35;
     }
 </style>

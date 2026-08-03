@@ -1,6 +1,6 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
-import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion, IsReadOnly } from '../../wailsjs/go/database/Database.js';
+import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion, IsReadOnly, RecordHolder, IsProtectedCopyPath, OpenProtectedCopyPath } from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
@@ -148,7 +148,20 @@ export async function loadDemoDatabase() {
     }
 }
 
+// A protected copy is not a database yet. The recipient is asked for its password once,
+// here; the result is an ordinary file they work with from then on. These stores drive the
+// prompt in App.svelte.
+export const protectedCopyPathStore = writable('');
+export const protectedCopyErrorStore = writable('');
+
 export async function openDatabaseByPath(filePath) {
+    if (await IsProtectedCopyPath(filePath).catch(() => false)) {
+        protectedCopyErrorStore.set('');
+        protectedCopyPathStore.set(filePath);
+        openModal(MODAL.PROTECTED_COPY);
+        return;
+    }
+
     // Reset mode synchronously before any await so it can't race with the
     // Svelte effect microtask that restoreSessionState schedules later.
     // A finally block would run AFTER those microtasks and overwrite the
@@ -174,6 +187,13 @@ export async function openDatabaseByPath(filePath) {
             warningMessageStore.set(translate('commands.dbVersionMismatch', { dbVersion, modelVersion }));
             openModal(MODAL.WARNING);
         }
+
+        // Record this machine in the copy's holder registry. This call is the ONE place
+        // the registry grows, and it lives here rather than in OpenDatabase because the CLI
+        // and the serve daemon run that too: a registry that grew on every inspection would
+        // write the examiner's own machine into the evidence. It does nothing at all on an
+        // ordinary database. See ADR-0007.
+        await RecordHolder().catch((error) => logger.error('Error recording holder:', error));
 
         // Read-only fallback: another blunderDB instance holds the write lock, so
         // the backend opened this database read-only (per the single-writer guard).
@@ -218,3 +238,27 @@ export function closeWarningModal() {
 }
 
 export { setStatusBarMessage };
+
+// unlockProtectedCopy turns the protected copy into an ordinary database and opens it. A
+// wrong password comes back as an error on the prompt rather than closing it: the recipient
+// gets to try again.
+export async function unlockProtectedCopy(password) {
+    const source = get(protectedCopyPathStore);
+    if (!source) return;
+    try {
+        const opened = await OpenProtectedCopyPath(source, password);
+        closeModal();
+        protectedCopyPathStore.set('');
+        await openDatabaseByPath(opened);
+    } catch (error) {
+        logger.error('Error opening protected copy:', error);
+        protectedCopyErrorStore.set(String(error));
+    }
+}
+
+export function cancelProtectedCopy() {
+    closeModal();
+    protectedCopyPathStore.set('');
+    protectedCopyErrorStore.set('');
+    setStatusBarMessage(tMsg('commands.errorOpeningDb'));
+}

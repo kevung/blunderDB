@@ -520,6 +520,39 @@
         "user": "Usuario",
         "version": "Versión"
     },
+    "issuance": {
+        "issuedCopy": "Ejemplar emitido",
+        "distribution": "Distribución",
+        "issuedBy": "Emitido por",
+        "issuedTo": "Entregado a",
+        "issuedOn": "Emitido el",
+        "collective": "a la distribución en su conjunto (sin destinatario nombrado)",
+        "collectiveShort": "(colectivo)",
+        "copyOf": "ejemplar {number} de {total}",
+        "signatureValid": "✓ firma verificada",
+        "signatureYours": "✓ firma verificada — emitido por usted",
+        "signatureInvalid": "⚠ firma no válida — alterado o falsificado",
+        "holders": "Poseedores",
+        "holdersNone": "ningún poseedor registrado",
+        "holdersCount": "{count} máquinas distintas",
+        "openings": "{count} aperturas",
+        "chainBroken": "⚠ el registro de poseedores ha sido modificado: se ha quitado o movido una entrada",
+        "lineage": "Contiene material de ejemplares emitidos ({count})",
+        "issuedCopies": "Ejemplares emitidos ({count})",
+        "password": "contraseña",
+        "registerStaysHere": "Este registro nunca sale de esta base de datos: no viaja en ningún ejemplar.",
+        "enableWatermark": "Poner marca de agua en esta exportación",
+        "watermarkNote": "Una marca de agua es inalterable e infalsificable, nunca ineliminable: no impide nada, permite rastrear el origen de un ejemplar filtrado.",
+        "distributionLabel": "Nombre de la distribución",
+        "distributionPlaceholder": "Clase del 12 de marzo de 2026",
+        "recipientsLabel": "Destinatarios (uno por línea)",
+        "recipientsHint": "Un ejemplar por destinatario. Déjelo vacío para un único ejemplar colectivo.",
+        "passwordLabel": "Contraseña (opcional)",
+        "passwordHint": "Protege el archivo durante el transporte, no la base de datos: el destinatario tiene la contraseña.",
+        "protectedTitle": "Ejemplar protegido",
+        "protectedHint": "Este ejemplar está protegido por contraseña. Introduzca la que le han dado; solo se le pedirá una vez: después será una base de datos normal.",
+        "openCopy": "Abrir"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "pts"
@@ -785,7 +818,8 @@
         "positionSaved": "Posición y análisis guardados correctamente",
         "importedPositionSaved": "Posición y análisis importados guardados correctamente",
         "pastedPositionSaved": "Posición y análisis pegados guardados correctamente",
-        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas"
+        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas",
+        "copiesIssued": "{count} ejemplares emitidos"
     },
     "stats": {
         "title": "Stats",

@@ -101,6 +101,8 @@ export function GetDatabaseVersion():Promise<string>;
 
 export function GetGamesByMatch(arg1:number):Promise<Array<domain.Game>>;
 
+export function GetIssuanceInfo():Promise<domain.IssuanceInfo>;
+
 export function GetLastVisitedMatch():Promise<domain.Match>;
 
 export function GetMatchByID(arg1:number):Promise<domain.Match>;
@@ -149,7 +151,11 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
+
 export function IsReadOnly():Promise<boolean>;
+
+export function IssueCopies(arg1:domain.ExportOptions,arg2:domain.IssuanceOptions):Promise<Array<domain.IssuedCopy>>;
 
 export function LoadAllPositions():Promise<Array<domain.Position>>;
 
@@ -189,9 +195,13 @@ export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:numb
 
 export function OpenDatabase(arg1:string):Promise<void>;
 
+export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
+
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function PositionExists(arg1:domain.Position):Promise<Record<string, any>>;
+
+export function RecordHolder():Promise<void>;
 
 export function RemoveMatchFromTournament(arg1:number):Promise<void>;
 

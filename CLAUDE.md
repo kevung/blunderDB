@@ -157,6 +157,11 @@ Backend packages, thinnest description that lets you find things:
   `pkg/blunderdb/parser/` — position-text parsing shared by GUI/CLI/server;
   `pkg/blunderdb/migrate/` — SQLite→PostgreSQL copy; `pkg/blunderdb/server/` —
   `Bootstrap()` for in-process embedding by a trusted parent (gammonGo).
+- `pkg/blunderdb/issuance/` — watermarking a database handed out to someone else
+  (issuer identity, sealed watermark, holder registry, lineage, encrypted
+  transport container). **Pure**: no SQL, no schema; its glue is
+  `database/db_issuance.go` and it stores canonical signed JSON in `metadata`
+  rows. Read its package doc and ADR-0007 before touching it.
 - `internal/gui/` — Wails `App` (dialogs, clipboard, drag-drop) + bootstrap;
   `internal/cli/` — one `cli_<cmd>.go` per subcommand; `internal/server/` — the
   HTTP daemon (`routes.go`, `handlers_*.go`, middleware, metrics, `call.go`).
@@ -199,7 +204,15 @@ Violating one of these is a bug even if all tests pass:
   (`beginCancellableImport`/`CancelImport` in `database/db.go`), not a flag.
 - **CLI/GUI/server parity**: put DB logic on `Database` (or the Storage contract)
   and expose it to the frontend (auto-bound), the CLI, and the server handlers.
-  Don't fork logic into a mode-specific helper.
+  Don't fork logic into a mode-specific helper. **One deliberate exception**:
+  `Database.RecordHolder` is called by the GUI *only*. Calling it from the CLI or
+  the daemon would write the machine of whoever inspects a leaked copy into that
+  copy's holder registry — the evidence. It is a design rule, not an oversight
+  (ADR-0007); everything else about issuance goes through `Database` as usual.
+- **Issued copies carry an allow-list**: `ExportDatabase` copies metadata through
+  `issuance.Carried`, never by exclusion. The issue register holds every
+  recipient of a distribution and its passwords; a deny-list would leak whatever
+  document is added next. Add a key to `CarriedMetadataKeys` only on purpose.
 - **Svelte 5 store rule**: inside components, always `$store` or
   `$effect(() => { const v = $store; … })` — **never** `.subscribe()` (stale
   closures, invisible to the compiler's dependency tracking; caused the

@@ -520,6 +520,39 @@
         "user": "Utilisateur",
         "version": "Version"
     },
+    "issuance": {
+        "issuedCopy": "Exemplaire",
+        "distribution": "Diffusion",
+        "issuedBy": "Émis par",
+        "issuedTo": "Remis à",
+        "issuedOn": "Émis le",
+        "collective": "à la diffusion dans son ensemble (aucun destinataire nommé)",
+        "collectiveShort": "(collectif)",
+        "copyOf": "exemplaire {number} sur {total}",
+        "signatureValid": "✓ signature vérifiée",
+        "signatureYours": "✓ signature vérifiée — émis par vous",
+        "signatureInvalid": "⚠ signature invalide — document altéré ou contrefait",
+        "holders": "Détenteurs",
+        "holdersNone": "aucun détenteur enregistré",
+        "holdersCount": "{count} machines distinctes",
+        "openings": "{count} ouvertures",
+        "chainBroken": "⚠ le registre des détenteurs a été modifié : une entrée a été retirée ou déplacée",
+        "lineage": "Contenu issu d'exemplaires ({count})",
+        "issuedCopies": "Exemplaires émis ({count})",
+        "password": "mot de passe",
+        "registerStaysHere": "Ce registre ne quitte jamais cette base : il ne part dans aucun exemplaire.",
+        "enableWatermark": "Filigraner cet export",
+        "watermarkNote": "Un filigrane est inaltérable et infalsifiable, jamais ineffaçable : il n'empêche rien, il permet de retrouver l'origine d'un exemplaire diffusé.",
+        "distributionLabel": "Nom de la diffusion",
+        "distributionPlaceholder": "Cours du 12 mars 2026",
+        "recipientsLabel": "Destinataires (un par ligne)",
+        "recipientsHint": "Un exemplaire par destinataire. Laisser vide pour un exemplaire collectif unique.",
+        "passwordLabel": "Mot de passe (facultatif)",
+        "passwordHint": "Protège le fichier pendant son transport, pas la base : le destinataire détient le mot de passe.",
+        "protectedTitle": "Exemplaire protégé",
+        "protectedHint": "Cet exemplaire est protégé par un mot de passe. Saisissez celui qui vous a été communiqué ; il ne vous sera demandé qu'une fois — ensuite c'est une base ordinaire.",
+        "openCopy": "Ouvrir"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "pt"
@@ -785,7 +818,8 @@
         "positionSaved": "Position et analyse enregistrées avec succès",
         "importedPositionSaved": "Position et analyse importées enregistrées avec succès",
         "pastedPositionSaved": "Position et analyse collées enregistrées avec succès",
-        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées"
+        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "copiesIssued": "{count} exemplaires émis"
     },
     "stats": {
         "title": "Stats",

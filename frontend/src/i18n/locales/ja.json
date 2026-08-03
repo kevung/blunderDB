@@ -520,6 +520,39 @@
         "user": "ユーザー",
         "version": "バージョン"
     },
+    "issuance": {
+        "issuedCopy": "配布コピー",
+        "distribution": "配布",
+        "issuedBy": "発行者",
+        "issuedTo": "配布先",
+        "issuedOn": "発行日",
+        "collective": "配布全体に対して（受取人の指定なし）",
+        "collectiveShort": "（共通）",
+        "copyOf": "{total} 部中 {number} 部目",
+        "signatureValid": "✓ 署名を検証しました",
+        "signatureYours": "✓ 署名を検証しました — あなたが発行したものです",
+        "signatureInvalid": "⚠ 署名が無効です — 改変または偽造",
+        "holders": "保持者",
+        "holdersNone": "保持者はまだ記録されていません",
+        "holdersCount": "{count} 台の異なるマシン",
+        "openings": "{count} 回開かれました",
+        "chainBroken": "⚠ 保持者台帳が改変されています。項目が削除または移動されました",
+        "lineage": "配布コピー由来の内容を含みます（{count} 件）",
+        "issuedCopies": "発行したコピー（{count} 件）",
+        "password": "パスワード",
+        "registerStaysHere": "この台帳はこのデータベースから出ません。どのコピーにも同梱されません。",
+        "enableWatermark": "このエクスポートに透かしを入れる",
+        "watermarkNote": "透かしは改変も偽造もできませんが、削除は防げません。何かを禁止するものではなく、流出したコピーの出所をたどるためのものです。",
+        "distributionLabel": "配布名",
+        "distributionPlaceholder": "2026年3月12日のレッスン",
+        "recipientsLabel": "受取人（1行に1名）",
+        "recipientsHint": "受取人ごとに1部。空欄にすると共通のコピーを1部だけ作成します。",
+        "passwordLabel": "パスワード（任意）",
+        "passwordHint": "データベースではなく、受け渡し中のファイルを保護します。パスワードは受取人が持ちます。",
+        "protectedTitle": "保護されたコピー",
+        "protectedHint": "このコピーはパスワードで保護されています。渡されたパスワードを入力してください。入力は一度だけで、その後は通常のデータベースになります。",
+        "openCopy": "開く"
+    },
     "matchInfo": {
         "vs": "対",
         "points": "pt"
@@ -785,7 +818,8 @@
         "positionSaved": "ポジションと分析を保存しました",
         "importedPositionSaved": "インポートしたポジションと分析を保存しました",
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
-        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗"
+        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",
+        "copiesIssued": "{count} 部を発行しました"
     },
     "stats": {
         "title": "統計",

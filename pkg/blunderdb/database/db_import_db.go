@@ -520,6 +520,12 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, fmt.Errorf("import cancelled by user")
 	}
 
+	// Carry the source's watermark into this database's lineage, inside the same
+	// transaction as the positions it describes. Importing an issued copy is the easiest
+	// way to strip a watermark — positions travel by Zobrist hash, `metadata` does not — so
+	// the default path through the product keeps the trace instead of laundering it.
+	d.inheritLineageTx(tx, importPath)
+
 	// Commit the transaction - this makes all changes atomic
 	err = tx.Commit()
 	if err != nil {

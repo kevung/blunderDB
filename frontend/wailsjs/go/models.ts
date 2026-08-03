@@ -827,6 +827,8 @@ export namespace domain {
 	    collectionIDs: number[];
 	    matchIDs: number[];
 	    tournamentIDs: number[];
+	    watermarkDocument?: string;
+	    lineageDocument?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ExportOptions(source);
@@ -846,6 +848,8 @@ export namespace domain {
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];
 	        this.tournamentIDs = source["tournamentIDs"];
+	        this.watermarkDocument = source["watermarkDocument"];
+	        this.lineageDocument = source["lineageDocument"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -888,6 +892,169 @@ export namespace domain {
 	        this.winner = source["winner"];
 	        this.points_won = source["points_won"];
 	        this.move_count = source["move_count"];
+	    }
+	}
+	export class HolderInfo {
+	    fingerprint: string;
+	    firstSeen: string;
+	    lastSeen: string;
+	    openings: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new HolderInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.fingerprint = source["fingerprint"];
+	        this.firstSeen = source["firstSeen"];
+	        this.lastSeen = source["lastSeen"];
+	        this.openings = source["openings"];
+	    }
+	}
+	export class IssueRecordInfo {
+	    distribution: string;
+	    recipient?: string;
+	    number?: number;
+	    total?: number;
+	    issuedAt: string;
+	    fileName?: string;
+	    contents?: string;
+	    password?: string;
+	    signature: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new IssueRecordInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.distribution = source["distribution"];
+	        this.recipient = source["recipient"];
+	        this.number = source["number"];
+	        this.total = source["total"];
+	        this.issuedAt = source["issuedAt"];
+	        this.fileName = source["fileName"];
+	        this.contents = source["contents"];
+	        this.password = source["password"];
+	        this.signature = source["signature"];
+	    }
+	}
+	export class WatermarkInfo {
+	    distribution: string;
+	    issuerName: string;
+	    issuerFingerprint: string;
+	    recipient?: string;
+	    number?: number;
+	    total?: number;
+	    issuedAt: string;
+	    nominative: boolean;
+	    signatureValid: boolean;
+	    issuedByYou: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new WatermarkInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.distribution = source["distribution"];
+	        this.issuerName = source["issuerName"];
+	        this.issuerFingerprint = source["issuerFingerprint"];
+	        this.recipient = source["recipient"];
+	        this.number = source["number"];
+	        this.total = source["total"];
+	        this.issuedAt = source["issuedAt"];
+	        this.nominative = source["nominative"];
+	        this.signatureValid = source["signatureValid"];
+	        this.issuedByYou = source["issuedByYou"];
+	    }
+	}
+	export class IssuanceInfo {
+	    isIssuedCopy: boolean;
+	    watermark?: WatermarkInfo;
+	    chainIntact: boolean;
+	    holders?: HolderInfo[];
+	    lineage?: WatermarkInfo[];
+	    issued?: IssueRecordInfo[];
+	    issuerFingerprint?: string;
+	    issuerName?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new IssuanceInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.isIssuedCopy = source["isIssuedCopy"];
+	        this.watermark = this.convertValues(source["watermark"], WatermarkInfo);
+	        this.chainIntact = source["chainIntact"];
+	        this.holders = this.convertValues(source["holders"], HolderInfo);
+	        this.lineage = this.convertValues(source["lineage"], WatermarkInfo);
+	        this.issued = this.convertValues(source["issued"], IssueRecordInfo);
+	        this.issuerFingerprint = source["issuerFingerprint"];
+	        this.issuerName = source["issuerName"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class IssuanceOptions {
+	    distribution: string;
+	    recipients: string[];
+	    outputDir: string;
+	    password: string;
+	    contents: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new IssuanceOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.distribution = source["distribution"];
+	        this.recipients = source["recipients"];
+	        this.outputDir = source["outputDir"];
+	        this.password = source["password"];
+	        this.contents = source["contents"];
+	    }
+	}
+	
+	export class IssuedCopy {
+	    path: string;
+	    recipient?: string;
+	    number: number;
+	    total: number;
+	    encrypted: boolean;
+	    signature: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new IssuedCopy(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.recipient = source["recipient"];
+	        this.number = source["number"];
+	        this.total = source["total"];
+	        this.encrypted = source["encrypted"];
+	        this.signature = source["signature"];
 	    }
 	}
 	export class Match {

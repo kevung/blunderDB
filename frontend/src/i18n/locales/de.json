@@ -520,6 +520,39 @@
         "user": "Benutzer",
         "version": "Version"
     },
+    "issuance": {
+        "issuedCopy": "Ausgegebenes Exemplar",
+        "distribution": "Verteilung",
+        "issuedBy": "Ausgegeben von",
+        "issuedTo": "Ausgegeben an",
+        "issuedOn": "Ausgegeben am",
+        "collective": "an die Verteilung als Ganzes (kein Empfänger genannt)",
+        "collectiveShort": "(kollektiv)",
+        "copyOf": "Exemplar {number} von {total}",
+        "signatureValid": "✓ Signatur geprüft",
+        "signatureYours": "✓ Signatur geprüft — von Ihnen ausgegeben",
+        "signatureInvalid": "⚠ ungültige Signatur — verändert oder gefälscht",
+        "holders": "Inhaber",
+        "holdersNone": "noch kein Inhaber erfasst",
+        "holdersCount": "{count} verschiedene Rechner",
+        "openings": "{count} Öffnungen",
+        "chainBroken": "⚠ das Inhaberregister wurde verändert: ein Eintrag wurde entfernt oder verschoben",
+        "lineage": "Enthält Material aus ausgegebenen Exemplaren ({count})",
+        "issuedCopies": "Ausgegebene Exemplare ({count})",
+        "password": "Passwort",
+        "registerStaysHere": "Dieses Register verlässt diese Datenbank nie: es reist in keinem Exemplar mit.",
+        "enableWatermark": "Diesen Export mit Wasserzeichen versehen",
+        "watermarkNote": "Ein Wasserzeichen ist manipulationssicher und fälschungssicher, aber nie unentfernbar: es verhindert nichts, es lässt ein durchgesickertes Exemplar auf seine Ausgabe zurückführen.",
+        "distributionLabel": "Name der Verteilung",
+        "distributionPlaceholder": "Kurs vom 12. März 2026",
+        "recipientsLabel": "Empfänger (einer pro Zeile)",
+        "recipientsHint": "Ein Exemplar pro Empfänger. Leer lassen für ein einziges kollektives Exemplar.",
+        "passwordLabel": "Passwort (optional)",
+        "passwordHint": "Schützt die Datei auf dem Transportweg, nicht die Datenbank: der Empfänger kennt das Passwort.",
+        "protectedTitle": "Geschütztes Exemplar",
+        "protectedHint": "Dieses Exemplar ist passwortgeschützt. Geben Sie das erhaltene Passwort ein; Sie werden nur einmal gefragt — danach ist es eine gewöhnliche Datenbank.",
+        "openCopy": "Öffnen"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "Pkt"
@@ -785,7 +818,8 @@
         "positionSaved": "Position und Analyse erfolgreich gespeichert",
         "importedPositionSaved": "Importierte Position und Analyse erfolgreich gespeichert",
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
-        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen"
+        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "copiesIssued": "{count} Exemplare ausgegeben"
     },
     "stats": {
         "title": "Stats",

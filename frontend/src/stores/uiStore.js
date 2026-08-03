@@ -37,6 +37,7 @@ export const MODAL = {
     GAMMON_VALUE_2: 'gammonValue2',
     GAMMON_VALUE_4: 'gammonValue4',
     WARNING: 'warning',
+    PROTECTED_COPY: 'protectedCopy',
     GO_TO_POSITION: 'goToPosition',
     EXPORT_DATABASE: 'exportDatabase',
     TAKE_POINT_2: 'takePoint2',
