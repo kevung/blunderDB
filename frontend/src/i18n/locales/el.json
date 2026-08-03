@@ -660,7 +660,9 @@
         "titleExport": "Εξαγωγή βάσης δεδομένων",
         "user": "Χρήστης",
         "userPlaceholder": "Εισαγάγετε το όνομά σας (προαιρετικό)",
-        "willBeExported": "{count} θέση(εις) θα εξαχθούν με {desc}."
+        "willBeExported": "{count} θέση(εις) θα εξαχθούν με {desc}.",
+        "descTwo": "{a} και {b}",
+        "descMany": "{list} και {last}"
     },
     "import": {
         "abortImport": "Ματαίωση εισαγωγής",

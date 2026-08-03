@@ -660,7 +660,9 @@
         "titleExport": "Vie tietokanta",
         "user": "Käyttäjä",
         "userPlaceholder": "Anna nimesi (valinnainen)",
-        "willBeExported": "{count} asema(a) viedään kohteeseen {desc}."
+        "willBeExported": "{count} asema(a) viedään kohteeseen {desc}.",
+        "descTwo": "{a} ja {b}",
+        "descMany": "{list} ja {last}"
     },
     "import": {
         "abortImport": "Keskeytä tuonti",

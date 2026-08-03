@@ -4,7 +4,6 @@
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { t } from '../i18n';
-    import { LogDebug } from '../../wailsjs/runtime/runtime.js';
 
     let {
         visible = false,
@@ -60,42 +59,22 @@
         onExport?.();
     }
 
-    // TEMPORARY DIAGNOSTIC — remove once the blank-dialog report is settled.
+    // WebKitGTK does not always repaint this dialog when its branch changes. The DOM is
+    // correct — content present, visible, opaque, black on white, inside the viewport — yet
+    // the window shows an empty white box. It appears when the box changes size sharply
+    // (560x819 for the form, 560x237 for the progress and completion screens) inside a
+    // fixed overlay that scrolls, and a window resize does not clear it.
     //
-    // The dialog shows as an empty white box after the export starts: no text, no button,
-    // and a window resize does not bring it back, so the DOM really is empty rather than
-    // unpainted. Every branch of the template renders something, so either `mode` holds a
-    // value none of them match, or building the subtree throws. This reports both, through
-    // the Go logger so it lands in the terminal running `wails dev`.
+    // Nudging the element's own opacity forces the region to be repainted. It runs once per
+    // branch change, costs a frame, and is invisible: 0.999 is not distinguishable from 1.
+    let contentElement = $state(null);
     $effect(() => {
-        const keys = exportOptions ? Object.keys(exportOptions).join(',') : '<null>';
-        let derivedState;
-        try {
-            derivedState = `descr=${JSON.stringify(exportDescription)}`;
-        } catch (error) {
-            derivedState = `descr THREW: ${error}`;
-        }
-        LogDebug(`[export-modal] visible=${visible} mode=${JSON.stringify(mode)} count=${positionCount} matches=${matches?.length} optionKeys=[${keys}] ${derivedState}`);
-
-        // What is actually on screen. The state above is correct and nothing throws, yet the
-        // dialog shows as an empty white box, so the question is now whether the DOM holds
-        // the content at all — and if it does, what is hiding it.
-        queueMicrotask(() => {
-            const overlay = document.querySelector('.modal-overlay');
-            if (!overlay) {
-                LogDebug('[export-dom] no .modal-overlay in the document');
-                return;
-            }
-            const content = overlay.querySelector('.modal-content');
-            const box = content?.getBoundingClientRect();
-            const style = content ? getComputedStyle(content) : null;
-            LogDebug(
-                `[export-dom] children=${content ? content.children.length : -1} ` +
-                    `box=${box ? `${Math.round(box.width)}x${Math.round(box.height)}@${Math.round(box.left)},${Math.round(box.top)}` : 'none'} ` +
-                    `display=${style?.display} visibility=${style?.visibility} opacity=${style?.opacity} ` +
-                    `color=${style?.color} overflow=${style?.overflowY} ` +
-                    `text=${JSON.stringify((content?.innerText || '').slice(0, 120))}`
-            );
+        mode; // repaint on every branch change
+        const element = contentElement;
+        if (!element) return;
+        element.style.opacity = '0.999';
+        requestAnimationFrame(() => {
+            element.style.opacity = '';
         });
     });
 
@@ -274,7 +253,7 @@
 
 {#if visible}
     <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
-        <div class="modal-content">
+        <div class="modal-content" bind:this={contentElement}>
             {#if mode === 'preparing'}
                 <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
                 <p class="status-text">{$t('export.countingPositions')}</p>

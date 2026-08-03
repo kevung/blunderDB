@@ -5,7 +5,7 @@
     import { fade } from 'svelte/transition';
 
     // Wails runtime
-    import { WindowGetSize, OnFileDrop, OnFileDropOff, LogDebug } from '../wailsjs/runtime/runtime.js';
+    import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists } from '../wailsjs/go/gui/App.js';
     import { initLanguage } from './i18n';
@@ -135,17 +135,6 @@
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
-
-    // TEMPORARY DIAGNOSTIC — remove once the blank-dialog report is settled.
-    // Reports which dialog is on screen and in what state, so the empty white box can be
-    // identified without an inspector. Goes to the Go logger, i.e. the `wails dev` terminal.
-    $effect(() => {
-        LogDebug(
-            `[modals] active=${$activeModal} export=${$exportModalModeStore} ` +
-                `import=${$showImportProgressModalStore}/${$importModalModeStore} ` +
-                `fileImport=${$showFileImportModalStore}/${$fileImportModeStore}`
-        );
-    });
 
     // Component state
     let mainArea;

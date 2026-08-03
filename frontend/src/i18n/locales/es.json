@@ -660,7 +660,9 @@
         "titleExport": "Exportar base de datos",
         "user": "Usuario",
         "userPlaceholder": "Introduce tu nombre (opcional)",
-        "willBeExported": "Se exportarán {count} posición(es) con {desc}."
+        "willBeExported": "Se exportarán {count} posición(es) con {desc}.",
+        "descTwo": "{a} y {b}",
+        "descMany": "{list} y {last}"
     },
     "import": {
         "abortImport": "Cancelar importación",

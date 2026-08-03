@@ -660,7 +660,9 @@
         "titleExport": "Экспорт базы данных",
         "user": "Пользователь",
         "userPlaceholder": "Введите ваше имя (необязательно)",
-        "willBeExported": "Будет экспортировано {count} позиц. с {desc}."
+        "willBeExported": "Будет экспортировано {count} позиц. с {desc}.",
+        "descTwo": "{a} и {b}",
+        "descMany": "{list} и {last}"
     },
     "import": {
         "abortImport": "Прервать импорт",
