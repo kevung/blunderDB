@@ -59,25 +59,6 @@
         onExport?.();
     }
 
-    // WebKitGTK does not always repaint this dialog when its branch changes. The DOM is
-    // correct — content present, visible, opaque, black on white, inside the viewport — yet
-    // the window shows an empty white box. It appears when the box changes size sharply
-    // (560x819 for the form, 560x237 for the progress and completion screens) inside a
-    // fixed overlay that scrolls, and a window resize does not clear it.
-    //
-    // Nudging the element's own opacity forces the region to be repainted. It runs once per
-    // branch change, costs a frame, and is invisible: 0.999 is not distinguishable from 1.
-    let contentElement = $state(null);
-    $effect(() => {
-        mode; // repaint on every branch change
-        const element = contentElement;
-        if (!element) return;
-        element.style.opacity = '0.999';
-        requestAnimationFrame(() => {
-            element.style.opacity = '';
-        });
-    });
-
     let collections = $derived($collectionsStore || []);
 
     // A ticked box with an empty field used to produce a file with no watermark and no
@@ -253,7 +234,7 @@
 
 {#if visible}
     <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
-        <div class="modal-content" bind:this={contentElement}>
+        <div class="modal-content">
             {#if mode === 'preparing'}
                 <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
                 <p class="status-text">{$t('export.countingPositions')}</p>
@@ -462,7 +443,14 @@
         background-color: rgba(0, 0, 0, 0.7);
         display: flex;
         justify-content: center;
-        align-items: center;
+        /* The dialog must stay reachable when it is taller than the window, but it must not
+           be a scroll container itself: WebKitGTK failed to repaint it when its box changed
+           size sharply between branches (560x819 for the form, 560x237 for the completion
+           screen), leaving an empty white box that even a window resize would not refresh.
+           Scrolling the overlay — whose box never changes — avoids that entirely, and
+           `margin: auto` on the child keeps it centred whenever there is room. */
+        align-items: flex-start;
+        overflow-y: auto;
         z-index: 2000;
     }
 
@@ -475,10 +463,10 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        /* Without these the dialog grows past the window and the overlay's centring pushes
-           its top out of reach: the fields render but cannot be clicked or tabbed to. */
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
+        /* Centred when it fits, pushed to the top and scrolled by the overlay when it does
+           not. No max-height and no scrolling here: see .modal-overlay. */
+        margin: auto;
+        flex: none;
     }
 
     h2 {
