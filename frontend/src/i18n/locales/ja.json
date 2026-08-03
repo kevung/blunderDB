@@ -660,7 +660,9 @@
         "titleExport": "データベースをエクスポート",
         "user": "ユーザー",
         "userPlaceholder": "名前を入力（任意）",
-        "willBeExported": "{count} 件のポジションが {desc} とともにエクスポートされます。"
+        "willBeExported": "{count} 件のポジションが {desc} とともにエクスポートされます。",
+        "descTwo": "{a}と{b}",
+        "descMany": "{list}、{last}"
     },
     "import": {
         "abortImport": "インポートを中止",

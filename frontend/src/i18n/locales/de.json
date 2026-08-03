@@ -660,7 +660,9 @@
         "titleExport": "Datenbank exportieren",
         "user": "Benutzer",
         "userPlaceholder": "Geben Sie Ihren Namen ein (optional)",
-        "willBeExported": "{count} Position(en) werden mit {desc} exportiert."
+        "willBeExported": "{count} Position(en) werden mit {desc} exportiert.",
+        "descTwo": "{a} und {b}",
+        "descMany": "{list} und {last}"
     },
     "import": {
         "abortImport": "Import abbrechen",
