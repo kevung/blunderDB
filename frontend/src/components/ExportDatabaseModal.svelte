@@ -76,6 +76,27 @@
             derivedState = `descr THREW: ${error}`;
         }
         LogDebug(`[export-modal] visible=${visible} mode=${JSON.stringify(mode)} count=${positionCount} matches=${matches?.length} optionKeys=[${keys}] ${derivedState}`);
+
+        // What is actually on screen. The state above is correct and nothing throws, yet the
+        // dialog shows as an empty white box, so the question is now whether the DOM holds
+        // the content at all — and if it does, what is hiding it.
+        queueMicrotask(() => {
+            const overlay = document.querySelector('.modal-overlay');
+            if (!overlay) {
+                LogDebug('[export-dom] no .modal-overlay in the document');
+                return;
+            }
+            const content = overlay.querySelector('.modal-content');
+            const box = content?.getBoundingClientRect();
+            const style = content ? getComputedStyle(content) : null;
+            LogDebug(
+                `[export-dom] children=${content ? content.children.length : -1} ` +
+                    `box=${box ? `${Math.round(box.width)}x${Math.round(box.height)}@${Math.round(box.left)},${Math.round(box.top)}` : 'none'} ` +
+                    `display=${style?.display} visibility=${style?.visibility} opacity=${style?.opacity} ` +
+                    `color=${style?.color} overflow=${style?.overflowY} ` +
+                    `text=${JSON.stringify((content?.innerText || '').slice(0, 120))}`
+            );
+        });
     });
 
     let collections = $derived($collectionsStore || []);
