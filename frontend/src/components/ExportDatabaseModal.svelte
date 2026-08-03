@@ -1,5 +1,5 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { trapFocus } from '../utils/focusTrap.js';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -35,18 +35,29 @@
     // Svelte 5 only tracks mutations made through a $state proxy. The parent hands this
     // component a plain object taken out of a store, so a checkbox writing
     // `exportOptions.includeCollections = true` updated the object but re-rendered nothing:
-    // every section gated on a checkbox stayed hidden. Mirror the options in local state —
-    // which the template and the handlers below use unchanged — and write every change back
-    // into the object the export service reads.
-    let exportOptions = $state({});
+    // every section gated on a checkbox stayed hidden. The options are therefore mirrored in
+    // local state — which the template and the handlers below use unchanged.
+    //
+    // The mirror is seeded ONLY when the dialog opens, and written back ONLY when the user
+    // confirms. An earlier version seeded it from a reactive read of the prop and wrote back
+    // from an $effect on every change; those two together can close a cycle through the
+    // parent's store binding, and a component that re-renders in a loop drops focus the
+    // instant you click into any of its fields. `untrack` keeps the seeding tied to
+    // `visible` alone, and the write-back happens once, on confirm.
+    let exportOptions = $state(untrack(() => ({ ...exportOptionsProp })));
     $effect(() => {
         if (visible) {
-            exportOptions = { ...exportOptionsProp };
+            untrack(() => {
+                exportOptions = { ...exportOptionsProp };
+            });
         }
     });
-    $effect(() => {
+
+    // Hand the chosen options back to the caller, which reads them from the store object.
+    function confirmExport() {
         Object.assign(exportOptionsProp, $state.snapshot(exportOptions));
-    });
+        onExport?.();
+    }
 
     let collections = $derived($collectionsStore || []);
 
@@ -397,7 +408,7 @@
 
                 <div class="button-group">
                     <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    <button class="btn-export" onclick={onExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
+                    <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
                 </div>
             {:else if mode === 'exporting'}
                 <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
