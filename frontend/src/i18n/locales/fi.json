@@ -539,7 +539,9 @@
         "passwordHint": "Suojaa tiedoston siirron ajaksi, ei tietokantaa: se, jolle annat salasanan, voi avata sen, ja alkuperä näkyy ilman salasanaakin.",
         "protectedTitle": "Suojattu tiedosto",
         "protectedHint": "Tämä tiedosto on suojattu salasanalla. Anna saamasi salasana; sitä kysytään vain kerran — sen jälkeen kyseessä on tavallinen tietokanta.",
-        "openCopy": "Avaa"
+        "openCopy": "Avaa",
+        "originRequired": "Täytä alkuperä tai poista valinta — tyhjä alkuperä ei merkitse mitään.",
+        "passwordRequired": "Anna salasana tai poista valinta."
     },
     "matchInfo": {
         "vs": "vs",

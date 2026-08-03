@@ -539,7 +539,9 @@
         "passwordHint": "Protege el archivo durante el transporte, no la base de datos: quien reciba la contraseña podrá abrirlo, y el origen sigue siendo legible sin ella.",
         "protectedTitle": "Archivo protegido",
         "protectedHint": "Este archivo está protegido por contraseña. Introduzca la que le han dado; solo se le pedirá una vez: después será una base de datos normal.",
-        "openCopy": "Abrir"
+        "openCopy": "Abrir",
+        "originRequired": "Indique el origen o desmarque la casilla: un origen vacío no marca nada.",
+        "passwordRequired": "Introduzca una contraseña o desmarque la casilla."
     },
     "matchInfo": {
         "vs": "vs",
