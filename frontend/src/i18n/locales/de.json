@@ -539,7 +539,9 @@
         "passwordHint": "Schützt die Datei auf dem Transportweg, nicht die Datenbank: wem Sie das Passwort geben, der kann sie öffnen, und die Herkunft bleibt auch ohne Passwort lesbar.",
         "protectedTitle": "Geschützte Datei",
         "protectedHint": "Diese Datei ist passwortgeschützt. Geben Sie das erhaltene Passwort ein; Sie werden nur einmal gefragt — danach ist es eine gewöhnliche Datenbank.",
-        "openCopy": "Öffnen"
+        "openCopy": "Öffnen",
+        "originRequired": "Geben Sie die Herkunft an oder entfernen Sie das Häkchen — eine leere Herkunft kennzeichnet nichts.",
+        "passwordRequired": "Geben Sie ein Passwort ein oder entfernen Sie das Häkchen."
     },
     "matchInfo": {
         "vs": "vs",

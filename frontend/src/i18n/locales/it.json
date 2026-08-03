@@ -539,7 +539,9 @@
         "passwordHint": "Protegge il file durante il trasporto, non il database: chi riceve la password può aprirlo, e l'origine resta leggibile anche senza.",
         "protectedTitle": "File protetto",
         "protectedHint": "Questo file è protetto da password. Inserisci quella che ti è stata comunicata; ti verrà chiesta una sola volta — poi sarà un database ordinario.",
-        "openCopy": "Apri"
+        "openCopy": "Apri",
+        "originRequired": "Indica l'origine oppure togli la spunta: un'origine vuota non marca nulla.",
+        "passwordRequired": "Inserisci una password oppure togli la spunta."
     },
     "matchInfo": {
         "vs": "vs",

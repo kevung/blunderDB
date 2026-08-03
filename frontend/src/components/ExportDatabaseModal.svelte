@@ -33,6 +33,13 @@
     } = $props();
 
     let collections = $derived($collectionsStore || []);
+
+    // A ticked box with an empty field used to produce a file with no watermark and no
+    // warning — the export silently did nothing about the very thing the user asked for.
+    // Both mechanisms are now blocked until they are actually filled in.
+    let missingOrigin = $derived(exportOptions.watermarkEnabled && !(exportOptions.watermark || '').trim());
+    let missingPassword = $derived(exportOptions.passwordEnabled && !(exportOptions.password || ''));
+    let cannotExport = $derived(missingOrigin || missingPassword);
     let tournaments = $derived($tournamentsStore || []);
 
     // Get current date in YYYY-MM-DD format
@@ -282,6 +289,9 @@
                         <div class="form-group">
                             <label for="export-origin">{$t('issuance.originLabel')}</label>
                             <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
+                            {#if missingOrigin}
+                                <p class="issuance-required">{$t('issuance.originRequired')}</p>
+                            {/if}
                         </div>
                         <div class="form-group">
                             <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
@@ -295,6 +305,9 @@
                         <div class="form-group">
                             <label for="export-password">{$t('issuance.passwordLabel')}</label>
                             <input id="export-password" type="text" bind:value={exportOptions.password} />
+                            {#if missingPassword}
+                                <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
+                            {/if}
                             <p class="issuance-hint">{$t('issuance.passwordHint')}</p>
                         </div>
                     </div>
@@ -365,7 +378,7 @@
 
                 <div class="button-group">
                     <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    <button class="btn-export" onclick={onExport}>{$t('export.exportAction')}</button>
+                    <button class="btn-export" onclick={onExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
                 </div>
             {:else if mode === 'exporting'}
                 <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
@@ -647,6 +660,12 @@
         border-left: 3px solid #1a73e8;
         padding-left: 10px;
         margin-bottom: 8px;
+    }
+
+    .issuance-required {
+        font-size: 11px;
+        color: #b3261e;
+        margin: 2px 0 6px;
     }
 
     .issuance-note,

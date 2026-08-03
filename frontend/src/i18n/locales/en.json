@@ -539,7 +539,9 @@
         "passwordHint": "Protects the file while it travels, not the database: whoever you give the password to can open it, and its origin stays readable without it.",
         "protectedTitle": "Protected file",
         "protectedHint": "This file is password-protected. Enter the password you were given; you will be asked only once — afterwards it is an ordinary database.",
-        "openCopy": "Open"
+        "openCopy": "Open",
+        "originRequired": "Fill in the origin, or untick the box — an empty origin marks nothing.",
+        "passwordRequired": "Enter a password, or untick the box."
     },
     "matchInfo": {
         "vs": "vs",

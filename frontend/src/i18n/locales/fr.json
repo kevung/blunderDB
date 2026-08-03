@@ -539,7 +539,9 @@
         "passwordHint": "Protège le fichier pendant son transport, pas la base : celui à qui vous donnez le mot de passe peut l'ouvrir, et l'origine reste lisible sans lui.",
         "protectedTitle": "Fichier protégé",
         "protectedHint": "Ce fichier est protégé par un mot de passe. Saisissez celui qui vous a été communiqué ; il ne vous sera demandé qu'une fois — ensuite c'est une base ordinaire.",
-        "openCopy": "Ouvrir"
+        "openCopy": "Ouvrir",
+        "originRequired": "Renseignez l'origine, ou décochez la case — une origine vide ne marque rien.",
+        "passwordRequired": "Saisissez un mot de passe, ou décochez la case."
     },
     "matchInfo": {
         "vs": "vs",

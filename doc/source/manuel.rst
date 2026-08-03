@@ -806,7 +806,8 @@ Dans la fenêtre d'export, cocher **Marquer ce fichier de son origine** fait
 apparaître deux champs :
 
 * **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
-  « Cours de Jean Dupont — 12 mars 2026 ».
+  « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : tant
+  qu'il est vide, le bouton d'export reste inactif.
 * **Note**, facultative — conditions d'utilisation, adresse de contact, une
   demande de ne pas rediffuser.
 
@@ -852,6 +853,19 @@ sans le mot de passe.
 
 Lire l'origine d'un fichier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dans l'application, ouvrez le fichier et affichez le panneau **Métadonnées**
+(commande ``meta``). Sous les champs habituels apparaît une section **Origine**,
+en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l'état de
+la signature :
+
+* « ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
+  intacte ;
+* « ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé —
+  comparez son empreinte à celle que le producteur vous a communiquée ;
+* « ⚠ signature invalide » : le document a été modifié ou contrefait.
+
+Cette section n'apparaît pas sur une base ordinaire.
 
 En ligne de commande, ``blunderdb info --db fichier.db`` affiche l'origine et
 l'état de la signature, **sans jamais écrire dans le fichier**. La commande
