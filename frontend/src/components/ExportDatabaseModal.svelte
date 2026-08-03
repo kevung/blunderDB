@@ -17,7 +17,7 @@
             description: '',
             dateOfCreation: ''
         },
-        exportOptions = {
+        exportOptions: exportOptionsProp = {
             includeAnalysis: true,
             includeComments: true,
             includeFilterLibrary: false,
@@ -31,6 +31,22 @@
         },
         matches = []
     } = $props();
+
+    // Svelte 5 only tracks mutations made through a $state proxy. The parent hands this
+    // component a plain object taken out of a store, so a checkbox writing
+    // `exportOptions.includeCollections = true` updated the object but re-rendered nothing:
+    // every section gated on a checkbox stayed hidden. Mirror the options in local state —
+    // which the template and the handlers below use unchanged — and write every change back
+    // into the object the export service reads.
+    let exportOptions = $state({});
+    $effect(() => {
+        if (visible) {
+            exportOptions = { ...exportOptionsProp };
+        }
+    });
+    $effect(() => {
+        Object.assign(exportOptionsProp, $state.snapshot(exportOptions));
+    });
 
     let collections = $derived($collectionsStore || []);
 

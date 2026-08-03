@@ -36,7 +36,19 @@
         "colorDice": "Würfel",
         "colorDiceDot": "Würfelaugen",
         "colorCube": "Dopplerwürfel",
-        "resetColors": "Zurücksetzen"
+        "resetColors": "Zurücksetzen",
+        "identityTitle": "Ausstelleridentität",
+        "identityIntro": "Der Schlüssel, mit dem Ihre Wasserzeichen signiert werden. Er gehört Ihnen, nicht einer Datenbank, und entsteht von selbst, wenn Sie zum ersten Mal eine Datei kennzeichnen.",
+        "identityName": "Anzeigename",
+        "identityFingerprint": "Öffentlicher Fingerabdruck",
+        "identityNone": "Noch keine Identität — sie wird beim ersten mit Herkunft gekennzeichneten Export erstellt. Sie können sie auch jetzt durch Speichern anlegen.",
+        "identityPassphrase": "Passphrase (optional)",
+        "identityWarning": "Wer die gespeicherte Datei besitzt, kann in Ihrem Namen signieren. Geben Sie sie nicht weiter.",
+        "identityExport": "Identität speichern…",
+        "identityImport": "Identität laden…",
+        "identityExported": "Identität gespeichert unter {path}",
+        "identityImported": "Identität installiert: {name}",
+        "identityPassphraseNeeded": "Diese Datei ist geschützt: Passphrase oben eingeben und erneut versuchen."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

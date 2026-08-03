@@ -14,6 +14,18 @@ export function DeleteFile(arg1) {
   return window['go']['gui']['App']['DeleteFile'](arg1);
 }
 
+export function ExportIssuerIdentity(arg1) {
+  return window['go']['gui']['App']['ExportIssuerIdentity'](arg1);
+}
+
+export function GetIssuerIdentity() {
+  return window['go']['gui']['App']['GetIssuerIdentity']();
+}
+
+export function ImportIssuerIdentity(arg1, arg2) {
+  return window['go']['gui']['App']['ImportIssuerIdentity'](arg1, arg2);
+}
+
 export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
 }
@@ -54,6 +66,10 @@ export function PathExists(arg1) {
   return window['go']['gui']['App']['PathExists'](arg1);
 }
 
+export function PickIdentityFile() {
+  return window['go']['gui']['App']['PickIdentityFile']();
+}
+
 export function PrepareDemoDatabase() {
   return window['go']['gui']['App']['PrepareDemoDatabase']();
 }
@@ -64,6 +80,10 @@ export function ReadFileContent(arg1) {
 
 export function SaveDatabaseDialog() {
   return window['go']['gui']['App']['SaveDatabaseDialog']();
+}
+
+export function SetIssuerName(arg1) {
+  return window['go']['gui']['App']['SetIssuerName'](arg1);
 }
 
 export function ShowAlert(arg1) {

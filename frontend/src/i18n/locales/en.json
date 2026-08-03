@@ -36,7 +36,19 @@
         "colorDice": "Dice",
         "colorDiceDot": "Dice pips",
         "colorCube": "Doubling cube",
-        "resetColors": "Reset to defaults"
+        "resetColors": "Reset to defaults",
+        "identityTitle": "Issuer identity",
+        "identityIntro": "The key your watermarks are signed with. It belongs to you, not to a database, and is created by itself the first time you mark a file.",
+        "identityName": "Display name",
+        "identityFingerprint": "Public fingerprint",
+        "identityNone": "No identity yet — one will be created the first time you export a file with its origin. You can also create it now by saving it.",
+        "identityPassphrase": "Passphrase (optional)",
+        "identityWarning": "The saved file lets anyone holding it sign in your name. Do not share it.",
+        "identityExport": "Save identity…",
+        "identityImport": "Load identity…",
+        "identityExported": "Identity saved to {path}",
+        "identityImported": "Identity installed: {name}",
+        "identityPassphraseNeeded": "This file is protected: enter its passphrase above, then try again."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

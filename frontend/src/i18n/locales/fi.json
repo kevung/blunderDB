@@ -36,7 +36,19 @@
         "colorDice": "Nopat",
         "colorDiceDot": "Nopan silmät",
         "colorCube": "Tuplauskuutio",
-        "resetColors": "Palauta oletukset"
+        "resetColors": "Palauta oletukset",
+        "identityTitle": "Merkitsijän identiteetti",
+        "identityIntro": "Avain, jolla vesileimasi allekirjoitetaan. Se kuuluu sinulle eikä tietokannalle, ja syntyy itsestään kun merkitset tiedoston ensimmäisen kerran.",
+        "identityName": "Näyttönimi",
+        "identityFingerprint": "Julkinen sormenjälki",
+        "identityNone": "Ei vielä identiteettiä — se luodaan ensimmäisessä alkuperällä merkityssä viennissä. Voit myös luoda sen nyt tallentamalla.",
+        "identityPassphrase": "Salalause (valinnainen)",
+        "identityWarning": "Tallennetun tiedoston haltija voi allekirjoittaa sinun nimissäsi. Älä jaa sitä.",
+        "identityExport": "Tallenna identiteetti…",
+        "identityImport": "Lataa identiteetti…",
+        "identityExported": "Identiteetti tallennettu: {path}",
+        "identityImported": "Identiteetti asennettu: {name}",
+        "identityPassphraseNeeded": "Tiedosto on suojattu: anna salalause yllä ja yritä uudelleen."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

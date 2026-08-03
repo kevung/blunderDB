@@ -36,7 +36,19 @@
         "colorDice": "Dados",
         "colorDiceDot": "Puntos de los dados",
         "colorCube": "Cubo de doblaje",
-        "resetColors": "Restablecer"
+        "resetColors": "Restablecer",
+        "identityTitle": "Identidad del emisor",
+        "identityIntro": "La clave con la que se firman sus marcas. Le pertenece a usted, no a una base de datos, y se crea sola la primera vez que marca un archivo.",
+        "identityName": "Nombre mostrado",
+        "identityFingerprint": "Huella pública",
+        "identityNone": "Todavía no hay identidad: se creará en la primera exportación marcada con su origen. También puede crearla ahora guardándola.",
+        "identityPassphrase": "Frase de contraseña (opcional)",
+        "identityWarning": "Quien tenga el archivo guardado podrá firmar en su nombre. No lo comparta.",
+        "identityExport": "Guardar identidad…",
+        "identityImport": "Cargar identidad…",
+        "identityExported": "Identidad guardada en {path}",
+        "identityImported": "Identidad instalada: {name}",
+        "identityPassphraseNeeded": "Este archivo está protegido: introduzca su frase de contraseña arriba y vuelva a intentarlo."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",

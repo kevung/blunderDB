@@ -4,8 +4,72 @@
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
+    import { GetIssuerIdentity, SetIssuerName, ExportIssuerIdentity, PickIdentityFile, ImportIssuerIdentity } from '../../wailsjs/go/gui/App.js';
+    import { logger } from '../utils/logger.js';
 
     let { visible = false, onClose } = $props();
+
+    // The issuer identity signs watermarks. It is created on the first watermarked export,
+    // so this section reports "not yet" rather than minting a key just because someone
+    // opened the settings. See ADR-0007.
+    let identity = $state(null);
+    let identityPassphrase = $state('');
+    let identityMessage = $state('');
+    let identityError = $state('');
+
+    $effect(() => {
+        if (visible) {
+            identityMessage = '';
+            identityError = '';
+            GetIssuerIdentity()
+                .then((info) => (identity = info))
+                .catch((error) => logger.error('Error loading issuer identity:', error));
+        }
+    });
+
+    async function renameIdentity(event) {
+        const name = event.currentTarget.value.trim();
+        if (!name || name === identity?.name) return;
+        try {
+            identity = await SetIssuerName(name);
+            identityMessage = '';
+            identityError = '';
+        } catch (error) {
+            identityError = String(error);
+        }
+    }
+
+    async function exportIdentity() {
+        identityMessage = '';
+        identityError = '';
+        try {
+            const path = await ExportIssuerIdentity(identityPassphrase);
+            if (!path) return; // dialog cancelled
+            identity = await GetIssuerIdentity();
+            identityPassphrase = '';
+            identityMessage = $t('config.identityExported', { path });
+        } catch (error) {
+            identityError = String(error);
+        }
+    }
+
+    async function importIdentity() {
+        identityMessage = '';
+        identityError = '';
+        try {
+            const pick = await PickIdentityFile();
+            if (pick.cancelled) return;
+            if (pick.needsPassphrase && !identityPassphrase) {
+                identityError = $t('config.identityPassphraseNeeded');
+                return;
+            }
+            identity = await ImportIssuerIdentity(pick.path, identityPassphrase);
+            identityPassphrase = '';
+            identityMessage = $t('config.identityImported', { name: identity.name });
+        } catch (error) {
+            identityError = String(error);
+        }
+    }
 
     // Board colour settings, in display order. Each maps a store key to a label.
     const COLOR_SETTINGS = [
@@ -107,6 +171,32 @@
             <div class="setting-row reset-row">
                 <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
             </div>
+
+            <div class="section-title">{$t('config.identityTitle')}</div>
+            <p class="setting-note">{$t('config.identityIntro')}</p>
+            {#if identity?.present}
+                <div class="setting-row">
+                    <label for="config-identity-name">{$t('config.identityName')}</label>
+                    <input id="config-identity-name" type="text" class="setting-input" value={identity.name} onblur={renameIdentity} />
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">{$t('config.identityFingerprint')}</span>
+                    <code class="identity-fingerprint">{identity.fingerprint}</code>
+                </div>
+            {:else}
+                <p class="setting-note">{$t('config.identityNone')}</p>
+            {/if}
+            <div class="setting-row">
+                <label for="config-identity-passphrase">{$t('config.identityPassphrase')}</label>
+                <input id="config-identity-passphrase" type="password" class="setting-input" bind:value={identityPassphrase} />
+            </div>
+            <p class="setting-note warn">{$t('config.identityWarning')}</p>
+            <div class="setting-row reset-row">
+                <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
+                <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
+            </div>
+            {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
+            {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
 
             <div class="modal-buttons">
                 <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
@@ -212,6 +302,36 @@
         text-align: right;
         font-variant-numeric: tabular-nums;
         font-weight: 500;
+    }
+
+    .setting-note {
+        font-size: 11px;
+        color: #666;
+        margin: 2px 0 6px;
+        line-height: 1.35;
+    }
+
+    .setting-note.warn {
+        color: #b3261e;
+    }
+
+    .setting-note.ok {
+        color: #1a7f37;
+    }
+
+    .setting-input {
+        flex: 1;
+        min-width: 0;
+        max-width: 220px;
+    }
+
+    .setting-label {
+        font-size: 12px;
+    }
+
+    .identity-fingerprint {
+        font-family: monospace;
+        font-size: 12px;
     }
 
     .section-title {

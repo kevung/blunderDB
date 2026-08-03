@@ -230,24 +230,24 @@ type Position struct {
 
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
 type SearchFilters struct {
-	Filter                        Position `json:"filter"`
-	ExcludeFilter                 Position `json:"excludeFilter"`
-	IncludeCube                   bool     `json:"includeCube"`
-	IncludeScore                  bool     `json:"includeScore"`
-	PipCountFilter                string   `json:"pipCountFilter"`
-	WinRateFilter                 string   `json:"winRateFilter"`
-	GammonRateFilter              string   `json:"gammonRateFilter"`
-	BackgammonRateFilter          string   `json:"backgammonRateFilter"`
-	Player2WinRateFilter          string   `json:"player2WinRateFilter"`
-	Player2GammonRateFilter       string   `json:"player2GammonRateFilter"`
-	Player2BackgammonRateFilter   string   `json:"player2BackgammonRateFilter"`
-	Player1CheckerOffFilter       string   `json:"player1CheckerOffFilter"`
-	Player2CheckerOffFilter       string   `json:"player2CheckerOffFilter"`
-	Player1BackCheckerFilter      string   `json:"player1BackCheckerFilter"`
-	Player2BackCheckerFilter      string   `json:"player2BackCheckerFilter"`
-	Player1CheckerInZoneFilter    string   `json:"player1CheckerInZoneFilter"`
-	Player2CheckerInZoneFilter    string   `json:"player2CheckerInZoneFilter"`
-	SearchText                    string   `json:"searchText"`
+	Filter                      Position `json:"filter"`
+	ExcludeFilter               Position `json:"excludeFilter"`
+	IncludeCube                 bool     `json:"includeCube"`
+	IncludeScore                bool     `json:"includeScore"`
+	PipCountFilter              string   `json:"pipCountFilter"`
+	WinRateFilter               string   `json:"winRateFilter"`
+	GammonRateFilter            string   `json:"gammonRateFilter"`
+	BackgammonRateFilter        string   `json:"backgammonRateFilter"`
+	Player2WinRateFilter        string   `json:"player2WinRateFilter"`
+	Player2GammonRateFilter     string   `json:"player2GammonRateFilter"`
+	Player2BackgammonRateFilter string   `json:"player2BackgammonRateFilter"`
+	Player1CheckerOffFilter     string   `json:"player1CheckerOffFilter"`
+	Player2CheckerOffFilter     string   `json:"player2CheckerOffFilter"`
+	Player1BackCheckerFilter    string   `json:"player1BackCheckerFilter"`
+	Player2BackCheckerFilter    string   `json:"player2BackCheckerFilter"`
+	Player1CheckerInZoneFilter  string   `json:"player1CheckerInZoneFilter"`
+	Player2CheckerInZoneFilter  string   `json:"player2CheckerInZoneFilter"`
+	SearchText                  string   `json:"searchText"`
 
 	// CommentFilter keeps only positions that carry a comment ("has") or that
 	// carry none ("none"); "" applies no comment filter. It asks about the mere
@@ -263,21 +263,21 @@ type SearchFilters struct {
 	// its positions, and are never consulted. See CONTEXT.md.
 	CommentFilter string `json:"commentFilter"`
 
-	Player1AbsolutePipCountFilter string   `json:"player1AbsolutePipCountFilter"`
-	EquityFilter                  string   `json:"equityFilter"`
-	DecisionTypeFilter            bool     `json:"decisionTypeFilter"`
-	CubeResponseFilter            string   `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only, "takepass" = take/pass only
-	DiceRollFilter                bool     `json:"diceRollFilter"`
-	DiceRollMode                  string   `json:"diceRollMode"`
-	ExceptDiceFilter              string   `json:"exceptDiceFilter"` // ";"-separated rolls to exclude, e.g. "65;54" (xD65 token)
-	MovePatternFilter             string   `json:"movePatternFilter"`
-	DateFilter                    string   `json:"dateFilter"`
-	Player1OutfieldBlotFilter     string   `json:"player1OutfieldBlotFilter"`
-	Player2OutfieldBlotFilter     string   `json:"player2OutfieldBlotFilter"`
-	Player1JanBlotFilter          string   `json:"player1JanBlotFilter"`
-	Player2JanBlotFilter          string   `json:"player2JanBlotFilter"`
-	NoContactFilter               bool     `json:"noContactFilter"`
-	MirrorFilter                  bool     `json:"mirrorFilter"`
+	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
+	EquityFilter                  string `json:"equityFilter"`
+	DecisionTypeFilter            bool   `json:"decisionTypeFilter"`
+	CubeResponseFilter            string `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only, "takepass" = take/pass only
+	DiceRollFilter                bool   `json:"diceRollFilter"`
+	DiceRollMode                  string `json:"diceRollMode"`
+	ExceptDiceFilter              string `json:"exceptDiceFilter"` // ";"-separated rolls to exclude, e.g. "65;54" (xD65 token)
+	MovePatternFilter             string `json:"movePatternFilter"`
+	DateFilter                    string `json:"dateFilter"`
+	Player1OutfieldBlotFilter     string `json:"player1OutfieldBlotFilter"`
+	Player2OutfieldBlotFilter     string `json:"player2OutfieldBlotFilter"`
+	Player1JanBlotFilter          string `json:"player1JanBlotFilter"`
+	Player2JanBlotFilter          string `json:"player2JanBlotFilter"`
+	NoContactFilter               bool   `json:"noContactFilter"`
+	MirrorFilter                  bool   `json:"mirrorFilter"`
 
 	// IndividuallyImportedFilter keeps only positions the user brought into the
 	// database on their own rather than inside a match (ADR-0001) — the answer
@@ -291,10 +291,10 @@ type SearchFilters struct {
 	// than of the board, so mirror search does not re-evaluate it.
 	FlaggedFilter bool `json:"flaggedFilter"`
 
-	MoveErrorFilter               string   `json:"moveErrorFilter"`
-	MatchIDsFilter                string   `json:"matchIDsFilter"`
-	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`
-	PlayerFilter                  string   `json:"playerFilter"` // exact player name (either seat); empty = no filter
+	MoveErrorFilter     string `json:"moveErrorFilter"`
+	MatchIDsFilter      string `json:"matchIDsFilter"`
+	TournamentIDsFilter string `json:"tournamentIDsFilter"`
+	PlayerFilter        string `json:"playerFilter"` // exact player name (either seat); empty = no filter
 
 	PositionIDsFilter     string `json:"positionIDsFilter"`
 	RestrictToPositionIDs string `json:"restrictToPositionIDs"`
@@ -626,4 +626,22 @@ type MatchMovePosition struct {
 	Player2Name  string   `json:"player2_name"`   // Player 2 name for reference
 	CheckerMove  string   `json:"checker_move"`   // The checker move played in this specific position
 	CubeAction   string   `json:"cube_action"`    // The cube action taken in this specific position
+}
+
+// IssuerIdentityInfo describes this machine's signing identity, as displayed in the
+// settings. Present is false until the identity exists — it is created on the first
+// watermarked export, or when the user explicitly asks to save it.
+type IssuerIdentityInfo struct {
+	Present     bool   `json:"present"`
+	Name        string `json:"name"`
+	Fingerprint string `json:"fingerprint"`
+	Path        string `json:"path"`
+}
+
+// IdentityFilePick is the outcome of choosing an identity file to import: its path, and
+// whether it is protected, so the caller asks for a passphrase only when one is needed.
+type IdentityFilePick struct {
+	Path            string `json:"path"`
+	NeedsPassphrase bool   `json:"needsPassphrase"`
+	Cancelled       bool   `json:"cancelled"`
 }
