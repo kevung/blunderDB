@@ -17,7 +17,14 @@ export const exportOptionsStore = writable({
     includeTournaments: false,
     includeTournamentIDs: [],
     includeCollections: false,
-    collectionIDs: []
+    collectionIDs: [],
+    // Issuance: off by default, so an ordinary export stays exactly what it was. A
+    // watermark can only be posed here, at export, because nothing else in the product
+    // states who a copy is for. See ADR-0007.
+    watermark: false,
+    distribution: '',
+    recipients: '',
+    password: ''
 });
 export const exportMatchesStore = writable([]);
 
@@ -34,7 +41,11 @@ export function resetExportState() {
         includeTournaments: false,
         includeTournamentIDs: [],
         includeCollections: false,
-        collectionIDs: []
+        collectionIDs: [],
+        watermark: false,
+        distribution: '',
+        recipients: '',
+        password: ''
     });
     exportMatchesStore.set([]);
 }

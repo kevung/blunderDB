@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
 // ExportDatabase creates a new database file containing the current selection of positions
@@ -281,13 +283,31 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		return err
 	}
 
-	// Insert metadata (user, description, dateOfCreation)
-	for key, value := range opts.Metadata {
-		if value != "" {
-			_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
-			if err != nil {
-				slog.Warn("inserting metadata in export database", "key", key, "err", err)
-			}
+	// Copy metadata by ALLOW-LIST, never by exclusion. An exported file is handed to
+	// someone else, and the source database may hold an Issue register listing every other
+	// recipient of a course along with the passwords of every distribution. A deny-list
+	// would leak whatever document is added six months from now; an allow-list will not.
+	// See pkg/blunderdb/issuance and ADR-0007.
+	for key, value := range issuance.Carried(opts.Metadata) {
+		_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+		if err != nil {
+			slog.Warn("inserting metadata in export database", "key", key, "err", err)
+		}
+	}
+
+	// The issuance documents, when this export is an Issued copy. They are written verbatim:
+	// the signature is over these exact bytes. The Holder registry is deliberately not
+	// carried — a fresh copy has no holders yet, and the source's would name machines that
+	// never saw this file.
+	for key, doc := range map[string]string{
+		issuance.KeyWatermark: opts.WatermarkDocument,
+		issuance.KeyLineage:   opts.LineageDocument,
+	} {
+		if doc == "" {
+			continue
+		}
+		if _, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, doc); err != nil {
+			return fmt.Errorf("cannot write the %s document into the exported copy: %w", key, err)
 		}
 	}
 

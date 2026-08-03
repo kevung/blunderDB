@@ -520,6 +520,39 @@
         "user": "User",
         "version": "Version"
     },
+    "issuance": {
+        "issuedCopy": "Issued copy",
+        "distribution": "Distribution",
+        "issuedBy": "Issued by",
+        "issuedTo": "Issued to",
+        "issuedOn": "Issued on",
+        "collective": "the distribution as a whole (no recipient named)",
+        "collectiveShort": "(collective)",
+        "copyOf": "copy {number} of {total}",
+        "signatureValid": "✓ signature verified",
+        "signatureYours": "✓ signature verified — issued by you",
+        "signatureInvalid": "⚠ invalid signature — altered or forged",
+        "holders": "Holders",
+        "holdersNone": "no holder recorded yet",
+        "holdersCount": "{count} distinct machines",
+        "openings": "{count} openings",
+        "chainBroken": "⚠ the holder registry has been altered: an entry was removed or reordered",
+        "lineage": "Contains material from issued copies ({count})",
+        "issuedCopies": "Copies issued ({count})",
+        "password": "password",
+        "registerStaysHere": "This register never leaves this database: it travels in no copy.",
+        "enableWatermark": "Watermark this export",
+        "watermarkNote": "A watermark is tamper-evident and unforgeable, never unremovable: it prevents nothing, it lets a copy that leaks be traced back to one emission.",
+        "distributionLabel": "Distribution name",
+        "distributionPlaceholder": "Lesson of 12 March 2026",
+        "recipientsLabel": "Recipients (one per line)",
+        "recipientsHint": "One copy per recipient. Leave empty for a single collective copy.",
+        "passwordLabel": "Password (optional)",
+        "passwordHint": "Protects the file in transit, not the database: the recipient holds the password.",
+        "protectedTitle": "Protected copy",
+        "protectedHint": "This copy is password-protected. Enter the password you were given; you will be asked only once — afterwards it is an ordinary database.",
+        "openCopy": "Open"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "pt"
@@ -785,7 +818,8 @@
         "positionSaved": "Position and analysis saved successfully",
         "importedPositionSaved": "Imported position and analysis saved successfully",
         "pastedPositionSaved": "Pasted position and analysis saved successfully",
-        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed"
+        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed",
+        "copiesIssued": "{count} copies issued"
     },
     "stats": {
         "title": "Stats",

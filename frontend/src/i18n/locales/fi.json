@@ -520,6 +520,39 @@
         "user": "Käyttäjä",
         "version": "Versio"
     },
+    "issuance": {
+        "issuedCopy": "Luovutettu kappale",
+        "distribution": "Jakelu",
+        "issuedBy": "Luovuttaja",
+        "issuedTo": "Vastaanottaja",
+        "issuedOn": "Luovutettu",
+        "collective": "koko jakelulle (vastaanottajaa ei nimetty)",
+        "collectiveShort": "(yhteinen)",
+        "copyOf": "kappale {number} / {total}",
+        "signatureValid": "✓ allekirjoitus vahvistettu",
+        "signatureYours": "✓ allekirjoitus vahvistettu — sinun luovuttamasi",
+        "signatureInvalid": "⚠ virheellinen allekirjoitus — muutettu tai väärennetty",
+        "holders": "Haltijat",
+        "holdersNone": "ei vielä haltijoita",
+        "holdersCount": "{count} eri konetta",
+        "openings": "{count} avausta",
+        "chainBroken": "⚠ haltijarekisteriä on muutettu: merkintä on poistettu tai siirretty",
+        "lineage": "Sisältää aineistoa luovutetuista kappaleista ({count})",
+        "issuedCopies": "Luovutetut kappaleet ({count})",
+        "password": "salasana",
+        "registerStaysHere": "Tämä rekisteri ei koskaan poistu tästä tietokannasta: se ei kulje minkään kappaleen mukana.",
+        "enableWatermark": "Lisää vesileima tähän vientiin",
+        "watermarkNote": "Vesileima on muuttumaton ja väärentämätön, mutta ei koskaan poistamaton: se ei estä mitään, vaan mahdollistaa vuotaneen kappaleen jäljittämisen alkuperäänsä.",
+        "distributionLabel": "Jakelun nimi",
+        "distributionPlaceholder": "12.3.2026 pidetty tunti",
+        "recipientsLabel": "Vastaanottajat (yksi riviä kohti)",
+        "recipientsHint": "Yksi kappale vastaanottajaa kohti. Jätä tyhjäksi, jos haluat yhden yhteisen kappaleen.",
+        "passwordLabel": "Salasana (valinnainen)",
+        "passwordHint": "Suojaa tiedoston siirron ajaksi, ei tietokantaa: vastaanottajalla on salasana.",
+        "protectedTitle": "Suojattu kappale",
+        "protectedHint": "Tämä kappale on suojattu salasanalla. Anna saamasi salasana; sitä kysytään vain kerran — sen jälkeen kyseessä on tavallinen tietokanta.",
+        "openCopy": "Avaa"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "p"
@@ -785,7 +818,8 @@
         "positionSaved": "Positio ja analyysi tallennettu onnistuneesti",
         "importedPositionSaved": "Tuotu positio ja analyysi tallennettu onnistuneesti",
         "pastedPositionSaved": "Liitetty positio ja analyysi tallennettu onnistuneesti",
-        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui"
+        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
+        "copiesIssued": "{count} kappaletta luovutettu"
     },
     "stats": {
         "title": "Tilastot",

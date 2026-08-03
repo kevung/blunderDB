@@ -38,7 +38,7 @@ func main() {
 			return
 		}
 		// Check if first argument is a CLI command
-		cliCommands := []string{"create", "import", "export", "list", "match", "verify", "delete", "help", "version", "info", "edit", "search"}
+		cliCommands := []string{"create", "import", "export", "issue", "identity", "open", "list", "match", "verify", "delete", "help", "version", "info", "edit", "search"}
 		for _, cmd := range cliCommands {
 			if strings.ToLower(os.Args[1]) == cmd {
 				runCLI()

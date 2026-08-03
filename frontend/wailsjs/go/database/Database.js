@@ -194,6 +194,10 @@ export function GetGamesByMatch(arg1) {
   return window['go']['database']['Database']['GetGamesByMatch'](arg1);
 }
 
+export function GetIssuanceInfo() {
+  return window['go']['database']['Database']['GetIssuanceInfo']();
+}
+
 export function GetLastVisitedMatch() {
   return window['go']['database']['Database']['GetLastVisitedMatch']();
 }
@@ -290,8 +294,16 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IsProtectedCopyPath(arg1) {
+  return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
+}
+
 export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
+}
+
+export function IssueCopies(arg1, arg2) {
+  return window['go']['database']['Database']['IssueCopies'](arg1, arg2);
 }
 
 export function LoadAllPositions() {
@@ -370,12 +382,20 @@ export function OpenDatabase(arg1) {
   return window['go']['database']['Database']['OpenDatabase'](arg1);
 }
 
+export function OpenProtectedCopyPath(arg1, arg2) {
+  return window['go']['database']['Database']['OpenProtectedCopyPath'](arg1, arg2);
+}
+
 export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
 }
 
 export function PositionExists(arg1) {
   return window['go']['database']['Database']['PositionExists'](arg1);
+}
+
+export function RecordHolder() {
+  return window['go']['database']['Database']['RecordHolder']();
 }
 
 export function RemoveMatchFromTournament(arg1) {

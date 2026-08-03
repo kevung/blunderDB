@@ -44,7 +44,19 @@
     import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from './stores/exportModalStore.js';
 
     // Services
-    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, closeWarningModal, warningMessageStore } from './services/databaseService.js';
+    import {
+        newDatabase,
+        openDatabase,
+        openDatabaseByPath,
+        loadDemoDatabase,
+        exitApp,
+        closeWarningModal,
+        warningMessageStore,
+        protectedCopyPathStore,
+        protectedCopyErrorStore,
+        unlockProtectedCopy,
+        cancelProtectedCopy
+    } from './services/databaseService.js';
     import {
         showPosition,
         loadAllPositions,
@@ -119,6 +131,7 @@
     import { gammonValue2Table } from './stores/gammonValue2Table';
     import { gammonValue4Table } from './stores/gammonValue4Table';
     import WarningModal from './components/WarningModal.svelte';
+    import ProtectedCopyModal from './components/ProtectedCopyModal.svelte';
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
@@ -527,6 +540,14 @@
     <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
 
     <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
+
+    <ProtectedCopyModal
+        visible={$activeModal === MODAL.PROTECTED_COPY}
+        fileName={$protectedCopyPathStore}
+        error={$protectedCopyErrorStore}
+        onSubmit={unlockProtectedCopy}
+        onCancel={cancelProtectedCopy}
+    />
 
     <DataTableModal
         visible={$activeModal === MODAL.TAKE_POINT_2}

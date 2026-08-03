@@ -59,6 +59,12 @@ func (cli *CLI) Run(args []string) error {
 		return cli.runImport(commandArgs)
 	case "export":
 		return cli.runExport(commandArgs)
+	case "issue":
+		return cli.runIssue(commandArgs)
+	case "identity":
+		return cli.runIdentity(commandArgs)
+	case "open":
+		return cli.runOpen(commandArgs)
 	case "list":
 		return cli.runList(commandArgs)
 	case "delete":
@@ -97,6 +103,9 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  create    Create a new database with optional metadata")
 	fmt.Println("  import    Import data into the database (match, position, batch)")
 	fmt.Println("  export    Export data from the database")
+	fmt.Println("  issue     Produce watermarked copies of a database to hand out")
+	fmt.Println("  identity  Show or move your issuer identity")
+	fmt.Println("  open      Open a password-protected copy into an ordinary database")
 	fmt.Println("  list      List database contents")
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")

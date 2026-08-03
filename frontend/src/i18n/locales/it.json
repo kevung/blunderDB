@@ -520,6 +520,39 @@
         "user": "Utente",
         "version": "Versione"
     },
+    "issuance": {
+        "issuedCopy": "Esemplare emesso",
+        "distribution": "Distribuzione",
+        "issuedBy": "Emesso da",
+        "issuedTo": "Consegnato a",
+        "issuedOn": "Emesso il",
+        "collective": "alla distribuzione nel suo insieme (nessun destinatario indicato)",
+        "collectiveShort": "(collettivo)",
+        "copyOf": "esemplare {number} di {total}",
+        "signatureValid": "✓ firma verificata",
+        "signatureYours": "✓ firma verificata — emesso da te",
+        "signatureInvalid": "⚠ firma non valida — alterato o contraffatto",
+        "holders": "Detentori",
+        "holdersNone": "nessun detentore registrato",
+        "holdersCount": "{count} macchine distinte",
+        "openings": "{count} aperture",
+        "chainBroken": "⚠ il registro dei detentori è stato modificato: una voce è stata rimossa o spostata",
+        "lineage": "Contiene materiale proveniente da esemplari emessi ({count})",
+        "issuedCopies": "Esemplari emessi ({count})",
+        "password": "password",
+        "registerStaysHere": "Questo registro non lascia mai questo database: non viaggia in alcun esemplare.",
+        "enableWatermark": "Applica una filigrana a questa esportazione",
+        "watermarkNote": "Una filigrana è inalterabile e non falsificabile, mai incancellabile: non impedisce nulla, permette di risalire all'origine di un esemplare diffuso.",
+        "distributionLabel": "Nome della distribuzione",
+        "distributionPlaceholder": "Lezione del 12 marzo 2026",
+        "recipientsLabel": "Destinatari (uno per riga)",
+        "recipientsHint": "Un esemplare per destinatario. Lascia vuoto per un unico esemplare collettivo.",
+        "passwordLabel": "Password (facoltativa)",
+        "passwordHint": "Protegge il file durante il trasporto, non il database: il destinatario possiede la password.",
+        "protectedTitle": "Esemplare protetto",
+        "protectedHint": "Questo esemplare è protetto da password. Inserisci quella che ti è stata comunicata; ti verrà chiesta una sola volta — poi sarà un database ordinario.",
+        "openCopy": "Apri"
+    },
     "matchInfo": {
         "vs": "vs",
         "points": "pt"
@@ -785,7 +818,8 @@
         "positionSaved": "Posizione e analisi salvate correttamente",
         "importedPositionSaved": "Posizione e analisi importate salvate correttamente",
         "pastedPositionSaved": "Posizione e analisi incollate salvate correttamente",
-        "importDone": "Importazione completata: {succeeded} importate, {skipped} ignorate, {failed} non riuscite"
+        "importDone": "Importazione completata: {succeeded} importate, {skipped} ignorate, {failed} non riuscite",
+        "copiesIssued": "{count} esemplari emessi"
     },
     "stats": {
         "title": "Stats",
