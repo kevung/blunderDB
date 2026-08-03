@@ -1,7 +1,7 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
-import { ExportDatabase, IssueCopies, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+import { ExportDatabase, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -11,23 +11,6 @@ import { tournamentsStore } from '../stores/tournamentStore.js';
 import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore, resetExportState } from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
-
-// dirOf returns the folder a chosen export path sits in — where a batch of copies lands.
-function dirOf(filePath) {
-    const cut = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
-    return cut > 0 ? filePath.slice(0, cut) : '.';
-}
-
-// describeExport summarises what an emission contained, for the issue register: months
-// later the issuer needs to know what a given copy actually held.
-function describeExport(o) {
-    const parts = [];
-    if (o.includeAnalysis) parts.push('analysis');
-    if (o.includeComments) parts.push('comments');
-    if (o.includeMatches && (o.matchIDs || []).length > 0) parts.push(`${o.matchIDs.length} matches`);
-    if (o.includeCollections && (o.collectionIDs || []).length > 0) parts.push(`${o.collectionIDs.length} collections`);
-    return parts.join(', ');
-}
 
 let pendingExportPath = null;
 
@@ -150,34 +133,21 @@ export async function handleExportCommit() {
             tournamentIDs: exportOptions.includeTournamentIDs || []
         };
 
-        // Watermarking routes through IssueCopies, which seals the copy, records it in this
-        // database's issue register, and — with several recipients — writes one file each.
-        // Everything else about the export is identical.
-        if (exportOptions.watermark) {
-            const recipients = (exportOptions.recipients || '')
-                .split('\n')
-                .map((name) => name.trim())
-                .filter(Boolean);
-            const copies = await IssueCopies(baseOptions, {
-                distribution: (exportOptions.distribution || '').trim(),
-                recipients,
-                // More than one recipient means a folder of files rather than the single
-                // path the user picked.
-                outputDir: recipients.length > 1 ? dirOf(pendingExportPath) : '',
-                password: exportOptions.password || '',
-                contents: describeExport(exportOptions)
-            });
-            logger.log('Issued copies:', copies);
-            exportModalModeStore.set('completed');
-            setStatusBarMessage(tMsg('status.copiesIssued', { count: copies.length }));
-        } else {
-            await ExportDatabase(baseOptions);
-            logger.log('Export completed successfully');
-            exportModalModeStore.set('completed');
+        // Both mechanisms are plain export options: the watermark is sealed and written by
+        // the backend, and a password wraps the finished file. Neither changes anything
+        // about what is exported.
+        await ExportDatabase({
+            ...baseOptions,
+            watermark: exportOptions.watermarkEnabled ? (exportOptions.watermark || '').trim() : '',
+            watermarkNote: exportOptions.watermarkEnabled ? (exportOptions.watermarkNote || '').trim() : '',
+            password: exportOptions.passwordEnabled ? exportOptions.password || '' : ''
+        });
 
-            const posCount = get(exportPositionCountStore);
-            setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
-        }
+        logger.log('Export completed successfully');
+        exportModalModeStore.set('completed');
+
+        const posCount = get(exportPositionCountStore);
+        setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
     } catch (error) {
         logger.error('Error committing export:', error);
         closeModal();

@@ -359,102 +359,38 @@ type ExportOptions struct {
 	MatchIDs             []int64           `json:"matchIDs"`
 	TournamentIDs        []int64           `json:"tournamentIDs"`
 
-	// WatermarkDocument and LineageDocument are the sealed issuance documents to write
-	// into the produced file, already signed by the caller. They are opaque strings here
-	// on purpose: domain stays dependency-free, and the export path stores the exact
-	// bytes that were signed rather than re-deriving them.
-	WatermarkDocument string `json:"watermarkDocument,omitempty"`
-	LineageDocument   string `json:"lineageDocument,omitempty"`
+	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can
+	// carry: a signed statement of where the file comes from, and an encrypted container
+	// around it. Both are chosen by the producer, both are independent, and the recipient's
+	// side writes nothing for either. Empty Watermark = no watermark; empty Password = an
+	// ordinary .db file.
+	Watermark     string `json:"watermark"`
+	WatermarkNote string `json:"watermarkNote"`
+	Password      string `json:"password"`
 }
 
-// IssuanceOptions describes an emission: which Distribution the copies belong to, who they
-// are for, and whether they travel protected.
-type IssuanceOptions struct {
-	// Distribution names the occasion — a lesson, a course session. Copies of one
-	// Distribution share a salt, so their Holder fingerprints are comparable with each
-	// other and meaningless outside it.
-	Distribution string `json:"distribution"`
-	// Recipients is the nominative regime: one Issued copy per name, each attributable
-	// from the moment it is produced. Empty means the collective regime — a single copy
-	// for a whole group, whose only attribution vector is its Holder registry.
-	Recipients []string `json:"recipients"`
-	// OutputDir is where a batch lands. When empty, a single copy is written to
-	// ExportOptions.ExportPath.
-	OutputDir string `json:"outputDir"`
-	// Password wraps each copy in an encrypted container. It protects the *transport* —
-	// the stray file, the forwarded attachment — never the database, since the legitimate
-	// recipient holds it.
-	Password string `json:"password"`
-	// Contents is a human summary of what was exported, kept in the Issue register so the
-	// Issuer knows months later what a given copy actually contained.
-	Contents string `json:"contents"`
-}
-
-// IssuedCopy is one file produced by an emission, as reported back to the caller.
-type IssuedCopy struct {
-	Path      string `json:"path"`
-	Recipient string `json:"recipient,omitempty"`
-	Number    int    `json:"number"`
-	Total     int    `json:"total"`
-	Encrypted bool   `json:"encrypted"`
-	Signature string `json:"signature"`
-}
-
-// HolderInfo is one machine that opened an Issued copy, as displayed.
-type HolderInfo struct {
-	Fingerprint string `json:"fingerprint"`
-	FirstSeen   string `json:"firstSeen"`
-	LastSeen    string `json:"lastSeen"`
-	Openings    int    `json:"openings"`
-}
-
-// WatermarkInfo is a Watermark as displayed, together with what verification concluded
-// about it. SignatureValid says the document was not altered and was not forged;
-// IssuedByYou says it was signed by this machine's own identity, which is how the person
-// examining a copy that came back closes the loop without having published anything.
+// WatermarkInfo is a Watermark as displayed, with what verification concluded about it.
+// SignatureValid says the document was not altered and was not forged; IssuedByYou says it
+// was signed by this machine's own identity.
 type WatermarkInfo struct {
-	Distribution      string `json:"distribution"`
+	Origin            string `json:"origin"`
 	IssuerName        string `json:"issuerName"`
 	IssuerFingerprint string `json:"issuerFingerprint"`
-	Recipient         string `json:"recipient,omitempty"`
-	Number            int    `json:"number,omitempty"`
-	Total             int    `json:"total,omitempty"`
+	Note              string `json:"note,omitempty"`
 	IssuedAt          string `json:"issuedAt"`
-	Nominative        bool   `json:"nominative"`
 	SignatureValid    bool   `json:"signatureValid"`
 	IssuedByYou       bool   `json:"issuedByYou"`
 }
 
-// IssueRecordInfo is one line of the Issue register, as displayed. It carries the
-// Distribution password, which is precisely why it never leaves the Issuer's database.
-type IssueRecordInfo struct {
-	Distribution string `json:"distribution"`
-	Recipient    string `json:"recipient,omitempty"`
-	Number       int    `json:"number,omitempty"`
-	Total        int    `json:"total,omitempty"`
-	IssuedAt     string `json:"issuedAt"`
-	FileName     string `json:"fileName,omitempty"`
-	Contents     string `json:"contents,omitempty"`
-	Password     string `json:"password,omitempty"`
-	Signature    string `json:"signature"`
-}
-
-// IssuanceInfo is everything a database can say about how it was handed out and where it
-// came from: the Watermark it carries if it is an Issued copy, the machines that have
-// opened it, the Watermarks it inherited by importing Issued copies, and the register of
-// copies it has itself produced.
+// IssuanceInfo is everything a database says about where it came from. There is nothing
+// else to report: no recipient, no holder, no history — the recipient's side records
+// nothing, by design (ADR-0007).
 type IssuanceInfo struct {
-	IsIssuedCopy bool           `json:"isIssuedCopy"`
-	Watermark    *WatermarkInfo `json:"watermark,omitempty"`
-	// ChainIntact reports that the Holder registry still reads as an unbroken sequence.
-	// It catches an entry removed from the middle; nothing on a plain SQLite file could
-	// catch the whole document being deleted.
-	ChainIntact bool              `json:"chainIntact"`
-	Holders     []HolderInfo      `json:"holders,omitempty"`
-	Lineage     []WatermarkInfo   `json:"lineage,omitempty"`
-	Issued      []IssueRecordInfo `json:"issued,omitempty"`
-	// IssuerFingerprint is this machine's own identity, shown so an Issuer can read it off
-	// and give it to their recipients.
+	Watermarked bool           `json:"watermarked"`
+	Watermark   *WatermarkInfo `json:"watermark,omitempty"`
+	// IssuerFingerprint and IssuerName describe this machine's own identity, shown so a
+	// producer can read their fingerprint off and publish it. Empty until they first
+	// watermark something.
 	IssuerFingerprint string `json:"issuerFingerprint,omitempty"`
 	IssuerName        string `json:"issuerName,omitempty"`
 }

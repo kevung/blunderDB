@@ -61,12 +61,8 @@ type (
 	MoveAnalysis         = domain.MoveAnalysis
 	MatchMovePosition    = domain.MatchMovePosition
 
-	IssuanceOptions = domain.IssuanceOptions
-	IssuanceInfo    = domain.IssuanceInfo
-	IssuedCopy      = domain.IssuedCopy
-	WatermarkInfo   = domain.WatermarkInfo
-	HolderInfo      = domain.HolderInfo
-	IssueRecordInfo = domain.IssueRecordInfo
+	IssuanceInfo  = domain.IssuanceInfo
+	WatermarkInfo = domain.WatermarkInfo
 )
 
 // InitializePosition returns the standard starting position.

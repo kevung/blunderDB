@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 )
 
 func mustIdentity(t *testing.T, name string) *Identity {
@@ -29,35 +28,61 @@ func mustSeal(t *testing.T, id *Identity, w Watermark) Envelope {
 
 func TestSealRoundTrip(t *testing.T) {
 	id := mustIdentity(t, "Jean Dupont")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours du 12 mars", Recipient: "Kévin Unger", Number: 7, Total: 24})
+	env := mustSeal(t, id, Watermark{
+		Origin: "Cours de Jean Dupont — 12 mars 2026",
+		Note:   "Merci de ne pas rediffuser.",
+	})
 
 	if !env.Verify() {
 		t.Fatal("a freshly sealed watermark must verify")
 	}
 	if !env.VerifiedBy(id.Fingerprint()) {
-		t.Fatal("the issuer must recognise their own watermark")
+		t.Fatal("the producer must recognise their own mark")
 	}
 	w, err := env.Open()
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
-	if w.Recipient != "Kévin Unger" || w.Number != 7 || w.IssuerName != "Jean Dupont" {
+	if w.Origin != "Cours de Jean Dupont — 12 mars 2026" || w.IssuerName != "Jean Dupont" {
 		t.Fatalf("watermark did not survive the round trip: %+v", w)
 	}
-	if !w.Nominative() {
-		t.Fatal("a watermark naming a recipient is nominative")
+	if w.Note != "Merci de ne pas rediffuser." {
+		t.Fatalf("the note must travel: %q", w.Note)
 	}
-	if w.Salt == "" || w.CopyID == "" || w.IssuedAt == "" {
-		t.Fatalf("Seal must fill salt, copy id and date: %+v", w)
+	if w.IssuedAt == "" {
+		t.Fatal("Seal must stamp the date")
 	}
 }
 
-// An accented recipient name is the canonical way a re-serialising implementation breaks:
-// the signature must be checked against the stored bytes, never against a re-marshalled
-// struct.
+// A watermark states an origin and nothing else: no recipient, no identifier, nothing
+// derived from the machine that produced it. Two marks made from the same identity for the
+// same origin must be indistinguishable apart from their timestamp.
+func TestWatermarkCarriesNothingButWhatWasWritten(t *testing.T) {
+	id := mustIdentity(t, "Jean Dupont")
+	env := mustSeal(t, id, Watermark{Origin: "Cours", IssuedAt: "2026-03-12T10:00:00Z"})
+
+	var fields map[string]any
+	if err := json.Unmarshal([]byte(env.Payload), &fields); err != nil {
+		t.Fatalf("unmarshal payload: %v", err)
+	}
+	want := map[string]bool{"version": true, "origin": true, "issuerName": true, "issuedAt": true}
+	for k := range fields {
+		if !want[k] {
+			t.Fatalf("unexpected field %q in a watermark: %v", k, fields)
+		}
+	}
+
+	twin := mustSeal(t, id, Watermark{Origin: "Cours", IssuedAt: "2026-03-12T10:00:00Z"})
+	if twin.Payload != env.Payload {
+		t.Fatalf("two identical marks must be identical:\n%s\n%s", env.Payload, twin.Payload)
+	}
+}
+
+// An accented origin is the canonical way a re-serialising implementation breaks: the
+// signature must be checked against the stored bytes, never a re-marshalled struct.
 func TestSealVerifiesAgainstStoredBytes(t *testing.T) {
 	id := mustIdentity(t, "Émetteur")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours élève", Recipient: "Céline Œuvré"})
+	env := mustSeal(t, id, Watermark{Origin: "Cours élève — Céline Œuvré"})
 
 	stored, err := EncodeEnvelope(env)
 	if err != nil {
@@ -71,46 +96,58 @@ func TestSealVerifiesAgainstStoredBytes(t *testing.T) {
 		t.Fatal("a stored and reloaded watermark must still verify")
 	}
 	w, _ := back.Open()
-	if w.Recipient != "Céline Œuvré" {
-		t.Fatalf("accented recipient mangled: %q", w.Recipient)
+	if w.Origin != "Cours élève — Céline Œuvré" {
+		t.Fatalf("accented origin mangled: %q", w.Origin)
 	}
 }
 
 func TestTamperedWatermarkFailsVerification(t *testing.T) {
 	id := mustIdentity(t, "Jean Dupont")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours", Recipient: "Kévin"})
+	env := mustSeal(t, id, Watermark{Origin: "Cours de Jean"})
 
 	altered := env
-	altered.Payload = strings.Replace(env.Payload, "Kévin", "Marc!", 1)
-	if len(altered.Payload) == len(env.Payload) && altered.Payload == env.Payload {
+	altered.Payload = strings.Replace(env.Payload, "Cours de Jean", "Cours de Marc", 1)
+	if altered.Payload == env.Payload {
 		t.Fatal("test setup: payload was not altered")
 	}
 	if altered.Verify() {
-		t.Fatal("a rewritten recipient must break the signature")
+		t.Fatal("rewriting the origin must break the signature")
 	}
 }
 
-// The property the signature actually buys: nobody can produce a watermark that a given
-// issuer's fingerprint vouches for.
-func TestForgedWatermarkIsNotAttributedToIssuer(t *testing.T) {
-	issuer := mustIdentity(t, "Jean Dupont")
+// The property the signature buys: nobody can produce a mark that a given producer's
+// fingerprint vouches for.
+func TestForgedWatermarkIsNotAttributedToProducer(t *testing.T) {
+	producer := mustIdentity(t, "Jean Dupont")
 	forger := mustIdentity(t, "Jean Dupont") // same display name, different key
 
-	forged := mustSeal(t, forger, Watermark{Distribution: "Cours", Recipient: "Marc"})
+	forged := mustSeal(t, forger, Watermark{Origin: "Cours de Jean Dupont"})
 	if !forged.Verify() {
 		t.Fatal("the forgery is internally consistent — that is expected")
 	}
-	if forged.VerifiedBy(issuer.Fingerprint()) {
-		t.Fatal("a forgery must not verify against the real issuer's fingerprint")
+	if forged.VerifiedBy(producer.Fingerprint()) {
+		t.Fatal("a forgery must not verify against the real producer's fingerprint")
 	}
 }
 
-func TestCollectiveWatermarkIsNotNominative(t *testing.T) {
+func TestSealRefusesAnEmptyOrigin(t *testing.T) {
 	id := mustIdentity(t, "Jean")
-	env := mustSeal(t, id, Watermark{Distribution: "Promotion 2026"})
-	w, _ := env.Open()
-	if w.Nominative() {
-		t.Fatal("a copy with no recipient is collective")
+	if _, err := Seal(id, Watermark{Origin: "   "}); err == nil {
+		t.Fatal("a watermark with no origin marks nothing")
+	}
+	if _, err := Seal(nil, Watermark{Origin: "Cours"}); err == nil {
+		t.Fatal("sealing without an identity must fail")
+	}
+}
+
+func TestUnwatermarkedEnvelopeEncodesToNothing(t *testing.T) {
+	encoded, err := EncodeEnvelope(Envelope{})
+	if err != nil || encoded != "" {
+		t.Fatalf("expected no row for an unwatermarked file, got %q / %v", encoded, err)
+	}
+	env, err := DecodeEnvelope("")
+	if err != nil || env.IsWatermarked() {
+		t.Fatalf("an absent row must decode to nothing: %+v / %v", env, err)
 	}
 }
 
@@ -118,105 +155,17 @@ func TestCarriedIsAnAllowList(t *testing.T) {
 	got := Carried(map[string]string{
 		"user":        "Kévin",
 		"description": "Cours",
-		"issued":      `{"records":[{"password":"secret"}]}`,
 		"watermark":   "{}",
-		"holders":     "{}",
 		"surprise":    "a document added six months from now",
 	})
-	if _, ok := got[KeyIssued]; ok {
-		t.Fatal("the issue register must never travel inside an issued copy")
+	if _, ok := got[KeyWatermark]; ok {
+		t.Fatal("the watermark is written by the export itself, never copied from the source")
 	}
 	if _, ok := got["surprise"]; ok {
 		t.Fatal("an unknown key must not be carried by default")
 	}
 	if got["user"] != "Kévin" || got["description"] != "Cours" {
 		t.Fatalf("ordinary metadata must be carried: %+v", got)
-	}
-}
-
-func TestLineageInheritDeduplicates(t *testing.T) {
-	id := mustIdentity(t, "Jean")
-	first := mustSeal(t, id, Watermark{Distribution: "Cours 1", Recipient: "Kévin"})
-	second := mustSeal(t, id, Watermark{Distribution: "Cours 2", Recipient: "Kévin"})
-
-	var l Lineage
-	l = l.Inherit(first, nil)
-	l = l.Inherit(second, Lineage{first}) // second copy already carried the first
-	if len(l) != 2 {
-		t.Fatalf("re-importing must not grow the lineage: %d entries", len(l))
-	}
-	l = l.Inherit(first, nil)
-	if len(l) != 2 {
-		t.Fatalf("importing the same copy twice must be idempotent: %d entries", len(l))
-	}
-	for _, e := range l {
-		if !e.Verify() {
-			t.Fatal("inherited watermarks must still verify against their original issuer")
-		}
-	}
-}
-
-func TestLineageIgnoresUnissuedSources(t *testing.T) {
-	var l Lineage
-	if got := l.Inherit(Envelope{}, nil); len(got) != 0 {
-		t.Fatalf("importing an ordinary database must not create a lineage: %d", len(got))
-	}
-	encoded, err := EncodeLineage(nil)
-	if err != nil || encoded != "" {
-		t.Fatalf("an empty lineage must encode to nothing, got %q / %v", encoded, err)
-	}
-}
-
-func TestRegistryRecordsMachinesNotOpenings(t *testing.T) {
-	var r Registry
-	now := time.Date(2026, 3, 12, 10, 0, 0, 0, time.UTC)
-	r.Record("genesis", "aaaa", now)
-	r.Record("genesis", "aaaa", now.Add(time.Hour))
-	r.Record("genesis", "bbbb", now.Add(2*time.Hour))
-
-	if len(r.Holders) != 2 {
-		t.Fatalf("one entry per machine, not per opening: %d", len(r.Holders))
-	}
-	if r.Holders[0].Openings != 2 {
-		t.Fatalf("repeat openings must increment the counter: %d", r.Holders[0].Openings)
-	}
-	if r.Holders[0].FirstSeen == r.Holders[0].LastSeen {
-		t.Fatal("last seen must move while first seen stays put")
-	}
-	if !r.ChainIntact("genesis") {
-		t.Fatal("a registry built by Record must be intact")
-	}
-}
-
-func TestRegistryChainCatchesARemovedEntry(t *testing.T) {
-	var r Registry
-	now := time.Now()
-	for _, fp := range []string{"aaaa", "bbbb", "cccc"} {
-		r.Record("genesis", fp, now)
-	}
-	trimmed := Registry{Holders: append(append([]Holder{}, r.Holders[0]), r.Holders[2])}
-	if trimmed.ChainIntact("genesis") {
-		t.Fatal("removing a middle entry must break the chain")
-	}
-	if !r.ChainIntact("genesis") {
-		t.Fatal("the untouched registry must stay intact")
-	}
-	if r.ChainIntact("another-copy") {
-		t.Fatal("a registry must not verify against a different copy's genesis")
-	}
-}
-
-func TestMachineFingerprintIsSaltedPerDistribution(t *testing.T) {
-	a := MachineFingerprint("salt-of-course-A")
-	b := MachineFingerprint("salt-of-course-B")
-	if a == b {
-		t.Fatal("the same machine must look different across distributions")
-	}
-	if a != MachineFingerprint("salt-of-course-A") {
-		t.Fatal("the fingerprint must be stable within a distribution")
-	}
-	if strings.Contains(a, machineTraits()) {
-		t.Fatal("the fingerprint must not leak the host traits it derives from")
 	}
 }
 
@@ -249,7 +198,7 @@ func TestIdentityPersistsAndIsCreatedOnce(t *testing.T) {
 func TestLoadIdentityAbsentIsNotAnError(t *testing.T) {
 	id, err := LoadIdentity(t.TempDir())
 	if err != nil {
-		t.Fatalf("having issued nothing is the normal state: %v", err)
+		t.Fatalf("having marked nothing is the normal state: %v", err)
 	}
 	if id != nil {
 		t.Fatal("expected no identity")
@@ -277,11 +226,9 @@ func TestIdentityTransferKeepsTheSameFingerprint(t *testing.T) {
 	if moved.Fingerprint() != original.Fingerprint() {
 		t.Fatal("moving an identity between machines must preserve it — it is one person")
 	}
-	// A watermark sealed on the second machine must be indistinguishable from one sealed
-	// on the first.
-	env := mustSeal(t, moved, Watermark{Distribution: "Cours", Recipient: "Kévin"})
+	env := mustSeal(t, moved, Watermark{Origin: "Cours"})
 	if !env.VerifiedBy(original.Fingerprint()) {
-		t.Fatal("copies issued from either machine must share one fingerprint")
+		t.Fatal("marks made from either machine must share one fingerprint")
 	}
 }
 
@@ -312,7 +259,6 @@ func TestProtectedIdentityFileNeedsItsPassphrase(t *testing.T) {
 		t.Fatal("the recovered identity must be the same one")
 	}
 
-	// The seed must not be sitting in the file in the clear.
 	raw, err := os.ReadFile(file)
 	if err != nil {
 		t.Fatalf("read: %v", err)
@@ -345,60 +291,6 @@ func TestRenameKeepsTheKey(t *testing.T) {
 	}
 }
 
-func TestIssueRegisterLooksUpAFoundCopy(t *testing.T) {
-	id := mustIdentity(t, "Jean")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours du 12 mars", Recipient: "Kévin", Number: 7, Total: 24})
-
-	var reg IssueRegister
-	reg.Add(IssueRecord{
-		Distribution: "Cours du 12 mars", Recipient: "Kévin", Number: 7, Total: 24,
-		Signature: env.Signature, Password: "le-mot-de-passe",
-	}, time.Now())
-
-	found, ok := reg.Find(env.Signature)
-	if !ok {
-		t.Fatal("a copy that comes back must be found in the register")
-	}
-	if found.Recipient != "Kévin" || found.Password != "le-mot-de-passe" {
-		t.Fatalf("unexpected record: %+v", found)
-	}
-	if _, ok := reg.Find("somebody else's signature"); ok {
-		t.Fatal("an unrelated copy must not match")
-	}
-	if got := reg.Distributions(); len(got) != 1 || got[0] != "Cours du 12 mars" {
-		t.Fatalf("unexpected distributions: %v", got)
-	}
-}
-
-func TestSaltIsSharedAcrossOneDistribution(t *testing.T) {
-	id := mustIdentity(t, "Jean")
-	first := mustSeal(t, id, Watermark{Distribution: "Cours", Recipient: "A"})
-	w, _ := first.Open()
-
-	var reg IssueRegister
-	reg.Add(IssueRecord{Distribution: "Cours", Signature: first.Signature, Salt: w.Salt, Number: 1}, time.Now())
-
-	if got := reg.SaltFor("Cours"); got != w.Salt {
-		t.Fatalf("copies of one distribution must share a salt: %q vs %q", got, w.Salt)
-	}
-	if got := reg.SaltFor("Un autre cours"); got != "" {
-		t.Fatalf("a different distribution must get its own salt, got %q", got)
-	}
-	if got := reg.NextNumber("Cours"); got != 2 {
-		t.Fatalf("a second batch must continue the numbering, got %d", got)
-	}
-	if got := reg.NextNumber("Un autre cours"); got != 1 {
-		t.Fatalf("a new distribution starts at one, got %d", got)
-	}
-
-	// Sharing the salt is what makes two leaks comparable.
-	second := mustSeal(t, id, Watermark{Distribution: "Cours", Recipient: "B", Salt: w.Salt})
-	w2, _ := second.Open()
-	if MachineFingerprint(w.Salt) != MachineFingerprint(w2.Salt) {
-		t.Fatal("one machine must look the same in two copies of the same distribution")
-	}
-}
-
 func TestContainerHeaderIsReadableWithoutThePassword(t *testing.T) {
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "cours.db")
@@ -406,7 +298,7 @@ func TestContainerHeaderIsReadableWithoutThePassword(t *testing.T) {
 		t.Fatalf("write: %v", err)
 	}
 	id := mustIdentity(t, "Jean Dupont")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours du 12 mars", Recipient: "Kévin", Number: 7})
+	env := mustSeal(t, id, Watermark{Origin: "Cours de Jean Dupont — 12 mars 2026"})
 
 	out := filepath.Join(dir, "cours"+ContainerExtension)
 	if err := WrapContainer(dbPath, out, env, "le-mot-de-passe"); err != nil {
@@ -419,7 +311,6 @@ func TestContainerHeaderIsReadableWithoutThePassword(t *testing.T) {
 		t.Fatal("an ordinary database must not look protected")
 	}
 
-	// The whole point: a copy found in the wild is identifiable without decrypting it.
 	header, err := ReadContainerHeader(out)
 	if err != nil {
 		t.Fatalf("ReadContainerHeader: %v", err)
@@ -428,17 +319,35 @@ func TestContainerHeaderIsReadableWithoutThePassword(t *testing.T) {
 		t.Fatal("the cleartext header must carry a verifiable watermark")
 	}
 	w, _ := header.Watermark.Open()
-	if w.Recipient != "Kévin" {
-		t.Fatalf("unexpected recipient in header: %q", w.Recipient)
+	if w.Origin != "Cours de Jean Dupont — 12 mars 2026" {
+		t.Fatalf("unexpected origin in header: %q", w.Origin)
 	}
 
-	// …and the payload really is encrypted.
 	raw, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatalf("read: %v", err)
 	}
 	if strings.Contains(string(raw), "pretend this is a database") {
 		t.Fatal("the database must not be readable in the container")
+	}
+}
+
+func TestContainerWithoutAWatermark(t *testing.T) {
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "cours.db")
+	if err := os.WriteFile(dbPath, []byte("SQLite format 3\x00"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	out := filepath.Join(dir, "cours"+ContainerExtension)
+	if err := WrapContainer(dbPath, out, Envelope{}, "pw"); err != nil {
+		t.Fatalf("a password without a watermark is a valid combination: %v", err)
+	}
+	header, err := ReadContainerHeader(out)
+	if err != nil {
+		t.Fatalf("ReadContainerHeader: %v", err)
+	}
+	if header.Watermark.IsWatermarked() {
+		t.Fatal("expected no watermark in the header")
 	}
 }
 
@@ -450,7 +359,7 @@ func TestContainerRoundTrip(t *testing.T) {
 		t.Fatalf("write: %v", err)
 	}
 	id := mustIdentity(t, "Jean")
-	env := mustSeal(t, id, Watermark{Distribution: "Cours"})
+	env := mustSeal(t, id, Watermark{Origin: "Cours"})
 	out := filepath.Join(dir, "cours"+ContainerExtension)
 	if err := WrapContainer(dbPath, out, env, "s3cret"); err != nil {
 		t.Fatalf("WrapContainer: %v", err)

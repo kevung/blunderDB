@@ -779,108 +779,62 @@ Le panneau **Métadonnées** affiche les informations générales de la base de
 données courante : nom, description, nombre de positions, nombre de matchs et
 de parties, version du schéma. Accessible via la commande ``meta``.
 
-Il affiche également, **lorsqu'elles existent**, les informations de diffusion
-décrites à la section :ref:`diffusion_controlee` : le filigrane de l'exemplaire
-reçu, son registre de détenteurs, le contenu hérité d'exemplaires importés et le
-registre des exemplaires émis depuis cette base. Une base ordinaire n'affiche
-aucune de ces sections.
+Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir
+:ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette section.
 
 .. _diffusion_controlee:
 
-Diffusion contrôlée d'une base
-------------------------------
+Diffuser une base : origine et mot de passe
+-------------------------------------------
 
-Un enseignant qui distribue une base de positions à ses élèves peut vouloir
-qu'elle ne circule pas au-delà de ses destinataires. blunderDB ne peut pas l'en
-empêcher — et ne le prétend pas. Le fichier distribué est une base SQLite
-ordinaire, et blunderDB est un logiciel libre : toute restriction se contourne.
-Ce que blunderDB apporte est **l'attribution** : un exemplaire qui fuite désigne
-son émission d'origine.
-
-La promesse est exactement celle-ci :
+Un enseignant qui distribue une base de positions dispose de deux mécanismes,
+indépendants l'un de l'autre, tous deux facultatifs et choisis **au moment de
+l'export** : marquer le fichier de son origine, et le protéger par un mot de
+passe.
 
 .. note::
 
-   Un filigrane est **inaltérable et infalsifiable, jamais ineffaçable**. Il ne
-   peut pas être modifié, et personne ne peut en fabriquer un au nom d'autrui —
-   donc nul ne peut être accusé à tort. Un détenteur décidé à l'effacer y
-   parviendra. Le dispositif sert à trancher un litige, pas à interdire un
-   partage.
+   Aucun des deux ne suit ce que devient le fichier. blunderDB **n'enregistre
+   rien du côté de celui qui reçoit la base** : ouvrir une base marquée est
+   exactement comme ouvrir n'importe quelle autre, et rien nulle part ne
+   consigne qui l'a ouverte, quand, ni d'où vient son contenu.
 
-Émettre des exemplaires
-~~~~~~~~~~~~~~~~~~~~~~~
+Marquer une base de son origine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Un filigrane ne se pose qu'**à l'export** : modifier une base et en envoyer le
-fichier ne produit pas un exemplaire, car rien dans ce geste n'indique à qui il
-est destiné.
+Dans la fenêtre d'export, cocher **Marquer ce fichier de son origine** fait
+apparaître deux champs :
 
-Dans la fenêtre d'export, cocher **Filigraner cet export** fait apparaître trois
-champs :
+* **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
+  « Cours de Jean Dupont — 12 mars 2026 ».
+* **Note**, facultative — conditions d'utilisation, adresse de contact, une
+  demande de ne pas rediffuser.
 
-* **Nom de la diffusion** — l'occasion : « Cours du 12 mars 2026 ». Tous les
-  exemplaires d'une même diffusion sont rattachés entre eux.
-* **Destinataires**, un par ligne — un exemplaire par destinataire, chacun
-  attribuable dès son émission. Laisser le champ vide produit un **exemplaire
-  collectif** unique, filigrané au nom de la diffusion et non d'une personne.
-* **Mot de passe**, facultatif — voir plus bas.
-
-Avec plusieurs destinataires, blunderDB écrit un fichier par personne dans le
-dossier choisi, nommé d'après la diffusion et le destinataire. Émettre une
-seconde fois pour la même diffusion continue la numérotation au lieu de la
-recommencer.
-
-Chaque émission est consignée dans le **registre des exemplaires émis**, visible
-dans le panneau Métadonnées de la base d'origine. Ce registre **ne quitte jamais
-cette base** : il contient la liste de tous les destinataires ainsi que les mots
-de passe des diffusions, et n'est donc jamais recopié dans un exemplaire.
+La marque est signée avec votre identité d'émetteur. Elle est donc
+**inaltérable et infalsifiable** : nul ne peut la modifier, ni en fabriquer une
+à votre nom. Elle n'est en revanche **pas ineffaçable** — le fichier distribué
+est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
+n'empêche rien : elle dit d'où vient le fichier.
 
 Identité d'émetteur
 ~~~~~~~~~~~~~~~~~~~
 
-Les filigranes sont signés avec votre **identité d'émetteur**, créée toute seule
-à la première émission ; il n'y a rien à configurer. Elle appartient à une
-personne et non à une base : tous vos exemplaires portent la même empreinte
-publique, de la forme ``A3F1-9C24-7B05-E1D8``.
+Les marques sont signées avec votre **identité d'émetteur**, créée toute seule
+la première fois que vous marquez un fichier ; il n'y a rien à configurer. Elle
+appartient à une personne et non à une base : tous vos fichiers portent la même
+empreinte publique, de la forme ``A3F1-9C24-7B05-E1D8``.
 
 Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils
-vérifient qu'un fichier vient bien de vous. Ce n'est pas indispensable : celui
-qui examine un exemplaire retrouvé est normalement celui qui l'a signé, et
-blunderDB lui indique directement « émis par vous ».
+vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un poste
+à l'autre en un seul fichier (extension ``.bdbid``), éventuellement protégé par
+une phrase secrète. **Ce fichier permet de signer en votre nom : ne le partagez
+pas.**
 
-L'identité se transporte d'un poste à l'autre en un seul fichier (extension
-``.bdbid``), éventuellement protégé par une phrase secrète. **Ce fichier permet
-de signer en votre nom : ne le partagez pas.**
+Protéger une base par un mot de passe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Registre de détenteurs
-~~~~~~~~~~~~~~~~~~~~~~
-
-Lorsqu'un exemplaire est ouvert comme base de travail dans l'application de
-bureau, blunderDB y inscrit une ligne par **machine distincte** — jamais une
-ligne par ouverture. L'empreinte enregistrée est un condensat non réversible :
-elle ne révèle aucun nom, elle permet seulement de constater qu'un exemplaire a
-voyagé, et de comparer deux exemplaires d'une même diffusion.
-
-Rien n'est demandé au détenteur, aucune fenêtre ne s'ouvre. Le registre est
-consultable dans le panneau Métadonnées, et le présent manuel en décrit le
-fonctionnement : le dispositif est discret, il n'est pas dissimulé.
-
-Ni la ligne de commande ni le mode serveur n'écrivent dans ce registre ;
-examiner un fichier suspect ne l'altère donc jamais.
-
-Contenu hérité (filiation)
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Importer un exemplaire reçu dans sa propre base est un usage parfaitement
-légitime — et c'est aussi la façon la plus simple de perdre un filigrane,
-puisque les positions circulent par leur empreinte Zobrist. blunderDB recopie
-donc le filigrane d'origine dans la base réceptrice, et tout export ultérieur
-l'emporte avec lui.
-
-Mot de passe : ce qu'il protège
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Un exemplaire peut être protégé par un mot de passe. Le fichier produit porte
-l'extension ``.bdbx``. À la première ouverture, blunderDB demande le mot de
+Cocher **Protéger ce fichier par un mot de passe** produit un fichier
+d'extension ``.bdbx``. À la première ouverture, blunderDB demande le mot de
 passe une seule fois et installe une base ordinaire ; ensuite plus rien n'est
 demandé.
 
@@ -888,20 +842,20 @@ demandé.
 
    Le mot de passe protège le **transport** du fichier, pas la base. Il empêche
    un tiers d'ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-   une pièce jointe transférée par erreur. Il ne protège pas du destinataire
-   légitime, qui détient le mot de passe — c'est le filigrane qui joue ce rôle.
+   une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
+   avez donné le mot de passe.
 
-L'en-tête d'un exemplaire protégé reste **en clair** : un fichier retrouvé
-demeure identifiable sans son mot de passe.
+L'en-tête du fichier protégé reste **en clair** : son origine demeure lisible
+sans le mot de passe.
 
-Identifier un exemplaire retrouvé
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Lire l'origine d'un fichier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-En ligne de commande, ``blunderdb info --db fichier.db`` affiche le filigrane,
-l'état de la signature, le registre des détenteurs et la filiation, **sans jamais
-écrire dans le fichier**. La commande fonctionne aussi sur un exemplaire
-protégé, sans le mot de passe. Voir ``CLI_USAGE.md`` pour les commandes
-``issue``, ``identity`` et ``open``.
+En ligne de commande, ``blunderdb info --db fichier.db`` affiche l'origine et
+l'état de la signature, **sans jamais écrire dans le fichier**. La commande
+fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
+``CLI_USAGE.md`` pour les options ``--watermark`` et ``--password`` de
+``export``, ainsi que pour ``identity`` et ``open``.
 
 .. _panneau_log:
 

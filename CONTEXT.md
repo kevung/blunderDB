@@ -95,58 +95,33 @@ and the empty scope denotes the desktop's single implicit Tenant. "Scope" and
 
 ### Handing a database to someone else
 
-**Distribution**:
-One occasion on which a database is handed out — a lesson, a course session, a pack of
-exercises — covering every copy produced for it. It names the *occasion*, not the file:
-one Distribution yields either twenty-four Issued copies, one per recipient, or a single
-copy meant for a whole group.
-
-**Issuer** / **Holder**:
-The person who produced an Issued copy, and whoever has it in hand afterwards. The Issuer
-of a copy is fixed at the moment it is produced; its Holders are discovered later, and
-there may be more of them than the Issuer intended.
-
-**Issued copy**:
-A database file made for someone else to hold, carrying a Watermark. Only an export
-produces one: editing a database in place and sending the file never yields an Issued copy,
-because nothing in that gesture states who it is for.
-_Avoid_: shared database, distributed file — the point is that it was *issued*, by someone,
-on an occasion.
-
 **Watermark**:
-The Issuer's sealed assertion inside an Issued copy: which Distribution it belongs to, who
-issued it, and — in the nominative regime — which recipient it was made for. It is the
-mirror image of the database's own metadata: `user` and `description` belong to the Holder
-and are theirs to edit, a Watermark belongs to the Issuer and is read-only everywhere else.
+The producer's signed statement of where a database comes from — what it is, who made it,
+and whatever they chose to attach to it (terms of use, a contact address). It is applied at
+export and nowhere else, and it is the mirror image of the database's own metadata: `user`
+and `description` belong to the Holder and are theirs to edit, a Watermark belongs to the
+producer and is read-only everywhere else.
 It is **tamper-evident and unforgeable, never unremovable** — a Holder with SQL tools can
 delete it, and the design says so out loud rather than pretending otherwise.
-_Avoid_: licence, DRM, protection — a Watermark forbids nothing; it attributes.
+_Avoid_: licence, DRM, protection — a Watermark forbids nothing and identifies nobody; it
+attributes a file to its source.
 
 **Issuer identity**:
 The durable identity a Watermark is signed with. It belongs to a person, not to a database:
-every copy the same Issuer produces carries the same public fingerprint, which is what lets
-a copy found in the wild be traced back to one emission. It comes into existence without
-being asked for, and moves from one machine to another as a single file.
+every file the same producer marks carries the same public fingerprint, which is what lets a
+recipient check that a file really came from them. It comes into existence without being
+asked for, on the first watermarked export, and moves from one machine to another as a
+single file.
 
-**Holder registry**:
-The record, inside an Issued copy, of the distinct machines that have opened it — one entry
-per machine, never one per opening. It answers "how far has this copy travelled", not "who
-is this person": entries are pseudonymous fingerprints, comparable within a Distribution and
-meaningless outside it. It grows only when the copy is opened as a working database in the
-desktop app; inspecting a copy never adds to it, so examining a suspect file cannot
-contaminate it.
-_Avoid_: log, journal, audit trail — it is a set of holders, not a history of events.
+**Protected file**:
+An exported database wrapped in an encrypted container, opened once with a password and
+thereafter an ordinary database. It protects the file **in transit** — the stray copy, the
+attachment forwarded by mistake — not the database, since whoever the password was given to
+can open it. Its header is cleartext, so a Watermark stays readable without the password.
 
-**Issue register**:
-The Issuer's own list of the copies they produced, kept in the database they issued from.
-It never travels inside an Issued copy — it is the one place where the recipients of a whole
-Distribution appear together, and shipping it to a recipient would hand them the list.
-
-**Lineage**:
-The Watermarks an ordinary database inherited by importing Issued copies into it. Importing
-a course into one's own database is a normal, supported gesture, and it is also the easiest
-way to strip a Watermark; Lineage is what keeps the trace attached to the result, so the
-default path through the product does not launder it.
+**What is deliberately absent**:
+Nothing records who holds a database, who opened it, or where its contents came from. The
+recipient's side writes nothing at all. This is a decision, not an omission: see ADR-0007.
 
 ## The host environment
 

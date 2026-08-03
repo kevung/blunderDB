@@ -27,6 +27,9 @@ func (cli *CLI) runExport(args []string) error {
 	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
 	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export")
+	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
+	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
+	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .bdbx container)")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -60,6 +63,10 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Export with specific tournaments")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
+		fmt.Println()
+		fmt.Println("  # Mark the exported file with its origin, and protect it with a password")
+		fmt.Println("  blunderdb export --db database.db --type database --file cours.db \\")
+		fmt.Println("      --watermark \"Cours de Jean Dupont - 12 mars 2026\" --password secret")
 		fmt.Println()
 		fmt.Println("  # Export positions to text file")
 		fmt.Println("  blunderdb export --db database.db --type positions --file positions.txt")
@@ -132,15 +139,17 @@ func (cli *CLI) runExport(args []string) error {
 	}
 
 	// Perform export based on type
+	marking := exportMarking{watermark: *watermark, note: *watermarkNote, password: *password}
+
 	switch strings.ToLower(*exportType) {
 	case "database":
 		return cli.exportDatabaseWithOptions(*outputFile, *includeAnalysis, *includeComments,
 			*includeFilterLibrary, *includePlayedMoves, *includeMatches,
-			*includeCollections, collectionIDs, matchIDs, tournamentIDs)
+			*includeCollections, collectionIDs, matchIDs, tournamentIDs, marking)
 	case "positions":
 		return cli.exportPositions(*outputFile)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile)
+		return cli.exportMatchesOnly(*outputFile, marking)
 	case "mat":
 		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir)
 	default:
@@ -227,9 +236,19 @@ func fileExists(path string) bool {
 }
 
 // exportDatabaseWithOptions exports the database with configurable options
+// exportMarking bundles the two optional mechanisms an export can carry: a signed statement
+// of where the file comes from, and a password around it. Both are the producer's choice and
+// neither makes the recipient's side write anything.
+type exportMarking struct {
+	watermark string
+	note      string
+	password  string
+}
+
 func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
 	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
-	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64) error {
+	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64,
+	marking exportMarking) error {
 	fmt.Printf("Exporting database to: %s\n", outputFile)
 
 	// Get all positions
@@ -259,6 +278,9 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		CollectionIDs:        collectionIDs,
 		MatchIDs:             matchIDs,
 		TournamentIDs:        tournamentIDs,
+		Watermark:            marking.watermark,
+		WatermarkNote:        marking.note,
+		Password:             marking.password,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
@@ -276,7 +298,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 }
 
 // exportMatchesOnly exports only the matches to a new database
-func (cli *CLI) exportMatchesOnly(outputFile string) error {
+func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) error {
 	fmt.Printf("Exporting matches to: %s\n", outputFile)
 
 	// Get matches count first

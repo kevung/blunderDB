@@ -24,6 +24,28 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		return fmt.Errorf("no database is currently open")
 	}
 
+	// Seal the watermark before writing anything: it is the producer's statement about this
+	// file, and a failure to sign must not leave a half-made export behind.
+	watermarkDocument, err := sealWatermark(strings.TrimSpace(opts.Watermark), strings.TrimSpace(opts.WatermarkNote))
+	if err != nil {
+		return fmt.Errorf("cannot sign the watermark: %w", err)
+	}
+
+	// A password-protected export is built as an ordinary database first, then wrapped. The
+	// intermediate file is removed whether or not wrapping succeeds — it is the whole
+	// database, unprotected, sitting next to the protected copy.
+	finalPath := opts.ExportPath
+	if opts.Password != "" {
+		opts.ExportPath = finalPath + ".plain"
+		defer func() {
+			if _, statErr := os.Stat(opts.ExportPath); statErr == nil {
+				if rmErr := os.Remove(opts.ExportPath); rmErr != nil {
+					slog.Warn("removing the intermediate export", "path", opts.ExportPath, "err", rmErr)
+				}
+			}
+		}()
+	}
+
 	// Delete the export file if it already exists
 	if _, err := os.Stat(opts.ExportPath); err == nil {
 		// File exists, remove it
@@ -295,19 +317,12 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		}
 	}
 
-	// The issuance documents, when this export is an Issued copy. They are written verbatim:
-	// the signature is over these exact bytes. The Holder registry is deliberately not
-	// carried — a fresh copy has no holders yet, and the source's would name machines that
-	// never saw this file.
-	for key, doc := range map[string]string{
-		issuance.KeyWatermark: opts.WatermarkDocument,
-		issuance.KeyLineage:   opts.LineageDocument,
-	} {
-		if doc == "" {
-			continue
-		}
-		if _, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, doc); err != nil {
-			return fmt.Errorf("cannot write the %s document into the exported copy: %w", key, err)
+	// The watermark, when the producer asked for one. It is written verbatim: the signature
+	// is over these exact bytes.
+	if watermarkDocument != "" {
+		if _, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`,
+			issuance.KeyWatermark, watermarkDocument); err != nil {
+			return fmt.Errorf("cannot write the watermark into the exported file: %w", err)
 		}
 	}
 
@@ -861,6 +876,23 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	}
 
 	slog.Info("exported positions", "count", len(opts.Positions), "path", opts.ExportPath)
+
+	// Wrap the finished database in its encrypted container. exportDB still holds the file
+	// open, so close it first: the last pages may not have been flushed, and on Windows a
+	// file with an open handle cannot be read wholesale.
+	if opts.Password != "" {
+		if err := exportDB.Close(); err != nil {
+			return fmt.Errorf("cannot finalise the exported database: %w", err)
+		}
+		env, err := issuance.DecodeEnvelope(watermarkDocument)
+		if err != nil {
+			return err
+		}
+		if err := issuance.WrapContainer(opts.ExportPath, finalPath, env, opts.Password); err != nil {
+			return err
+		}
+		slog.Info("protected the exported database", "path", finalPath)
+	}
 	return nil
 }
 

@@ -18,12 +18,13 @@ export const exportOptionsStore = writable({
     includeTournamentIDs: [],
     includeCollections: false,
     collectionIDs: [],
-    // Issuance: off by default, so an ordinary export stays exactly what it was. A
-    // watermark can only be posed here, at export, because nothing else in the product
-    // states who a copy is for. See ADR-0007.
-    watermark: false,
-    distribution: '',
-    recipients: '',
+    // Two optional, independent mechanisms, both off by default so an ordinary export
+    // stays exactly what it was: mark where the file comes from, and protect it with a
+    // password. See ADR-0007.
+    watermarkEnabled: false,
+    watermark: '',
+    watermarkNote: '',
+    passwordEnabled: false,
     password: ''
 });
 export const exportMatchesStore = writable([]);
@@ -42,9 +43,10 @@ export function resetExportState() {
         includeTournamentIDs: [],
         includeCollections: false,
         collectionIDs: [],
-        watermark: false,
-        distribution: '',
-        recipients: '',
+        watermarkEnabled: false,
+        watermark: '',
+        watermarkNote: '',
+        passwordEnabled: false,
         password: ''
     });
     exportMatchesStore.set([]);

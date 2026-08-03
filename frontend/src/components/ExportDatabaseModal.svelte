@@ -261,28 +261,37 @@
                     </div>
                 </div>
 
-                <!-- Issuance. Off by default: an ordinary export stays exactly what it was.
-                     A watermark can only be posed here, because nothing else in the product
-                     states who a copy is for. See ADR-0007. -->
+                <!-- Two independent, optional mechanisms, both the producer's choice and
+                     both off by default: mark where the file comes from, and protect it
+                     with a password. Neither makes the recipient's side record anything.
+                     See ADR-0007. -->
                 <div class="checkbox-group issuance-toggle">
                     <div class="checkbox-item">
-                        <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermark} />
+                        <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
                         <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
+                        <label for="export-protect">{$t('issuance.enablePassword')}</label>
                     </div>
                 </div>
 
-                {#if exportOptions.watermark}
+                {#if exportOptions.watermarkEnabled}
                     <div class="issuance-section">
                         <p class="issuance-note">{$t('issuance.watermarkNote')}</p>
                         <div class="form-group">
-                            <label for="export-distribution">{$t('issuance.distributionLabel')}</label>
-                            <input id="export-distribution" type="text" bind:value={exportOptions.distribution} placeholder={$t('issuance.distributionPlaceholder')} />
+                            <label for="export-origin">{$t('issuance.originLabel')}</label>
+                            <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
                         </div>
                         <div class="form-group">
-                            <label for="export-recipients">{$t('issuance.recipientsLabel')}</label>
-                            <textarea id="export-recipients" rows="4" bind:value={exportOptions.recipients}></textarea>
-                            <p class="issuance-hint">{$t('issuance.recipientsHint')}</p>
+                            <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
+                            <input id="export-watermark-note" type="text" bind:value={exportOptions.watermarkNote} placeholder={$t('issuance.notePlaceholder')} />
                         </div>
+                    </div>
+                {/if}
+
+                {#if exportOptions.passwordEnabled}
+                    <div class="issuance-section">
                         <div class="form-group">
                             <label for="export-password">{$t('issuance.passwordLabel')}</label>
                             <input id="export-password" type="text" bind:value={exportOptions.password} />

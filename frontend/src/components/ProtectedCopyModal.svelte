@@ -1,7 +1,7 @@
 <script>
-    // Asks for the password of a protected copy. This is the ONE prompt the recipient of a
-    // watermarked copy ever sees: once opened, the result is an ordinary database and
-    // nothing in the product interrupts them again. See ADR-0007.
+    // Asks for the password of a protected file. This is the ONE prompt a recipient ever
+    // sees: once opened, the result is an ordinary database, nothing further is asked, and
+    // nothing about the opening is recorded anywhere. See ADR-0007.
     import { onMount, onDestroy } from 'svelte';
     import { trapFocus } from '../utils/focusTrap.js';
     import { t } from '../i18n';

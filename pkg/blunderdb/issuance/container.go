@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// ContainerExtension is the extension of an encrypted Issued copy.
+// ContainerExtension is the extension of a password-protected copy.
 const ContainerExtension = ".bdbx"
 
 var containerMagic = []byte("BDBX\x01")
@@ -21,13 +21,13 @@ var containerMagic = []byte("BDBX\x01")
 // memory on a machine that has none to spare.
 const maxContainerPayload = 2 << 30 // 2 GiB
 
-// ContainerHeader travels **in the clear** at the head of an encrypted Issued copy. That is
-// deliberate and it is the whole point of encrypting the transport rather than the database:
-// a copy found on a forum stays identifiable without anybody having to decrypt it.
+// ContainerHeader travels **in the clear** at the head of a protected copy. That is
+// deliberate: it lets anyone see where the file came from before deciding whether to ask for
+// its password, and it keeps the origin readable on a file nobody can open any more.
 //
-// It follows that the header must never carry anything the passphrase is meant to protect.
-// It carries the Watermark, which is an assertion the Issuer wanted attached to the file
-// anyway, and the parameters needed to derive the key — nothing else.
+// It follows that the header must never carry anything the password is meant to protect. It
+// carries the Watermark, which the producer wanted attached to the file anyway, and the
+// parameters needed to derive the key — nothing else.
 type ContainerHeader struct {
 	Version   int      `json:"version"`
 	Watermark Envelope `json:"watermark"`
@@ -36,8 +36,8 @@ type ContainerHeader struct {
 	Nonce     string   `json:"nonce"`
 }
 
-// WrapContainer writes dbPath into outPath as an encrypted Issued copy: cleartext header,
-// then the database sealed under a passphrase.
+// WrapContainer writes dbPath into outPath as an encrypted copy: cleartext header, then the
+// database sealed under a passphrase.
 //
 // What this protects is the *transport* — the stray file in a downloads folder, the
 // attachment forwarded by mistake, the link shared without the password. It does not
@@ -81,7 +81,7 @@ func WrapContainer(dbPath, outPath string, watermark Envelope, passphrase string
 	return os.WriteFile(outPath, out, 0o644)
 }
 
-// IsContainer reports whether path is an encrypted Issued copy rather than an ordinary
+// IsContainer reports whether path is a password-protected copy rather than an ordinary
 // database. Cheap enough to call on every open.
 func IsContainer(path string) bool {
 	f, err := os.Open(path)
@@ -97,7 +97,7 @@ func IsContainer(path string) bool {
 }
 
 // ReadContainerHeader returns the cleartext header — Watermark included — **without the
-// passphrase**. This is what makes a leaked encrypted copy identifiable.
+// password**. This is what keeps a protected copy's origin readable.
 func ReadContainerHeader(path string) (ContainerHeader, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -107,7 +107,7 @@ func ReadContainerHeader(path string) (ContainerHeader, error) {
 	return header, err
 }
 
-// UnwrapContainer opens an encrypted Issued copy into an ordinary database at outPath, the
+// UnwrapContainer opens a protected copy into an ordinary database at outPath, the
 // one time a passphrase is ever asked for. From then on the recipient works with a normal
 // file: no prompt, no re-encryption, no ceremony.
 func UnwrapContainer(path, outPath, passphrase string) (ContainerHeader, error) {
@@ -161,7 +161,7 @@ func splitContainer(raw []byte) (ContainerHeader, []byte, error) {
 	return header, raw[at+headerLen:], nil
 }
 
-// DefaultUnwrapPath is where an encrypted copy lands when opened: beside it, same name,
+// DefaultUnwrapPath is where a protected copy lands when opened: beside it, same name,
 // ordinary extension.
 func DefaultUnwrapPath(containerPath string) string {
 	dir := filepath.Dir(containerPath)
