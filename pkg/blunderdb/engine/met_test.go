@@ -132,3 +132,53 @@ func TestConvertEMGLossToMWCLoss_Crawford(t *testing.T) {
 		t.Errorf("expected positive MWC loss, got %.6f", result)
 	}
 }
+
+// blunderDB writes 99999 as the match length of a money game. That sentinel used to flow
+// straight into the MET lookup, which indexes a 64-entry table by away score: one such row
+// among a user's matches panicked inside GetAllMatches, and because a panic in a bound
+// method makes Wails answer with an empty callback, the GUI call never settled and the
+// export screen simply never appeared.
+func TestMoneyGameSentinelIsNotAMatch(t *testing.T) {
+	for _, matchLength := range []int{0, -1, 99999, gnuBGMaxScore + 1} {
+		got := ConvertEMGLossToMWCLoss(120, 0, 0, 0, 1, matchLength)
+		if !math.IsNaN(got) {
+			t.Fatalf("match length %d has no match equity: got %v, want NaN", matchLength, got)
+		}
+	}
+}
+
+func TestScoresOutsideTheMatchHaveNoEquity(t *testing.T) {
+	cases := [][2]int{{7, 0}, {0, 7}, {-1, 0}, {0, -1}, {99999, 99999}}
+	for _, c := range cases {
+		got := ConvertEMGLossToMWCLoss(120, c[0], c[1], 0, 1, 7)
+		if !math.IsNaN(got) {
+			t.Fatalf("scores %v in a 7-point match: got %v, want NaN", c, got)
+		}
+	}
+}
+
+// Whatever it is handed, the lookup itself must never panic: it is called from bound methods
+// where a panic costs far more than a wrong number.
+func TestGnuBGGetMENeverPanics(t *testing.T) {
+	for _, matchTo := range []int{0, 1, 7, gnuBGMaxScore, gnuBGMaxScore + 1, 99999} {
+		for _, score := range []int{0, 1, 6, 99999} {
+			for _, crawford := range []bool{false, true} {
+				got := GnuBGGetME(score, score, matchTo, 0, 1, 0, crawford)
+				if math.IsNaN(got) || got < 0 || got > 1 {
+					t.Fatalf("GnuBGGetME(%d,%d,%d,crawford=%v) = %v, want a probability", score, score, matchTo, crawford, got)
+				}
+			}
+		}
+	}
+}
+
+// The fix must not move any number a real match produces.
+func TestNormalMatchEquityIsUnchanged(t *testing.T) {
+	got := ConvertEMGLossToMWCLoss(120, 3, 4, 0, 1, 7)
+	if math.IsNaN(got) {
+		t.Fatal("a 7-point match at 3-4 must have a match equity")
+	}
+	if got <= 0 || got > 0.2 {
+		t.Fatalf("unexpected MWC loss for a 120 mp error: %v", got)
+	}
+}
