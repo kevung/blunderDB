@@ -264,6 +264,8 @@ Auto-named files follow the scheme `Player1_Player2_YYYY-MM-DD_Np.mat` (money ga
 
 **What a watermark is.** It is signed with your issuer identity, so it is **tamper-evident and unforgeable**: nobody can alter it, and nobody can fabricate one in your name. It is **not unremovable** — the file is a plain SQLite database and blunderDB is free software — and it prevents nothing. It says where the file came from.
 
+A protected export is always named `.bdbx`: if you pass `--file cours.db --password …`, the file is written as `cours.bdbx`. blunderDB recognises a protected file by its contents rather than its name, but a `.db` file holding encrypted bytes misleads every other tool you own.
+
 **What a password protects.** The file *in transit*: the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database — whoever you gave the password to can open it. The container's header is cleartext, so `blunderdb info` reads the origin without the password.
 
 **What neither does.** Nothing is tracked. blunderDB records nothing on the recipient's side: no registry of who opened a file, no log, no trace carried into a database that imports one. See `docs/adr/0007-watermarks-mark-origin-and-nothing-else.md`.

@@ -400,3 +400,32 @@ func TestDefaultUnwrapPath(t *testing.T) {
 		t.Fatalf("got %q, want %q", got, want)
 	}
 }
+
+// A container does not have to be named .bdbx — blunderDB recognises one by its magic bytes.
+// Unwrapping one that is called .db must not land on the container itself.
+func TestDefaultUnwrapPathNeverOverwritesTheContainer(t *testing.T) {
+	for _, name := range []string{"cours.db", "cours", "cours.bdbx"} {
+		container := filepath.Join("dir", name)
+		got := DefaultUnwrapPath(container)
+		if got == filepath.Clean(container) {
+			t.Fatalf("%s would unwrap onto itself", name)
+		}
+		if filepath.Ext(got) != ".db" {
+			t.Fatalf("%s unwrapped to %q, expected a .db file", name, got)
+		}
+	}
+}
+
+func TestProtectedPath(t *testing.T) {
+	cases := map[string]string{
+		"cours.db":   "cours" + ContainerExtension,
+		"cours":      "cours" + ContainerExtension,
+		"cours.bdbx": "cours" + ContainerExtension,
+		"cours.BDBX": "cours.BDBX",
+	}
+	for in, want := range cases {
+		if got := ProtectedPath(in); got != want {
+			t.Fatalf("ProtectedPath(%q) = %q, want %q", in, got, want)
+		}
+	}
+}

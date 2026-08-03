@@ -187,6 +187,48 @@ func TestImportingAWatermarkedDatabaseLeavesNoTrace(t *testing.T) {
 	}
 }
 
+// The GUI's save dialog forces a .db name before the user has chosen a password, so a
+// protected export must rename itself rather than ship encrypted bytes under a .db name.
+func TestProtectedExportIsRenamedToBdbx(t *testing.T) {
+	isolateIdentity(t)
+	source := newTestDB(t)
+	dir := t.TempDir()
+	asked := filepath.Join(dir, "cours.db")
+
+	if err := source.ExportDatabase(ExportOptions{
+		ExportPath: asked,
+		Metadata:   map[string]string{},
+		Password:   "pw",
+	}); err != nil {
+		t.Fatalf("ExportDatabase: %v", err)
+	}
+
+	if _, err := os.Stat(asked); err == nil {
+		t.Fatalf("%s must not exist: an encrypted file must not be named .db", asked)
+	}
+	produced := filepath.Join(dir, "cours.bdbx")
+	if !issuance.IsContainer(produced) {
+		t.Fatalf("expected a protected container at %s", produced)
+	}
+	if entries, _ := filepath.Glob(filepath.Join(dir, "*.plain")); len(entries) > 0 {
+		t.Fatalf("the intermediate export was left on disk: %v", entries)
+	}
+
+	// …and it opens without landing on itself.
+	opened, err := OpenProtectedCopy(produced, "pw")
+	if err != nil {
+		t.Fatalf("OpenProtectedCopy: %v", err)
+	}
+	if opened == produced {
+		t.Fatal("unwrapping must not overwrite the container")
+	}
+	db := NewDatabase()
+	if err := db.OpenDatabase(opened); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+	_ = db.Close()
+}
+
 func TestPasswordProtectedExport(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)

@@ -163,9 +163,30 @@ func splitContainer(raw []byte) (ContainerHeader, []byte, error) {
 
 // DefaultUnwrapPath is where a protected copy lands when opened: beside it, same name,
 // ordinary extension.
+//
+// It must never return the container's own path — unwrapping would then overwrite the
+// protected file with its own contents. That is not hypothetical: a protected file does not
+// have to be named `.bdbx` (blunderDB recognises one by its magic bytes, not its extension),
+// so a container called `cours.db` is perfectly openable and would otherwise unwrap onto
+// itself.
 func DefaultUnwrapPath(containerPath string) string {
 	dir := filepath.Dir(containerPath)
-	base := filepath.Base(containerPath)
-	base = strings.TrimSuffix(base, ContainerExtension)
-	return filepath.Join(dir, base+".db")
+	base := strings.TrimSuffix(filepath.Base(containerPath), ContainerExtension)
+	base = strings.TrimSuffix(base, ".db")
+	target := filepath.Join(dir, base+".db")
+	if target == filepath.Clean(containerPath) {
+		target = filepath.Join(dir, base+"-ouverte.db")
+	}
+	return target
+}
+
+// ProtectedPath is the name a protected export should carry. blunderDB opens a container by
+// its magic bytes, so the extension is a convention rather than a requirement — but a file
+// whose name says `.db` and whose contents are encrypted misleads every other tool the user
+// owns, so an export that asks for a password gets the `.bdbx` name to match.
+func ProtectedPath(path string) string {
+	if strings.HasSuffix(strings.ToLower(path), ContainerExtension) {
+		return path
+	}
+	return strings.TrimSuffix(path, ".db") + ContainerExtension
 }
