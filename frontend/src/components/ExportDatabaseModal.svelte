@@ -4,6 +4,7 @@
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { t } from '../i18n';
+    import { LogDebug } from '../../wailsjs/runtime/runtime.js';
 
     let {
         visible = false,
@@ -58,6 +59,24 @@
         Object.assign(exportOptionsProp, $state.snapshot(exportOptions));
         onExport?.();
     }
+
+    // TEMPORARY DIAGNOSTIC — remove once the blank-dialog report is settled.
+    //
+    // The dialog shows as an empty white box after the export starts: no text, no button,
+    // and a window resize does not bring it back, so the DOM really is empty rather than
+    // unpainted. Every branch of the template renders something, so either `mode` holds a
+    // value none of them match, or building the subtree throws. This reports both, through
+    // the Go logger so it lands in the terminal running `wails dev`.
+    $effect(() => {
+        const keys = exportOptions ? Object.keys(exportOptions).join(',') : '<null>';
+        let derivedState;
+        try {
+            derivedState = `descr=${JSON.stringify(exportDescription)}`;
+        } catch (error) {
+            derivedState = `descr THREW: ${error}`;
+        }
+        LogDebug(`[export-modal] visible=${visible} mode=${JSON.stringify(mode)} count=${positionCount} matches=${matches?.length} optionKeys=[${keys}] ${derivedState}`);
+    });
 
     let collections = $derived($collectionsStore || []);
 
