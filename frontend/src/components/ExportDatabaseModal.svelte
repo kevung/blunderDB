@@ -292,16 +292,17 @@
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
                         <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
+                        <span class="info-tip" title={$t('issuance.watermarkNote')} aria-label={$t('issuance.watermarkNote')} role="note">?</span>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
                         <label for="export-protect">{$t('issuance.enablePassword')}</label>
+                        <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
                     </div>
                 </div>
 
                 {#if exportOptions.watermarkEnabled}
                     <div class="issuance-section">
-                        <p class="issuance-note">{$t('issuance.watermarkNote')}</p>
                         <div class="form-group">
                             <label for="export-origin">{$t('issuance.originLabel')}</label>
                             <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
@@ -319,12 +320,14 @@
                 {#if exportOptions.passwordEnabled}
                     <div class="issuance-section">
                         <div class="form-group">
-                            <label for="export-password">{$t('issuance.passwordLabel')}</label>
+                            <label for="export-password">
+                                {$t('issuance.passwordLabel')}
+                                <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
+                            </label>
                             <input id="export-password" type="text" bind:value={exportOptions.password} />
                             {#if missingPassword}
                                 <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
                             {/if}
-                            <p class="issuance-hint">{$t('issuance.passwordHint')}</p>
                         </div>
                     </div>
                 {/if}
@@ -442,6 +445,10 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        /* Without these the dialog grows past the window and the overlay's centring pushes
+           its top out of reach: the fields render but cannot be clicked or tabbed to. */
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
     }
 
     h2 {
@@ -678,17 +685,27 @@
         margin-bottom: 8px;
     }
 
+    .info-tip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 15px;
+        height: 15px;
+        margin-left: 4px;
+        border-radius: 50%;
+        border: 1px solid #9aa0a6;
+        color: #5f6368;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: help;
+        user-select: none;
+        flex: none;
+    }
+
     .issuance-required {
         font-size: 11px;
         color: #b3261e;
         margin: 2px 0 6px;
-    }
-
-    .issuance-note,
-    .issuance-hint {
-        font-size: 11px;
-        color: #666;
-        margin: 2px 0 6px;
-        line-height: 1.35;
     }
 </style>
