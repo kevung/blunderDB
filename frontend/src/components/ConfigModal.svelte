@@ -283,7 +283,6 @@
         width: 90%;
         max-width: 360px;
         max-height: 80vh;
-        overflow-y: auto;
         position: relative;
         display: flex;
         flex-direction: column;
@@ -435,10 +434,14 @@
         font-weight: 600;
     }
 
-    /* A fixed floor keeps the dialog from resizing as tabs are switched — Interface has
-       three rows, Colours has nine. */
+    /* A fixed height, not a floor: a minimum still let the dialog grow with the tallest tab
+       — Interface has three rows, Colours has nine, and Identity changes again when the
+       regeneration warning unfolds. The box then resized and, since the overlay centres it,
+       moved under the pointer at every tab change. The content scrolls inside instead.
+       `min()` keeps it from overflowing a short window. */
     .tab-body {
-        min-height: 190px;
+        height: min(300px, 46vh);
+        overflow-y: auto;
         text-align: left;
     }
 
