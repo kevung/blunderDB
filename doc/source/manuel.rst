@@ -919,9 +919,9 @@ Lire l'origine d'un fichier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dans l'application, ouvrez le fichier et affichez le panneau **Métadonnées**
-(commande ``meta``). Sous les champs habituels apparaît une section **Origine**,
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l'état de
-la signature :
+(commande ``meta``). Une section **Origine** apparaît en tête du panneau, en
+lecture seule, indiquant ce qui a été inscrit, par qui, quand, et l'état de la
+signature :
 
 * « ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
   intacte ;
