@@ -558,7 +558,8 @@
         "wrongPassword": "Wrong password.",
         "passwordRequiredToOpen": "This file is protected: enter its password.",
         "protectedOpened": "Protected file opened: {name}",
-        "removeContainer": "Delete the protected file once opened"
+        "removeContainer": "Delete the protected file once opened",
+        "signature": "Signature"
     },
     "matchInfo": {
         "vs": "vs",

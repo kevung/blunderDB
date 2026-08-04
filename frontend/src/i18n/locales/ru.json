@@ -558,7 +558,8 @@
         "wrongPassword": "Неверный пароль.",
         "passwordRequiredToOpen": "Файл защищён: введите пароль.",
         "protectedOpened": "Защищённый файл открыт: {name}",
-        "removeContainer": "Удалить защищённый файл после открытия"
+        "removeContainer": "Удалить защищённый файл после открытия",
+        "signature": "Подпись"
     },
     "matchInfo": {
         "vs": "vs",

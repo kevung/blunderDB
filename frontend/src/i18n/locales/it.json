@@ -558,7 +558,8 @@
         "wrongPassword": "Password errata.",
         "passwordRequiredToOpen": "Questo file è protetto: inserisci la password.",
         "protectedOpened": "File protetto aperto: {name}",
-        "removeContainer": "Elimina il file protetto una volta aperto"
+        "removeContainer": "Elimina il file protetto una volta aperto",
+        "signature": "Firma"
     },
     "matchInfo": {
         "vs": "vs",
