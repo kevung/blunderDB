@@ -837,12 +837,16 @@ pas.**
 Protéger une base par un mot de passe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Le mot de passe se saisit masqué ; l'icône en forme d'œil l'affiche **tant
+qu'on la maintient enfoncée**, et le masque de nouveau dès qu'on relâche.
+
 Cocher **Protéger ce fichier par un mot de passe** produit un fichier
 d'extension ``.bdbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
 fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
-demandé. À la première ouverture, blunderDB demande le mot de
-passe une seule fois et installe une base ordinaire ; ensuite plus rien n'est
-demandé.
+demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
+sélection accepte aussi bien les ``.db`` que les ``.bdbx``. blunderDB demande
+alors le mot de passe une seule fois et installe une base ordinaire ; ensuite
+plus rien n'est demandé.
 
 .. warning::
 

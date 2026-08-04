@@ -553,7 +553,8 @@
         "protectedHint": "Αυτό το αρχείο προστατεύεται με κωδικό. Εισαγάγετε τον κωδικό που σας δόθηκε· θα ζητηθεί μόνο μία φορά — έπειτα πρόκειται για συνηθισμένη βάση.",
         "openCopy": "Άνοιγμα",
         "originRequired": "Συμπληρώστε την προέλευση ή αποεπιλέξτε το πλαίσιο — κενή προέλευση δεν σημαίνει τίποτα.",
-        "passwordRequired": "Εισαγάγετε κωδικό ή αποεπιλέξτε το πλαίσιο."
+        "passwordRequired": "Εισαγάγετε κωδικό ή αποεπιλέξτε το πλαίσιο.",
+        "revealPassword": "Κρατήστε πατημένο για εμφάνιση του κωδικού"
     },
     "matchInfo": {
         "vs": "vs",
@@ -658,7 +659,18 @@
         "userPlaceholder": "Εισαγάγετε το όνομά σας (προαιρετικό)",
         "willBeExported": "{count} θέση(εις) θα εξαχθούν με {desc}.",
         "descTwo": "{a} και {b}",
-        "descMany": "{list} και {last}"
+        "descMany": "{list} και {last}",
+        "descAnalysis": "τις αναλύσεις",
+        "descComments": "τα σχόλια",
+        "descFilterLibrary": "τη βιβλιοθήκη φίλτρων",
+        "descPlayedMoves": "τις κινήσεις που παίχτηκαν",
+        "descMatch": "{count} αγώνα",
+        "descMatchesPlural": "{count} αγώνες",
+        "descTournament": "{count} τουρνουά",
+        "descTournamentsPlural": "{count} τουρνουά",
+        "descCollection": "{count} συλλογή",
+        "descCollectionsPlural": "{count} συλλογές",
+        "descPositionsOnly": "μόνο τις θέσεις"
     },
     "import": {
         "abortImport": "Ματαίωση εισαγωγής",

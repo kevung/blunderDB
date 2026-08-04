@@ -553,7 +553,8 @@
         "protectedHint": "このファイルはパスワードで保護されています。渡されたパスワードを入力してください。入力は一度だけで、その後は通常のデータベースになります。",
         "openCopy": "開く",
         "originRequired": "出所を入力するか、チェックを外してください。空欄では何も記載されません。",
-        "passwordRequired": "パスワードを入力するか、チェックを外してください。"
+        "passwordRequired": "パスワードを入力するか、チェックを外してください。",
+        "revealPassword": "押している間パスワードを表示"
     },
     "matchInfo": {
         "vs": "対",
@@ -658,7 +659,18 @@
         "userPlaceholder": "名前を入力（任意）",
         "willBeExported": "{count} 件のポジションが {desc} とともにエクスポートされます。",
         "descTwo": "{a}と{b}",
-        "descMany": "{list}、{last}"
+        "descMany": "{list}、{last}",
+        "descAnalysis": "分析",
+        "descComments": "コメント",
+        "descFilterLibrary": "フィルターライブラリ",
+        "descPlayedMoves": "実際の着手",
+        "descMatch": "{count} 件のマッチ",
+        "descMatchesPlural": "{count} 件のマッチ",
+        "descTournament": "{count} 件の大会",
+        "descTournamentsPlural": "{count} 件の大会",
+        "descCollection": "{count} 件のコレクション",
+        "descCollectionsPlural": "{count} 件のコレクション",
+        "descPositionsOnly": "ポジションのみ"
     },
     "import": {
         "abortImport": "インポートを中止",

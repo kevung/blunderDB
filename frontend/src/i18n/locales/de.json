@@ -553,7 +553,8 @@
         "protectedHint": "Diese Datei ist passwortgeschützt. Geben Sie das erhaltene Passwort ein; Sie werden nur einmal gefragt — danach ist es eine gewöhnliche Datenbank.",
         "openCopy": "Öffnen",
         "originRequired": "Geben Sie die Herkunft an oder entfernen Sie das Häkchen — eine leere Herkunft kennzeichnet nichts.",
-        "passwordRequired": "Geben Sie ein Passwort ein oder entfernen Sie das Häkchen."
+        "passwordRequired": "Geben Sie ein Passwort ein oder entfernen Sie das Häkchen.",
+        "revealPassword": "Gedrückt halten, um das Passwort anzuzeigen"
     },
     "matchInfo": {
         "vs": "vs",
@@ -658,7 +659,18 @@
         "userPlaceholder": "Geben Sie Ihren Namen ein (optional)",
         "willBeExported": "{count} Position(en) werden mit {desc} exportiert.",
         "descTwo": "{a} und {b}",
-        "descMany": "{list} und {last}"
+        "descMany": "{list} und {last}",
+        "descAnalysis": "Analysen",
+        "descComments": "Kommentaren",
+        "descFilterLibrary": "der Filterbibliothek",
+        "descPlayedMoves": "gespielten Zügen",
+        "descMatch": "{count} Match",
+        "descMatchesPlural": "{count} Matches",
+        "descTournament": "{count} Turnier",
+        "descTournamentsPlural": "{count} Turnieren",
+        "descCollection": "{count} Sammlung",
+        "descCollectionsPlural": "{count} Sammlungen",
+        "descPositionsOnly": "nur den Positionen"
     },
     "import": {
         "abortImport": "Import abbrechen",

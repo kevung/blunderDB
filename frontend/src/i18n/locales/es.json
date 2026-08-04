@@ -553,7 +553,8 @@
         "protectedHint": "Este archivo está protegido por contraseña. Introduzca la que le han dado; solo se le pedirá una vez: después será una base de datos normal.",
         "openCopy": "Abrir",
         "originRequired": "Indique el origen o desmarque la casilla: un origen vacío no marca nada.",
-        "passwordRequired": "Introduzca una contraseña o desmarque la casilla."
+        "passwordRequired": "Introduzca una contraseña o desmarque la casilla.",
+        "revealPassword": "Mantener pulsado para ver la contraseña"
     },
     "matchInfo": {
         "vs": "vs",
@@ -658,7 +659,18 @@
         "userPlaceholder": "Introduce tu nombre (opcional)",
         "willBeExported": "Se exportarán {count} posición(es) con {desc}.",
         "descTwo": "{a} y {b}",
-        "descMany": "{list} y {last}"
+        "descMany": "{list} y {last}",
+        "descAnalysis": "los análisis",
+        "descComments": "los comentarios",
+        "descFilterLibrary": "la biblioteca de filtros",
+        "descPlayedMoves": "las jugadas realizadas",
+        "descMatch": "{count} partido",
+        "descMatchesPlural": "{count} partidos",
+        "descTournament": "{count} torneo",
+        "descTournamentsPlural": "{count} torneos",
+        "descCollection": "{count} colección",
+        "descCollectionsPlural": "{count} colecciones",
+        "descPositionsOnly": "solo las posiciones"
     },
     "import": {
         "abortImport": "Cancelar importación",

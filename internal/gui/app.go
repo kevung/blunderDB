@@ -82,9 +82,16 @@ func (a *App) SaveDatabaseDialog() (string, error) {
 }
 
 func (a *App) OpenDatabaseDialog() (string, error) {
+	// A password-protected copy is a blunderDB database too — it just needs its password
+	// before it becomes one. Filtering on *.db alone made those files invisible in this
+	// dialog, so a recipient had no way to open what they had been given.
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title:   "Open Database File",
-		Filters: []runtime.FileFilter{{DisplayName: "Database Files (*.db)", Pattern: "*.db"}},
+		Title: "Open Database File",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "blunderDB databases (*.db, *.bdbx)", Pattern: "*.db;*.bdbx"},
+			{DisplayName: "Database Files (*.db)", Pattern: "*.db"},
+			{DisplayName: "Protected copies (*.bdbx)", Pattern: "*.bdbx"},
+		},
 	})
 }
 
