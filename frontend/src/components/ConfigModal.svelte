@@ -274,7 +274,12 @@
         z-index: 1000;
     }
 
+    /* One type scale for the whole dialog. It used to carry four at once in a single tab —
+       11 px notes, 12 px labels and buttons, 15 px selects, and form controls with no size
+       at all, which fall back to the browser's own control font in another family. What
+       separates a label from a value here is weight and colour, not size. */
     .modal-content {
+        font-size: 13px;
         background-color: white;
         padding: 1rem;
         border-radius: 4px;
@@ -287,6 +292,12 @@
         display: flex;
         flex-direction: column;
         text-align: center;
+    }
+
+    input,
+    select,
+    button {
+        font: inherit;
     }
 
     h2 {
@@ -328,7 +339,6 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
-        font-size: 15px;
         background-color: white;
     }
 
@@ -371,12 +381,10 @@
         border-radius: 4px;
         background: #b3261e;
         color: white;
-        font-size: 12px;
         cursor: pointer;
     }
 
     .setting-note {
-        font-size: 11px;
         color: #666;
         margin: 2px 0 6px;
         line-height: 1.35;
@@ -397,12 +405,13 @@
     }
 
     .setting-label {
-        font-size: 12px;
     }
 
+    /* Monospace looks a size larger than a proportional face at the same nominal size, so
+       it is nudged down to sit level with the text beside it. */
     .identity-fingerprint {
         font-family: monospace;
-        font-size: 12px;
+        font-size: 0.92em;
     }
 
     .tabs {
@@ -419,7 +428,6 @@
         border-bottom: 2px solid transparent;
         background: none;
         font: inherit;
-        font-size: 12px;
         color: #5f6368;
         cursor: pointer;
     }
@@ -457,7 +465,6 @@
 
     .tab-actions button {
         padding: 4px 10px;
-        font-size: 12px;
     }
 
     .setting-color {
@@ -477,7 +484,6 @@
         border-radius: 4px;
         background-color: #f5f5f5;
         cursor: pointer;
-        font-size: 12px;
     }
 
     .secondary-button:hover {
@@ -492,11 +498,10 @@
     }
 
     .modal-buttons button {
-        padding: 8px 14px;
+        padding: 6px 14px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 15px;
     }
 
     .primary-button {
