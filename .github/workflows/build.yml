@@ -413,14 +413,13 @@ jobs:
           files: |
             */bin/*
 
+  # Builds the docs in all 9 languages and attaches the PDFs to the release.
+  # Deliberately carries NO concurrency group: it used to share the Pages queue,
+  # and a merge landing right after a tag push evicted the tag's job (a group
+  # holds one pending run at most), so the release silently shipped without its
+  # PDFs. Only the deploy needs serializing — see the `pages` job below.
   docs:
     runs-on: ubuntu-latest
-    # Serialize Pages deploys so bursts of merges (or a merge racing a tag
-    # push) queue instead of colliding on the gh-pages branch. cancel-in-progress
-    # stays false: every push should publish, none should be dropped.
-    concurrency:
-      group: gh-pages-deploy
-      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -462,18 +461,6 @@ jobs:
         run: |
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
 
-      - name: Deploy to GitHub Pages
-        # Only publish on push (main / tags); pull_request runs still build the
-        # docs above to catch breakage, but must not push to gh-pages — doing so
-        # both pollutes the published site and races the real push deploys.
-        if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./doc/build
-          publish_branch: gh-pages
-          keep_files: false  # This will clean the branch before deploying
-
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
@@ -487,3 +474,40 @@ jobs:
         with:
           files: |
             */build/pdf_*/*.pdf
+
+      # Hand the built site to the `pages` job, which is the only one allowed to
+      # queue on gh-pages.
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
+        with:
+          name: docs-site
+          path: ./doc/build
+          retention-days: 1
+
+  # Only publish on push (main / tags); pull_request runs still build the docs
+  # above to catch breakage, but must not push to gh-pages — doing so both
+  # pollutes the published site and races the real push deploys.
+  pages:
+    runs-on: ubuntu-latest
+    needs: docs
+    if: github.event_name == 'push'
+    # Serialize Pages deploys so bursts of merges (or a merge racing a tag
+    # push) queue instead of colliding on the gh-pages branch. cancel-in-progress
+    # stays false: every push should publish, none should be dropped. A deploy
+    # dropped here costs nothing durable — the next push republishes the site.
+    concurrency:
+      group: gh-pages-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs-site
+          path: ./doc/build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc/build
+          publish_branch: gh-pages
+          keep_files: false  # This will clean the branch before deploying
