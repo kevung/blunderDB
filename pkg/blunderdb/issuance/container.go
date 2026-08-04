@@ -107,6 +107,34 @@ func ReadContainerHeader(path string) (ContainerHeader, error) {
 	return header, err
 }
 
+// VerifyPassword reports whether the password opens this protected copy, without writing
+// anything. AES-GCM authenticates the whole payload, so this necessarily decrypts it and
+// throws the result away — there is no cheaper honest check, and a wrong password must never
+// be mistaken for a right one.
+func VerifyPassword(path, password string) error {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("cannot read file: %w", err)
+	}
+	header, sealed, err := splitContainer(raw)
+	if err != nil {
+		return err
+	}
+	if password == "" {
+		return ErrPassphraseRequired
+	}
+	salt, err := base64.StdEncoding.DecodeString(header.Salt)
+	if err != nil {
+		return fmt.Errorf("corrupt file: %w", err)
+	}
+	nonce, err := base64.StdEncoding.DecodeString(header.Nonce)
+	if err != nil {
+		return fmt.Errorf("corrupt file: %w", err)
+	}
+	_, err = decryptSecret(sealed, password, salt, nonce)
+	return err
+}
+
 // UnwrapContainer opens a protected copy into an ordinary database at outPath, the
 // one time a passphrase is ever asked for. From then on the recipient works with a normal
 // file: no prompt, no re-encryption, no ceremony.

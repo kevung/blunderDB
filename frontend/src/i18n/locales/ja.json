@@ -554,7 +554,10 @@
         "openCopy": "開く",
         "originRequired": "出所を入力するか、チェックを外してください。空欄では何も記載されません。",
         "passwordRequired": "パスワードを入力するか、チェックを外してください。",
-        "revealPassword": "押している間パスワードを表示"
+        "revealPassword": "押している間パスワードを表示",
+        "wrongPassword": "パスワードが違います。",
+        "passwordRequiredToOpen": "このファイルは保護されています。パスワードを入力してください。",
+        "protectedOpened": "保護されたファイルを開きました: {name}"
     },
     "matchInfo": {
         "vs": "対",

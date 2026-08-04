@@ -554,7 +554,10 @@
         "openCopy": "Открыть",
         "originRequired": "Укажите происхождение или снимите флажок — пустое поле ничего не отмечает.",
         "passwordRequired": "Введите пароль или снимите флажок.",
-        "revealPassword": "Удерживайте, чтобы показать пароль"
+        "revealPassword": "Удерживайте, чтобы показать пароль",
+        "wrongPassword": "Неверный пароль.",
+        "passwordRequiredToOpen": "Файл защищён: введите пароль.",
+        "protectedOpened": "Защищённый файл открыт: {name}"
     },
     "matchInfo": {
         "vs": "vs",

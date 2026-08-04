@@ -554,7 +554,10 @@
         "openCopy": "Open",
         "originRequired": "Fill in the origin, or untick the box — an empty origin marks nothing.",
         "passwordRequired": "Enter a password, or untick the box.",
-        "revealPassword": "Hold to reveal the password"
+        "revealPassword": "Hold to reveal the password",
+        "wrongPassword": "Wrong password.",
+        "passwordRequiredToOpen": "This file is protected: enter its password.",
+        "protectedOpened": "Protected file opened: {name}"
     },
     "matchInfo": {
         "vs": "vs",

@@ -554,7 +554,10 @@
         "openCopy": "Abrir",
         "originRequired": "Indique el origen o desmarque la casilla: un origen vacío no marca nada.",
         "passwordRequired": "Introduzca una contraseña o desmarque la casilla.",
-        "revealPassword": "Mantener pulsado para ver la contraseña"
+        "revealPassword": "Mantener pulsado para ver la contraseña",
+        "wrongPassword": "Contraseña incorrecta.",
+        "passwordRequiredToOpen": "Este archivo está protegido: introduzca su contraseña.",
+        "protectedOpened": "Archivo protegido abierto: {name}"
     },
     "matchInfo": {
         "vs": "vs",

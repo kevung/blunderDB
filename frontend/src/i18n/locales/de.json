@@ -554,7 +554,10 @@
         "openCopy": "Öffnen",
         "originRequired": "Geben Sie die Herkunft an oder entfernen Sie das Häkchen — eine leere Herkunft kennzeichnet nichts.",
         "passwordRequired": "Geben Sie ein Passwort ein oder entfernen Sie das Häkchen.",
-        "revealPassword": "Gedrückt halten, um das Passwort anzuzeigen"
+        "revealPassword": "Gedrückt halten, um das Passwort anzuzeigen",
+        "wrongPassword": "Falsches Passwort.",
+        "passwordRequiredToOpen": "Diese Datei ist geschützt: Passwort eingeben.",
+        "protectedOpened": "Geschützte Datei geöffnet: {name}"
     },
     "matchInfo": {
         "vs": "vs",

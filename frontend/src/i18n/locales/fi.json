@@ -554,7 +554,10 @@
         "openCopy": "Avaa",
         "originRequired": "Täytä alkuperä tai poista valinta — tyhjä alkuperä ei merkitse mitään.",
         "passwordRequired": "Anna salasana tai poista valinta.",
-        "revealPassword": "Pidä painettuna nähdäksesi salasanan"
+        "revealPassword": "Pidä painettuna nähdäksesi salasanan",
+        "wrongPassword": "Väärä salasana.",
+        "passwordRequiredToOpen": "Tiedosto on suojattu: anna salasana.",
+        "protectedOpened": "Suojattu tiedosto avattu: {name}"
     },
     "matchInfo": {
         "vs": "vs",

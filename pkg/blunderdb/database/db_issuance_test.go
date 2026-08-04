@@ -308,6 +308,31 @@ func TestPasswordWithoutAWatermark(t *testing.T) {
 	_ = db.Close()
 }
 
+// The defect this guards against: once the database had been opened, a second open handed
+// it back without looking at the password at all, so any password worked. A protection that
+// stops protecting after first use is worse than none, because the user believes in it.
+func TestASecondOpenStillRequiresThePassword(t *testing.T) {
+	isolateIdentity(t)
+	source := newTestDB(t)
+	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	exportTo(t, source, container, ExportOptions{Password: "le-bon"})
+
+	if _, err := OpenProtectedCopy(container, "le-bon"); err != nil {
+		t.Fatalf("first open: %v", err)
+	}
+	// The database now exists next to the container — the situation that used to skip the
+	// check entirely.
+	if _, err := OpenProtectedCopy(container, "le-mauvais"); err == nil {
+		t.Fatal("a wrong password must be refused, even after a successful open")
+	}
+	if _, err := OpenProtectedCopy(container, ""); err == nil {
+		t.Fatal("an empty password must be refused too")
+	}
+	if _, err := OpenProtectedCopy(container, "le-bon"); err != nil {
+		t.Fatalf("the right password must still work: %v", err)
+	}
+}
+
 // Opening a protected copy twice must not discard the work done in the first result.
 func TestOpeningAProtectedCopyTwiceKeepsTheFirstResult(t *testing.T) {
 	isolateIdentity(t)

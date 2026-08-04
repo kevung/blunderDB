@@ -9,6 +9,7 @@
     let { visible = false, fileName = '', error = '', onSubmit = () => {}, onCancel = () => {} } = $props();
 
     let password = $state('');
+    let passwordVisible = $state(false);
     let input = $state(null);
 
     $effect(() => {
@@ -40,7 +41,28 @@
             <h2>{$t('issuance.protectedTitle')}</h2>
             <p class="file">{fileName}</p>
             <p class="hint">{$t('issuance.protectedHint')}</p>
-            <input bind:this={input} bind:value={password} type="password" aria-label={$t('issuance.passwordLabel')} placeholder={$t('issuance.passwordLabel')} />
+            <div class="password-row">
+                <input bind:this={input} bind:value={password} type={passwordVisible ? 'text' : 'password'} aria-label={$t('issuance.passwordLabel')} placeholder={$t('issuance.passwordLabel')} />
+                <!-- Same behaviour as the export dialog: revealed only while the button is
+                     held, never toggled, so a password cannot be left showing on screen. -->
+                <button
+                    type="button"
+                    class="reveal"
+                    aria-label={$t('issuance.revealPassword')}
+                    title={$t('issuance.revealPassword')}
+                    onpointerdown={() => (passwordVisible = true)}
+                    onpointerup={() => (passwordVisible = false)}
+                    onpointerleave={() => (passwordVisible = false)}
+                    onpointercancel={() => (passwordVisible = false)}
+                    onkeydown={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
+                    }}
+                    onkeyup={() => (passwordVisible = false)}
+                    onblur={() => (passwordVisible = false)}
+                >
+                    {passwordVisible ? '🙈' : '👁'}
+                </button>
+            </div>
             {#if error}<p class="error">{error}</p>{/if}
             <div class="buttons">
                 <button type="button" onclick={onCancel}>{$t('common.cancel')}</button>
@@ -92,11 +114,25 @@
         line-height: 1.35;
     }
 
+    .password-row {
+        display: flex;
+        gap: 6px;
+        align-items: stretch;
+    }
+
     input {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
         box-sizing: border-box;
         padding: 6px 8px;
         font-size: 14px;
+    }
+
+    .reveal {
+        flex: none;
+        padding: 0 8px;
+        cursor: pointer;
+        line-height: 1;
     }
 
     .error {
