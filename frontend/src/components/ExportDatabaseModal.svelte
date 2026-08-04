@@ -7,11 +7,10 @@
 
     let {
         visible = false,
-        mode = 'preparing',
+        mode = 'metadata',
         positionCount = 0,
         onCancel,
         onExport,
-        onClose,
         metadata = {
             user: '',
             description: '',
@@ -236,14 +235,7 @@
     <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
         <div class="modal-scroll">
             <div class="modal-content">
-                {#if mode === 'preparing'}
-                    <h2>{$t('export.preparing')} <span class="spinner"></span></h2>
-                    <p class="status-text">{$t('export.countingPositions')}</p>
-
-                    <div class="button-group">
-                        <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    </div>
-                {:else if mode === 'metadata'}
+                {#if mode === 'metadata' || mode === 'exporting'}
                     <h2>{$t('export.titleExport')}</h2>
 
                     <div class="summary">
@@ -411,23 +403,18 @@
                         <button onclick={onCancel}>{$t('common.cancel')}</button>
                         <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
                     </div>
-                {:else if mode === 'exporting'}
-                    <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
-                    <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
-                    <p class="status-text">{$t('export.mayTakeMoments')}</p>
+                {/if}
 
-                    <div class="button-group">
+                {#if mode === 'exporting'}
+                    <!-- Laid over the form rather than replacing it: the dialog keeps
+                         exactly the same box, which is what stops WebKitGTK leaving a blank
+                         white rectangle when the content changes. It also covers the
+                         controls, so nothing can be edited while the export runs. -->
+                    <div class="busy-overlay">
+                        <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
+                        <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
+                        <p class="status-text">{$t('export.mayTakeMoments')}</p>
                         <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    </div>
-                {:else if mode === 'completed'}
-                    <h2>{$t('export.completedTitle')}</h2>
-
-                    <div class="summary">
-                        <p>{$t('export.exportSuccessDetail', { count: positionCount })}</p>
-                    </div>
-
-                    <div class="button-group">
-                        <button onclick={onClose}>{$t('common.close')}</button>
                     </div>
                 {/if}
             </div>
@@ -477,6 +464,19 @@
         gap: 20px;
         /* No max-height and no scrolling here: see .modal-overlay and .modal-scroll. */
         flex: none;
+        position: relative;
+    }
+
+    .busy-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(255, 255, 255, 0.94);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-radius: 8px;
     }
 
     h2 {

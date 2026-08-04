@@ -149,10 +149,18 @@ export async function handleExportCommit() {
         });
 
         logger.log('Export completed successfully');
-        exportModalModeStore.set('completed');
 
+        // No completion screen: the dialog closes and the status bar says what happened.
+        // Acknowledging "it worked" with a click is friction, and it is how every other
+        // long operation in blunderDB reports — the .mat export has never had a dialog at
+        // all.
         const posCount = get(exportPositionCountStore);
+        closeModal();
+        resetExportState();
+        exportMatchesStore.set([]);
+        pendingExportPath = null;
         setStatusBarMessage(tMsg('status.exportCompleted', { posCount }));
+        statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error committing export:', error);
         closeModal();
@@ -163,9 +171,6 @@ export async function handleExportCommit() {
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
-    // No reset on success: it would wipe the 'completed' state the moment it was set, and
-    // the dialog would fall back to its 'preparing' screen — a spinner that never resolves,
-    // with no way out but Cancel. handleExportClose resets when the user closes it.
 }
 
 export function handleExportCancel() {
@@ -176,14 +181,5 @@ export function handleExportCancel() {
     resetExportState();
     exportMatchesStore.set([]);
     setStatusBarMessage(tMsg('status.exportCancelled'));
-    statusBarModeStore.set('NORMAL');
-}
-
-export function handleExportClose() {
-    logger.log('Export completed and closed');
-    closeModal();
-    pendingExportPath = null;
-    resetExportState();
-    exportMatchesStore.set([]);
     statusBarModeStore.set('NORMAL');
 }

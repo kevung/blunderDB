@@ -1,6 +1,10 @@
 import { writable } from 'svelte/store';
 
-export const exportModalModeStore = writable('preparing'); // 'preparing', 'metadata', 'exporting', 'completed'
+// Two screens only: the form, and the progress laid over it. A 'preparing' state existed
+// before the native file dialog — which is blocking, so it was never painted — and a
+// 'completed' one that asked for a click to acknowledge success the status bar already
+// reports. Both are gone.
+export const exportModalModeStore = writable('metadata'); // 'metadata', 'exporting'
 export const exportPositionCountStore = writable(0);
 export const exportMetadataStore = writable({
     user: '',
@@ -30,7 +34,7 @@ export const exportOptionsStore = writable({
 export const exportMatchesStore = writable([]);
 
 export function resetExportState() {
-    exportModalModeStore.set('preparing');
+    exportModalModeStore.set('metadata');
     exportMetadataStore.set({ user: '', description: '', dateOfCreation: '' });
     exportOptionsStore.set({
         includeAnalysis: true,
