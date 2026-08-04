@@ -20,6 +20,18 @@
     // more to the point, what it does not do. See RegenerateIssuerIdentity.
     let confirmingRegenerate = $state(false);
 
+    // Three concerns, and the third is not a preference at all: language, scale and colours
+    // are settings one adjusts, whereas the identity is an object one manages, with its own
+    // verbs. Keeping them in one column meant eighteen rows and up to seven buttons at
+    // different heights; tabs give each concern its own action area and leave a single
+    // primary button, always in the same place.
+    const TABS = [
+        { id: 'interface', labelKey: 'config.interface' },
+        { id: 'colors', labelKey: 'config.colors' },
+        { id: 'identity', labelKey: 'config.identityTitle' }
+    ];
+    let activeTab = $state('interface');
+
     $effect(() => {
         if (visible) {
             identityMessage = '';
@@ -141,95 +153,105 @@
             <div class="close-button" onclick={onClose}>×</div>
             <h2>{$t('config.title')}</h2>
 
-            <div class="setting-row">
-                <label for="config-language">{$t('config.language')}</label>
-                <select id="config-language" class="setting-select" value={$language} onchange={onLanguageChange}>
-                    {#each LOCALES as code (code)}
-                        <option value={code}>{LANGUAGE_LABELS[code]}</option>
-                    {/each}
-                </select>
-            </div>
-
-            <div class="section-title">{$t('config.interface')}</div>
-            <div class="setting-row">
-                <label for="config-ui-scale">{$t('config.uiScale')}</label>
-                <div class="scale-control">
-                    <input
-                        id="config-ui-scale"
-                        type="range"
-                        class="setting-range"
-                        min={MIN_UI_SCALE}
-                        max={MAX_UI_SCALE}
-                        step={UI_SCALE_STEP}
-                        value={$uiScaleStore}
-                        oninput={onUIScaleInput}
-                        onchange={onUIScaleChange}
-                    />
-                    <span class="scale-value">{$uiScaleStore}%</span>
-                </div>
-            </div>
-            <div class="setting-row">
-                <label for="config-panel-position">{$t('config.panelPosition')}</label>
-                <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
-                    {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
-                        <option value={opt.value}>{$t(opt.labelKey)}</option>
-                    {/each}
-                </select>
-            </div>
-
-            <div class="section-title">{$t('config.colors')}</div>
-            {#each COLOR_SETTINGS as setting (setting.key)}
-                <div class="setting-row">
-                    <label for={`config-color-${setting.key}`}>{$t(setting.labelKey)}</label>
-                    <input id={`config-color-${setting.key}`} type="color" class="setting-color" value={$boardColorsStore[setting.key]} oninput={(e) => onColorChange(setting.key, e)} />
-                </div>
-            {/each}
-            <div class="setting-row reset-row">
-                <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
-            </div>
-
-            <div class="section-title">{$t('config.identityTitle')}</div>
-            <p class="setting-note">{$t('config.identityIntro')}</p>
-            {#if identity?.present}
-                <div class="setting-row">
-                    <label for="config-identity-name">{$t('config.identityName')}</label>
-                    <input id="config-identity-name" type="text" class="setting-input" value={identity.name} onblur={renameIdentity} />
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">{$t('config.identityFingerprint')}</span>
-                    <code class="identity-fingerprint">{identity.fingerprint}</code>
-                </div>
-            {:else}
-                <p class="setting-note">{$t('config.identityNone')}</p>
-            {/if}
-            <div class="setting-row">
-                <label for="config-identity-passphrase">{$t('config.identityPassphrase')}</label>
-                <input id="config-identity-passphrase" type="password" class="setting-input" bind:value={identityPassphrase} />
-            </div>
-            <p class="setting-note warn">{$t('config.identityWarning')}</p>
-            <div class="setting-row reset-row">
-                <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
-                <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
-                {#if identity?.present && !confirmingRegenerate}
-                    <button class="secondary-button" onclick={() => (confirmingRegenerate = true)}>
-                        {$t('config.identityRegenerate')}
+            <div class="tabs" role="tablist">
+                {#each TABS as tab (tab.id)}
+                    <button type="button" class="tab" class:active={activeTab === tab.id} role="tab" aria-selected={activeTab === tab.id} onclick={() => (activeTab = tab.id)}>
+                        {$t(tab.labelKey)}
                     </button>
+                {/each}
+            </div>
+
+            <div class="tab-body">
+                {#if activeTab === 'interface'}
+                    <div class="setting-row">
+                        <label for="config-language">{$t('config.language')}</label>
+                        <select id="config-language" class="setting-select" value={$language} onchange={onLanguageChange}>
+                            {#each LOCALES as code (code)}
+                                <option value={code}>{LANGUAGE_LABELS[code]}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="config-ui-scale">{$t('config.uiScale')}</label>
+                        <div class="scale-control">
+                            <input
+                                id="config-ui-scale"
+                                type="range"
+                                class="setting-range"
+                                min={MIN_UI_SCALE}
+                                max={MAX_UI_SCALE}
+                                step={UI_SCALE_STEP}
+                                value={$uiScaleStore}
+                                oninput={onUIScaleInput}
+                                onchange={onUIScaleChange}
+                            />
+                            <span class="scale-value">{$uiScaleStore}%</span>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <label for="config-panel-position">{$t('config.panelPosition')}</label>
+                        <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
+                            {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
+                                <option value={opt.value}>{$t(opt.labelKey)}</option>
+                            {/each}
+                        </select>
+                    </div>
+                {:else if activeTab === 'colors'}
+                    {#each COLOR_SETTINGS as setting (setting.key)}
+                        <div class="setting-row">
+                            <label for={`config-color-${setting.key}`}>{$t(setting.labelKey)}</label>
+                            <input id={`config-color-${setting.key}`} type="color" class="setting-color" value={$boardColorsStore[setting.key]} oninput={(e) => onColorChange(setting.key, e)} />
+                        </div>
+                    {/each}
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
+                    </div>
+                {:else if activeTab === 'identity'}
+                    <p class="setting-note">{$t('config.identityIntro')}</p>
+                    {#if identity?.present}
+                        <div class="setting-row">
+                            <label for="config-identity-name">{$t('config.identityName')}</label>
+                            <input id="config-identity-name" type="text" class="setting-input" value={identity.name} onblur={renameIdentity} />
+                        </div>
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.identityFingerprint')}</span>
+                            <code class="identity-fingerprint">{identity.fingerprint}</code>
+                        </div>
+                    {:else}
+                        <p class="setting-note">{$t('config.identityNone')}</p>
+                    {/if}
+                    <div class="setting-row">
+                        <label for="config-identity-passphrase">{$t('config.identityPassphrase')}</label>
+                        <input id="config-identity-passphrase" type="password" class="setting-input" bind:value={identityPassphrase} />
+                    </div>
+                    <p class="setting-note warn">{$t('config.identityWarning')}</p>
+
+                    {#if confirmingRegenerate}
+                        <div class="regenerate-confirm">
+                            <p class="setting-note warn">{$t('config.identityRegenerateWarning')}</p>
+                            <p class="setting-note">{$t('config.identityRegenerateKeep', { fingerprint: identity?.fingerprint ?? '' })}</p>
+                            <div class="tab-actions">
+                                <button class="secondary-button" onclick={exportIdentity}>{$t('config.identitySaveFirst')}</button>
+                                <button class="secondary-button" onclick={() => (confirmingRegenerate = false)}>{$t('common.cancel')}</button>
+                                <button class="danger-button" onclick={regenerateIdentity}>{$t('config.identityRegenerateConfirm')}</button>
+                            </div>
+                        </div>
+                    {:else}
+                        <div class="tab-actions">
+                            <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
+                            <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
+                            {#if identity?.present}
+                                <button class="secondary-button" onclick={() => (confirmingRegenerate = true)}>
+                                    {$t('config.identityRegenerate')}
+                                </button>
+                            {/if}
+                        </div>
+                    {/if}
+
+                    {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
+                    {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
                 {/if}
             </div>
-
-            {#if confirmingRegenerate}
-                <div class="regenerate-confirm">
-                    <p class="setting-note warn">{$t('config.identityRegenerateWarning')}</p>
-                    <p class="setting-note">{$t('config.identityRegenerateKeep', { fingerprint: identity?.fingerprint ?? '' })}</p>
-                    <div class="setting-row reset-row">
-                        <button class="secondary-button" onclick={exportIdentity}>{$t('config.identitySaveFirst')}</button>
-                        <button class="secondary-button" onclick={() => (confirmingRegenerate = false)}>{$t('common.cancel')}</button>
-                        <button class="danger-button" onclick={regenerateIdentity}>{$t('config.identityRegenerateConfirm')}</button>
-                    </div>
-                </div>
-            {/if}
-            {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
-            {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
 
             <div class="modal-buttons">
                 <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
@@ -343,10 +365,14 @@
         margin: 4px 0;
     }
 
+    /* The only destructive action in the dialog, and the only red button. */
     .danger-button {
+        padding: 4px 10px;
+        border: 1px solid #b3261e;
+        border-radius: 4px;
         background: #b3261e;
         color: white;
-        border: 1px solid #b3261e;
+        font-size: 12px;
         cursor: pointer;
     }
 
@@ -380,12 +406,55 @@
         font-size: 12px;
     }
 
-    .section-title {
-        margin: 16px 0 4px;
-        padding-top: 12px;
-        border-top: 1px solid #eee;
+    .tabs {
+        display: flex;
+        gap: 2px;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 8px;
+    }
+
+    .tab {
+        flex: 1;
+        padding: 6px 8px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        background: none;
+        font: inherit;
+        font-size: 12px;
+        color: #5f6368;
+        cursor: pointer;
+    }
+
+    .tab:hover {
+        color: #202124;
+    }
+
+    .tab.active {
+        color: #1a73e8;
+        border-bottom-color: #1a73e8;
         font-weight: 600;
+    }
+
+    /* A fixed floor keeps the dialog from resizing as tabs are switched — Interface has
+       three rows, Colours has nine. */
+    .tab-body {
+        min-height: 190px;
         text-align: left;
+    }
+
+    /* One action area per tab, aligned the same way, so no button ever appears in the
+       middle of a list. */
+    .tab-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .tab-actions button {
+        padding: 4px 10px;
+        font-size: 12px;
     }
 
     .setting-color {
@@ -399,17 +468,13 @@
         cursor: pointer;
     }
 
-    .reset-row {
-        justify-content: flex-end;
-    }
-
     .secondary-button {
-        padding: 6px 12px;
+        padding: 4px 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
         background-color: #f5f5f5;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 12px;
     }
 
     .secondary-button:hover {

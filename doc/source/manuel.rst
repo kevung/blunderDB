@@ -160,15 +160,20 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB.
+blunderDB. Elle est organisée en trois onglets :
 
-Celle-ci permet de choisir la langue de l'interface parmi l'anglais, le
+* **Interface** — langue, échelle d'affichage, position du panneau ;
+* **Couleurs** — les couleurs du plateau ;
+* **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
+  section :ref:`diffusion_controlee`.
+
+L'onglet *Interface* permet de choisir la langue parmi l'anglais, le
 français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
 et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d'une session à l'autre.
 
-La fenêtre de configuration permet également de personnaliser les couleurs du
+L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
 la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 2, les dés, les points des dés et le videau. Le bouton *Réinitialiser* rétablit
@@ -852,9 +857,9 @@ vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un post
 une phrase secrète. **Ce fichier permet de signer en votre nom : ne le partagez
 pas.**
 
-Dans les préférences, la section *Identité d'émetteur* affiche votre nom et
-votre empreinte, et propose *Enregistrer l'identité…*, *Charger une identité…*
-et *Régénérer…*.
+Dans les préférences (icône engrenage de la barre d'outils), l'onglet *Identité
+d'émetteur* affiche votre nom et votre empreinte, et propose *Enregistrer
+l'identité…*, *Charger une identité…* et *Régénérer…*.
 
 .. warning::
 
