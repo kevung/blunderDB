@@ -7,19 +7,8 @@ export const commandTextStore = writable('');
 
 export const commentTextStore = writable('');
 
-// Active tab in the bottom panel ('log', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments')
+// Active tab in the bottom panel ('analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments')
 export const activeTabStore = writable('matches');
-
-// Session log entries: array of { timestamp, type, message }
-// type: 'info' (default), 'command', 'result', 'error'
-export const logEntriesStore = writable([]);
-
-export function addLogEntry(message, type = 'info') {
-    logEntriesStore.update((entries) => {
-        const entry = { timestamp: new Date(), type, message };
-        return [...entries, entry];
-    });
-}
 
 // Whether the command input is active in the status bar
 export const showCommandInputStore = writable(false);

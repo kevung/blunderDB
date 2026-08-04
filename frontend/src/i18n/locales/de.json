@@ -634,12 +634,6 @@
         "closeView": "Ansicht schließen",
         "newView": "Neue Ansicht"
     },
-    "console": {
-        "empty": "Noch keine Protokolleinträge."
-    },
-    "logs": {
-        "empty": "Noch keine Vorgänge protokolliert."
-    },
     "goToPosition": {
         "placeholder": "Positionsnummer eingeben",
         "title": "Zu Position gehen"
@@ -757,8 +751,7 @@
         "stats": "Statistik",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "Metadaten",
-        "log": "Protokoll"
+        "metadata": "Metadaten"
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",

@@ -634,12 +634,6 @@
         "closeView": "Sulje näkymä",
         "newView": "Uusi näkymä"
     },
-    "console": {
-        "empty": "Ei vielä lokimerkintöjä."
-    },
-    "logs": {
-        "empty": "Ei vielä kirjattuja toimintoja."
-    },
     "goToPosition": {
         "placeholder": "Anna aseman numero",
         "title": "Siirry asemaan"
@@ -757,8 +751,7 @@
         "stats": "Tilastot",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "Metatiedot",
-        "log": "Loki"
+        "metadata": "Metatiedot"
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",

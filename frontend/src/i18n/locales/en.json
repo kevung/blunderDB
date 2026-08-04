@@ -634,12 +634,6 @@
         "closeView": "Close view",
         "newView": "New view"
     },
-    "console": {
-        "empty": "No log entries yet."
-    },
-    "logs": {
-        "empty": "No operations logged yet."
-    },
     "goToPosition": {
         "placeholder": "Enter position number",
         "title": "Go To Position"
@@ -757,8 +751,7 @@
         "stats": "Stats",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "Metadata",
-        "log": "Log"
+        "metadata": "Metadata"
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",

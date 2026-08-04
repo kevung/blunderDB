@@ -43,8 +43,7 @@ export default {
                         <li>mostrar estadísticas de rendimiento (panel Stats),</li>
                         <li>calcular valores de EPC para posiciones de bear off (panel EPC),</li>
                         <li>consultar filtros de búsqueda guardados (panel Biblioteca de filtros),</li>
-                        <li>consultar el historial de búsquedas (panel Historial de búsquedas),</li>
-                        <li>ver los registros de operaciones (panel Log).</li>
+                        <li>consultar el historial de búsquedas (panel Historial de búsquedas).</li>
                     </ul>
                     <p>El área de visualización principal ofrece al usuario:</p>
                     <ul>
@@ -85,7 +84,7 @@ export default {
                     <p>
                         Para abrir la línea de comandos, pulsa la tecla <strong>Espacio</strong>. Aparece un prompt en la barra de estado. Escribe tu comando y pulsa <strong>Enter</strong> para ejecutarlo. Pulsa
                         <strong>Escape</strong>
-                        para cancelar. El historial de comandos y los resultados se registran en el panel <strong>Log</strong>.
+                        para cancelar.
                     </p>
                     <p>
                         blunderDB ejecuta las consultas enviadas por el usuario siempre que sean válidas y modifica inmediatamente el estado de la base de datos si es necesario. No se requieren acciones de guardado explícitas

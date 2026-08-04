@@ -77,9 +77,7 @@ Des panneaux peuvent être affichés pour:
 
 * étudier les positions par répétition espacée (panneau Anki),
 
-* afficher les métadonnées de la base de données (panneau métadonnées),
-
-* afficher le journal des opérations (panneau journal).
+* afficher les métadonnées de la base de données (panneau métadonnées).
 
 Des fenêtres modales peuvent s'afficher pour:
 
@@ -936,13 +934,4 @@ l'état de la signature, **sans jamais écrire dans le fichier**. La commande
 fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
 ``CLI_USAGE.md`` pour les options ``--watermark`` et ``--password`` de
 ``export``, ainsi que pour ``identity`` et ``open``.
-
-.. _panneau_log:
-
-Panneau Journal
----------------
-
-Le panneau **Journal** affiche le journal des opérations récentes : imports,
-exports et opérations sur la base de données, avec leurs résultats et
-horodatages. Il est utile pour diagnostiquer les erreurs d'import.
 

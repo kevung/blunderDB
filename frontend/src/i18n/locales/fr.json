@@ -634,12 +634,6 @@
         "closeView": "Fermer la vue",
         "newView": "Nouvelle vue"
     },
-    "console": {
-        "empty": "Aucune entrée de journal pour le moment."
-    },
-    "logs": {
-        "empty": "Aucune opération journalisée pour le moment."
-    },
     "goToPosition": {
         "placeholder": "Saisir le numéro de position",
         "title": "Aller à la position"
@@ -757,8 +751,7 @@
         "stats": "Stats",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "Métadonnées",
-        "log": "Journal"
+        "metadata": "Métadonnées"
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
