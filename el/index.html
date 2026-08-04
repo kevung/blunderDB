@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.30.1</title>
+  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.31.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1d8bdb56"></script>
+      <script src="_static/documentation_options.js?v=c8261516"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -285,6 +285,10 @@
 <td><p>26/07/2026</p></td>
 <td><p>Αναζήτηση με σχόλιο: το φίλτρο «Κείμενο αναζήτησης» γίνεται φίλτρο «Σχόλιο» και προσφέρει τρεις αποκλειστικές λειτουργίες — <em>περιέχει κείμενο</em> (προηγούμενη συμπεριφορά, σύμβολο <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;λέξη1;λέξη2&quot;&quot;</span></code>), <em>έχει σχόλιο</em> (σύμβολο <code class="docutils literal notranslate"><span class="pre">co</span></code>) και <em>χωρίς σχόλιο</em> (σύμβολο <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — για να βρίσκετε με μια κίνηση τις σχολιασμένες θέσεις, ή αντιθέτως εκείνες που απομένουν προς σχολιασμό. Θέσεις επισημασμένες στο eXtreme Gammon: οι επισημάνσεις που τίθενται κατά την ανάλυση ενός αγώνα XG διαβάζονται πλέον κατά την εισαγωγή και εντοπίζονται με το φίλτρο «Επισημασμένη» (σύμβολο <code class="docutils literal notranslate"><span class="pre">fl</span></code>), συνδυαζόμενο με όλα τα άλλα κριτήρια· μια επισημασμένη απόφαση κύβου δίνει δύο επισημασμένες θέσεις, τον διπλασιασμό και την αποδοχή/πάσο. Η επισήμανση δεν είναι αναδρομική: αρκεί να εισαγάγετε ξανά το σχετικό αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ώστε οι επισημάνσεις του να περάσουν στη βάση, χωρίς να θιγούν τα υπάρχοντα σχόλια και οι αναλύσεις. Αξιοσημείωτες διορθώσεις: το PR που εμφανίζεται στο σήμα ενός τουρνουά αφορά τον παίκτη αναφοράς και όχι πλέον το σύνολο των δύο παικτών, οι συλλογές Anki που βασίζονται σε μια αναζήτηση σέβονται ξανά τα φίλτρα αυτής αντί να παίρνουν όλη τη βάση, και διορθώθηκε μια εμπλοκή της αναζήτησης με ορισμένους συνδυασμούς φίλτρων (κείμενο, ημερομηνία, σφάλμα της κίνησης που παίχτηκε). Βλέπε <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Λίστα εντολών</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>04/08/2026</p></td>
+<td><p>Διανομή μιας βάσης σε τρίτους: δύο ανεξάρτητοι μηχανισμοί, και οι δύο προαιρετικοί και επιλεγόμενοι κατά την εξαγωγή. Η <strong>σήμανση προέλευσης</strong> καταγράφει στο αρχείο τι είναι και από πού προέρχεται, υπογεγραμμένη από μια ταυτότητα εκδότη που δημιουργείται από μόνη της στην πρώτη χρήση· η σήμανση δεν πλαστογραφείται, διαβάζεται στην κορυφή του πίνακα Μεταδεδομένα (ή με την <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, που δεν γράφει ποτέ στο αρχείο) και δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση — κανένα αρχείο καταγραφής, καμία παρακολούθηση. Η <strong>προστασία με κωδικό πρόσβασης</strong> παράγει κρυπτογραφημένο αρχείο <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, κλειδί παραγόμενο με Argon2id), που επαληθεύεται σε κάθε άνοιγμα και του οποίου η κεφαλίδα παραμένει αναγνώσιμη· η ταυτότητα εξάγεται και εισάγεται ως ένα μόνο αρχείο από τις ρυθμίσεις. Ανασχεδιασμένο παράθυρο εξαγωγής: μία μόνο οθόνη αντί για τέσσερις, υπενθύμιση του τι εξάγεται πραγματικά (οι εμφανιζόμενες θέσεις), το καλυπτόμενο μέρος κάθε συλλογής επισημασμένο με κόκκινο όταν είναι μερικό, τουρνουά εξαγώγιμα μόνο μαζί με τους αγώνες τους — και εξαγωγή τρεις φορές ταχύτερη. Παράθυρο ρυθμίσεων οργανωμένο σε τρεις καρτέλες (Διεπαφή, Χρώματα ταμπλό, Ταυτότητα εκδότη), σταθερού μεγέθους και θέσης. Πίνακας Μεταδεδομένα διατεταγμένος σε ένα ενιαίο πλέγμα. Ο πίνακας Log, που απλώς επαναλάμβανε τις εντολές, αφαιρέθηκε. Αξιοσημείωτες διορθώσεις: ένας λανθασμένος κωδικός δεν ανοίγει πια προστατευμένη βάση, τα πεδία των παραθύρων διαλόγου δεν χάνουν πια την εστίαση με το κλικ, ο υπολογισμός των δεικτών PR/MWC δεν καταρρέει πια σε παιχνίδι για χρήματα, και τα προσωρινά αρχεία (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, κλείδωμα) καθαρίζονται κατά το κλείσιμο. Βλ. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. Πίνακας EPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Πίνακας Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Πίνακας Μεταδεδομένων</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a><ul>

@@ -66,7 +66,7 @@
 
 \title{blunderDB}
 \date{04 Αυγούστου 2026}
-\release{0.30.1}
+\release{0.31.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -782,6 +782,22 @@
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.31.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+04/08/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Διανομή μιας βάσης σε τρίτους: δύο ανεξάρτητοι μηχανισμοί, και οι δύο προαιρετικοί και επιλεγόμενοι κατά την εξαγωγή. Η \sphinxstylestrong{σήμανση προέλευσης} καταγράφει στο αρχείο τι είναι και από πού προέρχεται, υπογεγραμμένη από μια ταυτότητα εκδότη που δημιουργείται από μόνη της στην πρώτη χρήση· η σήμανση δεν πλαστογραφείται, διαβάζεται στην κορυφή του πίνακα Μεταδεδομένα (ή με την \sphinxcode{\sphinxupquote{blunderdb info}}, που δεν γράφει ποτέ στο αρχείο) και δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση — κανένα αρχείο καταγραφής, καμία παρακολούθηση. Η \sphinxstylestrong{προστασία με κωδικό πρόσβασης} παράγει κρυπτογραφημένο αρχείο \sphinxcode{\sphinxupquote{.dbx}} (AES\sphinxhyphen{}256\sphinxhyphen{}GCM, κλειδί παραγόμενο με Argon2id), που επαληθεύεται σε κάθε άνοιγμα και του οποίου η κεφαλίδα παραμένει αναγνώσιμη· η ταυτότητα εξάγεται και εισάγεται ως ένα μόνο αρχείο από τις ρυθμίσεις. Ανασχεδιασμένο παράθυρο εξαγωγής: μία μόνο οθόνη αντί για τέσσερις, υπενθύμιση του τι εξάγεται πραγματικά (οι εμφανιζόμενες θέσεις), το καλυπτόμενο μέρος κάθε συλλογής επισημασμένο με κόκκινο όταν είναι μερικό, τουρνουά εξαγώγιμα μόνο μαζί με τους αγώνες τους — και εξαγωγή τρεις φορές ταχύτερη. Παράθυρο ρυθμίσεων οργανωμένο σε τρεις καρτέλες (Διεπαφή, Χρώματα ταμπλό, Ταυτότητα εκδότη), σταθερού μεγέθους και θέσης. Πίνακας Μεταδεδομένα διατεταγμένος σε ένα ενιαίο πλέγμα. Ο πίνακας Log, που απλώς επαναλάμβανε τις εντολές, αφαιρέθηκε. Αξιοσημείωτες διορθώσεις: ένας λανθασμένος κωδικός δεν ανοίγει πια προστατευμένη βάση, τα πεδία των παραθύρων διαλόγου δεν χάνουν πια την εστίαση με το κλικ, ο υπολογισμός των δεικτών PR/MWC δεν καταρρέει πια σε παιχνίδι για χρήματα, και τα προσωρινά αρχεία (\sphinxcode{\sphinxupquote{\sphinxhyphen{}wal}}, \sphinxcode{\sphinxupquote{\sphinxhyphen{}shm}}, κλείδωμα) καθαρίζονται κατά το κλείσιμο. Βλ. {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}}}}} και {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Εγχειρίδιο}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -804,15 +820,15 @@
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
 
 \end{itemize}
 
@@ -864,7 +880,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
+Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -872,7 +888,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
+Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
 \end{sphinxadmonition}
 
 
@@ -1010,7 +1026,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \item {} 
 \sphinxAtStartPar
-afficher les métadonnées de la base de données (panneau métadonnées).
+την προβολή των μεταδεδομένων της βάσης δεδομένων (πίνακας Μεταδεδομένα).
 
 \end{itemize}
 
@@ -1113,39 +1129,27 @@ afficher les métadonnées de la base de données (panneau métadonnées).
 \subsection{Ρυθμίσεις}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Le bouton de configuration (icône en forme de rouage) situé dans la barre
-d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :
+Το κουμπί ρυθμίσεων (εικονίδιο γραναζιού) στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB. Είναι οργανωμένο σε τρεις καρτέλες:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Interface} — langue, échelle d’affichage, position du panneau ;
+\sphinxstylestrong{Διεπαφή} — γλώσσα, κλίμακα εμφάνισης, θέση του πίνακα·
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Couleurs} — les couleurs du plateau ;
+\sphinxstylestrong{Χρώματα ταμπλό} — τα χρώματα του ταμπλό·
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Identité d’émetteur} — la clé qui signe vos filigranes, décrite à la
-section {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}.
+\sphinxstylestrong{Ταυτότητα εκδότη} — το κλειδί που υπογράφει τις σημάνσεις προέλευσής σας, το οποίο περιγράφεται στην ενότητα {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}}}}}.
 
 \end{itemize}
 
 \sphinxAtStartPar
-L’onglet \sphinxstyleemphasis{Interface} permet de choisir la langue parmi l’anglais, le
-français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
-et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
-aide) est traduit dans la langue sélectionnée. Le choix de la langue est
-enregistré et conservé d’une session à l’autre.
+Η καρτέλα \sphinxstyleemphasis{Διεπαφή} επιτρέπει την επιλογή γλώσσας ανάμεσα σε αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά και ρωσικά. Ολόκληρη η διεπαφή (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή γλώσσας αποθηκεύεται και διατηρείται από τη μία συνεδρία στην άλλη.
 
 \sphinxAtStartPar
-L’onglet \sphinxstyleemphasis{Couleurs} permet de personnaliser les couleurs du
-plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
-la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
-2, les dés, les points des dés et le videau. Le bouton \sphinxstyleemphasis{Réinitialiser} rétablit
-l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
-conservées d’une session à l’autre.
+Η καρτέλα \sphinxstyleemphasis{Χρώματα ταμπλό} επιτρέπει την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτόχρωμες και σκουρόχρωμες γλώσσες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι βούλες των ζαριών και ο κύβος. Το κουμπί \sphinxstyleemphasis{Επαναφορά} επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.
 
 \sphinxAtStartPar
 Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα ρυθμιστικό \sphinxstylestrong{κλίμακας διεπαφής} σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού \sphinxstylestrong{θέσης των πλαισίων} καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) σε σχέση με το ταμπλό: \sphinxstyleemphasis{κάτω}, \sphinxstyleemphasis{στο πλάι} ή \sphinxstyleemphasis{αυτόματα} (το πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη.
@@ -1784,206 +1788,135 @@ Expert
 Ο πίνακας \sphinxstylestrong{Μεταδεδομένων} εμφανίζει τις γενικές πληροφορίες της τρέχουσας βάσης δεδομένων: όνομα, περιγραφή, αριθμό θέσεων, αριθμό αγώνων και παρτίδων, έκδοση του σχήματος. Προσβάσιμος μέσω της εντολής \sphinxcode{\sphinxupquote{meta}}.
 
 \sphinxAtStartPar
-Il affiche également, \sphinxstylestrong{lorsqu’elle existe}, l’origine de la base — voir
-{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}. Une base ordinaire n’affiche pas cette section.
+Εμφανίζει επίσης, \sphinxstylestrong{όταν υπάρχει}, την προέλευση της βάσης — βλ. {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}}}}}. Μια συνηθισμένη βάση δεν εμφανίζει αυτή την ενότητα.
 
 
-\subsection{Diffuser une base : origine et mot de passe}
+\subsection{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}
 \label{\detokenize{manuel:diffuser-une-base-origine-et-mot-de-passe}}\label{\detokenize{manuel:diffusion-controlee}}
 \sphinxAtStartPar
-Un enseignant qui distribue une base de positions dispose de deux mécanismes,
-indépendants l’un de l’autre, tous deux facultatifs et choisis \sphinxstylestrong{au moment de
-l’export} : marquer le fichier de son origine, et le protéger par un mot de
-passe.
+Ένας δάσκαλος που διανέμει μια βάση θέσεων διαθέτει δύο μηχανισμούς, ανεξάρτητους μεταξύ τους, και οι δύο προαιρετικοί και επιλεγόμενοι \sphinxstylestrong{κατά την εξαγωγή}: να σημάνει το αρχείο με την προέλευσή του και να το προστατεύσει με κωδικό πρόσβασης.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Aucun des deux ne suit ce que devient le fichier. blunderDB \sphinxstylestrong{n’enregistre
-rien du côté de celui qui reçoit la base} : ouvrir une base marquée est
-exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
-consigne qui l’a ouverte, quand, ni d’où vient son contenu.
+Κανένας από τους δύο δεν παρακολουθεί την τύχη του αρχείου. Το blunderDB \sphinxstylestrong{δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση}: το άνοιγμα μιας σημασμένης βάσης είναι ακριβώς σαν το άνοιγμα οποιασδήποτε άλλης, και πουθενά δεν καταγράφεται ποιος την άνοιξε, πότε, ούτε από πού προέρχεται το περιεχόμενό της.
 \end{sphinxadmonition}
 
 
-\subsubsection{Marquer une base de son origine}
+\subsubsection{Σήμανση μιας βάσης με την προέλευσή της}
 \label{\detokenize{manuel:marquer-une-base-de-son-origine}}
 \sphinxAtStartPar
-La fenêtre d’export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l’écriture. Elle se ferme
-d’elle\sphinxhyphen{}même une fois terminée, et le résultat s’affiche dans la barre d’état.
+Το παράθυρο εξαγωγής χωράει σε μία μόνο οθόνη: η φόρμα και, πάνω της, μια ένδειξη προόδου κατά τη διάρκεια της εγγραφής. Κλείνει από μόνο του όταν ολοκληρωθεί και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης.
 
 \sphinxAtStartPar
-Trois points méritent l’attention :
+Τρία σημεία αξίζουν προσοχής:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{L’export porte sur les positions actuellement affichées}, pas sur la base
-entière. Après une recherche, seuls les résultats partent — la fenêtre le
-rappelle en tête.
+\sphinxstylestrong{Η εξαγωγή αφορά τις θέσεις που εμφανίζονται αυτή τη στιγμή}, όχι ολόκληρη τη βάση. Μετά από μια αναζήτηση εξάγονται μόνο τα αποτελέσματα — το παράθυρο το υπενθυμίζει στην κορυφή.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Une collection dont toutes les positions ne sont pas dans la sélection
-arrive tronquée.} La liste affiche donc, pour chaque collection, la part
-couverte (« 12/40 ») et la signale en rouge lorsqu’elle est partielle.
+\sphinxstylestrong{Μια συλλογή της οποίας οι θέσεις δεν περιλαμβάνονται όλες στην επιλογή φτάνει περικομμένη.} Η λίστα δείχνει επομένως, για κάθε συλλογή, το καλυπτόμενο μέρος («12/40») και το επισημαίνει με κόκκινο όταν είναι μερικό.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Les tournois ne peuvent être exportés qu’avec les matchs} : sans eux, le
-lien tournoi–match n’existe pas et le tournoi arriverait vide. La case est
-désactivée tant que « inclure les matchs » ne l’est pas.
+\sphinxstylestrong{Τα τουρνουά μπορούν να εξαχθούν μόνο μαζί με τους αγώνες}: χωρίς αυτούς δεν υπάρχει ο σύνδεσμος τουρνουά–αγώνα και το τουρνουά θα έφτανε κενό. Το πλαίσιο παραμένει απενεργοποιημένο όσο δεν έχει επιλεγεί το «συμπερίληψη των αγώνων».
 
 \end{itemize}
 
 \sphinxAtStartPar
-Les champs \sphinxstyleemphasis{Utilisateur}, \sphinxstyleemphasis{Description} et \sphinxstyleemphasis{Date} décrivent le \sphinxstylestrong{fichier
-produit} ; ils sont préremplis depuis la base source. La case \sphinxstyleemphasis{Mes filtres
-enregistrés} est à part des autres : elle n’exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu’un
-d’autre.
+Τα πεδία \sphinxstyleemphasis{Χρήστης}, \sphinxstyleemphasis{Περιγραφή} και \sphinxstyleemphasis{Ημερομηνία} περιγράφουν το \sphinxstylestrong{αρχείο που παράγεται}· συμπληρώνονται εκ των προτέρων από τη βάση προέλευσης. Το πλαίσιο \sphinxstyleemphasis{Τα αποθηκευμένα φίλτρα μου} είναι ξεχωριστό από τα υπόλοιπα: δεν εξάγει περιεχόμενο αλλά τις δικές σας αποθηκευμένες αναζητήσεις, οι οποίες δεν χρησιμεύουν στη βάση κάποιου άλλου.
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Marquer ce fichier de son origine} fait apparaître deux champs :
+Η επιλογή \sphinxstylestrong{Σήμανση αυτού του αρχείου με την προέλευσή του} εμφανίζει δύο πεδία:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Origine} — ce qu’est ce fichier et d’où il vient, dans vos mots :
-« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est \sphinxstylestrong{obligatoire} : tant
-qu’il est vide, le bouton d’export reste inactif.
+\sphinxstylestrong{Προέλευση} — τι είναι αυτό το αρχείο και από πού προέρχεται, με δικά σας λόγια: «Μάθημα του Jean Dupont — 12 Μαρτίου 2026». Το πεδίο αυτό είναι \sphinxstylestrong{υποχρεωτικό}: όσο παραμένει κενό, το κουμπί εξαγωγής μένει ανενεργό.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Note}, facultative — conditions d’utilisation, adresse de contact, une
-demande de ne pas rediffuser.
+\sphinxstylestrong{Σημείωση}, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα αίτημα να μην αναδιανεμηθεί.
 
 \end{itemize}
 
 \sphinxAtStartPar
-La marque est signée avec votre identité d’émetteur. Elle est donc
-\sphinxstylestrong{inaltérable et infalsifiable} : nul ne peut la modifier, ni en fabriquer une
-à votre nom. Elle n’est en revanche \sphinxstylestrong{pas ineffaçable} — le fichier distribué
-est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
-n’empêche rien : elle dit d’où vient le fichier.
+Η σήμανση υπογράφεται με την ταυτότητα εκδότη σας. Είναι επομένως \sphinxstylestrong{αναλλοίωτη και μη πλαστογραφήσιμη}: κανείς δεν μπορεί να την τροποποιήσει ούτε να κατασκευάσει μία στο όνομά σας. Δεν είναι όμως \sphinxstylestrong{ανεξίτηλη} — το αρχείο που διανέμεται είναι μια συνηθισμένη βάση SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: λέει από πού προέρχεται το αρχείο.
 
 
-\subsubsection{Identité d’émetteur}
+\subsubsection{Ταυτότητα εκδότη}
 \label{\detokenize{manuel:identite-d-emetteur}}
 \sphinxAtStartPar
-Les marques sont signées avec votre \sphinxstylestrong{identité d’émetteur}, créée toute seule
-la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
-appartient à une personne et non à une base : tous vos fichiers portent la même
-empreinte publique, de la forme \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
+Οι σημάνσεις υπογράφονται με την \sphinxstylestrong{ταυτότητα εκδότη} σας, η οποία δημιουργείται από μόνη της την πρώτη φορά που σημαίνετε ένα αρχείο· δεν χρειάζεται καμία ρύθμιση. Ανήκει σε ένα πρόσωπο και όχι σε μια βάση: όλα σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
 
 \sphinxAtStartPar
-Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
-vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
-à l’autre en un seul fichier (extension \sphinxcode{\sphinxupquote{.bdbid}}), éventuellement protégé par
-une phrase secrète. \sphinxstylestrong{Ce fichier permet de signer en votre nom : ne le partagez
-pas.}
+Μπορείτε να γνωστοποιήσετε αυτό το αποτύπωμα στους παραλήπτες σας ώστε να επαληθεύουν ότι ένα αρχείο προέρχεται πράγματι από εσάς. Η ταυτότητα μεταφέρεται από τον έναν υπολογιστή στον άλλο με ένα μόνο αρχείο (επέκταση \sphinxcode{\sphinxupquote{.bdbid}}), ενδεχομένως προστατευμένο με συνθηματική φράση. \sphinxstylestrong{Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το μοιράζεστε.}
 
 \sphinxAtStartPar
-Dans les préférences (icône engrenage de la barre d’outils), l’onglet \sphinxstyleemphasis{Identité
-d’émetteur} affiche votre nom et votre empreinte, et propose \sphinxstyleemphasis{Enregistrer
-l’identité…}, \sphinxstyleemphasis{Charger une identité…} et \sphinxstyleemphasis{Régénérer…}.
+Στις ρυθμίσεις (εικονίδιο γραναζιού της γραμμής εργαλείων), η καρτέλα \sphinxstyleemphasis{Ταυτότητα εκδότη} εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει \sphinxstyleemphasis{Αποθήκευση ταυτότητας…}, \sphinxstyleemphasis{Φόρτωση ταυτότητας…} και \sphinxstyleemphasis{Αναδημιουργία…}.
 
 \begin{sphinxadmonition}{warning}{Προειδοποίηση:}
 \sphinxAtStartPar
-\sphinxstylestrong{Régénérer ne révoque rien.} Un filigrane embarque la clé publique qui l’a
-signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
-d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
-ancienne empreinte, et ces marques resteront valides.
+\sphinxstylestrong{Η αναδημιουργία δεν ανακαλεί τίποτε.} Μια σήμανση ενσωματώνει το δημόσιο κλειδί που την υπέγραψε: επαληθεύεται επομένως για πάντα, από μόνη της. Αν το αρχείο ταυτότητάς σας διέρρευσε, όποιος το κατέχει θα μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι σημάνσεις αυτές θα παραμένουν έγκυρες.
 
 \sphinxAtStartPar
-Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
-votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
-destinataires.
+Αυτό που σας προστατεύει μετά από μια διαρροή δεν είναι λογισμικό: είναι να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό απέναντι στους παραλήπτες σας.
 
 \sphinxAtStartPar
-La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
-avant de la remplacer.
+Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να το αποθηκεύσετε πριν το αντικαταστήσει.
 \end{sphinxadmonition}
 
 
-\subsubsection{Protéger une base par un mot de passe}
+\subsubsection{Προστασία μιας βάσης με κωδικό πρόσβασης}
 \label{\detokenize{manuel:proteger-une-base-par-un-mot-de-passe}}
 \sphinxAtStartPar
-Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
-l’icône en forme d’œil l’affiche \sphinxstylestrong{tant qu’on la maintient enfoncée}, et le
-masque de nouveau dès qu’on relâche.
+Ο κωδικός πληκτρολογείται κρυμμένος, εδώ όπως και κατά το άνοιγμα ενός προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει \sphinxstylestrong{όσο το κρατάτε πατημένο} και τον κρύβει ξανά μόλις το αφήσετε.
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Protéger ce fichier par un mot de passe} produit un fichier
-d’extension \sphinxcode{\sphinxupquote{.dbx}} — y compris si vous aviez choisi un nom en \sphinxcode{\sphinxupquote{.db}} dans la
-fenêtre d’enregistrement, celle\sphinxhyphen{}ci s’ouvrant avant que le mot de passe ne soit
-demandé. Pour l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les \sphinxcode{\sphinxupquote{.db}} que les \sphinxcode{\sphinxupquote{.dbx}}. blunderDB demande
-alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
-n’est demandé.
+Η επιλογή \sphinxstylestrong{Προστασία αυτού του αρχείου με κωδικό πρόσβασης} παράγει αρχείο με επέκταση \sphinxcode{\sphinxupquote{.dbx}} — ακόμη και αν είχατε επιλέξει όνομα σε \sphinxcode{\sphinxupquote{.db}} στο παράθυρο αποθήκευσης, καθώς αυτό ανοίγει πριν ζητηθεί ο κωδικός. Για να το ανοίξετε, χρησιμοποιήστε το συνηθισμένο άνοιγμα βάσης: το παράθυρο επιλογής δέχεται τόσο \sphinxcode{\sphinxupquote{.db}} όσο και \sphinxcode{\sphinxupquote{.dbx}}. Το blunderDB ζητά τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· στη συνέχεια δεν ζητείται τίποτε άλλο.
 
 \sphinxAtStartPar
-La fenêtre propose de \sphinxstylestrong{supprimer le fichier protégé une fois ouvert} : sans
-cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
-défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
-la suppression n’a lieu qu’après une ouverture réussie.
+Το παράθυρο προτείνει τη \sphinxstylestrong{διαγραφή του προστατευμένου αρχείου μετά το άνοιγμα}: διαφορετικά διατηρείτε το ίδιο περιεχόμενο με δύο ονόματα. Το πλαίσιο δεν είναι επιλεγμένο εξ ορισμού — το προστατευμένο αρχείο παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή γίνεται μόνο μετά από επιτυχές άνοιγμα.
 
 \begin{sphinxadmonition}{warning}{Προειδοποίηση:}
 \sphinxAtStartPar
-Le mot de passe protège le \sphinxstylestrong{transport} du fichier, pas la base. Il empêche
-un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
-avez donné le mot de passe.
+Ο κωδικός προστατεύει τη \sphinxstylestrong{μεταφορά} του αρχείου, όχι τη βάση. Εμποδίζει έναν τρίτο να ανοίξει ένα αρχείο ξεχασμένο σε έναν φάκελο λήψεων ή ένα συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον οποίο δώσατε τον κωδικό.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le mot de passe est vérifié à \sphinxstylestrong{chaque} ouverture, y compris lorsque le fichier
-a déjà été ouvert auparavant sur ce poste.
+Ο κωδικός επαληθεύεται σε \sphinxstylestrong{κάθε} άνοιγμα, ακόμη και όταν το αρχείο έχει ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή.
 
 \sphinxAtStartPar
-Techniquement, la base est chiffrée par \sphinxstylestrong{AES\sphinxhyphen{}256 en mode GCM}, avec une clé
-dérivée du mot de passe par \sphinxstylestrong{Argon2id} (64 Mio de mémoire, 3 passes, 4 fils),
-et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
-l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
-fichier chiffré l’est également — on n’obtient jamais une base corrompue en
-silence.
+Τεχνικά, η βάση κρυπτογραφείται με \sphinxstylestrong{AES\sphinxhyphen{}256 σε λειτουργία GCM}, με κλειδί που παράγεται από τον κωδικό μέσω \sphinxstylestrong{Argon2id} (64 MiB μνήμης, 3 περάσματα, 4 νήματα) και τυχαίο αλάτι ξεχωριστό για κάθε αρχείο. Η λειτουργία GCM πιστοποιεί το σύνολο: ένας λανθασμένος κωδικός εντοπίζεται ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση.
 
 \sphinxAtStartPar
-L’en\sphinxhyphen{}tête du fichier protégé reste \sphinxstylestrong{en clair} : son origine demeure lisible
-sans le mot de passe.
+Η κεφαλίδα του προστατευμένου αρχείου παραμένει \sphinxstylestrong{μη κρυπτογραφημένη}: η προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό.
 
 
-\subsubsection{Lire l’origine d’un fichier}
+\subsubsection{Ανάγνωση της προέλευσης ενός αρχείου}
 \label{\detokenize{manuel:lire-l-origine-d-un-fichier}}
 \sphinxAtStartPar
-Dans l’application, ouvrez le fichier et affichez le panneau \sphinxstylestrong{Métadonnées}
-(commande \sphinxcode{\sphinxupquote{meta}}). Sous les champs habituels apparaît une section \sphinxstylestrong{Origine},
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
-la signature :
+Στην εφαρμογή, ανοίξτε το αρχείο και εμφανίστε τον πίνακα \sphinxstylestrong{Μεταδεδομένα} (εντολή \sphinxcode{\sphinxupquote{meta}}). Στην κορυφή του πίνακα εμφανίζεται μια ενότητα \sphinxstylestrong{Προέλευση}, μόνο για ανάγνωση, που δείχνει τι καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée — marquée par vous » : le fichier porte votre marque,
-intacte ;
+«\(\checkmark\) η υπογραφή επαληθεύτηκε — σημάνθηκε από εσάς»: το αρχείο φέρει τη δική σας σήμανση, ανέπαφη·
 
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée » : la marque est intacte et vient d’une autre clé —
-comparez son empreinte à celle que le producteur vous a communiquée ;
+«\(\checkmark\) η υπογραφή επαληθεύτηκε»: η σήμανση είναι ανέπαφη και προέρχεται από άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε ο δημιουργός·
 
 \item {} 
 \sphinxAtStartPar
-« ⚠ signature invalide » : le document a été modifié ou contrefait.
+«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Cette section n’apparaît pas sur une base ordinaire.
+Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση.
 
 \sphinxAtStartPar
-En ligne de commande, \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db fichier.db}} affiche l’origine et
-l’état de la signature, \sphinxstylestrong{sans jamais écrire dans le fichier}. La commande
-fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
-\sphinxcode{\sphinxupquote{CLI\_USAGE.md}} pour les options \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} et \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} de
-\sphinxcode{\sphinxupquote{export}}, ainsi que pour \sphinxcode{\sphinxupquote{identity}} et \sphinxcode{\sphinxupquote{open}}.
+Από τη γραμμή εντολών, το \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db αρχείο.db}} εμφανίζει την προέλευση και την κατάσταση της υπογραφής, \sphinxstylestrong{χωρίς ποτέ να γράφει στο αρχείο}. Η εντολή λειτουργεί και σε προστατευμένο αρχείο, χωρίς τον κωδικό. Βλ. \sphinxcode{\sphinxupquote{CLI\_USAGE.md}} για τις επιλογές \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} και \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} της \sphinxcode{\sphinxupquote{export}}, καθώς και για τις \sphinxcode{\sphinxupquote{identity}} και \sphinxcode{\sphinxupquote{open}}.
 
 \sphinxstepscope
 

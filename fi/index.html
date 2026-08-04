@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.30.1 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.31.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=12a7af68"></script>
+      <script src="_static/documentation_options.js?v=c70a6128"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -285,6 +285,10 @@
 <td><p>26.7.2026</p></td>
 <td><p>Kommenttihaku: suodatin ”Hakuteksti” muuttuu suodattimeksi ”Kommentti” ja tarjoaa kolme toisensa poissulkevaa tilaa — <em>sisältää tekstin</em> (aiempi toiminta, tunnus <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;sana1;sana2&quot;&quot;</span></code>), <em>on kommentti</em> (tunnus <code class="docutils literal notranslate"><span class="pre">co</span></code>) ja <em>ei kommenttia</em> (tunnus <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — jotta löydät yhdellä liikkeellä kommentoidut asemat tai päinvastoin ne, jotka on vielä kommentoitava. eXtreme Gammonissa merkityt asemat: XG-ottelun analysoinnin aikana asetetut merkinnät luetaan nyt tuonnin yhteydessä ja löytyvät suodattimella ”Merkitty” (tunnus <code class="docutils literal notranslate"><span class="pre">fl</span></code>), joka on yhdistettävissä kaikkiin muihin ehtoihin; merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen. Merkintä ei ole takautuva: riittää, että tuot kyseisen <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston uudelleen, jotta sen merkinnät päätyvät tietokantaan koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkittäviä korjauksia: turnauksen tunnuksessa näkyvä PR koskee viitepelaajaa eikä enää molempien pelaajien yhdistelmää, hakuun perustuvat Anki-pakat noudattavat jälleen kyseisen haun suodattimia sen sijaan että ottaisivat koko tietokannan, ja haun jumiutuminen tiettyjä suodattimia yhdistettäessä (teksti, päivämäärä, pelatun siirron virhe) on korjattu. Katso <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>4.8.2026</p></td>
+<td><p>Tietokannan jakaminen muille: kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja vientihetkellä valittavia. <strong>Alkuperämerkintä</strong> kirjaa tiedostoon, mikä se on ja mistä se tulee, ja sen allekirjoittaa merkitsijän identiteetti, joka syntyy itsestään ensimmäisellä käyttökerralla; merkintää ei voi väärentää, se luetaan Metatiedot-paneelin yläosasta (tai komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, joka ei koskaan kirjoita tiedostoon) eikä se tallenna mitään vastaanottajan puolella — ei lokia, ei seurantaa. <strong>Salasanasuojaus</strong> tuottaa salatun <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedoston (AES-256-GCM, avain johdettu Argon2id:llä), joka tarkistetaan joka avauskerralla ja jonka otsake pysyy luettavana salaamattomana; identiteetti viedään ja tuodaan yhtenä tiedostona asetuksista. Uudistettu vienti-ikkuna: yksi näkymä neljän sijaan, muistutus siitä, mitä todella viedään (näkyvissä olevat asemat), kunkin kokoelman katettu osuus punaisella merkittynä kun se on osittainen, turnaukset vietävissä vain otteluidensa kanssa — ja kolme kertaa nopeampi vienti. Asetusikkuna jaettu kolmeen välilehteen (Käyttöliittymä, Laudan värit, Merkitsijän identiteetti), koko ja sijainti pysyvät vakaina. Metatiedot-paneeli aseteltu yhteen ruudukkoon. Loki-paneeli, joka vain toisti kirjoitetut komennot, on poistettu. Merkittäviä korjauksia: väärä salasana ei enää avaa suojattua tietokantaa, valintaikkunoiden kentät eivät enää menetä kohdistusta napsautuksesta, PR/MWC-tunnuslukujen laskenta ei enää kaadu rahapelissä, ja väliaikaistiedostot (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lukko) siivotaan suljettaessa. Ks. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. EPC-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Metatietopaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Tietokannan jakaminen: alkuperä ja salasana</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a><ul>

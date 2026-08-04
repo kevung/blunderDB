@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentazione blunderDB 0.30.1 </title>
+  <title>blunderDB &mdash; Documentazione blunderDB 0.31.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=656c073e"></script>
+      <script src="_static/documentation_options.js?v=b0c1c97e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -285,6 +285,10 @@
 <td><p>26/07/2026</p></td>
 <td><p>Ricerca per commento: il filtro «Testo da cercare» diventa il filtro «Commento» e propone tre modalità esclusive — <em>contiene il testo</em> (comportamento precedente, token <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;parola1;parola2&quot;&quot;</span></code>), <em>ha un commento</em> (token <code class="docutils literal notranslate"><span class="pre">co</span></code>) e <em>senza commento</em> (token <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — per ritrovare con un gesto le posizioni annotate, o al contrario quelle che restano da commentare. Posizioni contrassegnate in eXtreme Gammon: i contrassegni posti durante l’analisi di una partita XG vengono ora letti all’importazione e ritrovati con il filtro «Contrassegnata» (token <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinabile con tutti gli altri criteri; una decisione di cubo contrassegnata dà due posizioni contrassegnate, il raddoppio e l’accetta/passa. La marcatura non è retroattiva: è sufficiente reimportare il file <code class="docutils literal notranslate"><span class="pre">.xg</span></code> interessato perché i suoi contrassegni raggiungano il database, senza toccare i commenti né le analisi esistenti. Correzioni degne di nota: il PR mostrato sul distintivo di un torneo si riferisce al giocatore di riferimento e non più all’insieme dei due giocatori, i mazzi Anki basati su una ricerca rispettano nuovamente i filtri di tale ricerca invece di prendere l’intero database, ed è corretto un blocco della ricerca combinando certi filtri (testo, data, errore della mossa giocata). Vedere <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Elenco dei comandi</span></a> e <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuale</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>04/08/2026</p></td>
+<td><p>Distribuzione di un database a terzi: due meccanismi indipendenti, entrambi facoltativi e scelti al momento dell’esportazione. Il <strong>contrassegno di origine</strong> iscrive nel file che cos’è e da dove proviene, firmato da un’identità di emittente creata da sé al primo utilizzo; il contrassegno non è falsificabile, si legge in cima al pannello Metadati (oppure con <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, che non scrive mai nel file) e non registra nulla dal lato di chi riceve il database: nessun registro, nessun tracciamento. La <strong>protezione con password</strong> produce un file <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> cifrato (AES-256-GCM, chiave derivata con Argon2id), verificato a ogni apertura e la cui intestazione resta leggibile in chiaro; l’identità si esporta e si importa in un unico file dalle impostazioni. Finestra di esportazione ridisegnata: una sola schermata invece di quattro, promemoria di ciò che viene realmente esportato (le posizioni visualizzate), parte coperta di ogni raccolta segnalata in rosso quando è parziale, tornei esportabili solo insieme ai loro match — e un’esportazione tre volte più rapida. Finestra delle impostazioni riorganizzata in tre schede (Interfaccia, Colori della board, Identità dell’emittente), di dimensione e posizione stabili. Pannello Metadati disposto in un’unica griglia. Il pannello Log, che si limitava a ripetere i comandi digitati, è stato rimosso. Correzioni di rilievo: una password errata non apre più un database protetto, i campi delle finestre modali non perdono più il focus al clic, il calcolo degli indicatori PR/MWC non va più in errore su una partita a soldi e i file temporanei (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lock) vengono ripuliti alla chiusura. Vedere <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Distribuire un database: origine e password</span></a> e <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuale</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. Pannello EPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Pannello Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Pannello Metadati</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Distribuire un database: origine e password</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a><ul>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Käyttöopas &mdash; blunderDB 0.30.1 documentation</title>
+  <title>2. Käyttöopas &mdash; blunderDB 0.31.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=12a7af68"></script>
+      <script src="_static/documentation_options.js?v=c70a6128"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -99,11 +99,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.17. EPC-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.19. Metatietopaneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">2.20.1. Marquer une base de son origine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">2.20.2. Identité d’émetteur</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">2.20.3. Protéger une base par un mot de passe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">2.20.4. Lire l’origine d’un fichier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">2.20. Tietokannan jakaminen: alkuperä ja salasana</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">2.20.1. Tietokannan merkitseminen alkuperällään</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">2.20.2. Merkitsijän identiteetti</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">2.20.3. Tietokannan suojaaminen salasanalla</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">2.20.4. Tiedoston alkuperän lukeminen</a></li>
 </ul>
 </li>
 </ul>
@@ -186,7 +186,7 @@
 <li><p>näyttää suoritustilastot (Stats-paneeli),</p></li>
 <li><p>laskea bearoff-aseman EPC (Effective Pip Count) (EPC-paneeli),</p></li>
 <li><p>opiskella asemia välitoistolla (Anki-paneeli),</p></li>
-<li><p>afficher les métadonnées de la base de données (panneau métadonnées).</p></li>
+<li><p>näyttävät tietokannan metatiedot (Metatiedot-paneeli).</p></li>
 </ul>
 <p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
 <ul class="simple">
@@ -227,26 +227,14 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Asetukset<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
-d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :</p>
+<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kolmeen välilehteen:</p>
 <ul class="simple">
-<li><p><strong>Interface</strong> — langue, échelle d’affichage, position du panneau ;</p></li>
-<li><p><strong>Couleurs</strong> — les couleurs du plateau ;</p></li>
-<li><p><strong>Identité d’émetteur</strong> — la clé qui signe vos filigranes, décrite à la
-section <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>.</p></li>
+<li><p><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti;</p></li>
+<li><p><strong>Laudan värit</strong> — laudan värit;</p></li>
+<li><p><strong>Merkitsijän identiteetti</strong> — avain, jolla alkuperämerkintäsi allekirjoitetaan; kuvattu luvussa <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>.</p></li>
 </ul>
-<p>L’onglet <em>Interface</em> permet de choisir la langue parmi l’anglais, le
-français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
-et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
-aide) est traduit dans la langue sélectionnée. Le choix de la langue est
-enregistré et conservé d’une session à l’autre.</p>
-<p>L’onglet <em>Couleurs</em> permet de personnaliser les couleurs du
-plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
-la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
-2, les dés, les points des dés et le videau. Le bouton <em>Réinitialiser</em> rétablit
-l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
-conservées d’une session à l’autre.</p>
+<p><em>Käyttöliittymä</em>-välilehdellä voi valita kielen vaihtoehdoista englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka ja venäjä. Koko käyttöliittymä (työkalurivi, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta toiseen.</p>
+<p><em>Laudan värit</em> -välilehdellä voi mukauttaa laudan värejä. Jokaisella osalla on oma värivalitsimensa: tausta, reunus, vaaleat ja tummat kolmiot, pelaajan 1 ja pelaajan 2 nappulat, nopat, noppien silmäluvut ja tuplauskuutio. <em>Palauta</em>-painike palauttaa kaikki oletusvärit. Kielen tavoin valitut värit säilyvät istunnosta toiseen.</p>
 <p>Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. <strong>Käyttöliittymän skaalaus</strong> -liukusäätimellä voi suurentaa tai pienentää kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden näytöillä tai luettavuuden parantamiseksi. <strong>Paneelien sijainti</strong> -valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa lautaan: <em>alhaalla</em>, <em>sivulla</em> tai <em>automaattinen</em> (sivu valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -569,138 +557,67 @@ conservées d’une session à l’autre.</p>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Metatietopaneeli<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
 <p><strong>Metatietopaneeli</strong> näyttää nykyisen tietokannan yleiset tiedot: nimi, kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. Käytettävissä komennolla <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
-<p>Il affiche également, <strong>lorsqu’elle existe</strong>, l’origine de la base — voir
-<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>. Une base ordinaire n’affiche pas cette section.</p>
+<p>Se näyttää myös tietokannan alkuperän, <strong>jos sellainen on</strong> — ks. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>. Tavallisessa tietokannassa tätä osiota ei näy.</p>
 </section>
 <section id="diffuser-une-base-origine-et-mot-de-passe">
-<span id="diffusion-controlee"></span><h2><span class="section-number">2.20. </span>Diffuser une base : origine et mot de passe<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
-<p>Un enseignant qui distribue une base de positions dispose de deux mécanismes,
-indépendants l’un de l’autre, tous deux facultatifs et choisis <strong>au moment de
-l’export</strong> : marquer le fichier de son origine, et le protéger par un mot de
-passe.</p>
+<span id="diffusion-controlee"></span><h2><span class="section-number">2.20. </span>Tietokannan jakaminen: alkuperä ja salasana<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>Asemakokoelmaa jakavalla opettajalla on käytössään kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja <strong>vientihetkellä</strong> valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen salasanalla.</p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Aucun des deux ne suit ce que devient le fichier. blunderDB <strong>n’enregistre
-rien du côté de celui qui reçoit la base</strong> : ouvrir une base marquée est
-exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
-consigne qui l’a ouverte, quand, ni d’où vient son contenu.</p>
+<p>Kumpikaan ei seuraa, mitä tiedostolle tapahtuu. blunderDB <strong>ei tallenna mitään tietokannan vastaanottajan puolella</strong>: merkityn tietokannan avaaminen on täsmälleen samanlaista kuin minkä tahansa muun avaaminen, eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on peräisin.</p>
 </div>
 <section id="marquer-une-base-de-son-origine">
-<h3><span class="section-number">2.20.1. </span>Marquer une base de son origine<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
-<p>La fenêtre d’export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l’écriture. Elle se ferme
-d’elle-même une fois terminée, et le résultat s’affiche dans la barre d’état.</p>
-<p>Trois points méritent l’attention :</p>
+<h3><span class="section-number">2.20.1. </span>Tietokannan merkitseminen alkuperällään<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
+<p>Kolme seikkaa ansaitsee huomiota:</p>
 <ul class="simple">
-<li><p><strong>L’export porte sur les positions actuellement affichées</strong>, pas sur la base
-entière. Après une recherche, seuls les résultats partent — la fenêtre le
-rappelle en tête.</p></li>
-<li><p><strong>Une collection dont toutes les positions ne sont pas dans la sélection
-arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part
-couverte (« 12/40 ») et la signale en rouge lorsqu’elle est partielle.</p></li>
-<li><p><strong>Les tournois ne peuvent être exportés qu’avec les matchs</strong> : sans eux, le
-lien tournoi–match n’existe pas et le tournoi arriverait vide. La case est
-désactivée tant que « inclure les matchs » ne l’est pas.</p></li>
+<li><p><strong>Vienti koskee parhaillaan näkyvissä olevia asemia</strong>, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa.</p></li>
+<li><p><strong>Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.</strong> Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.</p></li>
+<li><p><strong>Turnaukset voi viedä vain otteluiden kanssa</strong>: ilman niitä turnaus–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.</p></li>
 </ul>
-<p>Les champs <em>Utilisateur</em>, <em>Description</em> et <em>Date</em> décrivent le <strong>fichier
-produit</strong> ; ils sont préremplis depuis la base source. La case <em>Mes filtres
-enregistrés</em> est à part des autres : elle n’exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu’un
-d’autre.</p>
-<p>Cocher <strong>Marquer ce fichier de son origine</strong> fait apparaître deux champs :</p>
+<p>Kentät <em>Käyttäjä</em>, <em>Kuvaus</em> ja <em>Päivämäärä</em> kuvaavat <strong>syntyvää tiedostoa</strong>; ne on esitäytetty lähdetietokannasta. Valintaruutu <em>Omat tallennetut suodattimet</em> on erillinen muista: se ei vie sisältöä vaan omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen tietokannassa.</p>
+<p>Valinta <strong>Merkitse tämä tiedosto alkuperällään</strong> tuo näkyviin kaksi kenttää:</p>
 <ul class="simple">
-<li><p><strong>Origine</strong> — ce qu’est ce fichier et d’où il vient, dans vos mots :
-« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est <strong>obligatoire</strong> : tant
-qu’il est vide, le bouton d’export reste inactif.</p></li>
-<li><p><strong>Note</strong>, facultative — conditions d’utilisation, adresse de contact, une
-demande de ne pas rediffuser.</p></li>
+<li><p><strong>Alkuperä</strong> — mikä tämä tiedosto on ja mistä se tulee, omin sanoin: ”Jean Dupontin oppitunti — 12. maaliskuuta 2026”. Tämä kenttä on <strong>pakollinen</strong>: niin kauan kuin se on tyhjä, vientipainike pysyy passiivisena.</p></li>
+<li><p><strong>Huomautus</strong>, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla jakamatta eteenpäin.</p></li>
 </ul>
-<p>La marque est signée avec votre identité d’émetteur. Elle est donc
-<strong>inaltérable et infalsifiable</strong> : nul ne peut la modifier, ni en fabriquer une
-à votre nom. Elle n’est en revanche <strong>pas ineffaçable</strong> — le fichier distribué
-est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
-n’empêche rien : elle dit d’où vient le fichier.</p>
+<p>Merkintä allekirjoitetaan merkitsijän identiteetilläsi. Se on siten <strong>muuttumaton ja väärentämätön</strong>: kukaan ei voi muuttaa sitä eikä valmistaa sellaista sinun nimissäsi. Se ei sen sijaan ole <strong>poistamaton</strong> — jaettu tiedosto on tavallinen SQLite-tietokanta ja blunderDB on vapaa ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on peräisin.</p>
 </section>
 <section id="identite-d-emetteur">
-<h3><span class="section-number">2.20.2. </span>Identité d’émetteur<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
-<p>Les marques sont signées avec votre <strong>identité d’émetteur</strong>, créée toute seule
-la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
-appartient à une personne et non à une base : tous vos fichiers portent la même
-empreinte publique, de la forme <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
-<p>Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
-vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
-à l’autre en un seul fichier (extension <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), éventuellement protégé par
-une phrase secrète. <strong>Ce fichier permet de signer en votre nom : ne le partagez
-pas.</strong></p>
-<p>Dans les préférences (icône engrenage de la barre d’outils), l’onglet <em>Identité
-d’émetteur</em> affiche votre nom et votre empreinte, et propose <em>Enregistrer
-l’identité…</em>, <em>Charger une identité…</em> et <em>Régénérer…</em>.</p>
+<h3><span class="section-number">2.20.2. </span>Merkitsijän identiteetti<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Merkinnät allekirjoitetaan <strong>merkitsijän identiteetilläsi</strong>, joka syntyy itsestään ensimmäisellä kerralla, kun merkitset tiedoston; mitään ei tarvitse määrittää. Se kuuluu henkilölle eikä tietokannalle: kaikissa tiedostoissasi on sama julkinen sormenjälki muotoa <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Voit kertoa tämän sormenjäljen vastaanottajillesi, jotta he voivat varmistaa tiedoston tulevan todella sinulta. Identiteetti siirtyy koneelta toiselle yhtenä tiedostona (pääte <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), haluttaessa salalauseella suojattuna. <strong>Tällä tiedostolla voi allekirjoittaa sinun nimissäsi: älä jaa sitä.</strong></p>
+<p>Asetuksissa (työkalurivin rataskuvake) <em>Merkitsijän identiteetti</em> -välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot <em>Tallenna identiteetti…</em>, <em>Lataa identiteetti…</em> ja <em>Luo uusi…</em>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Varoitus</p>
-<p><strong>Régénérer ne révoque rien.</strong> Un filigrane embarque la clé publique qui l’a
-signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
-d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
-ancienne empreinte, et ces marques resteront valides.</p>
-<p>Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
-votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
-destinataires.</p>
-<p>La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
-avant de la remplacer.</p>
+<p><strong>Uuden luominen ei mitätöi mitään.</strong> Merkintä sisältää sen allekirjoittaneen julkisen avaimen: se todentuu siis ikuisesti, aivan itsekseen. Jos identiteettitiedostosi on vuotanut, sen haltija voi jatkaa allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät pätevinä.</p>
+<p>Vuodon jälkeen sinua ei suojaa ohjelmisto: suoja on siinä, että julkaiset uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan pätemättömäksi.</p>
+<p>Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta tallentaa se ennen korvaamista.</p>
 </div>
 </section>
 <section id="proteger-une-base-par-un-mot-de-passe">
-<h3><span class="section-number">2.20.3. </span>Protéger une base par un mot de passe<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
-<p>Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
-l’icône en forme d’œil l’affiche <strong>tant qu’on la maintient enfoncée</strong>, et le
-masque de nouveau dès qu’on relâche.</p>
-<p>Cocher <strong>Protéger ce fichier par un mot de passe</strong> produit un fichier
-d’extension <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — y compris si vous aviez choisi un nom en <code class="docutils literal notranslate"><span class="pre">.db</span></code> dans la
-fenêtre d’enregistrement, celle-ci s’ouvrant avant que le mot de passe ne soit
-demandé. Pour l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les <code class="docutils literal notranslate"><span class="pre">.db</span></code> que les <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB demande
-alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
-n’est demandé.</p>
-<p>La fenêtre propose de <strong>supprimer le fichier protégé une fois ouvert</strong> : sans
-cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
-défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
-la suppression n’a lieu qu’après une ouverture réussie.</p>
+<h3><span class="section-number">2.20.3. </span>Tietokannan suojaaminen salasanalla<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>Salasana kirjoitetaan peitettynä, sekä tässä että suojattua tiedostoa avattaessa; silmäkuvake näyttää sen <strong>niin kauan kuin sitä pidetään painettuna</strong> ja peittää sen taas heti, kun ote irrotetaan.</p>
+<p>Valinta <strong>Suojaa tämä tiedosto salasanalla</strong> tuottaa tiedoston, jonka pääte on <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — myös silloin, kun olit valinnut tallennusikkunassa <code class="docutils literal notranslate"><span class="pre">.db</span></code>-päätteisen nimen, sillä tuo ikkuna avautuu ennen salasanan kysymistä. Avaamiseen käytetään tavallista tietokannan avausta: valintaikkuna hyväksyy sekä <code class="docutils literal notranslate"><span class="pre">.db</span></code>- että <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedostot. blunderDB kysyy tällöin salasanan ja asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää kysytä.</p>
+<p>Ikkuna tarjoaa mahdollisuutta <strong>poistaa suojattu tiedosto avaamisen jälkeen</strong>: muuten sama sisältö jää talteen kahdella nimellä. Ruutu ei ole oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen.</p>
 <div class="admonition warning">
 <p class="admonition-title">Varoitus</p>
-<p>Le mot de passe protège le <strong>transport</strong> du fichier, pas la base. Il empêche
-un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
-avez donné le mot de passe.</p>
+<p>Salasana suojaa tiedoston <strong>siirron ajaksi</strong>, ei itse tietokantaa. Se estää sivullista avaamasta latauskansioon unohtunutta tiedostoa tai vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet antanut salasanan.</p>
 </div>
-<p>Le mot de passe est vérifié à <strong>chaque</strong> ouverture, y compris lorsque le fichier
-a déjà été ouvert auparavant sur ce poste.</p>
-<p>Techniquement, la base est chiffrée par <strong>AES-256 en mode GCM</strong>, avec une clé
-dérivée du mot de passe par <strong>Argon2id</strong> (64 Mio de mémoire, 3 passes, 4 fils),
-et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
-l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
-fichier chiffré l’est également — on n’obtient jamais une base corrompue en
-silence.</p>
-<p>L’en-tête du fichier protégé reste <strong>en clair</strong> : son origine demeure lisible
-sans le mot de passe.</p>
+<p>Salasana tarkistetaan <strong>joka</strong> avauskerralla, myös silloin kun tiedosto on jo aiemmin avattu tällä koneella.</p>
+<p>Teknisesti tietokanta salataan <strong>AES-256:lla GCM-tilassa</strong>, ja avain johdetaan salasanasta <strong>Argon2id</strong>-funktiolla (64 MiB muistia, 3 kierrosta, 4 säiettä) käyttäen satunnaista, tiedostokohtaista suolaa. GCM-tila todentaa kokonaisuuden: väärä salasana havaitaan sellaiseksi, samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta tietokantaa ei koskaan saada hiljaisesti.</p>
+<p>Suojatun tiedoston otsake pysyy <strong>salaamattomana</strong>: sen alkuperä on luettavissa ilman salasanaa.</p>
 </section>
 <section id="lire-l-origine-d-un-fichier">
-<h3><span class="section-number">2.20.4. </span>Lire l’origine d’un fichier<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
-<p>Dans l’application, ouvrez le fichier et affichez le panneau <strong>Métadonnées</strong>
-(commande <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Sous les champs habituels apparaît une section <strong>Origine</strong>,
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
-la signature :</p>
+<h3><span class="section-number">2.20.4. </span>Tiedoston alkuperän lukeminen<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>Avaa sovelluksessa tiedosto ja näytä <strong>Metatiedot</strong>-paneeli (komento <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Paneelin yläosaan ilmestyy vain luettava <strong>Alkuperä</strong>-osio, joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa allekirjoitus on:</p>
 <ul class="simple">
-<li><p>« ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
-intacte ;</p></li>
-<li><p>« ✓ signature vérifiée » : la marque est intacte et vient d’une autre clé —
-comparez son empreinte à celle que le producteur vous a communiquée ;</p></li>
-<li><p>« ⚠ signature invalide » : le document a été modifié ou contrefait.</p></li>
+<li><p>”✓ allekirjoitus varmennettu — sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;</p></li>
+<li><p>”✓ allekirjoitus varmennettu”: merkintä on ehjä ja peräisin toisesta avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle kertonut;</p></li>
+<li><p>”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on väärennetty.</p></li>
 </ul>
-<p>Cette section n’apparaît pas sur une base ordinaire.</p>
-<p>En ligne de commande, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">fichier.db</span></code> affiche l’origine et
-l’état de la signature, <strong>sans jamais écrire dans le fichier</strong>. La commande
-fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
-<code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> pour les options <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> et <code class="docutils literal notranslate"><span class="pre">--password</span></code> de
-<code class="docutils literal notranslate"><span class="pre">export</span></code>, ainsi que pour <code class="docutils literal notranslate"><span class="pre">identity</span></code> et <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+<p>Tavallisessa tietokannassa tätä osiota ei näy.</p>
+<p>Komentoriviltä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">tiedosto.db</span></code> näyttää alkuperän ja allekirjoituksen tilan <strong>kirjoittamatta koskaan tiedostoon</strong>. Komento toimii myös suojatulle tiedostolle ilman salasanaa. Ks. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> komennon <code class="docutils literal notranslate"><span class="pre">export</span></code> valitsimista <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> ja <code class="docutils literal notranslate"><span class="pre">--password</span></code> sekä komennoista <code class="docutils literal notranslate"><span class="pre">identity</span></code> ja <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
 </section>
 </section>
 </section>

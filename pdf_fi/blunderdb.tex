@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{04.08.2026}
-\release{0.30.1}
+\release{0.31.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -798,6 +798,22 @@ Kommenttihaku: suodatin ”Hakuteksti” muuttuu suodattimeksi ”Kommentti” j
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.31.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+4.8.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Tietokannan jakaminen muille: kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja vientihetkellä valittavia. \sphinxstylestrong{Alkuperämerkintä} kirjaa tiedostoon, mikä se on ja mistä se tulee, ja sen allekirjoittaa merkitsijän identiteetti, joka syntyy itsestään ensimmäisellä käyttökerralla; merkintää ei voi väärentää, se luetaan Metatiedot\sphinxhyphen{}paneelin yläosasta (tai komennolla \sphinxcode{\sphinxupquote{blunderdb info}}, joka ei koskaan kirjoita tiedostoon) eikä se tallenna mitään vastaanottajan puolella — ei lokia, ei seurantaa. \sphinxstylestrong{Salasanasuojaus} tuottaa salatun \sphinxcode{\sphinxupquote{.dbx}}\sphinxhyphen{}tiedoston (AES\sphinxhyphen{}256\sphinxhyphen{}GCM, avain johdettu Argon2id:llä), joka tarkistetaan joka avauskerralla ja jonka otsake pysyy luettavana salaamattomana; identiteetti viedään ja tuodaan yhtenä tiedostona asetuksista. Uudistettu vienti\sphinxhyphen{}ikkuna: yksi näkymä neljän sijaan, muistutus siitä, mitä todella viedään (näkyvissä olevat asemat), kunkin kokoelman katettu osuus punaisella merkittynä kun se on osittainen, turnaukset vietävissä vain otteluidensa kanssa — ja kolme kertaa nopeampi vienti. Asetusikkuna jaettu kolmeen välilehteen (Käyttöliittymä, Laudan värit, Merkitsijän identiteetti), koko ja sijainti pysyvät vakaina. Metatiedot\sphinxhyphen{}paneeli aseteltu yhteen ruudukkoon. Loki\sphinxhyphen{}paneeli, joka vain toisti kirjoitetut komennot, on poistettu. Merkittäviä korjauksia: väärä salasana ei enää avaa suojattua tietokantaa, valintaikkunoiden kentät eivät enää menetä kohdistusta napsautuksesta, PR/MWC\sphinxhyphen{}tunnuslukujen laskenta ei enää kaadu rahapelissä, ja väliaikaistiedostot (\sphinxcode{\sphinxupquote{\sphinxhyphen{}wal}}, \sphinxcode{\sphinxupquote{\sphinxhyphen{}shm}}, lukko) siivotaan suljettaessa. Ks. {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Tietokannan jakaminen: alkuperä ja salasana}}}}} ja {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Käyttöopas}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -820,15 +836,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
 
 \end{itemize}
 
@@ -880,7 +896,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raaka binääri (edistynyt menetelmä)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
+Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -888,7 +904,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
+Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
 \end{sphinxadmonition}
 
 
@@ -1026,7 +1042,7 @@ opiskella asemia välitoistolla (Anki\sphinxhyphen{}paneeli),
 
 \item {} 
 \sphinxAtStartPar
-afficher les métadonnées de la base de données (panneau métadonnées).
+näyttävät tietokannan metatiedot (Metatiedot\sphinxhyphen{}paneeli).
 
 \end{itemize}
 
@@ -1129,39 +1145,27 @@ Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudell
 \subsection{Asetukset}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Le bouton de configuration (icône en forme de rouage) situé dans la barre
-d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :
+Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kolmeen välilehteen:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Interface} — langue, échelle d’affichage, position du panneau ;
+\sphinxstylestrong{Käyttöliittymä} — kieli, näytön skaalaus, paneelin sijainti;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Couleurs} — les couleurs du plateau ;
+\sphinxstylestrong{Laudan värit} — laudan värit;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Identité d’émetteur} — la clé qui signe vos filigranes, décrite à la
-section {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}.
+\sphinxstylestrong{Merkitsijän identiteetti} — avain, jolla alkuperämerkintäsi allekirjoitetaan; kuvattu luvussa {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Tietokannan jakaminen: alkuperä ja salasana}}}}}.
 
 \end{itemize}
 
 \sphinxAtStartPar
-L’onglet \sphinxstyleemphasis{Interface} permet de choisir la langue parmi l’anglais, le
-français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
-et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
-aide) est traduit dans la langue sélectionnée. Le choix de la langue est
-enregistré et conservé d’une session à l’autre.
+\sphinxstyleemphasis{Käyttöliittymä}\sphinxhyphen{}välilehdellä voi valita kielen vaihtoehdoista englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka ja venäjä. Koko käyttöliittymä (työkalurivi, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta toiseen.
 
 \sphinxAtStartPar
-L’onglet \sphinxstyleemphasis{Couleurs} permet de personnaliser les couleurs du
-plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
-la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
-2, les dés, les points des dés et le videau. Le bouton \sphinxstyleemphasis{Réinitialiser} rétablit
-l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
-conservées d’une session à l’autre.
+\sphinxstyleemphasis{Laudan värit} \sphinxhyphen{}välilehdellä voi mukauttaa laudan värejä. Jokaisella osalla on oma värivalitsimensa: tausta, reunus, vaaleat ja tummat kolmiot, pelaajan 1 ja pelaajan 2 nappulat, nopat, noppien silmäluvut ja tuplauskuutio. \sphinxstyleemphasis{Palauta}\sphinxhyphen{}painike palauttaa kaikki oletusvärit. Kielen tavoin valitut värit säilyvät istunnosta toiseen.
 
 \sphinxAtStartPar
 Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. \sphinxstylestrong{Käyttöliittymän skaalaus} \sphinxhyphen{}liukusäätimellä voi suurentaa tai pienentää kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden näytöillä tai luettavuuden parantamiseksi. \sphinxstylestrong{Paneelien sijainti} \sphinxhyphen{}valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa lautaan: \sphinxstyleemphasis{alhaalla}, \sphinxstyleemphasis{sivulla} tai \sphinxstyleemphasis{automaattinen} (sivu valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen.
@@ -1800,206 +1804,135 @@ Laskenta perustuu GNUbg:n sisäänrakennettuun 6 pisteen bearoff\sphinxhyphen{}t
 \sphinxstylestrong{Metatietopaneeli} näyttää nykyisen tietokannan yleiset tiedot: nimi, kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. Käytettävissä komennolla \sphinxcode{\sphinxupquote{meta}}.
 
 \sphinxAtStartPar
-Il affiche également, \sphinxstylestrong{lorsqu’elle existe}, l’origine de la base — voir
-{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}. Une base ordinaire n’affiche pas cette section.
+Se näyttää myös tietokannan alkuperän, \sphinxstylestrong{jos sellainen on} — ks. {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Tietokannan jakaminen: alkuperä ja salasana}}}}}. Tavallisessa tietokannassa tätä osiota ei näy.
 
 
-\subsection{Diffuser une base : origine et mot de passe}
+\subsection{Tietokannan jakaminen: alkuperä ja salasana}
 \label{\detokenize{manuel:diffuser-une-base-origine-et-mot-de-passe}}\label{\detokenize{manuel:diffusion-controlee}}
 \sphinxAtStartPar
-Un enseignant qui distribue une base de positions dispose de deux mécanismes,
-indépendants l’un de l’autre, tous deux facultatifs et choisis \sphinxstylestrong{au moment de
-l’export} : marquer le fichier de son origine, et le protéger par un mot de
-passe.
+Asemakokoelmaa jakavalla opettajalla on käytössään kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja \sphinxstylestrong{vientihetkellä} valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen salasanalla.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Aucun des deux ne suit ce que devient le fichier. blunderDB \sphinxstylestrong{n’enregistre
-rien du côté de celui qui reçoit la base} : ouvrir une base marquée est
-exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
-consigne qui l’a ouverte, quand, ni d’où vient son contenu.
+Kumpikaan ei seuraa, mitä tiedostolle tapahtuu. blunderDB \sphinxstylestrong{ei tallenna mitään tietokannan vastaanottajan puolella}: merkityn tietokannan avaaminen on täsmälleen samanlaista kuin minkä tahansa muun avaaminen, eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on peräisin.
 \end{sphinxadmonition}
 
 
-\subsubsection{Marquer une base de son origine}
+\subsubsection{Tietokannan merkitseminen alkuperällään}
 \label{\detokenize{manuel:marquer-une-base-de-son-origine}}
 \sphinxAtStartPar
-La fenêtre d’export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l’écriture. Elle se ferme
-d’elle\sphinxhyphen{}même une fois terminée, et le résultat s’affiche dans la barre d’état.
+Vienti\sphinxhyphen{}ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.
 
 \sphinxAtStartPar
-Trois points méritent l’attention :
+Kolme seikkaa ansaitsee huomiota:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{L’export porte sur les positions actuellement affichées}, pas sur la base
-entière. Après une recherche, seuls les résultats partent — la fenêtre le
-rappelle en tête.
+\sphinxstylestrong{Vienti koskee parhaillaan näkyvissä olevia asemia}, ei koko tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä yläreunassa.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Une collection dont toutes les positions ne sont pas dans la sélection
-arrive tronquée.} La liste affiche donc, pour chaque collection, la part
-couverte (« 12/40 ») et la signale en rouge lorsqu’elle est partielle.
+\sphinxstylestrong{Kokoelma, jonka asemat eivät kaikki sisälly valintaan, saapuu vaillinaisena.} Siksi luettelo näyttää kunkin kokoelman katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Les tournois ne peuvent être exportés qu’avec les matchs} : sans eux, le
-lien tournoi–match n’existe pas et le tournoi arriverait vide. La case est
-désactivée tant que « inclure les matchs » ne l’est pas.
+\sphinxstylestrong{Turnaukset voi viedä vain otteluiden kanssa}: ilman niitä turnaus–ottelu\sphinxhyphen{}yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy poissa käytöstä, kunnes ”sisällytä ottelut” on valittu.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Les champs \sphinxstyleemphasis{Utilisateur}, \sphinxstyleemphasis{Description} et \sphinxstyleemphasis{Date} décrivent le \sphinxstylestrong{fichier
-produit} ; ils sont préremplis depuis la base source. La case \sphinxstyleemphasis{Mes filtres
-enregistrés} est à part des autres : elle n’exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu’un
-d’autre.
+Kentät \sphinxstyleemphasis{Käyttäjä}, \sphinxstyleemphasis{Kuvaus} ja \sphinxstyleemphasis{Päivämäärä} kuvaavat \sphinxstylestrong{syntyvää tiedostoa}; ne on esitäytetty lähdetietokannasta. Valintaruutu \sphinxstyleemphasis{Omat tallennetut suodattimet} on erillinen muista: se ei vie sisältöä vaan omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen tietokannassa.
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Marquer ce fichier de son origine} fait apparaître deux champs :
+Valinta \sphinxstylestrong{Merkitse tämä tiedosto alkuperällään} tuo näkyviin kaksi kenttää:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Origine} — ce qu’est ce fichier et d’où il vient, dans vos mots :
-« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est \sphinxstylestrong{obligatoire} : tant
-qu’il est vide, le bouton d’export reste inactif.
+\sphinxstylestrong{Alkuperä} — mikä tämä tiedosto on ja mistä se tulee, omin sanoin: ”Jean Dupontin oppitunti — 12. maaliskuuta 2026”. Tämä kenttä on \sphinxstylestrong{pakollinen}: niin kauan kuin se on tyhjä, vientipainike pysyy passiivisena.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Note}, facultative — conditions d’utilisation, adresse de contact, une
-demande de ne pas rediffuser.
+\sphinxstylestrong{Huomautus}, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla jakamatta eteenpäin.
 
 \end{itemize}
 
 \sphinxAtStartPar
-La marque est signée avec votre identité d’émetteur. Elle est donc
-\sphinxstylestrong{inaltérable et infalsifiable} : nul ne peut la modifier, ni en fabriquer une
-à votre nom. Elle n’est en revanche \sphinxstylestrong{pas ineffaçable} — le fichier distribué
-est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
-n’empêche rien : elle dit d’où vient le fichier.
+Merkintä allekirjoitetaan merkitsijän identiteetilläsi. Se on siten \sphinxstylestrong{muuttumaton ja väärentämätön}: kukaan ei voi muuttaa sitä eikä valmistaa sellaista sinun nimissäsi. Se ei sen sijaan ole \sphinxstylestrong{poistamaton} — jaettu tiedosto on tavallinen SQLite\sphinxhyphen{}tietokanta ja blunderDB on vapaa ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on peräisin.
 
 
-\subsubsection{Identité d’émetteur}
+\subsubsection{Merkitsijän identiteetti}
 \label{\detokenize{manuel:identite-d-emetteur}}
 \sphinxAtStartPar
-Les marques sont signées avec votre \sphinxstylestrong{identité d’émetteur}, créée toute seule
-la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
-appartient à une personne et non à une base : tous vos fichiers portent la même
-empreinte publique, de la forme \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
+Merkinnät allekirjoitetaan \sphinxstylestrong{merkitsijän identiteetilläsi}, joka syntyy itsestään ensimmäisellä kerralla, kun merkitset tiedoston; mitään ei tarvitse määrittää. Se kuuluu henkilölle eikä tietokannalle: kaikissa tiedostoissasi on sama julkinen sormenjälki muotoa \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
 
 \sphinxAtStartPar
-Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
-vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
-à l’autre en un seul fichier (extension \sphinxcode{\sphinxupquote{.bdbid}}), éventuellement protégé par
-une phrase secrète. \sphinxstylestrong{Ce fichier permet de signer en votre nom : ne le partagez
-pas.}
+Voit kertoa tämän sormenjäljen vastaanottajillesi, jotta he voivat varmistaa tiedoston tulevan todella sinulta. Identiteetti siirtyy koneelta toiselle yhtenä tiedostona (pääte \sphinxcode{\sphinxupquote{.bdbid}}), haluttaessa salalauseella suojattuna. \sphinxstylestrong{Tällä tiedostolla voi allekirjoittaa sinun nimissäsi: älä jaa sitä.}
 
 \sphinxAtStartPar
-Dans les préférences (icône engrenage de la barre d’outils), l’onglet \sphinxstyleemphasis{Identité
-d’émetteur} affiche votre nom et votre empreinte, et propose \sphinxstyleemphasis{Enregistrer
-l’identité…}, \sphinxstyleemphasis{Charger une identité…} et \sphinxstyleemphasis{Régénérer…}.
+Asetuksissa (työkalurivin rataskuvake) \sphinxstyleemphasis{Merkitsijän identiteetti} \sphinxhyphen{}välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot \sphinxstyleemphasis{Tallenna identiteetti…}, \sphinxstyleemphasis{Lataa identiteetti…} ja \sphinxstyleemphasis{Luo uusi…}.
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
 \sphinxAtStartPar
-\sphinxstylestrong{Régénérer ne révoque rien.} Un filigrane embarque la clé publique qui l’a
-signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
-d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
-ancienne empreinte, et ces marques resteront valides.
+\sphinxstylestrong{Uuden luominen ei mitätöi mitään.} Merkintä sisältää sen allekirjoittaneen julkisen avaimen: se todentuu siis ikuisesti, aivan itsekseen. Jos identiteettitiedostosi on vuotanut, sen haltija voi jatkaa allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät pätevinä.
 
 \sphinxAtStartPar
-Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
-votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
-destinataires.
+Vuodon jälkeen sinua ei suojaa ohjelmisto: suoja on siinä, että julkaiset uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan pätemättömäksi.
 
 \sphinxAtStartPar
-La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
-avant de la remplacer.
+Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta tallentaa se ennen korvaamista.
 \end{sphinxadmonition}
 
 
-\subsubsection{Protéger une base par un mot de passe}
+\subsubsection{Tietokannan suojaaminen salasanalla}
 \label{\detokenize{manuel:proteger-une-base-par-un-mot-de-passe}}
 \sphinxAtStartPar
-Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
-l’icône en forme d’œil l’affiche \sphinxstylestrong{tant qu’on la maintient enfoncée}, et le
-masque de nouveau dès qu’on relâche.
+Salasana kirjoitetaan peitettynä, sekä tässä että suojattua tiedostoa avattaessa; silmäkuvake näyttää sen \sphinxstylestrong{niin kauan kuin sitä pidetään painettuna} ja peittää sen taas heti, kun ote irrotetaan.
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Protéger ce fichier par un mot de passe} produit un fichier
-d’extension \sphinxcode{\sphinxupquote{.dbx}} — y compris si vous aviez choisi un nom en \sphinxcode{\sphinxupquote{.db}} dans la
-fenêtre d’enregistrement, celle\sphinxhyphen{}ci s’ouvrant avant que le mot de passe ne soit
-demandé. Pour l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les \sphinxcode{\sphinxupquote{.db}} que les \sphinxcode{\sphinxupquote{.dbx}}. blunderDB demande
-alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
-n’est demandé.
+Valinta \sphinxstylestrong{Suojaa tämä tiedosto salasanalla} tuottaa tiedoston, jonka pääte on \sphinxcode{\sphinxupquote{.dbx}} — myös silloin, kun olit valinnut tallennusikkunassa \sphinxcode{\sphinxupquote{.db}}\sphinxhyphen{}päätteisen nimen, sillä tuo ikkuna avautuu ennen salasanan kysymistä. Avaamiseen käytetään tavallista tietokannan avausta: valintaikkuna hyväksyy sekä \sphinxcode{\sphinxupquote{.db}}\sphinxhyphen{} että \sphinxcode{\sphinxupquote{.dbx}}\sphinxhyphen{}tiedostot. blunderDB kysyy tällöin salasanan ja asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää kysytä.
 
 \sphinxAtStartPar
-La fenêtre propose de \sphinxstylestrong{supprimer le fichier protégé une fois ouvert} : sans
-cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
-défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
-la suppression n’a lieu qu’après une ouverture réussie.
+Ikkuna tarjoaa mahdollisuutta \sphinxstylestrong{poistaa suojattu tiedosto avaamisen jälkeen}: muuten sama sisältö jää talteen kahdella nimellä. Ruutu ei ole oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen.
 
 \begin{sphinxadmonition}{warning}{Varoitus:}
 \sphinxAtStartPar
-Le mot de passe protège le \sphinxstylestrong{transport} du fichier, pas la base. Il empêche
-un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
-avez donné le mot de passe.
+Salasana suojaa tiedoston \sphinxstylestrong{siirron ajaksi}, ei itse tietokantaa. Se estää sivullista avaamasta latauskansioon unohtunutta tiedostoa tai vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet antanut salasanan.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le mot de passe est vérifié à \sphinxstylestrong{chaque} ouverture, y compris lorsque le fichier
-a déjà été ouvert auparavant sur ce poste.
+Salasana tarkistetaan \sphinxstylestrong{joka} avauskerralla, myös silloin kun tiedosto on jo aiemmin avattu tällä koneella.
 
 \sphinxAtStartPar
-Techniquement, la base est chiffrée par \sphinxstylestrong{AES\sphinxhyphen{}256 en mode GCM}, avec une clé
-dérivée du mot de passe par \sphinxstylestrong{Argon2id} (64 Mio de mémoire, 3 passes, 4 fils),
-et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
-l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
-fichier chiffré l’est également — on n’obtient jamais une base corrompue en
-silence.
+Teknisesti tietokanta salataan \sphinxstylestrong{AES\sphinxhyphen{}256:lla GCM\sphinxhyphen{}tilassa}, ja avain johdetaan salasanasta \sphinxstylestrong{Argon2id}\sphinxhyphen{}funktiolla (64 MiB muistia, 3 kierrosta, 4 säiettä) käyttäen satunnaista, tiedostokohtaista suolaa. GCM\sphinxhyphen{}tila todentaa kokonaisuuden: väärä salasana havaitaan sellaiseksi, samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta tietokantaa ei koskaan saada hiljaisesti.
 
 \sphinxAtStartPar
-L’en\sphinxhyphen{}tête du fichier protégé reste \sphinxstylestrong{en clair} : son origine demeure lisible
-sans le mot de passe.
+Suojatun tiedoston otsake pysyy \sphinxstylestrong{salaamattomana}: sen alkuperä on luettavissa ilman salasanaa.
 
 
-\subsubsection{Lire l’origine d’un fichier}
+\subsubsection{Tiedoston alkuperän lukeminen}
 \label{\detokenize{manuel:lire-l-origine-d-un-fichier}}
 \sphinxAtStartPar
-Dans l’application, ouvrez le fichier et affichez le panneau \sphinxstylestrong{Métadonnées}
-(commande \sphinxcode{\sphinxupquote{meta}}). Sous les champs habituels apparaît une section \sphinxstylestrong{Origine},
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
-la signature :
+Avaa sovelluksessa tiedosto ja näytä \sphinxstylestrong{Metatiedot}\sphinxhyphen{}paneeli (komento \sphinxcode{\sphinxupquote{meta}}). Paneelin yläosaan ilmestyy vain luettava \sphinxstylestrong{Alkuperä}\sphinxhyphen{}osio, joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa allekirjoitus on:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée — marquée par vous » : le fichier porte votre marque,
-intacte ;
+”\(\checkmark\) allekirjoitus varmennettu — sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;
 
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée » : la marque est intacte et vient d’une autre clé —
-comparez son empreinte à celle que le producteur vous a communiquée ;
+”\(\checkmark\) allekirjoitus varmennettu”: merkintä on ehjä ja peräisin toisesta avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle kertonut;
 
 \item {} 
 \sphinxAtStartPar
-« ⚠ signature invalide » : le document a été modifié ou contrefait.
+”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on väärennetty.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Cette section n’apparaît pas sur une base ordinaire.
+Tavallisessa tietokannassa tätä osiota ei näy.
 
 \sphinxAtStartPar
-En ligne de commande, \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db fichier.db}} affiche l’origine et
-l’état de la signature, \sphinxstylestrong{sans jamais écrire dans le fichier}. La commande
-fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
-\sphinxcode{\sphinxupquote{CLI\_USAGE.md}} pour les options \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} et \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} de
-\sphinxcode{\sphinxupquote{export}}, ainsi que pour \sphinxcode{\sphinxupquote{identity}} et \sphinxcode{\sphinxupquote{open}}.
+Komentoriviltä \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db tiedosto.db}} näyttää alkuperän ja allekirjoituksen tilan \sphinxstylestrong{kirjoittamatta koskaan tiedostoon}. Komento toimii myös suojatulle tiedostolle ilman salasanaa. Ks. \sphinxcode{\sphinxupquote{CLI\_USAGE.md}} komennon \sphinxcode{\sphinxupquote{export}} valitsimista \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} ja \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} sekä komennoista \sphinxcode{\sphinxupquote{identity}} ja \sphinxcode{\sphinxupquote{open}}.
 
 \sphinxstepscope
 

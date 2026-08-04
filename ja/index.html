@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.30.1 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.31.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9a8862c0"></script>
+      <script src="_static/documentation_options.js?v=4f25ac80"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -285,6 +285,10 @@
 <td><p>2026/07/26</p></td>
 <td><p>コメントによる検索：「検索テキスト」フィルターが「コメント」フィルターとなり、3 つの排他的なモードを備えました。<em>テキストを含む</em>（従来の動作、トークン <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;語1;語2&quot;&quot;</span></code>）、<em>コメントあり</em>（トークン <code class="docutils literal notranslate"><span class="pre">co</span></code>）、<em>コメントなし</em>（トークン <code class="docutils literal notranslate"><span class="pre">xco</span></code>）です。注釈済みの局面、あるいは逆にこれから注釈を付けるべき局面を、ひと手間で見つけられます。eXtreme Gammon でフラグを付けた局面：XG のマッチ分析中に付けたフラグをインポート時に読み取るようになり、「フラグ付き」フィルター（トークン <code class="docutils literal notranslate"><span class="pre">fl</span></code>）で再び見つけられます。他のすべての条件と組み合わせ可能です。フラグ付きのキューブ判断は 2 つのフラグ付き局面、すなわちダブルとテイク/パスを生成します。フラグは遡及しないため、該当する <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルを再インポートするだけで、既存のコメントや解析に触れることなくフラグがデータベースに加わります。主な修正：トーナメントのバッジに表示される PR が、両プレイヤーの合算ではなく基準プレイヤーのものになりました。検索に基づく Anki デッキが、データベース全体を取り込むのではなく、その検索の絞り込み条件を再び尊重するようになりました。特定の絞り込み条件（テキスト、日付、着手の誤差）を組み合わせた際の検索の停止を修正しました。<a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> および <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a> を参照してください。</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>2026/08/04</p></td>
+<td><p>データベースを第三者に配る仕組み。互いに独立した二つの方法があり、どちらも任意で、エクスポート時に選びます。<strong>出所の記載</strong>は、そのファイルが何であり、どこから来たのかをファイル自身に書き込みます。署名には、初回に自動で作られる発行者の識別情報を使います。記載は偽造できず、メタデータパネルの先頭で読め（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>でも読め、こちらはファイルに一切書き込みません）、受け取った側では何も記録しません。ログも追跡もありません。<strong>パスワード保護</strong>は暗号化された<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>ファイルを作ります（AES-256-GCM、鍵は Argon2id で導出）。パスワードは開くたびに検証され、ヘッダーは平文のまま読めます。識別情報は設定画面から一つのファイルとして書き出し・読み込みできます。エクスポートのウィンドウを刷新：四画面から一画面へ、実際に書き出される対象（表示中のポジション）の明示、コレクションごとの含有割合を不完全なときは赤で強調、トーナメントはマッチと一緒でなければ書き出せないように。エクスポート自体も三倍速くなりました。設定ウィンドウは三つのタブ（インターフェース、ボードの色、発行者の識別情報）に整理され、大きさも位置も変わりません。メタデータパネルは一つのグリッドに配置し直しました。入力したコマンドを繰り返すだけだったログパネルは削除しました。主な修正：誤ったパスワードで保護されたデータベースが開かなくなりました。ダイアログの入力欄がクリックでフォーカスを失わなくなりました。マネーゲームで PR/MWC の指標計算が異常終了しなくなりました。一時ファイル（<code class="docutils literal notranslate"><span class="pre">-wal</span></code>、<code class="docutils literal notranslate"><span class="pre">-shm</span></code>、ロック）は終了時に片づけられます。<a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>と<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a>を参照してください。</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. EPC パネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki パネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. メタデータパネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. データベースの配布：出所とパスワード</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a><ul>

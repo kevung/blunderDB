@@ -48,11 +48,11 @@
 \contentsline {subsection}{\numberline {2.2.17}Pannello EPC}{22}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Pannello Anki}{23}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Pannello Metadati}{23}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Diffuser une base : origine et mot de passe}{23}{subsection.2.2.20}%
-\contentsline {subsubsection}{Marquer une base de son origine}{24}{subsubsection*.26}%
-\contentsline {subsubsection}{Identité d’émetteur}{24}{subsubsection*.27}%
-\contentsline {subsubsection}{Protéger une base par un mot de passe}{25}{subsubsection*.28}%
-\contentsline {subsubsection}{Lire l’origine d’un fichier}{25}{subsubsection*.29}%
+\contentsline {subsection}{\numberline {2.2.20}Distribuire un database: origine e password}{23}{subsection.2.2.20}%
+\contentsline {subsubsection}{Contrassegnare un database con la sua origine}{24}{subsubsection*.26}%
+\contentsline {subsubsection}{Identità dell’emittente}{24}{subsubsection*.27}%
+\contentsline {subsubsection}{Proteggere un database con una password}{25}{subsubsection*.28}%
+\contentsline {subsubsection}{Leggere l’origine di un file}{25}{subsubsection*.29}%
 \contentsline {section}{\numberline {2.3}Guida utente}{26}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{26}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{26}{subsection.2.3.2}%

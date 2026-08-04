@@ -48,30 +48,30 @@
 \contentsline {subsection}{\numberline {2.2.17}Панель EPC}{22}{subsection.2.2.17}%
 \contentsline {subsection}{\numberline {2.2.18}Панель Anki}{23}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Панель метаданных}{23}{subsection.2.2.19}%
-\contentsline {subsection}{\numberline {2.2.20}Diffuser une base : origine et mot de passe}{23}{subsection.2.2.20}%
-\contentsline {subsubsection}{Marquer une base de son origine}{24}{subsubsection*.26}%
-\contentsline {subsubsection}{Identité d’émetteur}{24}{subsubsection*.27}%
-\contentsline {subsubsection}{Protéger une base par un mot de passe}{25}{subsubsection*.28}%
-\contentsline {subsubsection}{Lire l’origine d’un fichier}{25}{subsubsection*.29}%
-\contentsline {section}{\numberline {2.3}Руководство пользователя}{26}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{26}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.2.20}Распространение базы: происхождение и пароль}{23}{subsection.2.2.20}%
+\contentsline {subsubsection}{Пометить базу её происхождением}{24}{subsubsection*.26}%
+\contentsline {subsubsection}{Идентичность автора}{24}{subsubsection*.27}%
+\contentsline {subsubsection}{Защита базы паролем}{25}{subsubsection*.28}%
+\contentsline {subsubsection}{Как прочитать происхождение файла}{25}{subsubsection*.29}%
+\contentsline {section}{\numberline {2.3}Руководство пользователя}{25}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{25}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{26}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Импорт и слияние базы данных}{26}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{27}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{26}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Добавление позиции в базу данных}{27}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Добавление тега к позиции}{27}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Удаление позиции}{27}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Импорт позиции из XG}{28}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Импорт позиции из XG}{27}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Импорт матча}{28}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Импорт папки с матчами}{28}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Перетаскивание}{29}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Перетаскивание}{28}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Навигация по матчу}{29}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Управление панелью матчей}{29}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Управление коллекциями}{29}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Управление турнирами}{30}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Просмотр статистики производительности}{30}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Вычисление EPC}{30}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Просмотр анализа позиции, импортированной из XG}{31}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Просмотр анализа позиции, импортированной из XG}{30}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Экспорт позиции в XG}{31}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Просмотр различных позиций}{31}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Поиск позиций по критериям}{31}{subsection.2.3.21}%

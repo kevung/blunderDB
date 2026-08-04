@@ -55,7 +55,7 @@
 
 \title{blunderDB}
 \date{2026年08月04日}
-\release{0.30.1}
+\release{0.31.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{リリース}
@@ -771,6 +771,22 @@ Anki パネル：\sphinxstyleemphasis{Study} の隣の \sphinxstyleemphasis{Cram
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.31.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+2026/08/04
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+データベースを第三者に配る仕組み。互いに独立した二つの方法があり、どちらも任意で、エクスポート時に選びます。\sphinxstylestrong{出所の記載}は、そのファイルが何であり、どこから来たのかをファイル自身に書き込みます。署名には、初回に自動で作られる発行者の識別情報を使います。記載は偽造できず、メタデータパネルの先頭で読め（\sphinxcode{\sphinxupquote{blunderdb info}}でも読め、こちらはファイルに一切書き込みません）、受け取った側では何も記録しません。ログも追跡もありません。\sphinxstylestrong{パスワード保護}は暗号化された\sphinxcode{\sphinxupquote{.dbx}}ファイルを作ります（AES\sphinxhyphen{}256\sphinxhyphen{}GCM、鍵は Argon2id で導出）。パスワードは開くたびに検証され、ヘッダーは平文のまま読めます。識別情報は設定画面から一つのファイルとして書き出し・読み込みできます。エクスポートのウィンドウを刷新：四画面から一画面へ、実際に書き出される対象（表示中のポジション）の明示、コレクションごとの含有割合を不完全なときは赤で強調、トーナメントはマッチと一緒でなければ書き出せないように。エクスポート自体も三倍速くなりました。設定ウィンドウは三つのタブ（インターフェース、ボードの色、発行者の識別情報）に整理され、大きさも位置も変わりません。メタデータパネルは一つのグリッドに配置し直しました。入力したコマンドを繰り返すだけだったログパネルは削除しました。主な修正：誤ったパスワードで保護されたデータベースが開かなくなりました。ダイアログの入力欄がクリックでフォーカスを失わなくなりました。マネーゲームで PR/MWC の指標計算が異常終了しなくなりました。一時ファイル（\sphinxcode{\sphinxupquote{\sphinxhyphen{}wal}}、\sphinxcode{\sphinxupquote{\sphinxhyphen{}shm}}、ロック）は終了時に片づけられます。{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{データベースの配布：出所とパスワード}}}}}と{\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{マニュアル}}}}}を参照してください。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -793,15 +809,15 @@ blunderDB の最新バージョンは MIT ライセンスの下で利用可能�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
+Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
+Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
 
 \item {} 
 \sphinxAtStartPar
-Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
+Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
 
 \end{itemize}
 
@@ -853,7 +869,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{生のバイナリ (上級者向けの方法)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
+生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -861,7 +877,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
+webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
 \end{sphinxadmonition}
 
 
@@ -999,7 +1015,7 @@ eXtreme Gammon（XG）、GNUbg、または BGBlitz から取得した、現在�
 
 \item {} 
 \sphinxAtStartPar
-afficher les métadonnées de la base de données (panneau métadonnées).
+データベースのメタデータを表示する（メタデータパネル）。
 
 \end{itemize}
 
@@ -1102,39 +1118,27 @@ blunderDB を設定する。特にインターフェースの言語を設定す�
 \subsection{設定}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Le bouton de configuration (icône en forme de rouage) situé dans la barre
-d\textquotesingle{}outils, à gauche du bouton d\textquotesingle{}aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :
+ツールバーのヘルプボタンの左にある設定ボタン（歯車の形のアイコン）を押すと、blunderDB の設定ウィンドウが開きます。ウィンドウは三つのタブで構成されています。
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Interface} — langue, échelle d\textquotesingle{}affichage, position du panneau ;
+\sphinxstylestrong{インターフェース} — 言語、表示倍率、パネルの位置。
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Couleurs} — les couleurs du plateau ;
+\sphinxstylestrong{ボードの色} — ボードの配色。
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Identité d\textquotesingle{}émetteur} — la clé qui signe vos filigranes, décrite à la
-section {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}.
+\sphinxstylestrong{発行者の識別情報} — 出所の記載に署名する鍵。{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{データベースの配布：出所とパスワード}}}}}の節で説明します。
 
 \end{itemize}
 
 \sphinxAtStartPar
-L\textquotesingle{}onglet \sphinxstyleemphasis{Interface} permet de choisir la langue parmi l\textquotesingle{}anglais, le
-français, l\textquotesingle{}allemand, l\textquotesingle{}italien, l\textquotesingle{}espagnol, le finnois, le japonais, le grec
-et le russe. L\textquotesingle{}ensemble de l\textquotesingle{}interface (barre d\textquotesingle{}outils, panneaux, messages,
-aide) est traduit dans la langue sélectionnée. Le choix de la langue est
-enregistré et conservé d\textquotesingle{}une session à l\textquotesingle{}autre.
+\sphinxstyleemphasis{インターフェース}タブでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から言語を選べます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。
 
 \sphinxAtStartPar
-L\textquotesingle{}onglet \sphinxstyleemphasis{Couleurs} permet de personnaliser les couleurs du
-plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
-la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
-2, les dés, les points des dés et le videau. Le bouton \sphinxstyleemphasis{Réinitialiser} rétablit
-l\textquotesingle{}ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
-conservées d\textquotesingle{}une session à l\textquotesingle{}autre.
+\sphinxstyleemphasis{ボードの色}タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。\sphinxstyleemphasis{リセット}ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。
 
 \sphinxAtStartPar
 設定ウィンドウには、インターフェースの表示設定もまとめられています。\sphinxstylestrong{インターフェースの拡大率} のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。\sphinxstylestrong{パネルの位置} メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： \sphinxstyleemphasis{下}、\sphinxstyleemphasis{横} または \sphinxstyleemphasis{自動}（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。
@@ -1773,206 +1777,135 @@ EPC パネルを閉じるには、\sphinxstyleemphasis{CTRL\sphinxhyphen{}E} を
 \sphinxstylestrong{メタデータ} パネルは、現在のデータベースの一般情報を表示します：名前、説明、ポジション数、マッチ数とゲーム数、スキーマのバージョン。\sphinxcode{\sphinxupquote{meta}} コマンドでアクセスできます。
 
 \sphinxAtStartPar
-Il affiche également, \sphinxstylestrong{lorsqu\textquotesingle{}elle existe}, l\textquotesingle{}origine de la base — voir
-{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}. Une base ordinaire n\textquotesingle{}affiche pas cette section.
+また、\sphinxstylestrong{存在する場合に限り}データベースの出所も表示します（{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{データベースの配布：出所とパスワード}}}}}を参照）。通常のデータベースではこの区画は表示されません。
 
 
-\subsection{Diffuser une base : origine et mot de passe}
+\subsection{データベースの配布：出所とパスワード}
 \label{\detokenize{manuel:diffuser-une-base-origine-et-mot-de-passe}}\label{\detokenize{manuel:diffusion-controlee}}
 \sphinxAtStartPar
-Un enseignant qui distribue une base de positions dispose de deux mécanismes,
-indépendants l\textquotesingle{}un de l\textquotesingle{}autre, tous deux facultatifs et choisis \sphinxstylestrong{au moment de
-l\textquotesingle{}export} : marquer le fichier de son origine, et le protéger par un mot de
-passe.
+ポジションのデータベースを配る指導者には、互いに独立した二つの仕組みがあります。どちらも任意で、\sphinxstylestrong{エクスポート時}に選びます。ファイルに出所を記載すること、そしてパスワードで保護することです。
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Aucun des deux ne suit ce que devient le fichier. blunderDB \sphinxstylestrong{n\textquotesingle{}enregistre
-rien du côté de celui qui reçoit la base} : ouvrir une base marquée est
-exactement comme ouvrir n\textquotesingle{}importe quelle autre, et rien nulle part ne
-consigne qui l\textquotesingle{}a ouverte, quand, ni d\textquotesingle{}où vient son contenu.
+どちらもファイルのその後を追跡しません。blunderDB は\sphinxstylestrong{データベースを受け取った側では何も記録しません}。記載のあるデータベースを開く操作は、ほかのどのデータベースを開く場合とまったく同じで、誰がいつ開いたのか、内容がどこから来たのかは、どこにも残りません。
 \end{sphinxadmonition}
 
 
-\subsubsection{Marquer une base de son origine}
+\subsubsection{データベースに出所を記載する}
 \label{\detokenize{manuel:marquer-une-base-de-son-origine}}
 \sphinxAtStartPar
-La fenêtre d\textquotesingle{}export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l\textquotesingle{}écriture. Elle se ferme
-d\textquotesingle{}elle\sphinxhyphen{}même une fois terminée, et le résultat s\textquotesingle{}affiche dans la barre d\textquotesingle{}état.
+エクスポートのウィンドウは一画面に収まります。入力フォームがあり、書き込み中はその上に進捗表示が重なります。完了すると自動的に閉じ、結果はステータスバーに表示されます。
 
 \sphinxAtStartPar
-Trois points méritent l\textquotesingle{}attention :
+注意すべき点が三つあります。
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{L\textquotesingle{}export porte sur les positions actuellement affichées}, pas sur la base
-entière. Après une recherche, seuls les résultats partent — la fenêtre le
-rappelle en tête.
+\sphinxstylestrong{エクスポートの対象は現在表示中のポジション}であり、データベース全体ではありません。検索後は結果だけが書き出されます。ウィンドウの冒頭にもその旨が示されます。
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Une collection dont toutes les positions ne sont pas dans la sélection
-arrive tronquée.} La liste affiche donc, pour chaque collection, la part
-couverte (« 12/40 ») et la signale en rouge lorsqu\textquotesingle{}elle est partielle.
+\sphinxstylestrong{選択に含まれないポジションがあるコレクションは、欠けた状態で届きます。}そのため一覧には、コレクションごとに含まれている割合（「12/40」）が示され、不完全な場合は赤で強調されます。
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Les tournois ne peuvent être exportés qu\textquotesingle{}avec les matchs} : sans eux, le
-lien tournoi\textendash{}match n\textquotesingle{}existe pas et le tournoi arriverait vide. La case est
-désactivée tant que « inclure les matchs » ne l\textquotesingle{}est pas.
+\sphinxstylestrong{トーナメントはマッチと一緒でなければエクスポートできません}。マッチがなければトーナメントとマッチの結び付きが存在せず、トーナメントは空のまま届いてしまいます。「マッチを含める」が選ばれるまで、このチェックボックスは無効のままです。
 
 \end{itemize}
 
 \sphinxAtStartPar
-Les champs \sphinxstyleemphasis{Utilisateur}, \sphinxstyleemphasis{Description} et \sphinxstyleemphasis{Date} décrivent le \sphinxstylestrong{fichier
-produit} ; ils sont préremplis depuis la base source. La case \sphinxstyleemphasis{Mes filtres
-enregistrés} est à part des autres : elle n\textquotesingle{}exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu\textquotesingle{}un
-d\textquotesingle{}autre.
+\sphinxstyleemphasis{ユーザー}、\sphinxstyleemphasis{説明}、\sphinxstyleemphasis{日付}の各欄は\sphinxstylestrong{作成されるファイル}を説明するもので、元のデータベースの値があらかじめ入力されています。\sphinxstyleemphasis{保存済みフィルター}のチェックボックスだけは性質が異なり、内容ではなく自分の保存した検索を書き出します。他人のデータベースでは役に立ちません。
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Marquer ce fichier de son origine} fait apparaître deux champs :
+\sphinxstylestrong{このファイルに出所を記載する}にチェックを入れると、二つの入力欄が現れます。
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Origine} — ce qu\textquotesingle{}est ce fichier et d\textquotesingle{}où il vient, dans vos mots :
-« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est \sphinxstylestrong{obligatoire} : tant
-qu\textquotesingle{}il est vide, le bouton d\textquotesingle{}export reste inactif.
+\sphinxstylestrong{出所} — このファイルが何であり、どこから来たのかを自分の言葉で書きます。たとえば「Jean Dupont のレッスン — 2026年3月12日」。この欄は\sphinxstylestrong{必須}で、空のあいだはエクスポートのボタンが押せません。
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Note}, facultative — conditions d\textquotesingle{}utilisation, adresse de contact, une
-demande de ne pas rediffuser.
+\sphinxstylestrong{備考}（任意） — 利用条件、連絡先、再配布しないでほしいという依頼など。
 
 \end{itemize}
 
 \sphinxAtStartPar
-La marque est signée avec votre identité d\textquotesingle{}émetteur. Elle est donc
-\sphinxstylestrong{inaltérable et infalsifiable} : nul ne peut la modifier, ni en fabriquer une
-à votre nom. Elle n\textquotesingle{}est en revanche \sphinxstylestrong{pas ineffaçable} — le fichier distribué
-est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
-n\textquotesingle{}empêche rien : elle dit d\textquotesingle{}où vient le fichier.
+記載はあなたの発行者の識別情報で署名されます。したがって\sphinxstylestrong{改変も偽造もできません}。誰も内容を書き換えられず、あなたの名前で作ることもできません。一方で\sphinxstylestrong{消せないわけではありません}。配布されるファイルはごく普通の SQLite データベースであり、blunderDB は自由ソフトウェアだからです。記載は何かを禁じるものではなく、ファイルの出所を告げるだけです。
 
 
-\subsubsection{Identité d\textquotesingle{}émetteur}
+\subsubsection{発行者の識別情報}
 \label{\detokenize{manuel:identite-d-emetteur}}
 \sphinxAtStartPar
-Les marques sont signées avec votre \sphinxstylestrong{identité d\textquotesingle{}émetteur}, créée toute seule
-la première fois que vous marquez un fichier ; il n\textquotesingle{}y a rien à configurer. Elle
-appartient à une personne et non à une base : tous vos fichiers portent la même
-empreinte publique, de la forme \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
+記載はあなたの\sphinxstylestrong{発行者の識別情報}で署名されます。これは初めてファイルに記載したときに自動で作られ、設定は不要です。データベースではなく人に属するので、あなたのすべてのファイルが\sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}のような同じ公開フィンガープリントを持ちます。
 
 \sphinxAtStartPar
-Vous pouvez communiquer cette empreinte à vos destinataires pour qu\textquotesingle{}ils
-vérifient qu\textquotesingle{}un fichier vient bien de vous. L\textquotesingle{}identité se transporte d\textquotesingle{}un poste
-à l\textquotesingle{}autre en un seul fichier (extension \sphinxcode{\sphinxupquote{.bdbid}}), éventuellement protégé par
-une phrase secrète. \sphinxstylestrong{Ce fichier permet de signer en votre nom : ne le partagez
-pas.}
+このフィンガープリントを配布先に伝えておけば、ファイルが本当にあなたから来たものかを確認してもらえます。識別情報は一つのファイル（拡張子\sphinxcode{\sphinxupquote{.bdbid}}）として別のパソコンへ持ち運べ、必要ならパスフレーズで保護できます。\sphinxstylestrong{このファイルがあればあなたの名前で署名できます。共有しないでください。}
 
 \sphinxAtStartPar
-Dans les préférences (icône engrenage de la barre d\textquotesingle{}outils), l\textquotesingle{}onglet \sphinxstyleemphasis{Identité
-d\textquotesingle{}émetteur} affiche votre nom et votre empreinte, et propose \sphinxstyleemphasis{Enregistrer
-l\textquotesingle{}identité…}, \sphinxstyleemphasis{Charger une identité…} et \sphinxstyleemphasis{Régénérer…}.
+設定（ツールバーの歯車アイコン）の\sphinxstyleemphasis{発行者の識別情報}タブには、名前とフィンガープリントが表示され、\sphinxstyleemphasis{識別情報を保存…}、\sphinxstyleemphasis{識別情報を読み込む…}、\sphinxstyleemphasis{再生成…}が用意されています。
 
 \begin{sphinxadmonition}{warning}{警告:}
 \sphinxAtStartPar
-\sphinxstylestrong{Régénérer ne révoque rien.} Un filigrane embarque la clé publique qui l\textquotesingle{}a
-signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
-d\textquotesingle{}identité a fuité, celui qui le détient pourra continuer à signer sous votre
-ancienne empreinte, et ces marques resteront valides.
+\sphinxstylestrong{再生成しても、何かが失効するわけではありません。}記載には署名に使われた公開鍵が埋め込まれているため、それ自体でいつまでも検証できます。識別情報のファイルが漏れた場合、それを持つ人は古いフィンガープリントで署名し続けられ、その記載は有効なままです。
 
 \sphinxAtStartPar
-Ce qui vous protège après une fuite n\textquotesingle{}est pas logiciel : c\textquotesingle{}est de publier
-votre nouvelle empreinte et de désavouer l\textquotesingle{}ancienne auprès de vos
-destinataires.
+漏洩のあとにあなたを守るのはソフトウェアではありません。新しいフィンガープリントを公表し、古いものはもう自分のものではないと配布先に伝えることです。
 
 \sphinxAtStartPar
-La régénération écrase la clé actuelle ; blunderDB propose de l\textquotesingle{}enregistrer
-avant de la remplacer.
+再生成は現在の鍵を上書きします。blunderDB は置き換える前に保存するかどうかを尋ねます。
 \end{sphinxadmonition}
 
 
-\subsubsection{Protéger une base par un mot de passe}
+\subsubsection{データベースをパスワードで保護する}
 \label{\detokenize{manuel:proteger-une-base-par-un-mot-de-passe}}
 \sphinxAtStartPar
-Le mot de passe se saisit masqué, ici comme à l\textquotesingle{}ouverture d\textquotesingle{}un fichier protégé ;
-l\textquotesingle{}icône en forme d\textquotesingle{}œil l\textquotesingle{}affiche \sphinxstylestrong{tant qu\textquotesingle{}on la maintient enfoncée}, et le
-masque de nouveau dès qu\textquotesingle{}on relâche.
+パスワードは伏せ字で入力します。保護されたファイルを開くときも同じです。目の形のアイコンは\sphinxstylestrong{押している間だけ}パスワードを表示し、離すとすぐにまた隠します。
 
 \sphinxAtStartPar
-Cocher \sphinxstylestrong{Protéger ce fichier par un mot de passe} produit un fichier
-d\textquotesingle{}extension \sphinxcode{\sphinxupquote{.dbx}} — y compris si vous aviez choisi un nom en \sphinxcode{\sphinxupquote{.db}} dans la
-fenêtre d\textquotesingle{}enregistrement, celle\sphinxhyphen{}ci s\textquotesingle{}ouvrant avant que le mot de passe ne soit
-demandé. Pour l\textquotesingle{}ouvrir, utilisez l\textquotesingle{}ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les \sphinxcode{\sphinxupquote{.db}} que les \sphinxcode{\sphinxupquote{.dbx}}. blunderDB demande
-alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
-n\textquotesingle{}est demandé.
+\sphinxstylestrong{このファイルをパスワードで保護する}にチェックを入れると、拡張子\sphinxcode{\sphinxupquote{.dbx}}のファイルができます。保存ダイアログはパスワードを尋ねる前に開くため、そこで\sphinxcode{\sphinxupquote{.db}}の名前を選んでいた場合も同じです。開くときは通常のデータベースを開く操作を使います。選択ダイアログは\sphinxcode{\sphinxupquote{.db}}も\sphinxcode{\sphinxupquote{.dbx}}も受け付けます。blunderDB はパスワードを尋ね、その隣に通常のデータベースを用意します。以後は何も尋ねられません。
 
 \sphinxAtStartPar
-La fenêtre propose de \sphinxstylestrong{supprimer le fichier protégé une fois ouvert} : sans
-cela vous conservez le même contenu sous deux noms. La case n\textquotesingle{}est pas cochée par
-défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
-la suppression n\textquotesingle{}a lieu qu\textquotesingle{}après une ouverture réussie.
+ウィンドウでは\sphinxstylestrong{開いたあとに保護ファイルを削除する}ことも選べます。そうしなければ、同じ内容を二つの名前で持ち続けることになります。このチェックは既定では入っていません（渡すつもりなら保護ファイルは手元に残ります）。削除は開くことに成功したあとにだけ行われます。
 
 \begin{sphinxadmonition}{warning}{警告:}
 \sphinxAtStartPar
-Le mot de passe protège le \sphinxstylestrong{transport} du fichier, pas la base. Il empêche
-un tiers d\textquotesingle{}ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
-avez donné le mot de passe.
+パスワードが守るのはファイルの\sphinxstylestrong{受け渡し}であって、データベースそのものではありません。ダウンロードフォルダーに置き忘れたファイルや、誤って転送された添付ファイルを第三者が開くのを防ぎます。パスワードを教えた相手からは守れません。
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Le mot de passe est vérifié à \sphinxstylestrong{chaque} ouverture, y compris lorsque le fichier
-a déjà été ouvert auparavant sur ce poste.
+パスワードは\sphinxstylestrong{開くたびに}検証されます。そのパソコンで以前に開いたことがあるファイルでも同じです。
 
 \sphinxAtStartPar
-Techniquement, la base est chiffrée par \sphinxstylestrong{AES\sphinxhyphen{}256 en mode GCM}, avec une clé
-dérivée du mot de passe par \sphinxstylestrong{Argon2id} (64 Mio de mémoire, 3 passes, 4 fils),
-et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
-l\textquotesingle{}ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
-fichier chiffré l\textquotesingle{}est également — on n\textquotesingle{}obtient jamais une base corrompue en
-silence.
+技術的には、データベースは\sphinxstylestrong{AES\sphinxhyphen{}256 の GCM モード}で暗号化され、鍵はパスワードから\sphinxstylestrong{Argon2id}（メモリ 64 MiB、3 パス、4 スレッド）で導出されます。ソルトはファイルごとに無作為です。GCM モードは全体を認証するため、誤ったパスワードはそれと判別され、暗号化ファイルの改変も同様に検出されます。壊れたデータベースが黙って開かれることはありません。
 
 \sphinxAtStartPar
-L\textquotesingle{}en\sphinxhyphen{}tête du fichier protégé reste \sphinxstylestrong{en clair} : son origine demeure lisible
-sans le mot de passe.
+保護ファイルのヘッダーは\sphinxstylestrong{平文のまま}です。出所はパスワードなしでも読めます。
 
 
-\subsubsection{Lire l\textquotesingle{}origine d\textquotesingle{}un fichier}
+\subsubsection{ファイルの出所を読む}
 \label{\detokenize{manuel:lire-l-origine-d-un-fichier}}
 \sphinxAtStartPar
-Dans l\textquotesingle{}application, ouvrez le fichier et affichez le panneau \sphinxstylestrong{Métadonnées}
-(commande \sphinxcode{\sphinxupquote{meta}}). Sous les champs habituels apparaît une section \sphinxstylestrong{Origine},
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l\textquotesingle{}état de
-la signature :
+アプリケーションでファイルを開き、\sphinxstylestrong{メタデータ}パネルを表示します（コマンド\sphinxcode{\sphinxupquote{meta}}）。パネルの先頭に読み取り専用の\sphinxstylestrong{出所}の区画が現れ、何が記載されたか、誰が、いつ、そして署名の状態が示されます。
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée — marquée par vous » : le fichier porte votre marque,
-intacte ;
+「\(\checkmark\) 署名を検証しました — あなたによる記載」：そのファイルにはあなたの記載がそのまま残っています。
 
 \item {} 
 \sphinxAtStartPar
-« \(\checkmark\) signature vérifiée » : la marque est intacte et vient d\textquotesingle{}une autre clé —
-comparez son empreinte à celle que le producteur vous a communiquée ;
+「\(\checkmark\) 署名を検証しました」：記載は無傷で、別の鍵によるものです。作成者から伝えられたフィンガープリントと見比べてください。
 
 \item {} 
 \sphinxAtStartPar
-« ⚠ signature invalide » : le document a été modifié ou contrefait.
+「⚠ 署名が無効です」：文書が改変されたか、偽造されています。
 
 \end{itemize}
 
 \sphinxAtStartPar
-Cette section n\textquotesingle{}apparaît pas sur une base ordinaire.
+通常のデータベースではこの区画は表示されません。
 
 \sphinxAtStartPar
-En ligne de commande, \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db fichier.db}} affiche l\textquotesingle{}origine et
-l\textquotesingle{}état de la signature, \sphinxstylestrong{sans jamais écrire dans le fichier}. La commande
-fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
-\sphinxcode{\sphinxupquote{CLI\_USAGE.md}} pour les options \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} et \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} de
-\sphinxcode{\sphinxupquote{export}}, ainsi que pour \sphinxcode{\sphinxupquote{identity}} et \sphinxcode{\sphinxupquote{open}}.
+コマンドラインでは、\sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db fichier.db}}が出所と署名の状態を表示します。\sphinxstylestrong{ファイルに書き込むことは決してありません}。保護されたファイルにもパスワードなしで使えます。\sphinxcode{\sphinxupquote{export}}の\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}}と\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}}、および\sphinxcode{\sphinxupquote{identity}}と\sphinxcode{\sphinxupquote{open}}については\sphinxcode{\sphinxupquote{CLI\_USAGE.md}}を参照してください。
 
 \sphinxstepscope
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.30.1 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.31.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0392d96e"></script>
+      <script src="_static/documentation_options.js?v=d63f172e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -98,11 +98,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.17. EPC Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.19. Metadata Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">2.20.1. Marquer une base de son origine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">2.20.2. Identité d’émetteur</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">2.20.3. Protéger une base par un mot de passe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">2.20.4. Lire l’origine d’un fichier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">2.20. Handing out a database: origin and password</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">2.20.1. Marking a database with its origin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">2.20.2. Issuer identity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">2.20.3. Protecting a database with a password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">2.20.4. Reading a file’s origin</a></li>
 </ul>
 </li>
 </ul>
@@ -185,7 +185,7 @@
 <li><p>display performance statistics (Stats panel),</p></li>
 <li><p>compute the EPC (Effective Pip Count) of a bearoff position (EPC panel),</p></li>
 <li><p>study positions with spaced repetition (Anki panel),</p></li>
-<li><p>afficher les métadonnées de la base de données (panneau métadonnées).</p></li>
+<li><p>display the database metadata (metadata panel).</p></li>
 </ul>
 <p>Modal windows can be displayed to:</p>
 <ul class="simple">
@@ -226,26 +226,14 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
-d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :</p>
+<p>The configuration button (gear-shaped icon) located in the toolbar, to the left of the help button, opens the blunderDB settings window. It is organised into three tabs:</p>
 <ul class="simple">
-<li><p><strong>Interface</strong> — langue, échelle d’affichage, position du panneau ;</p></li>
-<li><p><strong>Couleurs</strong> — les couleurs du plateau ;</p></li>
-<li><p><strong>Identité d’émetteur</strong> — la clé qui signe vos filigranes, décrite à la
-section <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>.</p></li>
+<li><p><strong>Interface</strong> — language, display scale, panel position;</p></li>
+<li><p><strong>Colours</strong> — the board’s colours;</p></li>
+<li><p><strong>Issuer identity</strong> — the key that signs your watermarks, described in <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>.</p></li>
 </ul>
-<p>L’onglet <em>Interface</em> permet de choisir la langue parmi l’anglais, le
-français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
-et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
-aide) est traduit dans la langue sélectionnée. Le choix de la langue est
-enregistré et conservé d’une session à l’autre.</p>
-<p>L’onglet <em>Couleurs</em> permet de personnaliser les couleurs du
-plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
-la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
-2, les dés, les points des dés et le videau. Le bouton <em>Réinitialiser</em> rétablit
-l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
-conservées d’une session à l’autre.</p>
+<p>The <em>Interface</em> tab lets you choose the language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.</p>
+<p>The <em>Board colours</em> tab lets you customise the board’s colours. Each element has its own colour picker: the background, the border, the light and dark points, player 1’s and player 2’s checkers, the dice, the dice pips and the cube. The <em>Reset</em> button restores all the default colours. Like the language, the chosen colours are kept across sessions.</p>
 <p>The configuration window also provides interface display settings. An <strong>interface scale</strong> slider lets you enlarge or shrink all interface elements, which is useful on high-density screens or to improve readability. A <strong>panel position</strong> menu sets where the panels (search, matches, analysis) appear relative to the board: <em>bottom</em>, <em>side</em> or <em>automatic</em> (the side is then chosen on wide screens to make better use of the available space). Like the other settings, these choices are kept from one session to the next.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -568,138 +556,67 @@ conservées d’une session à l’autre.</p>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Metadata Panel<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
 <p>The <strong>Metadata</strong> panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the <code class="docutils literal notranslate"><span class="pre">meta</span></code> command.</p>
-<p>Il affiche également, <strong>lorsqu’elle existe</strong>, l’origine de la base — voir
-<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>. Une base ordinaire n’affiche pas cette section.</p>
+<p>It also shows the database’s origin <strong>when there is one</strong> — see <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>. An ordinary database does not show that section.</p>
 </section>
 <section id="diffuser-une-base-origine-et-mot-de-passe">
-<span id="diffusion-controlee"></span><h2><span class="section-number">2.20. </span>Diffuser une base : origine et mot de passe<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
-<p>Un enseignant qui distribue une base de positions dispose de deux mécanismes,
-indépendants l’un de l’autre, tous deux facultatifs et choisis <strong>au moment de
-l’export</strong> : marquer le fichier de son origine, et le protéger par un mot de
-passe.</p>
+<span id="diffusion-controlee"></span><h2><span class="section-number">2.20. </span>Handing out a database: origin and password<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>A teacher handing out a database of positions has two mechanisms, independent of each other, both optional and both chosen <strong>at export time</strong>: marking the file with its origin, and protecting it with a password.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Aucun des deux ne suit ce que devient le fichier. blunderDB <strong>n’enregistre
-rien du côté de celui qui reçoit la base</strong> : ouvrir une base marquée est
-exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
-consigne qui l’a ouverte, quand, ni d’où vient son contenu.</p>
+<p>Neither tracks what becomes of the file. blunderDB <strong>records nothing on the recipient’s side</strong>: opening a marked database is exactly like opening any other, and nothing anywhere logs who opened it, when, or where its contents came from.</p>
 </div>
 <section id="marquer-une-base-de-son-origine">
-<h3><span class="section-number">2.20.1. </span>Marquer une base de son origine<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
-<p>La fenêtre d’export tient en un seul écran : le formulaire, puis une
-progression qui se superpose à lui le temps de l’écriture. Elle se ferme
-d’elle-même une fois terminée, et le résultat s’affiche dans la barre d’état.</p>
-<p>Trois points méritent l’attention :</p>
+<h3><span class="section-number">2.20.1. </span>Marking a database with its origin<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>The export dialog fits on a single screen: the form, then a progress overlay laid over it while the file is written. It closes by itself when finished, and the result appears in the status bar.</p>
+<p>Three points deserve attention:</p>
 <ul class="simple">
-<li><p><strong>L’export porte sur les positions actuellement affichées</strong>, pas sur la base
-entière. Après une recherche, seuls les résultats partent — la fenêtre le
-rappelle en tête.</p></li>
-<li><p><strong>Une collection dont toutes les positions ne sont pas dans la sélection
-arrive tronquée.</strong> La liste affiche donc, pour chaque collection, la part
-couverte (« 12/40 ») et la signale en rouge lorsqu’elle est partielle.</p></li>
-<li><p><strong>Les tournois ne peuvent être exportés qu’avec les matchs</strong> : sans eux, le
-lien tournoi–match n’existe pas et le tournoi arriverait vide. La case est
-désactivée tant que « inclure les matchs » ne l’est pas.</p></li>
+<li><p><strong>The export covers the positions currently displayed</strong>, not the whole database. After a search, only the results go out — the dialog says so at the top.</p></li>
+<li><p><strong>A collection whose positions are not all in the selection arrives truncated.</strong> The list therefore shows, for each collection, how much of it is covered (“12/40”), in red when it is partial.</p></li>
+<li><p><strong>Tournaments can only be exported together with matches</strong>: without them the tournament–match link does not exist and the tournament would arrive empty. The box stays disabled until “include matches” is ticked.</p></li>
 </ul>
-<p>Les champs <em>Utilisateur</em>, <em>Description</em> et <em>Date</em> décrivent le <strong>fichier
-produit</strong> ; ils sont préremplis depuis la base source. La case <em>Mes filtres
-enregistrés</em> est à part des autres : elle n’exporte pas du contenu mais vos
-propres recherches enregistrées, sans utilité dans la base de quelqu’un
-d’autre.</p>
-<p>Cocher <strong>Marquer ce fichier de son origine</strong> fait apparaître deux champs :</p>
+<p>The <em>User</em>, <em>Description</em> and <em>Date</em> fields describe the <strong>file being produced</strong>; they are pre-filled from the source database. The <em>My saved filters</em> box is kept apart from the others: it exports not content but your own saved searches, which are of no use in someone else’s database.</p>
+<p>Ticking <strong>Mark this file with its origin</strong> reveals two fields:</p>
 <ul class="simple">
-<li><p><strong>Origine</strong> — ce qu’est ce fichier et d’où il vient, dans vos mots :
-« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est <strong>obligatoire</strong> : tant
-qu’il est vide, le bouton d’export reste inactif.</p></li>
-<li><p><strong>Note</strong>, facultative — conditions d’utilisation, adresse de contact, une
-demande de ne pas rediffuser.</p></li>
+<li><p><strong>Origin</strong> — what this file is and where it comes from, in your own words: “Jean Dupont’s lesson — 12 March 2026”. This field is <strong>required</strong>: while it is empty the export button stays disabled.</p></li>
+<li><p><strong>Note</strong>, optional — terms of use, a contact address, a request not to pass the file on.</p></li>
 </ul>
-<p>La marque est signée avec votre identité d’émetteur. Elle est donc
-<strong>inaltérable et infalsifiable</strong> : nul ne peut la modifier, ni en fabriquer une
-à votre nom. Elle n’est en revanche <strong>pas ineffaçable</strong> — le fichier distribué
-est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
-n’empêche rien : elle dit d’où vient le fichier.</p>
+<p>The mark is signed with your issuer identity. It is therefore <strong>tamper-evident and unforgeable</strong>: nobody can alter it, nor fabricate one in your name. It is however <strong>not unremovable</strong> — the distributed file is an ordinary SQLite database, and blunderDB is free software. It prevents nothing: it says where the file came from.</p>
 </section>
 <section id="identite-d-emetteur">
-<h3><span class="section-number">2.20.2. </span>Identité d’émetteur<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
-<p>Les marques sont signées avec votre <strong>identité d’émetteur</strong>, créée toute seule
-la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
-appartient à une personne et non à une base : tous vos fichiers portent la même
-empreinte publique, de la forme <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
-<p>Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
-vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
-à l’autre en un seul fichier (extension <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), éventuellement protégé par
-une phrase secrète. <strong>Ce fichier permet de signer en votre nom : ne le partagez
-pas.</strong></p>
-<p>Dans les préférences (icône engrenage de la barre d’outils), l’onglet <em>Identité
-d’émetteur</em> affiche votre nom et votre empreinte, et propose <em>Enregistrer
-l’identité…</em>, <em>Charger une identité…</em> et <em>Régénérer…</em>.</p>
+<h3><span class="section-number">2.20.2. </span>Issuer identity<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Marks are signed with your <strong>issuer identity</strong>, created by itself the first time you mark a file; there is nothing to set up. It belongs to a person rather than to a database: every file you mark carries the same public fingerprint, of the form <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>You can give that fingerprint to your recipients so they can check that a file really comes from you. The identity moves from one machine to another as a single file (extension <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), optionally protected by a passphrase. <strong>That file lets anyone holding it sign in your name: do not share it.</strong></p>
+<p>In the preferences (the gear icon in the toolbar), the <em>Issuer identity</em> tab shows your name and fingerprint, and offers <em>Save identity…</em>, <em>Load identity…</em> and <em>Regenerate…</em>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><strong>Régénérer ne révoque rien.</strong> Un filigrane embarque la clé publique qui l’a
-signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
-d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
-ancienne empreinte, et ces marques resteront valides.</p>
-<p>Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
-votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
-destinataires.</p>
-<p>La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
-avant de la remplacer.</p>
+<p><strong>Regenerating revokes nothing.</strong> A watermark embeds the public key that signed it, so it verifies for ever, on its own. If your identity file has leaked, whoever holds it can keep signing under your old fingerprint, and those marks stay valid.</p>
+<p>What protects you after a leak is not software: it is publishing your new fingerprint and disowning the old one to your recipients.</p>
+<p>Regenerating overwrites the current key; blunderDB offers to save it before replacing it.</p>
 </div>
 </section>
 <section id="proteger-une-base-par-un-mot-de-passe">
-<h3><span class="section-number">2.20.3. </span>Protéger une base par un mot de passe<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
-<p>Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
-l’icône en forme d’œil l’affiche <strong>tant qu’on la maintient enfoncée</strong>, et le
-masque de nouveau dès qu’on relâche.</p>
-<p>Cocher <strong>Protéger ce fichier par un mot de passe</strong> produit un fichier
-d’extension <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — y compris si vous aviez choisi un nom en <code class="docutils literal notranslate"><span class="pre">.db</span></code> dans la
-fenêtre d’enregistrement, celle-ci s’ouvrant avant que le mot de passe ne soit
-demandé. Pour l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les <code class="docutils literal notranslate"><span class="pre">.db</span></code> que les <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB demande
-alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
-n’est demandé.</p>
-<p>La fenêtre propose de <strong>supprimer le fichier protégé une fois ouvert</strong> : sans
-cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
-défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
-la suppression n’a lieu qu’après une ouverture réussie.</p>
+<h3><span class="section-number">2.20.3. </span>Protecting a database with a password<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>The password is typed masked, here as when opening a protected file; the eye icon reveals it <strong>while it is held down</strong>, and masks it again as soon as it is released.</p>
+<p>Ticking <strong>Protect this file with a password</strong> produces a file with the <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> extension — even if you chose a <code class="docutils literal notranslate"><span class="pre">.db</span></code> name in the save dialog, which opens before the password is asked for. To open it, use the usual open-database action: the file chooser accepts both <code class="docutils literal notranslate"><span class="pre">.db</span></code> and <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB then asks for the password and installs an ordinary database beside it; nothing is asked afterwards.</p>
+<p>The dialog offers to <strong>delete the protected file once opened</strong>: without that you keep the same content under two names. The box is not ticked by default — the protected file is yours to keep if you mean to pass it on — and the deletion only happens after a successful open.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Le mot de passe protège le <strong>transport</strong> du fichier, pas la base. Il empêche
-un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
-une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
-avez donné le mot de passe.</p>
+<p>The password protects the file <strong>in transit</strong>, not the database. It stops a stranger opening a file left in a downloads folder or an attachment forwarded by mistake. It does not protect you from whoever you gave the password to.</p>
 </div>
-<p>Le mot de passe est vérifié à <strong>chaque</strong> ouverture, y compris lorsque le fichier
-a déjà été ouvert auparavant sur ce poste.</p>
-<p>Techniquement, la base est chiffrée par <strong>AES-256 en mode GCM</strong>, avec une clé
-dérivée du mot de passe par <strong>Argon2id</strong> (64 Mio de mémoire, 3 passes, 4 fils),
-et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
-l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
-fichier chiffré l’est également — on n’obtient jamais une base corrompue en
-silence.</p>
-<p>L’en-tête du fichier protégé reste <strong>en clair</strong> : son origine demeure lisible
-sans le mot de passe.</p>
+<p>The password is checked on <strong>every</strong> open, including when the file has already been opened on this machine before.</p>
+<p>Technically, the database is encrypted with <strong>AES-256 in GCM mode</strong>, with the key derived from the password by <strong>Argon2id</strong> (64 MiB of memory, 3 passes, 4 lanes) and a random salt unique to each file. GCM authenticates the whole payload: a wrong password is detected as such, and so is any tampering with the encrypted file — you never silently end up with a corrupt database.</p>
+<p>The protected file’s header stays <strong>in the clear</strong>: its origin remains readable without the password.</p>
 </section>
 <section id="lire-l-origine-d-un-fichier">
-<h3><span class="section-number">2.20.4. </span>Lire l’origine d’un fichier<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
-<p>Dans l’application, ouvrez le fichier et affichez le panneau <strong>Métadonnées</strong>
-(commande <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Sous les champs habituels apparaît une section <strong>Origine</strong>,
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
-la signature :</p>
+<h3><span class="section-number">2.20.4. </span>Reading a file’s origin<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>In the application, open the file and show the <strong>Metadata</strong> panel (the <code class="docutils literal notranslate"><span class="pre">meta</span></code> command). An <strong>Origin</strong> section appears at the top of the panel, read-only, stating what was written, by whom, when, and how the signature checks out:</p>
 <ul class="simple">
-<li><p>« ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
-intacte ;</p></li>
-<li><p>« ✓ signature vérifiée » : la marque est intacte et vient d’une autre clé —
-comparez son empreinte à celle que le producteur vous a communiquée ;</p></li>
-<li><p>« ⚠ signature invalide » : le document a été modifié ou contrefait.</p></li>
+<li><p>“✓ signature verified — marked by you”: the file carries your mark, intact;</p></li>
+<li><p>“✓ signature verified”: the mark is intact and comes from another key — compare its fingerprint with the one the producer gave you;</p></li>
+<li><p>“⚠ invalid signature”: the document has been altered or forged.</p></li>
 </ul>
-<p>Cette section n’apparaît pas sur une base ordinaire.</p>
-<p>En ligne de commande, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">fichier.db</span></code> affiche l’origine et
-l’état de la signature, <strong>sans jamais écrire dans le fichier</strong>. La commande
-fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
-<code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> pour les options <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> et <code class="docutils literal notranslate"><span class="pre">--password</span></code> de
-<code class="docutils literal notranslate"><span class="pre">export</span></code>, ainsi que pour <code class="docutils literal notranslate"><span class="pre">identity</span></code> et <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+<p>This section does not appear on an ordinary database.</p>
+<p>From the command line, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">file.db</span></code> shows the origin and the state of the signature, <strong>without ever writing to the file</strong>. It works on a protected file too, without the password. See <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> for <code class="docutils literal notranslate"><span class="pre">export</span></code>’s <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> and <code class="docutils literal notranslate"><span class="pre">--password</span></code> options, and for <code class="docutils literal notranslate"><span class="pre">identity</span></code> and <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
 </section>
 </section>
 </section>

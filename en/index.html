@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.30.1 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.31.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0392d96e"></script>
+      <script src="_static/documentation_options.js?v=d63f172e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -284,6 +284,10 @@
 <td><p>July 26, 2026</p></td>
 <td><p>Comment search: the “Search Text” filter becomes the “Comment” filter and offers three exclusive modes — <em>contains text</em> (previous behaviour, token <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;word1;word2&quot;&quot;</span></code>), <em>has a comment</em> (token <code class="docutils literal notranslate"><span class="pre">co</span></code>) and <em>no comment</em> (token <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — to find annotated positions at a glance, or on the contrary those left to comment. Positions flagged in eXtreme Gammon: the flags set while analysing an XG match are now read on import and found again with the “Flagged” filter (token <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable with every other criterion; a flagged cube decision yields two flagged positions, the double and the take/pass. Flagging is not retroactive, so simply import the relevant <code class="docutils literal notranslate"><span class="pre">.xg</span></code> file again for its flags to join the database, leaving existing comments and analyses untouched. Notable fixes: the PR shown on a tournament badge refers to the reference player rather than the two players combined, Anki decks based on a search again honour that search’s filters instead of taking in the whole database, and a search hang combining certain filters (text, date, played-move error) is fixed. See <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">List of commands</span></a> and <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>August 4, 2026</p></td>
+<td><p>Handing a database to other people: two independent mechanisms, both optional and both chosen at export time. The <strong>origin watermark</strong> records in the file what it is and where it comes from, signed by an issuer identity created by itself on first use; the mark is unforgeable, is read at the top of the Metadata panel (or with <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, which never writes to the file) and records nothing on the recipient’s side — no log, no tracking. <strong>Password protection</strong> produces an encrypted <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> file (AES-256-GCM, key derived with Argon2id), checked on every open, whose header stays readable in the clear; the identity is exported and imported as a single file from the preferences. Redesigned export dialog: one screen instead of four, a reminder of what actually goes out (the positions on display), the covered share of each collection flagged in red when partial, tournaments exportable only together with their matches — and an export three times faster. Settings window reorganised into three tabs (Interface, Board colours, Issuer identity), with a stable size and position. Metadata panel laid out as a single grid. The Log panel, which only echoed commands, has been removed. Notable fixes: a wrong password no longer opens a protected database, modal dialog fields no longer lose focus on click, the PR/MWC badge computation no longer crashes on a money game, and temporary files (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lock) are cleaned up on close. See <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a> and <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -316,7 +320,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. EPC Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Metadata Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Handing out a database: origin and password</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a><ul>

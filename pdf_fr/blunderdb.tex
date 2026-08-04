@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{04 août 2026}
-\release{0.30.1}
+\release{0.31.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -811,6 +811,22 @@ Recherche par commentaire : le filtre « Texte de recherche » devient le filtre
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.31.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+04/08/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Diffusion d’une base à des tiers : deux mécanismes indépendants, tous deux facultatifs et choisis au moment de l’export. Le \sphinxstylestrong{filigrane d’origine} inscrit dans le fichier ce qu’il est et d’où il vient, signé par une identité d’émetteur créée toute seule au premier usage ; la marque est infalsifiable, se lit en tête du panneau Métadonnées (ou par \sphinxcode{\sphinxupquote{blunderdb info}}, sans jamais écrire dans le fichier) et ne consigne rien du côté de celui qui reçoit la base — aucun journal, aucun suivi. La \sphinxstylestrong{protection par mot de passe} produit un fichier \sphinxcode{\sphinxupquote{.dbx}} chiffré (AES\sphinxhyphen{}256\sphinxhyphen{}GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont l’en\sphinxhyphen{}tête reste lisible en clair ; l’identité s’exporte et s’importe en un seul fichier depuis les préférences. Fenêtre d’export refondue : un seul écran au lieu de quatre, rappel de ce qui part réellement (les positions affichées), part couverte de chaque collection signalée en rouge lorsqu’elle est partielle, tournois exportables seulement avec leurs matchs — et un export trois fois plus rapide. Fenêtre de configuration réorganisée en trois onglets (Interface, Couleurs du plateau, Identité d’émetteur), de taille et de position stables. Panneau Métadonnées redisposé en une seule grille. Le panneau Journal, qui ne recevait que l’écho des commandes, est retiré. Corrections notables : un mot de passe erroné n’ouvre plus une base protégée, les champs des fenêtres modales ne perdent plus le focus au clic, le calcul des indicateurs PR/MWC ne plante plus sur une partie d’argent, et les fichiers temporaires (\sphinxcode{\sphinxupquote{\sphinxhyphen{}wal}}, \sphinxcode{\sphinxupquote{\sphinxhyphen{}shm}}, verrou) sont nettoyés à la fermeture. Voir {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}} et {\hyperref[\detokenize{manuel:manuel}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Manuel}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -833,15 +849,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.30.1.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.30.1.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
 
 \end{itemize}
 
@@ -906,7 +922,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binaire brut (méthode avancée)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.30.1} reste disponible. Comme un navigateur retire
+Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} reste disponible. Comme un navigateur retire
 le bit exécutable au téléchargement, il faut le rétablir avant la première
 exécution :
 
@@ -921,7 +937,7 @@ bibliothèque webkit2gtk. Si vous obtenez l’erreur
 \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, votre
 distribution utilise webkit2gtk\sphinxhyphen{}4.1 : utilisez le paquet \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}},
 le paquet AUR, ou téléchargez la version dédiée
-\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.30.1}. Les paquets natifs choisissent
+\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Les paquets natifs choisissent
 automatiquement la bonne dépendance.
 \end{sphinxadmonition}
 
@@ -2261,9 +2277,9 @@ sans le mot de passe.
 \label{\detokenize{manuel:lire-l-origine-d-un-fichier}}
 \sphinxAtStartPar
 Dans l’application, ouvrez le fichier et affichez le panneau \sphinxstylestrong{Métadonnées}
-(commande \sphinxcode{\sphinxupquote{meta}}). Sous les champs habituels apparaît une section \sphinxstylestrong{Origine},
-en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
-la signature :
+(commande \sphinxcode{\sphinxupquote{meta}}). Une section \sphinxstylestrong{Origine} apparaît en tête du panneau, en
+lecture seule, indiquant ce qui a été inscrit, par qui, quand, et l’état de la
+signature :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar

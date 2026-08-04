@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.30.1</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.31.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8b1e356c"></script>
+      <script src="_static/documentation_options.js?v=5eb3fb2c"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -293,6 +293,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-odd"><td><p>0.30.0</p></td>
 <td><p>26/07/2026</p></td>
 <td><p>Recherche par commentaire : le filtre « Texte de recherche » devient le filtre « Commentaire » et propose trois modes exclusifs — <em>contient le texte</em> (comportement précédent, jeton <code class="docutils literal notranslate"><span class="pre">t&quot;mot1;mot2&quot;</span></code>), <em>a un commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">co</span></code>) et <em>sans commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — pour retrouver d’un geste les positions annotées, ou au contraire celles qu’il reste à commenter. Positions marquées dans eXtreme Gammon : les marques (<em>flags</em>) posées lors de l’analyse d’un match XG sont désormais lues à l’import et retrouvables par le filtre « Marquée » (jeton <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable avec tous les autres critères ; une décision de videau marquée donne deux positions marquées, le double et la prise/passe. Le marquage n’étant pas rétroactif, il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné pour que ses marques rejoignent la base, sans toucher aux commentaires ni aux analyses existants. Corrections notables : le PR affiché sur le badge d’un tournoi se rapporte au joueur de référence et non plus au cumul des deux joueurs, les paquets Anki fondés sur une recherche respectent de nouveau les filtres de cette recherche au lieu de reprendre toute la base, et un blocage de la recherche combinant certains filtres (texte, date, erreur du coup joué) est corrigé. Voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>04/08/2026</p></td>
+<td><p>Diffusion d’une base à des tiers : deux mécanismes indépendants, tous deux facultatifs et choisis au moment de l’export. Le <strong>filigrane d’origine</strong> inscrit dans le fichier ce qu’il est et d’où il vient, signé par une identité d’émetteur créée toute seule au premier usage ; la marque est infalsifiable, se lit en tête du panneau Métadonnées (ou par <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, sans jamais écrire dans le fichier) et ne consigne rien du côté de celui qui reçoit la base — aucun journal, aucun suivi. La <strong>protection par mot de passe</strong> produit un fichier <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> chiffré (AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont l’en-tête reste lisible en clair ; l’identité s’exporte et s’importe en un seul fichier depuis les préférences. Fenêtre d’export refondue : un seul écran au lieu de quatre, rappel de ce qui part réellement (les positions affichées), part couverte de chaque collection signalée en rouge lorsqu’elle est partielle, tournois exportables seulement avec leurs matchs — et un export trois fois plus rapide. Fenêtre de configuration réorganisée en trois onglets (Interface, Couleurs du plateau, Identité d’émetteur), de taille et de position stables. Panneau Métadonnées redisposé en une seule grille. Le panneau Journal, qui ne recevait que l’écho des commandes, est retiré. Corrections notables : un mot de passe erroné n’ouvre plus une base protégée, les champs des fenêtres modales ne perdent plus le focus au clic, le calcul des indicateurs PR/MWC ne plante plus sur une partie d’argent, et les fichiers temporaires (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, verrou) sont nettoyés à la fermeture. Voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></td>
 </tr>
 </tbody>
 </table>

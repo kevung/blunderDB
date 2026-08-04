@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.4)  4 AUG 2026 02:10
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.4)  4 AUG 2026 02:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1133,83 +1133,87 @@ uage=ESP;+smcp;"
 
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/n' will be
 (Font)              scaled to size 8.99994pt on input line 669.
-[3] [4] [5] [6] [7] [8] [9] [10
-
-]
+[3] [4] [5] [6] [7] [8] [9] [10]
 Capítulo 2.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 852.
+(Font)              scaled to size 4.49997pt on input line 868.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 853.
-[11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25]
-[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40]
-[41] [42] [43] [44] [45] [46] [47]
+(Font)              scaled to size 8.99994pt on input line 869.
+[11
+
+] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25]
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35]
+Underfull \vbox (badness 1668) detected at line 4072
+ []
+
+[36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6161.
- [48] [49] [50] [51]
+(Font)              scaled to size 8.99994pt on input line 6094.
+ [48] [49] [50]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6428.
+(Font)              scaled to size 10.79993pt on input line 6361.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6428.
+(Font)              scaled to size 10.79993pt on input line 6361.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6512--6514
+[51]
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6445--6447
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6515
+Overfull \hbox (11.423pt too wide) detected at line 6448
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6571--6573
+Underfull \hbox (badness 10000) in paragraph at lines 6504--6506
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
-[52] [53] [54]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6924--6926
+[52] [53]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 6857--6859
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6927
+Overfull \hbox (1.06567pt too wide) detected at line 6860
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[55]
-Underfull \hbox (badness 10000) in paragraph at lines 7220--7222
+[54] [55]
+Underfull \hbox (badness 10000) in paragraph at lines 7153--7155
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7266--7268
+Underfull \hbox (badness 10000) in paragraph at lines 7199--7201
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 7280--7282
+Underfull \hbox (badness 6876) in paragraph at lines 7213--7215
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7331--7333
+Underfull \hbox (badness 10000) in paragraph at lines 7264--7266
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
 [56]
-Underfull \hbox (badness 7221) in paragraph at lines 7501--7503
+Underfull \hbox (badness 7221) in paragraph at lines 7434--7436
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
 
-[57]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
+[57]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [58] [59]
+ [58]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1218,47 +1222,47 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [60] [61] [62] [63]
+ [59] [60] [61] [62]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [64] [65] [66] [67]
-Underfull \hbox (badness 6741) in paragraph at lines 7812--7814
+ [63] [64] [65] [66]
+Underfull \hbox (badness 6741) in paragraph at lines 7745--7747
 []\TU/FreeSerif(1)/b/n/10 Colecciones\TU/FreeSerif(1)/m/n/10 : \TU/FreeMono(1)/
 m/n/10 collection \TU/FreeSerif(1)/m/n/10 y \TU/FreeMono(1)/m/n/10 collection_p
 osition \TU/FreeSerif(1)/m/n/10 (tabla de enlace) agrupan posiciones elegidas
  []
 
-[68] [69] [70] [71] [72
-
-]
+[67] [68] [69] [70]
 Capítulo 3.
-[73] [74
+[71
+
+] [72
 
 ]
 Capítulo 4.
-[75] [76
+[73] [74
 
 ]
 Capítulo 5.
-(./blunderdb.ind) [77] (./blunderdb.aux)
+(./blunderdb.ind) [75] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 5140A2DF8AA50BF86CE52CE810F778BB;35876.
+(rerunfilecheck)             Checksum: 85636ADAA62146905AF4D87923BD6256;35991.
  ) 
 Here is how much of TeX's memory you used:
  19433 strings out of 476443
  398965 string characters out of 5793963
- 2026627 words of memory out of 5000000
+ 2035627 words of memory out of 5000000
  40958 multiletter control sequences out of 15000+600000
  566823 words of font info for 137 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3329b,672s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (81 pages).
+Output written on blunderdb.pdf (79 pages).

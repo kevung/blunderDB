@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.30.1</title>
+  <title>blunderDB &mdash; документация blunderDB 0.31.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6d94fba1"></script>
+      <script src="_static/documentation_options.js?v=b83935e1"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -285,6 +285,10 @@
 <td><p>26/07/2026</p></td>
 <td><p>Поиск по комментарию: фильтр «Текст поиска» становится фильтром «Комментарий» и предлагает три взаимоисключающих режима — <em>содержит текст</em> (прежнее поведение, токен <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;слово1;слово2&quot;&quot;</span></code>), <em>есть комментарий</em> (токен <code class="docutils literal notranslate"><span class="pre">co</span></code>) и <em>без комментария</em> (токен <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — чтобы одним движением находить аннотированные позиции или, наоборот, те, которые осталось прокомментировать. Позиции, отмеченные в eXtreme Gammon: отметки, поставленные при разборе матча XG, теперь читаются при импорте и находятся фильтром «Отмеченная» (токен <code class="docutils literal notranslate"><span class="pre">fl</span></code>), сочетающимся со всеми прочими критериями; отмеченное решение по кубу даёт две отмеченные позиции — дабл и тейк/пас. Отметка не действует задним числом: достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>, чтобы его отметки попали в базу, не затрагивая существующие комментарии и анализы. Заметные исправления: PR, показываемый на значке турнира, относится к основному игроку, а не к сумме обоих игроков; колоды Anki, построенные на поиске, снова учитывают фильтры этого поиска вместо того, чтобы брать всю базу; устранено зависание поиска при сочетании некоторых фильтров (текст, дата, ошибка сыгранного хода). См. <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Список команд</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></td>
 </tr>
+<tr class="row-even"><td><p>0.31.0</p></td>
+<td><p>04/08/2026</p></td>
+<td><p>Передача базы третьим лицам: два независимых механизма, оба необязательные и выбираемые в момент экспорта. <strong>Отметка происхождения</strong> записывает в файл, что это за файл и откуда он, и подписывается идентичностью автора, создаваемой сама собой при первом использовании; отметку невозможно подделать, она читается в верхней части панели «Метаданные» (или командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, которая никогда не пишет в файл) и ничего не фиксирует на стороне получателя — ни журнала, ни слежения. <strong>Защита паролем</strong> даёт зашифрованный файл <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, ключ выводится через Argon2id), пароль проверяется при каждом открытии, а заголовок остаётся читаемым без него; идентичность экспортируется и импортируется одним файлом из настроек. Переработанное окно экспорта: один экран вместо четырёх, напоминание о том, что действительно выгружается (отображаемые позиции), охваченная доля каждой коллекции выделяется красным, когда она неполная, турниры экспортируются только вместе со своими матчами — и экспорт стал втрое быстрее. Окно настроек разделено на три вкладки («Интерфейс», «Цвета доски», «Идентичность автора») и больше не меняет размер и положение. Панель «Метаданные» размещена в единой сетке. Панель «Журнал», которая лишь повторяла введённые команды, удалена. Заметные исправления: неверный пароль больше не открывает защищённую базу, поля модальных окон больше не теряют фокус при щелчке, расчёт показателей PR/MWC больше не падает на игре на деньги, а временные файлы (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, блокировка) удаляются при закрытии. См. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.17. Панель EPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Панель Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Панель метаданных</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Diffuser une base : origine et mot de passe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Распространение базы: происхождение и пароль</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a><ul>
