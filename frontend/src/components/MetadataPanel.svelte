@@ -73,52 +73,48 @@
 </script>
 
 <div class="metadata-panel">
-    {#if issuance?.watermark}
-        <!-- First in the panel, and in the same type as the fields below: this is what the
-             user came to check, so it should not read as a footnote. It stays read-only —
-             everything below belongs to whoever holds the file, this states where the file
-             came from and cannot be touched. Nothing here is derived from this machine: see
-             ADR-0007. -->
-        <dl class="origin">
-            <dt>{$t('issuance.originLabel')}</dt>
-            <dd class="value">{issuance.watermark.origin}</dd>
+    <!-- One grid for the whole panel: label on the left, content on the right, in a single
+         pair of columns so every row lines up. The watermark block used to be laid out that
+         way while the fields below put their labels on top — two organisations in one
+         panel. A rule closes the watermark block; it is read-only and written by whoever
+         produced the file, everything under the rule belongs to whoever holds it. See
+         ADR-0007. -->
+    <div class="fields">
+        {#if issuance?.watermark}
+            <span class="label">{$t('issuance.originLabel')}</span>
+            <span class="value strong">{issuance.watermark.origin}</span>
 
             {#if issuance.watermark.note}
-                <dt>{$t('issuance.note')}</dt>
-                <dd class="note">{issuance.watermark.note}</dd>
+                <span class="label">{$t('issuance.note')}</span>
+                <span class="value note">{issuance.watermark.note}</span>
             {/if}
 
-            <dt>{$t('issuance.signature')}</dt>
-            <dd>
+            <span class="label">{$t('issuance.signature')}</span>
+            <span class="value">
                 {issuance.watermark.issuerName}
                 <span class="sep">·</span>
                 <code>{issuance.watermark.issuerFingerprint}</code>
                 <span class="mark" class:invalid={!issuance.watermark.signatureValid}>
                     {verdictOf(issuance.watermark)}
                 </span>
-            </dd>
+            </span>
 
-            <dt>{$t('issuance.markedOn')}</dt>
-            <dd>{shortDate(issuance.watermark.issuedAt)}</dd>
-        </dl>
-    {/if}
+            <span class="label">{$t('issuance.markedOn')}</span>
+            <span class="value">{shortDate(issuance.watermark.issuedAt)}</span>
 
-    <div class="meta-row">
-        <div class="form-group">
-            <label for="meta-user">{$t('metadata.user')}</label>
-            <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
-        </div>
-        <div class="form-group">
-            <label for="meta-date">{$t('metadata.created')}</label>
-            <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
-        </div>
-        <div class="form-group">
-            <label for="meta-version">{$t('metadata.version')}</label>
-            <input id="meta-version" type="text" bind:value={databaseVersion} readonly />
-        </div>
-    </div>
-    <div class="form-group desc-group">
-        <label for="meta-description">{$t('metadata.description')}</label>
+            <hr />
+        {/if}
+
+        <label class="label" for="meta-user">{$t('metadata.user')}</label>
+        <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
+
+        <label class="label" for="meta-date">{$t('metadata.created')}</label>
+        <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
+
+        <label class="label" for="meta-version">{$t('metadata.version')}</label>
+        <input id="meta-version" type="text" bind:value={databaseVersion} readonly />
+
+        <label class="label desc-label" for="meta-description">{$t('metadata.description')}</label>
         <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
     </div>
 </div>
@@ -126,38 +122,24 @@
 <style>
     /* One type scale for the whole panel. Form controls do not inherit the page font on
        their own — left alone they render in the browser's own control font, larger and in a
-       different family than everything around them, which is what made the read-only block
-       and the editable fields look like two different panels. */
+       different family than everything around them. */
     .metadata-panel {
         font-size: 12px;
         padding: 6px 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
         height: 100%;
         overflow-y: auto;
         background: white;
         box-sizing: border-box;
     }
 
-    .meta-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-end;
+    .fields {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr);
+        gap: 3px 10px;
+        align-items: baseline;
     }
 
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-    }
-
-    .desc-group {
-        flex: 1;
-        min-height: 0;
-    }
-
-    label {
+    .label {
         font-size: inherit;
         font-weight: 600;
         color: #888;
@@ -167,14 +149,20 @@
         -webkit-user-select: none;
     }
 
+    /* A textarea is taller than its label's line, so the label sits at the top of the row
+       rather than on the baseline of an empty box. */
+    .desc-label {
+        align-self: start;
+        padding-top: 3px;
+    }
+
     input,
     textarea {
         font: inherit;
+        min-width: 0;
     }
 
     textarea {
-        flex: 1;
-        min-height: 30px;
         resize: vertical;
     }
 
@@ -189,46 +177,31 @@
         border-color: #1a73e8;
     }
 
-    /* Same type as the fields below — label in the panel's own idiom, value at the panel's
-       own size — so the block reads as part of the panel rather than as small print. It
-       sits first and is separated by a hairline; that is all the prominence it needs. */
-    .origin {
-        display: grid;
-        grid-template-columns: max-content 1fr;
-        gap: 1px 10px;
-        margin: 0 0 4px;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #e0e0e0;
+    hr {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin: 3px 0;
+        border: none;
+        border-top: 1px solid #e0e0e0;
     }
 
-    .origin dt {
-        font-size: inherit;
-        font-weight: 600;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    .origin dd {
-        margin: 0;
+    .value {
         color: #3c4043;
         overflow-wrap: anywhere;
     }
 
-    .origin .value {
+    .value.strong {
         font-weight: 600;
         color: #202124;
     }
 
-    .origin .note {
+    .value.note {
         font-style: italic;
     }
 
     /* Monospace looks a size larger than a proportional face at the same nominal size, so
        it is nudged down to sit level with the text beside it. */
-    .origin code {
+    code {
         font-family: monospace;
         font-size: 0.92em;
         color: #5f6368;
@@ -238,8 +211,7 @@
         color: #bdc1c6;
     }
 
-    /* The only colour in the block: a watermark that does not verify must catch the eye
-       without the rest of the panel shouting. */
+    /* The only colour in the panel: a watermark that does not verify must catch the eye. */
     .mark {
         font-weight: 600;
         color: #1a7f37;
