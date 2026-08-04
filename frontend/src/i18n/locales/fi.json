@@ -558,7 +558,8 @@
         "wrongPassword": "Väärä salasana.",
         "passwordRequiredToOpen": "Tiedosto on suojattu: anna salasana.",
         "protectedOpened": "Suojattu tiedosto avattu: {name}",
-        "removeContainer": "Poista suojattu tiedosto avaamisen jälkeen"
+        "removeContainer": "Poista suojattu tiedosto avaamisen jälkeen",
+        "signature": "Allekirjoitus"
     },
     "matchInfo": {
         "vs": "vs",

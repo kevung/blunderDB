@@ -558,7 +558,8 @@
         "wrongPassword": "Mot de passe incorrect.",
         "passwordRequiredToOpen": "Ce fichier est protégé : saisissez son mot de passe.",
         "protectedOpened": "Fichier protégé ouvert : {name}",
-        "removeContainer": "Supprimer le fichier protégé une fois ouvert"
+        "removeContainer": "Supprimer le fichier protégé une fois ouvert",
+        "signature": "Signature"
     },
     "matchInfo": {
         "vs": "vs",

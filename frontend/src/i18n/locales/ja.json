@@ -558,7 +558,8 @@
         "wrongPassword": "パスワードが違います。",
         "passwordRequiredToOpen": "このファイルは保護されています。パスワードを入力してください。",
         "protectedOpened": "保護されたファイルを開きました: {name}",
-        "removeContainer": "開いた後、保護されたファイルを削除する"
+        "removeContainer": "開いた後、保護されたファイルを削除する",
+        "signature": "署名"
     },
     "matchInfo": {
         "vs": "対",

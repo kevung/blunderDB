@@ -73,6 +73,36 @@
 </script>
 
 <div class="metadata-panel">
+    {#if issuance?.watermark}
+        <!-- First in the panel, and in the same type as the fields below: this is what the
+             user came to check, so it should not read as a footnote. It stays read-only —
+             everything below belongs to whoever holds the file, this states where the file
+             came from and cannot be touched. Nothing here is derived from this machine: see
+             ADR-0007. -->
+        <dl class="origin">
+            <dt>{$t('issuance.originLabel')}</dt>
+            <dd class="value">{issuance.watermark.origin}</dd>
+
+            {#if issuance.watermark.note}
+                <dt>{$t('issuance.note')}</dt>
+                <dd class="note">{issuance.watermark.note}</dd>
+            {/if}
+
+            <dt>{$t('issuance.signature')}</dt>
+            <dd>
+                {issuance.watermark.issuerName}
+                <span class="sep">·</span>
+                <code>{issuance.watermark.issuerFingerprint}</code>
+                <span class="mark" class:invalid={!issuance.watermark.signatureValid}>
+                    {verdictOf(issuance.watermark)}
+                </span>
+            </dd>
+
+            <dt>{$t('issuance.markedOn')}</dt>
+            <dd>{shortDate(issuance.watermark.issuedAt)}</dd>
+        </dl>
+    {/if}
+
     <div class="meta-row">
         <div class="form-group">
             <label for="meta-user">{$t('metadata.user')}</label>
@@ -91,32 +121,6 @@
         <label for="meta-description">{$t('metadata.description')}</label>
         <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
     </div>
-
-    {#if issuance?.watermark}
-        <!-- A notice, not a form: everything above is editable and belongs to whoever holds
-             the file, this single line states where the file came from and cannot be
-             touched. Facts are separated by middots rather than laid out in rows — in a
-             panel this short, a four-row table costs more space than the four facts are
-             worth. The verdict is reduced to one mark whose tooltip carries the sentence.
-             Nothing here is derived from this machine: see ADR-0007. -->
-        <p class="origin">
-            <span class="kicker">{$t('issuance.origin')}</span>
-            <span class="value">{issuance.watermark.origin}</span>
-            <span class="sep">·</span>
-            <span>{issuance.watermark.issuerName}</span>
-            <span class="sep">·</span>
-            <span>{shortDate(issuance.watermark.issuedAt)}</span>
-            <span class="sep">·</span>
-            <code>{issuance.watermark.issuerFingerprint}</code>
-            <span class="mark" class:invalid={!issuance.watermark.signatureValid} title={verdictOf(issuance.watermark)} aria-label={verdictOf(issuance.watermark)}>
-                {issuance.watermark.signatureValid ? '✓' : '⚠'}
-            </span>
-            {#if issuance.watermark.note}
-                <span class="sep">·</span>
-                <span class="note">{issuance.watermark.note}</span>
-            {/if}
-        </p>
-    {/if}
 </div>
 
 <style>
@@ -177,24 +181,20 @@
         border-color: #1a73e8;
     }
 
-    /* One wrapping line, a hairline to set it apart from the fields above, and no ground
-       of its own: the point is that it takes almost no room. Only the verdict mark carries
-       colour, so a tampered watermark still catches the eye. */
+    /* Same type as the fields below — label in the panel's own idiom, value at the panel's
+       own size — so the block reads as part of the panel rather than as small print. It
+       sits first and is separated by a hairline; that is all the prominence it needs. */
     .origin {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 0 5px;
-        margin: 2px 0 0;
-        padding-top: 4px;
-        border-top: 1px solid #e0e0e0;
-        font-size: 11px;
-        color: #5f6368;
-        line-height: 1.5;
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 1px 10px;
+        margin: 0 0 4px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 12px;
     }
 
-    .kicker {
-        font-size: 10px;
+    .origin dt {
         font-weight: 600;
         color: #888;
         text-transform: uppercase;
@@ -203,33 +203,38 @@
         -webkit-user-select: none;
     }
 
+    .origin dd {
+        margin: 0;
+        color: #3c4043;
+        overflow-wrap: anywhere;
+    }
+
     .origin .value {
         font-weight: 600;
         color: #202124;
-        overflow-wrap: anywhere;
+    }
+
+    .origin .note {
+        font-style: italic;
     }
 
     .origin code {
         font-family: monospace;
-        font-size: 10px;
+        color: #5f6368;
     }
 
     .sep {
         color: #bdc1c6;
     }
 
+    /* The only colour in the block: a watermark that does not verify must catch the eye
+       without the rest of the panel shouting. */
     .mark {
-        font-weight: 700;
+        font-weight: 600;
         color: #1a7f37;
-        cursor: help;
     }
 
     .mark.invalid {
         color: #b3261e;
-    }
-
-    .note {
-        font-style: italic;
-        overflow-wrap: anywhere;
     }
 </style>
