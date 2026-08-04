@@ -124,7 +124,12 @@
 </div>
 
 <style>
+    /* One type scale for the whole panel. Form controls do not inherit the page font on
+       their own — left alone they render in the browser's own control font, larger and in a
+       different family than everything around them, which is what made the read-only block
+       and the editable fields look like two different panels. */
     .metadata-panel {
+        font-size: 12px;
         padding: 6px 10px;
         display: flex;
         flex-direction: column;
@@ -153,15 +158,18 @@
     }
 
     label {
-        font-size: 10px;
+        font-size: inherit;
         font-weight: 600;
         color: #888;
         text-transform: uppercase;
         letter-spacing: 0.3px;
         user-select: none;
         -webkit-user-select: none;
-        font-size: 12px;
-        font-family: inherit;
+    }
+
+    input,
+    textarea {
+        font: inherit;
     }
 
     textarea {
@@ -191,10 +199,10 @@
         margin: 0 0 4px;
         padding-bottom: 5px;
         border-bottom: 1px solid #e0e0e0;
-        font-size: 12px;
     }
 
     .origin dt {
+        font-size: inherit;
         font-weight: 600;
         color: #888;
         text-transform: uppercase;
@@ -218,8 +226,11 @@
         font-style: italic;
     }
 
+    /* Monospace looks a size larger than a proportional face at the same nominal size, so
+       it is nudged down to sit level with the text beside it. */
     .origin code {
         font-family: monospace;
+        font-size: 0.92em;
         color: #5f6368;
     }
 
