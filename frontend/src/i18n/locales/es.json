@@ -539,8 +539,8 @@
         "markedOn": "Marcada el",
         "note": "Nota",
         "signatureValid": "✓ firma verificada",
-        "signatureYours": "✓ firma verificada — marcada por usted",
-        "signatureInvalid": "⚠ firma no válida — alterada o falsificada",
+        "signatureYours": "✓ marcado por usted",
+        "signatureInvalid": "⚠ firma no válida",
         "enableWatermark": "Marcar este archivo con su origen",
         "watermarkNote": "La marca está firmada: no puede alterarse ni falsificarse en su nombre. No es ineliminable y no impide nada: dice de dónde viene el archivo.",
         "originPlaceholder": "Clase de Jean Dupont — 12 de marzo de 2026",
@@ -557,7 +557,8 @@
         "revealPassword": "Mantener pulsado para ver la contraseña",
         "wrongPassword": "Contraseña incorrecta.",
         "passwordRequiredToOpen": "Este archivo está protegido: introduzca su contraseña.",
-        "protectedOpened": "Archivo protegido abierto: {name}"
+        "protectedOpened": "Archivo protegido abierto: {name}",
+        "removeContainer": "Eliminar el archivo protegido una vez abierto"
     },
     "matchInfo": {
         "vs": "vs",

@@ -378,3 +378,37 @@ func TestGetIssuanceInfoOnAnOrdinaryDatabase(t *testing.T) {
 		t.Fatalf("no identity should exist before the first watermark, got %q", info.IssuerFingerprint)
 	}
 }
+
+// Once a protected copy has been opened, the recipient has the same content twice under two
+// names. Removing the container is offered — and it must never be able to remove anything
+// else, since the path comes from the frontend.
+func TestDeleteProtectedCopyRefusesOrdinaryFiles(t *testing.T) {
+	isolateIdentity(t)
+	source := newTestDB(t)
+	dir := t.TempDir()
+
+	container := filepath.Join(dir, "cours.dbx")
+	exportTo(t, source, container, ExportOptions{Password: "pw"})
+
+	plain := filepath.Join(dir, "precieux.db")
+	if err := source.ExportDatabase(ExportOptions{ExportPath: plain, Metadata: map[string]string{}}); err != nil {
+		t.Fatalf("ExportDatabase: %v", err)
+	}
+
+	if err := DeleteProtectedCopy(plain); err == nil {
+		t.Fatal("an ordinary database must not be deletable through this path")
+	}
+	if _, err := os.Stat(plain); err != nil {
+		t.Fatalf("the ordinary database was removed anyway: %v", err)
+	}
+	if err := DeleteProtectedCopy(filepath.Join(dir, "absent.dbx")); err == nil {
+		t.Fatal("a missing file is not a protected copy")
+	}
+
+	if err := DeleteProtectedCopy(container); err != nil {
+		t.Fatalf("DeleteProtectedCopy: %v", err)
+	}
+	if _, err := os.Stat(container); !os.IsNotExist(err) {
+		t.Fatal("the container should be gone")
+	}
+}

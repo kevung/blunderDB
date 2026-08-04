@@ -1,6 +1,15 @@
 import { writable, get } from 'svelte/store';
 import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
-import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion, IsReadOnly, IsProtectedCopyPath, OpenProtectedCopyPath } from '../../wailsjs/go/database/Database.js';
+import {
+    SetupDatabase,
+    CheckDatabaseVersion,
+    OpenDatabase,
+    GetDatabaseVersion,
+    IsReadOnly,
+    IsProtectedCopyPath,
+    OpenProtectedCopyPath,
+    DeleteProtectedCopyPath
+} from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
@@ -246,11 +255,16 @@ function protectedCopyMessage(error) {
     return text;
 }
 
-export async function unlockProtectedCopy(password) {
+export async function unlockProtectedCopy(password, removeContainer = false) {
     const source = get(protectedCopyPathStore);
     if (!source) return;
     try {
         const opened = await OpenProtectedCopyPath(source, password);
+        // Only once the database is out: a failure here must never cost the container, which
+        // may be the only copy the recipient has.
+        if (removeContainer) {
+            await DeleteProtectedCopyPath(source).catch((error) => logger.error('Error removing the protected file:', error));
+        }
         closeModal();
         protectedCopyPathStore.set('');
         protectedCopyErrorStore.set('');

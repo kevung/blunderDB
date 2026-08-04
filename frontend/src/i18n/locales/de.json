@@ -539,8 +539,8 @@
         "markedOn": "Markiert am",
         "note": "Hinweis",
         "signatureValid": "✓ Signatur geprüft",
-        "signatureYours": "✓ Signatur geprüft — von Ihnen markiert",
-        "signatureInvalid": "⚠ ungültige Signatur — verändert oder gefälscht",
+        "signatureYours": "✓ von Ihnen markiert",
+        "signatureInvalid": "⚠ ungültige Signatur",
         "enableWatermark": "Diese Datei mit ihrer Herkunft kennzeichnen",
         "watermarkNote": "Die Kennzeichnung ist signiert und kann weder verändert noch in Ihrem Namen gefälscht werden. Sie ist nicht unentfernbar und verhindert nichts — sie sagt, woher die Datei stammt.",
         "originPlaceholder": "Kurs von Jean Dupont — 12. März 2026",
@@ -557,7 +557,8 @@
         "revealPassword": "Gedrückt halten, um das Passwort anzuzeigen",
         "wrongPassword": "Falsches Passwort.",
         "passwordRequiredToOpen": "Diese Datei ist geschützt: Passwort eingeben.",
-        "protectedOpened": "Geschützte Datei geöffnet: {name}"
+        "protectedOpened": "Geschützte Datei geöffnet: {name}",
+        "removeContainer": "Geschützte Datei nach dem Öffnen löschen"
     },
     "matchInfo": {
         "vs": "vs",

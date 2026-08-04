@@ -539,8 +539,8 @@
         "markedOn": "Marquée le",
         "note": "Note",
         "signatureValid": "✓ signature vérifiée",
-        "signatureYours": "✓ signature vérifiée — marquée par vous",
-        "signatureInvalid": "⚠ signature invalide — document altéré ou contrefait",
+        "signatureYours": "✓ marquée par vous",
+        "signatureInvalid": "⚠ signature invalide",
         "enableWatermark": "Marquer ce fichier de son origine",
         "watermarkNote": "La marque est signée : elle ne peut être ni modifiée ni contrefaite en votre nom. Elle n'est pas ineffaçable et n'empêche rien — elle dit d'où vient le fichier.",
         "originPlaceholder": "Cours de Jean Dupont — 12 mars 2026",
@@ -557,7 +557,8 @@
         "revealPassword": "Maintenir pour afficher le mot de passe",
         "wrongPassword": "Mot de passe incorrect.",
         "passwordRequiredToOpen": "Ce fichier est protégé : saisissez son mot de passe.",
-        "protectedOpened": "Fichier protégé ouvert : {name}"
+        "protectedOpened": "Fichier protégé ouvert : {name}",
+        "removeContainer": "Supprimer le fichier protégé une fois ouvert"
     },
     "matchInfo": {
         "vs": "vs",

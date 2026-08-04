@@ -10,6 +10,10 @@
 
     let password = $state('');
     let passwordVisible = $state(false);
+    // Offered, never assumed: once opened, the recipient has the same content twice under
+    // two names, which is a nuisance — but the protected file is theirs to keep if they
+    // want to pass it on, so the box starts unticked.
+    let removeContainer = $state(false);
     let input = $state(null);
 
     $effect(() => {
@@ -17,7 +21,7 @@
     });
 
     function submit() {
-        if (password) onSubmit(password);
+        if (password) onSubmit(password, removeContainer);
     }
 
     function handleKeyDown(event) {
@@ -63,6 +67,10 @@
                     {passwordVisible ? '🙈' : '👁'}
                 </button>
             </div>
+            <label class="remove-row">
+                <input type="checkbox" bind:checked={removeContainer} />
+                {$t('issuance.removeContainer')}
+            </label>
             {#if error}<p class="error">{error}</p>{/if}
             <div class="buttons">
                 <button type="button" onclick={onCancel}>{$t('common.cancel')}</button>
@@ -133,6 +141,16 @@
         padding: 0 8px;
         cursor: pointer;
         line-height: 1;
+    }
+
+    .remove-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        font-size: 12px;
+        color: #3c4043;
+        cursor: pointer;
     }
 
     .error {

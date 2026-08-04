@@ -137,8 +137,24 @@ func OpenProtectedCopy(path, password string) (string, error) {
 	return target, nil
 }
 
+// DeleteProtectedCopy removes a protected copy once it has been opened into an ordinary
+// database, so the recipient is not left with the same content twice under two names.
+//
+// It refuses anything that is not a container. That check is not politeness: this is called
+// from the frontend with a path, and without it the method would delete whatever file it was
+// handed.
+func DeleteProtectedCopy(path string) error {
+	if !issuance.IsContainer(path) {
+		return fmt.Errorf("%s is not a protected file", path)
+	}
+	return os.Remove(path)
+}
+
 // IsProtectedCopyPath is the bound form of IsProtectedCopy, for the frontend.
 func (d *Database) IsProtectedCopyPath(path string) bool { return IsProtectedCopy(path) }
+
+// DeleteProtectedCopyPath is the bound form of DeleteProtectedCopy, for the frontend.
+func (d *Database) DeleteProtectedCopyPath(path string) error { return DeleteProtectedCopy(path) }
 
 // OpenProtectedCopyPath is the bound form of OpenProtectedCopy, for the frontend.
 func (d *Database) OpenProtectedCopyPath(path, password string) (string, error) {

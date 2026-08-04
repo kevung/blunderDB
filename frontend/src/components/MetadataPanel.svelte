@@ -94,28 +94,28 @@
 
     {#if issuance?.watermark}
         <!-- Sealed: written by the producer, read-only for everyone else. The fields above
-             belong to whoever holds the file; this block states where the file came from.
-             Nothing here is derived from this machine — see ADR-0007. -->
-        <section class="issuance">
-            <h3>{$t('issuance.origin')}</h3>
-            <dl>
-                <dt>{$t('issuance.originLabel')}</dt>
-                <dd>{issuance.watermark.origin}</dd>
-                <dt>{$t('issuance.producedBy')}</dt>
-                <dd>
-                    {issuance.watermark.issuerName}
-                    <span class="fingerprint">{issuance.watermark.issuerFingerprint}</span>
-                    <span class="verdict" class:invalid={!issuance.watermark.signatureValid}>
-                        {verdictOf(issuance.watermark)}
-                    </span>
-                </dd>
-                <dt>{$t('issuance.markedOn')}</dt>
-                <dd>{shortDate(issuance.watermark.issuedAt)}</dd>
-                {#if issuance.watermark.note}
-                    <dt>{$t('issuance.note')}</dt>
-                    <dd>{issuance.watermark.note}</dd>
-                {/if}
-            </dl>
+             belong to whoever holds the file; this states where the file came from. It is
+             deliberately shaped as a card rather than as more form rows — nothing in it is
+             editable, and it should not read like the inputs it sits under. Nothing here is
+             derived from this machine: see ADR-0007. -->
+        <section class="origin" class:invalid={!issuance.watermark.signatureValid}>
+            <header>
+                <span class="origin-kicker">{$t('issuance.origin')}</span>
+                <span class="badge" class:invalid={!issuance.watermark.signatureValid}>
+                    {verdictOf(issuance.watermark)}
+                </span>
+            </header>
+            <p class="origin-value">{issuance.watermark.origin}</p>
+            <p class="origin-meta">
+                <span>{issuance.watermark.issuerName}</span>
+                <span class="dot">·</span>
+                <span>{shortDate(issuance.watermark.issuedAt)}</span>
+                <span class="dot">·</span>
+                <code>{issuance.watermark.issuerFingerprint}</code>
+            </p>
+            {#if issuance.watermark.note}
+                <p class="origin-note">{issuance.watermark.note}</p>
+            {/if}
         </section>
     {/if}
 </div>
@@ -178,15 +178,34 @@
         border-color: #1a73e8;
     }
 
-    .issuance {
-        border-top: 1px solid #e0e0e0;
-        padding-top: 4px;
+    /* A card, not more form rows: the accent border and tinted ground say "read-only, and
+       not written by you" without needing a lock icon or a sentence to explain it. The
+       accent turns red when the signature does not verify, so a tampered mark is visible
+       before any text is read. */
+    .origin {
+        margin-top: 2px;
+        padding: 6px 10px;
+        border-left: 3px solid #1a73e8;
+        border-radius: 0 4px 4px 0;
+        background: #f5f8fe;
         font-size: 12px;
+        line-height: 1.4;
     }
 
-    .issuance h3 {
-        margin: 0 0 2px;
-        font-size: 12px;
+    .origin.invalid {
+        border-left-color: #b3261e;
+        background: #fdf3f2;
+    }
+
+    .origin header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .origin-kicker {
+        font-size: 10px;
         font-weight: 600;
         color: #888;
         text-transform: uppercase;
@@ -195,32 +214,52 @@
         -webkit-user-select: none;
     }
 
-    .issuance dl {
-        display: grid;
-        grid-template-columns: max-content 1fr;
-        gap: 1px 10px;
-        margin: 0;
-    }
-
-    .issuance dt {
-        color: #888;
-    }
-
-    .issuance dd {
-        margin: 0;
-    }
-
-    .fingerprint {
-        font-family: monospace;
-        color: #555;
-    }
-
-    .verdict {
-        color: #1a7f37;
-    }
-
-    .verdict.invalid {
-        color: #b3261e;
+    .badge {
+        flex: none;
+        font-size: 11px;
         font-weight: 600;
+        color: #1a7f37;
+        white-space: nowrap;
+    }
+
+    .badge.invalid {
+        color: #b3261e;
+    }
+
+    /* The origin is the statement the whole card exists for, so it carries the weight. */
+    .origin-value {
+        margin: 1px 0 0;
+        font-size: 13px;
+        font-weight: 600;
+        color: #202124;
+        overflow-wrap: anywhere;
+    }
+
+    /* Producer, date and fingerprint on one wrapping line: three short facts, none of which
+       deserves a row of its own in a panel this short. */
+    .origin-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0 6px;
+        margin: 1px 0 0;
+        color: #5f6368;
+    }
+
+    .origin-meta code {
+        font-family: monospace;
+        font-size: 11px;
+        color: #5f6368;
+    }
+
+    .dot {
+        color: #bdc1c6;
+    }
+
+    .origin-note {
+        margin: 3px 0 0;
+        font-style: italic;
+        color: #3c4043;
+        overflow-wrap: anywhere;
     }
 </style>
