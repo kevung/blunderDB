@@ -6,50 +6,50 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 22:09+0200\n"
+"POT-Creation-Date: 2026-08-04 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: es <LL@li.org>\n"
 "Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/manuel.rst:4
 msgid "Manuel"
 msgstr "Manual"
 
-#: ../../source/manuel.rst:7 ../../source/manuel.rst:455
+#: ../../source/manuel.rst:7 ../../source/manuel.rst:458
 msgid "Introduction"
 msgstr "Introducción"
 
 #: ../../source/manuel.rst:9
 msgid ""
-"blunderDB est un logiciel pour constituer des bases de données de positions "
-"de backgammon. Sa force principale est de fournir un lieu unique pour "
-"agréger les positions qu'un joueur a rencontrées (en ligne, en tournoi) et "
-"de pouvoir les réétudier en les filtrant selon divers filtres arbitrairement"
-" combinables. blunderDB peut également être utilisé pour créer des "
-"catalogues de positions de référence."
+"blunderDB est un logiciel pour constituer des bases de données de "
+"positions de backgammon. Sa force principale est de fournir un lieu "
+"unique pour agréger les positions qu'un joueur a rencontrées (en ligne, "
+"en tournoi) et de pouvoir les réétudier en les filtrant selon divers "
+"filtres arbitrairement combinables. blunderDB peut également être utilisé"
+" pour créer des catalogues de positions de référence."
 msgstr ""
 "blunderDB es un programa para crear bases de datos de posiciones de "
-"backgammon. Su principal fortaleza es ofrecer un único lugar donde agregar "
-"las posiciones que un jugador ha encontrado (en línea, en torneos) y poder "
-"reestudiarlas filtrándolas según diversos filtros combinables de forma "
-"arbitraria. blunderDB también puede usarse para crear catálogos de "
-"posiciones de referencia."
+"backgammon. Su principal fortaleza es ofrecer un único lugar donde "
+"agregar las posiciones que un jugador ha encontrado (en línea, en "
+"torneos) y poder reestudiarlas filtrándolas según diversos filtros "
+"combinables de forma arbitraria. blunderDB también puede usarse para "
+"crear catálogos de posiciones de referencia."
 
 #: ../../source/manuel.rst:16
 msgid ""
 "Les positions sont stockées dans une base de données représentée par un "
 "fichier *.db*."
 msgstr ""
-"Las posiciones se almacenan en una base de datos representada por un fichero"
-" *.db*."
+"Las posiciones se almacenan en una base de datos representada por un "
+"fichero *.db*."
 
 #: ../../source/manuel.rst:20
 msgid "Interactions principales"
@@ -69,11 +69,11 @@ msgstr "modificar una posición existente,"
 
 #: ../../source/manuel.rst:28
 msgid ""
-"copier l'image du board dans le presse-papier (PNG) via **Ctrl+X**, ou avec "
-"l'analyse complète via **Ctrl+X Ctrl+X**,"
+"copier l'image du board dans le presse-papier (PNG) via **Ctrl+X**, ou "
+"avec l'analyse complète via **Ctrl+X Ctrl+X**,"
 msgstr ""
-"copiar la imagen del tablero al portapapeles (PNG) mediante **Ctrl+X**, o "
-"con el análisis completo mediante **Ctrl+X Ctrl+X**,"
+"copiar la imagen del tablero al portapapeles (PNG) mediante **Ctrl+X**, o"
+" con el análisis completo mediante **Ctrl+X Ctrl+X**,"
 
 #: ../../source/manuel.rst:30
 msgid "supprimer une position existante,"
@@ -88,8 +88,8 @@ msgid ""
 "importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, "
 "Jellyfish), y compris les commentaires depuis les fichiers XG,"
 msgstr ""
-"importar partidas desde diferentes fuentes (XG, GNUbg, BGBlitz, Jellyfish), "
-"incluidos los comentarios de los ficheros XG,"
+"importar partidas desde diferentes fuentes (XG, GNUbg, BGBlitz, "
+"Jellyfish), incluidos los comentarios de los ficheros XG,"
 
 #: ../../source/manuel.rst:36
 msgid "naviguer dans les coups d'un match importé,"
@@ -105,11 +105,11 @@ msgstr "organizar las partidas en torneos."
 
 #: ../../source/manuel.rst:42
 msgid ""
-"L'utilisateur peut étiqueter librement les positions à l'aide de tags et les"
-" annoter via des commentaires."
+"L'utilisateur peut étiqueter librement les positions à l'aide de tags et "
+"les annoter via des commentaires."
 msgstr ""
-"El usuario puede etiquetar libremente las posiciones mediante etiquetas y "
-"anotarlas con comentarios."
+"El usuario puede etiquetar libremente las posiciones mediante etiquetas y"
+" anotarlas con comentarios."
 
 #: ../../source/manuel.rst:46
 msgid "Description de l'interface"
@@ -137,11 +137,11 @@ msgstr ""
 
 #: ../../source/manuel.rst:56
 msgid ""
-"[en bas] la barre d'état, qui présente différentes informations sur la base "
-"de données ou la position courante, et intègre la ligne de commande."
+"[en bas] la barre d'état, qui présente différentes informations sur la "
+"base de données ou la position courante, et intègre la ligne de commande."
 msgstr ""
-"[abajo] la barra de estado, que presenta diversa información sobre la base "
-"de datos o la posición actual, e integra la línea de comandos."
+"[abajo] la barra de estado, que presenta diversa información sobre la "
+"base de datos o la posición actual, e integra la línea de comandos."
 
 #: ../../source/manuel.rst:59
 msgid "Des panneaux peuvent être affichés pour:"
@@ -152,8 +152,8 @@ msgid ""
 "afficher les données d'analyse associées à la position courante issues "
 "d'eXtreme Gammon (XG), GNUbg, ou BGBlitz,"
 msgstr ""
-"mostrar los datos de análisis asociados a la posición actual procedentes de "
-"eXtreme Gammon (XG), GNUbg o BGBlitz,"
+"mostrar los datos de análisis asociados a la posición actual procedentes "
+"de eXtreme Gammon (XG), GNUbg o BGBlitz,"
 
 #: ../../source/manuel.rst:64
 msgid "afficher, ajouter ou modifier des commentaires,"
@@ -165,13 +165,12 @@ msgstr "buscar y filtrar posiciones según criterios combinables,"
 
 #: ../../source/manuel.rst:68
 msgid "afficher et gérer les collections de positions (panneau collections),"
-msgstr ""
-"mostrar y gestionar las colecciones de posiciones (panel de colecciones),"
+msgstr "mostrar y gestionar las colecciones de posiciones (panel de colecciones),"
 
 #: ../../source/manuel.rst:70
 msgid ""
-"afficher la liste des matchs importés et naviguer dans les coups d'un match "
-"(panneau matchs),"
+"afficher la liste des matchs importés et naviguer dans les coups d'un "
+"match (panneau matchs),"
 msgstr ""
 "mostrar la lista de partidas importadas y navegar por las jugadas de una "
 "partida (panel de partidas),"
@@ -197,31 +196,26 @@ msgid "étudier les positions par répétition espacée (panneau Anki),"
 msgstr "estudiar las posiciones mediante repetición espaciada (panel Anki),"
 
 #: ../../source/manuel.rst:80
-msgid "afficher les métadonnées de la base de données (panneau métadonnées),"
-msgstr "mostrar los metadatos de la base de datos (panel de metadatos),"
+msgid "afficher les métadonnées de la base de données (panneau métadonnées)."
+msgstr "ver los metadatos de la base de datos (panel Metadatos)."
 
 #: ../../source/manuel.rst:82
-msgid "afficher le journal des opérations (panneau journal)."
-msgstr "mostrar el registro de operaciones (panel de registro)."
-
-#: ../../source/manuel.rst:84
 msgid "Des fenêtres modales peuvent s'afficher pour:"
 msgstr "Pueden mostrarse ventanas modales para:"
 
-#: ../../source/manuel.rst:86
+#: ../../source/manuel.rst:84
 msgid "afficher l'aide de blunderDB,"
 msgstr "mostrar la ayuda de blunderDB,"
 
-#: ../../source/manuel.rst:88
-msgid ""
-"afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),"
+#: ../../source/manuel.rst:86
+msgid "afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),"
 msgstr "mostrar el catálogo de visitas guiadas (ver :ref:`visites_guidees`),"
 
-#: ../../source/manuel.rst:90
+#: ../../source/manuel.rst:88
 msgid "paramétrer l'export de la base de données,"
 msgstr "configurar la exportación de la base de datos,"
 
-#: ../../source/manuel.rst:92
+#: ../../source/manuel.rst:90
 msgid ""
 "configurer blunderDB, notamment la langue de l'interface (voir "
 ":ref:`configuration`)."
@@ -229,60 +223,59 @@ msgstr ""
 "configurar blunderDB, en particular el idioma de la interfaz (véase "
 ":ref:`configuration`)."
 
-#: ../../source/manuel.rst:95
+#: ../../source/manuel.rst:93
 msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr "La zona de visualización principal pone a disposición del usuario:"
 
-#: ../../source/manuel.rst:97
+#: ../../source/manuel.rst:95
 msgid "un board afin d'afficher ou d'éditer une position de backgammon,"
 msgstr "un tablero para mostrar o editar una posición de backgammon,"
 
-#: ../../source/manuel.rst:99
+#: ../../source/manuel.rst:97
 msgid "le niveau et le propriétaire du cube,"
 msgstr "el nivel y el propietario del cubo,"
 
-#: ../../source/manuel.rst:101
+#: ../../source/manuel.rst:99
 msgid "le compte de course de chaque joueur,"
 msgstr "el pip count de cada jugador,"
 
-#: ../../source/manuel.rst:103
+#: ../../source/manuel.rst:101
 msgid "le score de chaque joueur,"
 msgstr "la puntuación de cada jugador,"
 
-#: ../../source/manuel.rst:105
+#: ../../source/manuel.rst:103
 msgid ""
-"les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position "
-"des dés indique quel joueur a le trait et que la position est une décision "
-"de cube. Lorsque la décision de cube est une réponse à un doublement "
-"(prise/passe), le videau proposé est affiché au centre du plateau, à la "
-"valeur offerte."
+"les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
+" des dés indique quel joueur a le trait et que la position est une "
+"décision de cube. Lorsque la décision de cube est une réponse à un "
+"doublement (prise/passe), le videau proposé est affiché au centre du "
+"plateau, à la valeur offerte."
 msgstr ""
-"los dados a jugar. Si no se muestra ningún valor en los dados, la posición "
-"de los dados indica qué jugador tiene el turno y que la posición es una "
-"decisión de cubo. Cuando la decisión de cubo es una respuesta a un doblaje "
-"(aceptar/pasar), el cubo propuesto se muestra en el centro del tablero, con "
-"el valor ofrecido."
+"los dados a jugar. Si no se muestra ningún valor en los dados, la "
+"posición de los dados indica qué jugador tiene el turno y que la posición"
+" es una decisión de cubo. Cuando la decisión de cubo es una respuesta a "
+"un doblaje (aceptar/pasar), el cubo propuesto se muestra en el centro del"
+" tablero, con el valor ofrecido."
 
-#: ../../source/manuel.rst:111
+#: ../../source/manuel.rst:109
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
 msgstr ""
-"La barra de estado está estructurada de izquierda a derecha con la siguiente"
-" información:"
+"La barra de estado está estructurada de izquierda a derecha con la "
+"siguiente información:"
 
-#: ../../source/manuel.rst:114
+#: ../../source/manuel.rst:112
 msgid "la ligne de commande, accessible en appuyant sur la touche *ESPACE*,"
 msgstr "la línea de comandos, accesible pulsando la tecla *ESPACIO*,"
 
-#: ../../source/manuel.rst:116
-msgid ""
-"un message d'information lié à une opération réalisée par l'utilisateur,"
+#: ../../source/manuel.rst:114
+msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr ""
 "un mensaje informativo relacionado con una operación realizada por el "
 "usuario,"
 
-#: ../../source/manuel.rst:118
+#: ../../source/manuel.rst:116
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
 "bibliothèque courante (ou les informations de coup/partie lors de la "
@@ -292,230 +285,251 @@ msgstr ""
 "biblioteca actual (o la información de jugada/partida al navegar por una "
 "partida)."
 
-#: ../../source/manuel.rst:122
+#: ../../source/manuel.rst:120
 msgid ""
-"Dans le cas de positions issues d'une recherche par l'utilisateur, le nombre"
-" de positions indiqué dans la barre d'état correspond au nombre de positions"
-" filtrées."
+"Dans le cas de positions issues d'une recherche par l'utilisateur, le "
+"nombre de positions indiqué dans la barre d'état correspond au nombre de "
+"positions filtrées."
 msgstr ""
-"En el caso de posiciones resultantes de una búsqueda del usuario, el número "
-"de posiciones indicado en la barra de estado corresponde al número de "
-"posiciones filtradas."
+"En el caso de posiciones resultantes de una búsqueda del usuario, el "
+"número de posiciones indicado en la barra de estado corresponde al número"
+" de posiciones filtradas."
 
-#: ../../source/manuel.rst:129
+#: ../../source/manuel.rst:127
 msgid "Onglets de vues"
 msgstr "Pestañas de vistas"
 
-#: ../../source/manuel.rst:131
+#: ../../source/manuel.rst:129
 msgid ""
 "Sous la barre d'outils, une barre d'onglets permet de travailler avec "
 "plusieurs **vues** en parallèle. Chaque vue est un espace de travail "
 "indépendant qui conserve sa propre liste de positions, l'index de la "
-"position courante, la position affichée, l'analyse et le coup sélectionné, "
-"le panneau actif, le commentaire en cours ainsi que le contexte de "
-"navigation dans un match. Il est ainsi possible, par exemple, de garder une "
-"recherche ouverte dans une vue tout en parcourant un match dans une autre."
+"position courante, la position affichée, l'analyse et le coup "
+"sélectionné, le panneau actif, le commentaire en cours ainsi que le "
+"contexte de navigation dans un match. Il est ainsi possible, par exemple,"
+" de garder une recherche ouverte dans une vue tout en parcourant un match"
+" dans une autre."
 msgstr ""
-"Bajo la barra de herramientas, una barra de pestañas permite trabajar con "
-"varias **vistas** en paralelo. Cada vista es un espacio de trabajo "
-"independiente que conserva su propia lista de posiciones, el índice de la "
-"posición actual, la posición mostrada, el análisis y la jugada seleccionada,"
-" el panel activo, el comentario en curso, así como el contexto de navegación"
-" en una partida. Así es posible, por ejemplo, mantener una búsqueda abierta "
-"en una vista mientras se recorre una partida en otra."
+"Bajo la barra de herramientas, una barra de pestañas permite trabajar con"
+" varias **vistas** en paralelo. Cada vista es un espacio de trabajo "
+"independiente que conserva su propia lista de posiciones, el índice de la"
+" posición actual, la posición mostrada, el análisis y la jugada "
+"seleccionada, el panel activo, el comentario en curso, así como el "
+"contexto de navegación en una partida. Así es posible, por ejemplo, "
+"mantener una búsqueda abierta en una vista mientras se recorre una "
+"partida en otra."
 
-#: ../../source/manuel.rst:139
+#: ../../source/manuel.rst:137
 msgid ""
 "**Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets ou "
 "appuyer sur *CTRL-T*. La nouvelle vue démarre comme une copie de la vue "
 "courante."
 msgstr ""
-"**Crear una vista**: hacer clic en el botón *+* de la barra de pestañas o "
-"pulsar *CTRL-T*. La nueva vista comienza como una copia de la vista actual."
+"**Crear una vista**: hacer clic en el botón *+* de la barra de pestañas o"
+" pulsar *CTRL-T*. La nueva vista comienza como una copia de la vista "
+"actual."
 
-#: ../../source/manuel.rst:143
+#: ../../source/manuel.rst:141
 msgid ""
 "**Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur "
 "*CTRL-W*. La dernière vue ne peut pas être fermée."
 msgstr ""
-"**Cerrar una vista**: hacer clic en la cruz de la pestaña o pulsar *CTRL-W*."
-" La última vista no se puede cerrar."
+"**Cerrar una vista**: hacer clic en la cruz de la pestaña o pulsar "
+"*CTRL-W*. La última vista no se puede cerrar."
 
-#: ../../source/manuel.rst:146
+#: ../../source/manuel.rst:144
 msgid ""
 "**Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-PageUp* / "
 "*CTRL-PageDown* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue précédente / "
-"suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième vue."
+"suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième "
+"vue."
 msgstr ""
 "**Cambiar de vista**: hacer clic en una pestaña, pulsar *CTRL-PageUp* / "
 "*CTRL-PageDown* (o *MAJ-J* / *MAJ-K*) para pasar a la vista anterior / "
 "siguiente, o *CTRL-1* a *CTRL-9* para ir directamente a la n-ésima vista."
 
-#: ../../source/manuel.rst:150
+#: ../../source/manuel.rst:148
 msgid ""
-"**Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom et"
-" valider avec *ENTREE*."
+"**Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom"
+" et valider avec *ENTREE*."
 msgstr ""
-"**Renombrar una vista**: hacer doble clic en la pestaña, escribir el nuevo "
-"nombre y validar con *INTRO*."
+"**Renombrar una vista**: hacer doble clic en la pestaña, escribir el "
+"nuevo nombre y validar con *INTRO*."
 
-#: ../../source/manuel.rst:153
+#: ../../source/manuel.rst:151
 msgid ""
-"Les vues sont enregistrées avec l'état de session de la base de données et "
-"restaurées à sa réouverture."
+"Les vues sont enregistrées avec l'état de session de la base de données "
+"et restaurées à sa réouverture."
 msgstr ""
 "Las vistas se guardan con el estado de sesión de la base de datos y se "
 "restauran al reabrirla."
 
-#: ../../source/manuel.rst:159
+#: ../../source/manuel.rst:157
 msgid "Configuration"
 msgstr "Configuración"
 
-#: ../../source/manuel.rst:161
+#: ../../source/manuel.rst:159
 msgid ""
-"Le bouton de configuration (icône en forme de rouage) situé dans la barre "
-"d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de "
-"blunderDB."
+"Le bouton de configuration (icône en forme de rouage) situé dans la barre"
+" d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration "
+"de blunderDB. Elle est organisée en trois onglets :"
 msgstr ""
-"El botón de configuración (icono con forma de engranaje) situado en la barra"
-" de herramientas, a la izquierda del botón de ayuda, abre la ventana de "
-"configuración de blunderDB."
+"El botón de configuración (icono de rueda dentada) situado en la barra de "
+"herramientas, a la izquierda del botón de ayuda, abre la ventana de "
+"configuración de blunderDB. Está organizada en tres pestañas:"
+
+#: ../../source/manuel.rst:163
+msgid "**Interface** — langue, échelle d'affichage, position du panneau ;"
+msgstr "**Interfaz** — idioma, escala de visualización, posición del panel;"
+
+#: ../../source/manuel.rst:164
+msgid "**Couleurs** — les couleurs du plateau ;"
+msgstr "**Colores del tablero** — los colores del tablero;"
 
 #: ../../source/manuel.rst:165
 msgid ""
-"Celle-ci permet de choisir la langue de l'interface parmi l'anglais, le "
+"**Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la "
+"section :ref:`diffusion_controlee`."
+msgstr ""
+"**Identidad del emisor** — la clave que firma tus marcas de origen, "
+"descrita en la sección :ref:`diffusion_controlee`."
+
+#: ../../source/manuel.rst:168
+msgid ""
+"L'onglet *Interface* permet de choisir la langue parmi l'anglais, le "
 "français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le "
 "grec et le russe. L'ensemble de l'interface (barre d'outils, panneaux, "
 "messages, aide) est traduit dans la langue sélectionnée. Le choix de la "
 "langue est enregistré et conservé d'une session à l'autre."
 msgstr ""
-"Esta permite elegir el idioma de la interfaz entre inglés, francés, alemán, "
-"italiano, español, finés, japonés, griego y ruso. Toda la interfaz (barra de"
-" herramientas, paneles, mensajes, ayuda) se traduce al idioma seleccionado. "
-"La elección del idioma se guarda y se mantiene de una sesión a otra."
+"La pestaña *Interfaz* permite elegir el idioma entre inglés, francés, "
+"alemán, italiano, español, finés, japonés, griego y ruso. Toda la "
+"interfaz (barra de herramientas, paneles, mensajes, ayuda) se traduce al "
+"idioma seleccionado. La elección del idioma se guarda y se conserva de "
+"una sesión a otra."
 
-#: ../../source/manuel.rst:171
+#: ../../source/manuel.rst:174
 msgid ""
-"La fenêtre de configuration permet également de personnaliser les couleurs "
-"du plateau. Chaque élément dispose de son propre sélecteur de couleur : le "
-"fond, la bordure, les flèches claires et foncées, les pions du joueur 1 et "
-"du joueur 2, les dés, les points des dés et le videau. Le bouton "
+"L'onglet *Couleurs* permet de personnaliser les couleurs du plateau. "
+"Chaque élément dispose de son propre sélecteur de couleur : le fond, la "
+"bordure, les flèches claires et foncées, les pions du joueur 1 et du "
+"joueur 2, les dés, les points des dés et le videau. Le bouton "
 "*Réinitialiser* rétablit l'ensemble des couleurs par défaut. Comme la "
 "langue, les couleurs choisies sont conservées d'une session à l'autre."
 msgstr ""
-"La ventana de configuración también permite personalizar los colores del "
-"tablero. Cada elemento dispone de su propio selector de color: el fondo, el "
-"borde, las puntas claras y oscuras, las fichas del jugador 1 y del jugador "
-"2, los dados, los puntos de los dados y el cubo. El botón *Restablecer* "
-"restaura todos los colores predeterminados. Al igual que el idioma, los "
-"colores elegidos se conservan de una sesión a otra."
+"La pestaña *Colores del tablero* permite personalizar los colores del "
+"tablero. Cada elemento dispone de su propio selector de color: el fondo, "
+"el borde, las flechas claras y oscuras, las fichas del jugador 1 y del "
+"jugador 2, los dados, los puntos de los dados y el cubo de dobles. El "
+"botón *Restablecer* devuelve todos los colores predeterminados. Al igual "
+"que el idioma, los colores elegidos se conservan de una sesión a otra."
 
-#: ../../source/manuel.rst:178
+#: ../../source/manuel.rst:181
 msgid ""
-"La fenêtre de configuration regroupe également des réglages d'affichage de "
-"l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de"
-" réduire l'ensemble des éléments, ce qui est utile sur les écrans à haute "
-"densité ou pour améliorer la lisibilité. Un menu **position des panneaux** "
-"détermine l'emplacement des panneaux (recherche, matchs, analyse) par "
-"rapport au plateau : *en bas*, *sur le côté* ou *automatique* (le côté est "
-"alors choisi sur les écrans larges afin de mieux exploiter l'espace "
-"disponible). Comme les autres réglages, ces choix sont conservés d'une "
-"session à l'autre."
+"La fenêtre de configuration regroupe également des réglages d'affichage "
+"de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
+" ou de réduire l'ensemble des éléments, ce qui est utile sur les écrans à"
+" haute densité ou pour améliorer la lisibilité. Un menu **position des "
+"panneaux** détermine l'emplacement des panneaux (recherche, matchs, "
+"analyse) par rapport au plateau : *en bas*, *sur le côté* ou "
+"*automatique* (le côté est alors choisi sur les écrans larges afin de "
+"mieux exploiter l'espace disponible). Comme les autres réglages, ces "
+"choix sont conservés d'une session à l'autre."
 msgstr ""
-"La ventana de configuración también incluye ajustes de visualización de la "
-"interfaz. Un control deslizante de **escala de la interfaz** permite "
-"agrandar o reducir todos los elementos, lo que resulta útil en pantallas de "
-"alta densidad o para mejorar la legibilidad. Un menú **posición de los "
-"paneles** determina la ubicación de los paneles (búsqueda, partidas, "
+"La ventana de configuración también incluye ajustes de visualización de "
+"la interfaz. Un control deslizante de **escala de la interfaz** permite "
+"agrandar o reducir todos los elementos, lo que resulta útil en pantallas "
+"de alta densidad o para mejorar la legibilidad. Un menú **posición de los"
+" paneles** determina la ubicación de los paneles (búsqueda, partidas, "
 "análisis) con respecto al tablero: *abajo*, *al lado* o *automática* (en "
-"este caso el lado se elige en las pantallas anchas para aprovechar mejor el "
-"espacio disponible). Como los demás ajustes, estas opciones se conservan de "
-"una sesión a otra."
+"este caso el lado se elige en las pantallas anchas para aprovechar mejor "
+"el espacio disponible). Como los demás ajustes, estas opciones se "
+"conservan de una sesión a otra."
 
-#: ../../source/manuel.rst:190
+#: ../../source/manuel.rst:193
 msgid "Visites guidées et base d'exemple"
 msgstr "Visitas guiadas y base de ejemplo"
 
-#: ../../source/manuel.rst:192
+#: ../../source/manuel.rst:195
 msgid ""
-"Pour faciliter la prise en main, blunderDB propose des **visites guidées** "
-"de l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou"
-" avec la commande ``tour`` (alias ``tutorial``). Quatre visites sont "
-"disponibles : un tour général de l'interface, et des visites dédiées à la "
-"recherche de positions, à la revue des matchs et à la revue des tournois. "
-"Chaque visite met en évidence les éléments concernés de l'interface, étape "
-"par étape, et peut être rejouée à tout moment. Au premier démarrage, le tour"
-" général est proposé automatiquement."
+"Pour faciliter la prise en main, blunderDB propose des **visites "
+"guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
+"barre d'outils ou avec la commande ``tour`` (alias ``tutorial``). Quatre "
+"visites sont disponibles : un tour général de l'interface, et des visites"
+" dédiées à la recherche de positions, à la revue des matchs et à la revue"
+" des tournois. Chaque visite met en évidence les éléments concernés de "
+"l'interface, étape par étape, et peut être rejouée à tout moment. Au "
+"premier démarrage, le tour général est proposé automatiquement."
 msgstr ""
-"Para facilitar la toma de contacto, blunderDB ofrece **visitas guiadas** de "
-"la interfaz. El catálogo de visitas se abre desde la barra de herramientas o"
-" con el comando ``tour`` (alias ``tutorial``). Hay cuatro visitas "
-"disponibles: una visita general de la interfaz, y visitas dedicadas a la "
-"búsqueda de posiciones, a la revisión de partidas y a la revisión de "
-"torneos. Cada visita resalta los elementos correspondientes de la interfaz, "
-"paso a paso, y puede repetirse en cualquier momento. En el primer arranque, "
-"la visita general se ofrece automáticamente."
+"Para facilitar la toma de contacto, blunderDB ofrece **visitas guiadas** "
+"de la interfaz. El catálogo de visitas se abre desde la barra de "
+"herramientas o con el comando ``tour`` (alias ``tutorial``). Hay cuatro "
+"visitas disponibles: una visita general de la interfaz, y visitas "
+"dedicadas a la búsqueda de posiciones, a la revisión de partidas y a la "
+"revisión de torneos. Cada visita resalta los elementos correspondientes "
+"de la interfaz, paso a paso, y puede repetirse en cualquier momento. En "
+"el primer arranque, la visita general se ofrece automáticamente."
 
-#: ../../source/manuel.rst:200
+#: ../../source/manuel.rst:203
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** (matchs, tournoi et "
 "analyses) permettant de découvrir les fonctionnalités de l'outil sans "
-"importer ses propres parties. Les visites guidées s'appuient sur cette base "
-"lorsqu'aucune base n'est ouverte."
+"importer ses propres parties. Les visites guidées s'appuient sur cette "
+"base lorsqu'aucune base n'est ouverte."
 msgstr ""
 "El comando ``demo`` carga una **base de ejemplo** (partidas, un torneo y "
-"análisis) que permite descubrir las funcionalidades de la herramienta sin "
-"importar las partidas propias. Las visitas guiadas se apoyan en esta base "
-"cuando no hay ninguna base abierta."
+"análisis) que permite descubrir las funcionalidades de la herramienta sin"
+" importar las partidas propias. Las visitas guiadas se apoyan en esta "
+"base cuando no hay ninguna base abierta."
 
-#: ../../source/manuel.rst:208
+#: ../../source/manuel.rst:211
 msgid "Navigation dans les positions"
 msgstr "Navegación por las posiciones"
 
-#: ../../source/manuel.rst:210
+#: ../../source/manuel.rst:213
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Por defecto, blunderDB permite:"
 
-#: ../../source/manuel.rst:212
+#: ../../source/manuel.rst:215
 msgid "faire défiler les différentes positions de la bibliothèque courante,"
 msgstr "desplazarse por las distintas posiciones de la biblioteca actual,"
 
-#: ../../source/manuel.rst:214
+#: ../../source/manuel.rst:217
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "mostrar la información de análisis asociada a una posición,"
 
-#: ../../source/manuel.rst:216
+#: ../../source/manuel.rst:219
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "mostrar, añadir y modificar los comentarios de una posición."
 
-#: ../../source/manuel.rst:218 ../../source/manuel.rst:231
-#: ../../source/manuel.rst:429
+#: ../../source/manuel.rst:221 ../../source/manuel.rst:234
+#: ../../source/manuel.rst:432
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Consulte :ref:`raccourcis` para ver los atajos disponibles."
 
-#: ../../source/manuel.rst:223
+#: ../../source/manuel.rst:226
 msgid "Édition de positions"
 msgstr "Edición de posiciones"
 
-#: ../../source/manuel.rst:225
+#: ../../source/manuel.rst:228
 msgid ""
-"L'appui sur la touche *TAB* ouvre le panneau de recherche et permet d'éditer"
-" une position sur le plateau pour l'ajouter à la base de données ou pour "
-"définir une structure de position à rechercher. La distribution des pions, "
-"du videau, du score, et du trait peuvent être modifiés à l'aide de la souris"
-" (voir :ref:`guide_edit_position`)."
+"L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
+"d'éditer une position sur le plateau pour l'ajouter à la base de données "
+"ou pour définir une structure de position à rechercher. La distribution "
+"des pions, du videau, du score, et du trait peuvent être modifiés à "
+"l'aide de la souris (voir :ref:`guide_edit_position`)."
 msgstr ""
 "Pulsar la tecla *TAB* abre el panel de búsqueda y permite editar una "
-"posición en el tablero para añadirla a la base de datos o para definir una "
-"estructura de posición que buscar. La distribución de las fichas, el cubo, "
-"la puntuación y el turno pueden modificarse con el ratón (véase "
+"posición en el tablero para añadirla a la base de datos o para definir "
+"una estructura de posición que buscar. La distribución de las fichas, el "
+"cubo, la puntuación y el turno pueden modificarse con el ratón (véase "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel.rst:236
+#: ../../source/manuel.rst:239
 msgid "La ligne de commande"
 msgstr "La línea de comandos"
 
-#: ../../source/manuel.rst:238
+#: ../../source/manuel.rst:241
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -527,462 +541,473 @@ msgid ""
 "notamment pour les fonctionnalités de recherche de positions."
 msgstr ""
 "La línea de comandos, integrada en la barra de estado, permite realizar "
-"todas las funcionalidades de blunderDB disponibles en la interfaz gráfica: "
-"operaciones generales sobre la base de datos, navegación por las posiciones,"
-" visualización del análisis o de los comentarios, búsqueda de posiciones "
-"según filtros... Tras una primera toma de contacto con la interfaz, se "
-"recomienda utilizar progresivamente la línea de comandos, que permite un uso"
-" potente y fluido de blunderDB, especialmente para las funcionalidades de "
-"búsqueda de posiciones."
+"todas las funcionalidades de blunderDB disponibles en la interfaz "
+"gráfica: operaciones generales sobre la base de datos, navegación por las"
+" posiciones, visualización del análisis o de los comentarios, búsqueda de"
+" posiciones según filtros... Tras una primera toma de contacto con la "
+"interfaz, se recomienda utilizar progresivamente la línea de comandos, "
+"que permite un uso potente y fluido de blunderDB, especialmente para las "
+"funcionalidades de búsqueda de posiciones."
 
-#: ../../source/manuel.rst:247
+#: ../../source/manuel.rst:250
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
-"envoyer une requête et fermer la ligne de commande, appuyer sur la touche "
-"*ENTREE*."
+"envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
+" *ENTREE*."
 msgstr ""
-"Para abrir la línea de comandos, pulse la tecla *ESPACIO*. Para enviar una "
-"consulta y cerrar la línea de comandos, pulse la tecla *INTRO*."
+"Para abrir la línea de comandos, pulse la tecla *ESPACIO*. Para enviar "
+"una consulta y cerrar la línea de comandos, pulse la tecla *INTRO*."
 
-#: ../../source/manuel.rst:251
+#: ../../source/manuel.rst:254
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
-"données le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la"
-" part de l'utilisateur."
+"données le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de"
+" la part de l'utilisateur."
 msgstr ""
 "blunderDB ejecuta las consultas enviadas por el usuario siempre que sean "
-"válidas y modifica inmediatamente el estado de la base de datos si procede. "
-"No se requieren acciones de guardado explícitas por parte del usuario."
+"válidas y modifica inmediatamente el estado de la base de datos si "
+"procede. No se requieren acciones de guardado explícitas por parte del "
+"usuario."
 
-#: ../../source/manuel.rst:256
+#: ../../source/manuel.rst:259
 msgid ""
-"Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible en "
-"ligne de commande."
+"Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
+"en ligne de commande."
 msgstr ""
-"Consulte la :numref:`cmd_mode` para ver la lista de comandos disponibles en "
-"la línea de comandos."
+"Consulte la :numref:`cmd_mode` para ver la lista de comandos disponibles "
+"en la línea de comandos."
 
-#: ../../source/manuel.rst:262
+#: ../../source/manuel.rst:265
 msgid "Panneau Analyse"
 msgstr "Panel de Análisis"
 
-#: ../../source/manuel.rst:264
+#: ../../source/manuel.rst:267
 msgid ""
 "Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la "
-"position courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il"
-" présente les meilleures alternatives (coups de pions ou décisions de "
+"position courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz."
+" Il présente les meilleures alternatives (coups de pions ou décisions de "
 "videau) avec leurs valeurs d'équité et les erreurs correspondantes. La "
-"touche *d* bascule entre l'analyse des coups de pions et l'analyse du cube. "
-"Lors de la navigation dans un match, le coup effectivement joué est mis en "
-"évidence dans la liste des alternatives. Appuyer sur *CTRL-L* ou exécuter la"
-" commande ``list`` pour afficher ou masquer le panneau."
+"touche *d* bascule entre l'analyse des coups de pions et l'analyse du "
+"cube. Lors de la navigation dans un match, le coup effectivement joué est"
+" mis en évidence dans la liste des alternatives. Appuyer sur *CTRL-L* ou "
+"exécuter la commande ``list`` pour afficher ou masquer le panneau."
 msgstr ""
 "El panel **Análisis** (*CTRL-L*) muestra los datos de análisis de la "
 "posición actual importados desde eXtreme Gammon (XG), GNUbg o BGBlitz. "
-"Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) "
-"con sus valores de equidad y los errores correspondientes. La tecla *d* "
-"alterna entre el análisis de las jugadas de fichas y el análisis del cubo. "
-"Durante la navegación por una partida, la jugada realmente jugada se resalta"
-" en la lista de alternativas. Pulse *CTRL-L* o ejecute el comando ``list`` "
-"para mostrar u ocultar el panel."
+"Presenta las mejores alternativas (jugadas de fichas o decisiones de "
+"cubo) con sus valores de equidad y los errores correspondientes. La tecla"
+" *d* alterna entre el análisis de las jugadas de fichas y el análisis del"
+" cubo. Durante la navegación por una partida, la jugada realmente jugada "
+"se resalta en la lista de alternativas. Pulse *CTRL-L* o ejecute el "
+"comando ``list`` para mostrar u ocultar el panel."
 
-#: ../../source/manuel.rst:276
+#: ../../source/manuel.rst:279
 msgid "Panneau Commentaires"
 msgstr "Panel de Comentarios"
 
-#: ../../source/manuel.rst:278
+#: ../../source/manuel.rst:281
 msgid ""
 "Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les "
 "commentaires associés à la position courante. Les commentaires importés "
 "depuis les fichiers XG sont automatiquement associés aux positions "
-"correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande ``comment`` "
-"pour afficher ou masquer le panneau."
+"correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande ``comment``"
+" pour afficher ou masquer le panneau."
 msgstr ""
 "El panel **Comentarios** (*CTRL-P*) muestra, añade y modifica los "
-"comentarios asociados a la posición actual. Los comentarios importados de "
-"los ficheros XG se asocian automáticamente a las posiciones "
+"comentarios asociados a la posición actual. Los comentarios importados de"
+" los ficheros XG se asocian automáticamente a las posiciones "
 "correspondientes. Pulse *CTRL-P* o ejecute el comando ``comment`` para "
 "mostrar u ocultar el panel."
 
-#: ../../source/manuel.rst:287
+#: ../../source/manuel.rst:290
 msgid "Panneau Recherche"
 msgstr "Panel de Búsqueda"
 
-#: ../../source/manuel.rst:289
+#: ../../source/manuel.rst:292
 msgid ""
-"Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les positions"
-" selon des critères combinables librement : structure de pions, type de "
-"décision de videau, magnitude d'erreur, dates, tags, etc. La touche *TAB* "
-"ouvre simultanément le panneau de recherche et l'éditeur de position, "
-"permettant de définir une structure de pions à rechercher sur le plateau."
+"Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les "
+"positions selon des critères combinables librement : structure de pions, "
+"type de décision de videau, magnitude d'erreur, dates, tags, etc. La "
+"touche *TAB* ouvre simultanément le panneau de recherche et l'éditeur de "
+"position, permettant de définir une structure de pions à rechercher sur "
+"le plateau."
 msgstr ""
 "El panel **Búsqueda** (*CTRL-F* o *TAB*) permite filtrar las posiciones "
 "según criterios libremente combinables: estructura de fichas, tipo de "
-"decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla *TAB*"
-" abre simultáneamente el panel de búsqueda y el editor de posición, lo que "
-"permite definir una estructura de fichas que buscar directamente en el "
-"tablero."
+"decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla "
+"*TAB* abre simultáneamente el panel de búsqueda y el editor de posición, "
+"lo que permite definir una estructura de fichas que buscar directamente "
+"en el tablero."
 
-#: ../../source/manuel.rst:295
+#: ../../source/manuel.rst:298
 msgid ""
 "Pour affiner une recherche parmi les positions actuellement filtrées, "
-"utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). "
-"Le panneau de recherche propose également une case à cocher *Search in "
-"current results* pour la même fonctionnalité."
+"utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss "
+"E>40``). Le panneau de recherche propose également une case à cocher "
+"*Search in current results* pour la même fonctionnalité."
 msgstr ""
-"Para afinar una búsqueda entre las posiciones filtradas actualmente, use el "
-"comando ``ss`` seguido de filtros (p. ej.: ``ss nc``, ``ss E>40``). El panel"
-" de búsqueda ofrece también una casilla *Search in current results* para la "
-"misma funcionalidad."
+"Para afinar una búsqueda entre las posiciones filtradas actualmente, use "
+"el comando ``ss`` seguido de filtros (p. ej.: ``ss nc``, ``ss E>40``). El"
+" panel de búsqueda ofrece también una casilla *Search in current results*"
+" para la misma funcionalidad."
 
-#: ../../source/manuel.rst:300
+#: ../../source/manuel.rst:303
 msgid ""
-"Le panneau propose un contrôle explicite du **type de décision** recherché :"
-" *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau* "
-"(décisions de cube). Lorsque *Videau* est sélectionné, une seconde liste "
-"précise le sous-type : *Tous*, *Double / Pas de double* (le joueur au trait "
-"doit décider de doubler) ou *Prise / Passe* (réponse à un doublement "
-"adverse). Le contrôle est synchronisé avec le plateau : modifier les dés ou "
-"le videau sur le plateau met à jour le type de décision, et inversement. En "
-"mode *Prise / Passe*, le videau est affiché au centre du plateau à la valeur"
-" offerte ; cette valeur reste éditable."
+"Le panneau propose un contrôle explicite du **type de décision** "
+"recherché : *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou "
+"*Videau* (décisions de cube). Lorsque *Videau* est sélectionné, une "
+"seconde liste précise le sous-type : *Tous*, *Double / Pas de double* (le"
+" joueur au trait doit décider de doubler) ou *Prise / Passe* (réponse à "
+"un doublement adverse). Le contrôle est synchronisé avec le plateau : "
+"modifier les dés ou le videau sur le plateau met à jour le type de "
+"décision, et inversement. En mode *Prise / Passe*, le videau est affiché "
+"au centre du plateau à la valeur offerte ; cette valeur reste éditable."
 msgstr ""
 "El panel ofrece un control explícito del **tipo de decisión** buscado: "
 "*Indiferente* (ningún filtro), *Fichas* (decisiones de jugada) o *Cubo* "
-"(decisiones de cubo). Cuando se selecciona *Cubo*, una segunda lista precisa"
-" el subtipo: *Todos*, *Doblar / No doblar* (el jugador con el turno debe "
-"decidir si doblar) o *Aceptar / Pasar* (respuesta a un doblaje del rival). "
-"El control está sincronizado con el tablero: modificar los dados o el cubo "
-"en el tablero actualiza el tipo de decisión, y viceversa. En modo *Aceptar /"
-" Pasar*, el cubo se muestra en el centro del tablero con el valor ofrecido; "
-"ese valor sigue siendo editable."
+"(decisiones de cubo). Cuando se selecciona *Cubo*, una segunda lista "
+"precisa el subtipo: *Todos*, *Doblar / No doblar* (el jugador con el "
+"turno debe decidir si doblar) o *Aceptar / Pasar* (respuesta a un doblaje"
+" del rival). El control está sincronizado con el tablero: modificar los "
+"dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa."
+" En modo *Aceptar / Pasar*, el cubo se muestra en el centro del tablero "
+"con el valor ofrecido; ese valor sigue siendo editable."
 
-#: ../../source/manuel.rst:309
+#: ../../source/manuel.rst:312
 msgid ""
-"Le filtre **Marquée** retient les positions que vous avez marquées (*flag*) "
-"dans le logiciel d'origine du match. Seul eXtreme Gammon produit cette "
-"information, enregistrée coup par coup dans le fichier ``.xg`` ; blunderDB "
-"la lit à l'import et la conserve. Une décision de videau marquée donne deux "
-"positions marquées, le double et la prise/passe, blunderDB scindant en deux "
-"ce que le fichier source enregistre comme une seule décision."
+"Le filtre **Marquée** retient les positions que vous avez marquées "
+"(*flag*) dans le logiciel d'origine du match. Seul eXtreme Gammon produit"
+" cette information, enregistrée coup par coup dans le fichier ``.xg`` ; "
+"blunderDB la lit à l'import et la conserve. Une décision de videau "
+"marquée donne deux positions marquées, le double et la prise/passe, "
+"blunderDB scindant en deux ce que le fichier source enregistre comme une "
+"seule décision."
 msgstr ""
-"El filtro **Marcada** conserva las posiciones que ha marcado en el programa "
-"de origen de la partida. Solo eXtreme Gammon produce esta información, "
-"registrada jugada a jugada en el archivo ``.xg``; blunderDB la lee al "
-"importar y la conserva. Una decisión de cubo marcada da dos posiciones "
-"marcadas, el doblez y la aceptación/paso, ya que blunderDB divide en dos lo "
-"que el archivo de origen registra como una sola decisión."
+"El filtro **Marcada** conserva las posiciones que ha marcado en el "
+"programa de origen de la partida. Solo eXtreme Gammon produce esta "
+"información, registrada jugada a jugada en el archivo ``.xg``; blunderDB "
+"la lee al importar y la conserva. Una decisión de cubo marcada da dos "
+"posiciones marcadas, el doblez y la aceptación/paso, ya que blunderDB "
+"divide en dos lo que el archivo de origen registra como una sola "
+"decisión."
 
-#: ../../source/manuel.rst:316
+#: ../../source/manuel.rst:319
 msgid ""
-"Le marquage n'est pas rétroactif : les matchs déjà présents dans la base ne "
-"portent pas cette information, puisqu'elle n'existe que dans les fichiers "
-"source. Il suffit de réimporter le fichier ``.xg`` concerné — l'import "
-"détecte le doublon et n'ajoute rien d'autre que les marques, sans toucher "
-"aux commentaires ni aux analyses existants. Le marquage ne peut ni être posé"
-" ni être retiré depuis blunderDB : pour une liste de travail temporaire, "
-"utilisez plutôt une collection."
+"Le marquage n'est pas rétroactif : les matchs déjà présents dans la base "
+"ne portent pas cette information, puisqu'elle n'existe que dans les "
+"fichiers source. Il suffit de réimporter le fichier ``.xg`` concerné — "
+"l'import détecte le doublon et n'ajoute rien d'autre que les marques, "
+"sans toucher aux commentaires ni aux analyses existants. Le marquage ne "
+"peut ni être posé ni être retiré depuis blunderDB : pour une liste de "
+"travail temporaire, utilisez plutôt une collection."
 msgstr ""
 "El marcado no es retroactivo: las partidas ya presentes en la base no "
 "contienen esta información, puesto que solo existe en los archivos de "
-"origen. Basta con volver a importar el archivo ``.xg`` correspondiente — la "
-"importación detecta el duplicado y no añade nada más que las marcas, sin "
-"tocar los comentarios ni los análisis existentes. El marcado no puede "
-"ponerse ni quitarse desde blunderDB: para una lista de trabajo temporal, "
-"utilice más bien una colección."
+"origen. Basta con volver a importar el archivo ``.xg`` correspondiente — "
+"la importación detecta el duplicado y no añade nada más que las marcas, "
+"sin tocar los comentarios ni los análisis existentes. El marcado no puede"
+" ponerse ni quitarse desde blunderDB: para una lista de trabajo temporal,"
+" utilice más bien una colección."
 
-#: ../../source/manuel.rst:324
+#: ../../source/manuel.rst:327
 msgid ""
-"Le filtre **Commentaire** interroge les commentaires attachés aux positions "
-"selon trois modes exclusifs. *contient le texte* recherche un ou plusieurs "
-"mots dans le texte des commentaires (champ de saisie, mots séparés par "
-"``;``, au moins un doit correspondre) ; *a un commentaire* retient toute "
-"position portant un commentaire, quel qu'en soit le contenu ; *sans "
-"commentaire* retient au contraire les positions non annotées — utile, "
-"combiné à un filtre d'erreur ou de date, pour dresser la liste de ce qu'il "
-"reste à commenter."
+"Le filtre **Commentaire** interroge les commentaires attachés aux "
+"positions selon trois modes exclusifs. *contient le texte* recherche un "
+"ou plusieurs mots dans le texte des commentaires (champ de saisie, mots "
+"séparés par ``;``, au moins un doit correspondre) ; *a un commentaire* "
+"retient toute position portant un commentaire, quel qu'en soit le contenu"
+" ; *sans commentaire* retient au contraire les positions non annotées — "
+"utile, combiné à un filtre d'erreur ou de date, pour dresser la liste de "
+"ce qu'il reste à commenter."
 msgstr ""
-"El filtro **Comentario** consulta los comentarios asociados a las posiciones"
-" según tres modos exclusivos. *contiene el texto* busca una o varias "
-"palabras en el texto de los comentarios (campo de entrada, palabras "
-"separadas por ``;``, al menos una debe coincidir); *tiene un comentario* "
-"conserva toda posición que lleve un comentario, sea cual sea su contenido; "
-"*sin comentario* conserva por el contrario las posiciones no anotadas — "
-"útil, combinado con un filtro de error o de fecha, para elaborar la lista de"
-" lo que queda por comentar."
+"El filtro **Comentario** consulta los comentarios asociados a las "
+"posiciones según tres modos exclusivos. *contiene el texto* busca una o "
+"varias palabras en el texto de los comentarios (campo de entrada, "
+"palabras separadas por ``;``, al menos una debe coincidir); *tiene un "
+"comentario* conserva toda posición que lleve un comentario, sea cual sea "
+"su contenido; *sin comentario* conserva por el contrario las posiciones "
+"no anotadas — útil, combinado con un filtro de error o de fecha, para "
+"elaborar la lista de lo que queda por comentar."
 
-#: ../../source/manuel.rst:332
+#: ../../source/manuel.rst:335
 msgid ""
-"Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent "
-"comme des commentaires : blunderDB ne conserve pas leur origine et ne peut "
-"donc pas distinguer une note que vous avez saisie d'une note reprise du "
-"fichier source. Par ailleurs, les commentaires attachés à un *match* ou à un"
-" *tournoi* ne sont pas concernés : ils annotent le match ou le tournoi, non "
-"ses positions."
+"Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent"
+" comme des commentaires : blunderDB ne conserve pas leur origine et ne "
+"peut donc pas distinguer une note que vous avez saisie d'une note reprise"
+" du fichier source. Par ailleurs, les commentaires attachés à un *match* "
+"ou à un *tournoi* ne sont pas concernés : ils annotent le match ou le "
+"tournoi, non ses positions."
 msgstr ""
-"Los comentarios importados desde un archivo de partida (XG, GNUbg) cuentan "
-"como comentarios: blunderDB no conserva su origen y por tanto no puede "
-"distinguir una nota que usted haya escrito de una nota tomada del archivo de"
-" origen. Por otra parte, los comentarios asociados a una *partida* o a un "
-"*torneo* no se ven afectados: anotan la partida o el torneo, no sus "
-"posiciones."
+"Los comentarios importados desde un archivo de partida (XG, GNUbg) "
+"cuentan como comentarios: blunderDB no conserva su origen y por tanto no "
+"puede distinguir una nota que usted haya escrito de una nota tomada del "
+"archivo de origen. Por otra parte, los comentarios asociados a una "
+"*partida* o a un *torneo* no se ven afectados: anotan la partida o el "
+"torneo, no sus posiciones."
 
-#: ../../source/manuel.rst:339
+#: ../../source/manuel.rst:342
 msgid ""
-"Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre "
-"modale) plutôt que sur la saisie d'identifiants numériques : deux listes à "
-"cocher, une pour les matchs et une pour les tournois, chacune filtrable par "
-"texte (joueur, date, événement pour les matchs ; nom, date, lieu pour les "
-"tournois), avec des boutons *Tout* / *Aucun* qui n'agissent que sur le sous-"
-"ensemble actuellement filtré. Cocher un tournoi coche automatiquement (et "
-"grise) ses matchs membres dans la liste des matchs, rendant visible le fait "
-"qu'un tournoi équivaut à l'ensemble de ses matchs."
+"Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
+" modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
+" à cocher, une pour les matchs et une pour les tournois, chacune "
+"filtrable par texte (joueur, date, événement pour les matchs ; nom, date,"
+" lieu pour les tournois), avec des boutons *Tout* / *Aucun* qui "
+"n'agissent que sur le sous-ensemble actuellement filtré. Cocher un "
+"tournoi coche automatiquement (et grise) ses matchs membres dans la liste"
+" des matchs, rendant visible le fait qu'un tournoi équivaut à l'ensemble "
+"de ses matchs."
 msgstr ""
 "El filtro **Partidas y Torneos** se apoya en un selector común (ventana "
-"modal) en lugar de la introducción de identificadores numéricos: dos listas "
-"de casillas, una para las partidas y otra para los torneos, cada una "
-"filtrable por texto (jugador, fecha, evento para las partidas; nombre, "
-"fecha, lugar para los torneos), con botones *Todo* / *Ninguno* que solo "
-"actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca "
-"automáticamente (y atenúa) sus partidas miembro en la lista de partidas, "
-"dejando patente que un torneo equivale al conjunto de sus partidas."
+"modal) en lugar de la introducción de identificadores numéricos: dos "
+"listas de casillas, una para las partidas y otra para los torneos, cada "
+"una filtrable por texto (jugador, fecha, evento para las partidas; "
+"nombre, fecha, lugar para los torneos), con botones *Todo* / *Ninguno* "
+"que solo actúan sobre el subconjunto actualmente filtrado. Marcar un "
+"torneo marca automáticamente (y atenúa) sus partidas miembro en la lista "
+"de partidas, dejando patente que un torneo equivale al conjunto de sus "
+"partidas."
 
-#: ../../source/manuel.rst:348
+#: ../../source/manuel.rst:351
 msgid ""
 "Le panneau de recherche comporte trois onglets sur son bord gauche : "
 "*Recherche* (les filtres), *Historique* et *Enregistrés*. L'onglet "
-"**Historique** liste les recherches passées avec leur date et leur commande "
-": un clic sélectionne une recherche et affiche la position associée sur le "
-"plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée "
-"dans la bibliothèque de filtres (icône signet, en donnant un nom au filtre) "
-"ou supprimée. L'onglet **Enregistrés** contient la **bibliothèque de "
-"filtres** : double-cliquer sur un filtre enregistré pour relancer la "
-"recherche correspondante (voir :ref:`annexe_filtres`). La commande "
-"``history`` (alias ``hi``) ouvre le panneau de recherche."
+"**Historique** liste les recherches passées avec leur date et leur "
+"commande : un clic sélectionne une recherche et affiche la position "
+"associée sur le plateau, un double-clic la ré-exécute. Chaque entrée peut"
+" être enregistrée dans la bibliothèque de filtres (icône signet, en "
+"donnant un nom au filtre) ou supprimée. L'onglet **Enregistrés** contient"
+" la **bibliothèque de filtres** : double-cliquer sur un filtre enregistré"
+" pour relancer la recherche correspondante (voir :ref:`annexe_filtres`). "
+"La commande ``history`` (alias ``hi``) ouvre le panneau de recherche."
 msgstr ""
 "El panel de búsqueda cuenta con tres pestañas en su borde izquierdo: "
 "*Búsqueda* (los filtros), *Historial* y *Guardados*. La pestaña "
-"**Historial** enumera las búsquedas anteriores con su fecha y su comando: un"
-" clic selecciona una búsqueda y muestra la posición asociada en el tablero, "
-"un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la "
-"biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o "
-"eliminarse. La pestaña **Guardados** contiene la **biblioteca de filtros**: "
-"hacer doble clic en un filtro guardado para relanzar la búsqueda "
-"correspondiente (véase :ref:`annexe_filtres`). El comando ``history`` (alias"
-" ``hi``) abre el panel de búsqueda."
+"**Historial** enumera las búsquedas anteriores con su fecha y su comando:"
+" un clic selecciona una búsqueda y muestra la posición asociada en el "
+"tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse"
+" en la biblioteca de filtros (icono de marcador, dándole un nombre al "
+"filtro) o eliminarse. La pestaña **Guardados** contiene la **biblioteca "
+"de filtros**: hacer doble clic en un filtro guardado para relanzar la "
+"búsqueda correspondiente (véase :ref:`annexe_filtres`). El comando "
+"``history`` (alias ``hi``) abre el panel de búsqueda."
 
-#: ../../source/manuel.rst:359
-msgid ""
-"Se référer à la :numref:`cmd_mode` pour la liste des filtres disponibles."
-msgstr ""
-"Consulte la :numref:`cmd_mode` para ver la lista de filtros disponibles."
+#: ../../source/manuel.rst:362
+msgid "Se référer à la :numref:`cmd_mode` pour la liste des filtres disponibles."
+msgstr "Consulte la :numref:`cmd_mode` para ver la lista de filtros disponibles."
 
-#: ../../source/manuel.rst:365
+#: ../../source/manuel.rst:368
 msgid "Panneau Collections"
 msgstr "Panel de Colecciones"
 
-#: ../../source/manuel.rst:367
+#: ../../source/manuel.rst:370
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
-"positions. Les collections peuvent être créées, renommées et supprimées. Des"
-" positions peuvent y être ajoutées ou retirées. Double-cliquer sur une "
-"collection pour parcourir ses positions avec les touches *GAUCHE* et "
-"*DROITE*. L'ordre des collections et des positions au sein des collections "
-"peut être modifié par glisser-déposer. Appuyer sur *CTRL-B* ou exécuter la "
-"commande ``collection`` pour afficher ou masquer le panneau."
+"positions. Les collections peuvent être créées, renommées et supprimées. "
+"Des positions peuvent y être ajoutées ou retirées. Double-cliquer sur une"
+" collection pour parcourir ses positions avec les touches *GAUCHE* et "
+"*DROITE*. L'ordre des collections et des positions au sein des "
+"collections peut être modifié par glisser-déposer. Appuyer sur *CTRL-B* "
+"ou exécuter la commande ``collection`` pour afficher ou masquer le "
+"panneau."
 msgstr ""
 "El panel **Colecciones** (*CTRL-B*) permite gestionar colecciones de "
-"posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Pueden"
-" añadirse o quitarse posiciones de ellas. Haga doble clic en una colección "
-"para recorrer sus posiciones con las teclas *IZQUIERDA* y *DERECHA*. El "
-"orden de las colecciones y de las posiciones dentro de ellas puede "
-"modificarse arrastrando y soltando. Pulse *CTRL-B* o ejecute el comando "
-"``collection`` para mostrar u ocultar el panel."
+"posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. "
+"Pueden añadirse o quitarse posiciones de ellas. Haga doble clic en una "
+"colección para recorrer sus posiciones con las teclas *IZQUIERDA* y "
+"*DERECHA*. El orden de las colecciones y de las posiciones dentro de "
+"ellas puede modificarse arrastrando y soltando. Pulse *CTRL-B* o ejecute "
+"el comando ``collection`` para mostrar u ocultar el panel."
 
-#: ../../source/manuel.rst:378
+#: ../../source/manuel.rst:381
 msgid "Panneau Matchs"
 msgstr "Panel de Partidas"
 
-#: ../../source/manuel.rst:380
+#: ../../source/manuel.rst:383
 msgid ""
-"Le panneau **Matchs** (*CTRL-Tab*) liste les matchs importés. Double-cliquer"
-" sur un match (ou appuyer sur *ENTREE*) pour naviguer dans ses coups. La "
-"commande ``m`` reprend la navigation dans le dernier match visité."
+"Le panneau **Matchs** (*CTRL-Tab*) liste les matchs importés. Double-"
+"cliquer sur un match (ou appuyer sur *ENTREE*) pour naviguer dans ses "
+"coups. La commande ``m`` reprend la navigation dans le dernier match "
+"visité."
 msgstr ""
-"El panel **Partidas** (*CTRL-Tab*) lista las partidas importadas. Haga doble"
-" clic en una partida (o pulse *INTRO*) para navegar por sus jugadas. El "
-"comando ``m`` reanuda la navegación en la última partida visitada."
+"El panel **Partidas** (*CTRL-Tab*) lista las partidas importadas. Haga "
+"doble clic en una partida (o pulse *INTRO*) para navegar por sus jugadas."
+" El comando ``m`` reanuda la navegación en la última partida visitada."
 
-#: ../../source/manuel.rst:384
+#: ../../source/manuel.rst:387
 msgid "L'utilisateur peut:"
 msgstr "El usuario puede:"
 
-#: ../../source/manuel.rst:386
+#: ../../source/manuel.rst:389
 msgid ""
 "parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
 "*DROITE*,"
 msgstr ""
-"recorrer las jugadas de una partida con las teclas *IZQUIERDA* y *DERECHA*,"
+"recorrer las jugadas de una partida con las teclas *IZQUIERDA* y "
+"*DERECHA*,"
 
-#: ../../source/manuel.rst:388
-msgid ""
-"passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
+#: ../../source/manuel.rst:391
+msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
 msgstr "pasar de una partida a otra con las teclas *PageUp* y *PageDown*,"
 
-#: ../../source/manuel.rst:390
+#: ../../source/manuel.rst:393
 msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
 msgstr "mostrar el análisis de las jugadas (fichas y cubo) pulsando *CTRL-L*,"
 
-#: ../../source/manuel.rst:392
-msgid ""
-"basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
+#: ../../source/manuel.rst:395
+msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
 msgstr ""
-"alternar entre el análisis de las jugadas de fichas y del cubo con la tecla "
-"*d*,"
+"alternar entre el análisis de las jugadas de fichas y del cubo con la "
+"tecla *d*,"
 
-#: ../../source/manuel.rst:394
+#: ../../source/manuel.rst:397
 msgid "voir le coup effectivement joué mis en évidence dans l'analyse."
 msgstr "ver la jugada realmente jugada resaltada en el análisis."
 
-#: ../../source/manuel.rst:396
+#: ../../source/manuel.rst:399
 msgid ""
-"La dernière position visitée dans chaque match est mémorisée et restaurée "
-"automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match`` "
-"pour afficher ou masquer le panneau."
+"La dernière position visitée dans chaque match est mémorisée et restaurée"
+" automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande "
+"``match`` pour afficher ou masquer le panneau."
 msgstr ""
 "La última posición visitada en cada partida se guarda y se restaura "
 "automáticamente. Pulse *CTRL-Tab* o ejecute el comando ``match`` para "
 "mostrar u ocultar el panel."
 
-#: ../../source/manuel.rst:400
-msgid ""
-"Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le "
-"bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du match."
-msgstr ""
-"Cada partida puede exportarse en transcripción Jellyfish ``.mat`` mediante "
-"el botón ⬇ de la lista de partidas o el botón *.mat* de la ficha de la "
-"partida."
-
 #: ../../source/manuel.rst:403
 msgid ""
-"Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre "
-"une fenêtre listant tous les noms de joueurs de la base avec leur nombre de "
-"matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir "
-"le nom canonique à conserver, puis fusionner. Utile pour unifier les "
-"statistiques par joueur lorsqu'un même joueur apparaît sous plusieurs noms."
+"Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le"
+" bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du "
+"match."
 msgstr ""
-"El botón **Fusionar jugadores** de la barra de herramientas del panel abre "
-"una ventana que enumera todos los nombres de jugadores de la base con su "
-"número de partidas: seleccionar las variantes de ortografía de un mismo "
-"jugador, elegir el nombre canónico que se desea conservar y, a continuación,"
-" fusionar. Útil para unificar las estadísticas por jugador cuando un mismo "
-"jugador aparece con varios nombres."
+"Cada partida puede exportarse en transcripción Jellyfish ``.mat`` "
+"mediante el botón ⬇ de la lista de partidas o el botón *.mat* de la ficha"
+" de la partida."
 
-#: ../../source/manuel.rst:409
+#: ../../source/manuel.rst:406
 msgid ""
-"Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus "
-"du plateau : elle rappelle les joueurs en présence (*joueur 1* contre "
-"*joueur 2*) ainsi que le contexte du match (événement, lieu, ronde, date et "
-"longueur du match, lorsque ces informations sont disponibles). Cette barre "
-"s'affiche aussi en dehors du mode match : lorsqu'une position étudiée (issue"
-" d'une recherche, d'une collection ou d'un accès direct) provient d'un ou de"
-" plusieurs matchs, elle en indique la **provenance** — le premier match "
-"concerné et, le cas échéant, un badge « +N » listant les autres au survol. "
-"Une position importée seule, qu'aucun match ne référence, n'affiche rien."
+"Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre"
+" une fenêtre listant tous les noms de joueurs de la base avec leur nombre"
+" de matchs : sélectionner les variantes d'orthographe d'un même joueur, "
+"choisir le nom canonique à conserver, puis fusionner. Utile pour unifier "
+"les statistiques par joueur lorsqu'un même joueur apparaît sous plusieurs"
+" noms."
 msgstr ""
-"Cuando una partida está abierta, aparece una **barra de información** sobre "
-"el tablero: recuerda los jugadores presentes (*jugador 1* contra *jugador "
-"2*) así como el contexto de la partida (evento, lugar, ronda, fecha y "
-"longitud de la partida, cuando esa información está disponible). Esta barra "
-"también se muestra fuera del modo partida: cuando una posición estudiada "
-"(procedente de una búsqueda, de una colección o de un acceso directo) "
-"proviene de una o varias partidas, indica su **procedencia** — la primera "
-"partida implicada y, en su caso, una insignia « +N » que enumera las demás "
-"al pasar el cursor. Una posición importada por separado, que ninguna partida"
-" referencia, no muestra nada."
+"El botón **Fusionar jugadores** de la barra de herramientas del panel "
+"abre una ventana que enumera todos los nombres de jugadores de la base "
+"con su número de partidas: seleccionar las variantes de ortografía de un "
+"mismo jugador, elegir el nombre canónico que se desea conservar y, a "
+"continuación, fusionar. Útil para unificar las estadísticas por jugador "
+"cuando un mismo jugador aparece con varios nombres."
 
-#: ../../source/manuel.rst:419
+#: ../../source/manuel.rst:412
+msgid ""
+"Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-"
+"dessus du plateau : elle rappelle les joueurs en présence (*joueur 1* "
+"contre *joueur 2*) ainsi que le contexte du match (événement, lieu, "
+"ronde, date et longueur du match, lorsque ces informations sont "
+"disponibles). Cette barre s'affiche aussi en dehors du mode match : "
+"lorsqu'une position étudiée (issue d'une recherche, d'une collection ou "
+"d'un accès direct) provient d'un ou de plusieurs matchs, elle en indique "
+"la **provenance** — le premier match concerné et, le cas échéant, un "
+"badge « +N » listant les autres au survol. Une position importée seule, "
+"qu'aucun match ne référence, n'affiche rien."
+msgstr ""
+"Cuando una partida está abierta, aparece una **barra de información** "
+"sobre el tablero: recuerda los jugadores presentes (*jugador 1* contra "
+"*jugador 2*) así como el contexto de la partida (evento, lugar, ronda, "
+"fecha y longitud de la partida, cuando esa información está disponible). "
+"Esta barra también se muestra fuera del modo partida: cuando una posición"
+" estudiada (procedente de una búsqueda, de una colección o de un acceso "
+"directo) proviene de una o varias partidas, indica su **procedencia** — "
+"la primera partida implicada y, en su caso, una insignia « +N » que "
+"enumera las demás al pasar el cursor. Una posición importada por "
+"separado, que ninguna partida referencia, no muestra nada."
+
+#: ../../source/manuel.rst:422
 msgid ""
 "À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est "
-"affiché d'emblée et la revue débute directement sur la première position, "
-"afin de commencer immédiatement la navigation."
+"affiché d'emblée et la revue débute directement sur la première position,"
+" afin de commencer immédiatement la navigation."
 msgstr ""
-"Al abrir una base que contiene partidas, el panel **Partidas** se muestra de"
-" inmediato y la revisión comienza directamente en la primera posición, para "
-"empezar a navegar de inmediato."
+"Al abrir una base que contiene partidas, el panel **Partidas** se muestra"
+" de inmediato y la revisión comienza directamente en la primera posición,"
+" para empezar a navegar de inmediato."
 
-#: ../../source/manuel.rst:423
+#: ../../source/manuel.rst:426
 msgid ""
 "Une base de données ne peut être ouverte en écriture que par une seule "
 "fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre "
-"fenêtre de blunderDB, elle s'ouvre en **lecture seule** : la navigation, la "
-"recherche et l'analyse restent possibles, mais toute modification est "
+"fenêtre de blunderDB, elle s'ouvre en **lecture seule** : la navigation, "
+"la recherche et l'analyse restent possibles, mais toute modification est "
 "désactivée et la barre de titre affiche « [lecture seule] »."
 msgstr ""
-"Una base de datos solo puede abrirse en escritura por una única ventana a la"
-" vez. Si abre una base ya abierta en otra ventana de blunderDB, se abre en "
-"modo de **solo lectura**: la navegación, la búsqueda y el análisis siguen "
-"siendo posibles, pero toda modificación queda desactivada y la barra de "
-"título muestra « [solo lectura] »."
+"Una base de datos solo puede abrirse en escritura por una única ventana a"
+" la vez. Si abre una base ya abierta en otra ventana de blunderDB, se "
+"abre en modo de **solo lectura**: la navegación, la búsqueda y el "
+"análisis siguen siendo posibles, pero toda modificación queda desactivada"
+" y la barra de título muestra « [solo lectura] »."
 
-#: ../../source/manuel.rst:434
+#: ../../source/manuel.rst:437
 msgid "Panneau Tournois"
 msgstr "Panel de Torneos"
 
-#: ../../source/manuel.rst:436
+#: ../../source/manuel.rst:439
 msgid ""
 "Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en "
-"tournois pour un suivi organisé et une analyse statistique par événement. "
-"Les tournois peuvent être créés, renommés et supprimés ; les matchs peuvent "
-"leur être assignés. Les statistiques du panneau Stats peuvent être filtrées "
-"par tournoi. Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau."
+"tournois pour un suivi organisé et une analyse statistique par événement."
+" Les tournois peuvent être créés, renommés et supprimés ; les matchs "
+"peuvent leur être assignés. Les statistiques du panneau Stats peuvent "
+"être filtrées par tournoi. Appuyer sur *CTRL-Y* pour afficher ou masquer "
+"le panneau."
 msgstr ""
-"El panel **Torneos** (*CTRL-Y*) permite agrupar partidas en torneos para un "
-"seguimiento organizado y un análisis estadístico por evento. Los torneos "
-"pueden crearse, renombrarse y eliminarse; las partidas pueden asignarse a "
-"ellos. Las estadísticas del panel Stats pueden filtrarse por torneo. Pulse "
-"*CTRL-Y* para mostrar u ocultar el panel."
+"El panel **Torneos** (*CTRL-Y*) permite agrupar partidas en torneos para "
+"un seguimiento organizado y un análisis estadístico por evento. Los "
+"torneos pueden crearse, renombrarse y eliminarse; las partidas pueden "
+"asignarse a ellos. Las estadísticas del panel Stats pueden filtrarse por "
+"torneo. Pulse *CTRL-Y* para mostrar u ocultar el panel."
 
-#: ../../source/manuel.rst:442
+#: ../../source/manuel.rst:445
 msgid ""
-"La colonne **PR** de chaque tournoi affiche le PR du **joueur de référence**"
-" — c'est-à-dire le joueur présent dans le plus grand nombre de matchs du "
-"tournoi (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne "
-"mélange donc pas votre jeu avec celui de vos adversaires : pour vos propres "
-"tournois, il reflète votre performance seule. Le nom du joueur de référence "
-"apparaît en infobulle au survol de la valeur."
+"La colonne **PR** de chaque tournoi affiche le PR du **joueur de "
+"référence** — c'est-à-dire le joueur présent dans le plus grand nombre de"
+" matchs du tournoi (en cas d'égalité, celui ayant pris le plus de "
+"décisions). Le PR ne mélange donc pas votre jeu avec celui de vos "
+"adversaires : pour vos propres tournois, il reflète votre performance "
+"seule. Le nom du joueur de référence apparaît en infobulle au survol de "
+"la valeur."
 msgstr ""
-"La columna **PR** de cada torneo muestra el PR del **jugador de referencia**"
-" — es decir, el jugador presente en el mayor número de partidas del torneo "
-"(en caso de empate, el que haya tomado más decisiones). El PR no mezcla por "
-"tanto su juego con el de sus adversarios: para sus propios torneos, refleja "
-"únicamente su rendimiento. El nombre del jugador de referencia aparece en un"
-" cuadro emergente al pasar por encima del valor."
+"La columna **PR** de cada torneo muestra el PR del **jugador de "
+"referencia** — es decir, el jugador presente en el mayor número de "
+"partidas del torneo (en caso de empate, el que haya tomado más "
+"decisiones). El PR no mezcla por tanto su juego con el de sus "
+"adversarios: para sus propios torneos, refleja únicamente su rendimiento."
+" El nombre del jugador de referencia aparece en un cuadro emergente al "
+"pasar por encima del valor."
 
-#: ../../source/manuel.rst:452
+#: ../../source/manuel.rst:455
 msgid "Panneau Stats"
 msgstr "Panel Stats"
 
-#: ../../source/manuel.rst:457
+#: ../../source/manuel.rst:460
 msgid ""
 "Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
-"progression dans le temps à partir des positions importées dans la base de "
-"données. Il calcule et affiche les indicateurs **PR** (Performance Rate) et "
-"**MWC cost** (Match Winning Chance cost) pour l'ensemble des positions ou un"
-" sous-ensemble filtré."
+"progression dans le temps à partir des positions importées dans la base "
+"de données. Il calcule et affiche les indicateurs **PR** (Performance "
+"Rate) et **MWC cost** (Match Winning Chance cost) pour l'ensemble des "
+"positions ou un sous-ensemble filtré."
 msgstr ""
-"El panel **Stats** permite analizar el nivel de juego y seguir la progresión"
-" a lo largo del tiempo a partir de las posiciones importadas en la base de "
-"datos. Calcula y muestra los indicadores **PR** (Performance Rate) y **MWC "
-"cost** (Match Winning Chance cost) para el conjunto de las posiciones o para"
-" un subconjunto filtrado."
+"El panel **Stats** permite analizar el nivel de juego y seguir la "
+"progresión a lo largo del tiempo a partir de las posiciones importadas en"
+" la base de datos. Calcula y muestra los indicadores **PR** (Performance "
+"Rate) y **MWC cost** (Match Winning Chance cost) para el conjunto de las "
+"posiciones o para un subconjunto filtrado."
 
-#: ../../source/manuel.rst:463
+#: ../../source/manuel.rst:466
 msgid "Le panneau Stats est particulièrement utile pour :"
 msgstr "El panel Stats resulta especialmente útil para:"
 
-#: ../../source/manuel.rst:465
+#: ../../source/manuel.rst:468
 msgid ""
 "**situer son niveau** par rapport aux seuils de référence (world-class, "
 "expert, avancé…) grâce au PR global ;"
@@ -990,128 +1015,128 @@ msgstr ""
 "**situar su nivel** respecto a los umbrales de referencia (world-class, "
 "experto, avanzado…) gracias al PR global;"
 
-#: ../../source/manuel.rst:468
-msgid ""
-"**suivre sa progression** tournoi après tournoi ou match après match grâce "
-"aux graphiques de l'onglet Progression ;"
-msgstr ""
-"**seguir su progresión** torneo a torneo o partida a partida gracias a los "
-"gráficos de la pestaña Progresión;"
-
 #: ../../source/manuel.rst:471
 msgid ""
-"**identifier ses points faibles** : onglet Erreurs pour voir la répartition "
-"entre coups joués et décisions de videau, et la distribution des magnitudes "
-"d'erreur ;"
+"**suivre sa progression** tournoi après tournoi ou match après match "
+"grâce aux graphiques de l'onglet Progression ;"
 msgstr ""
-"**identificar sus puntos débiles**: la pestaña Errores para ver el reparto "
-"entre jugadas de fichas y decisiones de cubo, y la distribución de las "
-"magnitudes de error;"
+"**seguir su progresión** torneo a torneo o partida a partida gracias a "
+"los gráficos de la pestaña Progresión;"
 
-#: ../../source/manuel.rst:475
+#: ../../source/manuel.rst:474
 msgid ""
-"**accéder directement aux positions concernées** en cliquant sur n'importe "
-"quel indicateur (drill-down)."
+"**identifier ses points faibles** : onglet Erreurs pour voir la "
+"répartition entre coups joués et décisions de videau, et la distribution "
+"des magnitudes d'erreur ;"
+msgstr ""
+"**identificar sus puntos débiles**: la pestaña Errores para ver el "
+"reparto entre jugadas de fichas y decisiones de cubo, y la distribución "
+"de las magnitudes de error;"
+
+#: ../../source/manuel.rst:478
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur "
+"n'importe quel indicateur (drill-down)."
 msgstr ""
 "**acceder directamente a las posiciones implicadas** haciendo clic en "
 "cualquier indicador (drill-down)."
 
-#: ../../source/manuel.rst:479
+#: ../../source/manuel.rst:482
 msgid "Ouverture du panneau"
 msgstr "Apertura del panel"
 
-#: ../../source/manuel.rst:481
+#: ../../source/manuel.rst:484
 msgid "Pour ouvrir le panneau Stats :"
 msgstr "Para abrir el panel Stats:"
 
-#: ../../source/manuel.rst:483
+#: ../../source/manuel.rst:486
 msgid "Appuyer sur *CTRL-D*."
 msgstr "Pulse *CTRL-D*."
 
-#: ../../source/manuel.rst:484
+#: ../../source/manuel.rst:487
 msgid "Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande."
 msgstr "Escriba el comando ``:stats`` o ``:st`` en la línea de comandos."
 
-#: ../../source/manuel.rst:487
+#: ../../source/manuel.rst:490
 msgid ""
-"Le panneau se rafraîchit automatiquement à chaque modification du filtre. Il"
-" ne recalcule pas les statistiques lors d'un simple basculement PR ↔ MWC : "
-"les deux métriques sont calculées simultanément par le backend."
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre."
+" Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
+"MWC : les deux métriques sont calculées simultanément par le backend."
 msgstr ""
-"El panel se actualiza automáticamente cada vez que se modifica el filtro. No"
-" recalcula las estadísticas al alternar simplemente entre PR ↔ MWC: ambas "
-"métricas se calculan simultáneamente por el backend."
+"El panel se actualiza automáticamente cada vez que se modifica el filtro."
+" No recalcula las estadísticas al alternar simplemente entre PR ↔ MWC: "
+"ambas métricas se calculan simultáneamente por el backend."
 
-#: ../../source/manuel.rst:492
+#: ../../source/manuel.rst:495
 msgid "Barre de filtre"
 msgstr "Barra de filtro"
 
-#: ../../source/manuel.rst:494
+#: ../../source/manuel.rst:497
 msgid ""
-"La barre de filtre, en haut du panneau, permet de restreindre le calcul à un"
-" sous-ensemble de positions."
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
+" un sous-ensemble de positions."
 msgstr ""
-"La barra de filtro, en la parte superior del panel, permite restringir el "
-"cálculo a un subconjunto de posiciones."
+"La barra de filtro, en la parte superior del panel, permite restringir el"
+" cálculo a un subconjunto de posiciones."
 
-#: ../../source/manuel.rst:498
+#: ../../source/manuel.rst:501
 msgid "Perspective joueur"
 msgstr "Perspectiva del jugador"
 
-#: ../../source/manuel.rst:500
+#: ../../source/manuel.rst:503
 msgid ""
-"La liste déroulante **Joueur** permet de filtrer les statistiques selon le "
-"joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom "
-"apparaît le plus souvent dans la base de données — modifiable à tout moment."
+"La liste déroulante **Joueur** permet de filtrer les statistiques selon "
+"le joueur analysé. blunderDB sélectionne automatiquement le joueur dont "
+"le nom apparaît le plus souvent dans la base de données — modifiable à "
+"tout moment."
 msgstr ""
-"La lista desplegable **Jugador** permite filtrar las estadísticas según el "
-"jugador analizado. blunderDB selecciona automáticamente el jugador cuyo "
-"nombre aparece con más frecuencia en la base de datos, modificable en "
-"cualquier momento."
+"La lista desplegable **Jugador** permite filtrar las estadísticas según "
+"el jugador analizado. blunderDB selecciona automáticamente el jugador "
+"cuyo nombre aparece con más frecuencia en la base de datos, modificable "
+"en cualquier momento."
 
-#: ../../source/manuel.rst:505
+#: ../../source/manuel.rst:508
 msgid ""
 "Changer de joueur ne provoque pas de perte de données ; il suffit de re-"
 "sélectionner le joueur précédent dans la liste."
 msgstr ""
-"Cambiar de jugador no provoca ninguna pérdida de datos; basta con volver a "
-"seleccionar el jugador anterior en la lista."
+"Cambiar de jugador no provoca ninguna pérdida de datos; basta con volver "
+"a seleccionar el jugador anterior en la lista."
 
-#: ../../source/manuel.rst:509
+#: ../../source/manuel.rst:512
 msgid "Filtres disponibles"
 msgstr "Filtros disponibles"
 
-#: ../../source/manuel.rst:511
+#: ../../source/manuel.rst:514
 msgid ""
-"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs tournois "
-"peuvent être sélectionnés simultanément."
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
+"tournois peuvent être sélectionnés simultanément."
 msgstr ""
 "**Torneo(s)** — restricción a uno o varios torneos. Pueden seleccionarse "
 "varios torneos simultáneamente."
 
-#: ../../source/manuel.rst:514
+#: ../../source/manuel.rst:517
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
 msgstr ""
-"**Fechas** — intervalo temporal (*Desde* … *Hasta*). Si solo se indica la "
-"fecha de inicio, se incluyen las posiciones más recientes."
+"**Fechas** — intervalo temporal (*Desde* … *Hasta*). Si solo se indica la"
+" fecha de inicio, se incluyen las posiciones más recientes."
 
-#: ../../source/manuel.rst:517
+#: ../../source/manuel.rst:520
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
-msgstr ""
-"**Tipo de decisión** — Todas / Jugadas de fichas / Decisiones de cubo."
-
-#: ../../source/manuel.rst:519
-msgid ""
-"**Longueur de match** — restriction à des longueurs de match précises (1, 3,"
-" 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
-"combinées."
-msgstr ""
-"**Longitud de match** — restricción a longitudes de match concretas (1, 3, "
-"5, 7, 9, 11, 13, 15, 21 puntos). Pueden combinarse varias longitudes."
+msgstr "**Tipo de decisión** — Todas / Jugadas de fichas / Decisiones de cubo."
 
 #: ../../source/manuel.rst:522
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1,"
+" 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
+"combinées."
+msgstr ""
+"**Longitud de match** — restricción a longitudes de match concretas (1, "
+"3, 5, 7, 9, 11, 13, 15, 21 puntos). Pueden combinarse varias longitudes."
+
+#: ../../source/manuel.rst:525
 msgid ""
 "Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur auto-"
 "détecté)."
@@ -1119,41 +1144,41 @@ msgstr ""
 "Un botón **Reset** restablece todos los filtros (salvo el jugador "
 "autodetectado)."
 
-#: ../../source/manuel.rst:526
+#: ../../source/manuel.rst:529
 msgid ""
 "Les filtres sont persistés dans la configuration de blunderDB "
 "(``config.yaml``) et sont restaurés à la prochaine ouverture."
 msgstr ""
-"Los filtros se guardan en la configuración de blunderDB (``config.yaml``) y "
-"se restauran en el próximo inicio."
+"Los filtros se guardan en la configuración de blunderDB (``config.yaml``)"
+" y se restauran en el próximo inicio."
 
-#: ../../source/manuel.rst:530
+#: ../../source/manuel.rst:533
 msgid "Toggle PR / MWC"
 msgstr "Conmutador PR / MWC"
 
-#: ../../source/manuel.rst:532
+#: ../../source/manuel.rst:535
 msgid ""
-"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée dans "
-"tous les onglets."
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
+"dans tous les onglets."
 msgstr ""
 "El botón **PR / MWC** situado en la parte superior del panel alterna la "
 "métrica mostrada en todas las pestañas."
 
-#: ../../source/manuel.rst:535
+#: ../../source/manuel.rst:538
 msgid "**PR (Performance Rate)**"
 msgstr "**PR (Performance Rate)**"
 
-#: ../../source/manuel.rst:537
+#: ../../source/manuel.rst:540
 msgid ""
-"Mesure la qualité de jeu *money-game* : somme des erreurs en millièmes de "
-"point de backgammon, divisée par le nombre de décisions. Indépendant du "
+"Mesure la qualité de jeu *money-game* : somme des erreurs en millièmes de"
+" point de backgammon, divisée par le nombre de décisions. Indépendant du "
 "score de match."
 msgstr ""
-"Mide la calidad de juego en *money-game*: suma de los errores en milésimas "
-"de punto, dividida por el número de decisiones. Independiente de la "
-"puntuación del match."
+"Mide la calidad de juego en *money-game*: suma de los errores en "
+"milésimas de punto, dividida por el número de decisiones. Independiente "
+"de la puntuación del match."
 
-#: ../../source/manuel.rst:541
+#: ../../source/manuel.rst:544
 msgid "Seuils de référence approximatifs :"
 msgstr "Umbrales de referencia aproximados:"
 
@@ -1205,33 +1230,33 @@ msgstr "Principiante"
 msgid "> 12"
 msgstr "> 12"
 
-#: ../../source/manuel.rst:554
+#: ../../source/manuel.rst:557
 msgid "**MWC cost (Match Winning Chance cost)**"
 msgstr "**MWC cost (Match Winning Chance cost)**"
 
-#: ../../source/manuel.rst:556
+#: ../../source/manuel.rst:559
 msgid ""
 "Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
-"l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-XG2"
-" embarquée dans blunderDB."
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-"
+"XG2 embarquée dans blunderDB."
 msgstr ""
-"Probabilidad acumulada de victoria del match perdida a causa de los errores,"
-" sobre el conjunto de datos filtrado. Calculada a partir de la MET Kazaross-"
-"XG2 integrada en blunderDB."
+"Probabilidad acumulada de victoria del match perdida a causa de los "
+"errores, sobre el conjunto de datos filtrado. Calculada a partir de la "
+"MET Kazaross-XG2 integrada en blunderDB."
 
-#: ../../source/manuel.rst:561
+#: ../../source/manuel.rst:564
 msgid ""
-"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans enjeu "
-"de match). Ces positions sont exclues du calcul MWC. Les valeurs MWC "
-"dépendent de la MET utilisée ; elles ne sont pas directement comparables "
-"entre logiciels utilisant des METs différentes."
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
+"MWC dépendent de la MET utilisée ; elles ne sont pas directement "
+"comparables entre logiciels utilisant des METs différentes."
 msgstr ""
 "El MWC cost **no es aplicable** a las posiciones de *money-game* (sin "
 "apuesta de match). Esas posiciones se excluyen del cálculo de MWC. Los "
-"valores de MWC dependen de la MET utilizada; no son directamente comparables"
-" entre programas que usan METs diferentes."
+"valores de MWC dependen de la MET utilizada; no son directamente "
+"comparables entre programas que usan METs diferentes."
 
-#: ../../source/manuel.rst:566
+#: ../../source/manuel.rst:569
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."
@@ -1239,237 +1264,237 @@ msgstr ""
 "El cambio PR ↔ MWC es instantáneo: no se realiza ningún recálculo en el "
 "backend."
 
-#: ../../source/manuel.rst:570
+#: ../../source/manuel.rst:573
 msgid "Onglet Dashboard"
 msgstr "Pestaña Dashboard"
 
-#: ../../source/manuel.rst:572
+#: ../../source/manuel.rst:575
 msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
 msgstr ""
 "La pestaña **Dashboard** ofrece una vista sintética de los indicadores "
 "clave."
 
-#: ../../source/manuel.rst:575
+#: ../../source/manuel.rst:578
 msgid "Cartes de niveau"
 msgstr "Tarjetas de nivel"
 
-#: ../../source/manuel.rst:577
+#: ../../source/manuel.rst:580
 msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Tres tarjetas muestran el PR (o MWC) para:"
 
-#: ../../source/manuel.rst:579
+#: ../../source/manuel.rst:582
 msgid "**All** — toutes les décisions (coups + videau) ;"
 msgstr "**All** — todas las decisiones (fichas + cubo);"
 
-#: ../../source/manuel.rst:580
+#: ../../source/manuel.rst:583
 msgid "**Checker** — coups joués seulement ;"
 msgstr "**Checker** — solo jugadas de fichas;"
 
-#: ../../source/manuel.rst:581
+#: ../../source/manuel.rst:584
 msgid "**Cube** — décisions de videau seulement."
 msgstr "**Cube** — solo decisiones de cubo."
 
-#: ../../source/manuel.rst:583
+#: ../../source/manuel.rst:586
 msgid ""
 "Cliquer sur une carte charge dans le panneau d'analyse les positions du "
 "sous-ensemble correspondant (drill-down)."
 msgstr ""
-"Hacer clic en una tarjeta carga en el panel de análisis las posiciones del "
-"subconjunto correspondiente (drill-down)."
+"Hacer clic en una tarjeta carga en el panel de análisis las posiciones "
+"del subconjunto correspondiente (drill-down)."
 
-#: ../../source/manuel.rst:587
-msgid ""
-"Le nombre total de décisions est affiché en bas de chaque carte au survol."
+#: ../../source/manuel.rst:590
+msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
 msgstr ""
 "El número total de decisiones se muestra en la parte inferior de cada "
 "tarjeta al pasar el cursor."
 
-#: ../../source/manuel.rst:590
+#: ../../source/manuel.rst:593
 msgid "PR glissant sur N dernières décisions"
 msgstr "PR deslizante sobre las últimas N decisiones"
 
-#: ../../source/manuel.rst:592
+#: ../../source/manuel.rst:595
 msgid ""
-"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières décisions "
-"(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente. "
-"Les valeurs grisées correspondent à un N supérieur au nombre de décisions "
-"disponibles."
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
+"décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
+"tendance récente. Les valeurs grisées correspondent à un N supérieur au "
+"nombre de décisions disponibles."
 msgstr ""
-"Una fila de valores PR (o MWC) calculados sobre las últimas *N* decisiones "
-"(N = 5, 10, 50, 100, 250, 500, 1000) permite medir la tendencia reciente. "
-"Los valores atenuados corresponden a un N superior al número de decisiones "
-"disponibles."
-
-#: ../../source/manuel.rst:597
-msgid ""
-"Cliquer sur une valeur charge les *N* dernières positions correspondantes."
-msgstr ""
-"Hacer clic en un valor carga las últimas *N* posiciones correspondientes."
+"Una fila de valores PR (o MWC) calculados sobre las últimas *N* "
+"decisiones (N = 5, 10, 50, 100, 250, 500, 1000) permite medir la "
+"tendencia reciente. Los valores atenuados corresponden a un N superior al"
+" número de decisiones disponibles."
 
 #: ../../source/manuel.rst:600
+msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr "Hacer clic en un valor carga las últimas *N* posiciones correspondientes."
+
+#: ../../source/manuel.rst:603
 msgid "Top blunders"
 msgstr "Top blunders"
 
-#: ../../source/manuel.rst:602
+#: ../../source/manuel.rst:605
 msgid ""
 "La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
 "décroissante. Cliquer sur une ligne charge la position concernée dans le "
 "panneau d'analyse."
 msgstr ""
 "La lista de los 10 peores errores (o MWC cost), ordenados por magnitud "
-"decreciente. Hacer clic en una fila carga la posición implicada en el panel "
-"de análisis."
+"decreciente. Hacer clic en una fila carga la posición implicada en el "
+"panel de análisis."
 
-#: ../../source/manuel.rst:606
+#: ../../source/manuel.rst:609
 msgid "Onglet Progression"
 msgstr "Pestaña Progresión"
 
-#: ../../source/manuel.rst:608
+#: ../../source/manuel.rst:611
 msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
 msgstr ""
 "La pestaña **Progresión** presenta la evolución del nivel a lo largo del "
 "tiempo."
 
-#: ../../source/manuel.rst:611
+#: ../../source/manuel.rst:614
 msgid "Courbe par tournoi"
 msgstr "Curva por torneo"
 
-#: ../../source/manuel.rst:613
+#: ../../source/manuel.rst:616
 msgid ""
-"Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X : "
-"ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur "
-"matérialisent les seuils de niveau."
+"Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :"
+" ordre des tournois, axe Y : valeur de la métrique). Des bandes de "
+"couleur matérialisent les seuils de niveau."
 msgstr ""
-"Un gráfico de líneas muestra el PR (o MWC) para cada torneo (eje X: orden de"
-" los torneos, eje Y: valor de la métrica). Unas bandas de color materializan"
-" los umbrales de nivel."
-
-#: ../../source/manuel.rst:617
-msgid ""
-"Cliquer sur un point du graphique ouvre un menu contextuel avec deux options"
-" :"
-msgstr ""
-"Hacer clic en un punto del gráfico abre un menú contextual con dos opciones:"
-
-#: ../../source/manuel.rst:619
-msgid "**Open tournament** — ouvre le tournoi dans le panneau Tournois."
-msgstr "**Open tournament** — abre el torneo en el panel Torneos."
+"Un gráfico de líneas muestra el PR (o MWC) para cada torneo (eje X: orden"
+" de los torneos, eje Y: valor de la métrica). Unas bandas de color "
+"materializan los umbrales de nivel."
 
 #: ../../source/manuel.rst:620
 msgid ""
-"**Open positions** — charge toutes les positions du tournoi dans le panneau "
-"d'analyse."
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
+"options :"
 msgstr ""
-"**Open positions** — carga todas las posiciones del torneo en el panel de "
-"análisis."
+"Hacer clic en un punto del gráfico abre un menú contextual con dos "
+"opciones:"
 
-#: ../../source/manuel.rst:624
+#: ../../source/manuel.rst:622
+msgid "**Open tournament** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Open tournament** — abre el torneo en el panel Torneos."
+
+#: ../../source/manuel.rst:623
+msgid ""
+"**Open positions** — charge toutes les positions du tournoi dans le "
+"panneau d'analyse."
+msgstr ""
+"**Open positions** — carga todas las posiciones del torneo en el panel de"
+" análisis."
+
+#: ../../source/manuel.rst:627
 msgid "Scatter plot par match"
 msgstr "Gráfico de dispersión por partida"
 
-#: ../../source/manuel.rst:626
+#: ../../source/manuel.rst:629
 msgid ""
 "Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
-"MWC). La taille du point est proportionnelle au nombre de décisions dans le "
-"match."
+"MWC). La taille du point est proportionnelle au nombre de décisions dans "
+"le match."
 msgstr ""
-"Un diagrama de dispersión representa cada partida (eje X: fecha, eje Y: PR o"
-" MWC). El tamaño del punto es proporcional al número de decisiones de la "
-"partida."
+"Un diagrama de dispersión representa cada partida (eje X: fecha, eje Y: "
+"PR o MWC). El tamaño del punto es proporcional al número de decisiones de"
+" la partida."
 
-#: ../../source/manuel.rst:629
+#: ../../source/manuel.rst:632
 msgid "Cliquer sur un point ouvre un menu contextuel :"
 msgstr "Hacer clic en un punto abre un menú contextual:"
 
-#: ../../source/manuel.rst:631
+#: ../../source/manuel.rst:634
 msgid "**Open match** — ouvre le match dans le panneau des matchs."
 msgstr "**Open match** — abre la partida en el panel de partidas."
 
-#: ../../source/manuel.rst:632
+#: ../../source/manuel.rst:635
 msgid ""
-"**Open positions** — charge toutes les positions du match dans le panneau "
-"d'analyse."
+"**Open positions** — charge toutes les positions du match dans le panneau"
+" d'analyse."
 msgstr ""
-"**Open positions** — carga todas las posiciones de la partida en el panel de"
-" análisis."
+"**Open positions** — carga todas las posiciones de la partida en el panel"
+" de análisis."
 
-#: ../../source/manuel.rst:636
+#: ../../source/manuel.rst:639
 msgid "Onglet Erreurs"
 msgstr "Pestaña Errores"
 
-#: ../../source/manuel.rst:638
+#: ../../source/manuel.rst:641
 msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
 msgstr "La pestaña **Errores** desglosa las fuentes de error."
 
-#: ../../source/manuel.rst:641
+#: ../../source/manuel.rst:644
 msgid "Répartition par action de videau"
 msgstr "Reparto por acción de cubo"
 
-#: ../../source/manuel.rst:643
+#: ../../source/manuel.rst:646
 msgid ""
-"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision "
-"de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Chaque barre "
-"indique également le nombre de décisions et le taux de blunders en "
-"infobulle."
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
+"décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
+"Chaque barre indique également le nombre de décisions et le taux de "
+"blunders en infobulle."
 msgstr ""
-"Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de "
-"cubo: *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Cada barra indica "
-"también el número de decisiones y la tasa de blunders en una información "
-"emergente."
+"Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de"
+" cubo: *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Cada barra "
+"indica también el número de decisiones y la tasa de blunders en una "
+"información emergente."
 
-#: ../../source/manuel.rst:647
+#: ../../source/manuel.rst:650
 msgid ""
-"Cliquer sur une barre charge les positions correspondant à cette action de "
-"videau, **uniquement celles avec une erreur** (drill-down)."
+"Cliquer sur une barre charge les positions correspondant à cette action "
+"de videau, **uniquement celles avec une erreur** (drill-down)."
 msgstr ""
-"Hacer clic en una barra carga las posiciones correspondientes a esa acción "
-"de cubo, **solo las que tienen un error** (drill-down)."
+"Hacer clic en una barra carga las posiciones correspondientes a esa "
+"acción de cubo, **solo las que tienen un error** (drill-down)."
 
-#: ../../source/manuel.rst:651
+#: ../../source/manuel.rst:654
 msgid "Répartition Checker / Cube"
 msgstr "Comparación Checker / Cube"
 
-#: ../../source/manuel.rst:653
+#: ../../source/manuel.rst:656
 msgid ""
 "Un diagramme comparatif place côte à côte le PR des coups joués et des "
 "décisions de videau. Cliquer sur une barre charge les positions du sous-"
 "ensemble avec erreur."
 msgstr ""
-"Un diagrama comparativo coloca lado a lado el PR de las jugadas de fichas y "
-"de las decisiones de cubo. Hacer clic en una barra carga las posiciones del "
-"subconjunto con error."
+"Un diagrama comparativo coloca lado a lado el PR de las jugadas de fichas"
+" y de las decisiones de cubo. Hacer clic en una barra carga las "
+"posiciones del subconjunto con error."
 
-#: ../../source/manuel.rst:658
+#: ../../source/manuel.rst:661
 msgid "Histogramme des magnitudes d'erreur"
 msgstr "Histograma de las magnitudes de error"
 
-#: ../../source/manuel.rst:660
+#: ../../source/manuel.rst:663
 msgid ""
-"Un histogramme distribue les erreurs selon leur magnitude en millièmes de "
-"point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une "
-"barre charge les positions de la tranche."
+"Un histogramme distribue les erreurs selon leur magnitude en millièmes de"
+" point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur "
+"une barre charge les positions de la tranche."
 msgstr ""
-"Un histograma distribuye los errores según su magnitud en milésimas de punto"
-" (intervalos: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Hacer clic en una "
-"barra carga las posiciones del intervalo."
+"Un histograma distribuye los errores según su magnitud en milésimas de "
+"punto (intervalos: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Hacer clic en"
+" una barra carga las posiciones del intervalo."
 
-#: ../../source/manuel.rst:665
+#: ../../source/manuel.rst:668
 msgid "Règle d'agrégation"
 msgstr "Regla de agregación"
 
-#: ../../source/manuel.rst:668
+#: ../../source/manuel.rst:671
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
-"règle **somme/somme** — jamais comme moyenne des PR individuels des matchs."
+"règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
 msgstr ""
-"El PR de un torneo (o de cualquier subconjunto) se calcula mediante la regla"
-" **suma/suma**, nunca como media de los PR individuales de las partidas."
+"El PR de un torneo (o de cualquier subconjunto) se calcula mediante la "
+"regla **suma/suma**, nunca como media de los PR individuales de las "
+"partidas."
 
-#: ../../source/manuel.rst:672
+#: ../../source/manuel.rst:675
 msgid "Formule :"
 msgstr "Fórmula:"
 
-#: ../../source/manuel.rst:674
+#: ../../source/manuel.rst:677
 msgid ""
 "PR_{tournoi} = \\frac{\\sum_{i} \\text{erreur}_i}{\\text{nombre total de "
 "décisions}}"
@@ -1477,131 +1502,131 @@ msgstr ""
 "PR_{torneo} = \\frac{\\sum_{i} \\text{error}_i}{\\text{número total de "
 "decisiones}}"
 
-#: ../../source/manuel.rst:678
+#: ../../source/manuel.rst:681
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Ejemplo:** un jugador disputa dos partidas en un torneo —"
 
-#: ../../source/manuel.rst:680
+#: ../../source/manuel.rst:683
 msgid "Match A : 10 décisions, erreur totale 50 mp → PR = 5,0"
 msgstr "Partida A: 10 decisiones, error total 50 mp → PR = 5,0"
 
-#: ../../source/manuel.rst:681
+#: ../../source/manuel.rst:684
 msgid "Match B : 90 décisions, erreur totale 270 mp → PR = 3,0"
 msgstr "Partida B: 90 decisiones, error total 270 mp → PR = 3,0"
 
-#: ../../source/manuel.rst:683
+#: ../../source/manuel.rst:686
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Media ingenua de los PR: (5,0 + 3,0) / 2 = **4,0** *(incorrecto)*"
 
-#: ../../source/manuel.rst:685
+#: ../../source/manuel.rst:688
 msgid ""
-"Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = **3,2** *(correct)*"
-msgstr ""
-"Regla suma/suma: (50 + 270) / (10 + 90) = 320 / 100 = **3,2** *(correcto)*"
+"Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = **3,2** "
+"*(correct)*"
+msgstr "Regla suma/suma: (50 + 270) / (10 + 90) = 320 / 100 = **3,2** *(correcto)*"
 
-#: ../../source/manuel.rst:687
+#: ../../source/manuel.rst:690
 msgid ""
-"La règle somme/somme est la seule qui résiste à la variation de longueur des"
-" matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
 msgstr ""
 "La regla suma/suma es la única que maneja correctamente la variación de "
 "longitud de los matches (un match a 21 puntos pesa más que un match a 1 "
 "punto)."
 
-#: ../../source/manuel.rst:691
+#: ../../source/manuel.rst:694
 msgid "MWC : limitations"
 msgstr "MWC: limitaciones"
 
-#: ../../source/manuel.rst:693
+#: ../../source/manuel.rst:696
 msgid ""
 "Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
-"référence de facto dans le backgammon compétitif. Les résultats ne sont pas "
-"directement comparables avec des logiciels utilisant d'autres METs."
+"référence de facto dans le backgammon compétitif. Les résultats ne sont "
+"pas directement comparables avec des logiciels utilisant d'autres METs."
 msgstr ""
 "El MWC cost se calcula a partir de la **MET Kazaross-XG2**, tabla de "
 "referencia de facto en el backgammon competitivo. Los resultados no son "
 "directamente comparables con programas que usan otras METs."
 
-#: ../../source/manuel.rst:697
+#: ../../source/manuel.rst:700
 msgid ""
-"Les positions *money-game* (sans score de match) sont **exclues** du calcul "
-"MWC. Si votre base de données contient beaucoup de positions money-game, le "
-"MWC cost peut être sous-estimé ou indisponible."
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
 msgstr ""
-"Las posiciones de *money-game* (sin puntuación de match) se **excluyen** del"
-" cálculo de MWC. Si su base de datos contiene muchas posiciones de money-"
-"game, el MWC cost puede estar subestimado o no estar disponible."
+"Las posiciones de *money-game* (sin puntuación de match) se **excluyen** "
+"del cálculo de MWC. Si su base de datos contiene muchas posiciones de "
+"money-game, el MWC cost puede estar subestimado o no estar disponible."
 
-#: ../../source/manuel.rst:701
+#: ../../source/manuel.rst:704
 msgid ""
-"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas un "
-"indicateur par décision. Il mesure l'impact total de vos erreurs sur vos "
-"chances de victoire."
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
 msgstr ""
 "El MWC cost es acumulativo sobre el conjunto de datos filtrado, no es un "
 "indicador por decisión. Mide el impacto total de sus errores sobre sus "
 "posibilidades de victoria."
 
-#: ../../source/manuel.rst:708
+#: ../../source/manuel.rst:711
 msgid "Panneau EPC"
 msgstr "Panel EPC"
 
-#: ../../source/manuel.rst:710
+#: ../../source/manuel.rst:713
 msgid ""
 "Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une "
-"position de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur"
-" l'onglet EPC dans le panneau inférieur, ou en exécutant la commande "
+"position de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant "
+"sur l'onglet EPC dans le panneau inférieur, ou en exécutant la commande "
 "``epc``."
 msgstr ""
 "El panel **EPC** (*CTRL-E*) calcula el EPC (Effective Pip Count) de una "
 "posición de bearoff. Se activa pulsando *CTRL-E*, haciendo clic en la "
 "pestaña EPC del panel inferior, o ejecutando el comando ``epc``."
 
-#: ../../source/manuel.rst:714
+#: ../../source/manuel.rst:717
 msgid ""
-"Dans ce panneau, l'utilisateur édite la position des pions dans le jan (6 "
-"derniers points) et les informations suivantes sont affichées en temps réel "
-"pour chaque joueur :"
+"Dans ce panneau, l'utilisateur édite la position des pions dans le jan (6"
+" derniers points) et les informations suivantes sont affichées en temps "
+"réel pour chaque joueur :"
 msgstr ""
 "En este panel, el usuario edita la posición de las fichas en el tablero "
 "interior (los 6 últimos puntos) y se muestra en tiempo real la siguiente "
 "información para cada jugador:"
 
-#: ../../source/manuel.rst:718
+#: ../../source/manuel.rst:721
 msgid "l'EPC (Effective Pip Count),"
 msgstr "el EPC (Effective Pip Count),"
 
-#: ../../source/manuel.rst:720
+#: ../../source/manuel.rst:723
 msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
 msgstr "el número medio de tiradas necesarias (Mean Rolls),"
 
-#: ../../source/manuel.rst:722
+#: ../../source/manuel.rst:725
 msgid "l'écart type (Standard Deviation),"
 msgstr "la desviación típica (Standard Deviation),"
 
-#: ../../source/manuel.rst:724
+#: ../../source/manuel.rst:727
 msgid "le pip count,"
 msgstr "el pip count,"
 
-#: ../../source/manuel.rst:726
+#: ../../source/manuel.rst:729
 msgid "le wastage (différence entre l'EPC et le pip count)."
 msgstr "el wastage (diferencia entre el EPC y el pip count)."
 
-#: ../../source/manuel.rst:728
+#: ../../source/manuel.rst:731
 msgid ""
 "Lorsque les deux joueurs ont des pions dans leur jan, une section de "
 "comparaison affiche les différences d'EPC et de pip count."
 msgstr ""
-"Cuando ambos jugadores tienen fichas en su tablero interior, una sección de "
-"comparación muestra las diferencias de EPC y de pip count."
+"Cuando ambos jugadores tienen fichas en su tablero interior, una sección "
+"de comparación muestra las diferencias de EPC y de pip count."
 
-#: ../../source/manuel.rst:731
+#: ../../source/manuel.rst:734
 msgid ""
-"Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre "
-"onglet."
+"Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre"
+" onglet."
 msgstr "Para cerrar el panel EPC, pulse *CTRL-E* o cambie a otra pestaña."
 
-#: ../../source/manuel.rst:733
+#: ../../source/manuel.rst:736
 msgid ""
 "Le calcul repose sur la base de données interne de bearoff à 6 points de "
 "GNUbg."
@@ -1609,123 +1634,504 @@ msgstr ""
 "El cálculo se basa en la base de datos interna de bearoff de 6 puntos de "
 "GNUbg."
 
-#: ../../source/manuel.rst:739
+#: ../../source/manuel.rst:742
 msgid "Panneau Anki"
 msgstr "Panel Anki"
 
-#: ../../source/manuel.rst:741
+#: ../../source/manuel.rst:744
 msgid ""
-"Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par répétition"
-" espacée en utilisant l'algorithme FSRS. L'utilisateur peut créer des "
-"paquets à partir de collections ou de résultats de recherche."
+"Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
+"répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
+"créer des paquets à partir de collections ou de résultats de recherche."
 msgstr ""
-"El panel **Anki** (*CTRL-K*) permite estudiar posiciones mediante repetición"
-" espaciada utilizando el algoritmo FSRS. El usuario puede crear mazos a "
-"partir de colecciones o de resultados de búsqueda."
+"El panel **Anki** (*CTRL-K*) permite estudiar posiciones mediante "
+"repetición espaciada utilizando el algoritmo FSRS. El usuario puede crear"
+" mazos a partir de colecciones o de resultados de búsqueda."
 
-#: ../../source/manuel.rst:745
+#: ../../source/manuel.rst:748
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
-"partir d'une collection ou des résultats de recherche courants. Les paquets "
-"basés sur une recherche se synchronisent automatiquement à l'activation de "
-"l'onglet Anki."
+"partir d'une collection ou des résultats de recherche courants. Les "
+"paquets basés sur une recherche se synchronisent automatiquement à "
+"l'activation de l'onglet Anki."
 msgstr ""
-"**Creación de mazos:** Haga clic en *New Deck* para crear un mazo a partir "
-"de una colección o de los resultados de búsqueda actuales. Los mazos basados"
-" en una búsqueda se sincronizan automáticamente al activar la pestaña Anki."
+"**Creación de mazos:** Haga clic en *New Deck* para crear un mazo a "
+"partir de una colección o de los resultados de búsqueda actuales. Los "
+"mazos basados en una búsqueda se sincronizan automáticamente al activar "
+"la pestaña Anki."
 
-#: ../../source/manuel.rst:749
+#: ../../source/manuel.rst:752
 msgid ""
-"**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-"
-"cliquez sur un paquet) pour commencer la révision des cartes dues. Chaque "
-"carte affiche la position correspondante sur le plateau. Évaluez votre "
-"rappel avec les touches *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* "
-"(Facile). Appuyez sur *Esc* pour arrêter et revenir à la liste des paquets."
+"**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
+"double-cliquez sur un paquet) pour commencer la révision des cartes dues."
+" Chaque carte affiche la position correspondante sur le plateau. Évaluez "
+"votre rappel avec les touches *1* (À revoir), *2* (Difficile), *3* "
+"(Bien), ou *4* (Facile). Appuyez sur *Esc* pour arrêter et revenir à la "
+"liste des paquets."
 msgstr ""
-"**Repaso:** Seleccione un mazo y luego haga clic en *Study* (o haga doble "
-"clic en un mazo) para empezar a repasar las cartas pendientes. Cada carta "
-"muestra la posición correspondiente en el tablero. Evalúe su recuerdo con "
-"las teclas *1* (Repetir), *2* (Difícil), *3* (Bien) o *4* (Fácil). Pulse "
-"*Esc* para detenerse y volver a la lista de mazos."
+"**Repaso:** Seleccione un mazo y luego haga clic en *Study* (o haga doble"
+" clic en un mazo) para empezar a repasar las cartas pendientes. Cada "
+"carta muestra la posición correspondiente en el tablero. Evalúe su "
+"recuerdo con las teclas *1* (Repetir), *2* (Difícil), *3* (Bien) o *4* "
+"(Fácil). Pulse *Esc* para detenerse y volver a la lista de mazos."
 
-#: ../../source/manuel.rst:755
+#: ../../source/manuel.rst:758
 msgid ""
-"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, lance "
-"une session d'entraînement libre : des positions aléatoires du paquet vous "
-"sont présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie"
-" jamais le planning de révision espacée** — idéal pour s'échauffer avant un "
-"tournoi ou réviser intensément un paquet thématique sans perturber son "
-"ordonnancement. Une pastille *Cram* remplace l'état de la carte et un bouton"
-" *Suivant* (touches *1* à *4*) fait défiler les positions. *Esc* revient à "
-"la liste sans enregistrer de session interrompue."
+"**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
+"lance une session d'entraînement libre : des positions aléatoires du "
+"paquet vous sont présentées sans tenir compte de l'échéancier FSRS. Ce "
+"mode **ne modifie jamais le planning de révision espacée** — idéal pour "
+"s'échauffer avant un tournoi ou réviser intensément un paquet thématique "
+"sans perturber son ordonnancement. Une pastille *Cram* remplace l'état de"
+" la carte et un bouton *Suivant* (touches *1* à *4*) fait défiler les "
+"positions. *Esc* revient à la liste sans enregistrer de session "
+"interrompue."
 msgstr ""
 "**Práctica libre (cram):** El botón *Cram*, junto a *Study*, inicia una "
-"sesión de práctica libre: se le muestran posiciones aleatorias del mazo sin "
-"tener en cuenta el calendario FSRS. Este modo **nunca modifica el plan de "
-"repetición espaciada** — ideal para calentar antes de un torneo o repasar "
-"intensamente un mazo temático sin alterar su orden. Una etiqueta *Cram* "
-"reemplaza el estado de la carta y un botón *Siguiente* (teclas *1* a *4*) "
-"recorre las posiciones. *Esc* vuelve a la lista sin guardar una sesión "
-"interrumpida."
+"sesión de práctica libre: se le muestran posiciones aleatorias del mazo "
+"sin tener en cuenta el calendario FSRS. Este modo **nunca modifica el "
+"plan de repetición espaciada** — ideal para calentar antes de un torneo o"
+" repasar intensamente un mazo temático sin alterar su orden. Una etiqueta"
+" *Cram* reemplaza el estado de la carta y un botón *Siguiente* (teclas "
+"*1* a *4*) recorre las posiciones. *Esc* vuelve a la lista sin guardar "
+"una sesión interrumpida."
 
-#: ../../source/manuel.rst:764
+#: ../../source/manuel.rst:767
 msgid ""
-"**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout "
-"moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
+"**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
+"tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
 msgstr ""
-"**Pausa/Reanudación:** Puede interrumpir una sesión de repaso en cualquier "
-"momento con *Esc*. El botón cambia a *Resume* y muestra su progreso. Haga "
-"clic en él para retomar donde lo dejó."
+"**Pausa/Reanudación:** Puede interrumpir una sesión de repaso en "
+"cualquier momento con *Esc*. El botón cambia a *Resume* y muestra su "
+"progreso. Haga clic en él para retomar donde lo dejó."
 
-#: ../../source/manuel.rst:768
+#: ../../source/manuel.rst:771
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
-"synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS "
-"(rétention cible, intervalle maximum, aléa) peuvent être configurés par "
+"synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
+" (rétention cible, intervalle maximum, aléa) peuvent être configurés par "
 "paquet dans les Paramètres (icône engrenage)."
 msgstr ""
 "**Gestión de mazos:** Utilice los botones de acción para renombrar, "
 "sincronizar, reiniciar o eliminar mazos. Los parámetros FSRS (retención "
-"objetivo, intervalo máximo, factor de aleatoriedad) pueden configurarse por "
-"mazo en los Ajustes (icono de engranaje)."
+"objetivo, intervalo máximo, factor de aleatoriedad) pueden configurarse "
+"por mazo en los Ajustes (icono de engranaje)."
 
-#: ../../source/manuel.rst:776
+#: ../../source/manuel.rst:779
 msgid "Panneau Métadonnées"
 msgstr "Panel de Metadatos"
 
-#: ../../source/manuel.rst:778
+#: ../../source/manuel.rst:781
 msgid ""
-"Le panneau **Métadonnées** affiche les informations générales de la base de "
-"données courante : nom, description, nombre de positions, nombre de matchs "
-"et de parties, version du schéma. Accessible via la commande ``meta``."
+"Le panneau **Métadonnées** affiche les informations générales de la base "
+"de données courante : nom, description, nombre de positions, nombre de "
+"matchs et de parties, version du schéma. Accessible via la commande "
+"``meta``."
 msgstr ""
-"El panel **Metadatos** muestra la información general de la base de datos "
-"actual: nombre, descripción, número de posiciones, número de partidas y "
+"El panel **Metadatos** muestra la información general de la base de datos"
+" actual: nombre, descripción, número de posiciones, número de partidas y "
 "juegos, versión del esquema. Accesible mediante el comando ``meta``."
 
 #: ../../source/manuel.rst:785
-msgid "Panneau Journal"
-msgstr "Panel de Registro"
-
-#: ../../source/manuel.rst:787
 msgid ""
-"Le panneau **Journal** affiche le journal des opérations récentes : imports,"
-" exports et opérations sur la base de données, avec leurs résultats et "
-"horodatages. Il est utile pour diagnostiquer les erreurs d'import."
+"Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
+" :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
+"section."
 msgstr ""
-"El panel **Registro** muestra el registro de las operaciones recientes: "
-"importaciones, exportaciones y operaciones sobre la base de datos, con sus "
-"resultados y marcas de tiempo. Resulta útil para diagnosticar los errores de"
-" importación."
+"También muestra, **cuando existe**, el origen de la base de datos — véase "
+":ref:`diffusion_controlee`. Una base de datos corriente no muestra esa "
+"sección."
+
+#: ../../source/manuel.rst:791
+msgid "Diffuser une base : origine et mot de passe"
+msgstr "Distribuir una base de datos: origen y contraseña"
+
+#: ../../source/manuel.rst:793
+msgid ""
+"Un enseignant qui distribue une base de positions dispose de deux "
+"mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
+"choisis **au moment de l'export** : marquer le fichier de son origine, et"
+" le protéger par un mot de passe."
+msgstr ""
+"Un profesor que distribuye una base de posiciones dispone de dos "
+"mecanismos, independientes entre sí, ambos opcionales y elegidos **en el "
+"momento de la exportación**: marcar el archivo con su origen y protegerlo "
+"con una contraseña."
+
+#: ../../source/manuel.rst:800
+msgid ""
+"Aucun des deux ne suit ce que devient le fichier. blunderDB "
+"**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
+"base marquée est exactement comme ouvrir n'importe quelle autre, et rien "
+"nulle part ne consigne qui l'a ouverte, quand, ni d'où vient son contenu."
+msgstr ""
+"Ninguno de los dos hace seguimiento de lo que ocurre con el archivo. "
+"blunderDB **no registra nada del lado de quien recibe la base**: abrir "
+"una base marcada es exactamente igual que abrir cualquier otra, y en "
+"ningún sitio queda constancia de quién la abrió, cuándo, ni de dónde "
+"procede su contenido."
+
+#: ../../source/manuel.rst:806
+msgid "Marquer une base de son origine"
+msgstr "Marcar una base de datos con su origen"
+
+#: ../../source/manuel.rst:808
+msgid ""
+"La fenêtre d'export tient en un seul écran : le formulaire, puis une "
+"progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
+"d'elle-même une fois terminée, et le résultat s'affiche dans la barre "
+"d'état."
+msgstr ""
+"La ventana de exportación cabe en una sola pantalla: el formulario y, "
+"sobre él, una barra de progreso durante la escritura. Se cierra sola al "
+"terminar y el resultado aparece en la barra de estado."
+
+#: ../../source/manuel.rst:812
+msgid "Trois points méritent l'attention :"
+msgstr "Tres puntos merecen atención:"
+
+#: ../../source/manuel.rst:814
+msgid ""
+"**L'export porte sur les positions actuellement affichées**, pas sur la "
+"base entière. Après une recherche, seuls les résultats partent — la "
+"fenêtre le rappelle en tête."
+msgstr ""
+"**La exportación afecta a las posiciones mostradas actualmente**, no a "
+"toda la base. Tras una búsqueda solo se exportan los resultados: la "
+"ventana lo recuerda en la parte superior."
+
+#: ../../source/manuel.rst:817
+msgid ""
+"**Une collection dont toutes les positions ne sont pas dans la sélection "
+"arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
+" couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle."
+msgstr ""
+"**Una colección cuyas posiciones no estén todas en la selección llega "
+"truncada.** Por eso la lista muestra, para cada colección, la parte "
+"cubierta («12/40») y la señala en rojo cuando es parcial."
+
+#: ../../source/manuel.rst:820
+msgid ""
+"**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
+"le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
+" est désactivée tant que « inclure les matchs » ne l'est pas."
+msgstr ""
+"**Los torneos solo pueden exportarse junto con los partidos**: sin ellos "
+"no existe el vínculo torneo–partido y el torneo llegaría vacío. La "
+"casilla permanece desactivada mientras no se marque «incluir los "
+"partidos»."
+
+#: ../../source/manuel.rst:824
+msgid ""
+"Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
+"produit** ; ils sont préremplis depuis la base source. La case *Mes "
+"filtres enregistrés* est à part des autres : elle n'exporte pas du "
+"contenu mais vos propres recherches enregistrées, sans utilité dans la "
+"base de quelqu'un d'autre."
+msgstr ""
+"Los campos *Usuario*, *Descripción* y *Fecha* describen el **archivo "
+"producido**; se rellenan previamente a partir de la base de origen. La "
+"casilla *Mis filtros guardados* es distinta de las demás: no exporta "
+"contenido, sino tus propias búsquedas guardadas, que no sirven de nada en "
+"la base de otra persona."
+
+#: ../../source/manuel.rst:830
+msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
+msgstr "Al marcar **Marcar este archivo con su origen** aparecen dos campos:"
+
+#: ../../source/manuel.rst:832
+msgid ""
+"**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
+"Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
+"tant qu'il est vide, le bouton d'export reste inactif."
+msgstr ""
+"**Origen** — qué es este archivo y de dónde viene, con tus palabras: "
+"«Clase de Jean Dupont — 12 de marzo de 2026». Este campo es "
+"**obligatorio**: mientras esté vacío, el botón de exportación permanece "
+"inactivo."
+
+#: ../../source/manuel.rst:835
+msgid ""
+"**Note**, facultative — conditions d'utilisation, adresse de contact, une"
+" demande de ne pas rediffuser."
+msgstr ""
+"**Nota**, opcional — condiciones de uso, dirección de contacto, una "
+"petición de no redistribuir."
+
+#: ../../source/manuel.rst:838
+msgid ""
+"La marque est signée avec votre identité d'émetteur. Elle est donc "
+"**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
+"fabriquer une à votre nom. Elle n'est en revanche **pas ineffaçable** — "
+"le fichier distribué est une base SQLite ordinaire, et blunderDB est un "
+"logiciel libre. Elle n'empêche rien : elle dit d'où vient le fichier."
+msgstr ""
+"La marca se firma con tu identidad de emisor. Es por tanto **inalterable "
+"e infalsificable**: nadie puede modificarla ni fabricar una en tu nombre. "
+"En cambio, **no es imborrable**: el archivo distribuido es una base "
+"SQLite corriente y blunderDB es software libre. No impide nada: dice de "
+"dónde viene el archivo."
+
+#: ../../source/manuel.rst:845
+msgid "Identité d'émetteur"
+msgstr "Identidad del emisor"
+
+#: ../../source/manuel.rst:847
+msgid ""
+"Les marques sont signées avec votre **identité d'émetteur**, créée toute "
+"seule la première fois que vous marquez un fichier ; il n'y a rien à "
+"configurer. Elle appartient à une personne et non à une base : tous vos "
+"fichiers portent la même empreinte publique, de la forme "
+"``A3F1-9C24-7B05-E1D8``."
+msgstr ""
+"Las marcas se firman con tu **identidad de emisor**, creada por sí sola "
+"la primera vez que marcas un archivo; no hay nada que configurar. "
+"Pertenece a una persona y no a una base de datos: todos tus archivos "
+"llevan la misma huella pública, con la forma ``A3F1-9C24-7B05-E1D8``."
+
+#: ../../source/manuel.rst:852
+msgid ""
+"Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
+"vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
+" poste à l'autre en un seul fichier (extension ``.bdbid``), "
+"éventuellement protégé par une phrase secrète. **Ce fichier permet de "
+"signer en votre nom : ne le partagez pas.**"
+msgstr ""
+"Puedes comunicar esa huella a tus destinatarios para que comprueben que "
+"un archivo procede realmente de ti. La identidad se traslada de un equipo "
+"a otro en un único archivo (extensión ``.bdbid``), protegido si se desea "
+"por una frase de contraseña. **Ese archivo permite firmar en tu nombre: "
+"no lo compartas.**"
+
+#: ../../source/manuel.rst:858
+msgid ""
+"Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
+"*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
+"*Enregistrer l'identité…*, *Charger une identité…* et *Régénérer…*."
+msgstr ""
+"En los ajustes (icono de rueda dentada de la barra de herramientas), la "
+"pestaña *Identidad del emisor* muestra tu nombre y tu huella, y ofrece "
+"*Guardar identidad…*, *Cargar identidad…* y *Regenerar…*."
+
+#: ../../source/manuel.rst:864
+msgid ""
+"**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
+"l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
+" d'identité a fuité, celui qui le détient pourra continuer à signer sous "
+"votre ancienne empreinte, et ces marques resteront valides."
+msgstr ""
+"**Regenerar no revoca nada.** Una marca lleva incorporada la clave "
+"pública que la firmó: se verifica por sí sola para siempre. Si tu archivo "
+"de identidad se ha filtrado, quien lo posea podrá seguir firmando con tu "
+"huella antigua, y esas marcas seguirán siendo válidas."
+
+#: ../../source/manuel.rst:869
+msgid ""
+"Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
+" votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
+"destinataires."
+msgstr ""
+"Lo que te protege tras una filtración no es el software: es publicar tu "
+"nueva huella y desautorizar la antigua ante tus destinatarios."
+
+#: ../../source/manuel.rst:873
+msgid ""
+"La régénération écrase la clé actuelle ; blunderDB propose de "
+"l'enregistrer avant de la remplacer."
+msgstr ""
+"La regeneración sobrescribe la clave actual; blunderDB ofrece guardarla "
+"antes de reemplazarla."
+
+#: ../../source/manuel.rst:877
+msgid "Protéger une base par un mot de passe"
+msgstr "Proteger una base de datos con una contraseña"
+
+#: ../../source/manuel.rst:879
+msgid ""
+"Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
+"protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
+"enfoncée**, et le masque de nouveau dès qu'on relâche."
+msgstr ""
+"La contraseña se escribe oculta, tanto aquí como al abrir un archivo "
+"protegido; el icono con forma de ojo la muestra **mientras se mantiene "
+"pulsado** y vuelve a ocultarla al soltarlo."
+
+#: ../../source/manuel.rst:883
+msgid ""
+"Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
+"d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
+"dans la fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de "
+"passe ne soit demandé. Pour l'ouvrir, utilisez l'ouverture de base "
+"habituelle : la fenêtre de sélection accepte aussi bien les ``.db`` que "
+"les ``.dbx``. blunderDB demande alors le mot de passe et installe une "
+"base ordinaire à côté ; ensuite plus rien n'est demandé."
+msgstr ""
+"Marcar **Proteger este archivo con una contraseña** produce un archivo "
+"con extensión ``.dbx``, incluso si habías elegido un nombre en ``.db`` en "
+"la ventana de guardado, ya que esta se abre antes de pedir la contraseña. "
+"Para abrirlo, usa la apertura de base habitual: la ventana de selección "
+"acepta tanto ``.db`` como ``.dbx``. blunderDB pide entonces la contraseña "
+"e instala al lado una base corriente; después no se pide nada más."
+
+#: ../../source/manuel.rst:891
+msgid ""
+"La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
+"sans cela vous conservez le même contenu sous deux noms. La case n'est "
+"pas cochée par défaut — le fichier protégé reste le vôtre si vous comptez"
+" le transmettre — et la suppression n'a lieu qu'après une ouverture "
+"réussie."
+msgstr ""
+"La ventana ofrece **eliminar el archivo protegido una vez abierto**: de "
+"lo contrario conservas el mismo contenido con dos nombres. La casilla no "
+"está marcada por omisión —el archivo protegido sigue siendo tuyo si "
+"piensas transmitirlo— y la eliminación solo se produce tras una apertura "
+"correcta."
+
+#: ../../source/manuel.rst:898
+msgid ""
+"Le mot de passe protège le **transport** du fichier, pas la base. Il "
+"empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
+"téléchargement ou une pièce jointe transférée par erreur. Il ne protège "
+"pas de celui à qui vous avez donné le mot de passe."
+msgstr ""
+"La contraseña protege el **transporte** del archivo, no la base. Impide "
+"que un tercero abra un archivo olvidado en una carpeta de descargas o un "
+"adjunto reenviado por error. No protege frente a aquel a quien has dado "
+"la contraseña."
+
+#: ../../source/manuel.rst:903
+msgid ""
+"Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
+"fichier a déjà été ouvert auparavant sur ce poste."
+msgstr ""
+"La contraseña se comprueba en **cada** apertura, incluso si el archivo ya "
+"se había abierto antes en ese equipo."
+
+#: ../../source/manuel.rst:906
+msgid ""
+"Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
+" clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
+"passes, 4 fils), et un sel tiré au hasard propre à chaque fichier. Le "
+"mode GCM authentifie l'ensemble : un mot de passe erroné est détecté "
+"comme tel, et toute altération du fichier chiffré l'est également — on "
+"n'obtient jamais une base corrompue en silence."
+msgstr ""
+"Técnicamente, la base se cifra con **AES-256 en modo GCM**, con una clave "
+"derivada de la contraseña mediante **Argon2id** (64 MiB de memoria, 3 "
+"pasadas, 4 hilos) y una sal aleatoria propia de cada archivo. El modo GCM "
+"autentica el conjunto: una contraseña errónea se detecta como tal, y "
+"también cualquier alteración del archivo cifrado; nunca se obtiene en "
+"silencio una base corrupta."
+
+#: ../../source/manuel.rst:913
+msgid ""
+"L'en-tête du fichier protégé reste **en clair** : son origine demeure "
+"lisible sans le mot de passe."
+msgstr ""
+"La cabecera del archivo protegido permanece **en claro**: su origen sigue "
+"siendo legible sin la contraseña."
+
+#: ../../source/manuel.rst:917
+msgid "Lire l'origine d'un fichier"
+msgstr "Leer el origen de un archivo"
+
+#: ../../source/manuel.rst:919
+msgid ""
+"Dans l'application, ouvrez le fichier et affichez le panneau "
+"**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
+"tête du panneau, en lecture seule, indiquant ce qui a été inscrit, par "
+"qui, quand, et l'état de la signature :"
+msgstr ""
+"En la aplicación, abre el archivo y muestra el panel **Metadatos** "
+"(comando ``meta``). Aparece una sección **Origen** en la parte superior "
+"del panel, de solo lectura, que indica lo que se inscribió, por quién, "
+"cuándo, y el estado de la firma:"
+
+#: ../../source/manuel.rst:924
+msgid ""
+"« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
+"marque, intacte ;"
+msgstr "«✓ firma verificada — marcada por ti»: el archivo lleva tu marca, intacta;"
+
+#: ../../source/manuel.rst:926
+msgid ""
+"« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
+" — comparez son empreinte à celle que le producteur vous a communiquée ;"
+msgstr ""
+"«✓ firma verificada»: la marca está intacta y procede de otra clave; "
+"compara su huella con la que te haya comunicado el autor;"
+
+#: ../../source/manuel.rst:928
+msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
+msgstr "«⚠ firma no válida»: el documento ha sido modificado o falsificado."
+
+#: ../../source/manuel.rst:930
+msgid "Cette section n'apparaît pas sur une base ordinaire."
+msgstr "Esta sección no aparece en una base de datos corriente."
+
+#: ../../source/manuel.rst:932
+msgid ""
+"En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
+"l'origine et l'état de la signature, **sans jamais écrire dans le "
+"fichier**. La commande fonctionne aussi sur un fichier protégé, sans le "
+"mot de passe. Voir ``CLI_USAGE.md`` pour les options ``--watermark`` et "
+"``--password`` de ``export``, ainsi que pour ``identity`` et ``open``."
+msgstr ""
+"En línea de comandos, ``blunderdb info --db archivo.db`` muestra el "
+"origen y el estado de la firma, **sin escribir nunca en el archivo**. El "
+"comando funciona también con un archivo protegido, sin la contraseña. "
+"Consulta ``CLI_USAGE.md`` para las opciones ``--watermark`` y "
+"``--password`` de ``export``, así como para ``identity`` y ``open``."
 
 #~ msgid ""
-#~ "Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus "
-#~ "du plateau : elle rappelle les joueurs en présence (*joueur 1* contre "
-#~ "*joueur 2*) ainsi que le contexte du match (événement, lieu, ronde, date et "
-#~ "longueur du match, lorsque ces informations sont disponibles)."
+#~ "Lorsqu'un match est ouvert, une **barre"
+#~ " d'informations** apparaît au-dessus du "
+#~ "plateau : elle rappelle les joueurs "
+#~ "en présence (*joueur 1* contre *joueur"
+#~ " 2*) ainsi que le contexte du "
+#~ "match (événement, lieu, ronde, date et"
+#~ " longueur du match, lorsque ces "
+#~ "informations sont disponibles)."
 #~ msgstr ""
-#~ "Cuando hay una partida abierta, aparece una **barra de información** sobre "
-#~ "el tablero: indica los jugadores presentes (*jugador 1* contra *jugador 2*) "
-#~ "así como el contexto de la partida (evento, lugar, ronda, fecha y longitud "
-#~ "de la partida, cuando esta información está disponible)."
+#~ "Cuando hay una partida abierta, aparece"
+#~ " una **barra de información** sobre "
+#~ "el tablero: indica los jugadores "
+#~ "presentes (*jugador 1* contra *jugador "
+#~ "2*) así como el contexto de la "
+#~ "partida (evento, lugar, ronda, fecha y"
+#~ " longitud de la partida, cuando esta"
+#~ " información está disponible)."
+
+#~ msgid ""
+#~ "Dans l'application, ouvrez le fichier et"
+#~ " affichez le panneau **Métadonnées** "
+#~ "(commande ``meta``). Sous les champs "
+#~ "habituels apparaît une section **Origine**,"
+#~ " en lecture seule, qui indique ce "
+#~ "qui a été inscrit, par qui, quand,"
+#~ " et l'état de la signature :"
+#~ msgstr ""
+
+#~ msgid "afficher le journal des opérations (panneau journal)."
+#~ msgstr "mostrar el registro de operaciones (panel de registro)."
+
+#~ msgid "Panneau Journal"
+#~ msgstr "Panel de Registro"
+
+#~ msgid ""
+#~ "Le panneau **Journal** affiche le "
+#~ "journal des opérations récentes : "
+#~ "imports, exports et opérations sur la"
+#~ " base de données, avec leurs "
+#~ "résultats et horodatages. Il est utile"
+#~ " pour diagnostiquer les erreurs d'import."
+#~ msgstr ""
+#~ "El panel **Registro** muestra el "
+#~ "registro de las operaciones recientes: "
+#~ "importaciones, exportaciones y operaciones "
+#~ "sobre la base de datos, con sus"
+#~ " resultados y marcas de tiempo. "
+#~ "Resulta útil para diagnosticar los "
+#~ "errores de importación."
+
