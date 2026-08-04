@@ -254,13 +254,22 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .comment-panel {
         height: 100%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         background-color: white;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     /* Search strip */
@@ -275,7 +284,7 @@
     }
     .search-icon {
         color: #aaa;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         flex-shrink: 0;
     }
     .search-input {
@@ -283,7 +292,7 @@
         border: none;
         outline: none;
         background: transparent;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #333;
         padding: 2px 0;
     }
@@ -292,7 +301,7 @@
         background: none;
         color: #999;
         cursor: pointer;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         padding: 0 2px;
         line-height: 1;
     }
@@ -326,7 +335,7 @@
     }
 
     .msg-text {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #333;
         white-space: pre-wrap;
         word-break: break-word;
@@ -338,7 +347,7 @@
         margin-bottom: 2px;
     }
     .msg-date {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         color: #888;
         font-style: italic;
     }
@@ -354,7 +363,7 @@
         background: none;
         color: #888;
         cursor: pointer;
-        font-size: 15px;
+        font-size: var(--font-size-title);
         padding: 2px 6px;
         line-height: 1;
         border-radius: 4px;
@@ -377,7 +386,7 @@
         padding: 4px 6px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         font-family: inherit;
         line-height: 1.35;
         resize: none;
@@ -391,7 +400,7 @@
         text-align: center;
         color: #bbb;
         padding: 20px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-style: italic;
     }
 
@@ -411,7 +420,7 @@
         outline: none;
         resize: none;
         background: white;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         line-height: 1.35;
         font-family: inherit;
     }

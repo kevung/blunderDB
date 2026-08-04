@@ -277,6 +277,15 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .status-bar {
         display: flex;
         align-items: center;
@@ -285,7 +294,7 @@
         padding: 2px 0;
         flex-shrink: 0;
         width: 100%;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         gap: 0;
         user-select: none;
@@ -299,7 +308,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         color: #555;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         line-height: 22px;
     }
 
@@ -308,7 +317,7 @@
         flex-shrink: 0;
         font-variant-numeric: tabular-nums;
         color: #555;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         border-left: 1px solid #e0e0e0;
         line-height: 22px;
     }
@@ -346,7 +355,7 @@
         align-items: baseline;
         gap: 12px;
         padding: 4px 10px;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         cursor: pointer;
     }
 
@@ -366,7 +375,7 @@
 
     .cmd-aliases {
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
@@ -375,7 +384,7 @@
         font-weight: bold;
         margin-right: 4px;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         line-height: 22px;
     }
 
@@ -386,7 +395,7 @@
         outline: none;
         color: #333;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 0;
         line-height: 22px;
         height: 22px;

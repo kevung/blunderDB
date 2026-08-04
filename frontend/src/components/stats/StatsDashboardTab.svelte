@@ -168,7 +168,7 @@
     /* ── Empty state ── */
     .empty-state {
         color: #888;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;
     }
@@ -214,20 +214,20 @@
     }
 
     .card-label {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
 
     .card-unit {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
     }
 
     /* ── Totals line ── */
     .stats-totals {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #777;
         padding: 8px 16px 0;
         margin: 0;
@@ -239,7 +239,7 @@
     }
 
     .section-title {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #555;
         text-transform: uppercase;
@@ -276,12 +276,12 @@
     }
 
     .rolling-n {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
     .rolling-val {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-variant-numeric: tabular-nums;
         font-weight: 600;
         color: #1a1a1a;
@@ -320,7 +320,7 @@
         text-align: left;
         cursor: pointer;
         border-radius: 4px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #1a1a1a;
     }
 
@@ -337,7 +337,7 @@
     .blunder-type {
         color: #555;
         min-width: 48px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .blunder-error {
@@ -358,7 +358,7 @@
     .blunder-date {
         color: #888;
         margin-left: 4px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .blunder-open-match {
@@ -367,7 +367,7 @@
         color: #999;
         cursor: pointer;
         padding: 4px 6px;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         border-radius: 3px;
         flex-shrink: 0;
     }

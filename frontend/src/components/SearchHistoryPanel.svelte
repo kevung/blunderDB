@@ -479,6 +479,15 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .search-history-panel {
         width: 100%;
         height: 100%;
@@ -491,7 +500,7 @@
     }
 
     .search-history-content {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: black;
         height: 100%;
         display: flex;
@@ -501,7 +510,7 @@
     .empty-message {
         text-align: center;
         color: #666;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 20px;
     }
 
@@ -559,7 +568,7 @@
 
     .command-cell {
         font-family: monospace;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .actions-cell {
@@ -652,7 +661,7 @@
         padding: 10px;
         border-radius: 4px;
         font-family: monospace;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         margin-bottom: 20px;
         word-break: break-all;
     }
@@ -672,7 +681,7 @@
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         box-sizing: border-box;
     }
 
@@ -688,7 +697,7 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         transition: background-color 0.2s;
     }
 

@@ -194,7 +194,7 @@
     /* ── Empty state ── */
     .empty-state {
         color: #888;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;
     }
@@ -206,7 +206,7 @@
 
     .section-title {
         margin: 0 0 6px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #555;
         text-transform: uppercase;
@@ -220,7 +220,7 @@
 
     .chart-hint {
         margin: 3px 0 0;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #aaa;
         text-align: right;
     }
@@ -244,17 +244,17 @@
     }
 
     .single-label {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         color: #333;
     }
 
     .single-meta {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
     .single-grade {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         font-style: italic;
     }
@@ -266,7 +266,7 @@
     }
 
     .single-actions button {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 3px 8px;
         border: 1px solid #ccc;
         border-radius: 3px;
@@ -288,7 +288,7 @@
     }
 
     .grade-pill {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         padding: 2px 7px;
         border-radius: 10px;
         color: #333;

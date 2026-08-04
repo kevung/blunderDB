@@ -262,7 +262,7 @@
         border-bottom: 2px solid transparent;
         background: transparent;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #555;
         white-space: nowrap;
         height: 100%;
@@ -298,7 +298,7 @@
     }
 
     .tab-label {
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .tab-content {

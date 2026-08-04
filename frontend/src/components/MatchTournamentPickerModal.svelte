@@ -178,6 +178,15 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -227,7 +236,7 @@
         padding: 8px 12px;
         background-color: #f9f9f9;
         border-bottom: 1px solid #ddd;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 500;
     }
 
@@ -236,7 +245,7 @@
         padding: 4px 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-family: inherit;
         min-width: 0;
     }
@@ -247,7 +256,7 @@
     }
 
     .small-btn {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 2px 8px;
     }
 
@@ -263,7 +272,7 @@
         gap: 6px;
         padding: 4px 8px;
         cursor: pointer;
-        font-size: 13px;
+        font-size: var(--font-size-base);
     }
 
     .collection-checkbox:hover {
@@ -291,7 +300,7 @@
 
     .coll-count {
         color: #888;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .button-group {
@@ -305,7 +314,7 @@
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;

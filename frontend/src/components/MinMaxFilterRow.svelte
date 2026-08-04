@@ -24,6 +24,15 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     /* Copied from SearchPanel.svelte (scoped CSS does not cross the component
        boundary); SearchPanel keeps its own copies for the non-converted blocks. */
     .minmax-controls {
@@ -35,13 +44,13 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         user-select: none;
         -webkit-user-select: none;
     }
     .num-input {
         width: 60px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 2px 3px;
     }
 </style>

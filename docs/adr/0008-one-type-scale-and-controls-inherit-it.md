@@ -2,8 +2,9 @@
 
 ## Status
 
-accepted — the rule applies to new and modified code from now on; the migration of existing
-components is deliberately gradual (see *Consequences*).
+accepted — and applied: every component now uses the tokens. The twenty absolute sizes that
+remain are the named exceptions below, and `input, select, textarea, button { font: inherit }`
+is declared per component rather than globally (see *Consequences*).
 
 ## Context
 
@@ -91,18 +92,23 @@ tabs and are not "text".
 
 ## Consequences
 
-- **The migration is transversal and visual, and no test covers it.** Adding
-  `font: inherit` for controls changes the appearance of every field in the application at
-  once. It is therefore done screen by screen, with the change confirmed on screen before
-  moving on. The rule binds new and modified code immediately; existing code converges.
+- **The migration was transversal and visual, and no test covered it.** It was therefore
+  done in two passes — the four heaviest panels first, checked on screen, then the remaining
+  twenty-seven components — rather than in one commit. `font: inherit` is declared by each
+  component that has controls (seventeen of them) instead of once globally, so a future
+  component that deliberately wants the platform's control font can still say so.
 - The four heaviest components — `MatchPanel` (33 declarations), `AnkiPanel` (29, seven
-  distinct sizes), `SearchPanel` (26), `TournamentPanel` (17) — hold 37% of all declarations
-  and are where the migration pays best.
-- **Progress is measurable**, which is the point of writing the baseline down. Counting
-  declarations and distinct values says whether the codebase is converging:
+  distinct sizes), `SearchPanel` (26), `TournamentPanel` (17) — held 37% of all declarations
+  and were migrated first, for that reason.
+- **Progress is measurable**, which is the point of writing the baseline down. The migration
+  took the codebase from 285 declarations over 20 distinct values to **263 using the tokens
+  and 20 absolute ones**, all of them named exceptions: modal titles (18–20 px), close
+  crosses (24 px, `1.5rem`), the large statistics figures (28 px), and two monospace nudges
+  at `0.92em`. What should stay near zero is the count of *unexplained* absolute values:
 
   ```bash
-  cd frontend/src && grep -ro 'font-size:[^;]*;' components/ *.svelte | wc -l
+  cd frontend/src && grep -rho 'font-size:[^;]*;' components/ *.svelte \
+      | grep -v 'var(--font-size' | sort | uniq -c | sort -rn
   ```
 
 - Sizes below `--font-size-small` disappear: 9 px and 10 px were used to de-emphasise

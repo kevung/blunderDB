@@ -664,7 +664,7 @@
         z-index: 5;
         background: #c0392b;
         color: #fff;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-weight: 700;
         letter-spacing: 0.06em;
         padding: 2px 8px;
@@ -739,7 +739,7 @@
     }
 
     .drop-hint {
-        font-size: 0.8rem;
+        font-size: var(--font-size-base);
         font-weight: 400;
         opacity: 0.7;
     }

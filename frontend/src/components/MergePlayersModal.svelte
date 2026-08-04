@@ -196,6 +196,15 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .modal-backdrop {
         position: fixed;
         inset: 0;
@@ -228,7 +237,7 @@
     }
 
     .modal-title {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #222;
         flex: 1;
@@ -258,7 +267,7 @@
     }
 
     .hint {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         margin: 0;
         line-height: 1.5;
@@ -267,7 +276,7 @@
     .filter-input {
         width: 100%;
         padding: 4px 8px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         border: 1px solid #ccc;
         border-radius: 3px;
         box-sizing: border-box;
@@ -292,7 +301,7 @@
         gap: 6px;
         padding: 4px 8px;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         border-bottom: 1px solid #f0f0f0;
         transition: background-color 0.1s;
     }
@@ -321,7 +330,7 @@
     }
 
     .player-count {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
         white-space: nowrap;
     }
@@ -330,7 +339,7 @@
         background: none;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #555;
         cursor: pointer;
         padding: 1px 5px;
@@ -348,7 +357,7 @@
         text-align: center;
         color: #999;
         padding: 16px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .canonical-row {
@@ -358,7 +367,7 @@
     }
 
     .canonical-label {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #444;
         white-space: nowrap;
         flex-shrink: 0;
@@ -367,7 +376,7 @@
     .canonical-input {
         flex: 1;
         padding: 4px 8px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         border: 1px solid #1976d2;
         border-radius: 3px;
         outline: none;
@@ -375,7 +384,7 @@
     }
 
     .error-msg {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #c62828;
         background: #ffebee;
         padding: 4px 8px;
@@ -383,7 +392,7 @@
     }
 
     .selection-summary {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         font-style: italic;
         word-break: break-word;
@@ -401,7 +410,7 @@
 
     .btn-cancel,
     .btn-merge {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 5px 14px;
         border-radius: 3px;
         cursor: pointer;
