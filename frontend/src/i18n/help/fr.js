@@ -43,8 +43,7 @@ export default {
                         <li>afficher des statistiques de performance (panneau Stats),</li>
                         <li>calculer les valeurs d'EPC pour les positions de sortie (panneau EPC),</li>
                         <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
-                        <li>consulter l'historique des recherches (panneau Historique des recherches),</li>
-                        <li>voir les journaux d'opérations (panneau Log).</li>
+                        <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
                     </ul>
                     <p>La zone d'affichage principale fournit à l'utilisateur :</p>
                     <ul>
@@ -85,7 +84,7 @@ export default {
                     <p>
                         Pour ouvrir la ligne de commande, appuyez sur la touche <strong>Espace</strong>. Une invite apparaît dans la barre d'état. Tapez votre commande et appuyez sur <strong>Entrée</strong> pour l'exécuter. Appuyez sur
                         <strong>Échap</strong>
-                        pour annuler. L'historique des commandes et les résultats sont consignés dans le panneau <strong>Log</strong>.
+                        pour annuler.
                     </p>
                     <p>
                         blunderDB exécute les requêtes envoyées par l'utilisateur dès lors qu'elles sont valides et modifie immédiatement l'état de la base de données si nécessaire. Aucune action d'enregistrement explicite

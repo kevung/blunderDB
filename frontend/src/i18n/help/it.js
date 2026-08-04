@@ -43,8 +43,7 @@ export default {
                         <li>mostrare statistiche di rendimento (pannello Stats),</li>
                         <li>calcolare i valori di EPC per posizioni di bearoff (pannello EPC),</li>
                         <li>consultare i filtri di ricerca salvati (pannello Libreria filtri),</li>
-                        <li>consultare la cronologia delle ricerche (pannello Cronologia ricerche),</li>
-                        <li>vedere i log delle operazioni (pannello Log).</li>
+                        <li>consultare la cronologia delle ricerche (pannello Cronologia ricerche).</li>
                     </ul>
                     <p>L'area di visualizzazione principale offre all'utente:</p>
                     <ul>
@@ -85,7 +84,7 @@ export default {
                     <p>
                         Per aprire la riga di comando, premi il tasto <strong>Spazio</strong>. Appare un prompt nella barra di stato. Digita il tuo comando e premi <strong>Enter</strong> per eseguirlo. Premi
                         <strong>Escape</strong>
-                        per annullare. La cronologia dei comandi e i risultati vengono registrati nel pannello <strong>Log</strong>.
+                        per annullare.
                     </p>
                     <p>
                         blunderDB esegue le query inviate dall'utente purché siano valide e modifica immediatamente lo stato del database se necessario. Non sono richieste azioni di salvataggio esplicite

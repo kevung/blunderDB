@@ -634,12 +634,6 @@
         "closeView": "Cerrar vista",
         "newView": "Nueva vista"
     },
-    "console": {
-        "empty": "Aún no hay entradas de registro."
-    },
-    "logs": {
-        "empty": "Aún no hay operaciones registradas."
-    },
     "goToPosition": {
         "placeholder": "Introduce el número de posición",
         "title": "Ir a la posición"
@@ -757,8 +751,7 @@
         "stats": "Estadísticas",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "Metadatos",
-        "log": "Registro"
+        "metadata": "Metadatos"
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",

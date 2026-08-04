@@ -43,8 +43,7 @@ export default {
                         <li>display performance statistics (Stats panel),</li>
                         <li>compute EPC values for bearoff positions (EPC panel),</li>
                         <li>browse saved search filters (Filter Library panel),</li>
-                        <li>browse search history (Search History panel),</li>
-                        <li>view operation logs (Log panel).</li>
+                        <li>browse search history (Search History panel).</li>
                     </ul>
                     <p>The main display area provides the user with:</p>
                     <ul>
@@ -85,7 +84,7 @@ export default {
                     <p>
                         To open the command line, press the <strong>Space</strong> key. A prompt appears in the status bar. Type your command and press <strong>Enter</strong> to execute. Press
                         <strong>Escape</strong>
-                        to cancel. Command history and results are logged in the <strong>Log</strong> panel.
+                        to cancel.
                     </p>
                     <p>
                         blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions

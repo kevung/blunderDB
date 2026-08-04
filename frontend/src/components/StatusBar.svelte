@@ -1,6 +1,6 @@
 <script>
     import { tick } from 'svelte';
-    import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, addLogEntry } from '../stores/uiStore';
+    import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore } from '../stores/uiStore';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
     import { tableData as metTable } from '../stores/metTable';
@@ -131,7 +131,6 @@
             event.preventDefault();
             const command = ($commandTextStore || '').trim();
             if (command) {
-                addLogEntry(`> ${command}`, 'command');
                 commandHistoryStore.update((history) => {
                     history = history || [];
                     history.unshift(command);

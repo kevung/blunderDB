@@ -43,8 +43,7 @@ export default {
                         <li>Leistungsstatistiken anzuzeigen (Stats-Panel),</li>
                         <li>EPC-Werte für Auswürfelpositionen zu berechnen (EPC-Panel),</li>
                         <li>gespeicherte Suchfilter durchzusehen (Filter Library-Panel),</li>
-                        <li>den Suchverlauf durchzusehen (Search History-Panel),</li>
-                        <li>Betriebsprotokolle anzuzeigen (Log-Panel).</li>
+                        <li>den Suchverlauf durchzusehen (Search History-Panel).</li>
                     </ul>
                     <p>Der Hauptanzeigebereich bietet dem Benutzer:</p>
                     <ul>
@@ -85,7 +84,7 @@ export default {
                     <p>
                         Zum Öffnen der Befehlszeile die <strong>Space</strong>-Taste drücken. In der Statusleiste erscheint eine Eingabeaufforderung. Befehl eingeben und zur Ausführung <strong>Enter</strong> drücken.
                         <strong>Escape</strong>
-                        drücken, um abzubrechen. Befehlsverlauf und Ergebnisse werden im <strong>Log</strong>-Panel protokolliert.
+                        drücken, um abzubrechen.
                     </p>
                     <p>
                         blunderDB führt die vom Benutzer gesendeten Abfragen aus, sofern sie gültig sind, und ändert bei Bedarf sofort den Zustand der Datenbank. Es sind keine expliziten Speicheraktionen
