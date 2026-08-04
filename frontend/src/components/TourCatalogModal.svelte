@@ -92,7 +92,7 @@
     .catalog-desc {
         margin: 0 0 1rem;
         color: #555;
-        font-size: 0.95rem;
+        font-size: var(--font-size-title);
     }
 
     .close-button {
@@ -137,7 +137,7 @@
     }
 
     .tour-desc {
-        font-size: 0.85rem;
+        font-size: var(--font-size-base);
         color: #666;
     }
 
@@ -149,7 +149,7 @@
         background-color: #6c757d;
         color: white;
         cursor: pointer;
-        font-size: 14px;
+        font-size: var(--font-size-base);
     }
 
     .start-button:hover {
@@ -168,7 +168,7 @@
     }
 
     .demo-hint {
-        font-size: 0.85rem;
+        font-size: var(--font-size-base);
         color: #666;
     }
 
@@ -180,7 +180,7 @@
         background-color: white;
         color: #6c757d;
         cursor: pointer;
-        font-size: 14px;
+        font-size: var(--font-size-base);
     }
 
     .demo-button:hover {
@@ -199,7 +199,7 @@
         border-radius: 4px;
         background-color: #f5f5f5;
         cursor: pointer;
-        font-size: 15px;
+        font-size: var(--font-size-title);
     }
 
     .primary-button:hover {

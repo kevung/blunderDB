@@ -83,6 +83,15 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -104,20 +113,20 @@
 
     h2 {
         margin: 0 0 6px;
-        font-size: 16px;
+        font-size: var(--font-size-title);
     }
 
     .file {
         margin: 0 0 8px;
         font-family: monospace;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #555;
         word-break: break-all;
     }
 
     .hint {
         margin: 0 0 10px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         line-height: 1.35;
     }
@@ -133,7 +142,7 @@
         min-width: 0;
         box-sizing: border-box;
         padding: 6px 8px;
-        font-size: 14px;
+        font-size: var(--font-size-base);
     }
 
     .reveal {
@@ -148,14 +157,14 @@
         align-items: center;
         gap: 6px;
         margin-top: 10px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #3c4043;
         cursor: pointer;
     }
 
     .error {
         color: #b3261e;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         margin: 6px 0 0;
     }
 

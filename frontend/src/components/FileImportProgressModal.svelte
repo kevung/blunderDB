@@ -101,13 +101,13 @@
 
     .status-text {
         color: #666;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         margin: 0;
     }
 
     .current-file {
         color: #999;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         margin: 4px 0 0 0;
         white-space: nowrap;
         overflow: hidden;
@@ -130,7 +130,7 @@
     }
 
     .progress-text {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         color: #666;
         text-align: right;
         margin-top: 4px;
@@ -152,7 +152,7 @@
     }
 
     .stat-label {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         text-transform: uppercase;
         margin-bottom: 5px;
@@ -200,7 +200,7 @@
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -227,7 +227,7 @@
 
     .summary p {
         margin: 5px 0;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         color: #555;
     }
 
@@ -245,7 +245,7 @@
     }
 
     .error-item {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #833;
         margin: 4px 0;
         word-break: break-all;

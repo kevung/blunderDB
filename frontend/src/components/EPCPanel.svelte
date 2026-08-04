@@ -133,7 +133,7 @@
         overflow-y: auto;
         padding: 8px 12px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .epc-inactive {
@@ -148,7 +148,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .inactive-icon {
@@ -166,7 +166,7 @@
 
     .error-text {
         color: #c62828;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .epc-content {
@@ -186,7 +186,7 @@
         align-items: center;
         gap: 6px;
         font-weight: 600;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #444;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -230,7 +230,7 @@
     }
 
     .epc-card-label {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #777;
         text-transform: uppercase;
         letter-spacing: 0.3px;
@@ -238,14 +238,14 @@
     }
 
     .epc-card-value {
-        font-size: 14px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #222;
         font-variant-numeric: tabular-nums;
     }
 
     .epc-main .epc-card-value {
-        font-size: 16px;
+        font-size: var(--font-size-title);
         color: #1a56c4;
     }
 
@@ -255,7 +255,7 @@
     }
 
     .epc-comparison-header {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: #666;
         text-transform: uppercase;
@@ -275,12 +275,12 @@
     }
 
     .comp-label {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #777;
     }
 
     .comp-value {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         font-variant-numeric: tabular-nums;
         color: #444;

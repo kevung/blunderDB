@@ -833,6 +833,15 @@
 </section>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .collection-panel {
         width: 100%;
         height: 100%;
@@ -866,7 +875,7 @@
     .coll-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .coll-table thead {
@@ -886,7 +895,7 @@
     .coll-table th {
         font-weight: 600;
         color: #333;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .narrow-col {
@@ -906,7 +915,7 @@
     }
 
     .date-cell {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
     }
 
@@ -960,7 +969,7 @@
         color: #888;
         font-style: italic;
         cursor: pointer;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .desc-text:hover {
         color: #555;
@@ -975,7 +984,7 @@
 
     .inline-edit {
         width: 100%;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 1px 4px;
         border: 1px solid #999;
         outline: none;
@@ -1008,7 +1017,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         padding: 2px 4px;
         line-height: 1;
@@ -1040,13 +1049,13 @@
         padding: 3px 6px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         outline: none;
         box-sizing: border-box;
     }
     .add-input.desc {
         flex: 1;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
     }
     .add-input:focus {
@@ -1057,7 +1066,7 @@
         text-align: center;
         color: #bbb;
         padding: 16px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-style: italic;
     }
 
@@ -1075,7 +1084,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         color: #666;
         padding: 2px 6px;
         line-height: 1;
@@ -1084,7 +1093,7 @@
         color: #333;
     }
     .detail-title {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #333;
         overflow: hidden;
@@ -1093,7 +1102,7 @@
         flex: 1;
     }
     .detail-count {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
         flex-shrink: 0;
     }
@@ -1108,7 +1117,7 @@
         cursor: pointer;
     }
     .desc-bar .desc-text {
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .full-width {
         width: 100%;

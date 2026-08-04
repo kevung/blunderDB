@@ -643,7 +643,7 @@
     }
 
     .analysis-content {
-        font-size: 12px; /* Reduce font size */
+        font-size: var(--font-size-base); /* Reduce font size */
         color: black; /* Set text color */
     }
 
@@ -654,7 +654,7 @@
 
     .cube-engine-header {
         font-weight: bold;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #444;
         padding: 2px 4px;
         margin-top: 4px;
@@ -670,7 +670,7 @@
     .info-table {
         width: 28%; /* Reduce width for the first and third tables */
         border-collapse: collapse;
-        font-size: 12px; /* Ensure same font size */
+        font-size: var(--font-size-base); /* Ensure same font size */
     }
 
     .left-table th:nth-child(1) {
@@ -691,7 +691,7 @@
     .checker-table {
         margin: 0 auto; /* Center the table */
         width: 100%;
-        font-size: 12px; /* Ensure same font size */
+        font-size: var(--font-size-base); /* Ensure same font size */
         border-spacing: 0; /* Remove space between cells */
     }
 

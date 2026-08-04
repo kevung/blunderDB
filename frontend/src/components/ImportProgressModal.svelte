@@ -147,7 +147,7 @@
 
     .status-text {
         color: #666;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         margin: 0;
     }
 
@@ -167,7 +167,7 @@
     }
 
     .stat-label {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         text-transform: uppercase;
         margin-bottom: 5px;
@@ -211,7 +211,7 @@
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -249,7 +249,7 @@
 
     .summary p {
         margin: 5px 0;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         color: #555;
     }
 

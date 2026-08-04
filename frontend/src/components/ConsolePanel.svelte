@@ -46,7 +46,7 @@
         height: 100%;
         background: #fff;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        font-size: 13px;
+        font-size: var(--font-size-base);
     }
 
     .log-output {
@@ -89,7 +89,7 @@
         color: #999;
         white-space: nowrap;
         min-width: 64px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .log-msg {

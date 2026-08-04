@@ -149,6 +149,15 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -221,7 +230,7 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 15px; /* Slightly increase font size */
+        font-size: var(--font-size-title); /* Slightly increase font size */
     }
 
     .primary-button {

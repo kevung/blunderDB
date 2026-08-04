@@ -312,6 +312,15 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .filter-bar {
         display: flex;
         flex-wrap: wrap;
@@ -319,7 +328,7 @@
         gap: 4px 8px;
         padding: 4px 8px;
         border-bottom: 1px solid #e0e0e0;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         flex-shrink: 0;
         min-height: 28px;
         background: var(--panel-bg, #fafafa);
@@ -346,7 +355,7 @@
 
     .fb-select,
     .fb-date {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         border: 1px solid #d0d0d0;
         border-radius: 3px;
         padding: 1px 4px;
@@ -365,7 +374,7 @@
     }
 
     .fb-tour-btn {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 1px 6px;
         border: 1px solid #d0d0d0;
         border-radius: 3px;
@@ -404,7 +413,7 @@
         padding: 3px 10px;
         cursor: pointer;
         white-space: nowrap;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .fb-check-label:hover {
@@ -448,7 +457,7 @@
     }
 
     .fb-ml-btn {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         padding: 1px 5px;
         border: 1px solid #ccc;
         border-radius: 3px;
@@ -464,7 +473,7 @@
     }
 
     .fb-ml-all {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         padding: 1px 6px;
         border: 1px solid #4a7ebb;
         border-radius: 3px;
@@ -481,7 +490,7 @@
     /* ── Reset ── */
     .fb-reset {
         margin-left: auto;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         padding: 1px 6px;
         border: 1px solid #ccc;
         border-radius: 3px;

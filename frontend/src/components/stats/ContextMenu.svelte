@@ -82,7 +82,7 @@
         background: none;
         border: none;
         padding: 6px 14px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         cursor: pointer;
         color: #333;
         border-radius: 0;

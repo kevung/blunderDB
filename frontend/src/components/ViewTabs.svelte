@@ -78,6 +78,15 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in
+       the browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .view-tabs {
         display: flex;
         align-items: stretch;
@@ -96,7 +105,7 @@
         align-items: center;
         gap: 4px;
         padding: 0 8px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         cursor: pointer;
         border-right: 1px solid #e0e0e0;
@@ -125,7 +134,7 @@
 
     .rename-input {
         width: 60px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         border: 1px solid #aaa;
         padding: 1px 3px;
         outline: none;
@@ -135,7 +144,7 @@
     .close-btn {
         border: none;
         background: none;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         color: #999;
         cursor: pointer;
         padding: 0 2px;
@@ -151,7 +160,7 @@
     .add-btn {
         border: none;
         background: none;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         color: #888;
         cursor: pointer;
         padding: 0 8px;

@@ -174,14 +174,14 @@
     /* ── Shared ── */
     .empty-state {
         color: #888;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;
     }
 
     .empty-subsection {
         color: #aaa;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         text-align: center;
         padding: 12px 16px;
         margin: 0;
@@ -194,7 +194,7 @@
     }
 
     .section-title {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #555;
         text-transform: uppercase;

@@ -243,7 +243,7 @@
         background-color: #eee;
         border: none;
         cursor: pointer;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         outline: none;
         display: flex; /* Use flexbox */
         justify-content: center; /* Center horizontally */

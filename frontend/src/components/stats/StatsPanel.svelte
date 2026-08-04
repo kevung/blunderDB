@@ -67,7 +67,7 @@
         height: 100%;
         min-height: 0;
         background: #fff;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     /* ── Header ── */
@@ -83,7 +83,7 @@
 
     .stats-title {
         margin: 0;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #333;
         flex: 1;
@@ -101,7 +101,7 @@
         background: none;
         border: none;
         padding: 2px 8px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         cursor: pointer;
         color: #555;
         transition: background 0.1s;
@@ -121,7 +121,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         color: #999;
         padding: 2px 4px;
         line-height: 1;
@@ -146,7 +146,7 @@
         border: none;
         border-bottom: 2px solid transparent;
         padding: 5px 12px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         cursor: pointer;
         color: #555;
         transition:
@@ -176,7 +176,7 @@
 
     .loading-msg {
         color: #999;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         text-align: center;
         padding: 24px;
     }
