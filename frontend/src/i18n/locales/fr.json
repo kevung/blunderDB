@@ -656,7 +656,7 @@
         "includeAnalysis": "Inclure les analyses",
         "includeCollections": "Inclure les collections ({count})",
         "includeComments": "Inclure les commentaires",
-        "includeFilterLibrary": "Inclure la bibliothèque de filtres",
+        "includeFilterLibrary": "Mes filtres enregistrés",
         "includeMatches": "Inclure les matchs ({count})",
         "includePlayedMoves": "Inclure les coups joués",
         "includeTournaments": "Inclure les tournois ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Exporter la base de données",
         "user": "Utilisateur",
         "userPlaceholder": "Saisir votre nom (facultatif)",
-        "willBeExported": "{count} position(s) seront exportées avec {desc}.",
+        "willBeExported": "Les {count} position(s) actuellement affichées seront exportées avec {desc}.",
         "descTwo": "{a} et {b}",
         "descMany": "{list} et {last}",
         "descAnalysis": "les analyses",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} tournois",
         "descCollection": "{count} collection",
         "descCollectionsPlural": "{count} collections",
-        "descPositionsOnly": "les positions seules"
+        "descPositionsOnly": "les positions seules",
+        "descWatermarked": "son origine marquée",
+        "descProtected": "un mot de passe",
+        "tournamentsNeedMatches": "Un tournoi n'est relié à ses matchs que si les matchs sont exportés aussi — cochez d'abord « inclure les matchs ».",
+        "filterLibraryHint": "Vos propres recherches enregistrées, pas du contenu : elles n'ont aucune utilité dans la base de quelqu'un d'autre.",
+        "metadataTitle": "Métadonnées du fichier exporté"
     },
     "import": {
         "abortImport": "Annuler l'import",

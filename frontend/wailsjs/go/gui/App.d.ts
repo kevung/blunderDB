@@ -41,6 +41,8 @@ export function PrepareDemoDatabase():Promise<string>;
 
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 
+export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
+
 export function SaveDatabaseDialog():Promise<string>;
 
 export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;

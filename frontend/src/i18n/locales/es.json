@@ -656,7 +656,7 @@
         "includeAnalysis": "Incluir análisis",
         "includeCollections": "Incluir colecciones ({count})",
         "includeComments": "Incluir comentarios",
-        "includeFilterLibrary": "Incluir biblioteca de filtros",
+        "includeFilterLibrary": "Mis filtros guardados",
         "includeMatches": "Incluir partidas ({count})",
         "includePlayedMoves": "Incluir jugadas realizadas",
         "includeTournaments": "Incluir torneos ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Exportar base de datos",
         "user": "Usuario",
         "userPlaceholder": "Introduce tu nombre (opcional)",
-        "willBeExported": "Se exportarán {count} posición(es) con {desc}.",
+        "willBeExported": "Se exportarán las {count} posición(es) mostradas actualmente con {desc}.",
         "descTwo": "{a} y {b}",
         "descMany": "{list} y {last}",
         "descAnalysis": "los análisis",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} torneos",
         "descCollection": "{count} colección",
         "descCollectionsPlural": "{count} colecciones",
-        "descPositionsOnly": "solo las posiciones"
+        "descPositionsOnly": "solo las posiciones",
+        "descWatermarked": "su origen marcado",
+        "descProtected": "una contraseña",
+        "tournamentsNeedMatches": "Un torneo solo se vincula a sus partidos si estos también se exportan: marque antes «incluir partidos».",
+        "filterLibraryHint": "Sus propias búsquedas guardadas, no contenido: no sirven de nada en la base de otra persona.",
+        "metadataTitle": "Metadatos del archivo exportado"
     },
     "import": {
         "abortImport": "Cancelar importación",

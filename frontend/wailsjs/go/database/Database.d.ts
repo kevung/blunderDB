@@ -29,6 +29,8 @@ export function ClearSessionState():Promise<void>;
 
 export function Close():Promise<void>;
 
+export function CollectionCoverage(arg1:Array<number>):Promise<Record<number, number>>;
+
 export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function ComputeEPCFromPosition(arg1:domain.Position):Promise<Record<string, any>>;

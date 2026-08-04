@@ -656,7 +656,7 @@
         "includeAnalysis": "Συμπερίληψη ανάλυσης",
         "includeCollections": "Συμπερίληψη συλλογών ({count})",
         "includeComments": "Συμπερίληψη σχολίων",
-        "includeFilterLibrary": "Συμπερίληψη βιβλιοθήκης φίλτρων",
+        "includeFilterLibrary": "Τα αποθηκευμένα φίλτρα μου",
         "includeMatches": "Συμπερίληψη αγώνων ({count})",
         "includePlayedMoves": "Συμπερίληψη παιγμένων κινήσεων",
         "includeTournaments": "Συμπερίληψη τουρνουά ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Εξαγωγή βάσης δεδομένων",
         "user": "Χρήστης",
         "userPlaceholder": "Εισαγάγετε το όνομά σας (προαιρετικό)",
-        "willBeExported": "{count} θέση(εις) θα εξαχθούν με {desc}.",
+        "willBeExported": "Οι {count} θέση(εις) που εμφανίζονται αυτή τη στιγμή θα εξαχθούν με {desc}.",
         "descTwo": "{a} και {b}",
         "descMany": "{list} και {last}",
         "descAnalysis": "τις αναλύσεις",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} τουρνουά",
         "descCollection": "{count} συλλογή",
         "descCollectionsPlural": "{count} συλλογές",
-        "descPositionsOnly": "μόνο τις θέσεις"
+        "descPositionsOnly": "μόνο τις θέσεις",
+        "descWatermarked": "σημασμένη την προέλευσή του",
+        "descProtected": "κωδικό",
+        "tournamentsNeedMatches": "Ένα τουρνουά συνδέεται με τους αγώνες του μόνο αν εξαχθούν και αυτοί — επιλέξτε πρώτα «συμπερίληψη αγώνων».",
+        "filterLibraryHint": "Οι δικές σας αποθηκευμένες αναζητήσεις, όχι περιεχόμενο: δεν χρησιμεύουν στη βάση κάποιου άλλου.",
+        "metadataTitle": "Μεταδεδομένα του εξαγόμενου αρχείου"
     },
     "import": {
         "abortImport": "Ματαίωση εισαγωγής",

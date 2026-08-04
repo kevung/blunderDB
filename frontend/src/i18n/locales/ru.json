@@ -656,7 +656,7 @@
         "includeAnalysis": "Включить анализ",
         "includeCollections": "Включить коллекции ({count})",
         "includeComments": "Включить комментарии",
-        "includeFilterLibrary": "Включить библиотеку фильтров",
+        "includeFilterLibrary": "Мои сохранённые фильтры",
         "includeMatches": "Включить матчи ({count})",
         "includePlayedMoves": "Включить сыгранные ходы",
         "includeTournaments": "Включить турниры ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Экспорт базы данных",
         "user": "Пользователь",
         "userPlaceholder": "Введите ваше имя (необязательно)",
-        "willBeExported": "Будет экспортировано {count} позиц. с {desc}.",
+        "willBeExported": "Будет экспортировано {count} отображаемых сейчас позиц. с {desc}.",
         "descTwo": "{a} и {b}",
         "descMany": "{list} и {last}",
         "descAnalysis": "анализами",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} турнирами",
         "descCollection": "{count} коллекцией",
         "descCollectionsPlural": "{count} коллекциями",
-        "descPositionsOnly": "только позициями"
+        "descPositionsOnly": "только позициями",
+        "descWatermarked": "отметкой происхождения",
+        "descProtected": "паролем",
+        "tournamentsNeedMatches": "Турнир связывается со своими матчами, только если матчи тоже экспортируются — сначала отметьте «включить матчи».",
+        "filterLibraryHint": "Ваши собственные сохранённые поиски, а не содержимое: в чужой базе они бесполезны.",
+        "metadataTitle": "Метаданные экспортируемого файла"
     },
     "import": {
         "abortImport": "Прервать импорт",

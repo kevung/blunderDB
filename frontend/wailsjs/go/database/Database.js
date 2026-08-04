@@ -50,6 +50,10 @@ export function Close() {
   return window['go']['database']['Database']['Close']();
 }
 
+export function CollectionCoverage(arg1) {
+  return window['go']['database']['Database']['CollectionCoverage'](arg1);
+}
+
 export function CommitImportDatabase(arg1) {
   return window['go']['database']['Database']['CommitImportDatabase'](arg1);
 }

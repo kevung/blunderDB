@@ -656,7 +656,7 @@
         "includeAnalysis": "Sisällytä analyysi",
         "includeCollections": "Sisällytä kokoelmat ({count})",
         "includeComments": "Sisällytä kommentit",
-        "includeFilterLibrary": "Sisällytä suodatinkirjasto",
+        "includeFilterLibrary": "Omat tallennetut suodattimet",
         "includeMatches": "Sisällytä ottelut ({count})",
         "includePlayedMoves": "Sisällytä pelatut siirrot",
         "includeTournaments": "Sisällytä turnaukset ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Vie tietokanta",
         "user": "Käyttäjä",
         "userPlaceholder": "Anna nimesi (valinnainen)",
-        "willBeExported": "{count} asema(a) viedään, mukana {desc}.",
+        "willBeExported": "{count} parhaillaan näkyvää asemaa viedään, mukana {desc}.",
         "descTwo": "{a} ja {b}",
         "descMany": "{list} ja {last}",
         "descAnalysis": "analyysit",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} turnausta",
         "descCollection": "{count} kokoelma",
         "descCollectionsPlural": "{count} kokoelmaa",
-        "descPositionsOnly": "vain asemat"
+        "descPositionsOnly": "vain asemat",
+        "descWatermarked": "merkitty alkuperä",
+        "descProtected": "salasana",
+        "tournamentsNeedMatches": "Turnaus liitetään otteluihinsa vain jos ottelutkin viedään — valitse ensin ”sisällytä ottelut”.",
+        "filterLibraryHint": "Omat tallennetut hakusi, ei sisältöä: toisen tietokannassa niistä ei ole hyötyä.",
+        "metadataTitle": "Vietävän tiedoston metatiedot"
     },
     "import": {
         "abortImport": "Keskeytä tuonti",

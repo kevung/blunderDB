@@ -3,6 +3,7 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
+    import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
     import { t } from '../i18n';
 
     let {
@@ -70,6 +71,16 @@
     let cannotExport = $derived(missingOrigin || missingPassword);
     let tournaments = $derived($tournamentsStore || []);
 
+    // How many of a collection's positions the current selection actually covers, and
+    // whether that is fewer than the collection holds.
+    function covered(collection) {
+        const coverage = $exportCollectionCoverageStore ?? {};
+        return coverage[collection.id] ?? coverage[String(collection.id)] ?? 0;
+    }
+    function isPartial(collection) {
+        return covered(collection) < (collection.positionCount ?? 0);
+    }
+
     // Get current date in YYYY-MM-DD format
     function getCurrentDate() {
         const now = new Date();
@@ -134,6 +145,10 @@
         if (exportOptions.includeAnalysis) parts.push(tr('export.descAnalysis'));
         if (exportOptions.includeComments) parts.push(tr('export.descComments'));
         if (exportOptions.includeFilterLibrary) parts.push(tr('export.descFilterLibrary'));
+        // These two change the nature of the file produced, so they belong in the sentence
+        // that says what is being produced.
+        if (exportOptions.watermarkEnabled) parts.push(tr('export.descWatermarked'));
+        if (exportOptions.passwordEnabled) parts.push(tr('export.descProtected'));
         if (exportOptions.includePlayedMoves) parts.push(tr('export.descPlayedMoves'));
         if (exportOptions.includeMatches && exportOptions.matchIDs.length > 0)
             parts.push(exportOptions.matchIDs.length > 1 ? tr('export.descMatchesPlural', { count: exportOptions.matchIDs.length }) : tr('export.descMatch', { count: exportOptions.matchIDs.length }));
@@ -244,6 +259,11 @@
                         <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
                     </div>
 
+                    <!-- These describe the file being produced, not the database being
+                         exported from. They start from the source's values, which most
+                         exports keep. -->
+                    <p class="group-title">{$t('export.metadataTitle')}</p>
+
                     <div class="form-group">
                         <label for="export-user">{$t('export.user')}</label>
                         <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
@@ -281,12 +301,28 @@
                             <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
+                            <!-- A tournament is linked to its matches only when the matches
+                                 are exported too; without them it would arrive empty. -->
+                            <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0 || !exportOptions.includeMatches} />
                             <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
+                            {#if tournaments.length > 0 && !exportOptions.includeMatches}
+                                <span class="info-tip" title={$t('export.tournamentsNeedMatches')} aria-label={$t('export.tournamentsNeedMatches')} role="note">?</span>
+                            {/if}
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
                             <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
+                        </div>
+                    </div>
+
+                    <!-- Not content but working preferences: the producer's own saved searches,
+                     which have no business in a recipient's database. Kept apart from the
+                     options above for that reason, and off by default. -->
+                    <div class="checkbox-group issuance-toggle">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                            <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
+                            <span class="info-tip" title={$t('export.filterLibraryHint')} aria-label={$t('export.filterLibraryHint')} role="note">?</span>
                         </div>
                     </div>
 
@@ -417,7 +453,13 @@
                                     <label class="collection-checkbox">
                                         <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
                                         <span class="coll-name">{collection.name}</span>
-                                        <span class="coll-count">({collection.positionCount})</span>
+                                        <!-- Covered / total. The export writes membership
+                                             only for positions it exports, so a partial
+                                             collection arrives truncated — said here rather
+                                             than discovered by the recipient. -->
+                                        <span class="coll-count" class:partial={isPartial(collection)}>
+                                            ({covered(collection)}/{collection.positionCount})
+                                        </span>
                                     </label>
                                 {/each}
                             </div>
@@ -722,6 +764,11 @@
         flex: 1;
     }
 
+    .coll-count.partial {
+        color: #b3261e;
+        font-weight: 600;
+    }
+
     .coll-count {
         color: #888;
         font-size: 12px;
@@ -772,6 +819,15 @@
         padding: 0 8px;
         cursor: pointer;
         line-height: 1;
+    }
+
+    .group-title {
+        margin: 6px 0 0;
+        font-size: 11px;
+        font-weight: 600;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
     .issuance-required {

@@ -1,14 +1,22 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
-import { ExportDatabase, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+import { ExportDatabase, CollectionCoverage, LoadMetadata, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
-import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore, resetExportState } from '../stores/exportModalStore.js';
+import {
+    exportModalModeStore,
+    exportPositionCountStore,
+    exportMetadataStore,
+    exportOptionsStore,
+    exportMatchesStore,
+    exportCollectionCoverageStore,
+    resetExportState
+} from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
@@ -59,6 +67,30 @@ export async function exportDatabase() {
             tournamentsStore.set(tourns || []);
         } catch (e) {
             logger.log('Could not get tournaments:', e);
+        }
+
+        // How much of each collection the current selection actually covers. The export only
+        // writes membership for positions it exports, so a collection can arrive truncated;
+        // the screen says so rather than letting it happen quietly.
+        try {
+            exportCollectionCoverageStore.set((await CollectionCoverage(positions.map((p) => p.id))) || {});
+        } catch (e) {
+            logger.log('Could not measure collection coverage:', e);
+            exportCollectionCoverageStore.set({});
+        }
+
+        // The metadata describe the file being produced. Starting from the source's own
+        // values beats an empty form: most exports keep them, and retyping them every time
+        // was pure friction.
+        try {
+            const source = await LoadMetadata();
+            exportMetadataStore.set({
+                user: source.user || '',
+                description: source.description || '',
+                dateOfCreation: new Date().toISOString().slice(0, 10)
+            });
+        } catch (e) {
+            logger.log('Could not read the source metadata:', e);
         }
 
         exportPositionCountStore.set(positions.length);

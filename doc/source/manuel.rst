@@ -806,6 +806,24 @@ La fenêtre d'export tient en un seul écran : le formulaire, puis une
 progression qui se superpose à lui le temps de l'écriture. Elle se ferme
 d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
 
+Trois points méritent l'attention :
+
+* **L'export porte sur les positions actuellement affichées**, pas sur la base
+  entière. Après une recherche, seuls les résultats partent — la fenêtre le
+  rappelle en tête.
+* **Une collection dont toutes les positions ne sont pas dans la sélection
+  arrive tronquée.** La liste affiche donc, pour chaque collection, la part
+  couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
+* **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
+  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est
+  désactivée tant que « inclure les matchs » ne l'est pas.
+
+Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier
+produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
+enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
+propres recherches enregistrées, sans utilité dans la base de quelqu'un
+d'autre.
+
 Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
 
 * **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :

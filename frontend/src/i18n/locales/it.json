@@ -656,7 +656,7 @@
         "includeAnalysis": "Includi analisi",
         "includeCollections": "Includi collezioni ({count})",
         "includeComments": "Includi commenti",
-        "includeFilterLibrary": "Includi libreria dei filtri",
+        "includeFilterLibrary": "I miei filtri salvati",
         "includeMatches": "Includi match ({count})",
         "includePlayedMoves": "Includi mosse giocate",
         "includeTournaments": "Includi tornei ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Esporta database",
         "user": "Utente",
         "userPlaceholder": "Inserisci il tuo nome (opzionale)",
-        "willBeExported": "{count} posizione/i verranno esportate con {desc}.",
+        "willBeExported": "Le {count} posizione/i attualmente visualizzate verranno esportate con {desc}.",
         "descTwo": "{a} e {b}",
         "descMany": "{list} e {last}",
         "descAnalysis": "le analisi",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} tornei",
         "descCollection": "{count} collezione",
         "descCollectionsPlural": "{count} collezioni",
-        "descPositionsOnly": "solo le posizioni"
+        "descPositionsOnly": "solo le posizioni",
+        "descWatermarked": "la sua origine marcata",
+        "descProtected": "una password",
+        "tournamentsNeedMatches": "Un torneo è collegato alle sue partite solo se anche queste vengono esportate: spunta prima «includi partite».",
+        "filterLibraryHint": "Le tue ricerche salvate, non contenuto: non servono a nulla nel database di qualcun altro.",
+        "metadataTitle": "Metadati del file esportato"
     },
     "import": {
         "abortImport": "Annulla importazione",
