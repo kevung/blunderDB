@@ -81,7 +81,7 @@
 
 
 \title{blunderDB}
-\date{02 ago 2026}
+\date{04 ago 2026}
 \release{0.30.1}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1026,11 +1026,7 @@ studiare le posizioni tramite ripetizione dilazionata (pannello Anki),
 
 \item {} 
 \sphinxAtStartPar
-visualizzare i metadati del database (pannello metadati),
-
-\item {} 
-\sphinxAtStartPar
-visualizzare il registro delle operazioni (pannello registro).
+afficher les métadonnées de la base de données (panneau métadonnées).
 
 \end{itemize}
 
@@ -1133,13 +1129,39 @@ Le viste vengono salvate con lo stato di sessione del database e ripristinate al
 \subsection{Configurazione}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Il pulsante di configurazione (icona a forma di ingranaggio) situato nella barra degli strumenti, a sinistra del pulsante di aiuto, apre la finestra di configurazione di blunderDB.
+Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en trois onglets :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Interface} — langue, échelle d’affichage, position du panneau ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Couleurs} — les couleurs du plateau ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Identité d’émetteur} — la clé qui signe vos filigranes, décrite à la
+section {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}.
+
+\end{itemize}
 
 \sphinxAtStartPar
-Essa permette di scegliere la lingua dell’interfaccia tra inglese, francese, tedesco, italiano, spagnolo, finlandese, giapponese, greco e russo. L’intera interfaccia (barra degli strumenti, pannelli, messaggi, guida) viene tradotta nella lingua selezionata. La scelta della lingua viene salvata e mantenuta da una sessione all’altra.
+L’onglet \sphinxstyleemphasis{Interface} permet de choisir la langue parmi l’anglais, le
+français, l’allemand, l’italien, l’espagnol, le finnois, le japonais, le grec
+et le russe. L’ensemble de l’interface (barre d’outils, panneaux, messages,
+aide) est traduit dans la langue sélectionnée. Le choix de la langue est
+enregistré et conservé d’une session à l’autre.
 
 \sphinxAtStartPar
-La finestra delle impostazioni permette inoltre di personalizzare i colori del board. Ogni elemento dispone del proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante \sphinxstyleemphasis{Ripristina} riporta tutti i colori ai valori predefiniti. Come la lingua, i colori scelti vengono conservati da una sessione all’altra.
+L’onglet \sphinxstyleemphasis{Couleurs} permet de personnaliser les couleurs du
+plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
+la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
+2, les dés, les points des dés et le videau. Le bouton \sphinxstyleemphasis{Réinitialiser} rétablit
+l’ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
+conservées d’une session à l’autre.
 
 \sphinxAtStartPar
 La finestra di configurazione raggruppa anche alcune impostazioni di visualizzazione dell’interfaccia. Un cursore di \sphinxstylestrong{scala dell’interfaccia} consente di ingrandire o ridurre l’insieme degli elementi, il che è utile sugli schermi ad alta densità o per migliorare la leggibilità. Un menu \sphinxstylestrong{posizione dei pannelli} determina la collocazione dei pannelli (ricerca, match, analisi) rispetto al tavoliere: \sphinxstyleemphasis{in basso}, \sphinxstyleemphasis{di lato} o \sphinxstyleemphasis{automatica} (il lato viene allora scelto sugli schermi larghi per sfruttare meglio lo spazio disponibile). Come le altre impostazioni, queste scelte vengono conservate da una sessione all’altra.
@@ -1777,11 +1799,207 @@ Il pannello \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}
 \sphinxAtStartPar
 Il pannello \sphinxstylestrong{Metadati} visualizza le informazioni generali del database corrente: nome, descrizione, numero di posizioni, numero di match e di partite, versione dello schema. Accessibile tramite il comando \sphinxcode{\sphinxupquote{meta}}.
 
-
-\subsection{Pannello Registro}
-\label{\detokenize{manuel:panneau-journal}}\label{\detokenize{manuel:panneau-log}}
 \sphinxAtStartPar
-Il pannello \sphinxstylestrong{Registro} visualizza il registro delle operazioni recenti: importazioni, esportazioni e operazioni sul database, con i relativi risultati e marche temporali. È utile per diagnosticare gli errori di importazione.
+Il affiche également, \sphinxstylestrong{lorsqu’elle existe}, l’origine de la base — voir
+{\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Diffuser une base : origine et mot de passe}}}}}. Une base ordinaire n’affiche pas cette section.
+
+
+\subsection{Diffuser une base : origine et mot de passe}
+\label{\detokenize{manuel:diffuser-une-base-origine-et-mot-de-passe}}\label{\detokenize{manuel:diffusion-controlee}}
+\sphinxAtStartPar
+Un enseignant qui distribue une base de positions dispose de deux mécanismes,
+indépendants l’un de l’autre, tous deux facultatifs et choisis \sphinxstylestrong{au moment de
+l’export} : marquer le fichier de son origine, et le protéger par un mot de
+passe.
+
+\begin{sphinxadmonition}{note}{Nota:}
+\sphinxAtStartPar
+Aucun des deux ne suit ce que devient le fichier. blunderDB \sphinxstylestrong{n’enregistre
+rien du côté de celui qui reçoit la base} : ouvrir une base marquée est
+exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
+consigne qui l’a ouverte, quand, ni d’où vient son contenu.
+\end{sphinxadmonition}
+
+
+\subsubsection{Marquer une base de son origine}
+\label{\detokenize{manuel:marquer-une-base-de-son-origine}}
+\sphinxAtStartPar
+La fenêtre d’export tient en un seul écran : le formulaire, puis une
+progression qui se superpose à lui le temps de l’écriture. Elle se ferme
+d’elle\sphinxhyphen{}même une fois terminée, et le résultat s’affiche dans la barre d’état.
+
+\sphinxAtStartPar
+Trois points méritent l’attention :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{L’export porte sur les positions actuellement affichées}, pas sur la base
+entière. Après une recherche, seuls les résultats partent — la fenêtre le
+rappelle en tête.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Une collection dont toutes les positions ne sont pas dans la sélection
+arrive tronquée.} La liste affiche donc, pour chaque collection, la part
+couverte (« 12/40 ») et la signale en rouge lorsqu’elle est partielle.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Les tournois ne peuvent être exportés qu’avec les matchs} : sans eux, le
+lien tournoi–match n’existe pas et le tournoi arriverait vide. La case est
+désactivée tant que « inclure les matchs » ne l’est pas.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les champs \sphinxstyleemphasis{Utilisateur}, \sphinxstyleemphasis{Description} et \sphinxstyleemphasis{Date} décrivent le \sphinxstylestrong{fichier
+produit} ; ils sont préremplis depuis la base source. La case \sphinxstyleemphasis{Mes filtres
+enregistrés} est à part des autres : elle n’exporte pas du contenu mais vos
+propres recherches enregistrées, sans utilité dans la base de quelqu’un
+d’autre.
+
+\sphinxAtStartPar
+Cocher \sphinxstylestrong{Marquer ce fichier de son origine} fait apparaître deux champs :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Origine} — ce qu’est ce fichier et d’où il vient, dans vos mots :
+« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est \sphinxstylestrong{obligatoire} : tant
+qu’il est vide, le bouton d’export reste inactif.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Note}, facultative — conditions d’utilisation, adresse de contact, une
+demande de ne pas rediffuser.
+
+\end{itemize}
+
+\sphinxAtStartPar
+La marque est signée avec votre identité d’émetteur. Elle est donc
+\sphinxstylestrong{inaltérable et infalsifiable} : nul ne peut la modifier, ni en fabriquer une
+à votre nom. Elle n’est en revanche \sphinxstylestrong{pas ineffaçable} — le fichier distribué
+est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
+n’empêche rien : elle dit d’où vient le fichier.
+
+
+\subsubsection{Identité d’émetteur}
+\label{\detokenize{manuel:identite-d-emetteur}}
+\sphinxAtStartPar
+Les marques sont signées avec votre \sphinxstylestrong{identité d’émetteur}, créée toute seule
+la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
+appartient à une personne et non à une base : tous vos fichiers portent la même
+empreinte publique, de la forme \sphinxcode{\sphinxupquote{A3F1\sphinxhyphen{}9C24\sphinxhyphen{}7B05\sphinxhyphen{}E1D8}}.
+
+\sphinxAtStartPar
+Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
+vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
+à l’autre en un seul fichier (extension \sphinxcode{\sphinxupquote{.bdbid}}), éventuellement protégé par
+une phrase secrète. \sphinxstylestrong{Ce fichier permet de signer en votre nom : ne le partagez
+pas.}
+
+\sphinxAtStartPar
+Dans les préférences (icône engrenage de la barre d’outils), l’onglet \sphinxstyleemphasis{Identité
+d’émetteur} affiche votre nom et votre empreinte, et propose \sphinxstyleemphasis{Enregistrer
+l’identité…}, \sphinxstyleemphasis{Charger une identité…} et \sphinxstyleemphasis{Régénérer…}.
+
+\begin{sphinxadmonition}{warning}{Avvertimento:}
+\sphinxAtStartPar
+\sphinxstylestrong{Régénérer ne révoque rien.} Un filigrane embarque la clé publique qui l’a
+signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
+d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
+ancienne empreinte, et ces marques resteront valides.
+
+\sphinxAtStartPar
+Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
+votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
+destinataires.
+
+\sphinxAtStartPar
+La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
+avant de la remplacer.
+\end{sphinxadmonition}
+
+
+\subsubsection{Protéger une base par un mot de passe}
+\label{\detokenize{manuel:proteger-une-base-par-un-mot-de-passe}}
+\sphinxAtStartPar
+Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
+l’icône en forme d’œil l’affiche \sphinxstylestrong{tant qu’on la maintient enfoncée}, et le
+masque de nouveau dès qu’on relâche.
+
+\sphinxAtStartPar
+Cocher \sphinxstylestrong{Protéger ce fichier par un mot de passe} produit un fichier
+d’extension \sphinxcode{\sphinxupquote{.dbx}} — y compris si vous aviez choisi un nom en \sphinxcode{\sphinxupquote{.db}} dans la
+fenêtre d’enregistrement, celle\sphinxhyphen{}ci s’ouvrant avant que le mot de passe ne soit
+demandé. Pour l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de
+sélection accepte aussi bien les \sphinxcode{\sphinxupquote{.db}} que les \sphinxcode{\sphinxupquote{.dbx}}. blunderDB demande
+alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
+n’est demandé.
+
+\sphinxAtStartPar
+La fenêtre propose de \sphinxstylestrong{supprimer le fichier protégé une fois ouvert} : sans
+cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
+défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
+la suppression n’a lieu qu’après une ouverture réussie.
+
+\begin{sphinxadmonition}{warning}{Avvertimento:}
+\sphinxAtStartPar
+Le mot de passe protège le \sphinxstylestrong{transport} du fichier, pas la base. Il empêche
+un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
+une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
+avez donné le mot de passe.
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
+Le mot de passe est vérifié à \sphinxstylestrong{chaque} ouverture, y compris lorsque le fichier
+a déjà été ouvert auparavant sur ce poste.
+
+\sphinxAtStartPar
+Techniquement, la base est chiffrée par \sphinxstylestrong{AES\sphinxhyphen{}256 en mode GCM}, avec une clé
+dérivée du mot de passe par \sphinxstylestrong{Argon2id} (64 Mio de mémoire, 3 passes, 4 fils),
+et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
+l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
+fichier chiffré l’est également — on n’obtient jamais une base corrompue en
+silence.
+
+\sphinxAtStartPar
+L’en\sphinxhyphen{}tête du fichier protégé reste \sphinxstylestrong{en clair} : son origine demeure lisible
+sans le mot de passe.
+
+
+\subsubsection{Lire l’origine d’un fichier}
+\label{\detokenize{manuel:lire-l-origine-d-un-fichier}}
+\sphinxAtStartPar
+Dans l’application, ouvrez le fichier et affichez le panneau \sphinxstylestrong{Métadonnées}
+(commande \sphinxcode{\sphinxupquote{meta}}). Sous les champs habituels apparaît une section \sphinxstylestrong{Origine},
+en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l’état de
+la signature :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+« \(\checkmark\) signature vérifiée — marquée par vous » : le fichier porte votre marque,
+intacte ;
+
+\item {} 
+\sphinxAtStartPar
+« \(\checkmark\) signature vérifiée » : la marque est intacte et vient d’une autre clé —
+comparez son empreinte à celle que le producteur vous a communiquée ;
+
+\item {} 
+\sphinxAtStartPar
+« ⚠ signature invalide » : le document a été modifié ou contrefait.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Cette section n’apparaît pas sur une base ordinaire.
+
+\sphinxAtStartPar
+En ligne de commande, \sphinxcode{\sphinxupquote{blunderdb info \sphinxhyphen{}\sphinxhyphen{}db fichier.db}} affiche l’origine et
+l’état de la signature, \sphinxstylestrong{sans jamais écrire dans le fichier}. La commande
+fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
+\sphinxcode{\sphinxupquote{CLI\_USAGE.md}} pour les options \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} et \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} de
+\sphinxcode{\sphinxupquote{export}}, ainsi que pour \sphinxcode{\sphinxupquote{identity}} et \sphinxcode{\sphinxupquote{open}}.
 
 \sphinxstepscope
 

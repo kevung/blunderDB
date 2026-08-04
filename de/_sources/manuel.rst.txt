@@ -77,9 +77,7 @@ Des panneaux peuvent être affichés pour:
 
 * étudier les positions par répétition espacée (panneau Anki),
 
-* afficher les métadonnées de la base de données (panneau métadonnées),
-
-* afficher le journal des opérations (panneau journal).
+* afficher les métadonnées de la base de données (panneau métadonnées).
 
 Des fenêtres modales peuvent s'afficher pour:
 
@@ -160,15 +158,20 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB.
+blunderDB. Elle est organisée en trois onglets :
 
-Celle-ci permet de choisir la langue de l'interface parmi l'anglais, le
+* **Interface** — langue, échelle d'affichage, position du panneau ;
+* **Couleurs** — les couleurs du plateau ;
+* **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
+  section :ref:`diffusion_controlee`.
+
+L'onglet *Interface* permet de choisir la langue parmi l'anglais, le
 français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
 et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d'une session à l'autre.
 
-La fenêtre de configuration permet également de personnaliser les couleurs du
+L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
 la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 2, les dés, les points des dés et le videau. Le bouton *Réinitialiser* rétablit
@@ -779,12 +782,156 @@ Le panneau **Métadonnées** affiche les informations générales de la base de
 données courante : nom, description, nombre de positions, nombre de matchs et
 de parties, version du schéma. Accessible via la commande ``meta``.
 
-.. _panneau_log:
+Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir
+:ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette section.
 
-Panneau Journal
----------------
+.. _diffusion_controlee:
 
-Le panneau **Journal** affiche le journal des opérations récentes : imports,
-exports et opérations sur la base de données, avec leurs résultats et
-horodatages. Il est utile pour diagnostiquer les erreurs d'import.
+Diffuser une base : origine et mot de passe
+-------------------------------------------
+
+Un enseignant qui distribue une base de positions dispose de deux mécanismes,
+indépendants l'un de l'autre, tous deux facultatifs et choisis **au moment de
+l'export** : marquer le fichier de son origine, et le protéger par un mot de
+passe.
+
+.. note::
+
+   Aucun des deux ne suit ce que devient le fichier. blunderDB **n'enregistre
+   rien du côté de celui qui reçoit la base** : ouvrir une base marquée est
+   exactement comme ouvrir n'importe quelle autre, et rien nulle part ne
+   consigne qui l'a ouverte, quand, ni d'où vient son contenu.
+
+Marquer une base de son origine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+La fenêtre d'export tient en un seul écran : le formulaire, puis une
+progression qui se superpose à lui le temps de l'écriture. Elle se ferme
+d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
+
+Trois points méritent l'attention :
+
+* **L'export porte sur les positions actuellement affichées**, pas sur la base
+  entière. Après une recherche, seuls les résultats partent — la fenêtre le
+  rappelle en tête.
+* **Une collection dont toutes les positions ne sont pas dans la sélection
+  arrive tronquée.** La liste affiche donc, pour chaque collection, la part
+  couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle.
+* **Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, le
+  lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est
+  désactivée tant que « inclure les matchs » ne l'est pas.
+
+Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier
+produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
+enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
+propres recherches enregistrées, sans utilité dans la base de quelqu'un
+d'autre.
+
+Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
+
+* **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
+  « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : tant
+  qu'il est vide, le bouton d'export reste inactif.
+* **Note**, facultative — conditions d'utilisation, adresse de contact, une
+  demande de ne pas rediffuser.
+
+La marque est signée avec votre identité d'émetteur. Elle est donc
+**inaltérable et infalsifiable** : nul ne peut la modifier, ni en fabriquer une
+à votre nom. Elle n'est en revanche **pas ineffaçable** — le fichier distribué
+est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
+n'empêche rien : elle dit d'où vient le fichier.
+
+Identité d'émetteur
+~~~~~~~~~~~~~~~~~~~
+
+Les marques sont signées avec votre **identité d'émetteur**, créée toute seule
+la première fois que vous marquez un fichier ; il n'y a rien à configurer. Elle
+appartient à une personne et non à une base : tous vos fichiers portent la même
+empreinte publique, de la forme ``A3F1-9C24-7B05-E1D8``.
+
+Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils
+vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un poste
+à l'autre en un seul fichier (extension ``.bdbid``), éventuellement protégé par
+une phrase secrète. **Ce fichier permet de signer en votre nom : ne le partagez
+pas.**
+
+Dans les préférences (icône engrenage de la barre d'outils), l'onglet *Identité
+d'émetteur* affiche votre nom et votre empreinte, et propose *Enregistrer
+l'identité…*, *Charger une identité…* et *Régénérer…*.
+
+.. warning::
+
+   **Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui l'a
+   signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
+   d'identité a fuité, celui qui le détient pourra continuer à signer sous votre
+   ancienne empreinte, et ces marques resteront valides.
+
+   Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier
+   votre nouvelle empreinte et de désavouer l'ancienne auprès de vos
+   destinataires.
+
+   La régénération écrase la clé actuelle ; blunderDB propose de l'enregistrer
+   avant de la remplacer.
+
+Protéger une base par un mot de passe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier protégé ;
+l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
+masque de nouveau dès qu'on relâche.
+
+Cocher **Protéger ce fichier par un mot de passe** produit un fichier
+d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
+fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
+demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
+sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
+alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
+n'est demandé.
+
+La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : sans
+cela vous conservez le même contenu sous deux noms. La case n'est pas cochée par
+défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
+la suppression n'a lieu qu'après une ouverture réussie.
+
+.. warning::
+
+   Le mot de passe protège le **transport** du fichier, pas la base. Il empêche
+   un tiers d'ouvrir un fichier qui traîne dans un dossier de téléchargement ou
+   une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
+   avez donné le mot de passe.
+
+Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le fichier
+a déjà été ouvert auparavant sur ce poste.
+
+Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une clé
+dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 passes, 4 fils),
+et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
+l'ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
+fichier chiffré l'est également — on n'obtient jamais une base corrompue en
+silence.
+
+L'en-tête du fichier protégé reste **en clair** : son origine demeure lisible
+sans le mot de passe.
+
+Lire l'origine d'un fichier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dans l'application, ouvrez le fichier et affichez le panneau **Métadonnées**
+(commande ``meta``). Sous les champs habituels apparaît une section **Origine**,
+en lecture seule, qui indique ce qui a été inscrit, par qui, quand, et l'état de
+la signature :
+
+* « ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
+  intacte ;
+* « ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé —
+  comparez son empreinte à celle que le producteur vous a communiquée ;
+* « ⚠ signature invalide » : le document a été modifié ou contrefait.
+
+Cette section n'apparaît pas sur une base ordinaire.
+
+En ligne de commande, ``blunderdb info --db fichier.db`` affiche l'origine et
+l'état de la signature, **sans jamais écrire dans le fichier**. La commande
+fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
+``CLI_USAGE.md`` pour les options ``--watermark`` et ``--password`` de
+``export``, ainsi que pour ``identity`` et ``open``.
 
