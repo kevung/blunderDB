@@ -1756,12 +1756,21 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in the
+       browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .search-panel {
         display: flex;
         height: 100%;
         background: white;
         overflow: hidden;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         user-select: none;
         -webkit-user-select: none;
     }
@@ -1782,7 +1791,7 @@
         border: none;
         background: transparent;
         padding: 8px 4px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         cursor: pointer;
         border-left: 2px solid transparent;
@@ -1827,7 +1836,7 @@
         border-bottom-color: #e0b4b0;
     }
     .structure-btn {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 3px 10px;
         border: 1px solid #ccc;
         background: #fff;
@@ -1851,7 +1860,7 @@
     }
     .structure-hint {
         margin-left: auto;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #c0392b;
         font-style: italic;
     }
@@ -1872,7 +1881,7 @@
         margin-bottom: 2px;
     }
     .group-header {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-weight: 700;
         color: #555;
         text-transform: uppercase;
@@ -1903,7 +1912,7 @@
         accent-color: #6c757d;
     }
     .filter-label {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #333;
         user-select: none;
     }
@@ -1920,7 +1929,7 @@
         gap: 8px;
     }
     .active-count {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
         margin-right: auto;
     }
@@ -1928,7 +1937,7 @@
         display: flex;
         align-items: center;
         gap: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         cursor: pointer;
         user-select: none;
@@ -1939,7 +1948,7 @@
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         background: #6c757d;
         color: white;
     }
@@ -1951,7 +1960,7 @@
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         background: #ccc;
         color: #333;
     }
@@ -1968,7 +1977,7 @@
         gap: 4px;
     }
     .decision-btn {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 3px 10px;
         border: 1px solid #ccc;
         background: #fff;
@@ -1997,17 +2006,17 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         user-select: none;
         -webkit-user-select: none;
     }
     .num-input {
         width: 60px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 2px 3px;
     }
     .date-input {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 2px 3px;
     }
     .text-control {
@@ -2016,13 +2025,13 @@
         gap: 6px;
     }
     .hint {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
         white-space: nowrap;
     }
     .text-input {
         flex: 1;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 3px 4px;
         max-width: 200px;
     }
@@ -2031,7 +2040,7 @@
         border: none;
         border-radius: 3px;
         cursor: pointer;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         background: #ccc;
         color: #333;
     }
@@ -2049,7 +2058,7 @@
     .empty-message {
         text-align: center;
         color: #888;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         padding: 12px;
     }
     .history-table-container {
@@ -2070,7 +2079,7 @@
         padding: 2px 4px;
         text-align: center;
         font-weight: bold;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         border: 1px solid #ddd;
         user-select: none;
     }
@@ -2078,7 +2087,7 @@
         padding: 2px 4px;
         border: 1px solid #ddd;
         text-align: center;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .history-table tbody tr {
         cursor: pointer;
@@ -2145,12 +2154,12 @@
     .saved-name {
         font-weight: 600;
         min-width: 120px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .saved-cmd {
         flex: 1;
         font-family: monospace;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -2182,14 +2191,14 @@
     }
     .save-dialog h3 {
         margin: 0 0 12px;
-        font-size: 14px;
+        font-size: var(--font-size-base);
     }
     .command-preview {
         background: #f5f5f5;
         padding: 8px;
         border-radius: 4px;
         font-family: monospace;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         margin-bottom: 12px;
         word-break: break-all;
     }
@@ -2200,7 +2209,7 @@
         display: block;
         margin-bottom: 4px;
         font-weight: bold;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         user-select: none;
         -webkit-user-select: none;
     }
@@ -2209,7 +2218,7 @@
         padding: 6px;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         box-sizing: border-box;
     }
     .dialog-actions {

@@ -1113,6 +1113,15 @@
 {/if}
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in the
+       browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .match-panel {
         width: 100%;
         height: 100%;
@@ -1154,7 +1163,7 @@
         background: none;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         cursor: pointer;
         padding: 2px 8px;
@@ -1186,7 +1195,7 @@
     .match-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .match-table thead {
@@ -1206,7 +1215,7 @@
     .match-table th {
         font-weight: 600;
         color: #333;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .match-table th.sortable {
@@ -1218,7 +1227,7 @@
     }
 
     .sort-arrow {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         margin-left: 3px;
         color: #1976d2;
     }
@@ -1267,7 +1276,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
     }
 
@@ -1286,7 +1295,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         padding: 0 2px;
         line-height: 1;
@@ -1305,7 +1314,7 @@
         padding: 1px 4px;
         border: 1px solid #1976d2;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         box-sizing: border-box;
         outline: none;
     }
@@ -1321,14 +1330,14 @@
         text-align: center;
         color: #999;
         padding: 24px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .loading-state {
         text-align: center;
         color: #999;
         padding: 24px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     /* --- Detail pane (right) --- */
@@ -1352,7 +1361,7 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #222;
         margin-bottom: 4px;
@@ -1361,14 +1370,14 @@
     .vs-label {
         color: #999;
         font-weight: 400;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .match-length-badge {
         display: inline-block;
         background: #e3f2fd;
         color: #1565c0;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         font-weight: 600;
         padding: 1px 6px;
         border-radius: 8px;
@@ -1379,7 +1388,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 4px 12px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         margin-bottom: 6px;
     }
@@ -1406,7 +1415,7 @@
         border-bottom: 2px solid transparent;
         padding: 4px 12px;
         cursor: pointer;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         transition:
             color 0.15s,
@@ -1451,7 +1460,7 @@
         gap: 10px;
         padding: 4px 12px;
         background: #f0f4f8;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         border-bottom: 1px solid #e0e0e0;
         z-index: 1;
@@ -1474,14 +1483,14 @@
     .transcript-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .transcript-table thead th {
         padding: 2px 8px;
         text-align: left;
         font-weight: 600;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
         border-bottom: 1px solid #eee;
         background: #fafafa;
@@ -1527,13 +1536,13 @@
         width: 32px;
         text-align: center;
         font-family: monospace;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
     }
 
     .transcript-move {
         font-family: monospace;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #222;
     }
 
@@ -1561,7 +1570,7 @@
     .metadata-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .metadata-table td {
@@ -1573,7 +1582,7 @@
     .meta-label {
         width: 100px;
         color: #888;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .meta-value {
@@ -1582,14 +1591,14 @@
 
     .source-file {
         font-family: monospace;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #666;
         word-break: break-all;
     }
 
     .id-value {
         font-family: monospace;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
@@ -1606,14 +1615,14 @@
         padding: 2px 4px;
         border: 1px solid #1976d2;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         box-sizing: border-box;
         outline: none;
     }
 
     .tournament-display {
         color: #666;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .tournament-display:hover {
@@ -1631,7 +1640,7 @@
 
     .tournament-dropdown-item {
         padding: 3px 6px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         cursor: pointer;
     }
 
@@ -1656,7 +1665,7 @@
     .match-comment-input {
         width: 100%;
         padding: 1px 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         border: 1px solid #4a90d9;
         border-radius: 3px;
         outline: none;
@@ -1672,13 +1681,13 @@
     .stats-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .stats-table th {
         text-align: left;
         padding: 4px 8px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         border-bottom: 2px solid #ddd;
         font-weight: 600;
@@ -1692,7 +1701,7 @@
     .stats-section-header td {
         background: #f0f4f8;
         padding: 5px 8px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-weight: 600;
         color: #444;
         text-transform: uppercase;
@@ -1703,13 +1712,13 @@
     .stats-label {
         padding: 3px 8px;
         color: #555;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     .sub-label {
         padding-left: 20px;
         color: #888;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .stats-val {
@@ -1722,7 +1731,7 @@
 
     .sub-val {
         color: #666;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .pr-val {

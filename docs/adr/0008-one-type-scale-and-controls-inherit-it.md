@@ -35,11 +35,18 @@ untidy.
 
 ```css
 :root {
-    --font-size-base: 13px;   /* body text, labels, values, controls, buttons */
-    --font-size-small: 11px;  /* secondary notes and hints */
-    --font-size-title: 16px;  /* panel and dialog titles */
+    --font-size-base: 12px;   /* body text, labels, values, controls, buttons */
+    --font-size-small: 11px;  /* dense lists, secondary notes and hints */
+    --font-size-title: 15px;  /* panel and dialog titles */
 }
 ```
+
+The values are taken from what the codebase already does, not from taste. Counting the
+panels that carry the most type — matches, Anki, search, tournaments — gives 55 declarations
+at 11 px and 28 at 12 px against a handful at every other value. Choosing anything else
+would have meant a visible change on every dense list for no reason. (An earlier draft of
+this decision proposed 13 px, inferred from a single settings dialog; the repository-wide
+count corrected it.)
 
 The tokens exist as of this decision. The companion rule —
 
@@ -98,8 +105,8 @@ tabs and are not "text".
   cd frontend/src && grep -ro 'font-size:[^;]*;' components/ *.svelte | wc -l
   ```
 
-- Two components already follow the rule (the metadata panel and the settings dialog) but
-  disagree on the base size, 12 px against 13 px. The scale above settles it at 13 px; both
-  are to be aligned when they are next touched.
+- Sizes below `--font-size-small` disappear: 9 px and 10 px were used to de-emphasise
+  counters and badges, which is exactly the "shrink to demote" habit rule 2 rejects. Those
+  become 11 px and lean on colour instead — a deliberate, visible change on a few badges.
 - A reviewer now has something to point at. "Why is this 11 px?" has an answer other than
   taste.

@@ -980,6 +980,15 @@
 </section>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in the
+       browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .tournament-panel {
         width: 100%;
         height: 100%;
@@ -991,7 +1000,7 @@
         -webkit-user-select: none;
     }
     .panel-content {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #333;
         height: 100%;
         display: flex;
@@ -1015,7 +1024,7 @@
     .tournament-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
     .tournament-table thead {
         position: sticky;
@@ -1032,7 +1041,7 @@
     .tournament-table th {
         font-weight: 600;
         color: #333;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .tournament-table th.sortable {
         cursor: pointer;
@@ -1041,7 +1050,7 @@
         background-color: #e8e8e8;
     }
     .sort-arrow {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         margin-left: 3px;
         color: #1976d2;
     }
@@ -1094,7 +1103,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         padding: 0 3px;
         line-height: 1;
@@ -1115,7 +1124,7 @@
         padding: 1px 4px;
         border: 1px solid #1976d2;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         box-sizing: border-box;
         outline: none;
     }
@@ -1128,13 +1137,13 @@
         text-align: center;
         color: #999;
         padding: 24px;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
 
     /* Detail header for match view */
     .detail-header {
         padding: 3px 8px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #555;
         border-bottom: 1px solid #e0e0e0;
         flex-shrink: 0;
@@ -1148,7 +1157,7 @@
         border: none;
         background: none;
         cursor: pointer;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         color: #666;
         padding: 0 4px;
         line-height: 1;
@@ -1164,7 +1173,7 @@
         white-space: nowrap;
     }
     .header-meta {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
         flex-shrink: 0;
     }
@@ -1186,13 +1195,13 @@
         padding: 1px 4px;
         border: 1px solid #1976d2;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         box-sizing: border-box;
         outline: none;
     }
     .tournament-comment-text {
         flex-shrink: 1;
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #bbb;
         cursor: pointer;
         overflow: hidden;
@@ -1222,7 +1231,7 @@
         padding: 2px 4px;
         border: 1px solid #ccc;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         outline: none;
         box-sizing: border-box;
     }
@@ -1252,7 +1261,7 @@
         padding: 2px 6px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         box-sizing: border-box;
         outline: none;
     }
@@ -1270,14 +1279,14 @@
     .dropdown-item {
         padding: 3px 8px;
         cursor: pointer;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         border-bottom: 1px solid #f5f5f5;
     }
     .dropdown-item:hover {
         background: #e3f2fd;
     }
     .match-pts {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #999;
     }
 
@@ -1291,7 +1300,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #aaa;
         cursor: pointer;
         min-height: 16px;
