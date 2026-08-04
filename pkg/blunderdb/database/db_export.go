@@ -50,7 +50,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	// database, unprotected, sitting next to the protected copy.
 	finalPath := opts.ExportPath
 	if opts.Password != "" {
-		// A protected export is named .bdbx even when the caller asked for .db: the GUI's
+		// A protected export is named .dbx even when the caller asked for .db: the GUI's
 		// save dialog forces a .db name before the user has chosen a password, and a file
 		// whose name says "database" but whose contents are encrypted confuses every other
 		// tool. ExportedPath reports where it actually landed.

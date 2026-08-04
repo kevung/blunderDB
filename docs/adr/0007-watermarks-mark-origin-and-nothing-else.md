@@ -51,7 +51,11 @@ the UI:
 
 > **tamper-evident and unforgeable, never unremovable.**
 
-**A password wraps the export in an encrypted container** (`.bdbx`, Argon2id + AES-GCM). It
+**A password wraps the export in an encrypted container** (`.dbx`: AES-256-GCM, key derived
+by Argon2id with 64 MiB, 3 passes and 4 lanes, salted per file). GCM authenticates the whole
+payload, so a wrong password is detected rather than yielding a corrupt database, and the
+password is checked on **every** open — an earlier version handed back an already-decrypted
+file without looking at it, which made the protection stop protecting after first use. It
 protects the file *in transit* — the stray copy in a downloads folder, the attachment
 forwarded by mistake — not the database, since whoever the password was given to can open it.
 The container's header is **cleartext**, so the origin of a file stays readable without it.
@@ -110,5 +114,5 @@ Export copies metadata by **allow-list** (`issuance.CarriedMetadataKeys`).
   different fingerprint; files already marked still verify, since they embed the public key.
   Rotation and revocation are out of scope.
 - `blunderdb info` reads the origin of any file, including a protected one, and never writes.
-- The `.bdbx` container is a **new distributed file format**. Once published it cannot be
+- The `.dbx` container is a **new distributed file format**. Once published it cannot be
   withdrawn.

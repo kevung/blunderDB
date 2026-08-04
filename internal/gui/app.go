@@ -88,9 +88,9 @@ func (a *App) OpenDatabaseDialog() (string, error) {
 	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Open Database File",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "blunderDB databases (*.db, *.bdbx)", Pattern: "*.db;*.bdbx"},
+			{DisplayName: "blunderDB databases (*.db, *.dbx)", Pattern: "*.db;*.dbx"},
 			{DisplayName: "Database Files (*.db)", Pattern: "*.db"},
-			{DisplayName: "Protected copies (*.bdbx)", Pattern: "*.bdbx"},
+			{DisplayName: "Protected copies (*.dbx)", Pattern: "*.dbx"},
 		},
 	})
 }

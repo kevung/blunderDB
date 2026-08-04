@@ -11,7 +11,7 @@ import (
 )
 
 // ContainerExtension is the extension of a password-protected copy.
-const ContainerExtension = ".bdbx"
+const ContainerExtension = ".dbx"
 
 var containerMagic = []byte("BDBX\x01")
 
@@ -194,7 +194,7 @@ func splitContainer(raw []byte) (ContainerHeader, []byte, error) {
 //
 // It must never return the container's own path — unwrapping would then overwrite the
 // protected file with its own contents. That is not hypothetical: a protected file does not
-// have to be named `.bdbx` (blunderDB recognises one by its magic bytes, not its extension),
+// have to be named `.dbx` (blunderDB recognises one by its magic bytes, not its extension),
 // so a container called `cours.db` is perfectly openable and would otherwise unwrap onto
 // itself.
 func DefaultUnwrapPath(containerPath string) string {
@@ -211,7 +211,7 @@ func DefaultUnwrapPath(containerPath string) string {
 // ProtectedPath is the name a protected export should carry. blunderDB opens a container by
 // its magic bytes, so the extension is a convention rather than a requirement — but a file
 // whose name says `.db` and whose contents are encrypted misleads every other tool the user
-// owns, so an export that asks for a password gets the `.bdbx` name to match.
+// owns, so an export that asks for a password gets the `.dbx` name to match.
 func ProtectedPath(path string) string {
 	if strings.HasSuffix(strings.ToLower(path), ContainerExtension) {
 		return path

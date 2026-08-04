@@ -431,10 +431,10 @@ func TestDefaultUnwrapPath(t *testing.T) {
 	}
 }
 
-// A container does not have to be named .bdbx — blunderDB recognises one by its magic bytes.
+// A container does not have to be named .dbx — blunderDB recognises one by its magic bytes.
 // Unwrapping one that is called .db must not land on the container itself.
 func TestDefaultUnwrapPathNeverOverwritesTheContainer(t *testing.T) {
-	for _, name := range []string{"cours.db", "cours", "cours.bdbx"} {
+	for _, name := range []string{"cours.db", "cours", "cours.dbx"} {
 		container := filepath.Join("dir", name)
 		got := DefaultUnwrapPath(container)
 		if got == filepath.Clean(container) {
@@ -448,10 +448,10 @@ func TestDefaultUnwrapPathNeverOverwritesTheContainer(t *testing.T) {
 
 func TestProtectedPath(t *testing.T) {
 	cases := map[string]string{
-		"cours.db":   "cours" + ContainerExtension,
-		"cours":      "cours" + ContainerExtension,
-		"cours.bdbx": "cours" + ContainerExtension,
-		"cours.BDBX": "cours.BDBX",
+		"cours.db":  "cours" + ContainerExtension,
+		"cours":     "cours" + ContainerExtension,
+		"cours.dbx": "cours" + ContainerExtension,
+		"cours.DBX": "cours.DBX",
 	}
 	for in, want := range cases {
 		if got := ProtectedPath(in); got != want {

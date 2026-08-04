@@ -206,7 +206,7 @@ func TestProtectedExportIsRenamedToBdbx(t *testing.T) {
 	if _, err := os.Stat(asked); err == nil {
 		t.Fatalf("%s must not exist: an encrypted file must not be named .db", asked)
 	}
-	produced := filepath.Join(dir, "cours.bdbx")
+	produced := filepath.Join(dir, "cours.dbx")
 	if !issuance.IsContainer(produced) {
 		t.Fatalf("expected a protected container at %s", produced)
 	}
@@ -233,7 +233,7 @@ func TestPasswordProtectedExport(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
 	dir := t.TempDir()
-	container := filepath.Join(dir, "cours.bdbx")
+	container := filepath.Join(dir, "cours.dbx")
 
 	exportTo(t, source, container, ExportOptions{
 		Watermark: "Cours de Jean Dupont — 12 mars 2026",
@@ -284,7 +284,7 @@ func TestPasswordProtectedExport(t *testing.T) {
 func TestPasswordWithoutAWatermark(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
-	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	container := filepath.Join(t.TempDir(), "cours.dbx")
 	exportTo(t, source, container, ExportOptions{Password: "pw"})
 
 	if !issuance.IsContainer(container) {
@@ -314,7 +314,7 @@ func TestPasswordWithoutAWatermark(t *testing.T) {
 func TestASecondOpenStillRequiresThePassword(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
-	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	container := filepath.Join(t.TempDir(), "cours.dbx")
 	exportTo(t, source, container, ExportOptions{Password: "le-bon"})
 
 	if _, err := OpenProtectedCopy(container, "le-bon"); err != nil {
@@ -337,7 +337,7 @@ func TestASecondOpenStillRequiresThePassword(t *testing.T) {
 func TestOpeningAProtectedCopyTwiceKeepsTheFirstResult(t *testing.T) {
 	isolateIdentity(t)
 	source := newTestDB(t)
-	container := filepath.Join(t.TempDir(), "cours.bdbx")
+	container := filepath.Join(t.TempDir(), "cours.dbx")
 	exportTo(t, source, container, ExportOptions{Password: "pw"})
 
 	first, err := OpenProtectedCopy(container, "pw")

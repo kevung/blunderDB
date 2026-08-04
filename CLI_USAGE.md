@@ -253,10 +253,10 @@ Auto-named files follow the scheme `Player1_Player2_YYYY-MM-DD_Np.mat` (money ga
 `export` can do two extra, independent things, both optional and freely combined:
 
 - `--watermark "<origin>"` writes a **signed statement of where the file comes from** into it, with `--watermark-note` for free text (terms of use, a contact address).
-- `--password <pw>` wraps the result in an encrypted container (`.bdbx`).
+- `--password <pw>` wraps the result in an encrypted container (`.dbx`).
 
 ```bash
-./blunderDB export --db cours.db --type database --file cours-diffusion.bdbx \
+./blunderDB export --db cours.db --type database --file cours-diffusion.dbx \
     --watermark "Cours de Jean Dupont — 12 mars 2026" \
     --watermark-note "Merci de ne pas rediffuser." \
     --password secret
@@ -264,7 +264,9 @@ Auto-named files follow the scheme `Player1_Player2_YYYY-MM-DD_Np.mat` (money ga
 
 **What a watermark is.** It is signed with your issuer identity, so it is **tamper-evident and unforgeable**: nobody can alter it, and nobody can fabricate one in your name. It is **not unremovable** — the file is a plain SQLite database and blunderDB is free software — and it prevents nothing. It says where the file came from.
 
-A protected export is always named `.bdbx`: if you pass `--file cours.db --password …`, the file is written as `cours.bdbx`. blunderDB recognises a protected file by its contents rather than its name, but a `.db` file holding encrypted bytes misleads every other tool you own.
+A protected export is always named `.dbx`: if you pass `--file cours.db --password …`, the file is written as `cours.dbx`. blunderDB recognises a protected file by its contents rather than its name, but a `.db` file holding encrypted bytes misleads every other tool you own.
+
+The container is **AES-256-GCM**, with the key derived from the password by **Argon2id** (64 MiB, 3 passes, 4 lanes) and a salt drawn per file. GCM authenticates the payload, so a wrong password is rejected instead of producing a corrupt database, and it is checked on every open.
 
 **What a password protects.** The file *in transit*: the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database — whoever you gave the password to can open it. The container's header is cleartext, so `blunderdb info` reads the origin without the password.
 
@@ -287,11 +289,11 @@ Renaming changes only a label: files already marked keep the name they were seal
 
 ## Open Command
 
-Turn a password-protected file (`.bdbx`) into an ordinary database. The password is asked for once; from then on it is a normal file.
+Turn a password-protected file (`.dbx`) into an ordinary database. The password is asked for once; from then on it is a normal file.
 
 ```bash
-./blunderDB open --db cours.bdbx --password secret
-./blunderDB open --db cours.bdbx --password secret --file ./mon-cours.db
+./blunderDB open --db cours.dbx --password secret
+./blunderDB open --db cours.dbx --password secret --file ./mon-cours.db
 ```
 
 **What the password protects:** the *transport* of the file — the stray copy in a downloads folder, the attachment forwarded by mistake. Not the database: whoever the password was given to can open it.
@@ -649,7 +651,7 @@ Statistics:
 
 ### Reading where a file came from
 
-`info` never writes: reading a database's origin leaves it untouched. It reads a protected `.bdbx` file too, from its cleartext header, without the password.
+`info` never writes: reading a database's origin leaves it untouched. It reads a protected `.dbx` file too, from its cleartext header, without the password.
 
 Nothing is printed for an ordinary database — a file that was never watermarked shows exactly what it always did.
 

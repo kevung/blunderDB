@@ -2,10 +2,16 @@ package database
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"sync"
+
+	"github.com/adrg/xdg"
 
 	_ "modernc.org/sqlite"
 
@@ -31,13 +37,41 @@ type Database struct {
 // failure (e.g. a read-only directory) is NON-fatal: single-instance is an
 // optional capability that must never block opening, so d.readOnly stays false
 // and the open proceeds unguarded. :memory: and the empty path are never locked.
+// lockPathFor returns the file whose advisory lock guards a database against a second
+// writer.
+//
+// It lives in the cache directory rather than beside the database. Two reasons, and the
+// second is the one that matters: a stray `cours.db.lock` next to someone's database reads
+// as debris, and it cannot simply be deleted when the lock is released — another instance
+// may already hold a descriptor to that inode, so unlinking it would let a third instance
+// create a fresh file and take a lock that excludes nobody. Keeping the marker out of sight
+// avoids the clutter without touching the correctness of the lock.
+//
+// The name is derived from the database's absolute path, so the same database always maps
+// to the same lock wherever it is opened from. If the cache directory cannot be created —
+// single-instance locking is an optional capability (ADR-0004) — it falls back beside the
+// database, which is where it always used to be.
+func lockPathFor(dbPath string) string {
+	abs, err := filepath.Abs(dbPath)
+	if err != nil {
+		abs = dbPath
+	}
+	dir := filepath.Join(xdg.CacheHome, "blunderDB", "locks")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		slog.Debug("lock directory unavailable; locking beside the database", "err", err)
+		return dbPath + ".lock"
+	}
+	sum := sha256.Sum256([]byte(abs))
+	return filepath.Join(dir, hex.EncodeToString(sum[:16])+".lock")
+}
+
 func (d *Database) acquireFileLock(path string) {
 	d.releaseFileLock()
 	d.readOnly = false
 	if path == "" || path == ":memory:" {
 		return
 	}
-	lock, ok, err := tryLockExclusive(path + ".lock")
+	lock, ok, err := tryLockExclusive(lockPathFor(path))
 	if err != nil {
 		slog.Warn("single-instance lock unavailable; opening without it", "path", path, "err", err)
 		return
