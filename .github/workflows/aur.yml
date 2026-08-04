@@ -4,10 +4,17 @@ name: Publish to AUR
 # OPT-IN: requires repo secrets AUR_SSH_PRIVATE_KEY, AUR_USERNAME, AUR_EMAIL,
 # and an AUR account whose SSH key is registered. Without the secret the job
 # runs but no-ops (see the "guard" step), so it never fails a release.
+#
+# TRIGGER: the *tag push*, not `release: published`. The release is created by
+# build.yml using the default GITHUB_TOKEN, and events raised by that token never
+# cascade into another workflow — so a `release: published` trigger silently never
+# fires. Pushing the tag is a human event, so it does. This job therefore starts
+# alongside the matrix build and simply waits for the 4.1 tarball to appear.
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "*"
   workflow_dispatch:
     inputs:
       version:
@@ -40,7 +47,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
           else
-            echo "version=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Download the webkit2gtk-4.1 tarball and compute checksum
@@ -52,9 +59,10 @@ jobs:
         run: |
           set -euo pipefail
           asset="blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz"
-          # The release event can fire before every matrix job has uploaded its
-          # asset, so poll until the 4.1 tarball is available.
-          for i in $(seq 1 40); do
+          # This job starts on the tag push, i.e. at the same moment as the
+          # matrix build that produces the asset — so the wait must cover the
+          # whole build (~15 min, plus the macOS universal job). 60 × 30 s = 30 min.
+          for i in $(seq 1 60); do
             if gh release download "$VERSION" -R "$GITHUB_REPOSITORY" -p "$asset" -D dl --clobber 2>/dev/null; then
               break
             fi

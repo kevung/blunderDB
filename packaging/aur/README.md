@@ -8,8 +8,8 @@ bundles the binary, `.desktop`, icon, metainfo and LICENSE).
 
 Two ways to publish:
 
-- **Automatically** — `.github/workflows/aur.yml` runs on every published
-  GitHub release (opt-in; see *CI setup* below).
+- **Automatically** — `.github/workflows/aur.yml` runs on every pushed tag
+  (opt-in; see *CI setup* below).
 - **Manually** — `scripts/aur-publish.sh <version> --push` (from the repo root).
 
 Both require a one-time AUR account + SSH key setup.
@@ -69,7 +69,11 @@ The script downloads the release tarball, computes its checksum, fills
 
 ## 3. CI setup (automatic publish on release)
 
-`.github/workflows/aur.yml` publishes on `release: published`. It **no-ops
+`.github/workflows/aur.yml` publishes on a **tag push**, then waits (up to 30
+minutes) for the release asset the matrix build uploads. The trigger is the tag
+and *not* `release: published`, because the release is created by CI with the
+default `GITHUB_TOKEN`, and events raised by that token never start another
+workflow — a `release: published` trigger would silently never fire. It **no-ops
 unless `AUR_SSH_PRIVATE_KEY` is set**, so it never fails a release before you opt
 in. To enable it, add three repository secrets:
 

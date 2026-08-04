@@ -467,9 +467,10 @@ doesn't touch assets).
 Once the GitHub release exists with its assets (CI uploads the raw binaries,
 `.tar.gz`, `.deb`, `.rpm` and `.sha256`), two downstream packages follow.
 
-**AUR (`blunderdb-bin`) — automatic.** `.github/workflows/aur.yml` triggers on
-`release: published`, waits for the 4.1 tarball, and pushes an updated PKGBUILD to
-the AUR. It only runs if the `AUR_SSH_PRIVATE_KEY` secret is set (otherwise it
+**AUR (`blunderdb-bin`) — automatic.** `.github/workflows/aur.yml` triggers on the
+**tag push** (not `release: published` — a release created by CI's `GITHUB_TOKEN`
+never cascades into another workflow), waits up to 30 min for the 4.1 tarball, and
+pushes an updated PKGBUILD to the AUR. It only runs if the `AUR_SSH_PRIVATE_KEY` secret is set (otherwise it
 no-ops — see `packaging/aur/README.md` for the one-time account/SSH setup). Verify
 after the release:
 
