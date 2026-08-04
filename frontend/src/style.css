@@ -1,6 +1,13 @@
 :root {
     /* User-controlled interface scale (see uiScaleStore.js). 1 = 100%. */
     --ui-scale: 1;
+
+    /* The interface's type scale — see docs/adr/0008. Components use these rather than
+       absolute sizes; hierarchy comes from weight and colour, not from size. Named
+       exceptions: dialog chrome, and the large figures of the statistics tabs. */
+    --font-size-base: 13px; /* body text, labels, values, controls, buttons */
+    --font-size-small: 11px; /* secondary notes and hints */
+    --font-size-title: 16px; /* panel and dialog titles */
 }
 
 html,
