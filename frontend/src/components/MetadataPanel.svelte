@@ -124,7 +124,7 @@
        their own — left alone they render in the browser's own control font, larger and in a
        different family than everything around them. */
     .metadata-panel {
-        font-size: 12px;
+        font-size: var(--font-size-base);
         padding: 6px 10px;
         height: 100%;
         overflow-y: auto;

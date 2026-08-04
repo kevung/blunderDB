@@ -845,11 +845,20 @@
 </div>
 
 <style>
+    /* A form control inherits neither size nor family; without this it renders in the
+       browser's own control font. See docs/adr/0008. */
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+    }
+
     .anki-panel {
         display: flex;
         flex-direction: column;
         height: 100%;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         overflow: hidden;
         background: white;
         user-select: none;
@@ -880,7 +889,7 @@
         border-radius: 3px;
         background: #fff;
         cursor: pointer;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .btn-add:hover {
         background: #f0f0f0;
@@ -898,7 +907,7 @@
         padding: 2px 6px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         min-width: 80px;
     }
 
@@ -907,11 +916,11 @@
         padding: 2px 4px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .search-hint {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
@@ -944,14 +953,14 @@
         padding: 16px;
         text-align: center;
         color: #bbb;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-style: italic;
     }
 
     .deck-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
     .deck-table thead {
         position: sticky;
@@ -968,7 +977,7 @@
     .deck-table th {
         font-weight: 600;
         color: #333;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .narrow-col {
         width: 1px;
@@ -1009,7 +1018,7 @@
         font-weight: 500;
     }
     .desc-cell {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1017,7 +1026,7 @@
         max-width: 0;
     }
     .source-cell {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #666;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1039,7 +1048,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         color: #666;
         padding: 2px 4px;
         line-height: 1;
@@ -1063,7 +1072,7 @@
         padding: 2px 4px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
     .edit-name {
         flex: 1;
@@ -1096,12 +1105,12 @@
     }
 
     .stat-number {
-        font-size: 14px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #555;
     }
     .stat-label {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         color: #888;
         text-transform: uppercase;
     }
@@ -1122,7 +1131,7 @@
         background: #6c757d;
         color: #fff;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         flex: 1;
         justify-content: center;
     }
@@ -1144,7 +1153,7 @@
         background: #fff;
         color: #17a2b8;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
         justify-content: center;
     }
     .btn-cram:hover {
@@ -1188,7 +1197,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 16px;
+        font-size: var(--font-size-title);
         color: #666;
         padding: 2px 6px;
         line-height: 1;
@@ -1198,7 +1207,7 @@
     }
 
     .review-title {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #333;
         flex: 1;
@@ -1207,12 +1216,12 @@
         white-space: nowrap;
     }
     .review-count {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
     .card-state {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         padding: 1px 6px;
         border-radius: 3px;
         font-weight: 500;
@@ -1235,7 +1244,7 @@
     }
 
     .review-position-id {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
@@ -1263,11 +1272,11 @@
     }
 
     .rating-label {
-        font-size: 11px;
+        font-size: var(--font-size-small);
         font-weight: 500;
     }
     .rating-key {
-        font-size: 9px;
+        font-size: var(--font-size-small);
         color: #aaa;
     }
 
@@ -1283,7 +1292,7 @@
     }
 
     .settings-title {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         font-weight: 600;
         color: #333;
     }
@@ -1303,7 +1312,7 @@
 
     .settings-row label {
         min-width: 140px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
         display: flex;
         align-items: center;
         gap: 4px;
@@ -1314,11 +1323,11 @@
         padding: 2px 6px;
         border: 1px solid #ccc;
         border-radius: 3px;
-        font-size: 11px;
+        font-size: var(--font-size-small);
     }
 
     .settings-hint {
-        font-size: 10px;
+        font-size: var(--font-size-small);
         color: #888;
     }
 
@@ -1335,7 +1344,7 @@
         background: #6c757d;
         color: #fff;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
     .btn-save:hover {
         background: #5a6268;
@@ -1347,7 +1356,7 @@
         border-radius: 3px;
         background: #fff;
         cursor: pointer;
-        font-size: 12px;
+        font-size: var(--font-size-base);
     }
     .btn-cancel:hover {
         background: #f0f0f0;

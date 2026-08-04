@@ -279,7 +279,7 @@
        at all, which fall back to the browser's own control font in another family. What
        separates a label from a value here is weight and colour, not size. */
     .modal-content {
-        font-size: 13px;
+        font-size: var(--font-size-base);
         background-color: white;
         padding: 1rem;
         border-radius: 4px;
@@ -302,7 +302,7 @@
 
     h2 {
         margin: 0 0 1rem;
-        font-size: 1.25rem;
+        font-size: var(--font-size-title);
     }
 
     .close-button {
