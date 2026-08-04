@@ -29,7 +29,7 @@ func (cli *CLI) runExport(args []string) error {
 	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
-	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .bdbx container)")
+	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")

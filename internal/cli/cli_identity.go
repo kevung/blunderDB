@@ -30,7 +30,7 @@ func (cli *CLI) runOpen(args []string) error {
 		openCmd.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Example:")
-		fmt.Println("  blunderdb open --db cours.bdbx --password secret")
+		fmt.Println("  blunderdb open --db cours.dbx --password secret")
 	}
 
 	if err := openCmd.Parse(args); err != nil {

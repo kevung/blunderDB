@@ -842,10 +842,10 @@ l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
 masque de nouveau dès qu'on relâche.
 
 Cocher **Protéger ce fichier par un mot de passe** produit un fichier
-d'extension ``.bdbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
+d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
 fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
 demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
-sélection accepte aussi bien les ``.db`` que les ``.bdbx``. blunderDB demande
+sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
 alors le mot de passe une seule fois et installe une base ordinaire ; ensuite
 plus rien n'est demandé.
 
@@ -855,6 +855,16 @@ plus rien n'est demandé.
    un tiers d'ouvrir un fichier qui traîne dans un dossier de téléchargement ou
    une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
    avez donné le mot de passe.
+
+Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le fichier
+a déjà été ouvert auparavant sur ce poste.
+
+Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une clé
+dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 passes, 4 fils),
+et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
+l'ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
+fichier chiffré l'est également — on n'obtient jamais une base corrompue en
+silence.
 
 L'en-tête du fichier protégé reste **en clair** : son origine demeure lisible
 sans le mot de passe.

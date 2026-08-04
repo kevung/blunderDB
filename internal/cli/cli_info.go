@@ -34,7 +34,7 @@ func (cli *CLI) runInfo(args []string) error {
 		fmt.Println("  # Output as JSON")
 		fmt.Println("  blunderdb info --db database.db --format json")
 		fmt.Println()
-		fmt.Println("  # See where a database came from (works on a protected .bdbx too)")
+		fmt.Println("  # See where a database came from (works on a protected .dbx too)")
 		fmt.Println("  blunderdb info --db cours.db")
 	}
 
