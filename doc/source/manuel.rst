@@ -837,8 +837,9 @@ pas.**
 Protéger une base par un mot de passe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Le mot de passe se saisit masqué ; l'icône en forme d'œil l'affiche **tant
-qu'on la maintient enfoncée**, et le masque de nouveau dès qu'on relâche.
+Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier protégé ;
+l'icône en forme d'œil l'affiche **tant qu'on la maintient enfoncée**, et le
+masque de nouveau dès qu'on relâche.
 
 Cocher **Protéger ce fichier par un mot de passe** produit un fichier
 d'extension ``.bdbx`` — y compris si vous aviez choisi un nom en ``.db`` dans la
