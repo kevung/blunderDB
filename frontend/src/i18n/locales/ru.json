@@ -553,7 +553,8 @@
         "protectedHint": "Этот файл защищён паролем. Введите полученный пароль; он будет запрошен только один раз — далее это обычная база.",
         "openCopy": "Открыть",
         "originRequired": "Укажите происхождение или снимите флажок — пустое поле ничего не отмечает.",
-        "passwordRequired": "Введите пароль или снимите флажок."
+        "passwordRequired": "Введите пароль или снимите флажок.",
+        "revealPassword": "Удерживайте, чтобы показать пароль"
     },
     "matchInfo": {
         "vs": "vs",
@@ -658,7 +659,18 @@
         "userPlaceholder": "Введите ваше имя (необязательно)",
         "willBeExported": "Будет экспортировано {count} позиц. с {desc}.",
         "descTwo": "{a} и {b}",
-        "descMany": "{list} и {last}"
+        "descMany": "{list} и {last}",
+        "descAnalysis": "анализами",
+        "descComments": "комментариями",
+        "descFilterLibrary": "библиотекой фильтров",
+        "descPlayedMoves": "сыгранными ходами",
+        "descMatch": "{count} матчем",
+        "descMatchesPlural": "{count} матчами",
+        "descTournament": "{count} турниром",
+        "descTournamentsPlural": "{count} турнирами",
+        "descCollection": "{count} коллекцией",
+        "descCollectionsPlural": "{count} коллекциями",
+        "descPositionsOnly": "только позициями"
     },
     "import": {
         "abortImport": "Прервать импорт",

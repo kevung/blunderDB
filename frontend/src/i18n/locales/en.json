@@ -553,7 +553,8 @@
         "protectedHint": "This file is password-protected. Enter the password you were given; you will be asked only once — afterwards it is an ordinary database.",
         "openCopy": "Open",
         "originRequired": "Fill in the origin, or untick the box — an empty origin marks nothing.",
-        "passwordRequired": "Enter a password, or untick the box."
+        "passwordRequired": "Enter a password, or untick the box.",
+        "revealPassword": "Hold to reveal the password"
     },
     "matchInfo": {
         "vs": "vs",
@@ -658,7 +659,18 @@
         "userPlaceholder": "Enter your name (optional)",
         "willBeExported": "{count} position(s) will be exported with {desc}.",
         "descTwo": "{a} and {b}",
-        "descMany": "{list} and {last}"
+        "descMany": "{list} and {last}",
+        "descAnalysis": "analysis",
+        "descComments": "comments",
+        "descFilterLibrary": "the filter library",
+        "descPlayedMoves": "played moves",
+        "descMatch": "{count} match",
+        "descMatchesPlural": "{count} matches",
+        "descTournament": "{count} tournament",
+        "descTournamentsPlural": "{count} tournaments",
+        "descCollection": "{count} collection",
+        "descCollectionsPlural": "{count} collections",
+        "descPositionsOnly": "positions only"
     },
     "import": {
         "abortImport": "Abort Import",

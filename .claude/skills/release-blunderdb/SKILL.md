@@ -291,6 +291,54 @@ Steps:
 
 ---
 
+## Phase 2a — Interface strings (all 9 languages)
+
+The Sphinx audit above covers the *manual*. The **interface** has its own
+translations, in `frontend/src/i18n/locales/<code>.json` — nine files, same nine
+languages, no gettext involved.
+
+A key used in a component but absent from the JSON does not fail anything: the
+engine falls back to English, then to **the key itself**, and the user reads
+`export.descMany` in the middle of a sentence. That shipped unnoticed once, in
+the export dialog's summary.
+
+`frontend/src/__tests__/i18nKeys.sync.test.js` guards this and runs with `npm
+test`, so CI catches new gaps. At release time, do two things it cannot do:
+
+1. **Shrink `KNOWN_GAPS`.** That list holds keys that were already missing when
+   the guard was written — real defects, each one a status message showing raw
+   text. Fix a few every release rather than letting the list calcify. The test
+   fails if an entry is fixed but left in the list, so it cannot drift the other
+   way.
+
+2. **Check for *untranslated* strings, not just missing ones.** The guard only
+   proves a key exists in each file; it cannot tell that a French `msgstr` was
+   copied verbatim into `ja.json`. Spot-check the sections touched by this
+   release:
+
+   ```bash
+   cd frontend && python3 - <<'EOF'
+   import json, io
+   en = json.load(io.open('src/i18n/locales/en.json', encoding='utf-8'))
+   def flat(d, p=''):
+       for k, v in d.items():
+           yield from flat(v, f'{p}{k}.') if isinstance(v, dict) else [(p + k, v)]
+   base = dict(flat(en))
+   for lang in ['fr','de','el','es','fi','it','ja','ru']:
+       other = dict(flat(json.load(io.open(f'src/i18n/locales/{lang}.json', encoding='utf-8'))))
+       same = [k for k, v in other.items() if base.get(k) == v and len(v) > 12]
+       print(f'{lang}: {len(same)} chaînes identiques à l\'anglais')
+       for k in same[:5]:
+           print('   ', k)
+   EOF
+   ```
+
+   Identical strings are not automatically wrong — proper nouns, `XGID`, `PR`
+   and short labels legitimately match — but a long sentence identical to
+   English in `ja.json` is untranslated.
+
+---
+
 ## Phase 2b — Linux packaging metadata (every release, incl. patches)
 
 The Linux packages (`.deb`/`.rpm` built by `nfpm` in CI, the AUR package, and the

@@ -553,7 +553,8 @@
         "protectedHint": "Tämä tiedosto on suojattu salasanalla. Anna saamasi salasana; sitä kysytään vain kerran — sen jälkeen kyseessä on tavallinen tietokanta.",
         "openCopy": "Avaa",
         "originRequired": "Täytä alkuperä tai poista valinta — tyhjä alkuperä ei merkitse mitään.",
-        "passwordRequired": "Anna salasana tai poista valinta."
+        "passwordRequired": "Anna salasana tai poista valinta.",
+        "revealPassword": "Pidä painettuna nähdäksesi salasanan"
     },
     "matchInfo": {
         "vs": "vs",
@@ -656,9 +657,20 @@
         "titleExport": "Vie tietokanta",
         "user": "Käyttäjä",
         "userPlaceholder": "Anna nimesi (valinnainen)",
-        "willBeExported": "{count} asema(a) viedään kohteeseen {desc}.",
+        "willBeExported": "{count} asema(a) viedään, mukana {desc}.",
         "descTwo": "{a} ja {b}",
-        "descMany": "{list} ja {last}"
+        "descMany": "{list} ja {last}",
+        "descAnalysis": "analyysit",
+        "descComments": "kommentit",
+        "descFilterLibrary": "suodatinkirjasto",
+        "descPlayedMoves": "pelatut siirrot",
+        "descMatch": "{count} ottelu",
+        "descMatchesPlural": "{count} ottelua",
+        "descTournament": "{count} turnaus",
+        "descTournamentsPlural": "{count} turnausta",
+        "descCollection": "{count} kokoelma",
+        "descCollectionsPlural": "{count} kokoelmaa",
+        "descPositionsOnly": "vain asemat"
     },
     "import": {
         "abortImport": "Keskeytä tuonti",

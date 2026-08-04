@@ -58,6 +58,8 @@
         onExport?.();
     }
 
+    let passwordVisible = $state(false);
+
     let collections = $derived($collectionsStore || []);
 
     // A ticked box with an empty field used to produce a file with no watermark and no
@@ -328,7 +330,30 @@
                                     {$t('issuance.passwordLabel')}
                                     <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
                                 </label>
-                                <input id="export-password" type="text" bind:value={exportOptions.password} />
+                                <div class="password-row">
+                                    <input id="export-password" type={passwordVisible ? 'text' : 'password'} bind:value={exportOptions.password} />
+                                    <!-- Reveal while held, never toggled: the password goes back
+                                     out of sight the moment the button is released, so it
+                                     cannot be left showing by accident. Pointer and keyboard
+                                     both work. -->
+                                    <button
+                                        type="button"
+                                        class="reveal"
+                                        aria-label={$t('issuance.revealPassword')}
+                                        title={$t('issuance.revealPassword')}
+                                        onpointerdown={() => (passwordVisible = true)}
+                                        onpointerup={() => (passwordVisible = false)}
+                                        onpointerleave={() => (passwordVisible = false)}
+                                        onpointercancel={() => (passwordVisible = false)}
+                                        onkeydown={(e) => {
+                                            if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
+                                        }}
+                                        onkeyup={() => (passwordVisible = false)}
+                                        onblur={() => (passwordVisible = false)}
+                                    >
+                                        {passwordVisible ? '🙈' : '👁'}
+                                    </button>
+                                </div>
                                 {#if missingPassword}
                                     <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
                                 {/if}
@@ -729,6 +754,24 @@
         cursor: help;
         user-select: none;
         flex: none;
+    }
+
+    .password-row {
+        display: flex;
+        gap: 6px;
+        align-items: stretch;
+    }
+
+    .password-row input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .reveal {
+        flex: none;
+        padding: 0 8px;
+        cursor: pointer;
+        line-height: 1;
     }
 
     .issuance-required {
