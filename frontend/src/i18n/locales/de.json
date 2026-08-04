@@ -656,7 +656,7 @@
         "includeAnalysis": "Analyse einbeziehen",
         "includeCollections": "Sammlungen einbeziehen ({count})",
         "includeComments": "Kommentare einbeziehen",
-        "includeFilterLibrary": "Filterbibliothek einbeziehen",
+        "includeFilterLibrary": "Meine gespeicherten Filter",
         "includeMatches": "Matches einbeziehen ({count})",
         "includePlayedMoves": "Gespielte Züge einbeziehen",
         "includeTournaments": "Turniere einbeziehen ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Datenbank exportieren",
         "user": "Benutzer",
         "userPlaceholder": "Geben Sie Ihren Namen ein (optional)",
-        "willBeExported": "{count} Position(en) werden mit {desc} exportiert.",
+        "willBeExported": "Die {count} aktuell angezeigten Position(en) werden mit {desc} exportiert.",
         "descTwo": "{a} und {b}",
         "descMany": "{list} und {last}",
         "descAnalysis": "Analysen",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} Turnieren",
         "descCollection": "{count} Sammlung",
         "descCollectionsPlural": "{count} Sammlungen",
-        "descPositionsOnly": "nur den Positionen"
+        "descPositionsOnly": "nur den Positionen",
+        "descWatermarked": "gekennzeichneter Herkunft",
+        "descProtected": "einem Passwort",
+        "tournamentsNeedMatches": "Ein Turnier wird nur mit seinen Matches verknüpft, wenn diese ebenfalls exportiert werden — aktivieren Sie zuerst „Matches einschließen“.",
+        "filterLibraryHint": "Ihre eigenen gespeicherten Suchen, kein Inhalt: in der Datenbank eines anderen nutzlos.",
+        "metadataTitle": "Metadaten der exportierten Datei"
     },
     "import": {
         "abortImport": "Import abbrechen",

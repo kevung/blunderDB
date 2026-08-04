@@ -656,7 +656,7 @@
         "includeAnalysis": "解析を含める",
         "includeCollections": "コレクションを含める（{count}）",
         "includeComments": "コメントを含める",
-        "includeFilterLibrary": "フィルターライブラリを含める",
+        "includeFilterLibrary": "保存した自分のフィルター",
         "includeMatches": "マッチを含める（{count}）",
         "includePlayedMoves": "実際のムーブを含める",
         "includeTournaments": "トーナメントを含める（{count}）",
@@ -668,7 +668,7 @@
         "titleExport": "データベースをエクスポート",
         "user": "ユーザー",
         "userPlaceholder": "名前を入力（任意）",
-        "willBeExported": "{count} 件のポジションが {desc} とともにエクスポートされます。",
+        "willBeExported": "現在表示中の {count} 件のポジションが {desc} とともにエクスポートされます。",
         "descTwo": "{a}と{b}",
         "descMany": "{list}、{last}",
         "descAnalysis": "分析",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} 件の大会",
         "descCollection": "{count} 件のコレクション",
         "descCollectionsPlural": "{count} 件のコレクション",
-        "descPositionsOnly": "ポジションのみ"
+        "descPositionsOnly": "ポジションのみ",
+        "descWatermarked": "出所の記載",
+        "descProtected": "パスワード",
+        "tournamentsNeedMatches": "大会はマッチも一緒にエクスポートした場合にのみ紐付きます。先に「マッチを含める」を選んでください。",
+        "filterLibraryHint": "内容ではなく、あなた自身の保存済み検索です。他人のデータベースでは役に立ちません。",
+        "metadataTitle": "エクスポートするファイルのメタデータ"
     },
     "import": {
         "abortImport": "インポートを中止",

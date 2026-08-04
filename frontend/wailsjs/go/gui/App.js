@@ -78,6 +78,10 @@ export function ReadFileContent(arg1) {
   return window['go']['gui']['App']['ReadFileContent'](arg1);
 }
 
+export function RegenerateIssuerIdentity(arg1) {
+  return window['go']['gui']['App']['RegenerateIssuerIdentity'](arg1);
+}
+
 export function SaveDatabaseDialog() {
   return window['go']['gui']['App']['SaveDatabaseDialog']();
 }

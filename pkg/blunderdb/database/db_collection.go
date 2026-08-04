@@ -880,3 +880,44 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 
 	return nil
 }
+
+// CollectionCoverage reports, for every collection, how many of its positions are part of
+// the given selection.
+//
+// The export writes a collection's membership only for positions it is actually exporting,
+// so a collection whose positions are not all in the selection arrives truncated. That used
+// to happen in silence: the recipient believed they had the collection and had a fragment of
+// it. This lets the export screen say so before anything is written.
+func (d *Database) CollectionCoverage(positionIDs []int64) (map[int64]int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	selected := make(map[int64]bool, len(positionIDs))
+	for _, id := range positionIDs {
+		selected[id] = true
+	}
+
+	rows, err := d.db.Query(`SELECT collection_id, position_id FROM collection_position`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	coverage := make(map[int64]int)
+	for rows.Next() {
+		var collectionID, positionID int64
+		if err := rows.Scan(&collectionID, &positionID); err != nil {
+			return nil, err
+		}
+		if _, ok := coverage[collectionID]; !ok {
+			coverage[collectionID] = 0
+		}
+		if selected[positionID] {
+			coverage[collectionID]++
+		}
+	}
+	return coverage, rows.Err()
+}

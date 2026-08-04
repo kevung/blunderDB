@@ -32,6 +32,8 @@ export const exportOptionsStore = writable({
     password: ''
 });
 export const exportMatchesStore = writable([]);
+// Per collection id, how many of its positions are in the selection being exported.
+export const exportCollectionCoverageStore = writable({});
 
 export function resetExportState() {
     exportModalModeStore.set('metadata');
@@ -54,4 +56,5 @@ export function resetExportState() {
         password: ''
     });
     exportMatchesStore.set([]);
+    exportCollectionCoverageStore.set({});
 }

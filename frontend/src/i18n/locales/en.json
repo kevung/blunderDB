@@ -656,7 +656,7 @@
         "includeAnalysis": "Include analysis",
         "includeCollections": "Include collections ({count})",
         "includeComments": "Include comments",
-        "includeFilterLibrary": "Include filter library",
+        "includeFilterLibrary": "My saved filters",
         "includeMatches": "Include matches ({count})",
         "includePlayedMoves": "Include played moves",
         "includeTournaments": "Include tournaments ({count})",
@@ -668,7 +668,7 @@
         "titleExport": "Export Database",
         "user": "User",
         "userPlaceholder": "Enter your name (optional)",
-        "willBeExported": "{count} position(s) will be exported with {desc}.",
+        "willBeExported": "The {count} position(s) currently displayed will be exported with {desc}.",
         "descTwo": "{a} and {b}",
         "descMany": "{list} and {last}",
         "descAnalysis": "analysis",
@@ -681,7 +681,12 @@
         "descTournamentsPlural": "{count} tournaments",
         "descCollection": "{count} collection",
         "descCollectionsPlural": "{count} collections",
-        "descPositionsOnly": "positions only"
+        "descPositionsOnly": "positions only",
+        "descWatermarked": "its origin marked",
+        "descProtected": "a password",
+        "tournamentsNeedMatches": "A tournament is linked to its matches only when the matches are exported too — tick “include matches” first.",
+        "filterLibraryHint": "Your own saved searches, not content: they are of no use in someone else's database.",
+        "metadataTitle": "Metadata of the exported file"
     },
     "import": {
         "abortImport": "Abort Import",
