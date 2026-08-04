@@ -554,7 +554,10 @@
         "openCopy": "Apri",
         "originRequired": "Indica l'origine oppure togli la spunta: un'origine vuota non marca nulla.",
         "passwordRequired": "Inserisci una password oppure togli la spunta.",
-        "revealPassword": "Tieni premuto per mostrare la password"
+        "revealPassword": "Tieni premuto per mostrare la password",
+        "wrongPassword": "Password errata.",
+        "passwordRequiredToOpen": "Questo file è protetto: inserisci la password.",
+        "protectedOpened": "File protetto aperto: {name}"
     },
     "matchInfo": {
         "vs": "vs",

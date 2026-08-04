@@ -235,6 +235,17 @@ export { setStatusBarMessage };
 // unlockProtectedCopy turns the protected copy into an ordinary database and opens it. A
 // wrong password comes back as an error on the prompt rather than closing it: the recipient
 // gets to try again.
+// The backend's errors cross the bridge as plain strings, so they are matched by text. Both
+// come from constants this project owns (issuance.ErrWrongPassphrase and
+// ErrPassphraseRequired), which is what makes the match safe; anything else is shown as-is
+// rather than swallowed.
+function protectedCopyMessage(error) {
+    const text = String(error);
+    if (text.includes('wrong passphrase')) return translate('issuance.wrongPassword');
+    if (text.includes('protected by a passphrase')) return translate('issuance.passwordRequiredToOpen');
+    return text;
+}
+
 export async function unlockProtectedCopy(password) {
     const source = get(protectedCopyPathStore);
     if (!source) return;
@@ -242,10 +253,14 @@ export async function unlockProtectedCopy(password) {
         const opened = await OpenProtectedCopyPath(source, password);
         closeModal();
         protectedCopyPathStore.set('');
+        protectedCopyErrorStore.set('');
         await openDatabaseByPath(opened);
+        // openDatabaseByPath reports the ordinary "database opened" message; say explicitly
+        // that the password was accepted, since that is what the user was just asked for.
+        setStatusBarMessage(tMsg('issuance.protectedOpened', { name: getFilenameFromPath(opened) }));
     } catch (error) {
         logger.error('Error opening protected copy:', error);
-        protectedCopyErrorStore.set(String(error));
+        protectedCopyErrorStore.set(protectedCopyMessage(error));
     }
 }
 

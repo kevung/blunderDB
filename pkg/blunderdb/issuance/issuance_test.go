@@ -384,6 +384,36 @@ func TestContainerRoundTrip(t *testing.T) {
 	}
 }
 
+func TestVerifyPassword(t *testing.T) {
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "cours.db")
+	if err := os.WriteFile(dbPath, []byte("SQLite format 3\x00"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	out := filepath.Join(dir, "cours"+ContainerExtension)
+	if err := WrapContainer(dbPath, out, Envelope{}, "s3cret"); err != nil {
+		t.Fatalf("WrapContainer: %v", err)
+	}
+
+	if err := VerifyPassword(out, "s3cret"); err != nil {
+		t.Fatalf("the right password must verify: %v", err)
+	}
+	if err := VerifyPassword(out, "wrong"); err != ErrWrongPassphrase {
+		t.Fatalf("expected ErrWrongPassphrase, got %v", err)
+	}
+	if err := VerifyPassword(out, ""); err != ErrPassphraseRequired {
+		t.Fatalf("expected ErrPassphraseRequired, got %v", err)
+	}
+	if err := VerifyPassword(dbPath, "s3cret"); err == nil {
+		t.Fatal("an ordinary database is not a protected copy")
+	}
+	// Verifying must not have written anything next to the container.
+	entries, _ := os.ReadDir(dir)
+	if len(entries) != 2 {
+		t.Fatalf("expected only the database and its container, got %d entries", len(entries))
+	}
+}
+
 func TestContainerRejectsOrdinaryFiles(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "plain.db")
 	if err := os.WriteFile(path, []byte("SQLite format 3\x00"), 0o644); err != nil {

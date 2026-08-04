@@ -122,6 +122,13 @@ func IsProtectedCopy(path string) bool { return issuance.IsContainer(path) }
 func OpenProtectedCopy(path, password string) (string, error) {
 	target := issuance.DefaultUnwrapPath(path)
 	if _, err := os.Stat(target); err == nil {
+		// The copy was opened here before, so the database already exists and must not be
+		// overwritten — someone may have worked in it since. But it must NOT be handed back
+		// without checking the password first: doing so let any password through from the
+		// second open onwards, which is no protection at all.
+		if err := issuance.VerifyPassword(path, password); err != nil {
+			return "", err
+		}
 		return target, nil
 	}
 	if _, err := issuance.UnwrapContainer(path, target, password); err != nil {
