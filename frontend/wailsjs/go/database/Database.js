@@ -114,6 +114,10 @@ export function DeletePosition(arg1) {
   return window['go']['database']['Database']['DeletePosition'](arg1);
 }
 
+export function DeleteProtectedCopyPath(arg1) {
+  return window['go']['database']['Database']['DeleteProtectedCopyPath'](arg1);
+}
+
 export function DeleteSearchHistoryEntry(arg1) {
   return window['go']['database']['Database']['DeleteSearchHistoryEntry'](arg1);
 }

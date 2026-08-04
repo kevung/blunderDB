@@ -557,7 +557,8 @@
         "revealPassword": "Gedrückt halten, um das Passwort anzuzeigen",
         "wrongPassword": "Falsches Passwort.",
         "passwordRequiredToOpen": "Diese Datei ist geschützt: Passwort eingeben.",
-        "protectedOpened": "Geschützte Datei geöffnet: {name}"
+        "protectedOpened": "Geschützte Datei geöffnet: {name}",
+        "removeContainer": "Geschützte Datei nach dem Öffnen löschen"
     },
     "matchInfo": {
         "vs": "vs",

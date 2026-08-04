@@ -61,6 +61,8 @@ export function DeleteMatch(arg1:number):Promise<void>;
 
 export function DeletePosition(arg1:number):Promise<void>;
 
+export function DeleteProtectedCopyPath(arg1:string):Promise<void>;
+
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;

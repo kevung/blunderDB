@@ -557,7 +557,8 @@
         "revealPassword": "押している間パスワードを表示",
         "wrongPassword": "パスワードが違います。",
         "passwordRequiredToOpen": "このファイルは保護されています。パスワードを入力してください。",
-        "protectedOpened": "保護されたファイルを開きました: {name}"
+        "protectedOpened": "保護されたファイルを開きました: {name}",
+        "removeContainer": "開いた後、保護されたファイルを削除する"
     },
     "matchInfo": {
         "vs": "対",

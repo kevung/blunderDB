@@ -557,7 +557,8 @@
         "revealPassword": "Hold to reveal the password",
         "wrongPassword": "Wrong password.",
         "passwordRequiredToOpen": "This file is protected: enter its password.",
-        "protectedOpened": "Protected file opened: {name}"
+        "protectedOpened": "Protected file opened: {name}",
+        "removeContainer": "Delete the protected file once opened"
     },
     "matchInfo": {
         "vs": "vs",

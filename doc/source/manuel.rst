@@ -846,8 +846,13 @@ d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` dans l
 fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit
 demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de
 sélection accepte aussi bien les ``.db`` que les ``.dbx``. blunderDB demande
-alors le mot de passe une seule fois et installe une base ordinaire ; ensuite
-plus rien n'est demandé.
+alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
+n'est demandé.
+
+La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : sans
+cela vous conservez le même contenu sous deux noms. La case n'est pas cochée par
+défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
+la suppression n'a lieu qu'après une ouverture réussie.
 
 .. warning::
 
