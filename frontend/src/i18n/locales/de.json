@@ -48,7 +48,13 @@
         "identityImport": "Identität laden…",
         "identityExported": "Identität gespeichert unter {path}",
         "identityImported": "Identität installiert: {name}",
-        "identityPassphraseNeeded": "Diese Datei ist geschützt: Passphrase oben eingeben und erneut versuchen."
+        "identityPassphraseNeeded": "Diese Datei ist geschützt: Passphrase oben eingeben und erneut versuchen.",
+        "identityRegenerate": "Neu erzeugen…",
+        "identityRegenerateWarning": "Das widerruft nichts. Bereits gekennzeichnete Dateien tragen den Schlüssel, mit dem sie signiert wurden, und bleiben für immer prüfbar — auch solche, die jemand mit Ihrer Identitätsdatei signiert hat. Nach einem Leck schützt Sie nur, den neuen Fingerabdruck zu veröffentlichen und den alten zu widerrufen.",
+        "identityRegenerateKeep": "Der aktuelle Schlüssel ({fingerprint}) wird überschrieben. Speichern Sie ihn zuerst, falls Sie ihn noch brauchen.",
+        "identitySaveFirst": "Aktuellen zuerst speichern…",
+        "identityRegenerateConfirm": "Trotzdem neu erzeugen",
+        "identityRegenerated": "Neue Identität erstellt: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

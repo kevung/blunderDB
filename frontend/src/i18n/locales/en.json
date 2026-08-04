@@ -48,7 +48,13 @@
         "identityImport": "Load identity…",
         "identityExported": "Identity saved to {path}",
         "identityImported": "Identity installed: {name}",
-        "identityPassphraseNeeded": "This file is protected: enter its passphrase above, then try again."
+        "identityPassphraseNeeded": "This file is protected: enter its passphrase above, then try again.",
+        "identityRegenerate": "Regenerate…",
+        "identityRegenerateWarning": "This revokes nothing. Files you have already marked carry the key they were signed with and keep verifying for ever — including any signed by someone who obtained your identity file. What protects you after a leak is publishing your new fingerprint and disowning the old one.",
+        "identityRegenerateKeep": "The current key ({fingerprint}) will be overwritten. Save it first if you may need it.",
+        "identitySaveFirst": "Save the current one first…",
+        "identityRegenerateConfirm": "Regenerate anyway",
+        "identityRegenerated": "New identity created: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
