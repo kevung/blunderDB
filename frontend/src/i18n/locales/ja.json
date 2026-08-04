@@ -48,7 +48,13 @@
         "identityImport": "識別情報を読み込む…",
         "identityExported": "{path} に保存しました",
         "identityImported": "識別情報を設定しました: {name}",
-        "identityPassphraseNeeded": "このファイルは保護されています。上にパスフレーズを入力して再試行してください。"
+        "identityPassphraseNeeded": "このファイルは保護されています。上にパスフレーズを入力して再試行してください。",
+        "identityRegenerate": "再生成…",
+        "identityRegenerateWarning": "これは何も無効化しません。すでに記載したファイルは署名に使った鍵を含んでおり、永久に検証できます。あなたの識別情報ファイルを入手した者が署名したものも同様です。漏洩後にあなたを守るのは、新しいフィンガープリントを公表し、古いものを否認することです。",
+        "identityRegenerateKeep": "現在の鍵（{fingerprint}）は上書きされます。必要になる可能性があるなら先に保存してください。",
+        "identitySaveFirst": "先に現在の鍵を保存…",
+        "identityRegenerateConfirm": "それでも再生成する",
+        "identityRegenerated": "新しい識別情報を作成しました: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

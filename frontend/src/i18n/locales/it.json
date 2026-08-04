@@ -48,7 +48,13 @@
         "identityImport": "Carica identità…",
         "identityExported": "Identità salvata in {path}",
         "identityImported": "Identità installata: {name}",
-        "identityPassphraseNeeded": "Questo file è protetto: inserisci la passphrase sopra e riprova."
+        "identityPassphraseNeeded": "Questo file è protetto: inserisci la passphrase sopra e riprova.",
+        "identityRegenerate": "Rigenera…",
+        "identityRegenerateWarning": "Questo non revoca nulla. I file già marcati portano la chiave con cui sono stati firmati e resteranno verificabili per sempre, compresi quelli firmati da chi avesse ottenuto il tuo file d'identità. Dopo una fuga, ciò che ti protegge è pubblicare la nuova impronta e disconoscere la precedente.",
+        "identityRegenerateKeep": "La chiave attuale ({fingerprint}) verrà sovrascritta. Salvala prima se potrebbe servirti.",
+        "identitySaveFirst": "Salva prima quella attuale…",
+        "identityRegenerateConfirm": "Rigenera comunque",
+        "identityRegenerated": "Nuova identità creata: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

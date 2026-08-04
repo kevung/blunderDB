@@ -109,6 +109,31 @@ func (a *App) PickIdentityFile() (domain.IdentityFilePick, error) {
 	return domain.IdentityFilePick{Path: path, NeedsPassphrase: needs}, nil
 }
 
+// RegenerateIssuerIdentity replaces the signing key with a fresh one.
+//
+// It is worth being exact about what this does not do. A watermark carries the public key it
+// was signed with, so it verifies for ever, on its own. Regenerating therefore **revokes
+// nothing**: if the old identity file leaked, whoever holds it can keep signing under the
+// old fingerprint and those marks stay valid. What protects a producer after a leak is
+// social — publishing the new fingerprint and disowning the old one — not this function.
+//
+// It is offered for the cases that remain: starting over, or moving to a fresh identity on
+// purpose. The caller is expected to have said all of the above and to have offered to save
+// the old identity first, because this overwrites it.
+func (a *App) RegenerateIssuerIdentity(name string) (domain.IssuerIdentityInfo, error) {
+	if strings.TrimSpace(name) == "" {
+		name = issuance.DefaultIssuerName()
+	}
+	id, err := issuance.NewIdentity(name)
+	if err != nil {
+		return domain.IssuerIdentityInfo{}, err
+	}
+	if err := id.Rename(issuance.ConfigDir(), name); err != nil {
+		return domain.IssuerIdentityInfo{}, err
+	}
+	return a.GetIssuerIdentity()
+}
+
 // ImportIssuerIdentity installs a transferred identity on this machine, replacing any
 // existing one. Holding the same identity on two machines is the intended outcome: it is one
 // person, and everything they mark from either machine carries one fingerprint.

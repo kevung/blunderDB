@@ -48,7 +48,13 @@
         "identityImport": "Lataa identiteetti…",
         "identityExported": "Identiteetti tallennettu: {path}",
         "identityImported": "Identiteetti asennettu: {name}",
-        "identityPassphraseNeeded": "Tiedosto on suojattu: anna salalause yllä ja yritä uudelleen."
+        "identityPassphraseNeeded": "Tiedosto on suojattu: anna salalause yllä ja yritä uudelleen.",
+        "identityRegenerate": "Luo uusi…",
+        "identityRegenerateWarning": "Tämä ei mitätöi mitään. Jo merkityt tiedostot sisältävät avaimen, jolla ne allekirjoitettiin, ja ne vahvistuvat aina — myös ne, jotka on allekirjoittanut joku identiteettitiedostosi saanut. Vuodon jälkeen sinua suojaa uuden sormenjäljen julkaiseminen ja vanhasta irtisanoutuminen.",
+        "identityRegenerateKeep": "Nykyinen avain ({fingerprint}) korvataan. Tallenna se ensin, jos saatat tarvita sitä.",
+        "identitySaveFirst": "Tallenna nykyinen ensin…",
+        "identityRegenerateConfirm": "Luo silti uusi",
+        "identityRegenerated": "Uusi identiteetti luotu: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

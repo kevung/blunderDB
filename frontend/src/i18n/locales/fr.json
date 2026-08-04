@@ -48,7 +48,13 @@
         "identityImport": "Charger une identité…",
         "identityExported": "Identité enregistrée dans {path}",
         "identityImported": "Identité installée : {name}",
-        "identityPassphraseNeeded": "Ce fichier est protégé : saisissez sa phrase secrète ci-dessus, puis réessayez."
+        "identityPassphraseNeeded": "Ce fichier est protégé : saisissez sa phrase secrète ci-dessus, puis réessayez.",
+        "identityRegenerate": "Régénérer…",
+        "identityRegenerateWarning": "Cela ne révoque rien. Les fichiers que vous avez déjà marqués portent la clé qui les a signés et se vérifieront toujours — y compris ceux signés par quelqu'un qui aurait obtenu votre fichier d'identité. Ce qui vous protège après une fuite, c'est de publier votre nouvelle empreinte et de désavouer l'ancienne.",
+        "identityRegenerateKeep": "La clé actuelle ({fingerprint}) sera écrasée. Enregistrez-la d'abord si vous pouvez en avoir besoin.",
+        "identitySaveFirst": "Enregistrer l'actuelle d'abord…",
+        "identityRegenerateConfirm": "Régénérer quand même",
+        "identityRegenerated": "Nouvelle identité créée : {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",

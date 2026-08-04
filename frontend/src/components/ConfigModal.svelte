@@ -4,7 +4,7 @@
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
-    import { GetIssuerIdentity, SetIssuerName, ExportIssuerIdentity, PickIdentityFile, ImportIssuerIdentity } from '../../wailsjs/go/gui/App.js';
+    import { GetIssuerIdentity, SetIssuerName, ExportIssuerIdentity, PickIdentityFile, ImportIssuerIdentity, RegenerateIssuerIdentity } from '../../wailsjs/go/gui/App.js';
     import { logger } from '../utils/logger.js';
 
     let { visible = false, onClose } = $props();
@@ -16,11 +16,15 @@
     let identityPassphrase = $state('');
     let identityMessage = $state('');
     let identityError = $state('');
+    // Regenerating is a two-step gesture: the first click only reveals what it does and,
+    // more to the point, what it does not do. See RegenerateIssuerIdentity.
+    let confirmingRegenerate = $state(false);
 
     $effect(() => {
         if (visible) {
             identityMessage = '';
             identityError = '';
+            confirmingRegenerate = false;
             GetIssuerIdentity()
                 .then((info) => (identity = info))
                 .catch((error) => logger.error('Error loading issuer identity:', error));
@@ -48,6 +52,18 @@
             identity = await GetIssuerIdentity();
             identityPassphrase = '';
             identityMessage = $t('config.identityExported', { path });
+        } catch (error) {
+            identityError = String(error);
+        }
+    }
+
+    async function regenerateIdentity() {
+        identityMessage = '';
+        identityError = '';
+        try {
+            identity = await RegenerateIssuerIdentity(identity?.name ?? '');
+            confirmingRegenerate = false;
+            identityMessage = $t('config.identityRegenerated', { fingerprint: identity.fingerprint });
         } catch (error) {
             identityError = String(error);
         }
@@ -194,7 +210,24 @@
             <div class="setting-row reset-row">
                 <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
                 <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
+                {#if identity?.present && !confirmingRegenerate}
+                    <button class="secondary-button" onclick={() => (confirmingRegenerate = true)}>
+                        {$t('config.identityRegenerate')}
+                    </button>
+                {/if}
             </div>
+
+            {#if confirmingRegenerate}
+                <div class="regenerate-confirm">
+                    <p class="setting-note warn">{$t('config.identityRegenerateWarning')}</p>
+                    <p class="setting-note">{$t('config.identityRegenerateKeep', { fingerprint: identity?.fingerprint ?? '' })}</p>
+                    <div class="setting-row reset-row">
+                        <button class="secondary-button" onclick={exportIdentity}>{$t('config.identitySaveFirst')}</button>
+                        <button class="secondary-button" onclick={() => (confirmingRegenerate = false)}>{$t('common.cancel')}</button>
+                        <button class="danger-button" onclick={regenerateIdentity}>{$t('config.identityRegenerateConfirm')}</button>
+                    </div>
+                </div>
+            {/if}
             {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
             {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
 
@@ -302,6 +335,19 @@
         text-align: right;
         font-variant-numeric: tabular-nums;
         font-weight: 500;
+    }
+
+    .regenerate-confirm {
+        border-left: 3px solid #b3261e;
+        padding-left: 8px;
+        margin: 4px 0;
+    }
+
+    .danger-button {
+        background: #b3261e;
+        color: white;
+        border: 1px solid #b3261e;
+        cursor: pointer;
     }
 
     .setting-note {

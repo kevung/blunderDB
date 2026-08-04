@@ -834,6 +834,24 @@ vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un post
 une phrase secrète. **Ce fichier permet de signer en votre nom : ne le partagez
 pas.**
 
+Dans les préférences, la section *Identité d'émetteur* affiche votre nom et
+votre empreinte, et propose *Enregistrer l'identité…*, *Charger une identité…*
+et *Régénérer…*.
+
+.. warning::
+
+   **Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui l'a
+   signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
+   d'identité a fuité, celui qui le détient pourra continuer à signer sous votre
+   ancienne empreinte, et ces marques resteront valides.
+
+   Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier
+   votre nouvelle empreinte et de désavouer l'ancienne auprès de vos
+   destinataires.
+
+   La régénération écrase la clé actuelle ; blunderDB propose de l'enregistrer
+   avant de la remplacer.
+
 Protéger une base par un mot de passe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

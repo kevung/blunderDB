@@ -48,7 +48,13 @@
         "identityImport": "Cargar identidad…",
         "identityExported": "Identidad guardada en {path}",
         "identityImported": "Identidad instalada: {name}",
-        "identityPassphraseNeeded": "Este archivo está protegido: introduzca su frase de contraseña arriba y vuelva a intentarlo."
+        "identityPassphraseNeeded": "Este archivo está protegido: introduzca su frase de contraseña arriba y vuelva a intentarlo.",
+        "identityRegenerate": "Regenerar…",
+        "identityRegenerateWarning": "Esto no revoca nada. Los archivos que ya ha marcado llevan la clave con la que se firmaron y seguirán verificándose siempre, incluidos los firmados por alguien que haya obtenido su archivo de identidad. Tras una filtración, lo que le protege es publicar su nueva huella y desautorizar la anterior.",
+        "identityRegenerateKeep": "La clave actual ({fingerprint}) se sobrescribirá. Guárdela antes si puede necesitarla.",
+        "identitySaveFirst": "Guardar la actual primero…",
+        "identityRegenerateConfirm": "Regenerar de todos modos",
+        "identityRegenerated": "Nueva identidad creada: {fingerprint}"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
