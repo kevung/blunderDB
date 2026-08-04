@@ -100,7 +100,7 @@
         pastePosition,
         handleFileDrop
     } from './services/importService.js';
-    import { exportDatabase, handleExportCommit, handleExportCancel, handleExportClose } from './services/exportService.js';
+    import { exportDatabase, handleExportCommit, handleExportCancel } from './services/exportService.js';
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
@@ -596,7 +596,6 @@
         bind:exportOptions={$exportOptionsStore}
         onCancel={handleExportCancel}
         onExport={handleExportCommit}
-        onClose={handleExportClose}
     />
 
     <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />

@@ -802,8 +802,11 @@ passe.
 Marquer une base de son origine
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dans la fenêtre d'export, cocher **Marquer ce fichier de son origine** fait
-apparaître deux champs :
+La fenêtre d'export tient en un seul écran : le formulaire, puis une
+progression qui se superpose à lui le temps de l'écriture. Elle se ferme
+d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.
+
+Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :
 
 * **Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots :
   « Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : tant

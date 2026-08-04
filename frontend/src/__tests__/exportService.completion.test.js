@@ -1,11 +1,11 @@
 /**
  * exportService.completion.test.js
  *
- * Regression: after a successful export the dialog fell back to its "preparing" screen — a
- * spinner reading "counting positions to export" that never resolved, with no way out but
- * Cancel. handleExportCommit set the mode to 'completed' and then a `finally` block called
- * resetExportState(), which put it straight back to 'preparing'. handleExportClose already
- * resets when the user closes the dialog, so that reset was both redundant and destructive.
+ * The export dialog has two screens: the form, and the progress laid over it. There is no
+ * completion screen — asking for a click to acknowledge success is friction the status bar
+ * already covers, and it was the screen whose sharp change of size left WebKitGTK painting
+ * a blank rectangle. A finished export therefore closes the dialog and reports in the
+ * status bar.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -26,11 +26,11 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllTournaments: vi.fn(() => Promise.resolve([]))
 }));
 
-import { exportDatabase, handleExportCommit, handleExportClose } from '../services/exportService.js';
+import { exportDatabase, handleExportCommit } from '../services/exportService.js';
 import { exportModalModeStore, exportOptionsStore, resetExportState } from '../stores/exportModalStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
-import { activeModal } from '../stores/uiStore.js';
+import { activeModal, statusBarTextStore } from '../stores/uiStore.js';
 import { ExportDatabase } from '../../wailsjs/go/database/Database.js';
 
 beforeEach(() => {
@@ -48,20 +48,25 @@ afterEach(() => {
 });
 
 describe('a successful export', () => {
-    test('leaves the dialog on its completion screen', async () => {
+    test('closes the dialog instead of asking for an acknowledgement', async () => {
         await exportDatabase();
+        expect(get(activeModal)).toBe('exportDatabase');
+
         await handleExportCommit();
 
-        expect(get(exportModalModeStore)).toBe('completed');
+        expect(get(activeModal)).toBeNull();
+        expect(get(exportModalModeStore)).toBe('metadata');
     });
 
-    test('closing the dialog is what resets it', async () => {
+    test('reports what happened in the status bar', async () => {
         await exportDatabase();
         await handleExportCommit();
-        handleExportClose();
 
-        expect(get(exportModalModeStore)).toBe('preparing');
-        expect(get(activeModal)).toBeNull();
+        // Status messages are stored as tMsg descriptors and translated at render time.
+        expect(get(statusBarTextStore)).toEqual({
+            i18nKey: 'status.exportCompleted',
+            i18nParams: { posCount: 3 }
+        });
     });
 
     test('sends identifiers rather than whole positions', async () => {
