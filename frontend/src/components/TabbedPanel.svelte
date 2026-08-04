@@ -11,7 +11,6 @@
     import { activeTabStore } from '../stores/uiStore';
     import { t } from '../i18n';
 
-    import ConsolePanel from './ConsolePanel.svelte';
     import AnalysisPanel from './AnalysisPanel.svelte';
     import CommentPanel from './CommentPanel.svelte';
     import SearchPanel from './SearchPanel.svelte';
@@ -36,8 +35,7 @@
         { id: 'epc', labelKey: 'tabbedPanel.epc', icon: 'epc', shortcut: 'Ctrl+E' },
         { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
         { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
-        { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
-        { id: 'log', labelKey: 'tabbedPanel.log', icon: 'log', shortcut: '' }
+        { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
     ]);
 
     let draggedIndex = $state(null);
@@ -126,13 +124,7 @@
                 onmousedown={(e) => handleMouseDown(e, i)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
-                    {#if tab.icon === 'log'}
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                        />
-                    {:else if tab.icon === 'analysis'}
+                    {#if tab.icon === 'analysis'}
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
@@ -216,8 +208,6 @@
             <EPCPanel />
         {:else if $activeTabStore === 'metadata'}
             <MetadataPanel />
-        {:else if $activeTabStore === 'log'}
-            <ConsolePanel />
         {/if}
     </div>
 </div>

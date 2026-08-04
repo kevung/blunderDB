@@ -43,8 +43,7 @@ export default {
                         <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
                         <li>laskevat EPC-arvoja bearoff-asemille (EPC-paneeli),</li>
                         <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
-                        <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli),</li>
-                        <li>näyttävät toimintojen lokit (Loki-paneeli).</li>
+                        <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
                     </ul>
                     <p>Päänäyttöalue tarjoaa käyttäjälle:</p>
                     <ul>
@@ -85,7 +84,6 @@ export default {
                     <p>
                         Avaa komentorivi painamalla <strong>välilyönti</strong>-näppäintä. Tilapalkkiin ilmestyy kehote. Kirjoita komentosi ja suorita se painamalla <strong>Enter</strong>. Peruuta painamalla
                         <strong>Escape</strong>.
-                        Komentohistoria ja tulokset kirjataan <strong>Loki</strong>-paneeliin.
                     </p>
                     <p>
                         blunderDB suorittaa käyttäjän lähettämät kyselyt edellyttäen, että ne ovat kelvollisia, ja muuttaa tarvittaessa välittömästi tietokannan tilaa. Käyttäjältä ei vaadita erillisiä tallennustoimintoja.

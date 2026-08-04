@@ -22,7 +22,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import { COMMANDS } from '../commandVocabulary.js';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
-import { activeModal, statusBarTextStore, statusBarModeStore, logEntriesStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
@@ -39,7 +39,7 @@ function trackingCallbacks(touched) {
     );
 }
 
-const OBSERVED = [activeModal, statusBarTextStore, statusBarModeStore, logEntriesStore, currentPositionIndexStore];
+const OBSERVED = [activeModal, statusBarTextStore, statusBarModeStore, currentPositionIndexStore];
 
 describe('commandVocabulary ↔ commandProcessor sync', () => {
     beforeEach(() => {
@@ -51,7 +51,6 @@ describe('commandVocabulary ↔ commandProcessor sync', () => {
         activeModal.set(null);
         statusBarTextStore.set('');
         statusBarModeStore.set('');
-        logEntriesStore.set([]);
         currentPositionIndexStore.set(0);
     });
 

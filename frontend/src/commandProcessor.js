@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, logEntriesStore, addLogEntry, openModal, MODAL } from './stores/uiStore';
+import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, openModal, MODAL } from './stores/uiStore';
 import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
@@ -9,9 +9,9 @@ import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wai
 import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
 import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/database/Database.js';
 import { logger } from './utils/logger.js';
-// NOTE: these UI messages are translated at emission time via the non-reactive
-// `translate` helper. Already-displayed messages do not retranslate on language change.
-import { translate, tMsg } from './i18n';
+// NOTE: status messages are emitted as tMsg() descriptors so the status bar can
+// re-translate them live when the language changes.
+import { tMsg } from './i18n';
 
 let callbacks = {};
 
@@ -35,11 +35,11 @@ export function processCommand(command) {
             index = positionNumber - 1;
         }
         currentPositionIndexStore.set(index);
-        addLogEntry(translate('commands.goToPosition', { n: index + 1 }), 'result');
+        statusBarTextStore.set(tMsg('commands.goToPosition', { n: index + 1 }));
     } else if (command.startsWith('#')) {
         const tags = command.slice(1).trim();
         insertTags(tags);
-        addLogEntry(translate('commands.tagsAdded', { tags }), 'result');
+        statusBarTextStore.set(tMsg('commands.tagsAdded', { tags }));
     } else if (command === 'new' || command === 'ne' || command === 'n') {
         callbacks.onNewDatabase?.();
     } else if (command === 'open' || command === 'op' || command === 'o') {
@@ -147,7 +147,6 @@ export function processCommand(command) {
         ClearCommandHistory()
             .then(() => {
                 commandHistoryStore.set([]);
-                logEntriesStore.set([]);
                 statusBarTextStore.set(tMsg('commands.commandHistoryCleared'));
             })
             .catch((error) => {

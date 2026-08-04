@@ -634,12 +634,6 @@
         "closeView": "ビューを閉じる",
         "newView": "新規ビュー"
     },
-    "console": {
-        "empty": "ログエントリはまだありません。"
-    },
-    "logs": {
-        "empty": "記録された操作はまだありません。"
-    },
     "goToPosition": {
         "placeholder": "ポジション番号を入力",
         "title": "ポジションへ移動"
@@ -757,8 +751,7 @@
         "stats": "統計",
         "epc": "EPC",
         "anki": "Anki",
-        "metadata": "メタデータ",
-        "log": "ログ"
+        "metadata": "メタデータ"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",

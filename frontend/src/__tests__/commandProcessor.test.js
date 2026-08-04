@@ -19,7 +19,7 @@ import { translate, resolveStatusMessage } from '../i18n';
 // the status bar can re-translate live. Resolve it to the English string the
 // way StatusBar does (via the translate function) for these assertions.
 const statusText = () => resolveStatusMessage(get(statusBarTextStore), translate);
-import { currentPositionIndexStore, statusBarTextStore, logEntriesStore, activeModal, MODAL } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarTextStore, activeModal, MODAL } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -490,7 +490,6 @@ describe('processCommand', () => {
         // Reset stores to defaults
         currentPositionIndexStore.set(0);
         statusBarTextStore.set('');
-        logEntriesStore.set([]);
         activeModal.set(null);
         positionsStore.set([]);
         databasePathStore.set('');
@@ -518,11 +517,9 @@ describe('processCommand', () => {
     });
 
     // -- tag insertion -------------------------------------------------------
-    test('# command adds tag log entry', () => {
+    test('# command reports the added tags in the status bar', () => {
         processCommand('#blunder');
-        const entries = get(logEntriesStore);
-        expect(entries.length).toBe(1);
-        expect(entries[0].message).toContain('Tags added');
+        expect(statusText()).toContain('Tags added');
     });
 
     test('# command saves the comment to the current position id (not the array index)', () => {
