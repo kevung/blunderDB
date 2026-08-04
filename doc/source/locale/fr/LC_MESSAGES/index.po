@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 22:15+0200\n"
+"POT-Creation-Date: 2026-08-04 04:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -813,21 +813,57 @@ msgid ""
 ":ref:`cmd_mode` et :ref:`manuel`."
 msgstr ""
 
-#: ../../source/index.rst:156
+#: ../../source/index.rst:1
+msgid "0.31.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "04/08/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
+"deux facultatifs et choisis au moment de l'export. Le **filigrane "
+"d'origine** inscrit dans le fichier ce qu'il est et d'où il vient, signé "
+"par une identité d'émetteur créée toute seule au premier usage ; la "
+"marque est infalsifiable, se lit en tête du panneau Métadonnées (ou par "
+"``blunderdb info``, sans jamais écrire dans le fichier) et ne consigne "
+"rien du côté de celui qui reçoit la base — aucun journal, aucun suivi. La"
+" **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
+"(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
+" l'en-tête reste lisible en clair ; l'identité s'exporte et s'importe en "
+"un seul fichier depuis les préférences. Fenêtre d'export refondue : un "
+"seul écran au lieu de quatre, rappel de ce qui part réellement (les "
+"positions affichées), part couverte de chaque collection signalée en "
+"rouge lorsqu'elle est partielle, tournois exportables seulement avec "
+"leurs matchs — et un export trois fois plus rapide. Fenêtre de "
+"configuration réorganisée en trois onglets (Interface, Couleurs du "
+"plateau, Identité d'émetteur), de taille et de position stables. Panneau "
+"Métadonnées redisposé en une seule grille. Le panneau Journal, qui ne "
+"recevait que l'écho des commandes, est retiré. Corrections notables : un "
+"mot de passe erroné n'ouvre plus une base protégée, les champs des "
+"fenêtres modales ne perdent plus le focus au clic, le calcul des "
+"indicateurs PR/MWC ne plante plus sur une partie d'argent, et les "
+"fichiers temporaires (``-wal``, ``-shm``, verrou) sont nettoyés à la "
+"fermeture. Voir :ref:`diffusion_controlee` et :ref:`manuel`."
+msgstr ""
+
+#: ../../source/index.rst:157
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:190
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:192
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:194
+#: ../../source/index.rst:195
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -837,65 +873,65 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:202
 msgid "Voici plusieurs manières de discuter:"
 msgstr ""
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:208
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:210
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:212
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:214
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "Faire un don"
 msgstr ""
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr ""
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr ""
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 
-#: ../../source/index.rst:226
+#: ../../source/index.rst:227
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:229
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -903,7 +939,7 @@ msgid ""
 "jouer."
 msgstr ""
 
-#: ../../source/index.rst:236
+#: ../../source/index.rst:237
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
