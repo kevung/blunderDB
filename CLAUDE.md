@@ -213,6 +213,12 @@ Violating one of these is a bug even if all tests pass:
 - **Exports carry an allow-list**: `ExportDatabase` copies metadata through
   `issuance.Carried`, never by exclusion — a document added to `metadata` next
   year must not travel to someone else's machine by default.
+- **One type scale**: components use the tokens in `frontend/src/style.css`
+  (`--font-size-base/-small/-title`), never an absolute `font-size`, and form
+  controls carry `font: inherit` — an input inherits neither size nor family, so
+  setting only a size leaves it in the browser's control font. Hierarchy comes
+  from weight and colour. Exceptions (chrome, statistics figures) are named in
+  ADR-0008; the migration of existing components is gradual, the rule is not.
 - **Svelte 5 store rule**: inside components, always `$store` or
   `$effect(() => { const v = $store; … })` — **never** `.subscribe()` (stale
   closures, invisible to the compiler's dependency tracking; caused the
