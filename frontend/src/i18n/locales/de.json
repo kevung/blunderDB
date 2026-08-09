@@ -627,7 +627,7 @@
                 "double_take": "Doppeln, nehmen",
                 "double_pass": "Doppeln, passen"
             },
-            "noDecision": "Keine Entscheidung (Würfel beim Gegner)",
+            "noDecision": "Keine Entscheidung",
             "downloadHint": "Ein exaktes Würfel-Urteil bis 11 Steine pro Spieler erfordert die herunterladbare Datenbank (1,2 GB).",
             "openConfig": "Konfigurationseinstellungen anzeigen",
             "winPct": "Gewinn (%)"

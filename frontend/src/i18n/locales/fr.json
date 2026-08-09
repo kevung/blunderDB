@@ -627,7 +627,7 @@
                 "double_take": "Double, prend",
                 "double_pass": "Double, passe"
             },
-            "noDecision": "Pas de décision (videau adverse)",
+            "noDecision": "Pas de décision",
             "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
             "openConfig": "Voir les paramètres de configuration",
             "winPct": "Gain (%)"

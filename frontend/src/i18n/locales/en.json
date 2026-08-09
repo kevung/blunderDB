@@ -627,7 +627,7 @@
                 "double_take": "Double, take",
                 "double_pass": "Double, pass"
             },
-            "noDecision": "No decision (cube against)",
+            "noDecision": "No decision",
             "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
             "openConfig": "See configuration settings",
             "winPct": "Win (%)"

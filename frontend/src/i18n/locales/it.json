@@ -627,7 +627,7 @@
                 "double_take": "Raddoppio, prende",
                 "double_pass": "Raddoppio, passa"
             },
-            "noDecision": "Nessuna decisione (cubo avversario)",
+            "noDecision": "Nessuna decisione",
             "downloadHint": "Un verdetto del cubo esatto fino a 11 pedine per giocatore richiede il database scaricabile (1,2 GB).",
             "openConfig": "Vedi le impostazioni di configurazione",
             "winPct": "Vittoria (%)"

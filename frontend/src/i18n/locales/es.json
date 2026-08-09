@@ -627,7 +627,7 @@
                 "double_take": "Doblar, tomar",
                 "double_pass": "Doblar, pasar"
             },
-            "noDecision": "Sin decisión (cubo del rival)",
+            "noDecision": "Sin decisión",
             "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
             "openConfig": "Ver los parámetros de configuración",
             "winPct": "Victoria (%)"

@@ -627,7 +627,7 @@
                 "double_take": "Tuplaus, ota",
                 "double_pass": "Tuplaus, ohita"
             },
-            "noDecision": "Ei päätöstä (kuutio vastustajalla)",
+            "noDecision": "Ei päätöstä",
             "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",
             "openConfig": "Näytä asetukset",
             "winPct": "Voitto (%)"

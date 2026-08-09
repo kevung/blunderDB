@@ -627,7 +627,7 @@
                 "double_take": "ダブル、テイク",
                 "double_pass": "ダブル、パス"
             },
-            "noDecision": "判断なし(相手がキューブ保有)",
+            "noDecision": "判断なし",
             "downloadHint": "プレイヤーごとに11枚まで正確なキューブ判定には、ダウンロード可能なデータベース(1.2 GB)が必要です。",
             "openConfig": "設定を表示",
             "winPct": "勝率 (%)"

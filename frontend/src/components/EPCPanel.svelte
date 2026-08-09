@@ -51,6 +51,13 @@
     // Signed difference bottom − top: negative when Black leads the race.
     const sd = (x, digits) => (x >= 0 ? '+' : '') + x.toFixed(digits);
 
+    // Decision-theoretic best equity: the roller picks double or not, the
+    // opponent then picks the cheaper response.
+    let bestEq = $derived(data.race?.money ? Math.max(data.race.money.no_double, Math.min(data.race.money.double_take, data.race.money.double_pass)) : 0);
+    let bestVerdict = $derived(data.race?.money?.verdict ?? '');
+    // Gap to the best decision, shown under every non-best equity (XG style).
+    const gap = (v) => '(' + sd(v - bestEq, 3) + ')';
+
     // Win probabilities per colour (the stored value is the on-roll player's).
     let winBlack = $derived(data.race ? (data.race.on_roll === 0 ? data.race.win_prob : 1 - data.race.win_prob) : 0);
     let winWhite = $derived(data.race ? 1 - winBlack : 0);
@@ -157,18 +164,22 @@
                                     <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
                                     <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
                                     <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
-                                    <td>{show(maskedRace, eq(data.race.money.no_double))}</td>
-                                    <td>{show(maskedRace, eq(data.race.money.double_take))}</td>
-                                    <td>{show(maskedRace, eq(data.race.money.double_pass))}</td>
-                                </tr>
-                                <tr class="best-action-row">
-                                    <td colspan="6" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
-                                        {#if maskedRace}
-                                            {HIDDEN}
-                                        {:else if data.race.money.verdict}
-                                            {$t('epc.race.verdicts.' + data.race.money.verdict)}
-                                        {:else}
-                                            {$t('epc.race.noDecision')}
+                                    <td>
+                                        {show(maskedRace, eq(data.race.money.no_double))}
+                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'no_double'}
+                                            <div class="eq-gap">{gap(data.race.money.no_double)}</div>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {show(maskedRace, eq(data.race.money.double_take))}
+                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'double_take'}
+                                            <div class="eq-gap">{gap(data.race.money.double_take)}</div>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {show(maskedRace, eq(data.race.money.double_pass))}
+                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'double_pass'}
+                                            <div class="eq-gap">{gap(data.race.money.double_pass)}</div>
                                         {/if}
                                     </td>
                                 </tr>
@@ -185,6 +196,17 @@
                         </tbody>
                     </table>
                     <div class="race-side">
+                        {#if data.race.money}
+                            <span class="decision-chip" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
+                                {#if maskedRace}
+                                    {HIDDEN}
+                                {:else if data.race.money.verdict}
+                                    {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                                {:else}
+                                    {$t('epc.race.noDecision')}
+                                {/if}
+                            </span>
+                        {/if}
                         {#if data.race.regime === 'exact'}
                             <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
                                 {$t('epc.race.exact')}
@@ -211,7 +233,7 @@
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 6px 14px;
+        padding: 3px 14px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         font-size: var(--font-size-base);
     }
@@ -276,7 +298,7 @@
     .tables-container {
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 8px;
         align-items: flex-start;
         padding-right: 80px;
     }
@@ -288,8 +310,8 @@
         align-items: center;
         gap: 14px;
         border-top: 2px solid #e0e0e0;
-        padding-top: 8px;
-        margin-top: 2px;
+        padding-top: 5px;
+        margin-top: 0;
     }
 
     table {
@@ -299,7 +321,7 @@
 
     th,
     td {
-        padding: 3px 20px;
+        padding: 1px 18px;
         text-align: center;
         white-space: nowrap;
     }
@@ -339,13 +361,6 @@
 
     .delta-row .main-value {
         color: #666;
-    }
-
-    .best-action-row td {
-        font-weight: 600;
-        color: #1a56c4;
-        border-top: 1px solid #ddd;
-        text-align: left;
     }
 
     tr.masked,
@@ -411,6 +426,23 @@
         align-items: flex-start;
         gap: 4px;
         min-width: 0;
+    }
+
+    .decision-chip {
+        padding: 1px 10px;
+        border-radius: 9px;
+        background: #e8f0fe;
+        border: 1px solid #c4d8f5;
+        color: #1a56c4;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .eq-gap {
+        font-size: var(--font-size-small);
+        color: #999;
+        font-weight: 400;
+        letter-spacing: 0;
     }
 
     .download-hint {
