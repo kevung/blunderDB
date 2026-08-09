@@ -630,7 +630,9 @@
             },
             "noDecision": "Pas de décision (videau adverse)",
             "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
-            "openConfig": "Voir les paramètres de configuration"
+            "openConfig": "Voir les paramètres de configuration",
+            "onRoll": "Au trait",
+            "cube": "Videau"
         }
     },
     "filterLibrary": {

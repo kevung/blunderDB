@@ -630,7 +630,9 @@
             },
             "noDecision": "Ei päätöstä (kuutio vastustajalla)",
             "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",
-            "openConfig": "Näytä asetukset"
+            "openConfig": "Näytä asetukset",
+            "onRoll": "Vuorossa",
+            "cube": "Kuutio"
         }
     },
     "filterLibrary": {

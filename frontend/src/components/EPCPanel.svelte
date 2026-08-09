@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
+    import { positionStore } from '../stores/positionStore';
     import { GetEpcChallenge, SaveEpcChallenge } from '../../wailsjs/go/main/Config.js';
     import { t } from '../i18n';
 
@@ -25,6 +26,34 @@
 
     function reveal(zone) {
         epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
+    }
+
+    // The race analysis is computed for the position's on-roll player and
+    // cube owner; both are editable straight from the race table header. The
+    // position store is the single source of truth: changing it re-triggers
+    // updateEPC (and re-masks the défi zones, consistently with board edits).
+    let onRoll = $derived($positionStore?.player_on_roll ?? 0);
+    let cubeState = $derived.by(() => {
+        const owner = $positionStore?.cube?.owner ?? -1;
+        if (owner === -1) return 'centered';
+        return owner === onRoll ? 'owned' : 'against';
+    });
+
+    function setOnRoll(p) {
+        positionStore.update((pos) => {
+            // Keep the cube on the same side relative to the new on-roll player
+            // is NOT what we want: the owner is absolute; just flip the roller.
+            pos.player_on_roll = p;
+            return pos;
+        });
+    }
+
+    function setCubeState(state) {
+        positionStore.update((pos) => {
+            const or = pos.player_on_roll ?? 0;
+            pos.cube.owner = state === 'centered' ? -1 : state === 'owned' ? or : 1 - or;
+            return pos;
+        });
     }
 
     function openBearoffSettings() {
@@ -134,17 +163,34 @@
                     <tbody>
                         <tr>
                             <th class="race-title" colspan={data.race.money ? 5 : 2}>
-                                <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
-                                {$t('epc.race.title')}
-                                {#if data.race.regime === 'exact'}
-                                    <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                        {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                                <span class="race-title-inner">
+                                    <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
+                                    {$t('epc.race.title')}
+                                    {#if data.race.regime === 'exact'}
+                                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                            {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                                        </span>
+                                    {:else}
+                                        <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                            {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                                        </span>
+                                    {/if}
+                                    <span class="race-controls" role="group" aria-label={$t('epc.race.title')} onclick={(e) => e.stopPropagation()}>
+                                        <span class="ctl-label">{$t('epc.race.onRoll')}</span>
+                                        <button class="dot-btn" class:active={onRoll === 0} onclick={() => setOnRoll(0)} title={$t('epc.bottomBlack')} aria-pressed={onRoll === 0}>
+                                            <span class="player-indicator bottom"></span>
+                                        </button>
+                                        <button class="dot-btn" class:active={onRoll === 1} onclick={() => setOnRoll(1)} title={$t('epc.topWhite')} aria-pressed={onRoll === 1}>
+                                            <span class="player-indicator top"></span>
+                                        </button>
+                                        <span class="ctl-label">{$t('epc.race.cube')}</span>
+                                        <select class="cube-select" value={cubeState} aria-label={$t('epc.race.cube')} onchange={(e) => setCubeState(e.target.value)}>
+                                            <option value="centered">{$t('epc.race.cubeStates.centered')}</option>
+                                            <option value="owned">{$t('epc.race.cubeStates.owned')}</option>
+                                            <option value="against">{$t('epc.race.cubeStates.against')}</option>
+                                        </select>
                                     </span>
-                                {:else}
-                                    <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                        {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                                    </span>
-                                {/if}
+                                </span>
                             </th>
                         </tr>
                         {#if data.race.money}
@@ -301,6 +347,49 @@
 
     .race-title {
         text-align: left;
+    }
+
+    .race-title-inner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .race-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 12px;
+    }
+
+    .ctl-label {
+        font-size: var(--font-size-small);
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .dot-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1px 4px;
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .dot-btn.active {
+        border-color: #1a56c4;
+        background: #e8f0fe;
+    }
+
+    .cube-select {
+        font: inherit;
+        font-size: var(--font-size-small);
+        padding: 0 2px;
     }
 
     .race-title .badge {

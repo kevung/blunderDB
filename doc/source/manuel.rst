@@ -730,9 +730,13 @@ Les résultats sont présentés sous forme de deux tableaux empilés :
   avance) d'EPC, de pips et de wastage ;
 
 * en dessous, un **tableau course/videau**, sur le modèle du tableau de
-  décision de videau du panneau d'analyse. En régime estimé, le lien
-  « Voir les paramètres de configuration » ouvre directement l'onglet
-  *Bearoff* de la configuration.
+  décision de videau du panneau d'analyse. Son en-tête permet d'éditer
+  directement le **joueur au trait** (deux pastilles) et la **position du
+  videau** (centré, possédé, adverse) : l'analyse — probabilité de gain,
+  équités et verdict — est recalculée aussitôt pour le joueur choisi, et
+  la pastille de la zone course suit. En régime estimé, le lien « Voir
+  les paramètres de configuration » ouvre directement l'onglet *Bearoff*
+  de la configuration.
 
 La case *Défi* reste épinglée en haut à droite du panneau.
 

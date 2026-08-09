@@ -630,7 +630,9 @@
             },
             "noDecision": "Keine Entscheidung (Würfel beim Gegner)",
             "downloadHint": "Ein exaktes Würfel-Urteil bis 11 Steine pro Spieler erfordert die herunterladbare Datenbank (1,2 GB).",
-            "openConfig": "Konfigurationseinstellungen anzeigen"
+            "openConfig": "Konfigurationseinstellungen anzeigen",
+            "onRoll": "Am Zug",
+            "cube": "Würfel"
         }
     },
     "filterLibrary": {

@@ -630,7 +630,9 @@
             },
             "noDecision": "Nessuna decisione (cubo avversario)",
             "downloadHint": "Un verdetto del cubo esatto fino a 11 pedine per giocatore richiede il database scaricabile (1,2 GB).",
-            "openConfig": "Vedi le impostazioni di configurazione"
+            "openConfig": "Vedi le impostazioni di configurazione",
+            "onRoll": "Al tiro",
+            "cube": "Cubo"
         }
     },
     "filterLibrary": {
