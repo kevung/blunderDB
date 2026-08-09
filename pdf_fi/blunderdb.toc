@@ -50,29 +50,29 @@
 \contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}paneeli}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metatietopaneeli}{24}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Tietokannan jakaminen: alkuperä ja salasana}{24}{subsection.2.2.20}%
-\contentsline {subsubsection}{Tietokannan merkitseminen alkuperällään}{24}{subsubsection*.27}%
+\contentsline {subsubsection}{Tietokannan merkitseminen alkuperällään}{25}{subsubsection*.27}%
 \contentsline {subsubsection}{Merkitsijän identiteetti}{25}{subsubsection*.28}%
-\contentsline {subsubsection}{Tietokannan suojaaminen salasanalla}{25}{subsubsection*.29}%
+\contentsline {subsubsection}{Tietokannan suojaaminen salasanalla}{26}{subsubsection*.29}%
 \contentsline {subsubsection}{Tiedoston alkuperän lukeminen}{26}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}Käyttöopas}{26}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{26}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{27}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{27}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Tuo ja yhdistä tietokanta}{27}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{27}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{28}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Merkitse asema tunnisteella}{28}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Poista asema}{28}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{28}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{29}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Tuo ottelu}{29}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Tuo ottelukansio}{29}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{29}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Vedä ja pudota}{30}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Selaa ottelua}{30}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Hallitse ottelupaneelia}{30}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Hallitse kokoelmia}{30}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Hallitse turnauksia}{31}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{31}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Laske EPC}{31}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{31}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{32}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{32}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{32}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Hae asemia kriteerien perusteella}{32}{subsection.2.3.21}%

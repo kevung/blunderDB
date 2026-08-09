@@ -50,29 +50,29 @@
 \contentsline {subsection}{\numberline {2.2.18}Anki Panel}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadata Panel}{24}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Handing out a database: origin and password}{24}{subsection.2.2.20}%
-\contentsline {subsubsection}{Marking a database with its origin}{24}{subsubsection*.27}%
+\contentsline {subsubsection}{Marking a database with its origin}{25}{subsubsection*.27}%
 \contentsline {subsubsection}{Issuer identity}{25}{subsubsection*.28}%
-\contentsline {subsubsection}{Protecting a database with a password}{25}{subsubsection*.29}%
+\contentsline {subsubsection}{Protecting a database with a password}{26}{subsubsection*.29}%
 \contentsline {subsubsection}{Reading a file’s origin}{26}{subsubsection*.30}%
-\contentsline {section}{\numberline {2.3}User Guide}{26}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Create a new database}{26}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.3}User Guide}{27}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Create a new database}{27}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Open an existing database}{27}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Import and merge a database}{27}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Edit a position}{27}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Edit a position}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Add a position to the database}{28}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Tag a position}{28}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Delete a position}{28}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Import a position from XG}{28}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Import a position from XG}{29}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Import a match}{29}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Import a folder of matches}{29}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Drag and drop}{29}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Drag and drop}{30}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navigate through a match}{30}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Manage the match panel}{30}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Manage collections}{30}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Manage tournaments}{31}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Display performance statistics}{31}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Calculate the EPC}{31}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Display the analysis of a position imported from XG}{31}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Display the analysis of a position imported from XG}{32}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Export a position to XG}{32}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}View the different positions}{32}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Search for positions based on criteria}{32}{subsection.2.3.21}%

@@ -1884,6 +1884,20 @@ n’est pas une approximation. Le verdict (pas de double / double, prend /
 double, passe) est reconstruit exactement des équités stockées, selon la
 règle de GNUbg, validée trait pour trait contre son analyse.
 
+\begin{sphinxadmonition}{note}{Примечание:}
+\sphinxAtStartPar
+Les équités cubeful supposent un \sphinxstylestrong{jeu de videau optimal des deux
+camps jusqu’au bout} : les recubes futurs sont intégralement valorisés
+(analyse rétrograde complète). Dans les courses très volatiles de fin de
+partie, la cascade de recubes mange presque tout l’avantage du camp au
+trait — les équités « sans double » et « double/prend » peuvent alors
+être proches de zéro là où un moteur comme XG, dont le modèle de videau
+ne valorise pas cette cascade, affiche des valeurs proches du dead cube
+(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
+62 \% de gain, D/T exact +0,006 contre +0,475 chez XG). La \sphinxstylestrong{décision}
+affichée, elle, coïncide avec celle des moteurs.
+\end{sphinxadmonition}
+
 \sphinxAtStartPar
 \sphinxstylestrong{Pourquoi le verdict n’est\sphinxhyphen{}il jamais estimé ?} L’équité cubeful est un
 problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu’aucun résumé statistique de la

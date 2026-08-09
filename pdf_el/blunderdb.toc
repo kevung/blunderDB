@@ -62,10 +62,10 @@
 \contentsline {subsection}{\numberline {2.3.5}Προσθήκη θέσης στη βάση δεδομένων}{30}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Προσθήκη ετικέτας σε μια θέση}{30}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Διαγραφή θέσης}{30}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Εισαγωγή θέσης από το XG}{30}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}Εισαγωγή θέσης από το XG}{31}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Εισαγωγή αγώνα}{31}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Εισαγωγή φακέλου αγώνων}{31}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Μεταφορά και απόθεση}{31}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.11}Μεταφορά και απόθεση}{32}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Πλοήγηση σε έναν αγώνα}{32}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Διαχείριση του πλαισίου αγώνων}{32}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Διαχείριση συλλογών}{32}{subsection.2.3.14}%

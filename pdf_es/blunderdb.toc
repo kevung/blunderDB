@@ -51,31 +51,31 @@
 \contentsline {subsection}{\numberline {2.2.19}Panel de Metadatos}{25}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Distribuir una base de datos: origen y contraseña}{25}{subsection.2.2.20}%
 \contentsline {subsubsection}{Marcar una base de datos con su origen}{25}{subsubsection*.27}%
-\contentsline {subsubsection}{Identidad del emisor}{25}{subsubsection*.28}%
+\contentsline {subsubsection}{Identidad del emisor}{26}{subsubsection*.28}%
 \contentsline {subsubsection}{Proteger una base de datos con una contraseña}{26}{subsubsection*.29}%
-\contentsline {subsubsection}{Leer el origen de un archivo}{26}{subsubsection*.30}%
+\contentsline {subsubsection}{Leer el origen de un archivo}{27}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}Guía del usuario}{27}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Crear una nueva base de datos}{27}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Abrir una base de datos existente}{27}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Importar y fusionar una base de datos}{27}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Editar una posición}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Añadir una posición a la base de datos}{28}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Etiquetar una posición}{28}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Eliminar una posición}{28}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Etiquetar una posición}{29}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Eliminar una posición}{29}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Importar una posición desde XG}{29}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Importar una partida}{29}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Importar una carpeta de partidas}{30}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Arrastrar y soltar}{30}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navegar por una partida}{30}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Gestionar el panel de partidas}{30}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Gestionar el panel de partidas}{31}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Gestionar las colecciones}{31}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Gestionar los torneos}{31}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Mostrar las estadísticas de rendimiento}{31}{subsection.2.3.16}%
-\contentsline {subsection}{\numberline {2.3.17}Calcular el EPC}{31}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.17}Calcular el EPC}{32}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Mostrar el análisis de una posición importada desde XG}{32}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Exportar una posición a XG}{32}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Visualizar las distintas posiciones}{32}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}Buscar posiciones según criterios}{32}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.20}Visualizar las distintas posiciones}{33}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.21}Buscar posiciones según criterios}{33}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Lista de comandos}{33}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operaciones globales}{34}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posiciones y navegación}{34}{subsection.2.4.2}%

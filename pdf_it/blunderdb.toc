@@ -51,31 +51,31 @@
 \contentsline {subsection}{\numberline {2.2.19}Pannello Metadati}{25}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Distribuire un database: origine e password}{25}{subsection.2.2.20}%
 \contentsline {subsubsection}{Contrassegnare un database con la sua origine}{25}{subsubsection*.27}%
-\contentsline {subsubsection}{Identità dell’emittente}{25}{subsubsection*.28}%
+\contentsline {subsubsection}{Identità dell’emittente}{26}{subsubsection*.28}%
 \contentsline {subsubsection}{Proteggere un database con una password}{26}{subsubsection*.29}%
-\contentsline {subsubsection}{Leggere l’origine di un file}{26}{subsubsection*.30}%
+\contentsline {subsubsection}{Leggere l’origine di un file}{27}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}Guida utente}{27}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Creare un nuovo database}{27}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Aprire un database esistente}{27}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Importare e unire un database}{27}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Modificare una posizione}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Aggiungere una posizione al database}{28}{subsection.2.3.5}%
-\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{28}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Eliminare una posizione}{28}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.6}Etichettare una posizione}{29}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Eliminare una posizione}{29}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Importare una posizione da XG}{29}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Importare un match}{29}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Importare una cartella di match}{30}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}Trascina e rilascia}{30}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}Navigare in un match}{30}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{30}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}Gestire il pannello dei match}{31}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Gestire le collezioni}{31}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Gestire i tornei}{31}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Visualizzare le statistiche di performance}{31}{subsection.2.3.16}%
-\contentsline {subsection}{\numberline {2.3.17}Calcolare l’EPC}{31}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.17}Calcolare l’EPC}{32}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Visualizzare l’analisi di una posizione importata da XG}{32}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Esportare una posizione verso XG}{32}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Visualizzare le diverse posizioni}{32}{subsection.2.3.20}%
-\contentsline {subsection}{\numberline {2.3.21}Cercare posizioni in base a criteri}{32}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.20}Visualizzare le diverse posizioni}{33}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.21}Cercare posizioni in base a criteri}{33}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Elenco dei comandi}{33}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Operazioni globali}{34}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Posizioni e navigazione}{34}{subsection.2.4.2}%

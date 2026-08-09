@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:09
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1720,133 +1720,133 @@ Underfull \hbox (badness 10000) in paragraph at lines 888--890
 
 [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26]
 [27] [28] [29]
-Underfull \hbox (badness 10000) in paragraph at lines 2280--2282
+Underfull \hbox (badness 10000) in paragraph at lines 2294--2296
 []\TU/FreeSerif(1)/m/n/10 blunderDB автоматически определяет дубликаты и предот
 вращает повторный импорт матча, уже
  []
 
 [30] [31] [32] [33]
-Underfull \hbox (badness 10000) in paragraph at lines 2765--2767
+Underfull \hbox (badness 10000) in paragraph at lines 2779--2781
 []\TU/FreeSerif(1)/m/n/10 Загружает образец базы данных (матчи, турнир, анализы
 ) для знакомства с
  []
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48]
-[49] [50] [51]
-Underfull \hbox (badness 5711) in paragraph at lines 6429--6431
+[49] [50] [51] [52]
+Underfull \hbox (badness 5711) in paragraph at lines 6443--6445
 []\TU/FreeSerif(1)/m/n/10 Наконец, blunderDB больше не ограничивается настольны
 м приложением: тот же исполняемый файл
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6452--6454
+Underfull \hbox (badness 10000) in paragraph at lines 6466--6468
 []\TU/FreeSerif(1)/m/n/10 Необязательный серверный режим может опираться на [][
 ]PostgreSQL[][] вместо SQLite для
  []
 
-[52]
-Underfull \hbox (badness 8056) in paragraph at lines 6502--6504
+[53]
+Underfull \hbox (badness 8056) in paragraph at lines 6516--6518
 []\TU/FreeSerif(1)/m/n/10 Эти три варианта использования опираются на общий \TU
 /FreeSerif(1)/b/n/10 слой хранения\TU/FreeSerif(1)/m/n/10 , который умеет работ
 ать с
  []
 
-[53]
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 6590--6592
+
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 6604--6606
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 6593
+Overfull \hbox (19.82352pt too wide) detected at line 6607
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6649--6651
+Underfull \hbox (badness 10000) in paragraph at lines 6663--6665
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6681--6683
+Underfull \hbox (badness 10000) in paragraph at lines 6695--6697
 [][][]\TU/FreeMono(1)/m/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6713--6715
+Underfull \hbox (badness 10000) in paragraph at lines 6727--6729
 [][][]\TU/FreeMono(1)/m/n/10 bearoff[]ts
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6736--6740
+Underfull \hbox (badness 10000) in paragraph at lines 6750--6754
 \TU/FreeMono(1)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m
 /n/10 BLUNDERDB_ADDR\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m/n/10 BLUNDERDB_
 LOG_LEVEL\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m/n/10 BLUNDERDB_RLS\TU/Free
 Serif(1)/m/n/10 ,
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 6764--6766
+[54]
+Underfull \hbox (badness 10000) in paragraph at lines 6778--6780
 []\TU/FreeSerif(1)/m/n/10 Два метода семейства \TU/FreeMono(1)/m/n/10 positions
  \TU/FreeSerif(1)/m/n/10 декодируют позицию, не сохраняя её: \TU/FreeMono(1)/m/
 n/10 positions.fromXGID
  []
 
-[54]
-Underfull \hbox (badness 10000) in paragraph at lines 6786--6788
+
+Underfull \hbox (badness 10000) in paragraph at lines 6800--6802
 []\TU/FreeSerif(1)/m/n/10 Образ слушает порт 8080 и настраивается через перемен
 ные окружения (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(1)/m/n/10 
 ,
  []
 
 [55]
-Underfull \hbox (badness 10000) in paragraph at lines 6838--6840
+Underfull \hbox (badness 10000) in paragraph at lines 6852--6854
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6841
+Underfull \hbox (badness 10000) detected at line 6855
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6860--6862
+Underfull \hbox (badness 10000) in paragraph at lines 6874--6876
 []\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
 //chemin \TU/FreeSerif(1)/m/n/10 или
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6892--6894
+Underfull \hbox (badness 6412) in paragraph at lines 6906--6908
 []\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6914--6916
+Underfull \hbox (badness 10000) in paragraph at lines 6928--6930
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
-
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 7023--7025
+[56]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 7037--7039
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 7026
+Overfull \hbox (9.46619pt too wide) detected at line 7040
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7092--7094
+Underfull \hbox (badness 10000) in paragraph at lines 7106--7108
 []\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
 .<метод> \TU/FreeSerif(1)/m/n/10 и
  []
 
-[56] [57]
-Underfull \hbox (badness 10000) in paragraph at lines 7365--7367
+[57] [58]
+Underfull \hbox (badness 10000) in paragraph at lines 7379--7381
 []\TU/FreeSerif(1)/m/n/10 Позиция турнира
  []
 
-[58]
-Underfull \hbox (badness 10000) in paragraph at lines 7600--7602
+
+Underfull \hbox (badness 10000) in paragraph at lines 7614--7616
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
@@ -1866,16 +1866,16 @@ File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
 <win3.png>
+ [62] [63] [64]
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [62] [63] [64] [65]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [66] [67] [68] [69] [70] [71] [72] [73]
+ [65] [66] [67] [68] [69] [70] [71] [72] [73]
 [74
 
 ]
