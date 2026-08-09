@@ -4,7 +4,7 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
-    import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton } from '../utils/boardGeometry.js';
+    import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -117,9 +117,11 @@
         }
         if (mode !== 'EDIT' && mode !== 'EPC') return;
 
+        // Normalise into drawing coordinates: the canvas may be CSS-scaled
+        // (interface zoom, side layout), so raw client pixels drift — at 90 %
+        // scale a click on point 1 used to land on point 2.
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
 
         _isMouseDown = true;
         startMousePos = {
@@ -140,9 +142,10 @@
 
         _isMouseDown = false;
         const rect = canvas.getBoundingClientRect();
+        const norm = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
         const endMousePos = {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
+            x: norm.x,
+            y: norm.y,
             button: event.button
         };
 
@@ -185,70 +188,9 @@
     }
 
     function getCheckerPointAndCount(x_mouse, y_mouse, _button) {
-        const boardAspectFactor = 11 / 13;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = boardAspectFactor * boardWidth;
-        const boardCheckerSize = boardHeight / 11;
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-
-        const x = Math.round((x_mouse - boardOrigXpos) / boardCheckerSize);
-        const y = Math.round((y_mouse - boardOrigYpos) / boardCheckerSize);
-
-        let checkerCount = 0;
-        if (Math.abs(x) <= 6 && Math.abs(y) > 0 && Math.abs(y) <= 6) {
-            if (Math.abs(y) == 0 || Math.abs(y) == 6) {
-                checkerCount = 0;
-            } else if (Math.abs(y) <= 5) {
-                if (x != 0) {
-                    checkerCount = 6 - Math.abs(y);
-                } else {
-                    checkerCount = Math.abs(y);
-                }
-            }
-
-            let checkerPoint = 0;
-            if (boardCfg.orientation == 'right') {
-                if (y < 0) {
-                    if (x > 0) {
-                        checkerPoint = 18 + x;
-                    } else if (x < 0) {
-                        checkerPoint = 19 + x;
-                    } else {
-                        checkerPoint = 25;
-                    }
-                } else if (y > 0) {
-                    if (x > 0) {
-                        checkerPoint = 7 - x;
-                    } else if (x < 0) {
-                        checkerPoint = 6 - x;
-                    } else {
-                        checkerPoint = 0;
-                    }
-                }
-            } else {
-                if (y < 0) {
-                    if (x > 0) {
-                        checkerPoint = 19 - x;
-                    } else if (x < 0) {
-                        checkerPoint = 18 - x;
-                    } else {
-                        checkerPoint = 25;
-                    }
-                } else if (y > 0) {
-                    if (x > 0) {
-                        checkerPoint = 6 + x;
-                    } else if (x < 0) {
-                        checkerPoint = 7 + x;
-                    } else {
-                        checkerPoint = 0;
-                    }
-                }
-            }
-
-            return { checkerPoint, checkerCount };
-        }
-        return { checkerPoint: -1, checkerCount: 0 };
+        // Pure mapping shared with the unit tests (boardGeometry.js), which
+        // assert it against the drawCheckers() formulas.
+        return checkerPointAndCountAt(x_mouse, y_mouse, width, height, boardCfg.widthFactor, boardCfg.orientation);
     }
 
     function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {

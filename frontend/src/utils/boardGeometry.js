@@ -102,3 +102,94 @@ export function epcEditButton(point) {
     if (point >= 19 && point <= 24) return 2;
     return null;
 }
+
+/**
+ * Convert a mouse event position into board-drawing coordinates. The canvas
+ * may be CSS-scaled (interface zoom, side-panel layout, responsive width), so
+ * client pixels are normalised by the ratio between the drawing size
+ * (width/height, the two.js coordinate space) and the element's rendered box.
+ * Without this, clicks drift proportionally to the scale — worst at the board
+ * edges (clicking point 1 lands on point 2 at 90 % interface scale).
+ */
+export function boardMouseToDrawing(clientX, clientY, rect, width, height) {
+    const scaleX = rect.width > 0 ? width / rect.width : 1;
+    const scaleY = rect.height > 0 ? height / rect.height : 1;
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
+
+/**
+ * Map a position in board-drawing coordinates to the clicked point and
+ * checker slot. Pure extraction of Board.svelte's click mapping so it can be
+ * asserted against the drawing formulas (drawCheckers) in unit tests.
+ * Returns { checkerPoint, checkerCount }; checkerPoint is -1 outside the
+ * board, 0/25 for the bars.
+ */
+export function checkerPointAndCountAt(x_mouse, y_mouse, width, height, widthFactor, orientation) {
+    const boardAspectFactor = 11 / 13;
+    const boardWidth = widthFactor * width;
+    const boardHeight = boardAspectFactor * boardWidth;
+    const boardCheckerSize = boardHeight / 11;
+    const boardOrigXpos = width / 2;
+    const boardOrigYpos = height / 2;
+
+    const x = Math.round((x_mouse - boardOrigXpos) / boardCheckerSize);
+    const y = Math.round((y_mouse - boardOrigYpos) / boardCheckerSize);
+
+    let checkerCount = 0;
+    if (Math.abs(x) <= 6 && Math.abs(y) > 0 && Math.abs(y) <= 6) {
+        if (Math.abs(y) == 0 || Math.abs(y) == 6) {
+            checkerCount = 0;
+        } else if (Math.abs(y) <= 5) {
+            if (x != 0) {
+                checkerCount = 6 - Math.abs(y);
+            } else {
+                checkerCount = Math.abs(y);
+            }
+        }
+
+        let checkerPoint = 0;
+        if (orientation == 'right') {
+            if (y < 0) {
+                if (x > 0) {
+                    checkerPoint = 18 + x;
+                } else if (x < 0) {
+                    checkerPoint = 19 + x;
+                } else {
+                    checkerPoint = 25;
+                }
+            } else if (y > 0) {
+                if (x > 0) {
+                    checkerPoint = 7 - x;
+                } else if (x < 0) {
+                    checkerPoint = 6 - x;
+                } else {
+                    checkerPoint = 0;
+                }
+            }
+        } else {
+            if (y < 0) {
+                if (x > 0) {
+                    checkerPoint = 19 - x;
+                } else if (x < 0) {
+                    checkerPoint = 18 - x;
+                } else {
+                    checkerPoint = 25;
+                }
+            } else if (y > 0) {
+                if (x > 0) {
+                    checkerPoint = 6 + x;
+                } else if (x < 0) {
+                    checkerPoint = 7 + x;
+                } else {
+                    checkerPoint = 0;
+                }
+            }
+        }
+
+        return { checkerPoint, checkerCount };
+    }
+    return { checkerPoint: -1, checkerCount: 0 };
+}

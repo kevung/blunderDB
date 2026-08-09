@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton } from '../utils/boardGeometry.js';
+import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
 
 describe('parseMoveNotation', () => {
     test('parses a simple two-move string', () => {
@@ -121,5 +121,73 @@ describe('epcEditButton', () => {
     });
     test('ignore le reste du plateau (hors des deux jans, barres comprises)', () => {
         for (const pt of [0, 7, 12, 13, 18, 25]) expect(epcEditButton(pt)).toBe(null);
+    });
+});
+
+// Réplique des formules de drawCheckers() (Board.svelte) : centre de la
+// colonne du point `index` en coordonnées de dessin.
+function drawnColumnCenter(index, width, height, widthFactor, orientation) {
+    const boardWidth = widthFactor * width;
+    const boardHeight = (11 / 13) * boardWidth;
+    const cs = boardHeight / 11;
+    const ox = width / 2;
+    const oy = height / 2;
+    let x;
+    const sign = orientation === 'right' ? 1 : -1;
+    if (index <= 6) x = ox + sign * (7 - index) * cs;
+    else if (index <= 12) x = ox - sign * (index - 6) * cs;
+    else if (index <= 18) x = ox - sign * (19 - index) * cs;
+    else x = ox + sign * (index - 18) * cs;
+    // yBase ± n·cs : on vise le centre du 3e pion (slot médian)
+    const yEdge = index <= 12 ? oy + 0.5 * boardHeight : oy - 0.5 * boardHeight;
+    const dir = index <= 12 ? -1 : 1;
+    const y = yEdge + dir * 3 * cs;
+    return { x, y };
+}
+
+describe('checkerPointAndCountAt — cohérence clic ↔ dessin', () => {
+    const W = 1000,
+        H = 700,
+        WF = 0.75;
+    for (const orientation of ['right', 'left']) {
+        test(`chaque point dessiné est retrouvé au clic (orientation ${orientation})`, () => {
+            for (let pt = 1; pt <= 24; pt++) {
+                const { x, y } = drawnColumnCenter(pt, W, H, WF, orientation);
+                const r = checkerPointAndCountAt(x, y, W, H, WF, orientation);
+                expect(r.checkerPoint, `point ${pt}`).toBe(pt);
+            }
+        });
+    }
+});
+
+describe('boardMouseToDrawing — robuste au zoom CSS (bug clic point 1 → point 2)', () => {
+    const W = 1000,
+        H = 700,
+        WF = 0.75;
+    // Régression : à l'échelle d'interface 90 %, getBoundingClientRect rend un
+    // rectangle réduit; sans normalisation, un clic au centre du point 1
+    // atterrissait sur le point 2 (erreur proportionnelle, maximale au bord).
+    for (const scale of [0.5, 0.9, 1.0, 1.1, 1.5]) {
+        test(`échelle ${scale} : le point cliqué reste le point visé`, () => {
+            const rect = { left: 37, top: 11, width: W * scale, height: H * scale };
+            for (const pt of [1, 6, 12, 13, 19, 24]) {
+                const c = drawnColumnCenter(pt, W, H, WF, 'right');
+                // Le navigateur rapporte le clic en pixels CSS (réduits/agrandis)
+                const clientX = rect.left + c.x * scale;
+                const clientY = rect.top + c.y * scale;
+                const { x, y } = boardMouseToDrawing(clientX, clientY, rect, W, H);
+                const r = checkerPointAndCountAt(x, y, W, H, WF, 'right');
+                expect(r.checkerPoint, `point ${pt} @ ${scale}`).toBe(pt);
+            }
+        });
+    }
+    test('contre-exemple : sans normalisation, 90 % envoie le point 1 sur le point 2', () => {
+        const scale = 0.9;
+        const c = drawnColumnCenter(1, W, H, WF, 'right');
+        // Ancien code : mouseX = clientX - rect.left, sans normalisation
+        const rawX = c.x * scale,
+            rawY = c.y * scale;
+        const r = checkerPointAndCountAt(rawX, rawY, W, H, WF, 'right');
+        expect(r.checkerPoint).not.toBe(1); // le bug rapporté
     });
 });

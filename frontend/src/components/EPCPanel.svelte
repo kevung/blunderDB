@@ -64,136 +64,143 @@
                 </label>
             </div>
 
-            <!-- Bottom player (Black) -->
-            {#if data.bottomEPC}
-                <div class="epc-player-section maskable">
-                    {#if challenge && !revealed.bottom}
-                        <button class="mask-overlay" onclick={() => reveal('bottom')}>{$t('epc.clickToReveal')}</button>
+            <div class="epc-columns">
+                <div class="epc-col epc-col-players">
+                    <!-- Bottom player (Black) -->
+                    {#if data.bottomEPC}
+                        <div class="epc-player-section maskable">
+                            {#if challenge && !revealed.bottom}
+                                <button class="mask-overlay" onclick={() => reveal('bottom')}>{$t('epc.clickToReveal')}</button>
+                            {/if}
+                            <div class="epc-player-header">
+                                <span class="player-indicator bottom"></span>
+                                <span class="player-label">{$t('epc.bottomBlack')}</span>
+                            </div>
+                            <div class="epc-grid">
+                                <div class="epc-card epc-main">
+                                    <div class="epc-card-label">{$t('epc.epc')}</div>
+                                    <div class="epc-card-value">{data.bottomEPC.epc.toFixed(2)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.pipCount')}</div>
+                                    <div class="epc-card-value">{data.bottomEPC.pipCount}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.wastage')}</div>
+                                    <div class="epc-card-value">{data.bottomEPC.wastage.toFixed(2)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.avgRolls')}</div>
+                                    <div class="epc-card-value">{data.bottomEPC.meanRolls.toFixed(3)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.stdDev')}</div>
+                                    <div class="epc-card-value">{data.bottomEPC.stdDev.toFixed(3)}</div>
+                                </div>
+                            </div>
+                        </div>
                     {/if}
-                    <div class="epc-player-header">
-                        <span class="player-indicator bottom"></span>
-                        <span class="player-label">{$t('epc.bottomBlack')}</span>
-                    </div>
-                    <div class="epc-grid">
-                        <div class="epc-card epc-main">
-                            <div class="epc-card-label">{$t('epc.epc')}</div>
-                            <div class="epc-card-value">{data.bottomEPC.epc.toFixed(2)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.pipCount')}</div>
-                            <div class="epc-card-value">{data.bottomEPC.pipCount}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.wastage')}</div>
-                            <div class="epc-card-value">{data.bottomEPC.wastage.toFixed(2)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.avgRolls')}</div>
-                            <div class="epc-card-value">{data.bottomEPC.meanRolls.toFixed(3)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.stdDev')}</div>
-                            <div class="epc-card-value">{data.bottomEPC.stdDev.toFixed(3)}</div>
-                        </div>
-                    </div>
-                </div>
-            {/if}
 
-            <!-- Top player (White) -->
-            {#if data.topEPC}
-                <div class="epc-player-section maskable">
-                    {#if challenge && !revealed.top}
-                        <button class="mask-overlay" onclick={() => reveal('top')}>{$t('epc.clickToReveal')}</button>
+                    <!-- Top player (White) -->
+                    {#if data.topEPC}
+                        <div class="epc-player-section maskable">
+                            {#if challenge && !revealed.top}
+                                <button class="mask-overlay" onclick={() => reveal('top')}>{$t('epc.clickToReveal')}</button>
+                            {/if}
+                            <div class="epc-player-header">
+                                <span class="player-indicator top"></span>
+                                <span class="player-label">{$t('epc.topWhite')}</span>
+                            </div>
+                            <div class="epc-grid">
+                                <div class="epc-card epc-main">
+                                    <div class="epc-card-label">{$t('epc.epc')}</div>
+                                    <div class="epc-card-value">{data.topEPC.epc.toFixed(2)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.pipCount')}</div>
+                                    <div class="epc-card-value">{data.topEPC.pipCount}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.wastage')}</div>
+                                    <div class="epc-card-value">{data.topEPC.wastage.toFixed(2)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.avgRolls')}</div>
+                                    <div class="epc-card-value">{data.topEPC.meanRolls.toFixed(3)}</div>
+                                </div>
+                                <div class="epc-card">
+                                    <div class="epc-card-label">{$t('epc.stdDev')}</div>
+                                    <div class="epc-card-value">{data.topEPC.stdDev.toFixed(3)}</div>
+                                </div>
+                            </div>
+                        </div>
                     {/if}
-                    <div class="epc-player-header">
-                        <span class="player-indicator top"></span>
-                        <span class="player-label">{$t('epc.topWhite')}</span>
-                    </div>
-                    <div class="epc-grid">
-                        <div class="epc-card epc-main">
-                            <div class="epc-card-label">{$t('epc.epc')}</div>
-                            <div class="epc-card-value">{data.topEPC.epc.toFixed(2)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.pipCount')}</div>
-                            <div class="epc-card-value">{data.topEPC.pipCount}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.wastage')}</div>
-                            <div class="epc-card-value">{data.topEPC.wastage.toFixed(2)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.avgRolls')}</div>
-                            <div class="epc-card-value">{data.topEPC.meanRolls.toFixed(3)}</div>
-                        </div>
-                        <div class="epc-card">
-                            <div class="epc-card-label">{$t('epc.stdDev')}</div>
-                            <div class="epc-card-value">{data.topEPC.stdDev.toFixed(3)}</div>
-                        </div>
-                    </div>
                 </div>
-            {/if}
 
-            <!-- Race zone: win probability + money cube (pure bearoff only) -->
-            {#if data.race}
-                <div class="epc-player-section epc-race maskable">
-                    {#if challenge && !revealed.race}
-                        <button class="mask-overlay" onclick={() => reveal('race')}>{$t('epc.clickToReveal')}</button>
-                    {/if}
-                    <div class="epc-player-header">
-                        <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
-                        <span class="player-label">{$t('epc.race.title')}</span>
-                        {#if data.race.regime === 'exact'}
-                            <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
-                            </span>
-                        {:else}
-                            <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                            </span>
-                        {/if}
-                    </div>
-                    <div class="epc-grid">
-                        <div class="epc-card epc-main">
-                            <div class="epc-card-label">{$t('epc.race.winProb')}</div>
-                            <div class="epc-card-value">{pct(data.race.win_prob)} %</div>
-                        </div>
-                        {#if data.race.money}
-                            <div class="epc-card">
-                                <div class="epc-card-label">{$t('epc.race.cubeless')}</div>
-                                <div class="epc-card-value">{eq(data.race.money.cubeless)}</div>
+                <!-- Race zone: win probability + money cube (pure bearoff only),
+                 in its own column on the right so wide panels need no scroll -->
+                {#if data.race}
+                    <div class="epc-col epc-col-race">
+                        <div class="epc-player-section epc-race maskable">
+                            {#if challenge && !revealed.race}
+                                <button class="mask-overlay" onclick={() => reveal('race')}>{$t('epc.clickToReveal')}</button>
+                            {/if}
+                            <div class="epc-player-header">
+                                <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
+                                <span class="player-label">{$t('epc.race.title')}</span>
+                                {#if data.race.regime === 'exact'}
+                                    <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                        {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                                    </span>
+                                {:else}
+                                    <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                        {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                                    </span>
+                                {/if}
                             </div>
-                            <div class="epc-card">
-                                <div class="epc-card-label">{$t('epc.race.noDouble')}</div>
-                                <div class="epc-card-value">{eq(data.race.money.no_double)}</div>
+                            <div class="epc-grid">
+                                <div class="epc-card epc-main">
+                                    <div class="epc-card-label">{$t('epc.race.winProb')}</div>
+                                    <div class="epc-card-value">{pct(data.race.win_prob)} %</div>
+                                </div>
+                                {#if data.race.money}
+                                    <div class="epc-card">
+                                        <div class="epc-card-label">{$t('epc.race.cubeless')}</div>
+                                        <div class="epc-card-value">{eq(data.race.money.cubeless)}</div>
+                                    </div>
+                                    <div class="epc-card">
+                                        <div class="epc-card-label">{$t('epc.race.noDouble')}</div>
+                                        <div class="epc-card-value">{eq(data.race.money.no_double)}</div>
+                                    </div>
+                                    <div class="epc-card">
+                                        <div class="epc-card-label">{$t('epc.race.doubleTake')}</div>
+                                        <div class="epc-card-value">{eq(data.race.money.double_take)}</div>
+                                    </div>
+                                    <div class="epc-card">
+                                        <div class="epc-card-label">{$t('epc.race.doublePass')}</div>
+                                        <div class="epc-card-value">{eq(data.race.money.double_pass)}</div>
+                                    </div>
+                                {/if}
                             </div>
-                            <div class="epc-card">
-                                <div class="epc-card-label">{$t('epc.race.doubleTake')}</div>
-                                <div class="epc-card-value">{eq(data.race.money.double_take)}</div>
-                            </div>
-                            <div class="epc-card">
-                                <div class="epc-card-label">{$t('epc.race.doublePass')}</div>
-                                <div class="epc-card-value">{eq(data.race.money.double_pass)}</div>
-                            </div>
-                        {/if}
-                    </div>
-                    {#if data.race.money}
-                        <div class="verdict-row">
-                            <span class="verdict-label">{$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)}) :</span>
-                            {#if data.race.money.verdict}
-                                <span class="verdict-chip">{$t('epc.race.verdicts.' + data.race.money.verdict)}</span>
+                            {#if data.race.money}
+                                <div class="verdict-row">
+                                    <span class="verdict-label">{$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)}) :</span>
+                                    {#if data.race.money.verdict}
+                                        <span class="verdict-chip">{$t('epc.race.verdicts.' + data.race.money.verdict)}</span>
+                                    {:else}
+                                        <span class="verdict-chip verdict-none">{$t('epc.race.noDecision')}</span>
+                                    {/if}
+                                </div>
                             {:else}
-                                <span class="verdict-chip verdict-none">{$t('epc.race.noDecision')}</span>
+                                <div class="download-hint">
+                                    {$t('epc.race.downloadHint')}
+                                    <button class="link-button" onclick={() => openModal(MODAL.CONFIG)}>{$t('epc.race.openConfig')}</button>
+                                </div>
                             {/if}
                         </div>
-                    {:else}
-                        <div class="download-hint">
-                            {$t('epc.race.downloadHint')}
-                            <button class="link-button" onclick={() => openModal(MODAL.CONFIG)}>{$t('epc.race.openConfig')}</button>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+                    </div>
+                {/if}
+            </div>
 
             <!-- Comparison section when both players have data -->
             {#if data.bottomEPC && data.topEPC && (!challenge || (revealed.bottom && revealed.top))}
@@ -276,6 +283,32 @@
     .epc-toolbar {
         display: flex;
         justify-content: flex-end;
+    }
+
+    /* Two-column layout: players on the left, race zone on the right, so a
+       wide bottom panel shows everything without scrolling. Columns wrap and
+       stack again when the panel is narrow (side layout). */
+    .epc-columns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+        align-items: flex-start;
+    }
+
+    .epc-col {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .epc-col-players {
+        flex: 1 1 340px;
+        min-width: 0;
+    }
+
+    .epc-col-race {
+        flex: 1 1 300px;
+        min-width: 0;
     }
 
     .challenge-toggle {
