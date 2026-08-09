@@ -56,7 +56,7 @@
 \contentsline {subsubsection}{Как прочитать происхождение файла}{27}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}Руководство пользователя}{27}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Создание новой базы данных}{27}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{27}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.2}Открытие существующей базы данных}{28}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Импорт и слияние базы данных}{28}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Редактирование позиции}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Добавление позиции в базу данных}{29}{subsection.2.3.5}%

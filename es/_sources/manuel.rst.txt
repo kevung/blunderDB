@@ -766,7 +766,9 @@ définition précise des deux régimes et de leurs hypothèses.
 Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
 
 * télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-  supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur ;
+  supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur.
+  Un téléchargement interrompu ou annulé **reprend où il s'était arrêté**
+  (le fichier partiel est conservé et complété par requête HTTP Range) ;
 
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.

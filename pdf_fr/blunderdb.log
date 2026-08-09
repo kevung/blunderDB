@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:36
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1039,71 +1039,71 @@ $[][] reste
 [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41]
 [42] [43] [44] [45] [46] [47] [48] [49]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6790.
+(Font)              scaled to size 8.99994pt on input line 6792.
  [50] [51] [52] [53]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 7151.
+(Font)              scaled to size 10.79993pt on input line 7153.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 7240--7242
+Overfull \hbox (11.423pt too wide) in paragraph at lines 7242--7244
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 7243
+Overfull \hbox (11.423pt too wide) detected at line 7245
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7299--7301
+Underfull \hbox (badness 10000) in paragraph at lines 7301--7303
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
 [54]
-Underfull \hbox (badness 8151) in paragraph at lines 7387--7391
+Underfull \hbox (badness 8151) in paragraph at lines 7389--7393
 []\TU/FreeSerif(0)/m/n/10 La plupart des options peuvent aussi être fournies pa
 r variable d’environnement (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
 [55] [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7592--7594
+Underfull \hbox (badness 10000) in paragraph at lines 7594--7596
 []\TU/FreeSerif(0)/m/n/10 scope de tenant de destination (obligatoire sauf en
  []
 
 
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7731--7733
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7733--7735
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7734
+Overfull \hbox (1.06567pt too wide) detected at line 7736
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [57] [58]
-Underfull \hbox (badness 10000) in paragraph at lines 8091--8093
+Underfull \hbox (badness 10000) in paragraph at lines 8093--8095
 []\TU/FreeSerif(0)/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 8167--8169
+Underfull \hbox (badness 10000) in paragraph at lines 8169--8171
 []\TU/FreeSerif(0)/m/n/10 Double avec au moins
  []
 
 [59]
-Underfull \hbox (badness 7851) in paragraph at lines 8326--8334
+Underfull \hbox (badness 7851) in paragraph at lines 8328--8336
 \TU/FreeSerif(0)/m/n/10 de certifier numériquement leurs applications voire de 
 distribuer via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 8326--8334
+Underfull \hbox (badness 10000) in paragraph at lines 8328--8336
 \TU/FreeSerif(0)/m/n/10 préconisé de faire appel à des sociétés extérieures pou
 r obtenir un certificat numérique au prix
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 8326--8334
+Underfull \hbox (badness 10000) in paragraph at lines 8328--8336
 \TU/FreeSerif(0)/m/n/10 de plusieurs centaines d’euros (voir par exemple [][]$[
 ][][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] [
 ] [][][][][][][] [] [][][][][] [] [][] [] [][] []
