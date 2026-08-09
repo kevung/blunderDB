@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "La clé actuelle ({fingerprint}) sera écrasée. Enregistrez-la d'abord si vous pouvez en avoir besoin.",
         "identitySaveFirst": "Enregistrer l'actuelle d'abord…",
         "identityRegenerateConfirm": "Régénérer quand même",
-        "identityRegenerated": "Nouvelle identité créée : {fingerprint}"
+        "identityRegenerated": "Nouvelle identité créée : {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Base de bearoff two-sided : probabilité de gain et verdict de videau exacts dans le panneau EPC. La base intégrée couvre 6 pions par joueur ; téléchargez la base étendue ou indiquez un fichier .bd de gnubg pour élargir le domaine exact.",
+        "bearoffActive": "Base active",
+        "bearoffDownloading": "Téléchargement…",
+        "bearoffGB": "Go",
+        "bearoffDownloaded": "Base TS-06-11 téléchargée ({gb} Go) : verdict exact jusqu'à 11 pions par joueur.",
+        "bearoffDownloadNote": "La base étendue TS-06-11 ({gb} Go) rend le verdict de videau exact jusqu'à 11 pions par joueur. Intégrité vérifiée (SHA-256) après téléchargement.",
+        "bearoffDownload": "Télécharger (1,2 Go)",
+        "bearoffDelete": "Supprimer la base téléchargée",
+        "bearoffExternal": "Fichier externe",
+        "bearoffExternalNone": "aucun",
+        "bearoffExternalPick": "Choisir un fichier .bd…",
+        "bearoffExternalClear": "Retirer"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -590,7 +603,36 @@
         "stdDev": "Écart-type",
         "topWhite": "Haut (Blanc)",
         "wastage": "Gaspillage",
-        "wastageDiff": "Diff. de gaspillage"
+        "wastageDiff": "Diff. de gaspillage",
+        "challenge": "Défi",
+        "challengeTooltip": "Mode entraînement : les résultats sont masqués à chaque modification ; cliquez sur une zone pour la révéler.",
+        "clickToReveal": "Cliquer pour révéler",
+        "race": {
+            "title": "Course (joueur au trait)",
+            "exact": "exact",
+            "estimated": "estimé",
+            "exactTooltip": "Lu dans la base two-sided : exact jusqu'à {n} pions par joueur.",
+            "estimatedTooltip": "Estimé par convolution des distributions one-sided + correctif calibré ; p99 = {p99} %.",
+            "winProb": "% de gain",
+            "cubeless": "Cubeless",
+            "noDouble": "Sans double",
+            "doubleTake": "Double/Prend",
+            "doublePass": "Double/Passe",
+            "verdictLabel": "Verdict money",
+            "cubeStates": {
+                "centered": "videau centré",
+                "owned": "videau possédé",
+                "against": "videau adverse"
+            },
+            "verdicts": {
+                "no_double": "Pas de double",
+                "double_take": "Double, prend",
+                "double_pass": "Double, passe"
+            },
+            "noDecision": "Pas de décision (videau adverse)",
+            "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
+            "openConfig": "Ouvrir la configuration"
+        }
     },
     "filterLibrary": {
         "add": "Ajouter",

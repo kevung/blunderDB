@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "Текущий ключ ({fingerprint}) будет перезаписан. Сохраните его заранее, если он может понадобиться.",
         "identitySaveFirst": "Сначала сохранить текущий…",
         "identityRegenerateConfirm": "Всё равно создать заново",
-        "identityRegenerated": "Создана новая идентичность: {fingerprint}"
+        "identityRegenerated": "Создана новая идентичность: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "База two-sided для бэарофа: точная вероятность победы и вердикт по кубу в панели EPC. Встроенная база покрывает 6 шашек на игрока; загрузите расширенную или укажите файл .bd от gnubg, чтобы расширить точную область.",
+        "bearoffActive": "Активная база",
+        "bearoffDownloading": "Загрузка…",
+        "bearoffGB": "ГБ",
+        "bearoffDownloaded": "База TS-06-11 загружена ({gb} ГБ): точный вердикт до 11 шашек на игрока.",
+        "bearoffDownloadNote": "Расширенная база TS-06-11 ({gb} ГБ) делает вердикт по кубу точным до 11 шашек на игрока. Целостность проверяется (SHA-256) после загрузки.",
+        "bearoffDownload": "Загрузить (1,2 ГБ)",
+        "bearoffDelete": "Удалить загруженную базу",
+        "bearoffExternal": "Внешний файл",
+        "bearoffExternalNone": "нет",
+        "bearoffExternalPick": "Выбрать файл .bd…",
+        "bearoffExternalClear": "Убрать"
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",
@@ -590,7 +603,36 @@
         "stdDev": "Станд. откл.",
         "topWhite": "Верх (белые)",
         "wastage": "Потери",
-        "wastageDiff": "Разница потерь"
+        "wastageDiff": "Разница потерь",
+        "challenge": "Вызов",
+        "challengeTooltip": "Режим тренировки: результаты скрываются после каждого изменения; нажмите на зону, чтобы открыть её.",
+        "clickToReveal": "Нажмите, чтобы открыть",
+        "race": {
+            "title": "Гонка (игрок на ходу)",
+            "exact": "точно",
+            "estimated": "оценка",
+            "exactTooltip": "Из базы two-sided: точно до {n} шашек на игрока.",
+            "estimatedTooltip": "Оценка свёрткой one-sided-распределений + калиброванная поправка; p99 = {p99} %.",
+            "winProb": "% побед",
+            "cubeless": "Без куба",
+            "noDouble": "Без дабла",
+            "doubleTake": "Дабл/Тейк",
+            "doublePass": "Дабл/Пас",
+            "verdictLabel": "Вердикт (money)",
+            "cubeStates": {
+                "centered": "куб в центре",
+                "owned": "куб у игрока",
+                "against": "куб у соперника"
+            },
+            "verdicts": {
+                "no_double": "Не даблить",
+                "double_take": "Дабл, тейк",
+                "double_pass": "Дабл, пас"
+            },
+            "noDecision": "Нет решения (куб у соперника)",
+            "downloadHint": "Точный вердикт по кубу до 11 шашек на игрока требует загружаемой базы (1,2 ГБ).",
+            "openConfig": "Открыть настройки"
+        }
     },
     "filterLibrary": {
         "add": "Добавить",

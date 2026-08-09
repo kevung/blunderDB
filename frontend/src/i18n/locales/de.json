@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "Der aktuelle Schlüssel ({fingerprint}) wird überschrieben. Speichern Sie ihn zuerst, falls Sie ihn noch brauchen.",
         "identitySaveFirst": "Aktuellen zuerst speichern…",
         "identityRegenerateConfirm": "Trotzdem neu erzeugen",
-        "identityRegenerated": "Neue Identität erstellt: {fingerprint}"
+        "identityRegenerated": "Neue Identität erstellt: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Two-Sided-Bearoff-Datenbank: exakte Gewinnwahrscheinlichkeit und exaktes Würfel-Urteil im EPC-Panel. Die eingebaute Datenbank deckt 6 Steine pro Spieler ab; laden Sie die erweiterte herunter oder wählen Sie eine gnubg-.bd-Datei, um den exakten Bereich zu erweitern.",
+        "bearoffActive": "Aktive Datenbank",
+        "bearoffDownloading": "Wird heruntergeladen…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "TS-06-11-Datenbank heruntergeladen ({gb} GB): exaktes Urteil bis 11 Steine pro Spieler.",
+        "bearoffDownloadNote": "Die erweiterte TS-06-11-Datenbank ({gb} GB) macht das Würfel-Urteil bis 11 Steine pro Spieler exakt. Integrität wird nach dem Download geprüft (SHA-256).",
+        "bearoffDownload": "Herunterladen (1,2 GB)",
+        "bearoffDelete": "Heruntergeladene Datenbank löschen",
+        "bearoffExternal": "Externe Datei",
+        "bearoffExternalNone": "keine",
+        "bearoffExternalPick": ".bd-Datei wählen…",
+        "bearoffExternalClear": "Entfernen"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -590,7 +603,36 @@
         "stdDev": "Std.-Abw.",
         "topWhite": "Oben (Weiß)",
         "wastage": "Verschwendung",
-        "wastageDiff": "Verschwendungs-Diff."
+        "wastageDiff": "Verschwendungs-Diff.",
+        "challenge": "Challenge",
+        "challengeTooltip": "Trainingsmodus: Ergebnisse werden nach jeder Änderung verdeckt; zum Aufdecken auf eine Zone klicken.",
+        "clickToReveal": "Zum Aufdecken klicken",
+        "race": {
+            "title": "Rennen (Spieler am Zug)",
+            "exact": "exakt",
+            "estimated": "geschätzt",
+            "exactTooltip": "Aus der Two-Sided-Datenbank gelesen: exakt bis {n} Steine pro Spieler.",
+            "estimatedTooltip": "Geschätzt durch Faltung der One-Sided-Verteilungen + kalibrierte Korrektur; p99 = {p99} %.",
+            "winProb": "Gewinn-%",
+            "cubeless": "Cubeless",
+            "noDouble": "Kein Dopplen",
+            "doubleTake": "Doppeln/Nehmen",
+            "doublePass": "Doppeln/Passen",
+            "verdictLabel": "Money-Urteil",
+            "cubeStates": {
+                "centered": "Würfel in der Mitte",
+                "owned": "Würfel im Besitz",
+                "against": "Würfel beim Gegner"
+            },
+            "verdicts": {
+                "no_double": "Kein Doppeln",
+                "double_take": "Doppeln, nehmen",
+                "double_pass": "Doppeln, passen"
+            },
+            "noDecision": "Keine Entscheidung (Würfel beim Gegner)",
+            "downloadHint": "Ein exaktes Würfel-Urteil bis 11 Steine pro Spieler erfordert die herunterladbare Datenbank (1,2 GB).",
+            "openConfig": "Einstellungen öffnen"
+        }
     },
     "filterLibrary": {
         "add": "Hinzufügen",

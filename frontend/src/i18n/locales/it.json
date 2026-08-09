@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "La chiave attuale ({fingerprint}) verrà sovrascritta. Salvala prima se potrebbe servirti.",
         "identitySaveFirst": "Salva prima quella attuale…",
         "identityRegenerateConfirm": "Rigenera comunque",
-        "identityRegenerated": "Nuova identità creata: {fingerprint}"
+        "identityRegenerated": "Nuova identità creata: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Database di bearoff two-sided: probabilità di vittoria e verdetto del cubo esatti nel pannello EPC. Il database integrato copre 6 pedine per giocatore; scaricare quello esteso o indicare un file .bd di gnubg per ampliare il dominio esatto.",
+        "bearoffActive": "Database attivo",
+        "bearoffDownloading": "Download in corso…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "Database TS-06-11 scaricato ({gb} GB): verdetto esatto fino a 11 pedine per giocatore.",
+        "bearoffDownloadNote": "Il database esteso TS-06-11 ({gb} GB) rende esatto il verdetto del cubo fino a 11 pedine per giocatore. Integrità verificata (SHA-256) dopo il download.",
+        "bearoffDownload": "Scarica (1,2 GB)",
+        "bearoffDelete": "Elimina il database scaricato",
+        "bearoffExternal": "File esterno",
+        "bearoffExternalNone": "nessuno",
+        "bearoffExternalPick": "Scegli un file .bd…",
+        "bearoffExternalClear": "Rimuovi"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -590,7 +603,36 @@
         "stdDev": "Dev. std",
         "topWhite": "Alto (Bianco)",
         "wastage": "Spreco",
-        "wastageDiff": "Diff spreco"
+        "wastageDiff": "Diff spreco",
+        "challenge": "Sfida",
+        "challengeTooltip": "Modalità allenamento: i risultati vengono nascosti a ogni modifica; fare clic su una zona per rivelarla.",
+        "clickToReveal": "Clic per rivelare",
+        "race": {
+            "title": "Corsa (giocatore al tiro)",
+            "exact": "esatto",
+            "estimated": "stimato",
+            "exactTooltip": "Letto dal database two-sided: esatto fino a {n} pedine per giocatore.",
+            "estimatedTooltip": "Stimato per convoluzione delle distribuzioni one-sided + correzione calibrata; p99 = {p99} %.",
+            "winProb": "% di vittoria",
+            "cubeless": "Cubeless",
+            "noDouble": "Senza raddoppio",
+            "doubleTake": "Raddoppio/Prende",
+            "doublePass": "Raddoppio/Passa",
+            "verdictLabel": "Verdetto money",
+            "cubeStates": {
+                "centered": "cubo centrato",
+                "owned": "cubo posseduto",
+                "against": "cubo avversario"
+            },
+            "verdicts": {
+                "no_double": "Nessun raddoppio",
+                "double_take": "Raddoppio, prende",
+                "double_pass": "Raddoppio, passa"
+            },
+            "noDecision": "Nessuna decisione (cubo avversario)",
+            "downloadHint": "Un verdetto del cubo esatto fino a 11 pedine per giocatore richiede il database scaricabile (1,2 GB).",
+            "openConfig": "Apri impostazioni"
+        }
     },
     "filterLibrary": {
         "add": "Aggiungi",

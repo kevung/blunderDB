@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "現在の鍵（{fingerprint}）は上書きされます。必要になる可能性があるなら先に保存してください。",
         "identitySaveFirst": "先に現在の鍵を保存…",
         "identityRegenerateConfirm": "それでも再生成する",
-        "identityRegenerated": "新しい識別情報を作成しました: {fingerprint}"
+        "identityRegenerated": "新しい識別情報を作成しました: {fingerprint}",
+        "bearoffTitle": "ベアオフ",
+        "bearoffIntro": "two-sidedベアオフ・データベース:EPCパネルで正確な勝率とキューブ判定を提供します。内蔵データベースはプレイヤーごとに6枚まで対応。拡張版をダウンロードするか、gnubgの.bdファイルを指定して正確な範囲を広げられます。",
+        "bearoffActive": "使用中のデータベース",
+        "bearoffDownloading": "ダウンロード中…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "TS-06-11データベースをダウンロード済み({gb} GB):プレイヤーごとに11枚まで正確な判定。",
+        "bearoffDownloadNote": "拡張TS-06-11データベース({gb} GB)により、プレイヤーごとに11枚までキューブ判定が正確になります。ダウンロード後に整合性を検証します(SHA-256)。",
+        "bearoffDownload": "ダウンロード(1.2 GB)",
+        "bearoffDelete": "ダウンロード済みデータベースを削除",
+        "bearoffExternal": "外部ファイル",
+        "bearoffExternalNone": "なし",
+        "bearoffExternalPick": ".bdファイルを選択…",
+        "bearoffExternalClear": "解除"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -590,7 +603,36 @@
         "stdDev": "標準偏差",
         "topWhite": "上側（白）",
         "wastage": "Wastage",
-        "wastageDiff": "Wastage 差"
+        "wastageDiff": "Wastage 差",
+        "challenge": "チャレンジ",
+        "challengeTooltip": "トレーニングモード:編集のたびに結果が隠されます。ゾーンをクリックすると表示されます。",
+        "clickToReveal": "クリックして表示",
+        "race": {
+            "title": "レース(手番プレイヤー)",
+            "exact": "正確",
+            "estimated": "推定",
+            "exactTooltip": "two-sidedデータベースから読み取り:プレイヤーごとに{n}枚まで正確。",
+            "estimatedTooltip": "one-sided分布の畳み込み+較正済み補正による推定。p99 = {p99} %。",
+            "winProb": "勝率",
+            "cubeless": "キューブレス",
+            "noDouble": "ノーダブル",
+            "doubleTake": "ダブル/テイク",
+            "doublePass": "ダブル/パス",
+            "verdictLabel": "マネー判定",
+            "cubeStates": {
+                "centered": "キューブ中央",
+                "owned": "キューブ保有",
+                "against": "相手がキューブ保有"
+            },
+            "verdicts": {
+                "no_double": "ノーダブル",
+                "double_take": "ダブル、テイク",
+                "double_pass": "ダブル、パス"
+            },
+            "noDecision": "判断なし(相手がキューブ保有)",
+            "downloadHint": "プレイヤーごとに11枚まで正確なキューブ判定には、ダウンロード可能なデータベース(1.2 GB)が必要です。",
+            "openConfig": "設定を開く"
+        }
     },
     "filterLibrary": {
         "add": "追加",

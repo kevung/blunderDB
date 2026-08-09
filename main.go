@@ -10,6 +10,7 @@ import (
 	"github.com/kevung/blunderdb/internal/gui"
 	"github.com/kevung/blunderdb/internal/server"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 	"github.com/kevung/blunderdb/pkg/blunderdb/migrate"
 )
 
@@ -96,6 +97,11 @@ func runGUI() {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error loading configuration file:", err)
 		os.Exit(1)
+	}
+
+	// Apply the persisted two-sided bearoff path to the engine (ADR-0009).
+	if p := config.GetBearoffTsPath(); p != "" {
+		race.SetExternalPath(p)
 	}
 
 	// Set up the in-memory database

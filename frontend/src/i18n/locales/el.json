@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "Το τρέχον κλειδί ({fingerprint}) θα αντικατασταθεί. Αποθηκεύστε το πρώτα αν μπορεί να το χρειαστείτε.",
         "identitySaveFirst": "Αποθήκευση του τρέχοντος πρώτα…",
         "identityRegenerateConfirm": "Αναδημιουργία ούτως ή άλλως",
-        "identityRegenerated": "Δημιουργήθηκε νέα ταυτότητα: {fingerprint}"
+        "identityRegenerated": "Δημιουργήθηκε νέα ταυτότητα: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Βάση bearoff two-sided: ακριβής πιθανότητα νίκης και ετυμηγορία κύβου στο πλαίσιο EPC. Η ενσωματωμένη βάση καλύπτει 6 πούλια ανά παίκτη· κατεβάστε την εκτεταμένη ή ορίστε ένα αρχείο .bd του gnubg για να διευρύνετε το ακριβές πεδίο.",
+        "bearoffActive": "Ενεργή βάση",
+        "bearoffDownloading": "Λήψη…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "Η βάση TS-06-11 μεταφορτώθηκε ({gb} GB): ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη.",
+        "bearoffDownloadNote": "Η εκτεταμένη βάση TS-06-11 ({gb} GB) καθιστά την ετυμηγορία κύβου ακριβή έως 11 πούλια ανά παίκτη. Η ακεραιότητα ελέγχεται (SHA-256) μετά τη λήψη.",
+        "bearoffDownload": "Λήψη (1,2 GB)",
+        "bearoffDelete": "Διαγραφή της βάσης",
+        "bearoffExternal": "Εξωτερικό αρχείο",
+        "bearoffExternalNone": "κανένα",
+        "bearoffExternalPick": "Επιλογή αρχείου .bd…",
+        "bearoffExternalClear": "Αφαίρεση"
     },
     "toolbar": {
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",
@@ -590,7 +603,36 @@
         "stdDev": "Τυπική απόκλιση",
         "topWhite": "Πάνω (Λευκά)",
         "wastage": "Σπατάλη",
-        "wastageDiff": "Διαφορά σπατάλης"
+        "wastageDiff": "Διαφορά σπατάλης",
+        "challenge": "Πρόκληση",
+        "challengeTooltip": "Λειτουργία εξάσκησης: τα αποτελέσματα κρύβονται μετά από κάθε αλλαγή· κάντε κλικ σε μια ζώνη για να την αποκαλύψετε.",
+        "clickToReveal": "Κλικ για αποκάλυψη",
+        "race": {
+            "title": "Κούρσα (παίκτης στη βολή)",
+            "exact": "ακριβές",
+            "estimated": "εκτίμηση",
+            "exactTooltip": "Από τη βάση two-sided: ακριβές έως {n} πούλια ανά παίκτη.",
+            "estimatedTooltip": "Εκτίμηση με συνέλιξη των κατανομών one-sided + βαθμονομημένη διόρθωση· p99 = {p99} %.",
+            "winProb": "% νίκης",
+            "cubeless": "Cubeless",
+            "noDouble": "Χωρίς διπλασιασμό",
+            "doubleTake": "Διπλασιασμός/Δέχομαι",
+            "doublePass": "Διπλασιασμός/Πάσο",
+            "verdictLabel": "Ετυμηγορία money",
+            "cubeStates": {
+                "centered": "κύβος στο κέντρο",
+                "owned": "κύβος δικός μας",
+                "against": "κύβος του αντιπάλου"
+            },
+            "verdicts": {
+                "no_double": "Όχι διπλασιασμός",
+                "double_take": "Διπλασιασμός, δέχομαι",
+                "double_pass": "Διπλασιασμός, πάσο"
+            },
+            "noDecision": "Καμία απόφαση (κύβος του αντιπάλου)",
+            "downloadHint": "Ακριβής ετυμηγορία κύβου έως 11 πούλια ανά παίκτη απαιτεί τη μεταφορτώσιμη βάση (1,2 GB).",
+            "openConfig": "Άνοιγμα ρυθμίσεων"
+        }
     },
     "filterLibrary": {
         "add": "Προσθήκη",

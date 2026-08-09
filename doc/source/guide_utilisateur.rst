@@ -301,7 +301,14 @@ bearoff d'une position.
 #. Éditer la position des pions dans le jan (6 derniers points).
 
 #. Les résultats sont affichés en temps réel dans le panneau EPC dédié:
-   EPC, nombre moyen de lancers, écart type, pip count et wastage.
+   EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
+   bearoff pur, la probabilité de gain du joueur au trait avec, dans le
+   domaine exact, le verdict de videau money (voir la section
+   « Méthodologie et hypothèses du panneau EPC » du manuel).
+
+#. Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les
+   résultats sont masqués à chaque modification et se révèlent zone par
+   zone, d'un clic.
 
 .. note::
    Le calculateur fonctionne pour les deux joueurs simultanément.

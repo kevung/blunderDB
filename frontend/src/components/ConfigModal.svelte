@@ -4,7 +4,22 @@
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
-    import { GetIssuerIdentity, SetIssuerName, ExportIssuerIdentity, PickIdentityFile, ImportIssuerIdentity, RegenerateIssuerIdentity } from '../../wailsjs/go/gui/App.js';
+    import {
+        GetIssuerIdentity,
+        SetIssuerName,
+        ExportIssuerIdentity,
+        PickIdentityFile,
+        ImportIssuerIdentity,
+        RegenerateIssuerIdentity,
+        BearoffStatus,
+        DownloadBearoffDB,
+        CancelBearoffDownload,
+        DeleteBearoffDB,
+        OpenBearoffFileDialog
+    } from '../../wailsjs/go/gui/App.js';
+    import { GetBearoffTsPath, SaveBearoffTsPath } from '../../wailsjs/go/main/Config.js';
+    import { EventsOn } from '../../wailsjs/runtime/runtime.js';
+    import { onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
 
     let { visible = false, onClose } = $props();
@@ -28,6 +43,7 @@
     const TABS = [
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
+        { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -140,6 +156,99 @@
         setPanelPosition(event.currentTarget.value);
     }
 
+    // Two-sided bearoff data sources (ADR-0009): status of the optional
+    // TS-06-11 download plus the user-supplied external .bd path.
+    let bearoff = $state(null);
+    let bearoffExternal = $state('');
+    let bearoffProgress = $state(null); // {received, total} while downloading
+    let bearoffError = $state('');
+
+    async function refreshBearoff() {
+        try {
+            bearoff = await BearoffStatus();
+            bearoffExternal = await GetBearoffTsPath();
+        } catch (error) {
+            logger.error('Error loading bearoff status:', error);
+        }
+    }
+
+    $effect(() => {
+        if (visible) {
+            bearoffError = '';
+            refreshBearoff();
+        }
+    });
+
+    const unsubBearoff = [
+        EventsOn('bearoff:progress', (p) => (bearoffProgress = p)),
+        EventsOn('bearoff:done', () => {
+            bearoffProgress = null;
+            bearoffError = '';
+            refreshBearoff();
+        }),
+        EventsOn('bearoff:error', (e) => {
+            bearoffProgress = null;
+            bearoffError = e?.message ?? String(e);
+            refreshBearoff();
+        })
+    ];
+    onDestroy(() => unsubBearoff.forEach((off) => off && off()));
+
+    async function startBearoffDownload() {
+        bearoffError = '';
+        bearoffProgress = { received: 0, total: bearoff?.expected_bytes ?? 0 };
+        try {
+            await DownloadBearoffDB();
+            await refreshBearoff();
+        } catch (error) {
+            bearoffError = String(error);
+            bearoffProgress = null;
+        }
+    }
+
+    async function cancelBearoffDownload() {
+        try {
+            await CancelBearoffDownload();
+        } finally {
+            bearoffProgress = null;
+            await refreshBearoff();
+        }
+    }
+
+    async function deleteBearoffDownload() {
+        bearoffError = '';
+        try {
+            await DeleteBearoffDB();
+            await refreshBearoff();
+        } catch (error) {
+            bearoffError = String(error);
+        }
+    }
+
+    async function pickBearoffExternal() {
+        bearoffError = '';
+        try {
+            const path = await OpenBearoffFileDialog();
+            if (!path) return;
+            await SaveBearoffTsPath(path);
+            await refreshBearoff();
+        } catch (error) {
+            bearoffError = String(error);
+        }
+    }
+
+    async function clearBearoffExternal() {
+        bearoffError = '';
+        try {
+            await SaveBearoffTsPath('');
+            await refreshBearoff();
+        } catch (error) {
+            bearoffError = String(error);
+        }
+    }
+
+    const gb = (bytes) => (bytes / 1e9).toFixed(2);
+
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             onClose();
@@ -206,6 +315,48 @@
                     <div class="tab-actions">
                         <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
                     </div>
+                {:else if activeTab === 'bearoff'}
+                    <p class="setting-note">{$t('config.bearoffIntro')}</p>
+                    {#if bearoff}
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.bearoffActive')}</span>
+                            <code class="identity-fingerprint">TS-06-{String(bearoff.active_domain).padStart(2, '0')} — {bearoff.active_origin}</code>
+                        </div>
+
+                        {#if bearoffProgress || bearoff.downloading}
+                            <div class="setting-row">
+                                <span class="setting-label">{$t('config.bearoffDownloading')}</span>
+                                <progress class="bearoff-progress" max={bearoffProgress?.total ?? bearoff.expected_bytes} value={bearoffProgress?.received ?? 0}></progress>
+                                <span class="setting-label">{gb(bearoffProgress?.received ?? 0)} / {gb(bearoffProgress?.total ?? bearoff.expected_bytes)} {$t('config.bearoffGB')}</span>
+                            </div>
+                            <div class="tab-actions">
+                                <button class="secondary-button" onclick={cancelBearoffDownload}>{$t('common.cancel')}</button>
+                            </div>
+                        {:else if bearoff.downloaded}
+                            <p class="setting-note ok">{$t('config.bearoffDownloaded', { gb: gb(bearoff.size_bytes) })}</p>
+                            <div class="tab-actions">
+                                <button class="danger-button" onclick={deleteBearoffDownload}>{$t('config.bearoffDelete')}</button>
+                            </div>
+                        {:else}
+                            <p class="setting-note">{$t('config.bearoffDownloadNote', { gb: gb(bearoff.expected_bytes) })}</p>
+                            <div class="tab-actions">
+                                <button class="secondary-button" onclick={startBearoffDownload}>{$t('config.bearoffDownload')}</button>
+                            </div>
+                        {/if}
+
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.bearoffExternal')}</span>
+                            <code class="identity-fingerprint">{bearoffExternal || $t('config.bearoffExternalNone')}</code>
+                        </div>
+                        <div class="tab-actions">
+                            <button class="secondary-button" onclick={pickBearoffExternal}>{$t('config.bearoffExternalPick')}</button>
+                            {#if bearoffExternal}
+                                <button class="secondary-button" onclick={clearBearoffExternal}>{$t('config.bearoffExternalClear')}</button>
+                            {/if}
+                        </div>
+
+                        {#if bearoffError}<p class="setting-note warn">{bearoffError}</p>{/if}
+                    {/if}
                 {:else if activeTab === 'identity'}
                     <p class="setting-note">{$t('config.identityIntro')}</p>
                     {#if identity?.present}
@@ -261,6 +412,11 @@
 {/if}
 
 <style>
+    .bearoff-progress {
+        flex: 1;
+        min-width: 120px;
+    }
+
     .modal-overlay {
         position: fixed;
         top: 0;

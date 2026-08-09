@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "Nykyinen avain ({fingerprint}) korvataan. Tallenna se ensin, jos saatat tarvita sitä.",
         "identitySaveFirst": "Tallenna nykyinen ensin…",
         "identityRegenerateConfirm": "Luo silti uusi",
-        "identityRegenerated": "Uusi identiteetti luotu: {fingerprint}"
+        "identityRegenerated": "Uusi identiteetti luotu: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Two-sided-bearoff-tietokanta: tarkka voittotodennäköisyys ja kuutiopäätös EPC-paneelissa. Sisäänrakennettu tietokanta kattaa 6 nappulaa pelaajaa kohden; lataa laajennettu tietokanta tai osoita gnubg:n .bd-tiedostoon laajentaaksesi tarkkaa aluetta.",
+        "bearoffActive": "Aktiivinen tietokanta",
+        "bearoffDownloading": "Ladataan…",
+        "bearoffGB": "Gt",
+        "bearoffDownloaded": "TS-06-11-tietokanta ladattu ({gb} Gt): tarkka päätös 11 nappulaan asti pelaajaa kohden.",
+        "bearoffDownloadNote": "Laajennettu TS-06-11-tietokanta ({gb} Gt) tekee kuutiopäätöksestä tarkan 11 nappulaan asti pelaajaa kohden. Eheys tarkistetaan (SHA-256) latauksen jälkeen.",
+        "bearoffDownload": "Lataa (1,2 Gt)",
+        "bearoffDelete": "Poista ladattu tietokanta",
+        "bearoffExternal": "Ulkoinen tiedosto",
+        "bearoffExternalNone": "ei mitään",
+        "bearoffExternalPick": "Valitse .bd-tiedosto…",
+        "bearoffExternalClear": "Poista"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -590,7 +603,36 @@
         "stdDev": "Keskihajonta",
         "topWhite": "Ylhäällä (valkoinen)",
         "wastage": "Hukka",
-        "wastageDiff": "Hukkaero"
+        "wastageDiff": "Hukkaero",
+        "challenge": "Haaste",
+        "challengeTooltip": "Harjoitustila: tulokset piilotetaan jokaisen muokkauksen jälkeen; paljasta vyöhyke napsauttamalla.",
+        "clickToReveal": "Paljasta napsauttamalla",
+        "race": {
+            "title": "Kilpajuoksu (vuorossa oleva pelaaja)",
+            "exact": "tarkka",
+            "estimated": "arvioitu",
+            "exactTooltip": "Luettu two-sided-tietokannasta: tarkka {n} nappulaan asti pelaajaa kohden.",
+            "estimatedTooltip": "Arvioitu one-sided-jakaumien konvoluutiolla + kalibroidulla korjauksella; p99 = {p99} %.",
+            "winProb": "Voitto-%",
+            "cubeless": "Cubeless",
+            "noDouble": "Ei tuplausta",
+            "doubleTake": "Tuplaus/Ota",
+            "doublePass": "Tuplaus/Ohita",
+            "verdictLabel": "Money-päätös",
+            "cubeStates": {
+                "centered": "kuutio keskellä",
+                "owned": "kuutio hallussa",
+                "against": "kuutio vastustajalla"
+            },
+            "verdicts": {
+                "no_double": "Ei tuplausta",
+                "double_take": "Tuplaus, ota",
+                "double_pass": "Tuplaus, ohita"
+            },
+            "noDecision": "Ei päätöstä (kuutio vastustajalla)",
+            "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",
+            "openConfig": "Avaa asetukset"
+        }
     },
     "filterLibrary": {
         "add": "Lisää",

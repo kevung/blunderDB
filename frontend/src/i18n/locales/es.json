@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "La clave actual ({fingerprint}) se sobrescribirá. Guárdela antes si puede necesitarla.",
         "identitySaveFirst": "Guardar la actual primero…",
         "identityRegenerateConfirm": "Regenerar de todos modos",
-        "identityRegenerated": "Nueva identidad creada: {fingerprint}"
+        "identityRegenerated": "Nueva identidad creada: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Base de bearoff two-sided: probabilidad de victoria y veredicto de cubo exactos en el panel EPC. La base integrada cubre 6 fichas por jugador; descargue la ampliada o indique un archivo .bd de gnubg para ampliar el dominio exacto.",
+        "bearoffActive": "Base activa",
+        "bearoffDownloading": "Descargando…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "Base TS-06-11 descargada ({gb} GB): veredicto exacto hasta 11 fichas por jugador.",
+        "bearoffDownloadNote": "La base ampliada TS-06-11 ({gb} GB) hace exacto el veredicto de cubo hasta 11 fichas por jugador. Integridad verificada (SHA-256) tras la descarga.",
+        "bearoffDownload": "Descargar (1,2 GB)",
+        "bearoffDelete": "Eliminar la base descargada",
+        "bearoffExternal": "Archivo externo",
+        "bearoffExternalNone": "ninguno",
+        "bearoffExternalPick": "Elegir un archivo .bd…",
+        "bearoffExternalClear": "Quitar"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -590,7 +603,36 @@
         "stdDev": "Desv. estándar",
         "topWhite": "Arriba (blancas)",
         "wastage": "Desperdicio",
-        "wastageDiff": "Dif. de desperdicio"
+        "wastageDiff": "Dif. de desperdicio",
+        "challenge": "Desafío",
+        "challengeTooltip": "Modo entrenamiento: los resultados se ocultan tras cada edición; haga clic en una zona para revelarla.",
+        "clickToReveal": "Clic para revelar",
+        "race": {
+            "title": "Carrera (jugador al tiro)",
+            "exact": "exacto",
+            "estimated": "estimado",
+            "exactTooltip": "Leído de la base two-sided: exacto hasta {n} fichas por jugador.",
+            "estimatedTooltip": "Estimado por convolución de las distribuciones one-sided + corrección calibrada; p99 = {p99} %.",
+            "winProb": "% de victoria",
+            "cubeless": "Cubeless",
+            "noDouble": "Sin doblar",
+            "doubleTake": "Doblar/Tomar",
+            "doublePass": "Doblar/Pasar",
+            "verdictLabel": "Veredicto money",
+            "cubeStates": {
+                "centered": "cubo centrado",
+                "owned": "cubo en posesión",
+                "against": "cubo del rival"
+            },
+            "verdicts": {
+                "no_double": "No doblar",
+                "double_take": "Doblar, tomar",
+                "double_pass": "Doblar, pasar"
+            },
+            "noDecision": "Sin decisión (cubo del rival)",
+            "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
+            "openConfig": "Abrir configuración"
+        }
     },
     "filterLibrary": {
         "add": "Añadir",

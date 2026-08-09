@@ -1359,6 +1359,32 @@ export namespace domain {
 
 export namespace gui {
 	
+	export class BearoffStatus {
+	    downloaded: boolean;
+	    downloading: boolean;
+	    path: string;
+	    size_bytes: number;
+	    active_domain: number;
+	    active_origin: string;
+	    external_path: string;
+	    expected_bytes: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.downloaded = source["downloaded"];
+	        this.downloading = source["downloading"];
+	        this.path = source["path"];
+	        this.size_bytes = source["size_bytes"];
+	        this.active_domain = source["active_domain"];
+	        this.active_origin = source["active_origin"];
+	        this.external_path = source["external_path"];
+	        this.expected_bytes = source["expected_bytes"];
+	    }
+	}
 	export class FileDialogResponse {
 	    file_path: string;
 	    content: string;
@@ -1442,6 +1468,8 @@ export namespace main {
 	    ui_scale?: number;
 	    panel_position?: string;
 	    tour_seen?: boolean;
+	    bearoff_ts_path?: string;
+	    epc_challenge?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -1458,6 +1486,8 @@ export namespace main {
 	        this.ui_scale = source["ui_scale"];
 	        this.panel_position = source["panel_position"];
 	        this.tour_seen = source["tour_seen"];
+	        this.bearoff_ts_path = source["bearoff_ts_path"];
+	        this.epc_challenge = source["epc_challenge"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

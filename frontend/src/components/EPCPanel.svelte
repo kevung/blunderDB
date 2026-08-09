@@ -1,10 +1,34 @@
 <script>
-    import { statusBarModeStore } from '../stores/uiStore';
-    import { epcDataStore } from '../stores/epcStore';
+    import { onMount } from 'svelte';
+    import { statusBarModeStore, MODAL, openModal } from '../stores/uiStore';
+    import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
+    import { GetEpcChallenge, SaveEpcChallenge } from '../../wailsjs/go/main/Config.js';
     import { t } from '../i18n';
 
     let isActive = $derived($statusBarModeStore === 'EPC');
     let data = $derived($epcDataStore);
+    let challenge = $derived($epcChallengeStore);
+    let revealed = $derived($epcRevealedStore);
+
+    onMount(() => {
+        GetEpcChallenge()
+            .then((v) => epcChallengeStore.set(!!v))
+            .catch(() => {});
+    });
+
+    function toggleChallenge(e) {
+        const on = e.target.checked;
+        epcChallengeStore.set(on);
+        resetEpcReveal();
+        SaveEpcChallenge(on).catch(() => {});
+    }
+
+    function reveal(zone) {
+        epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
+    }
+
+    const pct = (x) => (100 * x).toFixed(2);
+    const eq = (x) => (x >= 0 ? '+' : '') + x.toFixed(3);
 </script>
 
 <div class="epc-panel">
@@ -25,7 +49,7 @@
         <div class="epc-error">
             <span class="error-text">{data.error}</span>
         </div>
-    {:else if !data.bottomEPC && !data.topEPC}
+    {:else if !data.bottomEPC && !data.topEPC && !data.race}
         <div class="epc-inactive">
             <div class="epc-inactive-message">
                 <span>{$t('epc.placeCheckers')}</span>
@@ -33,9 +57,19 @@
         </div>
     {:else}
         <div class="epc-content">
+            <div class="epc-toolbar">
+                <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
+                    <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
+                    <span>{$t('epc.challenge')}</span>
+                </label>
+            </div>
+
             <!-- Bottom player (Black) -->
             {#if data.bottomEPC}
-                <div class="epc-player-section">
+                <div class="epc-player-section maskable">
+                    {#if challenge && !revealed.bottom}
+                        <button class="mask-overlay" onclick={() => reveal('bottom')}>{$t('epc.clickToReveal')}</button>
+                    {/if}
                     <div class="epc-player-header">
                         <span class="player-indicator bottom"></span>
                         <span class="player-label">{$t('epc.bottomBlack')}</span>
@@ -67,7 +101,10 @@
 
             <!-- Top player (White) -->
             {#if data.topEPC}
-                <div class="epc-player-section">
+                <div class="epc-player-section maskable">
+                    {#if challenge && !revealed.top}
+                        <button class="mask-overlay" onclick={() => reveal('top')}>{$t('epc.clickToReveal')}</button>
+                    {/if}
                     <div class="epc-player-header">
                         <span class="player-indicator top"></span>
                         <span class="player-label">{$t('epc.topWhite')}</span>
@@ -97,8 +134,69 @@
                 </div>
             {/if}
 
+            <!-- Race zone: win probability + money cube (pure bearoff only) -->
+            {#if data.race}
+                <div class="epc-player-section epc-race maskable">
+                    {#if challenge && !revealed.race}
+                        <button class="mask-overlay" onclick={() => reveal('race')}>{$t('epc.clickToReveal')}</button>
+                    {/if}
+                    <div class="epc-player-header">
+                        <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
+                        <span class="player-label">{$t('epc.race.title')}</span>
+                        {#if data.race.regime === 'exact'}
+                            <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                            </span>
+                        {:else}
+                            <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                            </span>
+                        {/if}
+                    </div>
+                    <div class="epc-grid">
+                        <div class="epc-card epc-main">
+                            <div class="epc-card-label">{$t('epc.race.winProb')}</div>
+                            <div class="epc-card-value">{pct(data.race.win_prob)} %</div>
+                        </div>
+                        {#if data.race.money}
+                            <div class="epc-card">
+                                <div class="epc-card-label">{$t('epc.race.cubeless')}</div>
+                                <div class="epc-card-value">{eq(data.race.money.cubeless)}</div>
+                            </div>
+                            <div class="epc-card">
+                                <div class="epc-card-label">{$t('epc.race.noDouble')}</div>
+                                <div class="epc-card-value">{eq(data.race.money.no_double)}</div>
+                            </div>
+                            <div class="epc-card">
+                                <div class="epc-card-label">{$t('epc.race.doubleTake')}</div>
+                                <div class="epc-card-value">{eq(data.race.money.double_take)}</div>
+                            </div>
+                            <div class="epc-card">
+                                <div class="epc-card-label">{$t('epc.race.doublePass')}</div>
+                                <div class="epc-card-value">{eq(data.race.money.double_pass)}</div>
+                            </div>
+                        {/if}
+                    </div>
+                    {#if data.race.money}
+                        <div class="verdict-row">
+                            <span class="verdict-label">{$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)}) :</span>
+                            {#if data.race.money.verdict}
+                                <span class="verdict-chip">{$t('epc.race.verdicts.' + data.race.money.verdict)}</span>
+                            {:else}
+                                <span class="verdict-chip verdict-none">{$t('epc.race.noDecision')}</span>
+                            {/if}
+                        </div>
+                    {:else}
+                        <div class="download-hint">
+                            {$t('epc.race.downloadHint')}
+                            <button class="link-button" onclick={() => openModal(MODAL.CONFIG)}>{$t('epc.race.openConfig')}</button>
+                        </div>
+                    {/if}
+                </div>
+            {/if}
+
             <!-- Comparison section when both players have data -->
-            {#if data.bottomEPC && data.topEPC}
+            {#if data.bottomEPC && data.topEPC && (!challenge || (revealed.bottom && revealed.top))}
                 <div class="epc-comparison">
                     <div class="epc-comparison-header">{$t('epc.comparison')}</div>
                     <div class="epc-comparison-grid">
@@ -175,10 +273,55 @@
         gap: 10px;
     }
 
+    .epc-toolbar {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .challenge-toggle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        color: #555;
+        font-size: var(--font-size-small);
+        user-select: none;
+    }
+
+    .challenge-toggle input {
+        font: inherit;
+        margin: 0;
+    }
+
     .epc-player-section {
         display: flex;
         flex-direction: column;
         gap: 4px;
+    }
+
+    .maskable {
+        position: relative;
+    }
+
+    .mask-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f2f2f2;
+        border: 1px dashed #bbb;
+        border-radius: 4px;
+        color: #666;
+        font: inherit;
+        font-size: var(--font-size-base);
+        cursor: pointer;
+    }
+
+    .mask-overlay:hover {
+        background: #ececec;
+        color: #333;
     }
 
     .epc-player-header {
@@ -207,6 +350,28 @@
     .player-indicator.top {
         background: #fff;
         border: 1px solid #999;
+    }
+
+    .badge {
+        margin-left: auto;
+        padding: 1px 8px;
+        border-radius: 9px;
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: none;
+    }
+
+    .badge-exact {
+        background: #e5f3e8;
+        border: 1px solid #bcdcc4;
+        color: #1e6b34;
+    }
+
+    .badge-estimated {
+        background: #fdf3e1;
+        border: 1px solid #ecd7a8;
+        color: #8a6413;
     }
 
     .epc-grid {
@@ -247,6 +412,49 @@
     .epc-main .epc-card-value {
         font-size: var(--font-size-title);
         color: #1a56c4;
+    }
+
+    .verdict-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .verdict-label {
+        font-size: var(--font-size-small);
+        color: #666;
+    }
+
+    .verdict-chip {
+        padding: 1px 10px;
+        border-radius: 9px;
+        background: #e8f0fe;
+        border: 1px solid #c4d8f5;
+        color: #1a56c4;
+        font-size: var(--font-size-base);
+        font-weight: 600;
+    }
+
+    .verdict-chip.verdict-none {
+        background: #f2f2f2;
+        border-color: #ddd;
+        color: #777;
+        font-weight: 400;
+    }
+
+    .download-hint {
+        font-size: var(--font-size-small);
+        color: #8a6413;
+    }
+
+    .link-button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        color: #1a56c4;
+        text-decoration: underline;
+        cursor: pointer;
     }
 
     .epc-comparison {

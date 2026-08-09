@@ -8,6 +8,8 @@ import (
 	"runtime"
 
 	"github.com/adrg/xdg"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
 const configFilePath = "blunderDB/config.yaml"
@@ -114,6 +116,12 @@ type Config struct {
 	UIScale          int                  `json:"ui_scale,omitempty"`
 	PanelPosition    string               `json:"panel_position,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
+	// BearoffTsPath is an optional user-supplied two-sided bearoff database
+	// (.bd) widening the embedded TS-06-06 (ADR-0009). Empty = none.
+	BearoffTsPath string `json:"bearoff_ts_path,omitempty"`
+	// EpcChallenge persists the EPC panel's training mode ("défi"): results
+	// are masked after each edit until the user clicks a zone to reveal it.
+	EpcChallenge bool `json:"epc_challenge,omitempty"`
 }
 
 // clampUIScale coerces a persisted/incoming scale into the supported range,
@@ -303,6 +311,30 @@ func (c *Config) GetTourSeen() bool {
 // SaveTourSeen persists whether the first-run guided-tour catalog has been shown.
 func (c *Config) SaveTourSeen(seen bool) error {
 	c.TourSeen = seen
+	return c.SaveConfig(c)
+}
+
+// GetBearoffTsPath returns the persisted external two-sided bearoff path.
+func (c *Config) GetBearoffTsPath() string {
+	return c.BearoffTsPath
+}
+
+// SaveBearoffTsPath persists the external two-sided bearoff path ("" clears
+// it) and applies it to the running engine immediately.
+func (c *Config) SaveBearoffTsPath(path string) error {
+	c.BearoffTsPath = path
+	race.SetExternalPath(path)
+	return c.SaveConfig(c)
+}
+
+// GetEpcChallenge returns the persisted EPC training-mode flag.
+func (c *Config) GetEpcChallenge() bool {
+	return c.EpcChallenge
+}
+
+// SaveEpcChallenge persists the EPC training-mode flag.
+func (c *Config) SaveEpcChallenge(on bool) error {
+	c.EpcChallenge = on
 	return c.SaveConfig(c)
 }
 

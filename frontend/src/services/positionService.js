@@ -21,7 +21,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
-import { epcDataStore } from '../stores/epcStore.js';
+import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, PANEL, closePanel, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
@@ -1033,7 +1033,7 @@ export async function exitEPCMode() {
     // an inconsistent MATCH state that broke match navigation.
     const returnToMatch = savedModeBeforeEPC === 'MATCH' && savedMatchContextBeforeEPC && savedMatchContextBeforeEPC.isMatchMode;
     statusBarTextStore.set('');
-    epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
+    epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
 
     if (returnToMatch) {
         matchContextStore.set(savedMatchContextBeforeEPC);
@@ -1071,25 +1071,33 @@ export async function exitEPCMode() {
 
 export async function updateEPC(position) {
     try {
-        // Typed contract from engine/race: { bottom: {all_in_home, checker_count, epc?}, top: {…} }.
+        // Typed contract from engine/race (ADR-0009):
+        // { bottom: {all_in_home, checker_count, epc?}, top: {…}, race?: {…} }.
         const result = await ComputeEPCFromPosition(position);
         const bottomEPC = result?.bottom?.epc || null;
         const topEPC = result?.top?.epc || null;
-        if (bottomEPC) {
+        const race = result?.race || null;
+        // Any recomputation re-masks the challenge overlays: this runs on the
+        // same signal as the data itself, so keyboard edits re-mask too.
+        resetEpcReveal();
+        if (bottomEPC || topEPC || race) {
             epcDataStore.set({
                 bottomEPC,
                 topEPC,
+                race,
                 error: null
             });
             const epc = bottomEPC;
-            statusBarTextStore.set(tMsg('commands.epcStatus', { epc: epc.epc.toFixed(2), pips: epc.pipCount, wastage: epc.wastage.toFixed(2), rolls: epc.meanRolls.toFixed(3) }));
+            if (epc) {
+                statusBarTextStore.set(tMsg('commands.epcStatus', { epc: epc.epc.toFixed(2), pips: epc.pipCount, wastage: epc.wastage.toFixed(2), rolls: epc.meanRolls.toFixed(3) }));
+            }
         } else {
-            epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
+            epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
             statusBarTextStore.set(tMsg('commands.epcNotAvailable'));
         }
     } catch (error) {
         logger.error('Error computing EPC:', error);
-        epcDataStore.set({ bottomEPC: null, topEPC: null, error: 'Error computing EPC' });
+        epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: 'Error computing EPC' });
         statusBarTextStore.set(tMsg('commands.epcErrorComputing'));
     }
 }

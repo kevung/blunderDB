@@ -54,7 +54,20 @@
         "identityRegenerateKeep": "The current key ({fingerprint}) will be overwritten. Save it first if you may need it.",
         "identitySaveFirst": "Save the current one first…",
         "identityRegenerateConfirm": "Regenerate anyway",
-        "identityRegenerated": "New identity created: {fingerprint}"
+        "identityRegenerated": "New identity created: {fingerprint}",
+        "bearoffTitle": "Bearoff",
+        "bearoffIntro": "Two-sided bearoff database: exact win probability and cube verdict in the EPC panel. The built-in database covers 6 checkers per player; download the extended one or point to a gnubg .bd file to widen the exact domain.",
+        "bearoffActive": "Active database",
+        "bearoffDownloading": "Downloading…",
+        "bearoffGB": "GB",
+        "bearoffDownloaded": "TS-06-11 database downloaded ({gb} GB): exact verdict up to 11 checkers per player.",
+        "bearoffDownloadNote": "The extended TS-06-11 database ({gb} GB) makes the cube verdict exact up to 11 checkers per player. Integrity checked (SHA-256) after download.",
+        "bearoffDownload": "Download (1.2 GB)",
+        "bearoffDelete": "Delete downloaded database",
+        "bearoffExternal": "External file",
+        "bearoffExternalNone": "none",
+        "bearoffExternalPick": "Choose a .bd file…",
+        "bearoffExternalClear": "Remove"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -590,7 +603,36 @@
         "stdDev": "Std Dev",
         "topWhite": "Top (White)",
         "wastage": "Wastage",
-        "wastageDiff": "Wastage Diff"
+        "wastageDiff": "Wastage Diff",
+        "challenge": "Challenge",
+        "challengeTooltip": "Training mode: results are masked after every edit; click a zone to reveal it.",
+        "clickToReveal": "Click to reveal",
+        "race": {
+            "title": "Race (player on roll)",
+            "exact": "exact",
+            "estimated": "estimated",
+            "exactTooltip": "Read from the two-sided database: exact up to {n} checkers per player.",
+            "estimatedTooltip": "Estimated by convolving the one-sided distributions + calibrated correction; p99 = {p99} %.",
+            "winProb": "Win %",
+            "cubeless": "Cubeless",
+            "noDouble": "No double",
+            "doubleTake": "Double/Take",
+            "doublePass": "Double/Pass",
+            "verdictLabel": "Money verdict",
+            "cubeStates": {
+                "centered": "centered cube",
+                "owned": "cube owned",
+                "against": "cube against"
+            },
+            "verdicts": {
+                "no_double": "No double",
+                "double_take": "Double, take",
+                "double_pass": "Double, pass"
+            },
+            "noDecision": "No decision (cube against)",
+            "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
+            "openConfig": "Open settings"
+        }
     },
     "filterLibrary": {
         "add": "Add",
