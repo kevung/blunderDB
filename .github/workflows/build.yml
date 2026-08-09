@@ -5,7 +5,9 @@ on:
     branches:
       - main
     tags:
-      - "*"
+      # Version tags only (e.g. 0.31.0). Data-asset tags such as
+      # bearoff-data-1 must NOT trigger the release matrix.
+      - "[0-9]*.[0-9]*.[0-9]*"
   pull_request:
     branches:
       - main

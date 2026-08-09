@@ -14,7 +14,9 @@ name: Publish to AUR
 on:
   push:
     tags:
-      - "*"
+      # Version tags only (e.g. 0.31.0). Data-asset tags such as
+      # bearoff-data-1 must NOT be published to AUR.
+      - "[0-9]*.[0-9]*.[0-9]*"
   workflow_dispatch:
     inputs:
       version:
