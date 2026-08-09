@@ -114,6 +114,12 @@ export default {
                     </ul>
                     <p>Quando entrambi i giocatori hanno pedine nel proprio quadrante interno, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
                     <p>Per chiudere il pannello Bearoff, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
+                    <p>
+                        Su una posizione di bearoff pura, una tabella di corsa mostra inoltre le probabilità di vittoria di entrambi i giocatori e, quando la posizione è coperta da un database two-sided (integrato fino a 6 pedine per giocatore, database esteso
+                        scaricabile fino a 11 dalla scheda Bearoff delle impostazioni), le equità money esatte — con, sotto ogni decisione non ottimale, lo scarto di equità dalla migliore — e la migliore decisione del cubo. Fuori da questo dominio la
+                        probabilità è stimata (badge «stimato» con il margine d'errore) e nessuna decisione viene mostrata. Il giocatore al tiro si modifica cliccando il rettangolo bearoff/punteggio di un giocatore, la posizione del cubo cliccando il cubo.
+                    </p>
+                    <p>La casella <strong>Sfida</strong> nasconde i risultati dopo ogni modifica; cliccare una zona per rivelarla — ideale per allenarsi a stimare l'EPC e la decisione del cubo prima di verificare.</p>
 
                     <h3>Navigazione dei match</h3>
                     <p>

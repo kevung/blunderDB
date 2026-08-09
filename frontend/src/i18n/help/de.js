@@ -114,6 +114,12 @@ export default {
                     </ul>
                     <p>Wenn beide Spieler Steine in ihrem Heimbrett haben, zeigt ein Vergleichsbereich die EPC- und Pip-Count-Differenzen.</p>
                     <p>Zum Schließen des Bearoff-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
+                    <p>
+                        Bei einer reinen Auswürfelposition zeigt eine Renntabelle zusätzlich die Gewinnchancen beider Spieler und, wenn die Position von einer Two-Sided-Datenbank abgedeckt ist (eingebaut bis 6 Steine pro Spieler, erweiterte Datenbank bis 11
+                        über den Bearoff-Tab der Einstellungen herunterladbar), die exakten Money-Equities — mit dem Equity-Abstand jeder nicht optimalen Entscheidung zur besten — sowie die beste Würfel-Entscheidung. Außerhalb dieses Bereichs wird die
+                        Gewinnchance geschätzt (Badge „geschätzt" mit Fehlermarge) und keine Entscheidung angezeigt. Der Spieler am Zug wird durch Klick auf das Auswürfel-/Punkterechteck eines Spielers geändert, die Würfelposition durch Klick auf den Würfel.
+                    </p>
+                    <p>Das Kontrollkästchen <strong>Challenge</strong> verdeckt die Ergebnisse nach jeder Änderung; ein Klick auf eine Zone deckt sie auf — ideal, um EPC und Würfel-Entscheidung erst zu schätzen und dann zu prüfen.</p>
 
                     <h3>Match-Navigation</h3>
                     <p>

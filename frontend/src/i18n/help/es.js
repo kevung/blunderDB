@@ -114,6 +114,12 @@ export default {
                     </ul>
                     <p>Cuando ambos jugadores tienen fichas en su cuadro interior, una sección de comparación muestra las diferencias de EPC y de pip count.</p>
                     <p>Para cerrar el panel Bearoff, pulsa <strong>Ctrl+E</strong> de nuevo o cambia a otra pestaña.</p>
+                    <p>
+                        En una posición de bearoff pura, una tabla de carrera muestra además las probabilidades de victoria de ambos jugadores y, cuando la posición está cubierta por una base two-sided (integrada hasta 6 fichas por jugador, base ampliada
+                        descargable hasta 11 desde la pestaña Bearoff de la configuración), las equidades money exactas — con, bajo cada decisión no óptima, la diferencia de equidad respecto a la mejor — y la mejor decisión de cubo. Fuera de ese dominio la
+                        probabilidad se estima (insignia «estimado» con su margen de error) y no se muestra ninguna decisión. El jugador al tiro se edita pulsando el rectángulo bearoff/marcador de un jugador, y la posición del cubo pulsando el cubo del tablero.
+                    </p>
+                    <p>La casilla <strong>Desafío</strong> oculta los resultados tras cada edición; pulse una zona para revelarla — ideal para entrenarse a estimar el EPC y la decisión de cubo antes de comprobar.</p>
 
                     <h3>Navegación por matches</h3>
                     <p>

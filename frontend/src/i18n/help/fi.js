@@ -112,6 +112,12 @@ export default {
                     </ul>
                     <p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
                     <p>Sulje Bearoff-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
+                    <p>
+                        Puhtaassa kotiutusasemassa kilpajuoksutaulukko näyttää lisäksi molempien pelaajien voittotodennäköisyydet ja, kun asema on two-sided-tietokannan kattama (sisäänrakennettu 6 nappulaan asti pelaajaa kohden, laajennettu tietokanta
+                        ladattavissa 11 nappulaan asti asetusten Bearoff-välilehdeltä), tarkat money-ekviteetit — kunkin ei-optimaalisen päätöksen alla ero parhaaseen — sekä parhaan kuutiopäätöksen. Tämän alueen ulkopuolella voittotodennäköisyys arvioidaan
+                        («arvioitu»-merkki virhemarginaaleineen) eikä päätöstä näytetä. Vuorossa olevaa pelaajaa vaihdetaan napsauttamalla pelaajan kotiutus-/pistesuorakulmiota, kuution sijaintia napsauttamalla kuutiota.
+                    </p>
+                    <p><strong>Haaste</strong>-valinta piilottaa tulokset jokaisen muokkauksen jälkeen; paljasta vyöhyke napsauttamalla — erinomainen tapa harjoitella EPC:n ja kuutiopäätöksen arviointia ennen tarkistusta.</p>
 
                     <h3>Ottelunavigointi</h3>
                     <p>

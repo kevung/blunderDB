@@ -114,6 +114,13 @@ export default {
                     </ul>
                     <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
                     <p>Pour fermer le panneau Bearoff, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
+                    <p>
+                        Sur une position de sortie pure, un tableau course affiche en outre les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6 pions par joueur, base étendue
+                        téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes — avec, sous chaque décision non optimale, l'écart d'équité à la meilleure décision — et la meilleure décision de videau. Hors de ce
+                        domaine, la probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la position du videau en cliquant le
+                        videau du plateau.
+                    </p>
+                    <p>La case <strong>Défi</strong> masque les résultats à chaque modification de la position ; cliquez une zone pour la révéler — idéal pour s'entraîner à estimer l'EPC et la décision de videau avant de vérifier.</p>
 
                     <h3>Navigation dans les matchs</h3>
                     <p>

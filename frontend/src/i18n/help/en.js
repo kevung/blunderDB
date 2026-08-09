@@ -114,6 +114,12 @@ export default {
                     </ul>
                     <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
                     <p>To close the Bearoff panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
+                    <p>
+                        On a pure bearoff position, a race table additionally shows both players' winning chances and, when the position is covered by a two-sided database (built-in up to 6 checkers per player, extended database downloadable up to 11 from the
+                        Bearoff tab of the settings), the exact money equities — with, under each non-optimal decision, the equity gap to the best one — and the best cube decision. Outside that domain the winning chance is estimated ("estimated" badge with its
+                        error margin) and no decision is shown. Edit the player on roll by clicking a player's bearoff/score rectangle, and the cube position by clicking the cube on the board.
+                    </p>
+                    <p>The <strong>Challenge</strong> checkbox masks the results after every edit; click a zone to reveal it — ideal for training yourself to estimate the EPC and the cube decision before checking.</p>
 
                     <h3>Match Navigation</h3>
                     <p>
