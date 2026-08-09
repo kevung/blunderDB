@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 22:09+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -129,8 +129,12 @@ msgid "epc"
 msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre le panneau EPC (Effective Pip Count)."
-msgstr "Open the EPC (Effective Pip Count) panel."
+msgid ""
+"Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et "
+"verdict de videau en bearoff)."
+msgstr ""
+"Opens the Bearoff panel (Effective Pip Count, winning probability and cube "
+"verdict in bearoff)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -1609,3 +1613,6 @@ msgstr ""
 
 #~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr "Show/hide the search history."
+
+#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
+#~ msgstr "Open the EPC (Effective Pip Count) panel."

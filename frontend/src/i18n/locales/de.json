@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "Spiel",
         "move": "Zug",
-        "typeCommand": "Befehl eingeben..."
+        "typeCommand": "Befehl eingeben...",
+        "createdModified": "Erstellt: {created} | Geändert: {modified}",
+        "noDatabaseOpened": "Keine Datenbank geöffnet",
+        "noPositionData": "keine Positionsdaten"
     },
     "viewTabs": {
         "closeView": "Ansicht schließen",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} Namen ausgewählt:",
         "title": "Spielernamen zusammenführen",
         "use": "verwenden",
-        "useAsCanonical": "Als kanonischen Namen verwenden"
+        "useAsCanonical": "Als kanonischen Namen verwenden",
+        "merged": "{n} Spielername(n) in „{target}“ zusammengeführt"
     },
     "tabbedPanel": {
         "analysis": "Analyse",

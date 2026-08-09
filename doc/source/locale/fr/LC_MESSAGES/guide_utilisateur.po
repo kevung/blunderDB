@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -559,8 +559,8 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:298
 msgid ""
-"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
-"exécuter la commande ``epc``."
+"Appuyer *CTRL-E*, cliquer sur l'onglet Bearoff dans le panneau inférieur,"
+" ou exécuter la commande ``epc``."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:301
@@ -569,25 +569,35 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:303
 msgid ""
-"Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC,"
-" nombre moyen de lancers, écart type, pip count et wastage."
+"Les résultats sont affichés en temps réel dans le panneau Bearoff dédié: "
+"EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en "
+"bearoff pur, la probabilité de gain du joueur au trait avec, dans le "
+"domaine exact, le verdict de videau money (voir la section « Méthodologie"
+" et hypothèses du panneau Bearoff » du manuel)."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:307
+#: ../../source/guide_utilisateur.rst:309
+msgid ""
+"Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
+"résultats sont masqués à chaque modification et se révèlent zone par "
+"zone, d'un clic."
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:314
 msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:310
+#: ../../source/guide_utilisateur.rst:317
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:312
+#: ../../source/guide_utilisateur.rst:319
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:315
+#: ../../source/guide_utilisateur.rst:322
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -597,53 +607,53 @@ msgid ""
 " de l'adversaire, le niveau d'analyse."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:322
+#: ../../source/guide_utilisateur.rst:329
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:325
+#: ../../source/guide_utilisateur.rst:332
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
 "d'origine de chaque analyse."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:329
+#: ../../source/guide_utilisateur.rst:336
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
 " plusieurs matchs, tous les coups joués sont indiqués."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:341
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:338
+#: ../../source/guide_utilisateur.rst:345
 msgid "Exporter une position vers XG"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:340
+#: ../../source/guide_utilisateur.rst:347
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:342
+#: ../../source/guide_utilisateur.rst:349
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:344
+#: ../../source/guide_utilisateur.rst:351
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:347
+#: ../../source/guide_utilisateur.rst:354
 msgid "Visualiser les différentes positions"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:349
+#: ../../source/guide_utilisateur.rst:356
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -651,25 +661,25 @@ msgid ""
 "dernière position."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:353
+#: ../../source/guide_utilisateur.rst:360
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:357
+#: ../../source/guide_utilisateur.rst:364
 msgid "Rechercher des positions selon des critères"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:359
+#: ../../source/guide_utilisateur.rst:366
 msgid "Pour rechercher des types de positions,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:361
+#: ../../source/guide_utilisateur.rst:368
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:363
+#: ../../source/guide_utilisateur.rst:370
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -678,19 +688,19 @@ msgid ""
 "le score."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:369
+#: ../../source/guide_utilisateur.rst:376
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
 " par les onglets *At least* et *Except* situés en haut du panneau :"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:372
+#: ../../source/guide_utilisateur.rst:379
 msgid ""
 "*At least* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:375
+#: ../../source/guide_utilisateur.rst:382
 msgid ""
 "*Except* : blunderDB exclut les positions contenant l'un des pions "
 "saisis. Le plateau est bordé de rouge lors de l'édition de cette "
@@ -704,37 +714,37 @@ msgid ""
 "quelle que soit la couleur) ; un simple clic sur ce point le débloque."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:385
+#: ../../source/guide_utilisateur.rst:392
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Except* "
 "l'emporte s'il contredit le critère *At least*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:388
+#: ../../source/guide_utilisateur.rst:395
 msgid "Méthode 1 (simple):"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:390
+#: ../../source/guide_utilisateur.rst:397
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:392
+#: ../../source/guide_utilisateur.rst:399
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:394
+#: ../../source/guide_utilisateur.rst:401
 msgid "Valider en cliquant sur \"Search\"."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:396
+#: ../../source/guide_utilisateur.rst:403
 msgid "Méthode 2 (avancée):"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:399
+#: ../../source/guide_utilisateur.rst:406
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:401
+#: ../../source/guide_utilisateur.rst:408
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -742,11 +752,11 @@ msgid ""
 "disponibles)."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:406
+#: ../../source/guide_utilisateur.rst:413
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:408
+#: ../../source/guide_utilisateur.rst:415
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -1027,5 +1037,18 @@ msgstr ""
 #~ "Depuis le panneau des matchs (*CTRL-T*),"
 #~ " utiliser le menu déroulant de la "
 #~ "colonne tournoi pour assigner un match."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Appuyer *CTRL-E*, cliquer sur l'onglet "
+#~ "EPC dans le panneau inférieur, ou "
+#~ "exécuter la commande ``epc``."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Les résultats sont affichés en temps "
+#~ "réel dans le panneau EPC dédié: "
+#~ "EPC, nombre moyen de lancers, écart "
+#~ "type, pip count et wastage."
 #~ msgstr ""
 

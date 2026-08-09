@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-01 11:10+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -384,7 +384,7 @@ msgid "CTRL-E"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher le panneau EPC."
+msgid "Afficher/cacher le panneau Bearoff."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -887,5 +887,8 @@ msgstr ""
 #~ msgid ""
 #~ "Désélectionner le filtre. Si aucun "
 #~ "filtre sélectionné, fermer le panneau."
+#~ msgstr ""
+
+#~ msgid "Afficher/cacher le panneau EPC."
 #~ msgstr ""
 

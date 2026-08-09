@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "peli",
         "move": "siirto",
-        "typeCommand": "Kirjoita komento..."
+        "typeCommand": "Kirjoita komento...",
+        "createdModified": "Luotu: {created} | Muokattu: {modified}",
+        "noDatabaseOpened": "Tietokantaa ei ole avattu",
+        "noPositionData": "ei asematietoja"
     },
     "viewTabs": {
         "closeView": "Sulje näkymä",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} nimeä valittu:",
         "title": "Yhdistä pelaajanimet",
         "use": "käytä",
-        "useAsCanonical": "Käytä kanonisena nimenä"
+        "useAsCanonical": "Käytä kanonisena nimenä",
+        "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”"
     },
     "tabbedPanel": {
         "analysis": "Analyysi",

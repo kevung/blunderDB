@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "игра",
         "move": "ход",
-        "typeCommand": "Введите команду..."
+        "typeCommand": "Введите команду...",
+        "createdModified": "Создана: {created} | Изменена: {modified}",
+        "noDatabaseOpened": "База данных не открыта",
+        "noPositionData": "нет данных о позиции"
     },
     "viewTabs": {
         "closeView": "Закрыть вид",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "Выбрано {n} имён:",
         "title": "Объединить имена игроков",
         "use": "использовать",
-        "useAsCanonical": "Использовать как каноническое имя"
+        "useAsCanonical": "Использовать как каноническое имя",
+        "merged": "Объединено имён игроков: {n} → «{target}»"
     },
     "tabbedPanel": {
         "analysis": "Анализ",

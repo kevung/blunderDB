@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "παιχνίδι",
         "move": "κίνηση",
-        "typeCommand": "Πληκτρολογήστε εντολή..."
+        "typeCommand": "Πληκτρολογήστε εντολή...",
+        "createdModified": "Δημιουργία: {created} | Τροποποίηση: {modified}",
+        "noDatabaseOpened": "Δεν έχει ανοιχτεί βάση δεδομένων",
+        "noPositionData": "χωρίς δεδομένα θέσης"
     },
     "viewTabs": {
         "closeView": "Κλείσιμο προβολής",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} ονόματα επιλέχθηκαν:",
         "title": "Συγχώνευση ονομάτων παικτών",
         "use": "χρήση",
-        "useAsCanonical": "Χρήση ως κανονικό όνομα"
+        "useAsCanonical": "Χρήση ως κανονικό όνομα",
+        "merged": "{n} όνομα(τα) παίκτη συγχωνεύθηκαν στο «{target}»"
     },
     "tabbedPanel": {
         "analysis": "Ανάλυση",

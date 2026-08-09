@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "partita",
         "move": "mossa",
-        "typeCommand": "Digita un comando..."
+        "typeCommand": "Digita un comando...",
+        "createdModified": "Creato: {created} | Modificato: {modified}",
+        "noDatabaseOpened": "Nessun database aperto",
+        "noPositionData": "nessun dato di posizione"
     },
     "viewTabs": {
         "closeView": "Chiudi vista",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} nomi selezionati:",
         "title": "Unisci nomi dei giocatori",
         "use": "usa",
-        "useAsCanonical": "Usa come nome canonico"
+        "useAsCanonical": "Usa come nome canonico",
+        "merged": "{n} nome/i di giocatore uniti in «{target}»"
     },
     "tabbedPanel": {
         "analysis": "Analisi",

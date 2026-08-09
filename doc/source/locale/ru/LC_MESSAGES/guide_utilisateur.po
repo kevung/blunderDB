@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -638,11 +638,11 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:298
 msgid ""
-"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
-"exécuter la commande ``epc``."
+"Appuyer *CTRL-E*, cliquer sur l'onglet Bearoff dans le panneau inférieur, ou"
+" exécuter la commande ``epc``."
 msgstr ""
-"Нажмите *CTRL-E*, перейдите на вкладку EPC в нижней панели или выполните "
-"команду ``epc``."
+"Нажмите *CTRL-E*, перейдите на вкладку Bearoff в нижней панели или выполните"
+" команду ``epc``."
 
 #: ../../source/guide_utilisateur.rst:301
 msgid "Éditer la position des pions dans le jan (6 derniers points)."
@@ -651,21 +651,37 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:303
 msgid ""
-"Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC, "
-"nombre moyen de lancers, écart type, pip count et wastage."
+"Les résultats sont affichés en temps réel dans le panneau Bearoff dédié: "
+"EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en "
+"bearoff pur, la probabilité de gain du joueur au trait avec, dans le domaine"
+" exact, le verdict de videau money (voir la section « Méthodologie et "
+"hypothèses du panneau Bearoff » du manuel)."
 msgstr ""
-"Результаты отображаются в реальном времени в специальной панели EPC: EPC, "
-"среднее количество бросков, стандартное отклонение, пипкаунт и wastage."
+"Результаты отображаются в реальном времени в отдельной панели Bearoff: EPC, "
+"среднее число бросков, стандартное отклонение, пипкаунт и wastage — а при "
+"чистом bearoff также вероятность выигрыша игрока на ходу с money-вердиктом "
+"по кубу в точной области (см. раздел «Методология и допущения панели "
+"Bearoff» руководства)."
 
-#: ../../source/guide_utilisateur.rst:307
+#: ../../source/guide_utilisateur.rst:309
+msgid ""
+"Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
+"résultats sont masqués à chaque modification et se révèlent zone par zone, "
+"d'un clic."
+msgstr ""
+"Чтобы тренироваться в оценке этих величин, установите флажок *Défi* (режим "
+"«Вызов»): результаты скрываются при каждом изменении и открываются зона за "
+"зоной, щелчком."
+
+#: ../../source/guide_utilisateur.rst:314
 msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
 msgstr "Калькулятор работает для обоих игроков одновременно."
 
-#: ../../source/guide_utilisateur.rst:310
+#: ../../source/guide_utilisateur.rst:317
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Просмотр анализа позиции, импортированной из XG"
 
-#: ../../source/guide_utilisateur.rst:312
+#: ../../source/guide_utilisateur.rst:319
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -673,7 +689,7 @@ msgstr ""
 "Если позиция, проанализированная XG, GNUbg или BGBlitz, была импортирована в"
 " blunderDB, анализ можно отобразить, нажав *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:315
+#: ../../source/guide_utilisateur.rst:322
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs coups "
 "sont affichés sur des lignes distinctes. Pour chaque ligne, les informations"
@@ -688,7 +704,7 @@ msgstr ""
 "шансы на выигрыш, гэммон и бэкгэммон игрока, шансы на выигрыш, гэммон и "
 "бэкгэммон противника, уровень анализа."
 
-#: ../../source/guide_utilisateur.rst:322
+#: ../../source/guide_utilisateur.rst:329
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque décision"
 " est affiché ainsi que les chances de gain de la position."
@@ -696,7 +712,7 @@ msgstr ""
 "Если позиция соответствует решению куба, отображается стоимость каждого "
 "решения, а также шансы на выигрыш в данной позиции."
 
-#: ../../source/guide_utilisateur.rst:325
+#: ../../source/guide_utilisateur.rst:332
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position (par"
 " exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -706,7 +722,7 @@ msgstr ""
 " и GNUbg), дополнительный столбец указывает исходный движок для каждого "
 "анализа."
 
-#: ../../source/guide_utilisateur.rst:329
+#: ../../source/guide_utilisateur.rst:336
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis en "
 "évidence dans la liste des coups. Si la position a été rencontrée dans "
@@ -716,7 +732,7 @@ msgstr ""
 "Если позиция встречалась в нескольких матчах, указываются все сыгранные "
 "ходы."
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:341
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -724,27 +740,27 @@ msgstr ""
 "При нажатии на ход в панели анализа на доске отображаются соответствующие "
 "стрелки."
 
-#: ../../source/guide_utilisateur.rst:338
+#: ../../source/guide_utilisateur.rst:345
 msgid "Exporter une position vers XG"
 msgstr "Экспорт позиции в XG"
 
-#: ../../source/guide_utilisateur.rst:340
+#: ../../source/guide_utilisateur.rst:347
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "Чтобы экспортировать позицию из blunderDB в XG,"
 
-#: ../../source/guide_utilisateur.rst:342
+#: ../../source/guide_utilisateur.rst:349
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "откройте в blunderDB позицию для экспорта и нажмите *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:344
+#: ../../source/guide_utilisateur.rst:351
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "переключитесь на XG и нажмите *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:347
+#: ../../source/guide_utilisateur.rst:354
 msgid "Visualiser les différentes positions"
 msgstr "Просмотр различных позиций"
 
-#: ../../source/guide_utilisateur.rst:349
+#: ../../source/guide_utilisateur.rst:356
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet d'aller à"
@@ -755,7 +771,7 @@ msgstr ""
 "*LEFT* и *RIGHT*. Клавиша *HOME* переходит к первой позиции. Клавиша *END* "
 "переходит к последней позиции."
 
-#: ../../source/guide_utilisateur.rst:353
+#: ../../source/guide_utilisateur.rst:360
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher le "
 "bearoff à droite, appuyer *CTRL-DROITE*."
@@ -763,19 +779,19 @@ msgstr ""
 "Чтобы отобразить снятие шашек слева, нажмите *CTRL-LEFT*. Чтобы отобразить "
 "снятие шашек справа, нажмите *CTRL-RIGHT*."
 
-#: ../../source/guide_utilisateur.rst:357
+#: ../../source/guide_utilisateur.rst:364
 msgid "Rechercher des positions selon des critères"
 msgstr "Поиск позиций по критериям"
 
-#: ../../source/guide_utilisateur.rst:359
+#: ../../source/guide_utilisateur.rst:366
 msgid "Pour rechercher des types de positions,"
 msgstr "Для поиска типов позиций:"
 
-#: ../../source/guide_utilisateur.rst:361
+#: ../../source/guide_utilisateur.rst:368
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "нажмите *TAB* для открытия панели поиска,"
 
-#: ../../source/guide_utilisateur.rst:363
+#: ../../source/guide_utilisateur.rst:370
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, afin"
@@ -787,7 +803,7 @@ msgstr ""
 "получения максимального количества результатов, очистите позицию клавишей "
 "*BACKSPACE*. При необходимости отредактируйте позицию куба и счёт."
 
-#: ../../source/guide_utilisateur.rst:369
+#: ../../source/guide_utilisateur.rst:376
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables "
 "par les onglets *At least* et *Except* situés en haut du panneau :"
@@ -795,7 +811,7 @@ msgstr ""
 "Панель поиска предлагает две структуры шашек, выбираемые с помощью вкладок "
 "*At least* и *Except* в верхней части панели:"
 
-#: ../../source/guide_utilisateur.rst:372
+#: ../../source/guide_utilisateur.rst:379
 msgid ""
 "*At least* (par défaut) : blunderDB filtre les positions ayant *a minima* la"
 " structure de pions saisie ;"
@@ -803,7 +819,7 @@ msgstr ""
 "*At least* (по умолчанию): blunderDB фильтрует позиции, содержащие *как "
 "минимум* введённую структуру шашек;"
 
-#: ../../source/guide_utilisateur.rst:375
+#: ../../source/guide_utilisateur.rst:382
 msgid ""
 "*Except* : blunderDB exclut les positions contenant l'un des pions saisis. "
 "Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
@@ -827,7 +843,7 @@ msgstr ""
 "клетка, без шашек любого цвета); одиночный щелчок на этом пункте снимает "
 "отметку."
 
-#: ../../source/guide_utilisateur.rst:385
+#: ../../source/guide_utilisateur.rst:392
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Except* "
 "l'emporte s'il contredit le critère *At least*."
@@ -835,31 +851,31 @@ msgstr ""
 "Если пункт входит в обе структуры, критерий *Except* имеет приоритет, если "
 "он противоречит критерию *At least*."
 
-#: ../../source/guide_utilisateur.rst:388
+#: ../../source/guide_utilisateur.rst:395
 msgid "Méthode 1 (simple):"
 msgstr "Метод 1 (простой):"
 
-#: ../../source/guide_utilisateur.rst:390
+#: ../../source/guide_utilisateur.rst:397
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Откройте окно поиска (*CTRL-F*)."
 
-#: ../../source/guide_utilisateur.rst:392
+#: ../../source/guide_utilisateur.rst:399
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Добавьте и настройте фильтры поиска."
 
-#: ../../source/guide_utilisateur.rst:394
+#: ../../source/guide_utilisateur.rst:401
 msgid "Valider en cliquant sur \"Search\"."
 msgstr "Подтвердите нажатием кнопки \"Search\"."
 
-#: ../../source/guide_utilisateur.rst:396
+#: ../../source/guide_utilisateur.rst:403
 msgid "Méthode 2 (avancée):"
 msgstr "Метод 2 (расширенный):"
 
-#: ../../source/guide_utilisateur.rst:399
+#: ../../source/guide_utilisateur.rst:406
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "откройте командную строку нажатием *ПРОБЕЛ*,"
 
-#: ../../source/guide_utilisateur.rst:401
+#: ../../source/guide_utilisateur.rst:408
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple *cube* "
 "ou *score* pour prendre respectivement en compte le cube et le score. Voir "
@@ -869,14 +885,21 @@ msgstr ""
 "*cube* или *score* для учёта куба и счёта соответственно. Смотрите "
 ":numref:`cmd_filter` для полного списка доступных фильтров)."
 
-#: ../../source/guide_utilisateur.rst:406
+#: ../../source/guide_utilisateur.rst:413
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "подтвердите запрос нажатием *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:408
+#: ../../source/guide_utilisateur.rst:415
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié les "
 "critères de recherche entrés par l'utilisateur."
 msgstr ""
 "Отображаемые позиции — это позиции из базы данных, соответствующие критериям"
 " поиска, введённым пользователем."
+
+#~ msgid ""
+#~ "Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC, "
+#~ "nombre moyen de lancers, écart type, pip count et wastage."
+#~ msgstr ""
+#~ "Результаты отображаются в реальном времени в специальной панели EPC: EPC, "
+#~ "среднее количество бросков, стандартное отклонение, пипкаунт и wastage."

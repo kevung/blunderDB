@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-17 11:16+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -276,11 +276,29 @@ msgstr ""
 " en tiempo real el EPC, el número medio de tiradas, la desviación típica, el"
 " pip count y el wastage."
 
-#: ../../source/faq.rst:126
+#: ../../source/faq.rst:124
+msgid ""
+"Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de"
+" gain du joueur au trait et, lorsque la position est couverte par une base "
+"two-sided (base intégrée jusqu'à 6 pions par joueur, base téléchargeable "
+"jusqu'à 11), le verdict de videau money exact. Hors de ce domaine, la "
+"probabilité est estimée avec sa marge d'erreur et le verdict n'est "
+"volontairement pas affiché. Voir la section « Méthodologie et hypothèses du "
+"panneau Bearoff » du manuel pour le détail des hypothèses."
+msgstr ""
+"En las posiciones de bearoff puro, el panel muestra también la probabilidad "
+"de victoria del jugador al tiro y, cuando la posición está cubierta por una "
+"base two-sided (base integrada hasta 6 fichas por jugador, base descargable "
+"hasta 11), el veredicto de cubo money exacto. Fuera de este dominio, la "
+"probabilidad se estima con su margen de error y el veredicto, "
+"deliberadamente, no se muestra. Véase la sección « Metodología e hipótesis "
+"del panel Bearoff » del manual para el detalle de las hipótesis."
+
+#: ../../source/faq.rst:134
 msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
 msgstr "¿Dispone blunderDB de una interfaz de línea de comandos?"
 
-#: ../../source/faq.rst:128
+#: ../../source/faq.rst:136
 msgid ""
 "Oui, blunderDB dispose d'une interface en ligne de commande (CLI) permettant"
 " d'effectuer sans interface graphique des opérations telles que la création "
@@ -294,22 +312,22 @@ msgstr ""
 "la visualización de estadísticas, etc. Consulte la documentación de la CLI "
 "para más detalles."
 
-#: ../../source/faq.rst:136
+#: ../../source/faq.rst:144
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "¿Puedo modificar, copiar y compartir blunderDB?"
 
-#: ../../source/faq.rst:138
+#: ../../source/faq.rst:146
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence MIT."
 msgstr ""
 "Sí, por supuesto (¡e incluso se anima a ello!). blunderDB está bajo licencia"
 " MIT."
 
-#: ../../source/faq.rst:142
+#: ../../source/faq.rst:150
 msgid "Quel format de données utilise blunderDB?"
 msgstr "¿Qué formato de datos utiliza blunderDB?"
 
-#: ../../source/faq.rst:144
+#: ../../source/faq.rst:152
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de blunderDB, "
 "elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -317,11 +335,11 @@ msgstr ""
 "La base de datos es un simple archivo SQLite. En ausencia de blunderDB, "
 "puede abrirse con cualquier editor de archivos SQLite."
 
-#: ../../source/faq.rst:149
+#: ../../source/faq.rst:157
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr "¿Cuáles fueron los principios de diseño de blunderDB?"
 
-#: ../../source/faq.rst:151
+#: ../../source/faq.rst:159
 msgid ""
 "Je voulais une interface accessible, mais pensée pour un usage avancé et "
 "soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
@@ -333,7 +351,7 @@ msgstr ""
 "de comandos, que se abre pulsando la barra *ESPACIADORA*, y los atajos de "
 "teclado sirven a ese uso, sin ser un paso obligado."
 
-#: ../../source/faq.rst:156
+#: ../../source/faq.rst:164
 msgid ""
 "Je souhaitais par ailleurs blunderDB léger, autonome, sans installation et "
 "disponible pour différentes plateformes, d'où mon choix du langage Go et de "
@@ -347,7 +365,7 @@ msgstr ""
 "formato de archivo debía ser multiplataforma y adecuado para contener una "
 "base de datos. El formato de archivo sqlite parecía la opción idónea."
 
-#: ../../source/faq.rst:163
+#: ../../source/faq.rst:171
 msgid ""
 "Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
 "copier, sauvegarder ou envoyer à un autre joueur."
@@ -355,7 +373,7 @@ msgstr ""
 "También quería que una base siguiera siendo un simple archivo, que se pueda "
 "copiar, guardar o enviar a otro jugador."
 
-#: ../../source/faq.rst:166
+#: ../../source/faq.rst:174
 msgid ""
 "Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
@@ -369,11 +387,11 @@ msgstr ""
 "multiusuario. No obstante, el uso normal sigue siendo la aplicación de "
 "escritorio. Véase :ref:`cli` y :ref:`headless`."
 
-#: ../../source/faq.rst:174
+#: ../../source/faq.rst:182
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "¿Cuál es la arquitectura de software de blunderDB?"
 
-#: ../../source/faq.rst:176
+#: ../../source/faq.rst:184
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -382,7 +400,7 @@ msgstr ""
 "El backend está programado en `Go <https://go.dev/>`_. Se encarga de todas "
 "las operaciones sobre la base de datos SQLite que almacena las posiciones."
 
-#: ../../source/faq.rst:180
+#: ../../source/faq.rst:188
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge du"
 " rendu de l'interface graphique et du board de Backgammon."
@@ -390,7 +408,7 @@ msgstr ""
 "El frontend está programado en `Svelte <https://svelte.dev/>`_. Se encarga "
 "del renderizado de la interfaz gráfica y del tablero de Backgammon."
 
-#: ../../source/faq.rst:183
+#: ../../source/faq.rst:191
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, permettant "
 "la production d'applications Desktop natives, déclinables sous Windows, "
@@ -399,11 +417,11 @@ msgstr ""
 "La aplicación se encapsula con `Wails <https://wails.io/>`_, lo que permite "
 "generar aplicaciones de escritorio nativas para Windows, Linux y macOS."
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:195
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "La base de datos se gestiona con `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:189
+#: ../../source/faq.rst:197
 msgid ""
 "Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
 "<https://www.postgresql.org/>`_ à la place de Sqlite pour les déploiements "
@@ -413,7 +431,7 @@ msgstr ""
 "<https://www.postgresql.org/>`_ en lugar de SQLite para los despliegues "
 "multiusuario."
 
-#: ../../source/faq.rst:193
+#: ../../source/faq.rst:201
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -421,19 +439,19 @@ msgstr ""
 "Para más información, consulte el `repositorio GitHub de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:196
+#: ../../source/faq.rst:204
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "¿En qué plataformas funciona blunderDB?"
 
-#: ../../source/faq.rst:198
+#: ../../source/faq.rst:206
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB funciona en Windows, Linux y Mac."
 
-#: ../../source/faq.rst:201
+#: ../../source/faq.rst:209
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "¿De dónde proviene el icono de blunderDB?"
 
-#: ../../source/faq.rst:203
+#: ../../source/faq.rst:211
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

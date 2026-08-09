@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "juego",
         "move": "jugada",
-        "typeCommand": "Escribe un comando..."
+        "typeCommand": "Escribe un comando...",
+        "createdModified": "Creada: {created} | Modificada: {modified}",
+        "noDatabaseOpened": "Ninguna base de datos abierta",
+        "noPositionData": "sin datos de posición"
     },
     "viewTabs": {
         "closeView": "Cerrar vista",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} nombres seleccionados:",
         "title": "Fusionar nombres de jugadores",
         "use": "usar",
-        "useAsCanonical": "Usar como nombre canónico"
+        "useAsCanonical": "Usar como nombre canónico",
+        "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»"
     },
     "tabbedPanel": {
         "analysis": "Análisis",

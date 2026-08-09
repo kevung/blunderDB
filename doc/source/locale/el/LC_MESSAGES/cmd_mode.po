@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 22:09+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: el <LL@li.org>\n"
@@ -132,8 +132,12 @@ msgid "epc"
 msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre le panneau EPC (Effective Pip Count)."
-msgstr "Ανοίγει το πάνελ EPC (Effective Pip Count)."
+msgid ""
+"Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et "
+"verdict de videau en bearoff)."
+msgstr ""
+"Ανοίγει τον πίνακα Bearoff (Effective Pip Count, πιθανότητα νίκης και "
+"ετυμηγορία κύβου στο bearoff)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -1280,3 +1284,6 @@ msgstr ""
 
 #~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr "Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης."
+
+#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
+#~ msgstr "Ανοίγει το πάνελ EPC (Effective Pip Count)."

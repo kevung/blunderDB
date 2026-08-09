@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 03:58+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -162,7 +162,7 @@ msgstr ""
 #: ../../source/manuel.rst:76
 msgid ""
 "calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau "
-"EPC),"
+"Bearoff),"
 msgstr ""
 
 #: ../../source/manuel.rst:78
@@ -1207,7 +1207,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/manuel.rst:711
-msgid "Panneau EPC"
+msgid "Panneau Bearoff"
 msgstr ""
 
 #: ../../source/manuel.rst:713
@@ -1220,61 +1220,250 @@ msgstr ""
 
 #: ../../source/manuel.rst:717
 msgid ""
-"Dans ce panneau, l'utilisateur édite la position des pions dans le jan (6"
-" derniers points) et les informations suivantes sont affichées en temps "
-"réel pour chaque joueur :"
+"Dans ce panneau, l'utilisateur édite la position des pions dans les deux "
+"jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur "
+"du bas, un clic sur les points 19 à 24 place des pions du joueur du haut "
+"(le bouton de souris est indifférent)."
 msgstr ""
 
-#: ../../source/manuel.rst:721
-msgid "l'EPC (Effective Pip Count),"
+#: ../../source/manuel.rst:722
+msgid "Les résultats sont présentés sous forme de deux tableaux empilés :"
 msgstr ""
 
-#: ../../source/manuel.rst:723
-msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
-msgstr ""
-
-#: ../../source/manuel.rst:725
-msgid "l'écart type (Standard Deviation),"
-msgstr ""
-
-#: ../../source/manuel.rst:727
-msgid "le pip count,"
-msgstr ""
-
-#: ../../source/manuel.rst:729
-msgid "le wastage (différence entre l'EPC et le pip count)."
-msgstr ""
-
-#: ../../source/manuel.rst:731
+#: ../../source/manuel.rst:724
 msgid ""
-"Lorsque les deux joueurs ont des pions dans leur jan, une section de "
-"comparaison affiche les différences d'EPC et de pip count."
+"en haut, un **tableau des joueurs** — une ligne par joueur (repérée par "
+"sa pastille de couleur, le joueur noir étant toujours en bas), une "
+"colonne par grandeur : EPC, pip count, wastage (différence entre l'EPC et"
+" le pip count), nombre moyen de lancers et écart type. Lorsque les deux "
+"joueurs ont des pions dans leur jan, une ligne **Δ** donne les "
+"différences *signées* (bas − haut : négatif quand le joueur noir est en "
+"avance) d'EPC, de pips et de wastage ;"
 msgstr ""
 
-#: ../../source/manuel.rst:734
+#: ../../source/manuel.rst:732
 msgid ""
-"Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre"
-" onglet."
+"en dessous, séparé par un filet, un **tableau course/videau** : deux "
+"colonnes de probabilité de gain (une par pastille de joueur, valeurs sans"
+" le signe %) et les équités money — sous chaque décision autre que la "
+"meilleure, l'écart d'équité à la meilleure décision est indiqué entre "
+"parenthèses. La **décision** s'affiche à droite du tableau, avec le badge"
+" exact/estimé. Le **joueur au trait** et la **position du videau** "
+"s'éditent directement sur le plateau, comme en mode édition : cliquer le "
+"rectangle bearoff/score d'un joueur lui donne le trait ; cliquer le "
+"videau fait tourner centré → possédé bas → possédé haut (clic droit en "
+"sens inverse). La valeur du videau reste épinglée — en money game les "
+"équités sont exprimées en unités du videau courant, seul son propriétaire"
+" compte. L'analyse est recalculée aussitôt. En régime estimé, le lien « "
+"Voir les paramètres de configuration » ouvre directement l'onglet "
+"*Bearoff* de la configuration."
 msgstr ""
 
-#: ../../source/manuel.rst:736
+#: ../../source/manuel.rst:747
+msgid "La case *Défi* reste épinglée en haut à droite du panneau."
+msgstr ""
+
+#: ../../source/manuel.rst:749
 msgid ""
-"Le calcul repose sur la base de données interne de bearoff à 6 points de "
-"GNUbg."
+"Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
+"dans leur jan), le tableau course affiche, pour le joueur au trait :"
 msgstr ""
 
-#: ../../source/manuel.rst:742
+#: ../../source/manuel.rst:752
+msgid "la probabilité de gain,"
+msgstr ""
+
+#: ../../source/manuel.rst:754
+msgid ""
+"en régime *exact* : les équités money (cubeless, sans double, "
+"double/prend, double/passe) et le **verdict de videau money** (pas de "
+"double, double/prend ou double/passe),"
+msgstr ""
+
+#: ../../source/manuel.rst:758
+msgid ""
+"en régime *estimé* : la probabilité de gain seule, accompagnée de sa "
+"marge d'erreur — le verdict de videau n'est alors volontairement pas "
+"affiché."
+msgstr ""
+
+#: ../../source/manuel.rst:761
+msgid ""
+"Un badge indique le régime : **exact** (valeur lue dans une base de "
+"données two-sided) ou **estimé ± marge**. Voir :ref:`epc_methodologie` "
+"pour la définition précise des deux régimes et de leurs hypothèses."
+msgstr ""
+
+#: ../../source/manuel.rst:765
+msgid ""
+"**Élargir le domaine exact.** La base intégrée couvre 6 pions par joueur."
+" Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration"
+" :"
+msgstr ""
+
+#: ../../source/manuel.rst:768
+msgid ""
+"télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256, "
+"supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur."
+" Un téléchargement interrompu ou annulé **reprend où il s'était arrêté** "
+"(le fichier partiel est conservé et complété par requête HTTP Range) ;"
+msgstr ""
+
+#: ../../source/manuel.rst:773
+msgid ""
+"indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
+"domaine le plus large l'emporte automatiquement."
+msgstr ""
+
+#: ../../source/manuel.rst:776
+msgid ""
+"**Mode défi.** La case *Défi* du panneau active un mode entraînement : à "
+"chaque modification de la position, les valeurs des trois zones — la "
+"ligne du joueur du bas, la ligne du joueur du haut et le tableau course —"
+" sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle "
+"cette zone seulement. La ligne Δ n'apparaît qu'une fois les deux lignes "
+"joueurs révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque "
+"camp, puis à se prononcer sur le videau, avant de vérifier. Le réglage "
+"est mémorisé."
+msgstr ""
+
+#: ../../source/manuel.rst:784
+msgid ""
+"Pour fermer le panneau Bearoff, appuyer sur *CTRL-E* ou basculer sur un "
+"autre onglet."
+msgstr ""
+
+#: ../../source/manuel.rst:789
+msgid "Méthodologie et hypothèses du panneau Bearoff"
+msgstr ""
+
+#: ../../source/manuel.rst:791
+msgid ""
+"Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
+" énoncées ici exhaustivement."
+msgstr ""
+
+#: ../../source/manuel.rst:794
+msgid ""
+"**Domaine.** Le panneau ne traite que le bearoff pur : tous les pions "
+"restants des deux joueurs dans leur jan intérieur. La position est "
+"évaluée *avant le lancer* ; les dés éventuellement posés sont ignorés. "
+"Les courses sans contact dont des pions sont hors du jan ne sont pas "
+"traitées."
+msgstr ""
+
+#: ../../source/manuel.rst:799
+msgid ""
+"**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
+"l'écart type proviennent de la distribution exacte du nombre de lancers "
+"pour sortir tous les pions, lue dans la base one-sided de GNUbg (6 "
+"points, 15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 "
+"est la moyenne exacte de pips par lancer, doubles comptés quatre fois) ; "
+"wastage = EPC − pip count. L'unique idéalisation est le *jeu one-sided "
+"optimal* : chaque joueur minimise ses propres lancers en ignorant "
+"l'adversaire — c'est la définition standard de l'EPC."
+msgstr ""
+
+#: ../../source/manuel.rst:808
+msgid ""
+"**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
+"sided disponible la plus large (intégrée TS-06-06, fichier externe, ou "
+"TS-06-11 téléchargée). Ces bases résultent d'une analyse rétrograde "
+"complète sous jeu two-sided optimal des deux camps : aucune hypothèse "
+"supplémentaire, erreur limitée à la quantification (< 0,002 %)."
+msgstr ""
+
+#: ../../source/manuel.rst:814
+msgid ""
+"**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
+"probabilité est obtenue en convoluant les deux distributions one-sided "
+"(le joueur au trait gagne si son nombre de lancers est inférieur ou égal "
+"à celui de l'adversaire), puis en appliquant une correction polynomiale "
+"figée, calibrée hors ligne contre la base TS-06-11. Trois hypothèses :"
+msgstr ""
+
+#: ../../source/manuel.rst:820
+msgid ""
+"**indépendance** des deux processus de sortie — structurelle en course, "
+"sans contact il n'y a aucune interaction ;"
+msgstr ""
+
+#: ../../source/manuel.rst:823
+msgid ""
+"**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
+"réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
+"sécurité. L'effet mesuré est un biais antisymétrique (la convolution "
+"exagère l'avance du meneur) que la correction absorbe statistiquement ;"
+msgstr ""
+
+#: ../../source/manuel.rst:828
+msgid ""
+"la **correction** a été calibrée et validée sur le domaine de l'oracle "
+"(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
+"0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de "
+"probabilité de gain). **Au-delà de 11 pions par joueur, cette borne est "
+"extrapolée** — la tendance est monotone mais aucun oracle ne la certifie."
+msgstr ""
+
+#: ../../source/manuel.rst:834
+msgid ""
+"**Équités et verdict de videau (régime exact seulement).** Les équités "
+"affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
+" de la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les"
+" gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : "
+"ce n'est pas une approximation. Le verdict (pas de double / double, prend"
+" / double, passe) est reconstruit exactement des équités stockées, selon "
+"la règle de GNUbg, validée trait pour trait contre son analyse."
+msgstr ""
+
+#: ../../source/manuel.rst:842
+#, python-format
+msgid ""
+"Les équités cubeful supposent un **jeu de videau optimal des deux camps "
+"jusqu'au bout** : les recubes futurs sont intégralement valorisés "
+"(analyse rétrograde complète). Dans les courses très volatiles de fin de "
+"partie, la cascade de recubes mange presque tout l'avantage du camp au "
+"trait — les équités « sans double » et « double/prend » peuvent alors "
+"être proches de zéro là où un moteur comme XG, dont le modèle de videau "
+"ne valorise pas cette cascade, affiche des valeurs proches du dead cube "
+"(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 : 62 % "
+"de gain, D/T exact +0,006 contre +0,475 chez XG). La **décision** "
+"affichée, elle, coïncide avec celle des moteurs."
+msgstr ""
+
+#: ../../source/manuel.rst:853
+#, python-format
+msgid ""
+"**Pourquoi le verdict n'est-il jamais estimé ?** L'équité cubeful est un "
+"problème de *trajectoire* (quand doubler), qu'aucun résumé statistique de"
+" la position ne capture : le meilleur modèle statique mesuré laisse une "
+"erreur résiduelle (écart type 0,016 d'équité, maximum 0,20) qui suffit à "
+"inverser toutes les décisions serrées. De même, la conversion du verdict "
+"au score de match via une table d'équités de match a été mesurée "
+"insuffisante (12 % de désaccords avec l'analyse 2-ply de GNUbg, avec de "
+"vraies bourdes). Un verdict faux affiché avec aplomb étant pire que pas "
+"de verdict, blunderDB n'affiche le verdict que lorsqu'il est exact — et "
+"money."
+msgstr ""
+
+#: ../../source/manuel.rst:863
+msgid ""
+"Les bases de bearoff sont des tables mathématiques immuables, "
+"régénérables avec l'outil ``makebearoff`` de GNUbg."
+msgstr ""
+
+#: ../../source/manuel.rst:869
 msgid "Panneau Anki"
 msgstr ""
 
-#: ../../source/manuel.rst:744
+#: ../../source/manuel.rst:871
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
 "répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
 "créer des paquets à partir de collections ou de résultats de recherche."
 msgstr ""
 
-#: ../../source/manuel.rst:748
+#: ../../source/manuel.rst:875
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -1282,7 +1471,7 @@ msgid ""
 "l'activation de l'onglet Anki."
 msgstr ""
 
-#: ../../source/manuel.rst:752
+#: ../../source/manuel.rst:879
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -1292,7 +1481,7 @@ msgid ""
 "liste des paquets."
 msgstr ""
 
-#: ../../source/manuel.rst:758
+#: ../../source/manuel.rst:885
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -1305,14 +1494,14 @@ msgid ""
 "interrompue."
 msgstr ""
 
-#: ../../source/manuel.rst:767
+#: ../../source/manuel.rst:894
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
 "progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
 msgstr ""
 
-#: ../../source/manuel.rst:771
+#: ../../source/manuel.rst:898
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
@@ -1320,11 +1509,11 @@ msgid ""
 "paquet dans les Paramètres (icône engrenage)."
 msgstr ""
 
-#: ../../source/manuel.rst:779
+#: ../../source/manuel.rst:906
 msgid "Panneau Métadonnées"
 msgstr ""
 
-#: ../../source/manuel.rst:781
+#: ../../source/manuel.rst:908
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -1332,18 +1521,18 @@ msgid ""
 "``meta``."
 msgstr ""
 
-#: ../../source/manuel.rst:785
+#: ../../source/manuel.rst:912
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
 "section."
 msgstr ""
 
-#: ../../source/manuel.rst:791
+#: ../../source/manuel.rst:918
 msgid "Diffuser une base : origine et mot de passe"
 msgstr ""
 
-#: ../../source/manuel.rst:793
+#: ../../source/manuel.rst:920
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -1351,7 +1540,7 @@ msgid ""
 " le protéger par un mot de passe."
 msgstr ""
 
-#: ../../source/manuel.rst:800
+#: ../../source/manuel.rst:927
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -1359,11 +1548,11 @@ msgid ""
 "nulle part ne consigne qui l'a ouverte, quand, ni d'où vient son contenu."
 msgstr ""
 
-#: ../../source/manuel.rst:806
+#: ../../source/manuel.rst:933
 msgid "Marquer une base de son origine"
 msgstr ""
 
-#: ../../source/manuel.rst:808
+#: ../../source/manuel.rst:935
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -1371,32 +1560,32 @@ msgid ""
 "d'état."
 msgstr ""
 
-#: ../../source/manuel.rst:812
+#: ../../source/manuel.rst:939
 msgid "Trois points méritent l'attention :"
 msgstr ""
 
-#: ../../source/manuel.rst:814
+#: ../../source/manuel.rst:941
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
 "fenêtre le rappelle en tête."
 msgstr ""
 
-#: ../../source/manuel.rst:817
+#: ../../source/manuel.rst:944
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
 " couverte (« 12/40 ») et la signale en rouge lorsqu'elle est partielle."
 msgstr ""
 
-#: ../../source/manuel.rst:820
+#: ../../source/manuel.rst:947
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
 " est désactivée tant que « inclure les matchs » ne l'est pas."
 msgstr ""
 
-#: ../../source/manuel.rst:824
+#: ../../source/manuel.rst:951
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -1405,24 +1594,24 @@ msgid ""
 "base de quelqu'un d'autre."
 msgstr ""
 
-#: ../../source/manuel.rst:830
+#: ../../source/manuel.rst:957
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 
-#: ../../source/manuel.rst:832
+#: ../../source/manuel.rst:959
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
 "tant qu'il est vide, le bouton d'export reste inactif."
 msgstr ""
 
-#: ../../source/manuel.rst:835
+#: ../../source/manuel.rst:962
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
 msgstr ""
 
-#: ../../source/manuel.rst:838
+#: ../../source/manuel.rst:965
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -1431,11 +1620,11 @@ msgid ""
 "logiciel libre. Elle n'empêche rien : elle dit d'où vient le fichier."
 msgstr ""
 
-#: ../../source/manuel.rst:845
+#: ../../source/manuel.rst:972
 msgid "Identité d'émetteur"
 msgstr ""
 
-#: ../../source/manuel.rst:847
+#: ../../source/manuel.rst:974
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -1444,7 +1633,7 @@ msgid ""
 "``A3F1-9C24-7B05-E1D8``."
 msgstr ""
 
-#: ../../source/manuel.rst:852
+#: ../../source/manuel.rst:979
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -1453,14 +1642,14 @@ msgid ""
 "signer en votre nom : ne le partagez pas.**"
 msgstr ""
 
-#: ../../source/manuel.rst:858
+#: ../../source/manuel.rst:985
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
 "*Enregistrer l'identité…*, *Charger une identité…* et *Régénérer…*."
 msgstr ""
 
-#: ../../source/manuel.rst:864
+#: ../../source/manuel.rst:991
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -1468,31 +1657,31 @@ msgid ""
 "votre ancienne empreinte, et ces marques resteront valides."
 msgstr ""
 
-#: ../../source/manuel.rst:869
+#: ../../source/manuel.rst:996
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
 "destinataires."
 msgstr ""
 
-#: ../../source/manuel.rst:873
+#: ../../source/manuel.rst:1000
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
 msgstr ""
 
-#: ../../source/manuel.rst:877
+#: ../../source/manuel.rst:1004
 msgid "Protéger une base par un mot de passe"
 msgstr ""
 
-#: ../../source/manuel.rst:879
+#: ../../source/manuel.rst:1006
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
 "enfoncée**, et le masque de nouveau dès qu'on relâche."
 msgstr ""
 
-#: ../../source/manuel.rst:883
+#: ../../source/manuel.rst:1010
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -1503,7 +1692,7 @@ msgid ""
 "base ordinaire à côté ; ensuite plus rien n'est demandé."
 msgstr ""
 
-#: ../../source/manuel.rst:891
+#: ../../source/manuel.rst:1018
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -1512,7 +1701,7 @@ msgid ""
 "réussie."
 msgstr ""
 
-#: ../../source/manuel.rst:898
+#: ../../source/manuel.rst:1025
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -1520,13 +1709,13 @@ msgid ""
 "pas de celui à qui vous avez donné le mot de passe."
 msgstr ""
 
-#: ../../source/manuel.rst:903
+#: ../../source/manuel.rst:1030
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
 msgstr ""
 
-#: ../../source/manuel.rst:906
+#: ../../source/manuel.rst:1033
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -1536,17 +1725,17 @@ msgid ""
 "n'obtient jamais une base corrompue en silence."
 msgstr ""
 
-#: ../../source/manuel.rst:913
+#: ../../source/manuel.rst:1040
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
 msgstr ""
 
-#: ../../source/manuel.rst:917
+#: ../../source/manuel.rst:1044
 msgid "Lire l'origine d'un fichier"
 msgstr ""
 
-#: ../../source/manuel.rst:919
+#: ../../source/manuel.rst:1046
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -1554,27 +1743,27 @@ msgid ""
 "qui, quand, et l'état de la signature :"
 msgstr ""
 
-#: ../../source/manuel.rst:924
+#: ../../source/manuel.rst:1051
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
 msgstr ""
 
-#: ../../source/manuel.rst:926
+#: ../../source/manuel.rst:1053
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
 msgstr ""
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:1055
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr ""
 
-#: ../../source/manuel.rst:930
+#: ../../source/manuel.rst:1057
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr ""
 
-#: ../../source/manuel.rst:932
+#: ../../source/manuel.rst:1059
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -2127,5 +2316,55 @@ msgstr ""
 #~ " base de données, avec leurs "
 #~ "résultats et horodatages. Il est utile"
 #~ " pour diagnostiquer les erreurs d'import."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "calculer l'EPC (Effective Pip Count) "
+#~ "d'une position de bearoff (panneau EPC),"
+#~ msgstr ""
+
+#~ msgid "Panneau EPC"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Dans ce panneau, l'utilisateur édite la"
+#~ " position des pions dans le jan "
+#~ "(6 derniers points) et les informations"
+#~ " suivantes sont affichées en temps "
+#~ "réel pour chaque joueur :"
+#~ msgstr ""
+
+#~ msgid "l'EPC (Effective Pip Count),"
+#~ msgstr ""
+
+#~ msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
+#~ msgstr ""
+
+#~ msgid "l'écart type (Standard Deviation),"
+#~ msgstr ""
+
+#~ msgid "le pip count,"
+#~ msgstr ""
+
+#~ msgid "le wastage (différence entre l'EPC et le pip count)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Lorsque les deux joueurs ont des "
+#~ "pions dans leur jan, une section "
+#~ "de comparaison affiche les différences "
+#~ "d'EPC et de pip count."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Pour fermer le panneau EPC, appuyer "
+#~ "sur *CTRL-E* ou basculer sur un "
+#~ "autre onglet."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Le calcul repose sur la base de"
+#~ " données interne de bearoff à 6 "
+#~ "points de GNUbg."
 #~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 04:16+0200\n"
+"POT-Creation-Date: 2026-08-09 20:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -395,7 +395,7 @@ msgid "Panneau Console renommé en panneau Log."
 msgstr ""
 
 #: ../../source/index.rst:7
-msgid "Panneau EPC dédié dans le panneau inférieur."
+msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr ""
 
 #: ../../source/index.rst:9
@@ -849,21 +849,58 @@ msgid ""
 "fermeture. Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr ""
 
-#: ../../source/index.rst:157
+#: ../../source/index.rst:1
+msgid "0.32.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "09/08/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
+"course complète. Sur une position de bearoff pur, il affiche — en plus de"
+" l'EPC, du pip count, du wastage et du nombre moyen de lancers de chaque "
+"joueur, désormais présentés en tableau avec une ligne Δ signée — les "
+"probabilités de gain des deux joueurs et les équités money (cubeless, "
+"sans double, double/prend, double/passe, avec l'écart de chaque décision "
+"à la meilleure) ainsi que la **meilleure décision de videau**. Deux "
+"régimes clairement distingués : *exact* (lecture dans une base two-sided "
+"; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par joueur) "
+"et *estimé* (convolution calibrée, marge d'erreur affichée — le verdict "
+"de videau n'est jamais estimé). La base étendue TS-06-11 (verdict exact "
+"jusqu'à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel "
+"onglet *Bearoff* de la configuration, avec vérification d'intégrité et "
+"reprise des téléchargements interrompus ; un fichier ``.bd`` two-sided "
+"quelconque de gnubg peut aussi être désigné. **Mode défi** pour "
+"l'entraînement : les résultats se masquent à chaque modification et se "
+"révèlent zone par zone, d'un clic. Édition entièrement au plateau : pions"
+" des deux jans, joueur au trait (clic sur le rectangle sortie/score) et "
+"position du videau (clic sur le videau). Le clic sur le plateau est "
+"désormais exact à toute échelle d'interface (un clic sur le point 1 "
+"pouvait atterrir sur le point 2). Nouvelle commande ``blunderdb epc`` en "
+"ligne de commande et option ``--bearoff-ts`` du mode serveur. Une "
+"nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
+"Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
+"affichée. Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
+msgstr ""
+
+#: ../../source/index.rst:158
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:193
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -873,65 +910,65 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "Voici plusieurs manières de discuter:"
 msgstr ""
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:210
+#: ../../source/index.rst:211
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Faire un don"
 msgstr ""
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr ""
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr ""
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:230
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -939,7 +976,7 @@ msgid ""
 "jouer."
 msgstr ""
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1136,5 +1173,8 @@ msgstr ""
 #~ "Correction du décodage XGID (indicateurs "
 #~ "Jacoby/Beaver et valeur du videau). Voir"
 #~ " :ref:`configuration`."
+#~ msgstr ""
+
+#~ msgid "Panneau EPC dédié dans le panneau inférieur."
 #~ msgstr ""
 

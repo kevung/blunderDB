@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "ゲーム",
         "move": "ムーブ",
-        "typeCommand": "コマンドを入力..."
+        "typeCommand": "コマンドを入力...",
+        "createdModified": "作成: {created} | 更新: {modified}",
+        "noDatabaseOpened": "データベースが開かれていません",
+        "noPositionData": "局面データなし"
     },
     "viewTabs": {
         "closeView": "ビューを閉じる",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} 件の名前を選択中:",
         "title": "プレイヤー名を統合",
         "use": "使用",
-        "useAsCanonical": "正規名として使用"
+        "useAsCanonical": "正規名として使用",
+        "merged": "{n}件のプレイヤー名を「{target}」に統合しました"
     },
     "tabbedPanel": {
         "analysis": "分析",

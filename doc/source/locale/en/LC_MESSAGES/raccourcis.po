@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-01 11:10+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -392,8 +392,8 @@ msgid "CTRL-E"
 msgstr "CTRL-E"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher le panneau EPC."
-msgstr "Show/hide the EPC panel."
+msgid "Afficher/cacher le panneau Bearoff."
+msgstr "Show/hide the Bearoff panel."
 
 #: ../../source/raccourcis.rst:1
 msgid "?"

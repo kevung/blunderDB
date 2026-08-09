@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-26 22:09+0200\n"
+"POT-Creation-Date: 2026-08-09 20:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: it <LL@li.org>\n"
@@ -132,8 +132,12 @@ msgid "epc"
 msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre le panneau EPC (Effective Pip Count)."
-msgstr "Apre il pannello EPC (Effective Pip Count)."
+msgid ""
+"Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et "
+"verdict de videau en bearoff)."
+msgstr ""
+"Apre il pannello Bearoff (Effective Pip Count, probabilità di vittoria e "
+"verdetto di cubo in bearoff)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -1276,3 +1280,6 @@ msgstr ""
 
 #~ msgid "Afficher/cacher l'historique de recherche."
 #~ msgstr "Mostra/nascondi la cronologia di ricerca."
+
+#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
+#~ msgstr "Apre il pannello EPC (Effective Pip Count)."

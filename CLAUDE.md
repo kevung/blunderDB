@@ -19,7 +19,7 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|verify|delete|help|version|info|edit|search` → **CLI**
+- `create|import|export|identity|open|list|match|verify|delete|help|version|info|edit|search|epc` → **CLI**
 
 ## Build & Run
 
@@ -145,7 +145,9 @@ Backend packages, thinnest description that lets you find things:
   (XDG-persisted window/last-DB config); `logging.go` (slog).
 - `pkg/blunderdb/domain/` — dependency-free domain types and constants
   (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
-- `pkg/blunderdb/engine/` — bitboards, Zobrist hashing, EPC (embeds `gnubg_os6.bd`).
+- `pkg/blunderdb/engine/` — bitboards, Zobrist hashing, EPC (embeds `gnubg_os6.bd`);
+  `engine/race/` — bearoff race analysis: two-sided `.bd` reader (embeds
+  `gnubg_ts0.bd`), win-probability estimation, money cube verdicts (ADR-0009).
 - `pkg/blunderdb/storage/` — the persistence **contract**; backends
   `storage/sqlite/` (desktop/CLI) and `storage/postgres/` (serve daemon, RLS,
   tenant purge); shared contract tests in `storage/storagetest/`. Read this

@@ -671,7 +671,10 @@
     "statusBar": {
         "game": "game",
         "move": "move",
-        "typeCommand": "Type command..."
+        "typeCommand": "Type command...",
+        "createdModified": "Created: {created} | Modified: {modified}",
+        "noDatabaseOpened": "No database opened",
+        "noPositionData": "no position data"
     },
     "viewTabs": {
         "closeView": "Close view",
@@ -782,7 +785,8 @@
         "selectedSummaryPlural": "{n} names selected:",
         "title": "Merge player names",
         "use": "use",
-        "useAsCanonical": "Use as canonical name"
+        "useAsCanonical": "Use as canonical name",
+        "merged": "Merged {n} player name(s) into “{target}”"
     },
     "tabbedPanel": {
         "analysis": "Analysis",

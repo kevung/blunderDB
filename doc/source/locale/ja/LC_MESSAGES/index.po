@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 04:16+0200\n"
+"POT-Creation-Date: 2026-08-09 20:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -397,8 +397,8 @@ msgid "Panneau Console renommé en panneau Log."
 msgstr "コンソールパネルをログパネルに名称変更。"
 
 #: ../../source/index.rst:7
-msgid "Panneau EPC dédié dans le panneau inférieur."
-msgstr "下部パネルに専用のEPCパネル。"
+msgid "Panneau Bearoff dédié dans le panneau inférieur."
+msgstr "下部パネルに専用のベアオフパネル。"
 
 #: ../../source/index.rst:9
 msgid "Copier/coller de position dans le panneau de recherche."
@@ -945,24 +945,61 @@ msgid ""
 "fermeture. Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr ""
 "データベースを第三者に配る仕組み。互いに独立した二つの方法があり、どちらも任意で、エクスポート時に選びます。\\ **出所の記載**\\ "
-"は、そのファイルが何であり、どこから来たのかをファイル自身に書き込みます。署名には、初回に自動で作られる発行者の識別情報を使います。記載は偽造できず、メタデータパネルの先頭で読め（\\ "
-"``blunderdb info``\\ "
+"は、そのファイルが何であり、どこから来たのかをファイル自身に書き込みます。署名には、初回に自動で作られる発行者の識別情報を使います。記載は偽造できず、メタデータパネルの先頭で読め（\\"
+" ``blunderdb info``\\ "
 "でも読め、こちらはファイルに一切書き込みません）、受け取った側では何も記録しません。ログも追跡もありません。\\ **パスワード保護**\\ "
 "は暗号化された\\ ``.dbx``\\ ファイルを作ります（AES-256-GCM、鍵は Argon2id "
-"で導出）。パスワードは開くたびに検証され、ヘッダーは平文のまま読めます。識別情報は設定画面から一つのファイルとして書き出し・読み込みできます。エクスポートのウィンドウを刷新：四画面から一画面へ、実際に書き出される対象（表示中のポジション）の明示、コレクションごとの含有割合を不完全なときは赤で強調、トーナメントはマッチと一緒でなければ書き出せないように。エクスポート自体も三倍速くなりました。設定ウィンドウは三つのタブ（インターフェース、ボードの色、発行者の識別情報）に整理され、大きさも位置も変わりません。メタデータパネルは一つのグリッドに配置し直しました。入力したコマンドを繰り返すだけだったログパネルは削除しました。主な修正：誤ったパスワードで保護されたデータベースが開かなくなりました。ダイアログの入力欄がクリックでフォーカスを失わなくなりました。マネーゲームで "
-"PR/MWC の指標計算が異常終了しなくなりました。一時ファイル（\\ ``-wal``\\ 、\\ ``-shm``\\ "
+"で導出）。パスワードは開くたびに検証され、ヘッダーは平文のまま読めます。識別情報は設定画面から一つのファイルとして書き出し・読み込みできます。エクスポートのウィンドウを刷新：四画面から一画面へ、実際に書き出される対象（表示中のポジション）の明示、コレクションごとの含有割合を不完全なときは赤で強調、トーナメントはマッチと一緒でなければ書き出せないように。エクスポート自体も三倍速くなりました。設定ウィンドウは三つのタブ（インターフェース、ボードの色、発行者の識別情報）に整理され、大きさも位置も変わりません。メタデータパネルは一つのグリッドに配置し直しました。入力したコマンドを繰り返すだけだったログパネルは削除しました。主な修正：誤ったパスワードで保護されたデータベースが開かなくなりました。ダイアログの入力欄がクリックでフォーカスを失わなくなりました。マネーゲームで"
+" PR/MWC の指標計算が異常終了しなくなりました。一時ファイル（\\ ``-wal``\\ 、\\ ``-shm``\\ "
 "、ロック）は終了時に片づけられます。\\ :ref:`diffusion_controlee`\\ と\\ :ref:`manuel`\\ "
 "を参照してください。"
 
-#: ../../source/index.rst:157
+#: ../../source/index.rst:1
+msgid "0.32.0"
+msgstr "0.32.0"
+
+#: ../../source/index.rst:1
+msgid "09/08/2026"
+msgstr "2026/08/09"
+
+#: ../../source/index.rst:1
+msgid ""
+"Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
+"course complète. Sur une position de bearoff pur, il affiche — en plus de"
+" l'EPC, du pip count, du wastage et du nombre moyen de lancers de chaque "
+"joueur, désormais présentés en tableau avec une ligne Δ signée — les "
+"probabilités de gain des deux joueurs et les équités money (cubeless, "
+"sans double, double/prend, double/passe, avec l'écart de chaque décision "
+"à la meilleure) ainsi que la **meilleure décision de videau**. Deux "
+"régimes clairement distingués : *exact* (lecture dans une base two-sided "
+"; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par joueur) "
+"et *estimé* (convolution calibrée, marge d'erreur affichée — le verdict "
+"de videau n'est jamais estimé). La base étendue TS-06-11 (verdict exact "
+"jusqu'à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel "
+"onglet *Bearoff* de la configuration, avec vérification d'intégrité et "
+"reprise des téléchargements interrompus ; un fichier ``.bd`` two-sided "
+"quelconque de gnubg peut aussi être désigné. **Mode défi** pour "
+"l'entraînement : les résultats se masquent à chaque modification et se "
+"révèlent zone par zone, d'un clic. Édition entièrement au plateau : pions"
+" des deux jans, joueur au trait (clic sur le rectangle sortie/score) et "
+"position du videau (clic sur le videau). Le clic sur le plateau est "
+"désormais exact à toute échelle d'interface (un clic sur le point 1 "
+"pouvait atterrir sur le point 2). Nouvelle commande ``blunderdb epc`` en "
+"ligne de commande et option ``--bearoff-ts`` du mode serveur. Une "
+"nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
+"Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
+"affichée. Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
+msgstr "EPCパネルは\\ **ベアオフ**\\ パネルとなり、完全なレース分析機能を獲得しました。純粋なベアオフのポジションでは、各プレイヤーのEPC、ピップカウント、ウェイステージ、平均ロール数（符号付きのΔ行を持つ表形式で表示されるようになりました）に加えて、両プレイヤーの勝率とマネーゲームのエクイティ（キューブレス、ノーダブル、ダブル/テイク、ダブル/パス、各判断の最善との差付き）、そして\\ **最善のキューブ判定**\\ を表示します。2つの方式が明確に区別されます：\\ *正確*\\ （two-sidedデータベースからの読み取り；GNUbgのTS-06-06データベースを内蔵、各プレイヤー6チェッカーまでカバー）と\\ *推定*\\ （較正済みの畳み込み、誤差の範囲を表示——キューブ判定は決して推定されません）。拡張データベースTS-06-11（各プレイヤー11チェッカーまでの正確な判定、1.2 GB）は、設定の新しい\\ *ベアオフ*\\ タブからダウンロードでき、整合性検証と中断されたダウンロードの再開に対応します；gnubgの任意のtwo-sided ``.bd`` ファイルを指定することもできます。トレーニング用の\\ **チャレンジモード**\\ ：結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。ボード上での完全な編集：両インナーボードのチェッカー、手番のプレイヤー（ベアオフ/スコアの長方形をクリック）、キューブの位置（キューブをクリック）。ボードのクリックはあらゆるインターフェース倍率で正確になりました（ポイント1のクリックがポイント2に着地することがありました）。コマンドラインの新コマンド ``blunderdb epc`` とサーバーモードの ``--bearoff-ts`` オプション。マニュアルの新しい節「ベアオフパネルの方法論と仮定」が、表示される各値の背後にある仮定を漏れなく述べています。:ref:`panneau_epc` と :ref:`epc_methodologie` を参照。"
+
+#: ../../source/index.rst:158
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:191
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:193
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -970,7 +1007,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:195
+#: ../../source/index.rst:196
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -980,59 +1017,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:203
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:204
+#: ../../source/index.rst:205
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:207
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:210
+#: ../../source/index.rst:211
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:213
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:215
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:218
+#: ../../source/index.rst:219
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:221
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:223
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:225
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:230
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1040,7 +1077,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:233
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1050,7 +1087,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
