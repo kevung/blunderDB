@@ -179,7 +179,6 @@
                             </tr>
                             <tr class="best-action-row">
                                 <td colspan="6" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
-                                    {$t('analysis.bestAction')} :
                                     {#if maskedRace}
                                         {HIDDEN}
                                     {:else if data.race.money.verdict}
