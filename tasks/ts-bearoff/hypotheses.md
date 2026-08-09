@@ -73,6 +73,13 @@ scope (no oracle → no honest error bound; ADR-0009).
   is not an approximation there; it becomes one only if a wider database is
   ever used on 12–15-checker positions.
 - **Error**: quantisation only.
+- **Optimal-cube semantics**: the cubeful equities price the FULL optimal
+  recube cascade (retrograde analysis). In hyper-volatile end-of-race
+  positions this eats most of the leader's edge — e.g. 2 checkers on the
+  3-point vs 2 on the 2-point: p = 61.88 %, exact D/T = +0.006 where XG
+  (dead-cube-ish model) shows +0.475. Decisions still agree; the docs must
+  state this so users don't read the gap as a bug (verified by hand and
+  against gnubg 0/2-ply, 2026-08-09).
 - **Why money and not the match score**: converting verdicts through a MET
   was measured against gnubg 2-ply on 5 280 score/cube scenarios: the simple
   dead-cube chain mis-decides D/ND 12 % of the time (worst case ≈ 17 % MWC —
