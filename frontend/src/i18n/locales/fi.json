@@ -67,7 +67,9 @@
         "bearoffExternal": "Ulkoinen tiedosto",
         "bearoffExternalNone": "ei mitään",
         "bearoffExternalPick": "Valitse .bd-tiedosto…",
-        "bearoffExternalClear": "Poista"
+        "bearoffExternalClear": "Poista",
+        "bearoffResume": "Jatka latausta",
+        "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

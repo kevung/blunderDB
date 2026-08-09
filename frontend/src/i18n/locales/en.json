@@ -67,7 +67,9 @@
         "bearoffExternal": "External file",
         "bearoffExternalNone": "none",
         "bearoffExternalPick": "Choose a .bd file…",
-        "bearoffExternalClear": "Remove"
+        "bearoffExternalClear": "Remove",
+        "bearoffResume": "Resume download",
+        "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

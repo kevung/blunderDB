@@ -67,7 +67,9 @@
         "bearoffExternal": "外部ファイル",
         "bearoffExternalNone": "なし",
         "bearoffExternalPick": ".bdファイルを選択…",
-        "bearoffExternalClear": "解除"
+        "bearoffExternalClear": "解除",
+        "bearoffResume": "ダウンロードを再開",
+        "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

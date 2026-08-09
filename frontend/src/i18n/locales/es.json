@@ -67,7 +67,9 @@
         "bearoffExternal": "Archivo externo",
         "bearoffExternalNone": "ninguno",
         "bearoffExternalPick": "Elegir un archivo .bd…",
-        "bearoffExternalClear": "Quitar"
+        "bearoffExternalClear": "Quitar",
+        "bearoffResume": "Reanudar la descarga",
+        "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",

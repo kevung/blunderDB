@@ -67,7 +67,9 @@
         "bearoffExternal": "Внешний файл",
         "bearoffExternalNone": "нет",
         "bearoffExternalPick": "Выбрать файл .bd…",
-        "bearoffExternalClear": "Убрать"
+        "bearoffExternalClear": "Убрать",
+        "bearoffResume": "Возобновить загрузку",
+        "bearoffPartial": "Есть частичная загрузка ({gb} ГБ) — возобновление продолжит с места остановки."
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",

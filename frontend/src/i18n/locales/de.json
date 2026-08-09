@@ -67,7 +67,9 @@
         "bearoffExternal": "Externe Datei",
         "bearoffExternalNone": "keine",
         "bearoffExternalPick": ".bd-Datei wählen…",
-        "bearoffExternalClear": "Entfernen"
+        "bearoffExternalClear": "Entfernen",
+        "bearoffResume": "Download fortsetzen",
+        "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

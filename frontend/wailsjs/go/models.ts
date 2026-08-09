@@ -1368,6 +1368,7 @@ export namespace gui {
 	    active_origin: string;
 	    external_path: string;
 	    expected_bytes: number;
+	    partial_bytes: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new BearoffStatus(source);
@@ -1383,6 +1384,7 @@ export namespace gui {
 	        this.active_origin = source["active_origin"];
 	        this.external_path = source["external_path"];
 	        this.expected_bytes = source["expected_bytes"];
+	        this.partial_bytes = source["partial_bytes"];
 	    }
 	}
 	export class FileDialogResponse {

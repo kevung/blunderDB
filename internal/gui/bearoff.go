@@ -2,15 +2,8 @@ package gui
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
-	"io"
-	"net/http"
 	"os"
-	"path/filepath"
 	"sync"
-	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -21,7 +14,9 @@ import (
 // The file is an immutable release asset under the dedicated tag
 // bearoff-data-1; it lands in $XDG_DATA_HOME/blunderdb (never the cache dir)
 // and is verified against race.DownloadedSHA256 before being moved in place.
-// Progress reaches the frontend through Wails events:
+// Interrupted or cancelled downloads keep their .part file and RESUME via
+// HTTP Range on the next attempt (see resumableDownload). Progress reaches
+// the frontend through Wails events:
 //
 //	bearoff:progress {received, total}   (throttled)
 //	bearoff:done     {}
@@ -39,6 +34,9 @@ type BearoffStatus struct {
 	ActiveOrigin  string `json:"active_origin"`  // origin of the currently resolved source
 	ExternalPath  string `json:"external_path"`  // user-configured .bd (may be "")
 	ExpectedBytes int64  `json:"expected_bytes"` // published asset size
+	// PartialBytes is the size of an interrupted download (.part) that the
+	// next attempt will resume from (0 if none).
+	PartialBytes int64 `json:"partial_bytes"`
 }
 
 const bearoffExpectedBytes = 1_225_323_048
@@ -57,6 +55,9 @@ func (a *App) BearoffStatus() BearoffStatus {
 	if fi, err := os.Stat(st.Path); err == nil {
 		st.Downloaded = true
 		st.SizeBytes = fi.Size()
+	}
+	if fi, err := os.Stat(st.Path + ".part"); err == nil {
+		st.PartialBytes = fi.Size()
 	}
 	bearoffMu.Lock()
 	st.Downloading = bearoffCancel != nil
@@ -121,75 +122,21 @@ func (a *App) DeleteBearoffDB() error {
 	if err := os.Remove(p); err != nil && !os.IsNotExist(err) {
 		return err
 	}
+	if err := os.Remove(p + ".part"); err != nil && !os.IsNotExist(err) {
+		return err
+	}
 	race.Resolve() // re-resolve so the panel downgrades immediately
 	return nil
 }
 
 func (a *App) downloadBearoff(ctx context.Context) error {
-	dest := race.DownloadedPath()
-	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
-		return err
-	}
-	tmp := dest + ".part"
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, bearoffDownloadURL, nil)
+	err := resumableDownload(ctx, bearoffDownloadURL, race.DownloadedPath(),
+		race.DownloadedSHA256, bearoffExpectedBytes,
+		func(received, total int64) {
+			runtime.EventsEmit(a.ctx, "bearoff:progress",
+				map[string]int64{"received": received, "total": total})
+		})
 	if err != nil {
-		return err
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("download failed: HTTP %s", resp.Status)
-	}
-	total := resp.ContentLength
-	if total <= 0 {
-		total = bearoffExpectedBytes
-	}
-
-	f, err := os.Create(tmp)
-	if err != nil {
-		return err
-	}
-	defer os.Remove(tmp) // no-op after the successful rename
-
-	h := sha256.New()
-	var received int64
-	lastEmit := time.Time{}
-	buf := make([]byte, 1<<20)
-	for {
-		n, rerr := resp.Body.Read(buf)
-		if n > 0 {
-			if _, werr := f.Write(buf[:n]); werr != nil {
-				f.Close()
-				return werr
-			}
-			h.Write(buf[:n])
-			received += int64(n)
-			if time.Since(lastEmit) > 200*time.Millisecond {
-				lastEmit = time.Now()
-				runtime.EventsEmit(a.ctx, "bearoff:progress",
-					map[string]int64{"received": received, "total": total})
-			}
-		}
-		if rerr == io.EOF {
-			break
-		}
-		if rerr != nil {
-			f.Close()
-			return rerr
-		}
-	}
-	if err := f.Close(); err != nil {
-		return err
-	}
-
-	if got := hex.EncodeToString(h.Sum(nil)); got != race.DownloadedSHA256 {
-		return fmt.Errorf("checksum mismatch: got %s", got)
-	}
-	if err := os.Rename(tmp, dest); err != nil {
 		return err
 	}
 	race.Resolve() // pick the new database up immediately

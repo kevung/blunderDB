@@ -67,7 +67,9 @@
         "bearoffExternal": "Εξωτερικό αρχείο",
         "bearoffExternalNone": "κανένα",
         "bearoffExternalPick": "Επιλογή αρχείου .bd…",
-        "bearoffExternalClear": "Αφαίρεση"
+        "bearoffExternalClear": "Αφαίρεση",
+        "bearoffResume": "Συνέχιση λήψης",
+        "bearoffPartial": "Υπάρχει μερική λήψη ({gb} GB) — η συνέχιση θα ξεκινήσει από εκεί που σταμάτησε."
     },
     "toolbar": {
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",

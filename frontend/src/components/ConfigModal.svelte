@@ -204,7 +204,7 @@
 
     async function startBearoffDownload() {
         bearoffError = '';
-        bearoffProgress = { received: 0, total: bearoff?.expected_bytes ?? 0 };
+        bearoffProgress = { received: bearoff?.partial_bytes ?? 0, total: bearoff?.expected_bytes ?? 0 };
         try {
             await DownloadBearoffDB();
             await refreshBearoff();
@@ -347,8 +347,13 @@
                             </div>
                         {:else}
                             <p class="setting-note">{$t('config.bearoffDownloadNote', { gb: gb(bearoff.expected_bytes) })}</p>
+                            {#if bearoff.partial_bytes > 0}
+                                <p class="setting-note">{$t('config.bearoffPartial', { gb: gb(bearoff.partial_bytes) })}</p>
+                            {/if}
                             <div class="tab-actions">
-                                <button class="secondary-button" onclick={startBearoffDownload}>{$t('config.bearoffDownload')}</button>
+                                <button class="secondary-button" onclick={startBearoffDownload}>
+                                    {bearoff.partial_bytes > 0 ? $t('config.bearoffResume') : $t('config.bearoffDownload')}
+                                </button>
                             </div>
                         {/if}
 
