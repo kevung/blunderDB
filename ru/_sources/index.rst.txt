@@ -123,7 +123,7 @@ Historique des versions
 
    Panneau Console renommé en panneau Log.
 
-   Panneau EPC dédié dans le panneau inférieur.
+   Panneau Bearoff dédié dans le panneau inférieur.
 
    Copier/coller de position dans le panneau de recherche.
 

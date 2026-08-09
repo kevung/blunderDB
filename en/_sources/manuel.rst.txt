@@ -73,7 +73,7 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les statistiques de performance (panneau Stats),
 
-* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau EPC),
+* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Bearoff),
 
 * étudier les positions par répétition espacée (panneau Anki),
 
@@ -707,8 +707,8 @@ MWC : limitations
 
 .. _panneau_epc:
 
-Panneau EPC
------------
+Panneau Bearoff
+---------------
 
 Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une position
 de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet
@@ -729,14 +729,19 @@ Les résultats sont présentés sous forme de deux tableaux empilés :
   différences *signées* (bas − haut : négatif quand le joueur noir est en
   avance) d'EPC, de pips et de wastage ;
 
-* en dessous, un **tableau course/videau**, sur le modèle du tableau de
-  décision de videau du panneau d'analyse. Son en-tête permet d'éditer
-  directement le **joueur au trait** (deux pastilles) et la **position du
-  videau** (centré, possédé, adverse) : l'analyse — probabilité de gain,
-  équités et verdict — est recalculée aussitôt pour le joueur choisi, et
-  la pastille de la zone course suit. En régime estimé, le lien « Voir
-  les paramètres de configuration » ouvre directement l'onglet *Bearoff*
-  de la configuration.
+* en dessous, séparé par un filet, un **tableau course/videau**, sur le
+  modèle du tableau de décision de videau du panneau d'analyse : deux
+  colonnes de probabilité de gain (une par pastille de joueur, valeurs
+  sans le signe %), les équités money et la **meilleure action** en
+  dernière ligne. Le **joueur au trait** et la **position du videau**
+  s'éditent directement sur le plateau, comme en mode édition : cliquer
+  le rectangle bearoff/score d'un joueur lui donne le trait ; cliquer le
+  videau fait tourner centré → possédé bas → possédé haut (clic droit en
+  sens inverse). La valeur du videau reste épinglée — en money game les
+  équités sont exprimées en unités du videau courant, seul son
+  propriétaire compte. L'analyse est recalculée aussitôt. En régime
+  estimé, le lien « Voir les paramètres de configuration » ouvre
+  directement l'onglet *Bearoff* de la configuration.
 
 La case *Défi* reste épinglée en haut à droite du panneau.
 
@@ -773,12 +778,12 @@ seulement. La ligne Δ n'apparaît qu'une fois les deux lignes joueurs
 révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
 se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
 
-Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
+Pour fermer le panneau Bearoff, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
 .. _epc_methodologie:
 
-Méthodologie et hypothèses du panneau EPC
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Méthodologie et hypothèses du panneau Bearoff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Chaque valeur affichée par le panneau repose sur des hypothèses précises,
 énoncées ici exhaustivement.

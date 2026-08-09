@@ -45,8 +45,8 @@
 \contentsline {paragraph}{Histogramm der Fehlergrößen}{22}{paragraph*.23}%
 \contentsline {subsubsection}{Aggregationsregel}{22}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: Einschränkungen}{22}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}EPC\sphinxhyphen {}Panel}{23}{subsection.2.2.17}%
-\contentsline {subsubsection}{Méthodologie et hypothèses du panneau EPC}{24}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.17}Panneau Bearoff}{23}{subsection.2.2.17}%
+\contentsline {subsubsection}{Méthodologie et hypothèses du panneau Bearoff}{24}{subsubsection*.26}%
 \contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadaten\sphinxhyphen {}Panel}{25}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Eine Datenbank weitergeben: Herkunft und Passwort}{25}{subsection.2.2.20}%

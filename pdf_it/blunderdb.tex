@@ -507,7 +507,7 @@ Riga di comando integrata nella barra di stato.
 Pannello Console rinominato in pannello Log.
 
 \sphinxAtStartPar
-Pannello EPC dedicato nel pannello inferiore.
+Panneau Bearoff dédié dans le panneau inférieur.
 
 \sphinxAtStartPar
 Copia/incolla di posizione nel pannello di ricerca.
@@ -1034,7 +1034,7 @@ visualizzare le statistiche di performance (pannello Stats),
 
 \item {} 
 \sphinxAtStartPar
-calcolare l’EPC (Effective Pip Count) di una posizione di bearoff (pannello EPC),
+calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),
 
 \item {} 
 \sphinxAtStartPar
@@ -1735,8 +1735,8 @@ Il MWC cost è cumulativo sull’intero set di dati filtrato — non è un indic
 \end{itemize}
 
 
-\subsection{Pannello EPC}
-\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:id10}}
+\subsection{Panneau Bearoff}
+\label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
 Il pannello \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) calcola l’EPC (Effective Pip Count) di una posizione di bearoff. Si attiva premendo \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliccando sulla scheda EPC nel pannello inferiore o eseguendo il comando \sphinxcode{\sphinxupquote{epc}}.
 
@@ -1761,14 +1761,19 @@ avance) d’EPC, de pips et de wastage ;
 
 \item {} 
 \sphinxAtStartPar
-en dessous, un \sphinxstylestrong{tableau course/videau}, sur le modèle du tableau de
-décision de videau du panneau d’analyse. Son en\sphinxhyphen{}tête permet d’éditer
-directement le \sphinxstylestrong{joueur au trait} (deux pastilles) et la \sphinxstylestrong{position du
-videau} (centré, possédé, adverse) : l’analyse — probabilité de gain,
-équités et verdict — est recalculée aussitôt pour le joueur choisi, et
-la pastille de la zone course suit. En régime estimé, le lien « Voir
-les paramètres de configuration » ouvre directement l’onglet \sphinxstyleemphasis{Bearoff}
-de la configuration.
+en dessous, séparé par un filet, un \sphinxstylestrong{tableau course/videau}, sur le
+modèle du tableau de décision de videau du panneau d’analyse : deux
+colonnes de probabilité de gain (une par pastille de joueur, valeurs
+sans le signe \%), les équités money et la \sphinxstylestrong{meilleure action} en
+dernière ligne. Le \sphinxstylestrong{joueur au trait} et la \sphinxstylestrong{position du videau}
+s’éditent directement sur le plateau, comme en mode édition : cliquer
+le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
+videau fait tourner centré → possédé bas → possédé haut (clic droit en
+sens inverse). La valeur du videau reste épinglée — en money game les
+équités sont exprimées en unités du videau courant, seul son
+propriétaire compte. L’analyse est recalculée aussitôt. En régime
+estimé, le lien « Voir les paramètres de configuration » ouvre
+directement l’onglet \sphinxstyleemphasis{Bearoff} de la configuration.
 
 \end{itemize}
 
@@ -1798,7 +1803,7 @@ d’erreur — le verdict de videau n’est alors volontairement pas affiché.
 
 \sphinxAtStartPar
 Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
-two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau EPC}}}}} pour la
+two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}} pour la
 définition précise des deux régimes et de leurs hypothèses.
 
 \sphinxAtStartPar
@@ -1827,11 +1832,11 @@ révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, pui
 se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
 
 \sphinxAtStartPar
-Per chiudere il pannello EPC, premere \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} o passare a un’altra scheda.
+Pour fermer le panneau Bearoff, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
 
 
-\subsubsection{Méthodologie et hypothèses du panneau EPC}
-\label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-epc}}\label{\detokenize{manuel:epc-methodologie}}
+\subsubsection{Méthodologie et hypothèses du panneau Bearoff}
+\label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-bearoff}}\label{\detokenize{manuel:epc-methodologie}}
 \sphinxAtStartPar
 Chaque valeur affichée par le panneau repose sur des hypothèses précises,
 énoncées ici exhaustivement.
@@ -1916,7 +1921,7 @@ régénérables avec l’outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg
 
 
 \subsection{Pannello Anki}
-\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:id11}}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:id10}}
 \sphinxAtStartPar
 Il pannello \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) permette di studiare le posizioni tramite ripetizione dilazionata utilizzando l’algoritmo FSRS. L’utente può creare mazzi a partire da raccolte o risultati di ricerca.
 
@@ -2517,7 +2522,8 @@ Il calcolatore EPC (Effective Pip Count) consente di calcolare le statistiche di
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Premere \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, fare clic sulla scheda EPC nel pannello inferiore oppure eseguire il comando \sphinxcode{\sphinxupquote{epc}}.
+Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet Bearoff dans le panneau inférieur,
+ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -2525,11 +2531,11 @@ Modificare la posizione delle pedine nella casa (ultimi 6 punti).
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel dans le panneau EPC dédié:
+Les résultats sont affichés en temps réel dans le panneau Bearoff dédié:
 EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
 bearoff pur, la probabilité de gain du joueur au trait avec, dans le
 domaine exact, le verdict de videau money (voir la section
-« Méthodologie et hypothèses du panneau EPC » du manuel).
+« Méthodologie et hypothèses du panneau Bearoff » du manuel).
 
 \item {} 
 \sphinxAtStartPar
@@ -2797,7 +2803,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le panneau EPC (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
+Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4855,7 +4861,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Mostra/nascondi il pannello EPC.
+Afficher/cacher le panneau Bearoff.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6406,7 +6412,7 @@ two\sphinxhyphen{}sided (base intégrée jusqu’à 6 pions par joueur, base té
 jusqu’à 11), le verdict de videau money exact. Hors de ce domaine, la
 probabilité est estimée avec sa marge d’erreur et le verdict n’est
 volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau EPC » du manuel pour le détail des hypothèses.
+panneau Bearoff » du manuel pour le détail des hypothèses.
 
 
 \subsection{blunderDB dispone di un’interfaccia a riga di comando?}

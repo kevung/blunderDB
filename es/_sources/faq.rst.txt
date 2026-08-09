@@ -127,7 +127,7 @@ two-sided (base intégrée jusqu'à 6 pions par joueur, base téléchargeable
 jusqu'à 11), le verdict de videau money exact. Hors de ce domaine, la
 probabilité est estimée avec sa marge d'erreur et le verdict n'est
 volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau EPC » du manuel pour le détail des hypothèses.
+panneau Bearoff » du manuel pour le détail des hypothèses.
 
 
 blunderDB dispose-t-il d'une interface en ligne de commande?

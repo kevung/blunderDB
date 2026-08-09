@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 16:40
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 16:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1142,73 +1142,69 @@ LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/it' will be
 [11
 
 ] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25]
-[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36]
-Underfull \vbox (badness 1668) detected at line 4220
- []
-
-[37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48]
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40]
+[41] [42] [43] [44] [45] [46] [47] [48]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6242.
- [49] [50] [51]
-[52]
+(Font)              scaled to size 8.99994pt on input line 6248.
+ [49] [50] [51] [52]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6518.
+(Font)              scaled to size 10.79993pt on input line 6524.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6518.
+(Font)              scaled to size 10.79993pt on input line 6524.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6602--6604
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6608--6610
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6605
+Overfull \hbox (11.423pt too wide) detected at line 6611
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6661--6663
+Underfull \hbox (badness 10000) in paragraph at lines 6667--6669
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 8151) in paragraph at lines 6748--6752
+Underfull \hbox (badness 8151) in paragraph at lines 6754--6758
 []\TU/FreeSerif(1)/m/n/10 La plupart des options peuvent aussi être fournies pa
 r variable d’environnement (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(1)/m/n/10 ,
  []
 
 [53] [54] [55]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7035--7037
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7041--7043
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7038
+Overfull \hbox (1.06567pt too wide) detected at line 7044
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7331--7333
+Underfull \hbox (badness 10000) in paragraph at lines 7337--7339
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7377--7379
+Underfull \hbox (badness 10000) in paragraph at lines 7383--7385
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 7391--7393
+Underfull \hbox (badness 6876) in paragraph at lines 7397--7399
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7442--7444
+Underfull \hbox (badness 10000) in paragraph at lines 7448--7450
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
 [57]
-Underfull \hbox (badness 7221) in paragraph at lines 7612--7614
+Underfull \hbox (badness 7221) in paragraph at lines 7618--7620
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
@@ -1237,7 +1233,7 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
  [65] [66] [67] [68]
-Underfull \hbox (badness 6741) in paragraph at lines 7923--7925
+Underfull \hbox (badness 6741) in paragraph at lines 7929--7931
 []\TU/FreeSerif(1)/b/n/10 Colecciones\TU/FreeSerif(1)/m/n/10 : \TU/FreeMono(1)/
 m/n/10 collection \TU/FreeSerif(1)/m/n/10 y \TU/FreeMono(1)/m/n/10 collection_p
 osition \TU/FreeSerif(1)/m/n/10 (tabla de enlace) agrupan posiciones elegidas
@@ -1261,11 +1257,11 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: FF40A7590C82B797A8FB65CF9EB43425;36287.
+(rerunfilecheck)             Checksum: BC37A56994CD0C6CFD2E8566905AAB45;36337.
  ) 
 Here is how much of TeX's memory you used:
  19436 strings out of 476443
- 399059 string characters out of 5793963
+ 399074 string characters out of 5793963
  2035627 words of memory out of 5000000
  40961 multiletter control sequences out of 15000+600000
  566823 words of font info for 137 fonts, out of 8000000 for 9000

@@ -29,7 +29,7 @@ Opérations globales
    "tutorial, tour", "Ouvre le catalogue des visites guidées de l'interface."
    "demo", "Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir l'outil."
    "meta", "Affiche les métadonnées de la base de données."
-   "epc", "Ouvre le panneau EPC (Effective Pip Count, probabilité de gain et verdict de videau en bearoff)."
+   "epc", "Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff)."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."

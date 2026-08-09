@@ -45,8 +45,8 @@
 \contentsline {paragraph}{Error magnitude histogram}{21}{paragraph*.23}%
 \contentsline {subsubsection}{Aggregation rule}{21}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: limitations}{22}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}EPC Panel}{22}{subsection.2.2.17}%
-\contentsline {subsubsection}{Méthodologie et hypothèses du panneau EPC}{23}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.17}Panneau Bearoff}{22}{subsection.2.2.17}%
+\contentsline {subsubsection}{Méthodologie et hypothèses du panneau Bearoff}{23}{subsubsection*.26}%
 \contentsline {subsection}{\numberline {2.2.18}Anki Panel}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadata Panel}{24}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Handing out a database: origin and password}{24}{subsection.2.2.20}%

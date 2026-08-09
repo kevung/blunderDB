@@ -95,8 +95,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC: limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.17. EPC Panel</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-epc">2.17.1. Méthodologie et hypothèses du panneau EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Panneau Bearoff</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Méthodologie et hypothèses du panneau Bearoff</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki Panel</a></li>
@@ -186,7 +186,7 @@
 <li><p>display the list of imported matches and navigate through the moves of a match (match panel),</p></li>
 <li><p>display and manage tournaments (tournaments panel),</p></li>
 <li><p>display performance statistics (Stats panel),</p></li>
-<li><p>compute the EPC (Effective Pip Count) of a bearoff position (EPC panel),</p></li>
+<li><p>calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),</p></li>
 <li><p>study positions with spaced repetition (Anki panel),</p></li>
 <li><p>display the database metadata (metadata panel).</p></li>
 </ul>
@@ -529,8 +529,8 @@
 </ul>
 </section>
 </section>
-<section id="panneau-epc">
-<span id="id10"></span><h2><span class="section-number">2.17. </span>EPC Panel<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<section id="panneau-bearoff">
+<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Panneau Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
 <p>The <strong>EPC</strong> panel (<em>CTRL-E</em>) computes the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing <em>CTRL-E</em>, clicking the EPC tab in the bottom panel, or running the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command.</p>
 <p>Dans ce panneau, l’utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
@@ -545,14 +545,19 @@ et le pip count), nombre moyen de lancers et écart type. Lorsque les
 deux joueurs ont des pions dans leur jan, une ligne <strong>Δ</strong> donne les
 différences <em>signées</em> (bas − haut : négatif quand le joueur noir est en
 avance) d’EPC, de pips et de wastage ;</p></li>
-<li><p>en dessous, un <strong>tableau course/videau</strong>, sur le modèle du tableau de
-décision de videau du panneau d’analyse. Son en-tête permet d’éditer
-directement le <strong>joueur au trait</strong> (deux pastilles) et la <strong>position du
-videau</strong> (centré, possédé, adverse) : l’analyse — probabilité de gain,
-équités et verdict — est recalculée aussitôt pour le joueur choisi, et
-la pastille de la zone course suit. En régime estimé, le lien « Voir
-les paramètres de configuration » ouvre directement l’onglet <em>Bearoff</em>
-de la configuration.</p></li>
+<li><p>en dessous, séparé par un filet, un <strong>tableau course/videau</strong>, sur le
+modèle du tableau de décision de videau du panneau d’analyse : deux
+colonnes de probabilité de gain (une par pastille de joueur, valeurs
+sans le signe %), les équités money et la <strong>meilleure action</strong> en
+dernière ligne. Le <strong>joueur au trait</strong> et la <strong>position du videau</strong>
+s’éditent directement sur le plateau, comme en mode édition : cliquer
+le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
+videau fait tourner centré → possédé bas → possédé haut (clic droit en
+sens inverse). La valeur du videau reste épinglée — en money game les
+équités sont exprimées en unités du videau courant, seul son
+propriétaire compte. L’analyse est recalculée aussitôt. En régime
+estimé, le lien « Voir les paramètres de configuration » ouvre
+directement l’onglet <em>Bearoff</em> de la configuration.</p></li>
 </ul>
 <p>La case <em>Défi</em> reste épinglée en haut à droite du panneau.</p>
 <p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
@@ -566,7 +571,7 @@ ou double/passe),</p></li>
 d’erreur — le verdict de videau n’est alors volontairement pas affiché.</p></li>
 </ul>
 <p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
-two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau EPC</span></a> pour la
+two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Bearoff</span></a> pour la
 définition précise des deux régimes et de leurs hypothèses.</p>
 <p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
 Deux moyens d’aller au-delà, dans l’onglet <em>Bearoff</em> de la configuration :</p>
@@ -583,9 +588,9 @@ masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette z
 seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
 révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
 se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.</p>
-<p>To close the EPC panel, press <em>CTRL-E</em> or switch to another tab.</p>
-<section id="methodologie-et-hypotheses-du-panneau-epc">
-<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau EPC<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-epc" title="Link to this heading"></a></h3>
+<p>Pour fermer le panneau Bearoff, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
+<section id="methodologie-et-hypotheses-du-panneau-bearoff">
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
 <p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
 énoncées ici exhaustivement.</p>
 <p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
@@ -647,7 +652,7 @@ régénérables avec l’outil <code class="docutils literal notranslate"><span 
 </section>
 </section>
 <section id="panneau-anki">
-<span id="id11"></span><h2><span class="section-number">2.18. </span>Anki Panel<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<span id="id10"></span><h2><span class="section-number">2.18. </span>Anki Panel<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
 <p>The <strong>Anki</strong> panel (<em>CTRL-K</em>) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.</p>
 <p><strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or the current search results. Search-based decks sync automatically when the Anki tab is opened.</p>
 <p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
