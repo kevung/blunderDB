@@ -630,7 +630,7 @@
             },
             "noDecision": "No decision (cube against)",
             "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
-            "openConfig": "Open settings"
+            "openConfig": "See configuration settings"
         }
     },
     "filterLibrary": {

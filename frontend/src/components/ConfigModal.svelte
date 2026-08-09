@@ -1,4 +1,6 @@
 <script>
+    import { get } from 'svelte/store';
+    import { configInitialTabStore } from '../stores/uiStore';
     import { trapFocus } from '../utils/focusTrap.js';
     import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
@@ -50,6 +52,12 @@
 
     $effect(() => {
         if (visible) {
+            // A caller may request a specific tab (EPC panel → Bearoff).
+            const requested = get(configInitialTabStore);
+            if (requested) {
+                activeTab = requested;
+                configInitialTabStore.set(null);
+            }
             identityMessage = '';
             identityError = '';
             confirmingRegenerate = false;

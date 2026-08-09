@@ -630,7 +630,7 @@
             },
             "noDecision": "判断なし(相手がキューブ保有)",
             "downloadHint": "プレイヤーごとに11枚まで正確なキューブ判定には、ダウンロード可能なデータベース(1.2 GB)が必要です。",
-            "openConfig": "設定を開く"
+            "openConfig": "設定を表示"
         }
     },
     "filterLibrary": {

@@ -630,7 +630,7 @@
             },
             "noDecision": "Sin decisión (cubo del rival)",
             "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
-            "openConfig": "Abrir configuración"
+            "openConfig": "Ver los parámetros de configuración"
         }
     },
     "filterLibrary": {

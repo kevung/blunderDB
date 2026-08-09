@@ -51,6 +51,10 @@ export const PANEL = {
 // ── Single modal store (only one modal at a time) ──
 export const activeModal = writable(null);
 
+// Initial tab requested for the Config modal (e.g. the EPC panel's download
+// hint opens straight onto the Bearoff tab). Consumed once by ConfigModal.
+export const configInitialTabStore = writable(null);
+
 // ── Panel set (multiple panels can be open) ──
 export const openPanels = writable(new Set());
 
