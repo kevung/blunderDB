@@ -1731,22 +1731,33 @@ du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
 (le bouton de souris est indifférent).
 
 \sphinxAtStartPar
-Les résultats sont présentés sous forme de deux tableaux côte à côte :
+Les résultats sont présentés sous forme de deux tableaux empilés :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-à gauche, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur, une colonne
-par grandeur : EPC, pip count, wastage (différence entre l’EPC et le pip
-count), nombre moyen de lancers et écart type. Lorsque les deux joueurs
-ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les différences
-d’EPC, de pips et de wastage ;
+en haut, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur (repérée par
+sa pastille de couleur, le joueur noir étant toujours en bas), une
+colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
+et le pip count), nombre moyen de lancers et écart type. Lorsque les
+deux joueurs ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les
+différences \sphinxstyleemphasis{signées} (bas − haut : négatif quand le joueur noir est en
+avance) d’EPC, de pips et de wastage ;
 
 \item {} 
 \sphinxAtStartPar
-à droite, un \sphinxstylestrong{tableau course/videau}, sur le modèle du tableau de
-décision de videau du panneau d’analyse.
+en dessous, un \sphinxstylestrong{tableau course/videau}, sur le modèle du tableau de
+décision de videau du panneau d’analyse. Son en\sphinxhyphen{}tête permet d’éditer
+directement le \sphinxstylestrong{joueur au trait} (deux pastilles) et la \sphinxstylestrong{position du
+videau} (centré, possédé, adverse) : l’analyse — probabilité de gain,
+équités et verdict — est recalculée aussitôt pour le joueur choisi, et
+la pastille de la zone course suit. En régime estimé, le lien « Voir
+les paramètres de configuration » ouvre directement l’onglet \sphinxstyleemphasis{Bearoff}
+de la configuration.
 
 \end{itemize}
+
+\sphinxAtStartPar
+La case \sphinxstyleemphasis{Défi} reste épinglée en haut à droite du panneau.
 
 \sphinxAtStartPar
 Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans

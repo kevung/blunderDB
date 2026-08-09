@@ -59,7 +59,7 @@
 \contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{26}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Tuo ja yhdistä tietokanta}{27}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{27}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{28}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{27}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Merkitse asema tunnisteella}{28}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Poista asema}{28}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Tuo asema XG:stä}{28}{subsection.2.3.8}%
@@ -70,11 +70,11 @@
 \contentsline {subsection}{\numberline {2.3.13}Hallitse ottelupaneelia}{30}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}Hallitse kokoelmia}{30}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}Hallitse turnauksia}{30}{subsection.2.3.15}%
-\contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{31}{subsection.2.3.16}%
+\contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{30}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Laske EPC}{31}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{31}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{31}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{32}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{31}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Hae asemia kriteerien perusteella}{32}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}Komentoluettelo}{32}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Yleiset toiminnot}{33}{subsection.2.4.1}%

@@ -54,24 +54,24 @@
 \contentsline {subsubsection}{ファイルの出所を読む}{29}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}ユーザーガイド}{29}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}新しいデータベースを作成する}{29}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}既存のデータベースを開く}{29}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.2}既存のデータベースを開く}{30}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}データベースをインポートして統合する}{30}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}ポジションを編集する}{30}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}ポジションをデータベースに追加する}{31}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}ポジションにタグを付ける}{31}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}ポジションを削除する}{31}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}XG からポジションをインポートする}{31}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.8}XG からポジションをインポートする}{32}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}マッチをインポートする}{32}{subsection.2.3.9}%
-\contentsline {subsection}{\numberline {2.3.10}マッチのフォルダをインポートする}{32}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.10}マッチのフォルダをインポートする}{33}{subsection.2.3.10}%
 \contentsline {subsection}{\numberline {2.3.11}ドラッグ＆ドロップ}{33}{subsection.2.3.11}%
 \contentsline {subsection}{\numberline {2.3.12}マッチ内を移動する}{33}{subsection.2.3.12}%
-\contentsline {subsection}{\numberline {2.3.13}マッチパネルを管理する}{33}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.13}マッチパネルを管理する}{34}{subsection.2.3.13}%
 \contentsline {subsection}{\numberline {2.3.14}コレクションを管理する}{34}{subsection.2.3.14}%
 \contentsline {subsection}{\numberline {2.3.15}トーナメントを管理する}{34}{subsection.2.3.15}%
-\contentsline {subsection}{\numberline {2.3.16}パフォーマンス統計を表示する}{34}{subsection.2.3.16}%
+\contentsline {subsection}{\numberline {2.3.16}パフォーマンス統計を表示する}{35}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}EPCを計算する}{35}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}XGからインポートしたポジションの分析を表示する}{35}{subsection.2.3.18}%
-\contentsline {subsection}{\numberline {2.3.19}XGにポジションをエクスポートする}{35}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.19}XGにポジションをエクスポートする}{36}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}様々なポジションを表示する}{36}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}条件に基づいてポジションを検索する}{36}{subsection.2.3.21}%
 \contentsline {section}{\numberline {2.4}コマンド一覧}{37}{section.2.4}%
