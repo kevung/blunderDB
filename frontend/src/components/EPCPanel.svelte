@@ -141,71 +141,65 @@
                  in the values); equities and the verdict are the on-roll
                  player's, as in the Analysis panel. -->
             {#if data.race}
-                <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
-                    <tbody>
-                        <tr>
-                            <th class="race-title" colspan={data.race.money ? 6 : 2}>
-                                <span class="race-title-inner">
-                                    <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
-                                    {$t('epc.race.title')}
-                                    {#if data.race.regime === 'exact'}
-                                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                            {$t('epc.race.exact')}
-                                        </span>
-                                    {:else}
-                                        <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                            {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                                        </span>
-                                    {/if}
-                                </span>
-                            </th>
-                        </tr>
-                        {#if data.race.money}
-                            <tr>
-                                <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
-                                <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
-                                <th>{$t('epc.race.cubeless')}</th>
-                                <th>{$t('epc.race.noDouble')}</th>
-                                <th>{$t('epc.race.doubleTake')}</th>
-                                <th>{$t('epc.race.doublePass')}</th>
-                            </tr>
-                            <tr>
-                                <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
-                                <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
-                                <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
-                                <td>{show(maskedRace, eq(data.race.money.no_double))}</td>
-                                <td>{show(maskedRace, eq(data.race.money.double_take))}</td>
-                                <td>{show(maskedRace, eq(data.race.money.double_pass))}</td>
-                            </tr>
-                            <tr class="best-action-row">
-                                <td colspan="6" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
-                                    {#if maskedRace}
-                                        {HIDDEN}
-                                    {:else if data.race.money.verdict}
-                                        {$t('epc.race.verdicts.' + data.race.money.verdict)}
-                                    {:else}
-                                        {$t('epc.race.noDecision')}
-                                    {/if}
-                                </td>
-                            </tr>
-                        {:else}
-                            <tr>
-                                <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
-                                <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
-                            </tr>
-                            <tr>
-                                <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
-                                <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="download-hint">
-                                    {$t('epc.race.downloadHint')}
-                                    <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
-                                </td>
-                            </tr>
-                        {/if}
-                    </tbody>
-                </table>
+                <div class="race-wrap">
+                    <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
+                        <tbody>
+                            {#if data.race.money}
+                                <tr>
+                                    <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                    <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
+                                    <th>{$t('epc.race.cubeless')}</th>
+                                    <th>{$t('epc.race.noDouble')}</th>
+                                    <th>{$t('epc.race.doubleTake')}</th>
+                                    <th>{$t('epc.race.doublePass')}</th>
+                                </tr>
+                                <tr>
+                                    <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                    <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.no_double))}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.double_take))}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.double_pass))}</td>
+                                </tr>
+                                <tr class="best-action-row">
+                                    <td colspan="6" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
+                                        {#if maskedRace}
+                                            {HIDDEN}
+                                        {:else if data.race.money.verdict}
+                                            {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                                        {:else}
+                                            {$t('epc.race.noDecision')}
+                                        {/if}
+                                    </td>
+                                </tr>
+                            {:else}
+                                <tr>
+                                    <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                    <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
+                                </tr>
+                                <tr>
+                                    <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                    <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="download-hint">
+                                        {$t('epc.race.downloadHint')}
+                                        <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
+                                    </td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                    {#if data.race.regime === 'exact'}
+                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                            {$t('epc.race.exact')}
+                        </span>
+                    {:else}
+                        <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                            {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                        </span>
+                    {/if}
+                </div>
             {/if}
         </div>
     {/if}
@@ -287,10 +281,14 @@
         padding-right: 80px;
     }
 
-    /* Clear visual separation between the two tables. */
-    .race-table {
+    /* Clear visual separation between the two tables; the regime badge sits
+       to the right of the race table. */
+    .race-wrap {
+        display: flex;
+        align-items: center;
+        gap: 14px;
         border-top: 2px solid #e0e0e0;
-        padding-top: 6px;
+        padding-top: 8px;
         margin-top: 2px;
     }
 
@@ -322,17 +320,6 @@
         font-size: var(--font-size-small);
         font-weight: 600;
         color: #444;
-    }
-
-    .race-title {
-        text-align: left;
-    }
-
-    .race-title-inner {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
     }
 
     .main-value {
