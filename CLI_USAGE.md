@@ -36,6 +36,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `search` - Search positions with filters
 - `list` - List database contents
 - `match` - Display match positions and analysis
+- `epc` - EPC, win probability and money cube verdict for a bearoff position
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
@@ -606,6 +607,39 @@ Position 2 [Game 1, Move 2]
   Cube: 1 (centered)
   Dice: 6-4
   ...
+```
+
+## EPC Command
+
+Compute the Effective Pip Count, the win probability and the money cube
+verdict for a bearoff position given as an XGID. Pure computation: no
+database file is involved.
+
+```bash
+./blunderDB epc [options] '<XGID>'
+```
+
+**Options:**
+- `--format` - Output format: `text` or `json` (default: text)
+- `--bearoff-ts` - Optional two-sided bearoff database (`.bd`) widening the
+  embedded TS-06-06 (also read from the `BLUNDERDB_TS_PATH` environment
+  variable). The widest valid database wins; an invalid file is ignored
+  with a warning.
+
+**Regimes.** Inside the two-sided database domain the win probability and
+the money cube analysis (cubeless, ND, D/T, D/P, verdict) are **exact**.
+Outside it, the win probability is **estimated** (convolution of the
+one-sided roll distributions plus a calibrated correction) and printed with
+its measured error bound; the cube verdict is deliberately never estimated
+(ADR-0009).
+
+**Examples:**
+```bash
+# Exact regime (both players within 6 checkers)
+./blunderDB epc 'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'
+
+# With the downloaded TS-06-11 (exact up to 11 checkers per player)
+./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 ```
 
 ## Info Command

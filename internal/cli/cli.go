@@ -75,6 +75,8 @@ func (cli *CLI) Run(args []string) error {
 		return cli.runInfo(commandArgs)
 	case "edit":
 		return cli.runEdit(commandArgs)
+	case "epc":
+		return cli.runEpc(commandArgs)
 	case "search":
 		return cli.runSearch(commandArgs)
 	case "help":
@@ -106,6 +108,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  list      List database contents")
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
+	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")

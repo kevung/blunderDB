@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -48,9 +49,14 @@ func RunServe(args []string) error {
 		rateLimitRPS   = fs.Float64("rate-limit-rps", 0, "per-tenant sustained requests/second (0 = disabled)")
 		rateLimitBurst = fs.Int("rate-limit-burst", 0, "per-tenant token-bucket burst (default 2×rps)")
 		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
+		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if *tsPath != "" {
+		race.SetExternalPath(*tsPath)
 	}
 
 	if *dbPath != "" {

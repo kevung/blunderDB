@@ -54,7 +54,7 @@ func TestPositionsEPC(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("epc: got %d (%s)", rec.Code, rec.Body)
 	}
-	var resp race.EPC
+	var resp race.Result
 	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
@@ -76,6 +76,11 @@ func TestPositionsEPC(t *testing.T) {
 	}
 	if resp.Top.CheckerCount != 15 {
 		t.Fatalf("top checker count = %d, want 15", resp.Top.CheckerCount)
+	}
+	// White has a straggler: not a pure bearoff, so no race zone (and in
+	// particular no cube verdict — verdicts are never estimated, ADR-0009).
+	if resp.Race != nil {
+		t.Fatalf("race zone must be absent outside pure bearoff, got %+v", resp.Race)
 	}
 
 	// Missing position → 400.

@@ -139,14 +139,18 @@ func (s *Server) positionRoutes() []route {
 			}
 			return plays, nil
 		})},
-		// Effective Pip Count for both players (pure; no storage). Generic race
-		// metric, useful to the Desktop too. EPC is nil until a side is all home.
-		// Single implementation shared with the GUI and the CLI (engine/race).
-		{http.MethodPost, "/v1/positions.epc", rpc(func(ctx context.Context, scope string, req positionReq) (race.EPC, error) {
+		// EPC + race zone (pure; no storage). Single implementation shared
+		// with the GUI and the CLI (engine/race). Response { bottom, top,
+		// race? }: race carries the on-roll win probability (exact, or
+		// estimated with its error bounds) and — exact regime only — the
+		// money cube verdict; verdicts are never estimated (ADR-0009).
+		// Sources: embedded TS-06-06 plus whatever .bd path the operator
+		// configures; the daemon never downloads.
+		{http.MethodPost, "/v1/positions.epc", rpc(func(ctx context.Context, scope string, req positionReq) (race.Result, error) {
 			if req.Position == nil {
-				return race.EPC{}, fmt.Errorf("%w: missing position", storage.ErrInvalid)
+				return race.Result{}, fmt.Errorf("%w: missing position", storage.ErrInvalid)
 			}
-			return race.ComputeEPC(&req.Position.Board), nil
+			return race.Evaluate(req.Position), nil
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)

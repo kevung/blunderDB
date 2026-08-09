@@ -34,13 +34,14 @@ type EPC struct {
 // WhiteBar = 0, points 1..24, BlackBar = 25; both bars count against
 // AllInHome.
 func ComputeEPC(b *domain.Board) EPC {
-	return EPC{
-		Bottom: computeSide(b, domain.Black),
-		Top:    computeSide(b, domain.White),
-	}
+	bottom, _ := computeSide(b, domain.Black)
+	top, _ := computeSide(b, domain.White)
+	return EPC{Bottom: bottom, Top: top}
 }
 
-func computeSide(b *domain.Board, color int) Side {
+// computeSide also returns the player's home board (checkers on their
+// 1..6-points), which Evaluate feeds to the two-sided lookup.
+func computeSide(b *domain.Board, color int) (Side, [6]int) {
 	var home [6]int // home[i] = checkers on this player's (i+1)-point
 	total, allHome := 0, true
 	for i := range b.Points {
@@ -70,5 +71,5 @@ func computeSide(b *domain.Board, color int) Side {
 			side.EPC = r
 		}
 	}
-	return side
+	return side, home
 }
