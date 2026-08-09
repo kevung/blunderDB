@@ -10,6 +10,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -53,7 +54,7 @@ func TestPositionsEPC(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("epc: got %d (%s)", rec.Code, rec.Body)
 	}
-	var resp epcResp
+	var resp race.EPC
 	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}

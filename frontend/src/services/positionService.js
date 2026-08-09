@@ -1071,14 +1071,17 @@ export async function exitEPCMode() {
 
 export async function updateEPC(position) {
     try {
+        // Typed contract from engine/race: { bottom: {all_in_home, checker_count, epc?}, top: {…} }.
         const result = await ComputeEPCFromPosition(position);
-        if (result && result.bottomEPC) {
+        const bottomEPC = result?.bottom?.epc || null;
+        const topEPC = result?.top?.epc || null;
+        if (bottomEPC) {
             epcDataStore.set({
-                bottomEPC: result.bottomEPC,
-                topEPC: result.topEPC || null,
+                bottomEPC,
+                topEPC,
                 error: null
             });
-            const epc = result.bottomEPC;
+            const epc = bottomEPC;
             statusBarTextStore.set(tMsg('commands.epcStatus', { epc: epc.epc.toFixed(2), pips: epc.pipCount, wastage: epc.wastage.toFixed(2), rolls: epc.meanRolls.toFixed(3) }));
         } else {
             epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });

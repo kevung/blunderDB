@@ -1357,6 +1357,31 @@ export namespace domain {
 
 }
 
+export namespace engine {
+	
+	export class EPCResult {
+	    epc: number;
+	    meanRolls: number;
+	    stdDev: number;
+	    pipCount: number;
+	    wastage: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new EPCResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.epc = source["epc"];
+	        this.meanRolls = source["meanRolls"];
+	        this.stdDev = source["stdDev"];
+	        this.pipCount = source["pipCount"];
+	        this.wastage = source["wastage"];
+	    }
+	}
+
+}
+
 export namespace gui {
 	
 	export class FileDialogResponse {
@@ -1497,6 +1522,77 @@ export namespace parser {
 	        this.position = this.convertValues(source["position"], domain.Position);
 	        this.analysis = this.convertValues(source["analysis"], domain.PositionAnalysis);
 	        this.comment = source["comment"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace race {
+	
+	export class Side {
+	    all_in_home: boolean;
+	    checker_count: number;
+	    epc?: engine.EPCResult;
+	
+	    static createFrom(source: any = {}) {
+	        return new Side(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.all_in_home = source["all_in_home"];
+	        this.checker_count = source["checker_count"];
+	        this.epc = this.convertValues(source["epc"], engine.EPCResult);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class EPC {
+	    bottom: Side;
+	    top: Side;
+	
+	    static createFrom(source: any = {}) {
+	        return new EPC(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.bottom = this.convertValues(source["bottom"], Side);
+	        this.top = this.convertValues(source["top"], Side);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
