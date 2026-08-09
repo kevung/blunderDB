@@ -4,7 +4,7 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
-    import { parseMoveNotation, mirrorPosition, computePipCount } from '../utils/boardGeometry.js';
+    import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton } from '../utils/boardGeometry.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -116,8 +116,6 @@
             /** @type {HTMLElement} */ (document.activeElement).blur();
         }
         if (mode !== 'EDIT' && mode !== 'EPC') return;
-        // In EPC mode, only allow left-click (Black checkers)
-        if (mode === 'EPC' && event.button !== 0) return;
 
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -139,8 +137,6 @@
     function handleMouseUp(event) {
         event.preventDefault(); // Prevent text or element selection
         if (mode !== 'EDIT' && mode !== 'EPC') return;
-        // In EPC mode, only allow left-click (Black checkers)
-        if (mode === 'EPC' && event.button !== 0) return;
 
         _isMouseDown = false;
         const rect = canvas.getBoundingClientRect();
@@ -256,10 +252,12 @@
     }
 
     function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
-        // In EPC mode, only allow Black checkers (color 0) on points 1-6
+        // In EPC mode both home boards are editable; the point decides the
+        // colour (1-6 → Black, 19-24 → White), whatever button was pressed.
         if (mode === 'EPC') {
-            if (checkerPoint < 1 || checkerPoint > 6) return;
-            button = 0; // Force Black checkers only
+            const epcButton = epcEditButton(checkerPoint);
+            if (epcButton === null) return;
+            button = epcButton;
         }
 
         // A single click on a blocked ("must be empty") Except point unblocks it

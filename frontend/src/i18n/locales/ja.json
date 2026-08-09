@@ -214,7 +214,6 @@
         "dbVersionMismatch": "データベースのメジャーバージョンが一致しません。データベーススキーマが現在の blunderDB バージョンと互換性がない可能性があります。このまま編集を続ける場合は自己責任で行ってください。続行する前にファイルをバックアップしてください。\nデータベースバージョン: {dbVersion}\n想定バージョン: {modelVersion}",
         "epcErrorComputing": "EPC: 計算エラー",
         "epcNotAvailable": "EPC: 該当なし（すべてのチェッカーがインナーボードにありません）",
-        "epcStatus": "EPC: {epc} | Pips: {pips} | Wastage: {wastage} | 平均ロール: {rolls}",
         "errorClearingHistory": "コマンド履歴のクリア中にエラーが発生しました。",
         "errorCreatingDb": "新規データベースの作成中にエラーが発生しました",
         "errorMigrating": "データベースの移行中にエラーが発生しました。",

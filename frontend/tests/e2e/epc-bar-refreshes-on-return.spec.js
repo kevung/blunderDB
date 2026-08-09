@@ -1,20 +1,17 @@
 /**
  * epc-bar-refreshes-on-return.spec.js  — Scénario S1 étendu
  *
- * Vérifie que la valeur EPC dans la barre d'état se met à jour quand on
- * change de position entre deux visites de l'onglet EPC.
- *
- * Attendu initial sur `ui-reactivity` : ROUGE (bug — la barre affiche
- * l'ancienne valeur EPC au retour sur l'onglet EPC). Deviendra vert après
- * Fiche 05.a / 05.f.
+ * Vérifie que la valeur EPC affichée dans le PANNEAU se met à jour quand on
+ * change de position entre deux visites de l'onglet EPC — et que la barre
+ * d'état, elle, ne transmet AUCUNE valeur EPC (le mode défi masque le
+ * panneau ; une copie dans la barre d'état trahirait les réponses).
  *
  * Stratégie :
  *   1. Mock ComputeEPCFromPosition → retourne epcResultA pour positionA
- *   2. Cliquer EPC → vérifier que la barre affiche « EPC: 66.47 »
+ *   2. Cliquer EPC → vérifier que le panneau affiche « 66.47 »
  *   3. Quitter EPC (aller sur Stats)
- *   4. Via page.evaluate, importer positionStore et le setter à positionB,
- *      puis patcher le mock pour retourner epcResultB
- *   5. Retour EPC → vérifier que la barre affiche « EPC: 72.34 »
+ *   4. Patcher le mock pour retourner epcResultB
+ *   5. Retour EPC → vérifier que le panneau affiche « 72.34 »
  */
 
 import { test, expect } from '@playwright/test';
@@ -49,7 +46,7 @@ test.beforeEach(async ({ page }) => {
             get() {
                 return () => Promise.resolve(window.__epcFixture ?? window.__epcFixtureA ?? null);
             },
-            configurable: true,
+            configurable: true
         });
     });
 
@@ -57,24 +54,23 @@ test.beforeEach(async ({ page }) => {
     await waitForApp(page);
 });
 
-// ── T1 : barre d'état EPC renseignée lors de la première visite ───────────────
+// ── T1 : panneau EPC renseigné lors de la première visite ─────────────────────
 
-test('T1 — barre d\'état affiche EPC lors de la première visite', async ({ page }) => {
+test("T1 — le panneau affiche l'EPC lors de la première visite", async ({ page }) => {
     await clickTab(page, 'epc');
 
-    // La barre doit afficher une valeur EPC dans les 2 s
-    const statusBar = page.locator('[data-testid="status-bar"]');
-    await expect(statusBar).toContainText(/EPC[:\s]+\d/, { timeout: 2000 });
+    // Le panneau doit afficher la valeur EPC de la fixture dans les 2 s
+    const panel = page.locator('.epc-panel');
+    await expect(panel).toContainText('66.47', { timeout: 2000 });
 });
 
 // ── T2 : EPC se met à jour quand la position change entre deux visites ─────────
 
 test('T2 — EPC change après changement de position (S1 étendu)', async ({ page }) => {
-    // 1. Visiter EPC et mémoriser la valeur affichée
+    // 1. Visiter EPC et vérifier la valeur affichée
     await clickTab(page, 'epc');
-    const statusBar = page.locator('[data-testid="status-bar"]');
-    await expect(statusBar).toContainText(/EPC[:\s]+\d/, { timeout: 2000 });
-    const initialText = await statusBar.textContent();
+    const panel = page.locator('.epc-panel');
+    await expect(panel).toContainText('66.47', { timeout: 2000 });
 
     // 2. Quitter EPC (aller sur Stats)
     await clickTab(page, 'stats');
@@ -86,40 +82,39 @@ test('T2 — EPC change après changement de position (S1 étendu)', async ({ pa
         window.__epcFixture = result;
     }, epcResultB);
 
-    // 4. Retour sur EPC
+    // 4. Retour sur EPC — le panneau doit refléter la nouvelle valeur
     await clickTab(page, 'epc');
-
-    // 5. La barre doit afficher une valeur EPC différente
-    await expect(statusBar).toContainText(/EPC[:\s]+\d/, { timeout: 2000 });
-    const newText = await statusBar.textContent();
-
-    expect(newText).not.toBe(initialText);
+    await expect(panel).toContainText('72.34', { timeout: 2000 });
+    await expect(panel).not.toContainText('66.47');
 });
 
 // ── T3 : EPC stable si la position n'a pas changé (S1 base) ──────────────────
 
-test('T3 — EPC stable au retour si la position n\'a pas changé', async ({ page }) => {
+test("T3 — EPC stable au retour si la position n'a pas changé", async ({ page }) => {
     // Première visite EPC
     await clickTab(page, 'epc');
-    const statusBar = page.locator('[data-testid="status-bar"]');
-    await expect(statusBar).toContainText(/EPC[:\s]+\d/, { timeout: 2000 });
-    const firstText = await statusBar.textContent();
+    const panel = page.locator('.epc-panel');
+    await expect(panel).toContainText('66.47', { timeout: 2000 });
 
     // Aller sur Stats sans changer la position
     await clickTab(page, 'stats');
 
     // Retour sur EPC — la valeur ne doit PAS avoir changé
     await clickTab(page, 'epc');
-    await expect(statusBar).toContainText(/EPC[:\s]+\d/, { timeout: 2000 });
-    const secondText = await statusBar.textContent();
+    await expect(panel).toContainText('66.47', { timeout: 2000 });
+});
 
-    // La valeur EPC doit être identique (même position)
-    // Note : si le texte contient des infos dynamiques non-EPC, on compare
-    // uniquement la partie EPC via regex
-    const epcPattern = /EPC[:\s]+([\d.]+)/;
-    const m1 = firstText?.match(epcPattern)?.[1];
-    const m2 = secondText?.match(epcPattern)?.[1];
-    expect(m1).toBeDefined();
-    expect(m2).toBeDefined();
-    expect(m1).toBe(m2);
+// ── T4 : la barre d'état ne transmet aucune valeur EPC (mode défi étanche) ────
+
+test("T4 — la barre d'état ne contient jamais de valeur EPC", async ({ page }) => {
+    await clickTab(page, 'epc');
+
+    // Le panneau affiche la valeur…
+    const panel = page.locator('.epc-panel');
+    await expect(panel).toContainText('66.47', { timeout: 2000 });
+
+    // …mais la barre d'état, jamais : ni la valeur, ni le motif « EPC: <n> ».
+    const statusBar = page.locator('[data-testid="status-bar"]');
+    await expect(statusBar).not.toContainText('66.47');
+    await expect(statusBar).not.toContainText(/EPC[:\s]+\d/);
 });

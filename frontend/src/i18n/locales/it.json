@@ -214,7 +214,6 @@
         "dbVersionMismatch": "Discrepanza nella versione principale del database. Lo schema del database potrebbe essere incompatibile con la versione attuale di blunderDB. Continuare a modificare il database avviene a tuo rischio. Esegui un backup del file prima di procedere oltre.\nVersione del database: {dbVersion}\nVersione prevista: {modelVersion}",
         "epcErrorComputing": "EPC: errore di calcolo",
         "epcNotAvailable": "EPC: N/D (le pedine non sono tutte nella home board)",
-        "epcStatus": "EPC: {epc} | Pip: {pips} | Spreco: {wastage} | Tiri medi: {rolls}",
         "errorClearingHistory": "Errore durante la cancellazione della cronologia dei comandi.",
         "errorCreatingDb": "Errore durante la creazione del nuovo database",
         "errorMigrating": "Errore durante la migrazione del database.",

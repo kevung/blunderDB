@@ -1087,10 +1087,10 @@ export async function updateEPC(position) {
                 race,
                 error: null
             });
-            const epc = bottomEPC;
-            if (epc) {
-                statusBarTextStore.set(tMsg('commands.epcStatus', { epc: epc.epc.toFixed(2), pips: epc.pipCount, wastage: epc.wastage.toFixed(2), rolls: epc.meanRolls.toFixed(3) }));
-            }
+            // Deliberately NO values in the status bar: the panel displays
+            // everything, and the challenge (défi) mode masks the panel — a
+            // status-bar copy would leak the answers.
+            statusBarTextStore.set('');
         } else {
             epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
             statusBarTextStore.set(tMsg('commands.epcNotAvailable'));

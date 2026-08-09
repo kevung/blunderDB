@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { parseMoveNotation, mirrorPosition, computePipCount } from '../utils/boardGeometry.js';
+import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton } from '../utils/boardGeometry.js';
 
 describe('parseMoveNotation', () => {
     test('parses a simple two-move string', () => {
@@ -107,5 +107,19 @@ describe('computePipCount', () => {
 
     test('empty board is zero/zero', () => {
         expect(computePipCount(makePosition())).toEqual({ pipCount1: 0, pipCount2: 0 });
+    });
+});
+
+describe('epcEditButton', () => {
+    test('rend le jan de Noir éditable (1-6 → clic gauche/Noir)', () => {
+        for (let pt = 1; pt <= 6; pt++) expect(epcEditButton(pt)).toBe(0);
+    });
+    test('rend le jan de Blanc éditable (19-24 → couleur Blanc), le bug rapporté', () => {
+        // Régression : l'ancien code EPC refusait tout point hors 1-6, rendant
+        // impossible l'insertion de pions du joueur 2 dans le panneau EPC.
+        for (let pt = 19; pt <= 24; pt++) expect(epcEditButton(pt)).toBe(2);
+    });
+    test('ignore le reste du plateau (hors des deux jans, barres comprises)', () => {
+        for (const pt of [0, 7, 12, 13, 18, 25]) expect(epcEditButton(pt)).toBe(null);
     });
 });

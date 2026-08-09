@@ -214,7 +214,6 @@
         "dbVersionMismatch": "Incompatibilité majeure de version de base de données. Le schéma de la base de données peut être incompatible avec la version actuelle de blunderDB. Continuer à modifier la base de données se fait à vos propres risques. Sauvegardez votre fichier avant de continuer.\nVersion de la base de données : {dbVersion}\nVersion attendue : {modelVersion}",
         "epcErrorComputing": "EPC : erreur de calcul",
         "epcNotAvailable": "EPC : N/D (les pions ne sont pas tous dans le jan intérieur)",
-        "epcStatus": "EPC : {epc} | Pips : {pips} | Gaspillage : {wastage} | Jets moy. : {rolls}",
         "errorClearingHistory": "Erreur lors de l'effacement de l'historique des commandes.",
         "errorCreatingDb": "Erreur lors de la création de la nouvelle base de données",
         "errorMigrating": "Erreur lors de la migration de la base de données.",

@@ -214,7 +214,6 @@
         "dbVersionMismatch": "Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: {dbVersion}\nExpected version: {modelVersion}",
         "epcErrorComputing": "EPC: Error computing",
         "epcNotAvailable": "EPC: N/A (checkers not all in home board)",
-        "epcStatus": "EPC: {epc} | Pips: {pips} | Wastage: {wastage} | Avg rolls: {rolls}",
         "errorClearingHistory": "Error clearing command history.",
         "errorCreatingDb": "Error creating new database",
         "errorMigrating": "Error migrating database.",
