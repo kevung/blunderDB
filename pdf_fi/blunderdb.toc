@@ -45,8 +45,8 @@
 \contentsline {paragraph}{Virheiden suuruusjakauman histogrammi}{21}{paragraph*.23}%
 \contentsline {subsubsection}{Yhdistämissääntö}{21}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: rajoitukset}{22}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Panneau Bearoff}{22}{subsection.2.2.17}%
-\contentsline {subsubsection}{Méthodologie et hypothèses du panneau Bearoff}{23}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.17}Bearoff\sphinxhyphen {}paneeli}{22}{subsection.2.2.17}%
+\contentsline {subsubsection}{Bearoff\sphinxhyphen {}paneelin metodologia ja oletukset}{23}{subsubsection*.26}%
 \contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}paneeli}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metatietopaneeli}{24}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Tietokannan jakaminen: alkuperä ja salasana}{24}{subsection.2.2.20}%

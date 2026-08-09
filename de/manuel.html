@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Handbuch &mdash; blunderDB 0.31.0 Dokumentation</title>
+  <title>2. Handbuch &mdash; blunderDB 0.32.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ab40cc24"></script>
+      <script src="_static/documentation_options.js?v=393f12cf"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -96,8 +96,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC: Einschränkungen</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Panneau Bearoff</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Méthodologie et hypothèses du panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Bearoff-Panel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Methodik und Annahmen des Bearoff-Panels</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki-Panel</a></li>
@@ -187,7 +187,7 @@
 <li><p>die Liste der importierten Matches anzuzeigen und durch die Züge eines Matches zu navigieren (Matches-Panel),</p></li>
 <li><p>Turniere anzuzeigen und zu verwalten (Turnier-Panel),</p></li>
 <li><p>Leistungsstatistiken anzuzeigen (Stats-Panel),</p></li>
-<li><p>calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),</p></li>
+<li><p>den EPC (Effective Pip Count) einer Bearoff-Stellung zu berechnen (Bearoff-Panel),</p></li>
 <li><p>Stellungen durch verteiltes Wiederholen zu studieren (Anki-Panel),</p></li>
 <li><p>die Metadaten der Datenbank anzuzeigen (Metadaten-Panel).</p></li>
 </ul>
@@ -531,140 +531,50 @@
 </section>
 </section>
 <section id="panneau-bearoff">
-<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Panneau Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
+<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Bearoff-Panel<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
 <p>Das Panel <strong>EPC</strong> (<em>CTRL-E</em>) berechnet den EPC (Effective Pip Count) einer Bearoff-Stellung. Es wird aktiviert, indem man <em>CTRL-E</em> drückt, auf den Tab EPC im unteren Panel klickt oder den Befehl <code class="docutils literal notranslate"><span class="pre">epc</span></code> ausführt.</p>
-<p>Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).</p>
-<p>Les résultats sont présentés sous forme de deux tableaux empilés :</p>
+<p>In diesem Panel bearbeitet der Benutzer die Position der Steine in den beiden Heimfeldern: Ein Klick auf die Punkte 1 bis 6 platziert Steine des unteren Spielers, ein Klick auf die Punkte 19 bis 24 platziert Steine des oberen Spielers (die Maustaste spielt keine Rolle).</p>
+<p>Die Ergebnisse werden in Form zweier übereinander angeordneter Tabellen dargestellt:</p>
 <ul class="simple">
-<li><p>en haut, un <strong>tableau des joueurs</strong> — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne <strong>Δ</strong> donne les
-différences <em>signées</em> (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;</p></li>
-<li><p>en dessous, séparé par un filet, un <strong>tableau course/videau</strong> : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe %) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La <strong>décision</strong> s’affiche à droite du tableau, avec
-le badge exact/estimé. Le <strong>joueur au trait</strong> et la <strong>position du videau</strong>
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet <em>Bearoff</em> de la configuration.</p></li>
+<li><p>oben eine <strong>Spielertabelle</strong> — eine Zeile pro Spieler (gekennzeichnet durch seinen Farbpunkt, der schwarze Spieler steht immer unten), eine Spalte pro Größe: EPC, Pip-Count, Wastage (Differenz zwischen EPC und Pip-Count), durchschnittliche Wurfzahl und Standardabweichung. Wenn beide Spieler Steine in ihrem Heimfeld haben, gibt eine <strong>Δ</strong>-Zeile die <em>vorzeichenbehafteten</em> Differenzen (unten − oben: negativ, wenn der schwarze Spieler vorne liegt) von EPC, Pips und Wastage an;</p></li>
+<li><p>darunter, durch eine Linie getrennt, eine <strong>Rennen-/Würfel-Tabelle</strong>: zwei Spalten mit der Gewinnwahrscheinlichkeit (eine pro Spieler-Farbpunkt, Werte ohne das %-Zeichen) und die Money-Equities — unter jeder Entscheidung außer der besten steht in Klammern der Equity-Abstand zur besten Entscheidung. Die <strong>Entscheidung</strong> wird rechts neben der Tabelle angezeigt, mit dem Badge exakt/geschätzt. Der <strong>Spieler am Zug</strong> und die <strong>Position des Verdopplungswürfels</strong> werden direkt am Brett bearbeitet, wie im Bearbeitungsmodus: Ein Klick auf das Bearoff-/Score-Rechteck eines Spielers macht ihn zum Spieler am Zug; ein Klick auf den Würfel wechselt zyklisch zentriert → Besitz unten → Besitz oben (Rechtsklick in umgekehrter Richtung). Der Wert des Würfels bleibt fest — im Money-Game werden die Equities in Einheiten des aktuellen Würfels ausgedrückt, nur sein Besitzer zählt. Die Analyse wird sofort neu berechnet. Im geschätzten Regime öffnet der Link „Konfigurationseinstellungen anzeigen“ direkt den Reiter <em>Bearoff</em> der Konfiguration.</p></li>
 </ul>
-<p>La case <em>Défi</em> reste épinglée en haut à droite du panneau.</p>
-<p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :</p>
+<p>Das Kontrollkästchen <em>Challenge</em> bleibt oben rechts im Panel angeheftet.</p>
+<p>Wenn die Stellung ein reines Bearoff ist (alle Steine beider Spieler in ihrem Heimfeld), zeigt die Rennen-Tabelle für den Spieler am Zug:</p>
 <ul class="simple">
-<li><p>la probabilité de gain,</p></li>
-<li><p>en régime <em>exact</em> : les équités money (cubeless, sans double, double/prend,
-double/passe) et le <strong>verdict de videau money</strong> (pas de double, double/prend
-ou double/passe),</p></li>
-<li><p>en régime <em>estimé</em> : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.</p></li>
+<li><p>die Gewinnwahrscheinlichkeit,</p></li>
+<li><p>im <em>exakten</em> Regime: die Money-Equities (Cubeless, ohne Doppeln, Doppeln/Take, Doppeln/Pass) und das <strong>Money-Würfel-Urteil</strong> (kein Doppeln, Doppeln/Take oder Doppeln/Pass),</p></li>
+<li><p>im <em>geschätzten</em> Regime: nur die Gewinnwahrscheinlichkeit, zusammen mit ihrer Fehlermarge — das Würfel-Urteil wird dann bewusst nicht angezeigt.</p></li>
 </ul>
-<p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
-two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Bearoff</span></a> pour la
-définition précise des deux régimes et de leurs hypothèses.</p>
-<p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au-delà, dans l’onglet <em>Bearoff</em> de la configuration :</p>
+<p>Ein Badge zeigt das Regime an: <strong>exakt</strong> (Wert aus einer Two-Sided-Datenbank gelesen) oder <strong>geschätzt ± Marge</strong>. Siehe <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodik und Annahmen des Bearoff-Panels</span></a> für die genaue Definition der beiden Regime und ihrer Annahmen.</p>
+<p><strong>Den exakten Bereich erweitern.</strong> Die integrierte Datenbank deckt 6 Steine pro Spieler ab. Zwei Wege, darüber hinauszugehen, im Reiter <em>Bearoff</em> der Konfiguration:</p>
 <ul class="simple">
-<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé <strong>reprend où il s’était arrêté</strong>
-(le fichier partiel est conservé et complété par requête HTTP Range) ;</p></li>
-<li><p>indiquer un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.</p></li>
+<li><p>die erweiterte Datenbank TS-06-11 herunterladen (1,2 GB, per SHA-256 geprüft, an derselben Stelle löschbar): exaktes Urteil bis 11 Steine pro Spieler. Ein unterbrochener oder abgebrochener Download <strong>wird dort fortgesetzt, wo er aufgehört hat</strong> (die Teildatei bleibt erhalten und wird per HTTP-Range-Anfrage vervollständigt);</p></li>
+<li><p>eine beliebige Two-Sided-<code class="docutils literal notranslate"><span class="pre">.bd</span></code>-Datei von gnubg angeben. Die Datenbank mit dem größten Bereich hat automatisch Vorrang.</p></li>
 </ul>
-<p><strong>Mode défi.</strong> La case <em>Défi</em> du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.</p>
-<p>Pour fermer le panneau Bearoff, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
+<p><strong>Challenge-Modus.</strong> Das Kontrollkästchen <em>Challenge</em> des Panels aktiviert einen Trainingsmodus: Bei jeder Änderung der Stellung werden die Werte der drei Zonen — die Zeile des unteren Spielers, die Zeile des oberen Spielers und die Rennen-Tabelle — verdeckt (ersetzt durch „···“); ein Klick auf eine Zone deckt nur diese Zone auf. Die Δ-Zeile erscheint erst, wenn beide Spielerzeilen aufgedeckt sind. So kann man trainieren, den EPC jeder Seite zu schätzen und sich dann zum Verdopplungswürfel zu äußern, bevor man nachprüft. Die Einstellung wird gespeichert.</p>
+<p>Um das Bearoff-Panel zu schließen, drücken Sie <em>CTRL-E</em> oder wechseln Sie zu einem anderen Tab.</p>
 <section id="methodologie-et-hypotheses-du-panneau-bearoff">
-<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
-<p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.</p>
-<p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le
-lancer</em> ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.</p>
-<p><strong>Blocs EPC (toujours exacts).</strong> L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le <em>jeu one-sided optimal</em> : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.</p>
-<p><strong>Probabilité de gain, régime exact.</strong> Lecture directe dans la base two-sided
-disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (&lt; 0,002 %).</p>
-<p><strong>Probabilité de gain, régime estimé.</strong> Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one-sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS-06-11. Trois hypothèses :</p>
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Methodik und Annahmen des Bearoff-Panels<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
+<p>Jeder vom Panel angezeigte Wert beruht auf präzisen Annahmen, die hier erschöpfend dargelegt werden.</p>
+<p><strong>Bereich.</strong> Das Panel behandelt nur das reine Bearoff: alle verbleibenden Steine beider Spieler in ihrem Heimfeld. Die Stellung wird <em>vor dem Wurf</em> bewertet; eventuell liegende Würfel werden ignoriert. Kontaktlose Rennen, bei denen Steine außerhalb des Heimfelds stehen, werden nicht behandelt.</p>
+<p><strong>EPC-Blöcke (immer exakt).</strong> EPC, durchschnittliche Wurfzahl und Standardabweichung stammen aus der exakten Verteilung der Anzahl der Würfe, die zum Abtragen aller Steine nötig sind, gelesen aus der One-Sided-Datenbank von GNUbg (6 Punkte, 15 Steine, integriert). EPC = durchschnittliche Würfe × 49/6 (49/6 ≈ 8,167 ist der exakte Durchschnitt der Pips pro Wurf, Päsche vierfach gezählt); Wastage = EPC − Pip-Count. Die einzige Idealisierung ist das <em>optimale One-Sided-Spiel</em>: Jeder Spieler minimiert seine eigenen Würfe und ignoriert den Gegner — das ist die Standarddefinition des EPC.</p>
+<p><strong>Gewinnwahrscheinlichkeit, exaktes Regime.</strong> Direktes Lesen aus der größten verfügbaren Two-Sided-Datenbank (integrierte TS-06-06, externe Datei oder heruntergeladene TS-06-11). Diese Datenbanken sind das Ergebnis einer vollständigen Rückwärtsanalyse unter optimalem Two-Sided-Spiel beider Seiten: keine zusätzliche Annahme, Fehler beschränkt auf die Quantisierung (&lt; 0,002 %).</p>
+<p><strong>Gewinnwahrscheinlichkeit, geschätztes Regime.</strong> Außerhalb des Bereichs der Datenbank: Die Wahrscheinlichkeit wird durch Faltung der beiden One-Sided-Verteilungen ermittelt (der Spieler am Zug gewinnt, wenn seine Wurfzahl kleiner oder gleich der des Gegners ist) und anschließende Anwendung einer festen polynomialen Korrektur, offline gegen die TS-06-11-Datenbank kalibriert. Drei Annahmen:</p>
 <ul class="simple">
-<li><p><strong>indépendance</strong> des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;</p></li>
-<li><p><strong>jeu one-sided optimal des deux camps</strong> — c’est <em>l’approximation</em> : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;</p></li>
-<li><p>la <strong>correction</strong> a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
-probabilité de gain). <strong>Au-delà de 11 pions par joueur, cette borne est
-extrapolée</strong> — la tendance est monotone mais aucun oracle ne la certifie.</p></li>
+<li><p><strong>Unabhängigkeit</strong> der beiden Abtragprozesse — im Rennen strukturell gegeben, ohne Kontakt gibt es keinerlei Interaktion;</p></li>
+<li><p><strong>optimales One-Sided-Spiel beider Seiten</strong> — das ist <em>die Approximation</em>: In Wirklichkeit weicht der zurückliegende Spieler ab, um auf Varianz zu spielen, und der Führende, um auf Sicherheit zu spielen. Der gemessene Effekt ist eine antisymmetrische Verzerrung (die Faltung übertreibt den Vorsprung des Führenden), die die Korrektur statistisch auffängt;</p></li>
+<li><p>die <strong>Korrektur</strong> wurde auf dem Bereich des Orakels kalibriert und validiert (bis 11 Steine pro Spieler). Gemessener Restfehler: Standardabweichung 0,05 %, 99. Perzentil 0,17 %, beobachtetes Maximum 0,9 % (in Prozentpunkten der Gewinnwahrscheinlichkeit). <strong>Jenseits von 11 Steinen pro Spieler ist diese Schranke extrapoliert</strong> — die Tendenz ist monoton, aber kein Orakel bestätigt sie.</p></li>
 </ul>
-<p><strong>Équités et verdict de videau (régime exact seulement).</strong> Les équités
-affichées sont celles du <strong>money game, sans Jacoby</strong>, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.</p>
+<p><strong>Equities und Würfel-Urteil (nur exaktes Regime).</strong> Die angezeigten Equities sind die des <strong>Money-Game ohne Jacoby</strong>, im Referenzrahmen der Bearoff-Literatur. Im Bereich ≤ 11 Steine pro Spieler sind Gammons unmöglich (jede Seite hat bereits mindestens 4 Steine abgetragen): Das ist keine Approximation. Das Urteil (kein Doppeln / Doppeln, Take / Doppeln, Pass) wird exakt aus den gespeicherten Equities rekonstruiert, nach der Regel von GNUbg, Zug für Zug gegen dessen Analyse validiert.</p>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Les équités cubeful supposent un <strong>jeu de videau optimal des deux
-camps jusqu’au bout</strong> : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 % de gain, D/T exact +0,006 contre +0,475 chez XG). La <strong>décision</strong>
-affichée, elle, coïncide avec celle des moteurs.</p>
+<p>Die Cubeful-Equities setzen ein <strong>optimales Spiel mit dem Verdopplungswürfel beider Seiten bis zum Ende</strong> voraus: Künftige Redoubles werden vollständig bewertet (vollständige Rückwärtsanalyse). In den sehr volatilen Rennen am Partieende frisst die Kaskade der Redoubles fast den gesamten Vorteil der Seite am Zug auf — die Equities „ohne Doppeln“ und „Doppeln/Take“ können dann nahe null liegen, wo eine Engine wie XG, deren Würfelmodell diese Kaskade nicht bewertet, Werte nahe dem Dead Cube anzeigt (zum Beispiel 2 Steine auf Punkt 3 gegen 2 Steine auf Punkt 2: 62 % Gewinn, exaktes D/T +0,006 gegenüber +0,475 bei XG). Die angezeigte <strong>Entscheidung</strong> hingegen stimmt mit der der Engines überein.</p>
 </div>
-<p><strong>Pourquoi le verdict n’est-il jamais estimé ?</strong> L’équité cubeful est un
-problème de <em>trajectoire</em> (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 % de
-désaccords avec l’analyse 2-ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.</p>
+<p><strong>Warum wird das Urteil nie geschätzt?</strong> Die Cubeful-Equity ist ein Problem der <em>Trajektorie</em> (wann doppeln?), das keine statistische Zusammenfassung der Stellung erfasst: Das beste gemessene statische Modell lässt einen Restfehler (Standardabweichung 0,016 Equity, Maximum 0,20), der ausreicht, um alle knappen Entscheidungen umzukehren. Ebenso wurde die Umrechnung des Urteils auf den Matchstand über eine Match-Equity-Tabelle als unzureichend gemessen (12 % Abweichungen von der 2-ply-Analyse von GNUbg, mit echten Blunders). Da ein mit Nachdruck angezeigtes falsches Urteil schlimmer ist als gar kein Urteil, zeigt blunderDB das Urteil nur an, wenn es exakt ist — und nur für Money.</p>
 <div class="admonition note">
 <p class="admonition-title">Bemerkung</p>
-<p>Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg.</p>
+<p>Die Bearoff-Datenbanken sind unveränderliche mathematische Tabellen, die sich mit dem Werkzeug <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> von GNUbg neu erzeugen lassen.</p>
 </div>
 </section>
 </section>

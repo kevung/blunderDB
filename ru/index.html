@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; документация blunderDB 0.31.0</title>
+  <title>blunderDB &mdash; документация blunderDB 0.32.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b83935e1"></script>
+      <script src="_static/documentation_options.js?v=2a46eb0a"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -208,7 +208,7 @@
 <td><p>Упрощение интерфейса: навигация по матчам и коллекциям теперь выполняется непосредственно через панели.</p>
 <p>Командная строка, интегрированная в строку состояния.</p>
 <p>Панель Консоль переименована в панель Log.</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>Выделенная панель Bearoff в нижней панели.</p>
 <p>Копирование/вставка позиции в панели поиска.</p>
 <p>Перетаскивание для изменения порядка коллекций, позиций в коллекциях и матчей в турнирах.</p>
 <p>Столбец турнира в панели матчей со встроенным редактированием.</p>
@@ -289,6 +289,10 @@
 <td><p>04/08/2026</p></td>
 <td><p>Передача базы третьим лицам: два независимых механизма, оба необязательные и выбираемые в момент экспорта. <strong>Отметка происхождения</strong> записывает в файл, что это за файл и откуда он, и подписывается идентичностью автора, создаваемой сама собой при первом использовании; отметку невозможно подделать, она читается в верхней части панели «Метаданные» (или командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, которая никогда не пишет в файл) и ничего не фиксирует на стороне получателя — ни журнала, ни слежения. <strong>Защита паролем</strong> даёт зашифрованный файл <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, ключ выводится через Argon2id), пароль проверяется при каждом открытии, а заголовок остаётся читаемым без него; идентичность экспортируется и импортируется одним файлом из настроек. Переработанное окно экспорта: один экран вместо четырёх, напоминание о том, что действительно выгружается (отображаемые позиции), охваченная доля каждой коллекции выделяется красным, когда она неполная, турниры экспортируются только вместе со своими матчами — и экспорт стал втрое быстрее. Окно настроек разделено на три вкладки («Интерфейс», «Цвета доски», «Идентичность автора») и больше не меняет размер и положение. Панель «Метаданные» размещена в единой сетке. Панель «Журнал», которая лишь повторяла введённые команды, удалена. Заметные исправления: неверный пароль больше не открывает защищённую базу, поля модальных окон больше не теряют фокус при щелчке, расчёт показателей PR/MWC больше не падает на игре на деньги, а временные файлы (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, блокировка) удаляются при закрытии. См. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a> и <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Руководство</span></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>09/08/2026</p></td>
+<td><p>Панель EPC становится панелью <strong>Bearoff</strong> и получает полный анализ гонки. На позиции чистого bearoff она отображает — помимо EPC, пипкаунта, wastage и среднего числа бросков каждого игрока, теперь представленных таблицей со знаковой строкой Δ — вероятности выигрыша обоих игроков и money-эквити (cubeless, без дабла, дабл/тейк, дабл/пас, с отрывом каждого решения от лучшего), а также <strong>лучшее решение по кубу</strong>. Два чётко различаемых режима: <em>точный</em> (чтение из two-sided базы; встроенная база TS-06-06 из GNUbg, покрывающая до 6 шашек у каждого игрока) и <em>оценка</em> (калиброванная свёртка с отображаемой погрешностью — вердикт по кубу никогда не оценивается). Расширенная база TS-06-11 (точный вердикт до 11 шашек у каждого игрока, 1,2 ГБ) загружается с новой вкладки <em>Bearoff</em> конфигурации, с проверкой целостности и возобновлением прерванных загрузок; можно также указать любой two-sided файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code> из gnubg. <strong>Режим «Вызов»</strong> для тренировки: результаты скрываются при каждом изменении и открываются зона за зоной, щелчком. Редактирование целиком на доске: шашки обоих домов, игрок на ходу (щелчок по прямоугольнику снятия/счёта) и позиция куба (щелчок по кубу). Щелчок по доске теперь точен при любом масштабе интерфейса (щелчок по пункту 1 мог попадать на пункт 2). Новая команда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> в командной строке и опция <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> серверного режима. Новый раздел руководства «Методология и допущения панели Bearoff» исчерпывающе излагает допущения, стоящие за каждым отображаемым значением. См. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Панель Bearoff</span></a> и <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Методология и допущения панели Bearoff</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -318,7 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. Панель матчей</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. Панель турниров</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Панель Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Панель Bearoff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Панель Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Панель метаданных</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Распространение базы: происхождение и пароль</a></li>

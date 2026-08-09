@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.31.0 Dokumentation</title>
+  <title>8. Headless-Modus (Server) &mdash; blunderDB 0.32.0 Dokumentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ab40cc24"></script>
+      <script src="_static/documentation_options.js?v=393f12cf"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=9bf55d28"></script>
@@ -183,18 +183,13 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
 <td><p>PostgreSQL: aktiviert Row-Level Security pro Tenant (Verteidigung in der Tiefe, optional)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;fichier&gt;</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;Datei&gt;</span></code></p></td>
 <td><p>–</p></td>
-<td><p>base de bearoff two-sided (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) optionnelle élargissant la base
-intégrée TS-06-06 pour l’analyse de course du point d’accès EPC ;
-le démon ne télécharge jamais de base lui-même — monter le fichier
-en volume et le désigner ici</p></td>
+<td><p>optionale Two-Sided-Bearoff-Datenbank (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), die die integrierte TS-06-06-Datenbank für die Rennen-Analyse des EPC-Endpunkts erweitert; der Daemon lädt nie selbst eine Datenbank herunter — die Datei als Volume einbinden und hier angeben</p></td>
 </tr>
 </tbody>
 </table>
-<p>La plupart des options peuvent aussi être fournies par variable
-d’environnement (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
-<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>).</p>
+<p>Die meisten Optionen können auch über Umgebungsvariablen bereitgestellt werden (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>).</p>
 <section id="points-d-acces">
 <h3><span class="section-number">8.2.1. </span>Endpunkte<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
 <p>Der Dienst stellt stets vorhandene Betriebs-Endpunkte bereit:</p>

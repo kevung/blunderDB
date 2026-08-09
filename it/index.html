@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentazione blunderDB 0.31.0 </title>
+  <title>blunderDB &mdash; Documentazione blunderDB 0.32.0 </title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b0c1c97e"></script>
+      <script src="_static/documentation_options.js?v=22be1795"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=45930005"></script>
@@ -208,7 +208,7 @@
 <td><p>Semplificazione dell’interfaccia: la navigazione nei match e nelle collezioni avviene direttamente tramite i pannelli.</p>
 <p>Riga di comando integrata nella barra di stato.</p>
 <p>Pannello Console rinominato in pannello Log.</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>Pannello Bearoff dedicato nel pannello inferiore.</p>
 <p>Copia/incolla di posizione nel pannello di ricerca.</p>
 <p>Trascinamento per riordinare le collezioni, le posizioni all’interno delle collezioni e i match all’interno dei tornei.</p>
 <p>Colonna torneo nel pannello dei match con modifica inline.</p>
@@ -289,6 +289,10 @@
 <td><p>04/08/2026</p></td>
 <td><p>Distribuzione di un database a terzi: due meccanismi indipendenti, entrambi facoltativi e scelti al momento dell’esportazione. Il <strong>contrassegno di origine</strong> iscrive nel file che cos’è e da dove proviene, firmato da un’identità di emittente creata da sé al primo utilizzo; il contrassegno non è falsificabile, si legge in cima al pannello Metadati (oppure con <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, che non scrive mai nel file) e non registra nulla dal lato di chi riceve il database: nessun registro, nessun tracciamento. La <strong>protezione con password</strong> produce un file <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> cifrato (AES-256-GCM, chiave derivata con Argon2id), verificato a ogni apertura e la cui intestazione resta leggibile in chiaro; l’identità si esporta e si importa in un unico file dalle impostazioni. Finestra di esportazione ridisegnata: una sola schermata invece di quattro, promemoria di ciò che viene realmente esportato (le posizioni visualizzate), parte coperta di ogni raccolta segnalata in rosso quando è parziale, tornei esportabili solo insieme ai loro match — e un’esportazione tre volte più rapida. Finestra delle impostazioni riorganizzata in tre schede (Interfaccia, Colori della board, Identità dell’emittente), di dimensione e posizione stabili. Pannello Metadati disposto in un’unica griglia. Il pannello Log, che si limitava a ripetere i comandi digitati, è stato rimosso. Correzioni di rilievo: una password errata non apre più un database protetto, i campi delle finestre modali non perdono più il focus al clic, il calcolo degli indicatori PR/MWC non va più in errore su una partita a soldi e i file temporanei (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lock) vengono ripuliti alla chiusura. Vedere <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Distribuire un database: origine e password</span></a> e <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuale</span></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>9 agosto 2026</p></td>
+<td><p>Il pannello EPC diventa il pannello <strong>Bearoff</strong> e acquisisce l’analisi completa della corsa. Su una posizione di bearoff puro mostra — oltre all’EPC, al pip count, al wastage e al numero medio di lanci di ciascun giocatore, ora presentati in tabella con una riga Δ con segno — le probabilità di vittoria dei due giocatori e le equità money (cubeless, senza raddoppio, raddoppio/prende, raddoppio/passa, con lo scarto di ogni decisione rispetto alla migliore) nonché la <strong>migliore decisione di cubo</strong>. Due regimi chiaramente distinti: <em>esatto</em> (lettura in un database two-sided; database TS-06-06 di GNUbg integrato, che copre fino a 6 pedine per giocatore) e <em>stimato</em> (convoluzione calibrata, margine d’errore mostrato — il verdetto di cubo non è mai stimato). Il database esteso TS-06-11 (verdetto esatto fino a 11 pedine per giocatore, 1,2 GB) si scarica dalla nuova scheda <em>Bearoff</em> della configurazione, con verifica di integrità e ripresa dei download interrotti; è anche possibile indicare un qualsiasi file <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided di gnubg. <strong>Modalità sfida</strong> per l’allenamento: i risultati si nascondono a ogni modifica e si rivelano zona per zona, con un clic. Modifica interamente sul tavoliere: pedine delle due tavole interne, giocatore al tiro (clic sul rettangolo uscita/punteggio) e posizione del cubo (clic sul cubo). Il clic sul tavoliere è ora esatto a qualsiasi scala dell’interfaccia (un clic sulla punta 1 poteva finire sulla punta 2). Nuovo comando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> da riga di comando e opzione <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> della modalità server. Una nuova sezione del manuale, « Metodologia e ipotesi del pannello Bearoff », enuncia esaustivamente le ipotesi dietro ogni valore mostrato. Vedere <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Pannello Bearoff</span></a> e <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Metodologia e ipotesi del pannello Bearoff</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -318,7 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. Pannello Match</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. Pannello Tornei</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Pannello Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Pannello Bearoff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Pannello Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Pannello Metadati</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Distribuire un database: origine e password</a></li>

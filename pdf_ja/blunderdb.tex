@@ -55,7 +55,7 @@
 
 \title{blunderDB}
 \date{2026年08月09日}
-\release{0.31.0}
+\release{0.32.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{リリース}
@@ -480,7 +480,7 @@ EPC（実効ピップカウント）計算機。GNUbgのベアオフデータベ
 コンソールパネルをログパネルに名称変更。
 
 \sphinxAtStartPar
-Panneau Bearoff dédié dans le panneau inférieur.
+下部パネルに専用のベアオフパネル。
 
 \sphinxAtStartPar
 検索パネルでのポジションのコピー／貼り付け。
@@ -787,6 +787,22 @@ Anki パネル：\sphinxstyleemphasis{Study} の隣の \sphinxstyleemphasis{Cram
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.32.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+2026/08/09
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+EPCパネルは\sphinxstylestrong{ベアオフ}パネルとなり、完全なレース分析機能を獲得しました。純粋なベアオフのポジションでは、各プレイヤーのEPC、ピップカウント、ウェイステージ、平均ロール数（符号付きのΔ行を持つ表形式で表示されるようになりました）に加えて、両プレイヤーの勝率とマネーゲームのエクイティ（キューブレス、ノーダブル、ダブル/テイク、ダブル/パス、各判断の最善との差付き）、そして\sphinxstylestrong{最善のキューブ判定}を表示します。2つの方式が明確に区別されます：\sphinxstyleemphasis{正確}（two\sphinxhyphen{}sidedデータベースからの読み取り；GNUbgのTS\sphinxhyphen{}06\sphinxhyphen{}06データベースを内蔵、各プレイヤー6チェッカーまでカバー）と\sphinxstyleemphasis{推定}（較正済みの畳み込み、誤差の範囲を表示——キューブ判定は決して推定されません）。拡張データベースTS\sphinxhyphen{}06\sphinxhyphen{}11（各プレイヤー11チェッカーまでの正確な判定、1.2 GB）は、設定の新しい\sphinxstyleemphasis{ベアオフ}タブからダウンロードでき、整合性検証と中断されたダウンロードの再開に対応します；gnubgの任意のtwo\sphinxhyphen{}sided \sphinxcode{\sphinxupquote{.bd}} ファイルを指定することもできます。トレーニング用の\sphinxstylestrong{チャレンジモード}：結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。ボード上での完全な編集：両インナーボードのチェッカー、手番のプレイヤー（ベアオフ/スコアの長方形をクリック）、キューブの位置（キューブをクリック）。ボードのクリックはあらゆるインターフェース倍率で正確になりました（ポイント1のクリックがポイント2に着地することがありました）。コマンドラインの新コマンド \sphinxcode{\sphinxupquote{blunderdb epc}} とサーバーモードの \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} オプション。マニュアルの新しい節「ベアオフパネルの方法論と仮定」が、表示される各値の背後にある仮定を漏れなく述べています。{\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ベアオフパネル}}}}} と {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ベアオフパネルの方法論と仮定}}}}} を参照。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -809,15 +825,15 @@ blunderDB の最新バージョンは MIT ライセンスの下で利用可能�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
+Windows 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.32.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
+Linux 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0}
 
 \item {} 
 \sphinxAtStartPar
-Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
+Mac 版：\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.32.0.zip}
 
 \end{itemize}
 
@@ -869,7 +885,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{生のバイナリ (上級者向けの方法)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
+生のバイナリ \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0} も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -877,7 +893,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
+webkit2gtk ライブラリのバージョンに応じて 2 つの Linux 版が公開されています。\sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}} というエラーが表示される場合、お使いのディストリビューションは webkit2gtk\sphinxhyphen{}4.1 を使用しています。\sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} パッケージ、AUR パッケージを使用するか、専用版 \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.32.0} をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。
 \end{sphinxadmonition}
 
 
@@ -1007,7 +1023,7 @@ eXtreme Gammon（XG）、GNUbg、または BGBlitz から取得した、現在�
 
 \item {} 
 \sphinxAtStartPar
-calculer l\textquotesingle{}EPC (Effective Pip Count) d\textquotesingle{}une position de bearoff (panneau Bearoff),
+ベアオフポジションの EPC（Effective Pip Count）を計算する（ベアオフパネル）、
 
 \item {} 
 \sphinxAtStartPar
@@ -1708,205 +1724,115 @@ MWC cost はフィルターされたデータセット全体にわたる累積�
 \end{itemize}
 
 
-\subsection{Panneau Bearoff}
+\subsection{ベアオフパネル}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
 \sphinxstylestrong{EPC} パネル（\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。\sphinxstyleemphasis{CTRL\sphinxhyphen{}E} を押すか、下部パネルの EPC タブをクリックするか、\sphinxcode{\sphinxupquote{epc}} コマンドを実行することで有効になります。
 
 \sphinxAtStartPar
-Dans ce panneau, l\textquotesingle{}utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).
+このパネルでは、両方のインナーボードのチェッカーの配置を編集できます。ポイント1〜6をクリックすると下側のプレイヤーのチェッカーが置かれ、ポイント19〜24をクリックすると上側のプレイヤーのチェッカーが置かれます（マウスのボタンはどちらでも構いません）。
 
 \sphinxAtStartPar
-Les résultats sont présentés sous forme de deux tableaux empilés :
+結果は上下に並んだ2つの表として表示されます：
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-en haut, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l\textquotesingle{}EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les
-différences \sphinxstyleemphasis{signées} (bas − haut : négatif quand le joueur noir est en
-avance) d\textquotesingle{}EPC, de pips et de wastage ;
+上には\sphinxstylestrong{プレイヤーの表}——プレイヤーごとに1行（色付きの点で識別され、黒のプレイヤーが常に下）、量ごとに1列：EPC、ピップカウント、ウェステージ（EPCとピップカウントの差）、平均ロール数、標準偏差。両プレイヤーが自分のインナーボードにチェッカーを持つ場合、\sphinxstylestrong{Δ}行がEPC、ピップ、ウェステージの\sphinxstyleemphasis{符号付き}の差（下−上：黒のプレイヤーがリードしているときは負）を示します；
 
 \item {} 
 \sphinxAtStartPar
-en dessous, séparé par un filet, un \sphinxstylestrong{tableau course/videau} : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe \%) et les équités money — sous chaque décision autre que
-la meilleure, l\textquotesingle{}écart d\textquotesingle{}équité à la meilleure décision est indiqué
-entre parenthèses. La \sphinxstylestrong{décision} s\textquotesingle{}affiche à droite du tableau, avec
-le badge exact/estimé. Le \sphinxstylestrong{joueur au trait} et la \sphinxstylestrong{position du videau}
-s\textquotesingle{}éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d\textquotesingle{}un joueur lui donne le trait ; cliquer le
-videau fait tourner centré \(\rightarrow\) possédé bas \(\rightarrow\) possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L\textquotesingle{}analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l\textquotesingle{}onglet \sphinxstyleemphasis{Bearoff} de la configuration.
+その下に、罫線で区切られた\sphinxstylestrong{レース／キューブの表}：2列の勝率（プレイヤーの色付きの点ごとに1列、\%記号なしの値）とマネーゲームのエクイティ——最善以外の各判断の下には、最善の判断とのエクイティ差が括弧内に示されます。\sphinxstylestrong{判断}は表の右側に、正確／推定のバッジとともに表示されます。\sphinxstylestrong{手番のプレイヤー}と\sphinxstylestrong{キューブの位置}は、編集モードと同様に、ボード上で直接編集できます。プレイヤーのベアオフ／スコアの長方形をクリックするとそのプレイヤーに手番が移り、キューブをクリックすると中央\(\rightarrow\)下側所有\(\rightarrow\)上側所有の順に切り替わります（右クリックで逆順）。キューブの値は固定されたままです——マネーゲームではエクイティは現在のキューブの単位で表され、所有者だけが意味を持ちます。分析は直ちに再計算されます。推定方式では、「設定を表示」リンクから設定の\sphinxstyleemphasis{ベアオフ}タブが直接開きます。
 
 \end{itemize}
 
 \sphinxAtStartPar
-La case \sphinxstyleemphasis{Défi} reste épinglée en haut à droite du panneau.
+\sphinxstyleemphasis{チャレンジ}チェックボックスはパネルの右上に固定表示されたままです。
 
 \sphinxAtStartPar
-Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :
+ポジションが純粋なベアオフ（両プレイヤーの全チェッカーが自分のインナーボード内にある）である場合、レースの表には手番のプレイヤーについて次が表示されます：
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-la probabilité de gain,
+勝率、
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{exact} : les équités money (cubeless, sans double, double/prend,
-double/passe) et le \sphinxstylestrong{verdict de videau money} (pas de double, double/prend
-ou double/passe),
+\sphinxstyleemphasis{正確}方式では：マネーゲームのエクイティ（キューブレス、ノーダブル、ダブル/テイク、ダブル/パス）と\sphinxstylestrong{マネーゲームのキューブ判定}（ノーダブル、ダブル/テイク、またはダブル/パス）、
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{estimé} : la probabilité de gain seule, accompagnée de sa marge
-d\textquotesingle{}erreur — le verdict de videau n\textquotesingle{}est alors volontairement pas affiché.
+\sphinxstyleemphasis{推定}方式では：勝率のみが誤差の範囲とともに表示されます——この場合、キューブ判定は意図的に表示されません。
 
 \end{itemize}
 
 \sphinxAtStartPar
-Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
-two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé \(\pm\) marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}} pour la
-définition précise des deux régimes et de leurs hypothèses.
+バッジが方式を示します：\sphinxstylestrong{正確}（two\sphinxhyphen{}sidedデータベースから読み取った値）または\sphinxstylestrong{推定 \(\pm\) 誤差}。2つの方式とその仮定の正確な定義については {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ベアオフパネルの方法論と仮定}}}}} を参照してください。
 
 \sphinxAtStartPar
-\sphinxstylestrong{Élargir le domaine exact.} La base intégrée couvre 6 pions par joueur.
-Deux moyens d\textquotesingle{}aller au\sphinxhyphen{}delà, dans l\textquotesingle{}onglet \sphinxstyleemphasis{Bearoff} de la configuration :
+\sphinxstylestrong{正確な範囲を広げる。} 内蔵データベースは各プレイヤー6チェッカーまでをカバーします。それを超えるには、設定の\sphinxstyleemphasis{ベアオフ}タブに2つの方法があります：
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
-supprimable au même endroit) : verdict exact jusqu\textquotesingle{}à 11 pions par joueur.
-Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où il s\textquotesingle{}était arrêté}
-(le fichier partiel est conservé et complété par requête HTTP Range) ;
+拡張データベースTS\sphinxhyphen{}06\sphinxhyphen{}11（1.2 GB、SHA\sphinxhyphen{}256で検証、同じ場所から削除可能）をダウンロードする：各プレイヤー11チェッカーまでの正確な判定。中断またはキャンセルされたダウンロードは\sphinxstylestrong{停止したところから再開されます}（部分ファイルが保持され、HTTP Rangeリクエストで補完されます）；
 
 \item {} 
 \sphinxAtStartPar
-indiquer un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided de gnubg quelconque. La base au
-domaine le plus large l\textquotesingle{}emporte automatiquement.
+gnubgの任意のtwo\sphinxhyphen{}sided \sphinxcode{\sphinxupquote{.bd}} ファイルを指定する。最も広い範囲を持つデータベースが自動的に優先されます。
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Mode défi.} La case \sphinxstyleemphasis{Défi} du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n\textquotesingle{}apparaît qu\textquotesingle{}une fois les deux lignes joueurs
-révélées. On peut ainsi s\textquotesingle{}entraîner à estimer l\textquotesingle{}EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
+\sphinxstylestrong{チャレンジモード。} パネルの\sphinxstyleemphasis{チャレンジ}チェックボックスはトレーニングモードを有効にします。ポジションを変更するたびに、3つの領域——下側プレイヤーの行、上側プレイヤーの行、レースの表——の値が隠され（「···」に置き換えられ）、領域をクリックするとその領域だけが表示されます。Δ行は、両方のプレイヤー行が表示されて初めて現れます。こうして、各陣営のEPCを推定し、次にキューブについて判断する練習をしてから、答えを確認できます。この設定は記憶されます。
 
 \sphinxAtStartPar
-Pour fermer le panneau Bearoff, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
+ベアオフパネルを閉じるには、\sphinxstyleemphasis{CTRL\sphinxhyphen{}E} を押すか、別のタブに切り替えます。
 
 
-\subsubsection{Méthodologie et hypothèses du panneau Bearoff}
+\subsubsection{ベアオフパネルの方法論と仮定}
 \label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-bearoff}}\label{\detokenize{manuel:epc-methodologie}}
 \sphinxAtStartPar
-Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.
+パネルに表示される各値は明確な仮定に基づいています。ここではそれらを漏れなく述べます。
 
 \sphinxAtStartPar
-\sphinxstylestrong{Domaine.} Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée \sphinxstyleemphasis{avant le
-lancer} ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.
+\sphinxstylestrong{範囲。} パネルが扱うのは純粋なベアオフのみです。すなわち、両プレイヤーの残りの全チェッカーが自分のインナーボード内にある状態です。ポジションは\sphinxstyleemphasis{ロール前}に評価され、置かれているダイスは無視されます。チェッカーがインナーボードの外にあるノーコンタクトのレースは扱われません。
 
 \sphinxAtStartPar
-\sphinxstylestrong{Blocs EPC (toujours exacts).} L\textquotesingle{}EPC, le nombre moyen de lancers et
-l\textquotesingle{}écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one\sphinxhyphen{}sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L\textquotesingle{}unique idéalisation est le \sphinxstyleemphasis{jeu one\sphinxhyphen{}sided optimal} : chaque joueur
-minimise ses propres lancers en ignorant l\textquotesingle{}adversaire — c\textquotesingle{}est la définition
-standard de l\textquotesingle{}EPC.
+\sphinxstylestrong{EPCブロック（常に正確）。} EPC、平均ロール数、標準偏差は、全チェッカーを上げるのに必要なロール数の正確な分布から得られ、GNUbgのone\sphinxhyphen{}sidedデータベース（6ポイント、15チェッカー、内蔵）から読み取られます。EPC = 平均ロール数 × 49/6（49/6 ≈ 8.167は1ロールあたりのピップの正確な平均で、ゾロ目は4回と数えます）；ウェステージ = EPC − ピップカウント。唯一の理想化は\sphinxstyleemphasis{最適なone\sphinxhyphen{}sidedプレイ}です。各プレイヤーは相手を無視して自分のロール数を最小化します——これがEPCの標準的な定義です。
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime exact.} Lecture directe dans la base two\sphinxhyphen{}sided
-disponible la plus large (intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06, fichier externe, ou TS\sphinxhyphen{}06\sphinxhyphen{}11
-téléchargée). Ces bases résultent d\textquotesingle{}une analyse rétrograde complète sous jeu
-two\sphinxhyphen{}sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (\textless{} 0,002 \%).
+\sphinxstylestrong{勝率、正確方式。} 利用可能な最も広いtwo\sphinxhyphen{}sidedデータベース（内蔵のTS\sphinxhyphen{}06\sphinxhyphen{}06、外部ファイル、またはダウンロードしたTS\sphinxhyphen{}06\sphinxhyphen{}11）から直接読み取ります。これらのデータベースは、両陣営の最適なtwo\sphinxhyphen{}sidedプレイの下での完全な後退解析の結果です。追加の仮定はなく、誤差は量子化によるもの（\textless{} 0.002 \%）に限られます。
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime estimé.} Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one\sphinxhyphen{}sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l\textquotesingle{}adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS\sphinxhyphen{}06\sphinxhyphen{}11. Trois hypothèses :
+\sphinxstylestrong{勝率、推定方式。} データベースの範囲外では、勝率は2つのone\sphinxhyphen{}sided分布の畳み込み（手番のプレイヤーは、自分のロール数が相手のロール数以下であれば勝ちます）により求め、その後、TS\sphinxhyphen{}06\sphinxhyphen{}11データベースに対してオフラインで較正された固定の多項式補正を適用します。3つの仮定があります：
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{indépendance} des deux processus de sortie — structurelle en course,
-sans contact il n\textquotesingle{}y a aucune interaction ;
+2つのベアオフ過程の\sphinxstylestrong{独立性}——レースでは構造的なもので、コンタクトがなければ相互作用は一切ありません；
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{jeu one\sphinxhyphen{}sided optimal des deux camps} — c\textquotesingle{}est \sphinxstyleemphasis{l\textquotesingle{}approximation} : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L\textquotesingle{}effet mesuré est un biais antisymétrique (la convolution
-exagère l\textquotesingle{}avance du meneur) que la correction absorbe statistiquement ;
+\sphinxstylestrong{両陣営の最適なone\sphinxhyphen{}sidedプレイ}——これが\sphinxstyleemphasis{近似}です。実際には、リードされている側は分散を求めてプレイを変え、リードしている側は安全策を取ります。測定された効果は反対称のバイアス（畳み込みはリードしている側の優位を誇張します）で、補正がこれを統計的に吸収します；
 
 \item {} 
 \sphinxAtStartPar
-la \sphinxstylestrong{correction} a été calibrée et validée sur le domaine de l\textquotesingle{}oracle
-(jusqu\textquotesingle{}à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 \%, 99e centile 0,17 \%, maximum observé 0,9 \% (en points de
-probabilité de gain). \sphinxstylestrong{Au\sphinxhyphen{}delà de 11 pions par joueur, cette borne est
-extrapolée} — la tendance est monotone mais aucun oracle ne la certifie.
+\sphinxstylestrong{補正}は、オラクルの範囲（各プレイヤー11チェッカーまで）で較正・検証されています。測定された残留誤差：標準偏差0.05 \%、第99百分位0.17 \%、観測された最大値0.9 \%（勝率のポイント単位）。\sphinxstylestrong{各プレイヤー11チェッカーを超えると、この上限は外挿されたものです}——傾向は単調ですが、それを保証するオラクルはありません。
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Équités et verdict de videau (régime exact seulement).} Les équités
-affichées sont celles du \sphinxstylestrong{money game, sans Jacoby}, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n\textquotesingle{}est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.
+\sphinxstylestrong{エクイティとキューブ判定（正確方式のみ）。} 表示されるエクイティは、ベアオフの文献の慣例に従った\sphinxstylestrong{ジャコビールールなしのマネーゲーム}のものです。各プレイヤー11チェッカー以下の範囲ではギャモンは不可能です（各陣営はすでに少なくとも4チェッカーを上げています）。これは近似ではありません。判定（ノーダブル／ダブル・テイク／ダブル・パス）は、保存されたエクイティからGNUbgの規則に従って正確に再構築され、GNUbgの分析と一つひとつ照合して検証されています。
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Les équités cubeful supposent un \sphinxstylestrong{jeu de videau optimal des deux
-camps jusqu\textquotesingle{}au bout} : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l\textquotesingle{}avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 \% de gain, D/T exact +0,006 contre +0,475 chez XG). La \sphinxstylestrong{décision}
-affichée, elle, coïncide avec celle des moteurs.
+キューブフルのエクイティは、\sphinxstylestrong{最後まで両陣営が最適なキューブプレイを行う}ことを前提とします。将来のリキューブは完全に評価されます（完全な後退解析）。終盤の非常に変動の大きいレースでは、リキューブの連鎖が手番の陣営の優位のほとんどを食いつぶします——そのため「ノーダブル」と「ダブル/テイク」のエクイティはゼロに近くなることがあり、一方、キューブモデルがこの連鎖を評価しないXGのようなエンジンは、デッドキューブに近い値を表示します（例えば3ポイントに2チェッカー対2ポイントに2チェッカー：勝率62 \%、正確なD/Tは+0.006、XGでは+0.475）。ただし、表示される\sphinxstylestrong{判断}はエンジンのものと一致します。
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Pourquoi le verdict n\textquotesingle{}est\sphinxhyphen{}il jamais estimé ?} L\textquotesingle{}équité cubeful est un
-problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu\textquotesingle{}aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d\textquotesingle{}équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d\textquotesingle{}équités de match a été mesurée insuffisante (12 \% de
-désaccords avec l\textquotesingle{}analyse 2\sphinxhyphen{}ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n\textquotesingle{}affiche le verdict que lorsqu\textquotesingle{}il est exact — et money.
+\sphinxstylestrong{なぜ判定は決して推定されないのか。} キューブフルのエクイティは\sphinxstyleemphasis{軌道}の問題（いつダブルするか）であり、ポジションのいかなる統計的要約もこれを捉えられません。測定された最良の静的モデルでも残留誤差（エクイティの標準偏差0.016、最大0.20）が残り、これは僅差の判断をすべて覆すのに十分です。同様に、マッチエクイティテーブルによる判定のマッチスコアへの変換も不十分であると測定されました（GNUbgの2\sphinxhyphen{}ply分析との不一致12 \%、本物のブランダーを含む）。自信満々に表示される誤った判定は判定なしより悪いため、blunderDBは判定が正確——かつマネーゲーム——である場合にのみ表示します。
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
-Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l\textquotesingle{}outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg.
+ベアオフデータベースは不変の数学的な表であり、GNUbgの\sphinxcode{\sphinxupquote{makebearoff}}ツールで再生成できます。
 \end{sphinxadmonition}
 
 
@@ -2512,8 +2438,7 @@ EPCカルキュレーター（Effective Pip Count）は、ポジションのベ�
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l\textquotesingle{}onglet Bearoff dans le panneau inférieur,
-ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
+\sphinxstyleemphasis{CTRL\sphinxhyphen{}E} を押すか、下部パネルのベアオフタブをクリックするか、\sphinxcode{\sphinxupquote{epc}} コマンドを実行します。
 
 \item {} 
 \sphinxAtStartPar
@@ -2521,17 +2446,11 @@ ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel dans le panneau Bearoff dédié:
-EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
-bearoff pur, la probabilité de gain du joueur au trait avec, dans le
-domaine exact, le verdict de videau money (voir la section
-« Méthodologie et hypothèses du panneau Bearoff » du manuel).
+結果は専用のベアオフパネルにリアルタイムで表示されます：EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージ。さらに純粋なベアオフでは、手番のプレイヤーの勝率が表示され、正確な範囲内ではマネーゲームのキューブ判定も表示されます（マニュアルの「ベアオフパネルの方法論と仮定」の節を参照）。
 
 \item {} 
 \sphinxAtStartPar
-Pour s\textquotesingle{}entraîner à estimer ces valeurs, cocher la case \sphinxstyleemphasis{Défi} : les
-résultats sont masqués à chaque modification et se révèlent zone par
-zone, d\textquotesingle{}un clic.
+これらの値を推定する練習をするには、\sphinxstyleemphasis{チャレンジ}チェックボックスをオンにします。結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。
 
 \end{enumerate}
 
@@ -2793,7 +2712,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
+ベアオフパネル（Effective Pip Count、勝率、ベアオフでのキューブ判定）を開きます。
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4851,7 +4770,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/cacher le panneau Bearoff.
+ベアオフパネルを表示/非表示にする。
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6396,13 +6315,7 @@ blunderDB は自動的に重複を検出し、データベースにすでに存�
 EPC（Effective Pip Count）は、ベアオフポジションを評価するための単純なピップカウントよりも正確な測定値です。blunderDB の EPC 計算機は GNUbg の 6 ポイントベアオフデータベースを使用し、EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージをリアルタイムで計算します。
 
 \sphinxAtStartPar
-Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
-gain du joueur au trait et, lorsque la position est couverte par une base
-two\sphinxhyphen{}sided (base intégrée jusqu\textquotesingle{}à 6 pions par joueur, base téléchargeable
-jusqu\textquotesingle{}à 11), le verdict de videau money exact. Hors de ce domaine, la
-probabilité est estimée avec sa marge d\textquotesingle{}erreur et le verdict n\textquotesingle{}est
-volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau Bearoff » du manuel pour le détail des hypothèses.
+純粋なベアオフのポジションでは、パネルには手番のプレイヤーの勝率も表示され、そのポジションが two\sphinxhyphen{}sided データベース（内蔵データベースは各プレイヤー6チェッカーまで、ダウンロード可能なデータベースは11チェッカーまで）でカバーされている場合は、正確なマネーゲームのキューブ判定も表示されます。この範囲外では、勝率は誤差の範囲付きで推定され、判定は意図的に表示されません。各仮定の詳細は、マニュアルの「ベアオフパネルの方法論と仮定」の節を参照してください。
 
 
 \subsection{blunderDB にはコマンドラインインターフェースがありますか？}
@@ -6729,10 +6642,7 @@ PostgreSQL：テナントごとのRow\sphinxhyphen{}Level Securityを有効に�
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-base de bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) optionnelle élargissant la base
-intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 pour l\textquotesingle{}analyse de course du point d\textquotesingle{}accès EPC ;
-le démon ne télécharge jamais de base lui\sphinxhyphen{}même — monter le fichier
-en volume et le désigner ici
+EPCエンドポイントのレース分析のために内蔵のTS\sphinxhyphen{}06\sphinxhyphen{}06データベースを拡張する、オプションのtwo\sphinxhyphen{}sidedベアオフデータベース（\sphinxcode{\sphinxupquote{.bd}}）；デーモンは自らデータベースをダウンロードすることはありません——ファイルをボリュームとしてマウントし、ここで指定してください
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6742,9 +6652,7 @@ en volume et le désigner ici
 \sphinxattableend\end{savenotes}
 
 \sphinxAtStartPar
-La plupart des options peuvent aussi être fournies par variable
-d\textquotesingle{}environnement (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
+ほとんどのオプションは環境変数（\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}、\sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}、\sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}、\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}、\sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}、\sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}）でも指定できます。
 
 
 \subsubsection{エンドポイント}

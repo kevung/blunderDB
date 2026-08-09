@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. マニュアル &mdash; blunderDB 0.31.0 ドキュメント</title>
+  <title>2. マニュアル &mdash; blunderDB 0.32.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4f25ac80"></script>
+      <script src="_static/documentation_options.js?v=dd5a726b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -96,8 +96,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC：制限事項</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Panneau Bearoff</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Méthodologie et hypothèses du panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. ベアオフパネル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. ベアオフパネルの方法論と仮定</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki パネル</a></li>
@@ -187,7 +187,7 @@
 <li><p>インポートしたマッチの一覧を表示し、マッチの手を辿る（マッチパネル）、</p></li>
 <li><p>トーナメントを表示・管理する（トーナメントパネル）、</p></li>
 <li><p>パフォーマンス統計を表示する（Stats パネル）、</p></li>
-<li><p>calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Bearoff),</p></li>
+<li><p>ベアオフポジションの EPC（Effective Pip Count）を計算する（ベアオフパネル）、</p></li>
 <li><p>間隔反復によってポジションを学習する（Anki パネル）、</p></li>
 <li><p>データベースのメタデータを表示する（メタデータパネル）。</p></li>
 </ul>
@@ -531,140 +531,50 @@
 </section>
 </section>
 <section id="panneau-bearoff">
-<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Panneau Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
+<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>ベアオフパネル<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
 <p><strong>EPC</strong> パネル（<em>CTRL-E</em>）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。<em>CTRL-E</em> を押すか、下部パネルの EPC タブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行することで有効になります。</p>
-<p>Dans ce panneau, l'utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).</p>
-<p>Les résultats sont présentés sous forme de deux tableaux empilés :</p>
+<p>このパネルでは、両方のインナーボードのチェッカーの配置を編集できます。ポイント1〜6をクリックすると下側のプレイヤーのチェッカーが置かれ、ポイント19〜24をクリックすると上側のプレイヤーのチェッカーが置かれます（マウスのボタンはどちらでも構いません）。</p>
+<p>結果は上下に並んだ2つの表として表示されます：</p>
 <ul class="simple">
-<li><p>en haut, un <strong>tableau des joueurs</strong> — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l'EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne <strong>Δ</strong> donne les
-différences <em>signées</em> (bas − haut : négatif quand le joueur noir est en
-avance) d'EPC, de pips et de wastage ;</p></li>
-<li><p>en dessous, séparé par un filet, un <strong>tableau course/videau</strong> : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe %) et les équités money — sous chaque décision autre que
-la meilleure, l'écart d'équité à la meilleure décision est indiqué
-entre parenthèses. La <strong>décision</strong> s'affiche à droite du tableau, avec
-le badge exact/estimé. Le <strong>joueur au trait</strong> et la <strong>position du videau</strong>
-s'éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d'un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L'analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l'onglet <em>Bearoff</em> de la configuration.</p></li>
+<li><p>上には<strong>プレイヤーの表</strong>——プレイヤーごとに1行（色付きの点で識別され、黒のプレイヤーが常に下）、量ごとに1列：EPC、ピップカウント、ウェステージ（EPCとピップカウントの差）、平均ロール数、標準偏差。両プレイヤーが自分のインナーボードにチェッカーを持つ場合、<strong>Δ</strong>行がEPC、ピップ、ウェステージの<em>符号付き</em>の差（下−上：黒のプレイヤーがリードしているときは負）を示します；</p></li>
+<li><p>その下に、罫線で区切られた<strong>レース／キューブの表</strong>：2列の勝率（プレイヤーの色付きの点ごとに1列、%記号なしの値）とマネーゲームのエクイティ——最善以外の各判断の下には、最善の判断とのエクイティ差が括弧内に示されます。<strong>判断</strong>は表の右側に、正確／推定のバッジとともに表示されます。<strong>手番のプレイヤー</strong>と<strong>キューブの位置</strong>は、編集モードと同様に、ボード上で直接編集できます。プレイヤーのベアオフ／スコアの長方形をクリックするとそのプレイヤーに手番が移り、キューブをクリックすると中央→下側所有→上側所有の順に切り替わります（右クリックで逆順）。キューブの値は固定されたままです——マネーゲームではエクイティは現在のキューブの単位で表され、所有者だけが意味を持ちます。分析は直ちに再計算されます。推定方式では、「設定を表示」リンクから設定の<em>ベアオフ</em>タブが直接開きます。</p></li>
 </ul>
-<p>La case <em>Défi</em> reste épinglée en haut à droite du panneau.</p>
-<p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :</p>
+<p><em>チャレンジ</em>チェックボックスはパネルの右上に固定表示されたままです。</p>
+<p>ポジションが純粋なベアオフ（両プレイヤーの全チェッカーが自分のインナーボード内にある）である場合、レースの表には手番のプレイヤーについて次が表示されます：</p>
 <ul class="simple">
-<li><p>la probabilité de gain,</p></li>
-<li><p>en régime <em>exact</em> : les équités money (cubeless, sans double, double/prend,
-double/passe) et le <strong>verdict de videau money</strong> (pas de double, double/prend
-ou double/passe),</p></li>
-<li><p>en régime <em>estimé</em> : la probabilité de gain seule, accompagnée de sa marge
-d'erreur — le verdict de videau n'est alors volontairement pas affiché.</p></li>
+<li><p>勝率、</p></li>
+<li><p><em>正確</em>方式では：マネーゲームのエクイティ（キューブレス、ノーダブル、ダブル/テイク、ダブル/パス）と<strong>マネーゲームのキューブ判定</strong>（ノーダブル、ダブル/テイク、またはダブル/パス）、</p></li>
+<li><p><em>推定</em>方式では：勝率のみが誤差の範囲とともに表示されます——この場合、キューブ判定は意図的に表示されません。</p></li>
 </ul>
-<p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
-two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Bearoff</span></a> pour la
-définition précise des deux régimes et de leurs hypothèses.</p>
-<p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
-Deux moyens d'aller au-delà, dans l'onglet <em>Bearoff</em> de la configuration :</p>
+<p>バッジが方式を示します：<strong>正確</strong>（two-sidedデータベースから読み取った値）または<strong>推定 ± 誤差</strong>。2つの方式とその仮定の正確な定義については <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">ベアオフパネルの方法論と仮定</span></a> を参照してください。</p>
+<p><strong>正確な範囲を広げる。</strong> 内蔵データベースは各プレイヤー6チェッカーまでをカバーします。それを超えるには、設定の<em>ベアオフ</em>タブに2つの方法があります：</p>
 <ul class="simple">
-<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur.
-Un téléchargement interrompu ou annulé <strong>reprend où il s'était arrêté</strong>
-(le fichier partiel est conservé et complété par requête HTTP Range) ;</p></li>
-<li><p>indiquer un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg quelconque. La base au
-domaine le plus large l'emporte automatiquement.</p></li>
+<li><p>拡張データベースTS-06-11（1.2 GB、SHA-256で検証、同じ場所から削除可能）をダウンロードする：各プレイヤー11チェッカーまでの正確な判定。中断またはキャンセルされたダウンロードは<strong>停止したところから再開されます</strong>（部分ファイルが保持され、HTTP Rangeリクエストで補完されます）；</p></li>
+<li><p>gnubgの任意のtwo-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code> ファイルを指定する。最も広い範囲を持つデータベースが自動的に優先されます。</p></li>
 </ul>
-<p><strong>Mode défi.</strong> La case <em>Défi</em> du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n'apparaît qu'une fois les deux lignes joueurs
-révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.</p>
-<p>Pour fermer le panneau Bearoff, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
+<p><strong>チャレンジモード。</strong> パネルの<em>チャレンジ</em>チェックボックスはトレーニングモードを有効にします。ポジションを変更するたびに、3つの領域——下側プレイヤーの行、上側プレイヤーの行、レースの表——の値が隠され（「···」に置き換えられ）、領域をクリックするとその領域だけが表示されます。Δ行は、両方のプレイヤー行が表示されて初めて現れます。こうして、各陣営のEPCを推定し、次にキューブについて判断する練習をしてから、答えを確認できます。この設定は記憶されます。</p>
+<p>ベアオフパネルを閉じるには、<em>CTRL-E</em> を押すか、別のタブに切り替えます。</p>
 <section id="methodologie-et-hypotheses-du-panneau-bearoff">
-<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
-<p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.</p>
-<p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le
-lancer</em> ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.</p>
-<p><strong>Blocs EPC (toujours exacts).</strong> L'EPC, le nombre moyen de lancers et
-l'écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L'unique idéalisation est le <em>jeu one-sided optimal</em> : chaque joueur
-minimise ses propres lancers en ignorant l'adversaire — c'est la définition
-standard de l'EPC.</p>
-<p><strong>Probabilité de gain, régime exact.</strong> Lecture directe dans la base two-sided
-disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
-téléchargée). Ces bases résultent d'une analyse rétrograde complète sous jeu
-two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (&lt; 0,002 %).</p>
-<p><strong>Probabilité de gain, régime estimé.</strong> Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one-sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l'adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS-06-11. Trois hypothèses :</p>
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>ベアオフパネルの方法論と仮定<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
+<p>パネルに表示される各値は明確な仮定に基づいています。ここではそれらを漏れなく述べます。</p>
+<p><strong>範囲。</strong> パネルが扱うのは純粋なベアオフのみです。すなわち、両プレイヤーの残りの全チェッカーが自分のインナーボード内にある状態です。ポジションは<em>ロール前</em>に評価され、置かれているダイスは無視されます。チェッカーがインナーボードの外にあるノーコンタクトのレースは扱われません。</p>
+<p><strong>EPCブロック（常に正確）。</strong> EPC、平均ロール数、標準偏差は、全チェッカーを上げるのに必要なロール数の正確な分布から得られ、GNUbgのone-sidedデータベース（6ポイント、15チェッカー、内蔵）から読み取られます。EPC = 平均ロール数 × 49/6（49/6 ≈ 8.167は1ロールあたりのピップの正確な平均で、ゾロ目は4回と数えます）；ウェステージ = EPC − ピップカウント。唯一の理想化は<em>最適なone-sidedプレイ</em>です。各プレイヤーは相手を無視して自分のロール数を最小化します——これがEPCの標準的な定義です。</p>
+<p><strong>勝率、正確方式。</strong> 利用可能な最も広いtwo-sidedデータベース（内蔵のTS-06-06、外部ファイル、またはダウンロードしたTS-06-11）から直接読み取ります。これらのデータベースは、両陣営の最適なtwo-sidedプレイの下での完全な後退解析の結果です。追加の仮定はなく、誤差は量子化によるもの（&lt; 0.002 %）に限られます。</p>
+<p><strong>勝率、推定方式。</strong> データベースの範囲外では、勝率は2つのone-sided分布の畳み込み（手番のプレイヤーは、自分のロール数が相手のロール数以下であれば勝ちます）により求め、その後、TS-06-11データベースに対してオフラインで較正された固定の多項式補正を適用します。3つの仮定があります：</p>
 <ul class="simple">
-<li><p><strong>indépendance</strong> des deux processus de sortie — structurelle en course,
-sans contact il n'y a aucune interaction ;</p></li>
-<li><p><strong>jeu one-sided optimal des deux camps</strong> — c'est <em>l'approximation</em> : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L'effet mesuré est un biais antisymétrique (la convolution
-exagère l'avance du meneur) que la correction absorbe statistiquement ;</p></li>
-<li><p>la <strong>correction</strong> a été calibrée et validée sur le domaine de l'oracle
-(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
-probabilité de gain). <strong>Au-delà de 11 pions par joueur, cette borne est
-extrapolée</strong> — la tendance est monotone mais aucun oracle ne la certifie.</p></li>
+<li><p>2つのベアオフ過程の<strong>独立性</strong>——レースでは構造的なもので、コンタクトがなければ相互作用は一切ありません；</p></li>
+<li><p><strong>両陣営の最適なone-sidedプレイ</strong>——これが<em>近似</em>です。実際には、リードされている側は分散を求めてプレイを変え、リードしている側は安全策を取ります。測定された効果は反対称のバイアス（畳み込みはリードしている側の優位を誇張します）で、補正がこれを統計的に吸収します；</p></li>
+<li><p><strong>補正</strong>は、オラクルの範囲（各プレイヤー11チェッカーまで）で較正・検証されています。測定された残留誤差：標準偏差0.05 %、第99百分位0.17 %、観測された最大値0.9 %（勝率のポイント単位）。<strong>各プレイヤー11チェッカーを超えると、この上限は外挿されたものです</strong>——傾向は単調ですが、それを保証するオラクルはありません。</p></li>
 </ul>
-<p><strong>Équités et verdict de videau (régime exact seulement).</strong> Les équités
-affichées sont celles du <strong>money game, sans Jacoby</strong>, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n'est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.</p>
+<p><strong>エクイティとキューブ判定（正確方式のみ）。</strong> 表示されるエクイティは、ベアオフの文献の慣例に従った<strong>ジャコビールールなしのマネーゲーム</strong>のものです。各プレイヤー11チェッカー以下の範囲ではギャモンは不可能です（各陣営はすでに少なくとも4チェッカーを上げています）。これは近似ではありません。判定（ノーダブル／ダブル・テイク／ダブル・パス）は、保存されたエクイティからGNUbgの規則に従って正確に再構築され、GNUbgの分析と一つひとつ照合して検証されています。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
-<p>Les équités cubeful supposent un <strong>jeu de videau optimal des deux
-camps jusqu'au bout</strong> : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l'avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 % de gain, D/T exact +0,006 contre +0,475 chez XG). La <strong>décision</strong>
-affichée, elle, coïncide avec celle des moteurs.</p>
+<p>キューブフルのエクイティは、<strong>最後まで両陣営が最適なキューブプレイを行う</strong>ことを前提とします。将来のリキューブは完全に評価されます（完全な後退解析）。終盤の非常に変動の大きいレースでは、リキューブの連鎖が手番の陣営の優位のほとんどを食いつぶします——そのため「ノーダブル」と「ダブル/テイク」のエクイティはゼロに近くなることがあり、一方、キューブモデルがこの連鎖を評価しないXGのようなエンジンは、デッドキューブに近い値を表示します（例えば3ポイントに2チェッカー対2ポイントに2チェッカー：勝率62 %、正確なD/Tは+0.006、XGでは+0.475）。ただし、表示される<strong>判断</strong>はエンジンのものと一致します。</p>
 </div>
-<p><strong>Pourquoi le verdict n'est-il jamais estimé ?</strong> L'équité cubeful est un
-problème de <em>trajectoire</em> (quand doubler), qu'aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d'équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d'équités de match a été mesurée insuffisante (12 % de
-désaccords avec l'analyse 2-ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n'affiche le verdict que lorsqu'il est exact — et money.</p>
+<p><strong>なぜ判定は決して推定されないのか。</strong> キューブフルのエクイティは<em>軌道</em>の問題（いつダブルするか）であり、ポジションのいかなる統計的要約もこれを捉えられません。測定された最良の静的モデルでも残留誤差（エクイティの標準偏差0.016、最大0.20）が残り、これは僅差の判断をすべて覆すのに十分です。同様に、マッチエクイティテーブルによる判定のマッチスコアへの変換も不十分であると測定されました（GNUbgの2-ply分析との不一致12 %、本物のブランダーを含む）。自信満々に表示される誤った判定は判定なしより悪いため、blunderDBは判定が正確——かつマネーゲーム——である場合にのみ表示します。</p>
 <div class="admonition note">
 <p class="admonition-title">注釈</p>
-<p>Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l'outil <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg.</p>
+<p>ベアオフデータベースは不変の数学的な表であり、GNUbgの<code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>ツールで再生成できます。</p>
 </div>
 </section>
 </section>

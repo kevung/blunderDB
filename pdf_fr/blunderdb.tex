@@ -81,7 +81,7 @@
 
 \title{blunderDB}
 \date{09 août 2026}
-\release{0.31.0}
+\release{0.32.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -827,6 +827,22 @@ Diffusion d’une base à des tiers : deux mécanismes indépendants, tous deux 
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.32.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+09/08/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Le panneau EPC devient le panneau \sphinxstylestrong{Bearoff} et gagne l’analyse de course complète. Sur une position de bearoff pur, il affiche — en plus de l’EPC, du pip count, du wastage et du nombre moyen de lancers de chaque joueur, désormais présentés en tableau avec une ligne Δ signée — les probabilités de gain des deux joueurs et les équités money (cubeless, sans double, double/prend, double/passe, avec l’écart de chaque décision à la meilleure) ainsi que la \sphinxstylestrong{meilleure décision de videau}. Deux régimes clairement distingués : \sphinxstyleemphasis{exact} (lecture dans une base two\sphinxhyphen{}sided ; base TS\sphinxhyphen{}06\sphinxhyphen{}06 de GNUbg intégrée, couvrant jusqu’à 6 pions par joueur) et \sphinxstyleemphasis{estimé} (convolution calibrée, marge d’erreur affichée — le verdict de videau n’est jamais estimé). La base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (verdict exact jusqu’à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel onglet \sphinxstyleemphasis{Bearoff} de la configuration, avec vérification d’intégrité et reprise des téléchargements interrompus ; un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided quelconque de gnubg peut aussi être désigné. \sphinxstylestrong{Mode défi} pour l’entraînement : les résultats se masquent à chaque modification et se révèlent zone par zone, d’un clic. Édition entièrement au plateau : pions des deux jans, joueur au trait (clic sur le rectangle sortie/score) et position du videau (clic sur le videau). Le clic sur le plateau est désormais exact à toute échelle d’interface (un clic sur le point 1 pouvait atterrir sur le point 2). Nouvelle commande \sphinxcode{\sphinxupquote{blunderdb epc}} en ligne de commande et option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} du mode serveur. Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur affichée. Voir {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Panneau Bearoff}}}}} et {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -849,15 +865,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.32.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.32.0.zip}
 
 \end{itemize}
 
@@ -922,7 +938,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Binaire brut (méthode avancée)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} reste disponible. Comme un navigateur retire
+Le binaire brut \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0} reste disponible. Comme un navigateur retire
 le bit exécutable au téléchargement, il faut le rétablir avant la première
 exécution :
 
@@ -937,7 +953,7 @@ bibliothèque webkit2gtk. Si vous obtenez l’erreur
 \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, votre
 distribution utilise webkit2gtk\sphinxhyphen{}4.1 : utilisez le paquet \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}},
 le paquet AUR, ou téléchargez la version dédiée
-\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Les paquets natifs choisissent
+\sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.32.0}. Les paquets natifs choisissent
 automatiquement la bonne dépendance.
 \end{sphinxadmonition}
 

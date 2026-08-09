@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.31.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.32.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d63f172e"></script>
+      <script src="_static/documentation_options.js?v=4440c9c5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -207,7 +207,7 @@
 <td><p>Interface simplification: match and collection navigation is now done directly through panels.</p>
 <p>Command line integrated into the status bar.</p>
 <p>Console panel renamed to Log panel.</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>Dedicated Bearoff panel in the bottom panel.</p>
 <p>Copy/paste position in the search panel.</p>
 <p>Drag and drop to reorder collections, positions within collections, and matches within tournaments.</p>
 <p>Tournament column in the match panel with inline editing.</p>
@@ -288,6 +288,10 @@
 <td><p>August 4, 2026</p></td>
 <td><p>Handing a database to other people: two independent mechanisms, both optional and both chosen at export time. The <strong>origin watermark</strong> records in the file what it is and where it comes from, signed by an issuer identity created by itself on first use; the mark is unforgeable, is read at the top of the Metadata panel (or with <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, which never writes to the file) and records nothing on the recipient’s side — no log, no tracking. <strong>Password protection</strong> produces an encrypted <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> file (AES-256-GCM, key derived with Argon2id), checked on every open, whose header stays readable in the clear; the identity is exported and imported as a single file from the preferences. Redesigned export dialog: one screen instead of four, a reminder of what actually goes out (the positions on display), the covered share of each collection flagged in red when partial, tournaments exportable only together with their matches — and an export three times faster. Settings window reorganised into three tabs (Interface, Board colours, Issuer identity), with a stable size and position. Metadata panel laid out as a single grid. The Log panel, which only echoed commands, has been removed. Notable fixes: a wrong password no longer opens a protected database, modal dialog fields no longer lose focus on click, the PR/MWC badge computation no longer crashes on a money game, and temporary files (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lock) are cleaned up on close. See <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a> and <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manual</span></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>August 9, 2026</p></td>
+<td><p>The EPC panel becomes the <strong>Bearoff</strong> panel and gains full race analysis. On a pure bearoff position it displays — in addition to each player’s EPC, pip count, wastage and average number of rolls, now laid out as a table with a signed Δ row — both players’ winning probabilities and the money equities (cubeless, no double, double/take, double/pass, with each decision’s gap to the best one) as well as the <strong>best cube decision</strong>. Two clearly distinguished regimes: <em>exact</em> (looked up in a two-sided database; GNUbg’s TS-06-06 database built in, covering up to 6 checkers per player) and <em>estimated</em> (calibrated convolution, error margin displayed — the cube verdict is never estimated). The extended TS-06-11 database (exact verdict up to 11 checkers per player, 1.2 GB) can be downloaded from the new <em>Bearoff</em> tab of the configuration, with integrity checking and resuming of interrupted downloads; any two-sided gnubg <code class="docutils literal notranslate"><span class="pre">.bd</span></code> file can also be pointed to. <strong>Challenge mode</strong> for training: results are hidden on every change of the position and revealed area by area, with a click. Editing entirely on the board: checkers of both home boards, player on roll (click the bearoff/score rectangle) and cube position (click the cube). Clicks on the board are now accurate at any interface scale (a click on point 1 could land on point 2). New <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> command on the command line and <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> server-mode option. A new manual section, “Methodology and assumptions of the Bearoff panel”, exhaustively states the assumptions behind every displayed value. See <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Bearoff Panel</span></a> and <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Methodology and assumptions of the Bearoff panel</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -317,7 +321,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. Matches Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. Tournaments Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Stats Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Bearoff Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Metadata Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Handing out a database: origin and password</a></li>

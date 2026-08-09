@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.31.0 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.32.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d63f172e"></script>
+      <script src="_static/documentation_options.js?v=4440c9c5"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -95,8 +95,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC: limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Panneau Bearoff</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Méthodologie et hypothèses du panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Bearoff Panel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Methodology and assumptions of the Bearoff panel</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki Panel</a></li>
@@ -186,7 +186,7 @@
 <li><p>display the list of imported matches and navigate through the moves of a match (match panel),</p></li>
 <li><p>display and manage tournaments (tournaments panel),</p></li>
 <li><p>display performance statistics (Stats panel),</p></li>
-<li><p>calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),</p></li>
+<li><p>compute the EPC (Effective Pip Count) of a bearoff position (Bearoff panel),</p></li>
 <li><p>study positions with spaced repetition (Anki panel),</p></li>
 <li><p>display the database metadata (metadata panel).</p></li>
 </ul>
@@ -530,140 +530,50 @@
 </section>
 </section>
 <section id="panneau-bearoff">
-<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Panneau Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
+<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Bearoff Panel<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
 <p>The <strong>EPC</strong> panel (<em>CTRL-E</em>) computes the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing <em>CTRL-E</em>, clicking the EPC tab in the bottom panel, or running the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command.</p>
-<p>Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).</p>
-<p>Les résultats sont présentés sous forme de deux tableaux empilés :</p>
+<p>In this panel, the user edits the checker positions in the two home boards: clicking points 1 to 6 places checkers of the bottom player, clicking points 19 to 24 places checkers of the top player (either mouse button works).</p>
+<p>Results are presented as two stacked tables:</p>
 <ul class="simple">
-<li><p>en haut, un <strong>tableau des joueurs</strong> — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne <strong>Δ</strong> donne les
-différences <em>signées</em> (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;</p></li>
-<li><p>en dessous, séparé par un filet, un <strong>tableau course/videau</strong> : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe %) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La <strong>décision</strong> s’affiche à droite du tableau, avec
-le badge exact/estimé. Le <strong>joueur au trait</strong> et la <strong>position du videau</strong>
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet <em>Bearoff</em> de la configuration.</p></li>
+<li><p>at the top, a <strong>players table</strong> — one row per player (identified by its coloured dot, the black player always at the bottom), one column per quantity: EPC, pip count, wastage (difference between the EPC and the pip count), average number of rolls and standard deviation. When both players have checkers in their home board, a <strong>Δ</strong> row gives the <em>signed</em> differences (bottom − top: negative when the black player is ahead) in EPC, pips and wastage;</p></li>
+<li><p>below it, separated by a rule, a <strong>race/cube table</strong>: two winning-probability columns (one per player dot, values without the % sign) and the money equities — under each decision other than the best one, the equity gap to the best decision is shown in parentheses. The <strong>decision</strong> is displayed to the right of the table, with the exact/estimated badge. The <strong>player on roll</strong> and the <strong>cube position</strong> are edited directly on the board, as in edit mode: clicking a player’s bearoff/score rectangle gives that player the roll; clicking the cube cycles centred → owned bottom → owned top (right click cycles the other way). The cube value stays pinned — in money game the equities are expressed in units of the current cube, only its owner matters. The analysis is recomputed immediately. In the estimated regime, the “See the configuration settings” link opens the <em>Bearoff</em> tab of the configuration directly.</p></li>
 </ul>
-<p>La case <em>Défi</em> reste épinglée en haut à droite du panneau.</p>
-<p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :</p>
+<p>The <em>Challenge</em> box stays pinned at the top right of the panel.</p>
+<p>When the position is a pure bearoff (all checkers of both players in their home board), the race table shows, for the player on roll:</p>
 <ul class="simple">
-<li><p>la probabilité de gain,</p></li>
-<li><p>en régime <em>exact</em> : les équités money (cubeless, sans double, double/prend,
-double/passe) et le <strong>verdict de videau money</strong> (pas de double, double/prend
-ou double/passe),</p></li>
-<li><p>en régime <em>estimé</em> : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.</p></li>
+<li><p>the winning probability,</p></li>
+<li><p>in the <em>exact</em> regime: the money equities (cubeless, no double, double/take, double/pass) and the <strong>money cube verdict</strong> (no double, double/take or double/pass),</p></li>
+<li><p>in the <em>estimated</em> regime: the winning probability alone, together with its error margin — the cube verdict is then deliberately not shown.</p></li>
 </ul>
-<p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
-two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Bearoff</span></a> pour la
-définition précise des deux régimes et de leurs hypothèses.</p>
-<p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au-delà, dans l’onglet <em>Bearoff</em> de la configuration :</p>
+<p>A badge indicates the regime: <strong>exact</strong> (value read from a two-sided database) or <strong>estimated ± margin</strong>. See <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodology and assumptions of the Bearoff panel</span></a> for the precise definition of the two regimes and their assumptions.</p>
+<p><strong>Widening the exact domain.</strong> The built-in database covers 6 checkers per player. Two ways to go beyond that, in the <em>Bearoff</em> tab of the configuration:</p>
 <ul class="simple">
-<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé <strong>reprend où il s’était arrêté</strong>
-(le fichier partiel est conservé et complété par requête HTTP Range) ;</p></li>
-<li><p>indiquer un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.</p></li>
+<li><p>download the extended TS-06-11 database (1.2 GB, verified by SHA-256, deletable in the same place): exact verdict up to 11 checkers per player. An interrupted or cancelled download <strong>resumes where it stopped</strong> (the partial file is kept and completed with an HTTP Range request);</p></li>
+<li><p>point to any two-sided gnubg <code class="docutils literal notranslate"><span class="pre">.bd</span></code> file. The database with the widest domain automatically wins.</p></li>
 </ul>
-<p><strong>Mode défi.</strong> La case <em>Défi</em> du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.</p>
-<p>Pour fermer le panneau Bearoff, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
+<p><strong>Challenge mode.</strong> The panel’s <em>Challenge</em> box enables a training mode: on every change of the position, the values of the three areas — the bottom player’s row, the top player’s row and the race table — are hidden (replaced by “···”); clicking an area reveals that area only. The Δ row only appears once both player rows are revealed. You can thus practise estimating each side’s EPC, then committing to a cube decision, before checking. The setting is remembered.</p>
+<p>To close the Bearoff panel, press <em>CTRL-E</em> or switch to another tab.</p>
 <section id="methodologie-et-hypotheses-du-panneau-bearoff">
-<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
-<p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.</p>
-<p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le
-lancer</em> ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.</p>
-<p><strong>Blocs EPC (toujours exacts).</strong> L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le <em>jeu one-sided optimal</em> : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.</p>
-<p><strong>Probabilité de gain, régime exact.</strong> Lecture directe dans la base two-sided
-disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (&lt; 0,002 %).</p>
-<p><strong>Probabilité de gain, régime estimé.</strong> Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one-sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS-06-11. Trois hypothèses :</p>
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Methodology and assumptions of the Bearoff panel<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Link to this heading"></a></h3>
+<p>Every value displayed by the panel rests on precise assumptions, stated here exhaustively.</p>
+<p><strong>Domain.</strong> The panel only handles pure bearoff: all remaining checkers of both players in their home board. The position is evaluated <em>before the roll</em>; any dice already showing are ignored. No-contact races with checkers outside the home board are not handled.</p>
+<p><strong>EPC blocks (always exact).</strong> The EPC, the average number of rolls and the standard deviation come from the exact distribution of the number of rolls needed to bear off all checkers, read from GNUbg’s one-sided database (6 points, 15 checkers, built in). EPC = average rolls × 49/6 (49/6 ≈ 8.167 is the exact average number of pips per roll, doubles counted four times); wastage = EPC − pip count. The only idealisation is <em>optimal one-sided play</em>: each player minimises their own rolls while ignoring the opponent — this is the standard definition of the EPC.</p>
+<p><strong>Winning probability, exact regime.</strong> Direct lookup in the widest available two-sided database (built-in TS-06-06, external file, or downloaded TS-06-11). These databases result from a complete retrograde analysis under optimal two-sided play by both sides: no additional assumption, error limited to quantisation (&lt; 0.002%).</p>
+<p><strong>Winning probability, estimated regime.</strong> Outside the database’s domain: the probability is obtained by convolving the two one-sided distributions (the player on roll wins if their number of rolls is less than or equal to the opponent’s), then applying a frozen polynomial correction, calibrated offline against the TS-06-11 database. Three assumptions:</p>
 <ul class="simple">
-<li><p><strong>indépendance</strong> des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;</p></li>
-<li><p><strong>jeu one-sided optimal des deux camps</strong> — c’est <em>l’approximation</em> : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;</p></li>
-<li><p>la <strong>correction</strong> a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
-probabilité de gain). <strong>Au-delà de 11 pions par joueur, cette borne est
-extrapolée</strong> — la tendance est monotone mais aucun oracle ne la certifie.</p></li>
+<li><p><strong>independence</strong> of the two bearoff processes — structural in a race, with no contact there is no interaction whatsoever;</p></li>
+<li><p><strong>optimal one-sided play by both sides</strong> — this is <em>the approximation</em>: in reality the trailing player deviates to play for variance and the leader for safety. The measured effect is an antisymmetric bias (the convolution overstates the leader’s advantage) which the correction absorbs statistically;</p></li>
+<li><p>the <strong>correction</strong> was calibrated and validated on the oracle’s domain (up to 11 checkers per player). Measured residual error: standard deviation 0.05%, 99th percentile 0.17%, observed maximum 0.9% (in winning-probability points). <strong>Beyond 11 checkers per player, this bound is extrapolated</strong> — the trend is monotonic but no oracle certifies it.</p></li>
 </ul>
-<p><strong>Équités et verdict de videau (régime exact seulement).</strong> Les équités
-affichées sont celles du <strong>money game, sans Jacoby</strong>, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.</p>
+<p><strong>Equities and cube verdict (exact regime only).</strong> The displayed equities are those of the <strong>money game, without Jacoby</strong>, the reference framework of the bearoff literature. Within the ≤ 11 checkers per player domain, gammons are impossible (each side has already borne off at least 4 checkers): this is not an approximation. The verdict (no double / double, take / double, pass) is reconstructed exactly from the stored equities, following GNUbg’s rule, validated verdict for verdict against its analysis.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Les équités cubeful supposent un <strong>jeu de videau optimal des deux
-camps jusqu’au bout</strong> : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 % de gain, D/T exact +0,006 contre +0,475 chez XG). La <strong>décision</strong>
-affichée, elle, coïncide avec celle des moteurs.</p>
+<p>The cubeful equities assume <strong>optimal cube play by both sides all the way to the end</strong>: future recubes are fully valued (complete retrograde analysis). In the very volatile races at the end of the game, the cascade of recubes eats up almost all of the advantage of the side on roll — the “no double” and “double/take” equities can then be close to zero where an engine such as XG, whose cube model does not value this cascade, shows values close to the dead cube (for instance 2 checkers on the 3 point against 2 checkers on the 2 point: 62% winning chances, exact D/T +0.006 versus +0.475 for XG). The displayed <strong>decision</strong>, however, coincides with the engines’.</p>
 </div>
-<p><strong>Pourquoi le verdict n’est-il jamais estimé ?</strong> L’équité cubeful est un
-problème de <em>trajectoire</em> (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 % de
-désaccords avec l’analyse 2-ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.</p>
+<p><strong>Why is the verdict never estimated?</strong> Cubeful equity is a <em>trajectory</em> problem (when to double) that no statistical summary of the position captures: the best static model measured leaves a residual error (standard deviation 0.016 of equity, maximum 0.20) large enough to flip every close decision. Likewise, converting the verdict to the match score through a match-equity table was measured to be insufficient (12% of disagreements with GNUbg’s 2-ply analysis, including genuine blunders). Since a wrong verdict displayed with confidence is worse than no verdict, blunderDB only shows the verdict when it is exact — and money.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg.</p>
+<p>Bearoff databases are immutable mathematical tables, regenerable with GNUbg’s <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> tool.</p>
 </div>
 </section>
 </section>

@@ -66,7 +66,7 @@
 
 \title{blunderDB}
 \date{09 Αυγούστου 2026}
-\release{0.31.0}
+\release{0.32.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Δημοσίευση}
@@ -491,7 +491,7 @@
 Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log.
 
 \sphinxAtStartPar
-Panneau Bearoff dédié dans le panneau inférieur.
+Αποκλειστικός πίνακας Bearoff στον κάτω πίνακα.
 
 \sphinxAtStartPar
 Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης.
@@ -798,6 +798,22 @@ Panneau Bearoff dédié dans le panneau inférieur.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.32.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+9 Αυγούστου 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ο πίνακας EPC γίνεται ο πίνακας \sphinxstylestrong{Bearoff} και αποκτά πλήρη ανάλυση κούρσας. Σε μια θέση καθαρού bearoff εμφανίζει — εκτός από το EPC, το pip count, το wastage και τον μέσο αριθμό ζαριών κάθε παίκτη, που παρουσιάζονται πλέον σε πίνακα με προσημασμένη γραμμή Δ — τις πιθανότητες νίκης των δύο παικτών και τις ισοδυναμίες money (cubeless, χωρίς διπλασιασμό, διπλασιασμός/αποδοχή, διπλασιασμός/πάσο, με την απόκλιση κάθε απόφασης από την καλύτερη) καθώς και την \sphinxstylestrong{καλύτερη απόφαση κύβου}. Δύο σαφώς διακριτά καθεστώτα: \sphinxstyleemphasis{ακριβές} (ανάγνωση από βάση two\sphinxhyphen{}sided· ενσωματωμένη βάση TS\sphinxhyphen{}06\sphinxhyphen{}06 του GNUbg, που καλύπτει έως 6 πούλια ανά παίκτη) και \sphinxstyleemphasis{εκτιμώμενο} (βαθμονομημένη συνέλιξη, με εμφανιζόμενο περιθώριο σφάλματος — η ετυμηγορία κύβου δεν εκτιμάται ποτέ). Η εκτεταμένη βάση TS\sphinxhyphen{}06\sphinxhyphen{}11 (ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη, 1,2 GB) κατεβαίνει από τη νέα καρτέλα \sphinxstyleemphasis{Bearoff} των ρυθμίσεων, με έλεγχο ακεραιότητας και συνέχιση των διακοπεισών λήψεων· μπορεί επίσης να οριστεί οποιοδήποτε αρχείο \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided του gnubg. \sphinxstylestrong{Λειτουργία πρόκλησης} για εξάσκηση: τα αποτελέσματα αποκρύπτονται σε κάθε τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ. Επεξεργασία εξ ολοκλήρου στο ταμπλό: πούλια των δύο εσωτερικών τεταρτημορίων, παίκτης στη βολή (κλικ στο ορθογώνιο εξόδου/σκορ) και θέση του κύβου (κλικ στον κύβο). Το κλικ στο ταμπλό είναι πλέον ακριβές σε κάθε κλίμακα διεπαφής (ένα κλικ στο σημείο 1 μπορούσε να καταλήξει στο σημείο 2). Νέα εντολή \sphinxcode{\sphinxupquote{blunderdb epc}} στη γραμμή εντολών και επιλογή \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} της λειτουργίας διακομιστή. Μια νέα ενότητα του εγχειριδίου, «Μεθοδολογία και υποθέσεις του πίνακα Bearoff», διατυπώνει εξαντλητικά τις υποθέσεις πίσω από κάθε εμφανιζόμενη τιμή. Δείτε {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Bearoff}}}}} και {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Μεθοδολογία και υποθέσεις του πίνακα Bearoff}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -820,15 +836,15 @@ Panneau Bearoff dédié dans le panneau inférieur.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
+για Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.32.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
+για Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0}
 
 \item {} 
 \sphinxAtStartPar
-για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
+για Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.32.0.zip}
 
 \end{itemize}
 
@@ -880,7 +896,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
+Το ακατέργαστο εκτελέσιμο \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0} παραμένει διαθέσιμο. Επειδή ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να το αποκαταστήσετε πριν από την πρώτη εκτέλεση:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -888,7 +904,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
+Δημοσιεύονται δύο παραλλαγές Linux ανάλογα με την έκδοση της βιβλιοθήκης webkit2gtk. Εάν λάβετε το σφάλμα \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, η διανομή σας χρησιμοποιεί webkit2gtk\sphinxhyphen{}4.1: χρησιμοποιήστε το πακέτο \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}, το πακέτο AUR ή κατεβάστε την ειδική έκδοση \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.32.0}. Τα εγγενή πακέτα επιλέγουν αυτόματα τη σωστή εξάρτηση.
 \end{sphinxadmonition}
 
 
@@ -1018,7 +1034,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \item {} 
 \sphinxAtStartPar
-calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),
+υπολογισμός του EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff) (πίνακας Bearoff),
 
 \item {} 
 \sphinxAtStartPar
@@ -1719,205 +1735,115 @@ Expert
 \end{itemize}
 
 
-\subsection{Panneau Bearoff}
+\subsection{Πίνακας Bearoff}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
 Ο πίνακας \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή \sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
-Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).
+Σε αυτόν τον πίνακα, ο χρήστης επεξεργάζεται τη θέση των πουλιών στα δύο εσωτερικά τεταρτημόρια: ένα κλικ στα σημεία 1 έως 6 τοποθετεί πούλια του κάτω παίκτη, ένα κλικ στα σημεία 19 έως 24 τοποθετεί πούλια του πάνω παίκτη (το κουμπί του ποντικιού δεν έχει σημασία).
 
 \sphinxAtStartPar
-Les résultats sont présentés sous forme de deux tableaux empilés :
+Τα αποτελέσματα παρουσιάζονται με τη μορφή δύο στοιβαγμένων πινάκων:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-en haut, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les
-différences \sphinxstyleemphasis{signées} (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;
+επάνω, ένας \sphinxstylestrong{πίνακας παικτών} — μία γραμμή ανά παίκτη (που αναγνωρίζεται από τη χρωματιστή κουκκίδα του, με τον μαύρο παίκτη πάντα κάτω), μία στήλη ανά μέγεθος: EPC, pip count, wastage (διαφορά μεταξύ του EPC και του pip count), μέσος αριθμός ζαριών και τυπική απόκλιση. Όταν και οι δύο παίκτες έχουν πούλια στο τεταρτημόριό τους, μια γραμμή \sphinxstylestrong{Δ} δίνει τις \sphinxstyleemphasis{προσημασμένες} διαφορές (κάτω − πάνω: αρνητικές όταν προηγείται ο μαύρος παίκτης) σε EPC, pips και wastage·
 
 \item {} 
 \sphinxAtStartPar
-en dessous, séparé par un filet, un \sphinxstylestrong{tableau course/videau} : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe \%) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La \sphinxstylestrong{décision} s’affiche à droite du tableau, avec
-le badge exact/estimé. Le \sphinxstylestrong{joueur au trait} et la \sphinxstylestrong{position du videau}
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet \sphinxstyleemphasis{Bearoff} de la configuration.
+από κάτω, χωρισμένος με μια λεπτή γραμμή, ένας \sphinxstylestrong{πίνακας κούρσας/κύβου}: δύο στήλες πιθανότητας νίκης (μία ανά χρωματιστή κουκκίδα παίκτη, τιμές χωρίς το σύμβολο \%) και οι ισοδυναμίες money — κάτω από κάθε απόφαση εκτός της καλύτερης, η απόκλιση ισοδυναμίας από την καλύτερη απόφαση αναγράφεται σε παρένθεση. Η \sphinxstylestrong{απόφαση} εμφανίζεται στα δεξιά του πίνακα, με το σήμα ακριβές/εκτιμώμενο. Ο \sphinxstylestrong{παίκτης στη βολή} και η \sphinxstylestrong{θέση του κύβου} επεξεργάζονται απευθείας στο ταμπλό, όπως στη λειτουργία επεξεργασίας: κάνοντας κλικ στο ορθογώνιο bearoff/σκορ ενός παίκτη του δίνετε τη βολή· κάνοντας κλικ στον κύβο αυτός εναλλάσσεται κεντραρισμένος → στην κατοχή του κάτω παίκτη → στην κατοχή του πάνω παίκτη (δεξί κλικ με αντίστροφη σειρά). Η τιμή του κύβου παραμένει καρφιτσωμένη — σε money game οι ισοδυναμίες εκφράζονται σε μονάδες του τρέχοντος κύβου, μόνο ο κάτοχός του μετρά. Η ανάλυση επανυπολογίζεται αμέσως. Στο εκτιμώμενο καθεστώς, ο σύνδεσμος «Δείτε τις παραμέτρους διαμόρφωσης» ανοίγει απευθείας την καρτέλα \sphinxstyleemphasis{Bearoff} των ρυθμίσεων.
 
 \end{itemize}
 
 \sphinxAtStartPar
-La case \sphinxstyleemphasis{Défi} reste épinglée en haut à droite du panneau.
+Το πλαίσιο \sphinxstyleemphasis{Πρόκληση} παραμένει καρφιτσωμένο επάνω δεξιά στον πίνακα.
 
 \sphinxAtStartPar
-Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :
+Όταν η θέση είναι καθαρό bearoff (όλα τα πούλια και των δύο παικτών στο τεταρτημόριό τους), ο πίνακας κούρσας εμφανίζει, για τον παίκτη στη βολή:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-la probabilité de gain,
+την πιθανότητα νίκης,
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{exact} : les équités money (cubeless, sans double, double/prend,
-double/passe) et le \sphinxstylestrong{verdict de videau money} (pas de double, double/prend
-ou double/passe),
+στο \sphinxstyleemphasis{ακριβές} καθεστώς: τις ισοδυναμίες money (cubeless, χωρίς διπλασιασμό, διπλασιασμός/αποδοχή, διπλασιασμός/πάσο) και την \sphinxstylestrong{ετυμηγορία κύβου money} (όχι διπλασιασμός, διπλασιασμός/αποδοχή ή διπλασιασμός/πάσο),
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{estimé} : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.
+στο \sphinxstyleemphasis{εκτιμώμενο} καθεστώς: μόνο την πιθανότητα νίκης, συνοδευόμενη από το περιθώριο σφάλματός της — η ετυμηγορία κύβου τότε σκόπιμα δεν εμφανίζεται.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
-two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}} pour la
-définition précise des deux régimes et de leurs hypothèses.
+Ένα σήμα υποδεικνύει το καθεστώς: \sphinxstylestrong{ακριβές} (τιμή που διαβάζεται από βάση δεδομένων two\sphinxhyphen{}sided) ή \sphinxstylestrong{εκτιμώμενο ± περιθώριο}. Δείτε {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Μεθοδολογία και υποθέσεις του πίνακα Bearoff}}}}} για τον ακριβή ορισμό των δύο καθεστώτων και των υποθέσεών τους.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Élargir le domaine exact.} La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au\sphinxhyphen{}delà, dans l’onglet \sphinxstyleemphasis{Bearoff} de la configuration :
+\sphinxstylestrong{Διεύρυνση του ακριβούς πεδίου.} Η ενσωματωμένη βάση καλύπτει 6 πούλια ανά παίκτη. Δύο τρόποι για να πάτε πιο πέρα, στην καρτέλα \sphinxstyleemphasis{Bearoff} των ρυθμίσεων:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où il s’était arrêté}
-(le fichier partiel est conservé et complété par requête HTTP Range) ;
+λήψη της εκτεταμένης βάσης TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 GB, επαληθευμένη με SHA\sphinxhyphen{}256, με δυνατότητα διαγραφής στο ίδιο σημείο): ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη. Μια διακοπείσα ή ακυρωμένη λήψη \sphinxstylestrong{συνεχίζεται από εκεί όπου είχε σταματήσει} (το μερικό αρχείο διατηρείται και συμπληρώνεται με αίτημα HTTP Range)·
 
 \item {} 
 \sphinxAtStartPar
-indiquer un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.
+ορισμός οποιουδήποτε αρχείου \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided του gnubg. Η βάση με το ευρύτερο πεδίο υπερισχύει αυτόματα.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Mode défi.} La case \sphinxstyleemphasis{Défi} du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
+\sphinxstylestrong{Λειτουργία πρόκλησης.} Το πλαίσιο \sphinxstyleemphasis{Πρόκληση} του πίνακα ενεργοποιεί μια λειτουργία εξάσκησης: σε κάθε τροποποίηση της θέσης, οι τιμές των τριών ζωνών — η γραμμή του κάτω παίκτη, η γραμμή του πάνω παίκτη και ο πίνακας κούρσας — αποκρύπτονται (αντικαθίστανται από « ··· »)· ένα κλικ σε μια ζώνη αποκαλύπτει μόνο αυτή τη ζώνη. Η γραμμή Δ εμφανίζεται μόνο αφού αποκαλυφθούν και οι δύο γραμμές παικτών. Μπορείτε έτσι να εξασκηθείτε στην εκτίμηση του EPC κάθε πλευράς, και έπειτα να αποφανθείτε για τον κύβο, πριν επαληθεύσετε. Η ρύθμιση απομνημονεύεται.
 
 \sphinxAtStartPar
-Pour fermer le panneau Bearoff, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
+Για να κλείσετε τον πίνακα Bearoff, πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ή μεταβείτε σε άλλη καρτέλα.
 
 
-\subsubsection{Méthodologie et hypothèses du panneau Bearoff}
+\subsubsection{Μεθοδολογία και υποθέσεις του πίνακα Bearoff}
 \label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-bearoff}}\label{\detokenize{manuel:epc-methodologie}}
 \sphinxAtStartPar
-Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.
+Κάθε τιμή που εμφανίζεται στον πίνακα βασίζεται σε συγκεκριμένες υποθέσεις, που διατυπώνονται εδώ εξαντλητικά.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Domaine.} Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée \sphinxstyleemphasis{avant le
-lancer} ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.
+\sphinxstylestrong{Πεδίο.} Ο πίνακας χειρίζεται μόνο το καθαρό bearoff: όλα τα εναπομείναντα πούλια και των δύο παικτών στο εσωτερικό τεταρτημόριό τους. Η θέση αξιολογείται \sphinxstyleemphasis{πριν από τη ζαριά}· τα ζάρια που ενδεχομένως εμφανίζονται αγνοούνται. Οι κούρσες χωρίς επαφή με πούλια εκτός τεταρτημορίου δεν υποστηρίζονται.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Blocs EPC (toujours exacts).} L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one\sphinxhyphen{}sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le \sphinxstyleemphasis{jeu one\sphinxhyphen{}sided optimal} : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.
+\sphinxstylestrong{Μπλοκ EPC (πάντα ακριβή).} Το EPC, ο μέσος αριθμός ζαριών και η τυπική απόκλιση προέρχονται από την ακριβή κατανομή του αριθμού ζαριών για την έξοδο όλων των πουλιών, που διαβάζεται από την one\sphinxhyphen{}sided βάση του GNUbg (6 σημεία, 15 πούλια, ενσωματωμένη). EPC = μέσες ζαριές × 49/6 (49/6 ≈ 8,167 είναι ο ακριβής μέσος όρος pips ανά ζαριά, με τις διπλές να μετρούν τέσσερις φορές)· wastage = EPC − pip count. Η μοναδική εξιδανίκευση είναι το \sphinxstyleemphasis{βέλτιστο one\sphinxhyphen{}sided παιχνίδι}: κάθε παίκτης ελαχιστοποιεί τις δικές του ζαριές αγνοώντας τον αντίπαλο — αυτός είναι ο τυπικός ορισμός του EPC.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime exact.} Lecture directe dans la base two\sphinxhyphen{}sided
-disponible la plus large (intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06, fichier externe, ou TS\sphinxhyphen{}06\sphinxhyphen{}11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two\sphinxhyphen{}sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (< 0,002 \%).
+\sphinxstylestrong{Πιθανότητα νίκης, ακριβές καθεστώς.} Απευθείας ανάγνωση από την ευρύτερη διαθέσιμη βάση two\sphinxhyphen{}sided (ενσωματωμένη TS\sphinxhyphen{}06\sphinxhyphen{}06, εξωτερικό αρχείο, ή κατεβασμένη TS\sphinxhyphen{}06\sphinxhyphen{}11). Οι βάσεις αυτές προκύπτουν από πλήρη ανάδρομη ανάλυση υπό βέλτιστο two\sphinxhyphen{}sided παιχνίδι και των δύο πλευρών: καμία πρόσθετη υπόθεση, σφάλμα περιορισμένο στην κβάντιση (< 0,002 \%).
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime estimé.} Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one\sphinxhyphen{}sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS\sphinxhyphen{}06\sphinxhyphen{}11. Trois hypothèses :
+\sphinxstylestrong{Πιθανότητα νίκης, εκτιμώμενο καθεστώς.} Εκτός του πεδίου της βάσης: η πιθανότητα προκύπτει με συνέλιξη των δύο one\sphinxhyphen{}sided κατανομών (ο παίκτης στη βολή κερδίζει αν ο αριθμός των ζαριών του είναι μικρότερος ή ίσος με του αντιπάλου), και στη συνέχεια με εφαρμογή μιας παγιωμένης πολυωνυμικής διόρθωσης, βαθμονομημένης εκτός σύνδεσης έναντι της βάσης TS\sphinxhyphen{}06\sphinxhyphen{}11. Τρεις υποθέσεις:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{indépendance} des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;
+\sphinxstylestrong{ανεξαρτησία} των δύο διαδικασιών εξόδου — δομική στην κούρσα, χωρίς επαφή δεν υπάρχει καμία αλληλεπίδραση·
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{jeu one\sphinxhyphen{}sided optimal des deux camps} — c’est \sphinxstyleemphasis{l’approximation} : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;
+\sphinxstylestrong{βέλτιστο one\sphinxhyphen{}sided παιχνίδι και των δύο πλευρών} — αυτή είναι \sphinxstyleemphasis{η προσέγγιση}: στην πραγματικότητα ο παίκτης που ακολουθεί αποκλίνει για να παίξει τη διακύμανση και ο προπορευόμενος για ασφάλεια. Το μετρημένο αποτέλεσμα είναι μια αντισυμμετρική μεροληψία (η συνέλιξη υπερβάλλει το προβάδισμα του προπορευόμενου) την οποία η διόρθωση απορροφά στατιστικά·
 
 \item {} 
 \sphinxAtStartPar
-la \sphinxstylestrong{correction} a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 \%, 99e centile 0,17 \%, maximum observé 0,9 \% (en points de
-probabilité de gain). \sphinxstylestrong{Au\sphinxhyphen{}delà de 11 pions par joueur, cette borne est
-extrapolée} — la tendance est monotone mais aucun oracle ne la certifie.
+η \sphinxstylestrong{διόρθωση} βαθμονομήθηκε και επικυρώθηκε στο πεδίο του oracle (έως 11 πούλια ανά παίκτη). Μετρημένο υπολειπόμενο σφάλμα: τυπική απόκλιση 0,05 \%, 99ο εκατοστημόριο 0,17 \%, μέγιστο παρατηρημένο 0,9 \% (σε μονάδες πιθανότητας νίκης). \sphinxstylestrong{Πέρα από τα 11 πούλια ανά παίκτη, το όριο αυτό προεκτείνεται} — η τάση είναι μονότονη αλλά κανένα oracle δεν την πιστοποιεί.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Équités et verdict de videau (régime exact seulement).} Les équités
-affichées sont celles du \sphinxstylestrong{money game, sans Jacoby}, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.
+\sphinxstylestrong{Ισοδυναμίες και ετυμηγορία κύβου (μόνο στο ακριβές καθεστώς).} Οι εμφανιζόμενες ισοδυναμίες είναι εκείνες του \sphinxstylestrong{money game, χωρίς Jacoby}, στο πλαίσιο αναφοράς της βιβλιογραφίας του bearoff. Στο πεδίο ≤ 11 πούλια ανά παίκτη, τα gammon είναι αδύνατα (κάθε πλευρά έχει ήδη βγάλει τουλάχιστον 4 πούλια): αυτό δεν είναι προσέγγιση. Η ετυμηγορία (όχι διπλασιασμός / διπλασιασμός, αποδοχή / διπλασιασμός, πάσο) ανακατασκευάζεται ακριβώς από τις αποθηκευμένες ισοδυναμίες, σύμφωνα με τον κανόνα του GNUbg, επικυρωμένο ένα προς ένα έναντι της ανάλυσής του.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Les équités cubeful supposent un \sphinxstylestrong{jeu de videau optimal des deux
-camps jusqu’au bout} : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 \% de gain, D/T exact +0,006 contre +0,475 chez XG). La \sphinxstylestrong{décision}
-affichée, elle, coïncide avec celle des moteurs.
+Οι cubeful ισοδυναμίες προϋποθέτουν \sphinxstylestrong{βέλτιστο παιχνίδι κύβου και των δύο πλευρών μέχρι το τέλος}: τα μελλοντικά recube αποτιμώνται πλήρως (πλήρης ανάδρομη ανάλυση). Στις πολύ ασταθείς κούρσες του τέλους της παρτίδας, ο καταρράκτης των recube καταναλώνει σχεδόν όλο το πλεονέκτημα της πλευράς στη βολή — οι ισοδυναμίες «χωρίς διπλασιασμό» και «διπλασιασμός/αποδοχή» μπορεί τότε να είναι κοντά στο μηδέν εκεί όπου μια μηχανή όπως το XG, της οποίας το μοντέλο κύβου δεν αποτιμά αυτόν τον καταρράκτη, εμφανίζει τιμές κοντά στο dead cube (για παράδειγμα 2 πούλια στο σημείο 3 έναντι 2 πουλιών στο σημείο 2: 62 \% νίκη, ακριβές D/T +0,006 έναντι +0,475 στο XG). Η εμφανιζόμενη \sphinxstylestrong{απόφαση}, ωστόσο, συμπίπτει με εκείνη των μηχανών.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Pourquoi le verdict n’est\sphinxhyphen{}il jamais estimé ?} L’équité cubeful est un
-problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 \% de
-désaccords avec l’analyse 2\sphinxhyphen{}ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.
+\sphinxstylestrong{Γιατί η ετυμηγορία δεν εκτιμάται ποτέ;} Η cubeful ισοδυναμία είναι ένα πρόβλημα \sphinxstyleemphasis{τροχιάς} (πότε να διπλασιάσει κανείς), το οποίο καμία στατιστική σύνοψη της θέσης δεν συλλαμβάνει: το καλύτερο στατικό μοντέλο που μετρήθηκε αφήνει ένα υπολειπόμενο σφάλμα (τυπική απόκλιση 0,016 ισοδυναμίας, μέγιστο 0,20) που αρκεί για να αντιστρέψει όλες τις οριακές αποφάσεις. Ομοίως, η μετατροπή της ετυμηγορίας στο σκορ του αγώνα μέσω πίνακα ισοδυναμιών αγώνα μετρήθηκε ανεπαρκής (12 \% διαφωνίες με την ανάλυση 2\sphinxhyphen{}ply του GNUbg, με πραγματικά blunder). Καθώς μια λανθασμένη ετυμηγορία που εμφανίζεται με βεβαιότητα είναι χειρότερη από καμία ετυμηγορία, το blunderDB εμφανίζει την ετυμηγορία μόνο όταν είναι ακριβής — και money.
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
-Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg.
+Οι βάσεις bearoff είναι αμετάβλητοι μαθηματικοί πίνακες, που μπορούν να αναπαραχθούν με το εργαλείο \sphinxcode{\sphinxupquote{makebearoff}} του GNUbg.
 \end{sphinxadmonition}
 
 
@@ -2523,8 +2449,7 @@ BGBlitz: αρχεία \sphinxstyleemphasis{.bgf} και \sphinxstyleemphasis{.tx
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet Bearoff dans le panneau inférieur,
-ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
+Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, κάντε κλικ στην καρτέλα Bearoff στο κάτω πλαίσιο, ή εκτελέστε την εντολή \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -2532,17 +2457,11 @@ ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel dans le panneau Bearoff dédié:
-EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
-bearoff pur, la probabilité de gain du joueur au trait avec, dans le
-domaine exact, le verdict de videau money (voir la section
-« Méthodologie et hypothèses du panneau Bearoff » du manuel).
+Τα αποτελέσματα εμφανίζονται σε πραγματικό χρόνο στον ειδικό πίνακα Bearoff: EPC, μέσος αριθμός ζαριών, τυπική απόκλιση, pip count και wastage — και, σε καθαρό bearoff, η πιθανότητα νίκης του παίκτη στη βολή με, στο ακριβές πεδίο, την ετυμηγορία κύβου money (δείτε την ενότητα «Μεθοδολογία και υποθέσεις του πίνακα Bearoff» του εγχειριδίου).
 
 \item {} 
 \sphinxAtStartPar
-Pour s’entraîner à estimer ces valeurs, cocher la case \sphinxstyleemphasis{Défi} : les
-résultats sont masqués à chaque modification et se révèlent zone par
-zone, d’un clic.
+Για να εξασκηθείτε στην εκτίμηση αυτών των τιμών, επιλέξτε το πλαίσιο \sphinxstyleemphasis{Πρόκληση}: τα αποτελέσματα αποκρύπτονται σε κάθε τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ.
 
 \end{enumerate}
 
@@ -2804,7 +2723,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
+Ανοίγει τον πίνακα Bearoff (Effective Pip Count, πιθανότητα νίκης και ετυμηγορία κύβου στο bearoff).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4862,7 +4781,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/cacher le panneau Bearoff.
+Εμφάνιση/απόκρυψη του πίνακα Bearoff.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6407,13 +6326,7 @@ blunders από διαδικτυακό παιχνίδι.
 Το EPC (Effective Pip Count) είναι ένα πιο ακριβές μέτρο από το απλό pip count για την αξιολόγηση θέσεων bearoff. Ο υπολογιστής EPC του blunderDB χρησιμοποιεί τη βάση δεδομένων bearoff 6 σημείων του GNUbg και υπολογίζει σε πραγματικό χρόνο το EPC, τον μέσο αριθμό ζαριών, την τυπική απόκλιση, το pip count και το wastage.
 
 \sphinxAtStartPar
-Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
-gain du joueur au trait et, lorsque la position est couverte par une base
-two\sphinxhyphen{}sided (base intégrée jusqu’à 6 pions par joueur, base téléchargeable
-jusqu’à 11), le verdict de videau money exact. Hors de ce domaine, la
-probabilité est estimée avec sa marge d’erreur et le verdict n’est
-volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau Bearoff » du manuel pour le détail des hypothèses.
+Στις θέσεις καθαρού bearoff, ο πίνακας εμφανίζει επίσης την πιθανότητα νίκης του παίκτη στη βολή και, όταν η θέση καλύπτεται από μια βάση two\sphinxhyphen{}sided (ενσωματωμένη βάση έως 6 πούλια ανά παίκτη, βάση με δυνατότητα λήψης έως 11), την ακριβή ετυμηγορία κύβου money. Εκτός αυτού του πεδίου, η πιθανότητα εκτιμάται με το περιθώριο σφάλματός της και η ετυμηγορία σκόπιμα δεν εμφανίζεται. Δείτε την ενότητα «Μεθοδολογία και υποθέσεις του πίνακα Bearoff» του εγχειριδίου για τις λεπτομέρειες των υποθέσεων.
 
 
 \subsection{Διαθέτει το blunderDB διεπαφή γραμμής εντολών;}
@@ -6740,10 +6653,7 @@ PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά 
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-base de bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) optionnelle élargissant la base
-intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 pour l’analyse de course du point d’accès EPC ;
-le démon ne télécharge jamais de base lui\sphinxhyphen{}même — monter le fichier
-en volume et le désigner ici
+προαιρετική βάση bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) που διευρύνει την ενσωματωμένη βάση TS\sphinxhyphen{}06\sphinxhyphen{}06 για την ανάλυση κούρσας του σημείου πρόσβασης EPC· ο δαίμονας δεν κατεβάζει ποτέ βάση από μόνος του — προσαρτήστε το αρχείο ως volume και ορίστε το εδώ
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6753,9 +6663,7 @@ en volume et le désigner ici
 \sphinxattableend\end{savenotes}
 
 \sphinxAtStartPar
-La plupart des options peuvent aussi être fournies par variable
-d’environnement (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
+Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθούν μέσω μεταβλητής περιβάλλοντος (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
 
 
 \subsubsection{Σημεία πρόσβασης}

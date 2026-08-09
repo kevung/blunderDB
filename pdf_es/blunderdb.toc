@@ -45,8 +45,8 @@
 \contentsline {paragraph}{Histograma de las magnitudes de error}{22}{paragraph*.23}%
 \contentsline {subsubsection}{Regla de agregación}{22}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: limitaciones}{22}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Panneau Bearoff}{22}{subsection.2.2.17}%
-\contentsline {subsubsection}{Méthodologie et hypothèses du panneau Bearoff}{23}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.17}Panel Bearoff}{22}{subsection.2.2.17}%
+\contentsline {subsubsection}{Metodología e hipótesis del panel Bearoff}{23}{subsubsection*.26}%
 \contentsline {subsection}{\numberline {2.2.18}Panel Anki}{24}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Panel de Metadatos}{25}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Distribuir una base de datos: origen y contraseña}{25}{subsection.2.2.20}%

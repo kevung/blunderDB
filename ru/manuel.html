@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Руководство &mdash; документация blunderDB 0.31.0</title>
+  <title>2. Руководство &mdash; документация blunderDB 0.32.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b83935e1"></script>
+      <script src="_static/documentation_options.js?v=2a46eb0a"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -96,8 +96,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC: ограничения</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Panneau Bearoff</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Méthodologie et hypothèses du panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bearoff">2.17. Панель Bearoff</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-bearoff">2.17.1. Методология и допущения панели Bearoff</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Панель Anki</a></li>
@@ -187,7 +187,7 @@
 <li><p>отображения списка импортированных матчей и навигации по ходам матча (панель матчей),</p></li>
 <li><p>отображения и управления турнирами (панель турниров),</p></li>
 <li><p>отображения статистики производительности (панель Stats),</p></li>
-<li><p>calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),</p></li>
+<li><p>вычисления EPC (Effective Pip Count) позиции снятия шашек (панель Bearoff),</p></li>
 <li><p>изучения позиций методом интервального повторения (панель Anki),</p></li>
 <li><p>просматривать метаданные базы данных (панель «Метаданные»).</p></li>
 </ul>
@@ -531,140 +531,50 @@
 </section>
 </section>
 <section id="panneau-bearoff">
-<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Panneau Bearoff<a class="headerlink" href="#panneau-bearoff" title="Ссылка на этот заголовок"></a></h2>
+<span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Панель Bearoff<a class="headerlink" href="#panneau-bearoff" title="Ссылка на этот заголовок"></a></h2>
 <p>Панель <strong>EPC</strong> (<em>CTRL-E</em>) вычисляет EPC (Effective Pip Count) позиции снятия шашек. Активируется нажатием <em>CTRL-E</em>, щелчком на вкладке EPC в нижней панели или выполнением команды <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
-<p>Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).</p>
-<p>Les résultats sont présentés sous forme de deux tableaux empilés :</p>
+<p>В этой панели пользователь редактирует расположение шашек в обоих домах (внутренних полях): щелчок по пунктам 1–6 ставит шашки нижнего игрока, щелчок по пунктам 19–24 — шашки верхнего игрока (кнопка мыши не имеет значения).</p>
+<p>Результаты представлены в виде двух таблиц, расположенных одна над другой:</p>
 <ul class="simple">
-<li><p>en haut, un <strong>tableau des joueurs</strong> — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne <strong>Δ</strong> donne les
-différences <em>signées</em> (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;</p></li>
-<li><p>en dessous, séparé par un filet, un <strong>tableau course/videau</strong> : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe %) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La <strong>décision</strong> s’affiche à droite du tableau, avec
-le badge exact/estimé. Le <strong>joueur au trait</strong> et la <strong>position du videau</strong>
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet <em>Bearoff</em> de la configuration.</p></li>
+<li><p>сверху — <strong>таблица игроков</strong>: по строке на игрока (обозначена его цветной точкой, чёрный игрок всегда снизу), по столбцу на величину: EPC, пипкаунт, wastage (разница между EPC и пипкаунтом), среднее число бросков и стандартное отклонение. Когда у обоих игроков есть шашки в своём доме, строка <strong>Δ</strong> показывает <em>знаковые</em> разности (нижний − верхний: отрицательные, когда чёрный игрок впереди) EPC, пипов и wastage;</p></li>
+<li><p>ниже, за разделительной линией, — <strong>таблица гонки/куба</strong>: два столбца вероятности выигрыша (по одному на цветную точку игрока, значения без знака %) и money-эквити — под каждым решением, кроме лучшего, в скобках указан отрыв эквити от лучшего решения. <strong>Решение</strong> отображается справа от таблицы вместе со значком точно/оценка. <strong>Игрок на ходу</strong> и <strong>позиция куба</strong> редактируются прямо на доске, как в режиме редактирования: щелчок по прямоугольнику снятия/счёта игрока передаёт ему ход; щелчок по кубу переключает по кругу: в центре → у нижнего → у верхнего (правая кнопка мыши — в обратном порядке). Значение куба остаётся закреплённым — в money game эквити выражаются в единицах текущего куба, важен только его владелец. Анализ пересчитывается немедленно. В режиме оценки ссылка «Voir les paramètres de configuration» (см. параметры конфигурации) открывает непосредственно вкладку <em>Bearoff</em> конфигурации.</p></li>
 </ul>
-<p>La case <em>Défi</em> reste épinglée en haut à droite du panneau.</p>
-<p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :</p>
+<p>Флажок <em>Défi</em> остаётся закреплённым в правом верхнем углу панели.</p>
+<p>Когда позиция является чистым bearoff (все шашки обоих игроков в своём доме), таблица гонки отображает для игрока на ходу:</p>
 <ul class="simple">
-<li><p>la probabilité de gain,</p></li>
-<li><p>en régime <em>exact</em> : les équités money (cubeless, sans double, double/prend,
-double/passe) et le <strong>verdict de videau money</strong> (pas de double, double/prend
-ou double/passe),</p></li>
-<li><p>en régime <em>estimé</em> : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.</p></li>
+<li><p>вероятность выигрыша,</p></li>
+<li><p>в <em>точном</em> режиме: money-эквити (cubeless, без дабла, дабл/тейк, дабл/пас) и <strong>money-вердикт по кубу</strong> (без дабла, дабл/тейк или дабл/пас),</p></li>
+<li><p>в режиме <em>оценки</em>: только вероятность выигрыша с её погрешностью — вердикт по кубу в этом случае намеренно не отображается.</p></li>
 </ul>
-<p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
-two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Bearoff</span></a> pour la
-définition précise des deux régimes et de leurs hypothèses.</p>
-<p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au-delà, dans l’onglet <em>Bearoff</em> de la configuration :</p>
+<p>Значок указывает режим: <strong>точно</strong> (значение прочитано из two-sided базы данных) или <strong>оценка ± погрешность</strong>. Точное определение обоих режимов и их допущений см. в <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Методология и допущения панели Bearoff</span></a>.</p>
+<p><strong>Расширение точной области.</strong> Встроенная база покрывает до 6 шашек у каждого игрока. Выйти за эти пределы можно двумя способами на вкладке <em>Bearoff</em> конфигурации:</p>
 <ul class="simple">
-<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé <strong>reprend où il s’était arrêté</strong>
-(le fichier partiel est conservé et complété par requête HTTP Range) ;</p></li>
-<li><p>indiquer un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.</p></li>
+<li><p>загрузить расширенную базу TS-06-11 (1,2 ГБ, проверяется по SHA-256, удаляется там же): точный вердикт до 11 шашек у каждого игрока. Прерванная или отменённая загрузка <strong>возобновляется с места остановки</strong> (частичный файл сохраняется и дополняется запросом HTTP Range);</p></li>
+<li><p>указать любой two-sided файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code> из gnubg. База с самой широкой областью автоматически имеет приоритет.</p></li>
 </ul>
-<p><strong>Mode défi.</strong> La case <em>Défi</em> du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.</p>
-<p>Pour fermer le panneau Bearoff, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
+<p><strong>Режим «Вызов».</strong> Флажок <em>Défi</em> на панели включает режим тренировки: при каждом изменении позиции значения трёх зон — строки нижнего игрока, строки верхнего игрока и таблицы гонки — скрываются (заменяются на « ··· »); щелчок по зоне открывает только её. Строка Δ появляется лишь после открытия обеих строк игроков. Так можно тренироваться оценивать EPC каждой стороны, затем принимать решение по кубу и только потом проверять себя. Настройка запоминается.</p>
+<p>Для закрытия панели Bearoff нажмите <em>CTRL-E</em> или переключитесь на другую вкладку.</p>
 <section id="methodologie-et-hypotheses-du-panneau-bearoff">
-<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Ссылка на этот заголовок"></a></h3>
-<p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.</p>
-<p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le
-lancer</em> ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.</p>
-<p><strong>Blocs EPC (toujours exacts).</strong> L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le <em>jeu one-sided optimal</em> : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.</p>
-<p><strong>Probabilité de gain, régime exact.</strong> Lecture directe dans la base two-sided
-disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (&lt; 0,002 %).</p>
-<p><strong>Probabilité de gain, régime estimé.</strong> Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one-sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS-06-11. Trois hypothèses :</p>
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Методология и допущения панели Bearoff<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-bearoff" title="Ссылка на этот заголовок"></a></h3>
+<p>Каждое значение, отображаемое панелью, опирается на точные допущения, исчерпывающе изложенные здесь.</p>
+<p><strong>Область применения.</strong> Панель обрабатывает только чистый bearoff: все оставшиеся шашки обоих игроков находятся в их домах (внутренних полях). Позиция оценивается <em>до броска</em>; уже выставленные кости игнорируются. Бесконтактные гонки, в которых есть шашки вне дома, не обрабатываются.</p>
+<p><strong>Блоки EPC (всегда точные).</strong> EPC, среднее число бросков и стандартное отклонение берутся из точного распределения числа бросков, нужных для снятия всех шашек, прочитанного из one-sided базы GNUbg (6 пунктов, 15 шашек, встроена). EPC = среднее число бросков × 49/6 (49/6 ≈ 8,167 — точное среднее число пипов за бросок, дубли считаются четырежды); wastage = EPC − пипкаунт. Единственная идеализация — <em>оптимальная one-sided игра</em>: каждый игрок минимизирует собственное число бросков, игнорируя соперника, — это стандартное определение EPC.</p>
+<p><strong>Вероятность выигрыша, точный режим.</strong> Прямое чтение из самой широкой доступной two-sided базы (встроенная TS-06-06, внешний файл или загруженная TS-06-11). Эти базы получены полным ретроградным анализом при оптимальной two-sided игре обеих сторон: никаких дополнительных допущений, ошибка ограничена квантованием (&lt; 0,002 %).</p>
+<p><strong>Вероятность выигрыша, режим оценки.</strong> Вне области базы вероятность получается свёрткой двух one-sided распределений (игрок на ходу выигрывает, если его число бросков меньше или равно числу бросков соперника) с последующей фиксированной полиномиальной поправкой, откалиброванной офлайн по базе TS-06-11. Три допущения:</p>
 <ul class="simple">
-<li><p><strong>indépendance</strong> des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;</p></li>
-<li><p><strong>jeu one-sided optimal des deux camps</strong> — c’est <em>l’approximation</em> : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;</p></li>
-<li><p>la <strong>correction</strong> a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
-probabilité de gain). <strong>Au-delà de 11 pions par joueur, cette borne est
-extrapolée</strong> — la tendance est monotone mais aucun oracle ne la certifie.</p></li>
+<li><p><strong>независимость</strong> двух процессов снятия — структурная в гонке: без контакта нет никакого взаимодействия;</p></li>
+<li><p><strong>оптимальная one-sided игра обеих сторон</strong> — это и есть <em>приближение</em>: в действительности отстающий игрок отклоняется ради дисперсии, а лидер — ради безопасности. Измеренный эффект — антисимметричное смещение (свёртка преувеличивает преимущество лидера), которое поправка статистически поглощает;</p></li>
+<li><p><strong>поправка</strong> откалибрована и проверена на области оракула (до 11 шашек у каждого игрока). Измеренная остаточная ошибка: стандартное отклонение 0,05 %, 99-й процентиль 0,17 %, наблюдаемый максимум 0,9 % (в пунктах вероятности выигрыша). <strong>Свыше 11 шашек у игрока эта граница экстраполируется</strong> — тенденция монотонна, но никакой оракул её не подтверждает.</p></li>
 </ul>
-<p><strong>Équités et verdict de videau (régime exact seulement).</strong> Les équités
-affichées sont celles du <strong>money game, sans Jacoby</strong>, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.</p>
+<p><strong>Эквити и вердикт по кубу (только точный режим).</strong> Отображаемые эквити — это эквити <strong>money game без правила Джекоби</strong>, в системе отсчёта литературы по bearoff. В области ≤ 11 шашек у каждого игрока гаммоны невозможны (каждая сторона уже сняла не менее 4 шашек): это не приближение. Вердикт (без дабла / дабл, тейк / дабл, пас) точно восстанавливается из сохранённых эквити по правилу GNUbg, проверенному один в один против его анализа.</p>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Les équités cubeful supposent un <strong>jeu de videau optimal des deux
-camps jusqu’au bout</strong> : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 % de gain, D/T exact +0,006 contre +0,475 chez XG). La <strong>décision</strong>
-affichée, elle, coïncide avec celle des moteurs.</p>
+<p>Cubeful-эквити предполагают <strong>оптимальную игру кубом обеих сторон до самого конца</strong>: будущие редаблы полностью учитываются (полный ретроградный анализ). В очень волатильных гонках конца партии каскад редаблов съедает почти всё преимущество стороны на ходу — эквити «без дабла» и «дабл/тейк» тогда могут быть близки к нулю там, где движок вроде XG, чья модель куба не учитывает эту каскаду, показывает значения, близкие к dead cube (например, 2 шашки на пункте 3 против 2 шашек на пункте 2: 62 % выигрыша, точное D/T +0,006 против +0,475 у XG). Отображаемое <strong>решение</strong> при этом совпадает с решением движков.</p>
 </div>
-<p><strong>Pourquoi le verdict n’est-il jamais estimé ?</strong> L’équité cubeful est un
-problème de <em>trajectoire</em> (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 % de
-désaccords avec l’analyse 2-ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.</p>
+<p><strong>Почему вердикт никогда не оценивается?</strong> Cubeful-эквити — задача о <em>траектории</em> (когда даблить), которую не улавливает никакая статистическая сводка позиции: лучшая из измеренных статических моделей оставляет остаточную ошибку (стандартное отклонение 0,016 эквити, максимум 0,20), достаточную, чтобы перевернуть все близкие решения. Аналогично, пересчёт вердикта на счёт матча через таблицу матчевых эквити оказался недостаточным (12 % расхождений с 2-ply анализом GNUbg, включая настоящие бландеры). Поскольку уверенно показанный неверный вердикт хуже отсутствия вердикта, blunderDB отображает вердикт только тогда, когда он точен — и только для money game.</p>
 <div class="admonition note">
 <p class="admonition-title">Примечание</p>
-<p>Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg.</p>
+<p>Базы bearoff — неизменяемые математические таблицы, которые можно заново сгенерировать инструментом <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> из GNUbg.</p>
 </div>
 </section>
 </section>

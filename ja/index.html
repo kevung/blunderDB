@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.31.0 ドキュメント</title>
+  <title>blunderDB &mdash; blunderDB 0.32.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4f25ac80"></script>
+      <script src="_static/documentation_options.js?v=dd5a726b"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=4755f45a"></script>
@@ -208,7 +208,7 @@
 <td><p>インターフェースの簡素化：マッチおよびコレクション内のナビゲーションはパネルから直接行えるようになりました。</p>
 <p>ステータスバーに統合されたコマンドライン。</p>
 <p>コンソールパネルをログパネルに名称変更。</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>下部パネルに専用のベアオフパネル。</p>
 <p>検索パネルでのポジションのコピー／貼り付け。</p>
 <p>ドラッグアンドドロップによる、コレクション、コレクション内のポジション、トーナメント内のマッチの並べ替え。</p>
 <p>マッチパネルへのトーナメント列の追加とインライン編集。</p>
@@ -289,6 +289,10 @@
 <td><p>2026/08/04</p></td>
 <td><p>データベースを第三者に配る仕組み。互いに独立した二つの方法があり、どちらも任意で、エクスポート時に選びます。<strong>出所の記載</strong>は、そのファイルが何であり、どこから来たのかをファイル自身に書き込みます。署名には、初回に自動で作られる発行者の識別情報を使います。記載は偽造できず、メタデータパネルの先頭で読め（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>でも読め、こちらはファイルに一切書き込みません）、受け取った側では何も記録しません。ログも追跡もありません。<strong>パスワード保護</strong>は暗号化された<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>ファイルを作ります（AES-256-GCM、鍵は Argon2id で導出）。パスワードは開くたびに検証され、ヘッダーは平文のまま読めます。識別情報は設定画面から一つのファイルとして書き出し・読み込みできます。エクスポートのウィンドウを刷新：四画面から一画面へ、実際に書き出される対象（表示中のポジション）の明示、コレクションごとの含有割合を不完全なときは赤で強調、トーナメントはマッチと一緒でなければ書き出せないように。エクスポート自体も三倍速くなりました。設定ウィンドウは三つのタブ（インターフェース、ボードの色、発行者の識別情報）に整理され、大きさも位置も変わりません。メタデータパネルは一つのグリッドに配置し直しました。入力したコマンドを繰り返すだけだったログパネルは削除しました。主な修正：誤ったパスワードで保護されたデータベースが開かなくなりました。ダイアログの入力欄がクリックでフォーカスを失わなくなりました。マネーゲームで PR/MWC の指標計算が異常終了しなくなりました。一時ファイル（<code class="docutils literal notranslate"><span class="pre">-wal</span></code>、<code class="docutils literal notranslate"><span class="pre">-shm</span></code>、ロック）は終了時に片づけられます。<a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>と<a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">マニュアル</span></a>を参照してください。</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>2026/08/09</p></td>
+<td><p>EPCパネルは<strong>ベアオフ</strong>パネルとなり、完全なレース分析機能を獲得しました。純粋なベアオフのポジションでは、各プレイヤーのEPC、ピップカウント、ウェイステージ、平均ロール数（符号付きのΔ行を持つ表形式で表示されるようになりました）に加えて、両プレイヤーの勝率とマネーゲームのエクイティ（キューブレス、ノーダブル、ダブル/テイク、ダブル/パス、各判断の最善との差付き）、そして<strong>最善のキューブ判定</strong>を表示します。2つの方式が明確に区別されます：<em>正確</em>（two-sidedデータベースからの読み取り；GNUbgのTS-06-06データベースを内蔵、各プレイヤー6チェッカーまでカバー）と<em>推定</em>（較正済みの畳み込み、誤差の範囲を表示——キューブ判定は決して推定されません）。拡張データベースTS-06-11（各プレイヤー11チェッカーまでの正確な判定、1.2 GB）は、設定の新しい<em>ベアオフ</em>タブからダウンロードでき、整合性検証と中断されたダウンロードの再開に対応します；gnubgの任意のtwo-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code> ファイルを指定することもできます。トレーニング用の<strong>チャレンジモード</strong>：結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。ボード上での完全な編集：両インナーボードのチェッカー、手番のプレイヤー（ベアオフ/スコアの長方形をクリック）、キューブの位置（キューブをクリック）。ボードのクリックはあらゆるインターフェース倍率で正確になりました（ポイント1のクリックがポイント2に着地することがありました）。コマンドラインの新コマンド <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> とサーバーモードの <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> オプション。マニュアルの新しい節「ベアオフパネルの方法論と仮定」が、表示される各値の背後にある仮定を漏れなく述べています。<a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">ベアオフパネル</span></a> と <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">ベアオフパネルの方法論と仮定</span></a> を参照。</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -318,7 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. マッチパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. トーナメントパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Stats パネル</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. ベアオフパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki パネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. メタデータパネル</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. データベースの配布：出所とパスワード</a></li>

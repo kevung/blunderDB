@@ -82,7 +82,7 @@
 
 \title{blunderDB}
 \date{09.08.2026}
-\release{0.31.0}
+\release{0.32.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -507,7 +507,7 @@ Tilariviin integroitu komentorivi.
 Console\sphinxhyphen{}paneeli nimetty uudelleen Log\sphinxhyphen{}paneeliksi.
 
 \sphinxAtStartPar
-Panneau Bearoff dédié dans le panneau inférieur.
+Oma Bearoff\sphinxhyphen{}paneeli alapaneelissa.
 
 \sphinxAtStartPar
 Position kopiointi/liittäminen hakupaneelissa.
@@ -814,6 +814,22 @@ Tietokannan jakaminen muille: kaksi toisistaan riippumatonta mekanismia, molemma
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.32.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+9.8.2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+EPC\sphinxhyphen{}paneelista tulee \sphinxstylestrong{Bearoff}\sphinxhyphen{}paneeli, ja se saa täydellisen kilpajuoksuanalyysin. Puhtaassa bearoff\sphinxhyphen{}asemassa se näyttää — kummankin pelaajan EPC:n, pip countin, wastagen ja keskimääräisen heittomäärän lisäksi, jotka esitetään nyt taulukkona etumerkillisen Δ\sphinxhyphen{}rivin kera — molempien pelaajien voittotodennäköisyydet ja money\sphinxhyphen{}ekviteetit (cubeless, ei tuplausta, tuplaus/ota, tuplaus/ohita, kunkin päätöksen ero parhaaseen) sekä \sphinxstylestrong{parhaan kuutiopäätöksen}. Kaksi selvästi erotettua tilaa: \sphinxstyleemphasis{tarkka} (luku two\sphinxhyphen{}sided\sphinxhyphen{}tietokannasta; sisäänrakennettu GNUbg:n TS\sphinxhyphen{}06\sphinxhyphen{}06\sphinxhyphen{}tietokanta, joka kattaa enintään 6 nappulaa pelaajaa kohden) ja \sphinxstyleemphasis{arvioitu} (kalibroitu konvoluutio, virhemarginaali näytetään — kuutiopäätöstä ei koskaan arvioida). Laajennettu TS\sphinxhyphen{}06\sphinxhyphen{}11\sphinxhyphen{}tietokanta (tarkka päätös 11 nappulaan asti pelaajaa kohden, 1,2 Gt) ladataan asetusten uudelta \sphinxstyleemphasis{Bearoff}\sphinxhyphen{}välilehdeltä eheystarkistuksen ja keskeytyneiden latausten jatkamisen kera; myös mikä tahansa gnubg:n two\sphinxhyphen{}sided \sphinxcode{\sphinxupquote{.bd}}\sphinxhyphen{}tiedosto voidaan osoittaa. \sphinxstylestrong{Haastetila} harjoittelua varten: tulokset piilotetaan jokaisen muutoksen yhteydessä ja ne paljastuvat vyöhyke kerrallaan napsautuksella. Muokkaus kokonaan laudalla: molempien kotikenttien nappulat, vuorossa oleva pelaaja (napsautus ulosotto/pistetilanne\sphinxhyphen{}suorakulmioon) ja kuution sijainti (napsautus kuutioon). Laudan napsautus on nyt tarkka kaikilla käyttöliittymän mittakaavoilla (napsautus pisteeseen 1 saattoi osua pisteeseen 2). Uusi komentorivikomento \sphinxcode{\sphinxupquote{blunderdb epc}} ja palvelintilan valitsin \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}}. Käsikirjan uusi osio, « Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset », esittää tyhjentävästi kunkin näytetyn arvon taustalla olevat oletukset. Katso {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Bearoff\sphinxhyphen{}paneeli}}}}} ja {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -836,15 +852,15 @@ Uusin blunderDB\sphinxhyphen{}versio on saatavilla MIT\sphinxhyphen{}lisenssill�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
+Windowsille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.32.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
+Linuxille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0}
 
 \item {} 
 \sphinxAtStartPar
-Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
+Macille: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.32.0.zip}
 
 \end{itemize}
 
@@ -896,7 +912,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raaka binääri (edistynyt menetelmä)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
+Raaka binääri \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0} on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -904,7 +920,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
+Julkaistaan kaksi Linux\sphinxhyphen{}versiota webkit2gtk\sphinxhyphen{}kirjaston version mukaan. Jos saat virheen \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, jakelusi käyttää webkit2gtk\sphinxhyphen{}4.1:tä: käytä \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}}\sphinxhyphen{}pakettia, AUR\sphinxhyphen{}pakettia tai lataa erillinen versio \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.32.0}. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.
 \end{sphinxadmonition}
 
 
@@ -1034,7 +1050,7 @@ näyttää suoritustilastot (Stats\sphinxhyphen{}paneeli),
 
 \item {} 
 \sphinxAtStartPar
-calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),
+laskea bearoff\sphinxhyphen{}aseman EPC (Effective Pip Count) (Bearoff\sphinxhyphen{}paneeli),
 
 \item {} 
 \sphinxAtStartPar
@@ -1735,205 +1751,115 @@ MWC cost on kumulatiivinen koko suodatetussa aineistossa — ei päätöskohtain
 \end{itemize}
 
 
-\subsection{Panneau Bearoff}
+\subsection{Bearoff\sphinxhyphen{}paneeli}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
 \sphinxstylestrong{EPC\sphinxhyphen{}paneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) laskee bearoff\sphinxhyphen{}aseman EPC:n (Effective Pip Count). Se aktivoidaan painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, napsauttamalla EPC\sphinxhyphen{}välilehteä alapaneelissa tai suorittamalla komento \sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
-Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).
+Tässä paneelissa käyttäjä muokkaa nappuloiden sijaintia molemmissa kotikentissä: napsautus pisteisiin 1–6 asettaa alapelaajan nappuloita, napsautus pisteisiin 19–24 asettaa yläpelaajan nappuloita (hiiren painikkeella ei ole väliä).
 
 \sphinxAtStartPar
-Les résultats sont présentés sous forme de deux tableaux empilés :
+Tulokset esitetään kahtena päällekkäisenä taulukkona:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-en haut, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les
-différences \sphinxstyleemphasis{signées} (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;
+ylhäällä \sphinxstylestrong{pelaajataulukko} — yksi rivi pelaajaa kohden (tunnistettavissa pelaajan värillisestä pisteestä, musta pelaaja aina alimpana), yksi sarake suuretta kohden: EPC, pip count, wastage (EPC:n ja pip countin erotus), keskimääräinen heittomäärä ja keskihajonta. Kun molemmilla pelaajilla on nappuloita kotikentässään, \sphinxstylestrong{Δ}\sphinxhyphen{}rivi antaa EPC:n, pipien ja wastagen \sphinxstyleemphasis{etumerkilliset} erotukset (ala − ylä: negatiivinen, kun musta pelaaja on edellä);
 
 \item {} 
 \sphinxAtStartPar
-en dessous, séparé par un filet, un \sphinxstylestrong{tableau course/videau} : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe \%) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La \sphinxstylestrong{décision} s’affiche à droite du tableau, avec
-le badge exact/estimé. Le \sphinxstylestrong{joueur au trait} et la \sphinxstylestrong{position du videau}
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet \sphinxstyleemphasis{Bearoff} de la configuration.
+sen alla, viivalla erotettuna, \sphinxstylestrong{kilpajuoksu/kuutio\sphinxhyphen{}taulukko}: kaksi voittotodennäköisyyssaraketta (yksi kummankin pelaajan värillistä pistettä kohden, arvot ilman \%\sphinxhyphen{}merkkiä) ja money\sphinxhyphen{}ekviteetit — jokaisen muun kuin parhaan päätöksen alla näytetään suluissa ekviteettiero parhaaseen päätökseen. \sphinxstylestrong{Päätös} näkyy taulukon oikealla puolella tarkka/arvioitu\sphinxhyphen{}merkin kera. \sphinxstylestrong{Vuorossa olevaa pelaajaa} ja \sphinxstylestrong{kuution sijaintia} muokataan suoraan laudalla, kuten muokkaustilassa: pelaajan bearoff/pistetilanne\sphinxhyphen{}suorakulmion napsauttaminen antaa vuoron hänelle; kuution napsauttaminen kierrättää tilat keskellä → alapelaajan hallussa → yläpelaajan hallussa (oikea painike vastakkaiseen suuntaan). Kuution arvo pysyy kiinnitettynä — money gamessa ekviteetit ilmaistaan nykyisen kuution yksiköissä, vain sen omistajalla on merkitystä. Analyysi lasketaan heti uudelleen. Arvioidussa tilassa linkki « Näytä asetukset » avaa suoraan asetusten \sphinxstyleemphasis{Bearoff}\sphinxhyphen{}välilehden.
 
 \end{itemize}
 
 \sphinxAtStartPar
-La case \sphinxstyleemphasis{Défi} reste épinglée en haut à droite du panneau.
+\sphinxstyleemphasis{Haaste}\sphinxhyphen{}valintaruutu pysyy kiinnitettynä paneelin oikeaan yläkulmaan.
 
 \sphinxAtStartPar
-Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :
+Kun asema on puhdas bearoff (molempien pelaajien kaikki nappulat kotikentässään), kilpajuoksutaulukko näyttää vuorossa olevalle pelaajalle:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-la probabilité de gain,
+voittotodennäköisyyden,
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{exact} : les équités money (cubeless, sans double, double/prend,
-double/passe) et le \sphinxstylestrong{verdict de videau money} (pas de double, double/prend
-ou double/passe),
+\sphinxstyleemphasis{tarkassa} tilassa: money\sphinxhyphen{}ekviteetit (cubeless, ei tuplausta, tuplaus/ota, tuplaus/ohita) ja \sphinxstylestrong{money\sphinxhyphen{}kuutiopäätöksen} (ei tuplausta, tuplaus/ota tai tuplaus/ohita),
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{estimé} : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.
+\sphinxstyleemphasis{arvioidussa} tilassa: pelkän voittotodennäköisyyden virhemarginaaleineen — kuutiopäätöstä ei tällöin tarkoituksella näytetä.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
-two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}} pour la
-définition précise des deux régimes et de leurs hypothèses.
+Merkki osoittaa tilan: \sphinxstylestrong{tarkka} (arvo luettu two\sphinxhyphen{}sided\sphinxhyphen{}tietokannasta) tai \sphinxstylestrong{arvioitu ± marginaali}. Katso {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset}}}}}, jossa määritellään täsmällisesti molemmat tilat ja niiden oletukset.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Élargir le domaine exact.} La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au\sphinxhyphen{}delà, dans l’onglet \sphinxstyleemphasis{Bearoff} de la configuration :
+\sphinxstylestrong{Tarkan alueen laajentaminen.} Sisäänrakennettu tietokanta kattaa 6 nappulaa pelaajaa kohden. Asetusten \sphinxstyleemphasis{Bearoff}\sphinxhyphen{}välilehdellä on kaksi tapaa mennä pidemmälle:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où il s’était arrêté}
-(le fichier partiel est conservé et complété par requête HTTP Range) ;
+lataa laajennettu TS\sphinxhyphen{}06\sphinxhyphen{}11\sphinxhyphen{}tietokanta (1,2 Gt, tarkistetaan SHA\sphinxhyphen{}256:lla, poistettavissa samasta paikasta): tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden. Keskeytynyt tai peruutettu lataus \sphinxstylestrong{jatkuu siitä, mihin se jäi} (osittainen tiedosto säilytetään ja täydennetään HTTP Range \sphinxhyphen{}pyynnöllä);
 
 \item {} 
 \sphinxAtStartPar
-indiquer un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.
+osoita mikä tahansa gnubg:n two\sphinxhyphen{}sided \sphinxcode{\sphinxupquote{.bd}}\sphinxhyphen{}tiedosto. Alueeltaan laajin tietokanta voittaa automaattisesti.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Mode défi.} La case \sphinxstyleemphasis{Défi} du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
+\sphinxstylestrong{Haastetila.} Paneelin \sphinxstyleemphasis{Haaste}\sphinxhyphen{}valintaruutu ottaa käyttöön harjoitustilan: jokaisen asemamuutoksen yhteydessä kolmen vyöhykkeen — alapelaajan rivin, yläpelaajan rivin ja kilpajuoksutaulukon — arvot piilotetaan (korvataan merkinnällä « ··· »); vyöhykkeen napsauttaminen paljastaa vain kyseisen vyöhykkeen. Δ\sphinxhyphen{}rivi ilmestyy vasta, kun molemmat pelaajarivit on paljastettu. Näin voi harjoitella kummankin puolen EPC:n arviointia ja sitten kuutiopäätöksen tekemistä ennen tarkistusta. Asetus muistetaan.
 
 \sphinxAtStartPar
-Pour fermer le panneau Bearoff, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
+Sulje Bearoff\sphinxhyphen{}paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} tai vaihtamalla toiseen välilehteen.
 
 
-\subsubsection{Méthodologie et hypothèses du panneau Bearoff}
+\subsubsection{Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset}
 \label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-bearoff}}\label{\detokenize{manuel:epc-methodologie}}
 \sphinxAtStartPar
-Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.
+Jokainen paneelin näyttämä arvo perustuu täsmällisiin oletuksiin, jotka esitetään tässä tyhjentävästi.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Domaine.} Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée \sphinxstyleemphasis{avant le
-lancer} ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.
+\sphinxstylestrong{Alue.} Paneeli käsittelee vain puhdasta bearoffia: molempien pelaajien kaikki jäljellä olevat nappulat ovat heidän kotikentässään. Asema arvioidaan \sphinxstyleemphasis{ennen heittoa}; mahdollisesti asetetut nopat jätetään huomiotta. Kontaktittomia kilpajuoksuja, joissa nappuloita on kotikentän ulkopuolella, ei käsitellä.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Blocs EPC (toujours exacts).} L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one\sphinxhyphen{}sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le \sphinxstyleemphasis{jeu one\sphinxhyphen{}sided optimal} : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.
+\sphinxstylestrong{EPC\sphinxhyphen{}lohkot (aina tarkkoja).} EPC, keskimääräinen heittomäärä ja keskihajonta saadaan kaikkien nappuloiden ulosottoon tarvittavien heittojen tarkasta jakaumasta, joka luetaan GNUbg:n one\sphinxhyphen{}sided\sphinxhyphen{}tietokannasta (6 pistettä, 15 nappulaa, sisäänrakennettu). EPC = keskimääräiset heitot × 49/6 (49/6 ≈ 8,167 on heittokohtaisten pipien tarkka keskiarvo, tuplat laskettuna neljästi); wastage = EPC − pip count. Ainoa idealisointi on \sphinxstyleemphasis{optimaalinen one\sphinxhyphen{}sided\sphinxhyphen{}peli}: kumpikin pelaaja minimoi omat heittonsa vastustajasta piittaamatta — tämä on EPC:n vakiomääritelmä.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime exact.} Lecture directe dans la base two\sphinxhyphen{}sided
-disponible la plus large (intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06, fichier externe, ou TS\sphinxhyphen{}06\sphinxhyphen{}11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two\sphinxhyphen{}sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (< 0,002 \%).
+\sphinxstylestrong{Voittotodennäköisyys, tarkka tila.} Suora luku laajimmasta käytettävissä olevasta two\sphinxhyphen{}sided\sphinxhyphen{}tietokannasta (sisäänrakennettu TS\sphinxhyphen{}06\sphinxhyphen{}06, ulkoinen tiedosto tai ladattu TS\sphinxhyphen{}06\sphinxhyphen{}11). Nämä tietokannat ovat tulosta täydellisestä taaksepäin etenevästä analyysistä molempien puolten optimaalisella two\sphinxhyphen{}sided\sphinxhyphen{}pelillä: ei lisäoletuksia, virhe rajoittuu kvantisointiin (< 0,002 \%).
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime estimé.} Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one\sphinxhyphen{}sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS\sphinxhyphen{}06\sphinxhyphen{}11. Trois hypothèses :
+\sphinxstylestrong{Voittotodennäköisyys, arvioitu tila.} Tietokannan alueen ulkopuolella: todennäköisyys saadaan konvoloimalla kaksi one\sphinxhyphen{}sided\sphinxhyphen{}jakaumaa (vuorossa oleva pelaaja voittaa, jos hänen heittomääränsä on pienempi tai yhtä suuri kuin vastustajan) ja soveltamalla sitten kiinteää polynomikorjausta, joka on kalibroitu etukäteen TS\sphinxhyphen{}06\sphinxhyphen{}11\sphinxhyphen{}tietokantaa vasten. Kolme oletusta:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{indépendance} des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;
+kahden ulosottoprosessin \sphinxstylestrong{riippumattomuus} — rakenteellinen ominaisuus kilpajuoksussa: ilman kontaktia ei ole mitään vuorovaikutusta;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{jeu one\sphinxhyphen{}sided optimal des deux camps} — c’est \sphinxstyleemphasis{l’approximation} : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;
+\sphinxstylestrong{molempien puolten optimaalinen one\sphinxhyphen{}sided\sphinxhyphen{}peli} — tämä on \sphinxstyleemphasis{approksimaatio}: todellisuudessa jäljessä oleva pelaaja poikkeaa siitä pelatakseen varianssia ja johdossa oleva pelatakseen varman päälle. Mitattu vaikutus on antisymmetrinen harha (konvoluutio liioittelee johtajan etumatkaa), jonka korjaus absorboi tilastollisesti;
 
 \item {} 
 \sphinxAtStartPar
-la \sphinxstylestrong{correction} a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 \%, 99e centile 0,17 \%, maximum observé 0,9 \% (en points de
-probabilité de gain). \sphinxstylestrong{Au\sphinxhyphen{}delà de 11 pions par joueur, cette borne est
-extrapolée} — la tendance est monotone mais aucun oracle ne la certifie.
+\sphinxstylestrong{korjaus} on kalibroitu ja validoitu oraakkelin alueella (enintään 11 nappulaa pelaajaa kohden). Mitattu jäännösvirhe: keskihajonta 0,05 \%, 99. persentiili 0,17 \%, suurin havaittu 0,9 \% (voittotodennäköisyyden prosenttiyksikköinä). \sphinxstylestrong{Kun nappuloita on pelaajaa kohden yli 11, tämä raja on ekstrapoloitu} — suuntaus on monotoninen, mutta mikään oraakkeli ei todenna sitä.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Équités et verdict de videau (régime exact seulement).} Les équités
-affichées sont celles du \sphinxstylestrong{money game, sans Jacoby}, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.
+\sphinxstylestrong{Ekviteetit ja kuutiopäätös (vain tarkka tila).} Näytetyt ekviteetit ovat \sphinxstylestrong{money gamen, ilman Jacobya}, bearoff\sphinxhyphen{}kirjallisuuden viitekehyksessä. Alueella ≤ 11 nappulaa pelaajaa kohden gammonit ovat mahdottomia (kumpikin puoli on jo ottanut ulos vähintään 4 nappulaa): tämä ei ole approksimaatio. Päätös (ei tuplausta / tuplaus, ota / tuplaus, ohita) rekonstruoidaan tarkasti tallennetuista ekviteeteista GNUbg:n säännön mukaan, joka on validoitu kohta kohdalta sen analyysiä vasten.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Les équités cubeful supposent un \sphinxstylestrong{jeu de videau optimal des deux
-camps jusqu’au bout} : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 \% de gain, D/T exact +0,006 contre +0,475 chez XG). La \sphinxstylestrong{décision}
-affichée, elle, coïncide avec celle des moteurs.
+Cubeful\sphinxhyphen{}ekviteetit olettavat \sphinxstylestrong{molempien puolten optimaalisen kuutiopelin loppuun asti}: tulevat uudelleentuplaukset arvostetaan täysimääräisesti (täydellinen taaksepäin etenevä analyysi). Pelin lopun hyvin epävakaissa kilpajuoksuissa uudelleentuplausten ketju syö lähes koko vuorossa olevan puolen edun — ekviteetit « ei tuplausta » ja « tuplaus/ota » voivat tällöin olla lähellä nollaa siinä, missä XG:n kaltainen moottori, jonka kuutiomalli ei arvosta tätä ketjua, näyttää dead cubea lähellä olevia arvoja (esimerkiksi 2 nappulaa pisteessä 3 vastaan 2 nappulaa pisteessä 2: 62 \%:n voittotodennäköisyys, tarkka D/T +0,006, XG:llä +0,475). Näytetty \sphinxstylestrong{päätös} sitä vastoin yhtyy moottoreiden päätökseen.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Pourquoi le verdict n’est\sphinxhyphen{}il jamais estimé ?} L’équité cubeful est un
-problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 \% de
-désaccords avec l’analyse 2\sphinxhyphen{}ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.
+\sphinxstylestrong{Miksi kuutiopäätöstä ei koskaan arvioida?} Cubeful\sphinxhyphen{}ekviteetti on \sphinxstyleemphasis{trajektoriaongelma} (milloin tuplata), jota mikään aseman tilastollinen tiivistelmä ei tavoita: paras mitattu staattinen malli jättää jäännösvirheen (ekviteetin keskihajonta 0,016, maksimi 0,20), joka riittää kääntämään kaikki tiukat päätökset. Samoin päätöksen muuntaminen ottelutilanteeseen match\sphinxhyphen{}ekviteettitaulukon avulla mitattiin riittämättömäksi (12 \% erimielisyyksiä GNUbg:n 2\sphinxhyphen{}ply\sphinxhyphen{}analyysin kanssa, mukana todellisia blundereita). Koska itsevarmasti näytetty väärä päätös on pahempi kuin ei päätöstä lainkaan, blunderDB näyttää päätöksen vain, kun se on tarkka — ja money.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg.
+Bearoff\sphinxhyphen{}tietokannat ovat muuttumattomia matemaattisia tauluja, jotka voidaan generoida uudelleen GNUbg:n \sphinxcode{\sphinxupquote{makebearoff}}\sphinxhyphen{}työkalulla.
 \end{sphinxadmonition}
 
 
@@ -2539,8 +2465,7 @@ EPC\sphinxhyphen{}laskuri (Effective Pip Count) mahdollistaa aseman bearoff\sphi
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet Bearoff dans le panneau inférieur,
-ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
+Paina \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, napsauta alapaneelin Bearoff\sphinxhyphen{}välilehteä tai suorita komento \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -2548,17 +2473,11 @@ Muokkaa nappuloiden asemaa kotialueella (6 viimeistä pistettä).
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel dans le panneau Bearoff dédié:
-EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
-bearoff pur, la probabilité de gain du joueur au trait avec, dans le
-domaine exact, le verdict de videau money (voir la section
-« Méthodologie et hypothèses du panneau Bearoff » du manuel).
+Tulokset näytetään reaaliajassa omassa Bearoff\sphinxhyphen{}paneelissa: EPC, keskimääräinen heittomäärä, keskihajonta, pip count ja wastage — sekä puhtaassa bearoffissa vuorossa olevan pelaajan voittotodennäköisyys ja tarkalla alueella money\sphinxhyphen{}kuutiopäätös (katso käsikirjan osio « Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset »).
 
 \item {} 
 \sphinxAtStartPar
-Pour s’entraîner à estimer ces valeurs, cocher la case \sphinxstyleemphasis{Défi} : les
-résultats sont masqués à chaque modification et se révèlent zone par
-zone, d’un clic.
+Näiden arvojen arvioimista voi harjoitella valitsemalla \sphinxstyleemphasis{Haaste}\sphinxhyphen{}valintaruudun: tulokset piilotetaan jokaisen muutoksen yhteydessä ja ne paljastuvat vyöhyke kerrallaan napsautuksella.
 
 \end{enumerate}
 
@@ -2820,7 +2739,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
+Avaa Bearoff\sphinxhyphen{}paneelin (Effective Pip Count, voittotodennäköisyys ja kuutiopäätös bearoffissa).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4878,7 +4797,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/cacher le panneau Bearoff.
+Näytä/piilota Bearoff\sphinxhyphen{}paneeli.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6423,13 +6342,7 @@ Kokoelma on asemien mukautettu ryhmittely. Toisin kuin dynaaminen suodatinhaku, 
 EPC (Effective Pip Count) on tarkempi mittari kuin pelkkä pip count bearoff\sphinxhyphen{}asemien arviointiin. blunderDB:n EPC\sphinxhyphen{}laskuri käyttää GNUbg:n 6\sphinxhyphen{}pisteen bearoff\sphinxhyphen{}tietokantaa ja laskee reaaliajassa EPC:n, heittojen keskimääräisen määrän, keskihajonnan, pip countin ja wastagen.
 
 \sphinxAtStartPar
-Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
-gain du joueur au trait et, lorsque la position est couverte par une base
-two\sphinxhyphen{}sided (base intégrée jusqu’à 6 pions par joueur, base téléchargeable
-jusqu’à 11), le verdict de videau money exact. Hors de ce domaine, la
-probabilité est estimée avec sa marge d’erreur et le verdict n’est
-volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau Bearoff » du manuel pour le détail des hypothèses.
+Puhtaissa bearoff\sphinxhyphen{}asemissa paneeli näyttää myös vuorossa olevan pelaajan voittotodennäköisyyden ja, kun asema kuuluu two\sphinxhyphen{}sided\sphinxhyphen{}tietokannan piiriin (sisäänrakennettu tietokanta enintään 6 nappulaa pelaajaa kohden, ladattava tietokanta enintään 11), tarkan money\sphinxhyphen{}kuutiopäätöksen. Tämän alueen ulkopuolella todennäköisyys arvioidaan virhemarginaaleineen, eikä kuutiopäätöstä tarkoituksella näytetä. Katso oletusten yksityiskohdat käsikirjan osiosta « Bearoff\sphinxhyphen{}paneelin metodologia ja oletukset ».
 
 
 \subsection{Onko blunderDB:ssä komentorivikäyttöliittymä?}
@@ -6746,7 +6659,7 @@ PostgreSQL: ottaa käyttöön vuokralaiskohtaisen Row\sphinxhyphen{}Level Securi
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts <fichier>}}
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts <tiedosto>}}
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -6756,10 +6669,7 @@ PostgreSQL: ottaa käyttöön vuokralaiskohtaisen Row\sphinxhyphen{}Level Securi
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-base de bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) optionnelle élargissant la base
-intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 pour l’analyse de course du point d’accès EPC ;
-le démon ne télécharge jamais de base lui\sphinxhyphen{}même — monter le fichier
-en volume et le désigner ici
+valinnainen two\sphinxhyphen{}sided\sphinxhyphen{}bearoff\sphinxhyphen{}tietokanta (\sphinxcode{\sphinxupquote{.bd}}), joka laajentaa sisäänrakennettua TS\sphinxhyphen{}06\sphinxhyphen{}06\sphinxhyphen{}tietokantaa EPC\sphinxhyphen{}päätepisteen kilpajuoksuanalyysiä varten; demoni ei koskaan lataa tietokantaa itse — liitä tiedosto taltiona ja osoita se tässä
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6769,9 +6679,7 @@ en volume et le désigner ici
 \sphinxattableend\end{savenotes}
 
 \sphinxAtStartPar
-La plupart des options peuvent aussi être fournies par variable
-d’environnement (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
+Useimmat valinnat voidaan antaa myös ympäristömuuttujalla (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
 
 
 \subsubsection{Päätepisteet}

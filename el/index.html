@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.31.0</title>
+  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.32.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c8261516"></script>
+      <script src="_static/documentation_options.js?v=5a59cbfd"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e109e2be"></script>
@@ -208,7 +208,7 @@
 <td><p>Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται πλέον απευθείας μέσω των πινάκων.</p>
 <p>Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης.</p>
 <p>Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log.</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>Αποκλειστικός πίνακας Bearoff στον κάτω πίνακα.</p>
 <p>Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης.</p>
 <p>Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις συλλογές, και αγώνων μέσα στα τουρνουά.</p>
 <p>Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία.</p>
@@ -289,6 +289,10 @@
 <td><p>04/08/2026</p></td>
 <td><p>Διανομή μιας βάσης σε τρίτους: δύο ανεξάρτητοι μηχανισμοί, και οι δύο προαιρετικοί και επιλεγόμενοι κατά την εξαγωγή. Η <strong>σήμανση προέλευσης</strong> καταγράφει στο αρχείο τι είναι και από πού προέρχεται, υπογεγραμμένη από μια ταυτότητα εκδότη που δημιουργείται από μόνη της στην πρώτη χρήση· η σήμανση δεν πλαστογραφείται, διαβάζεται στην κορυφή του πίνακα Μεταδεδομένα (ή με την <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, που δεν γράφει ποτέ στο αρχείο) και δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση — κανένα αρχείο καταγραφής, καμία παρακολούθηση. Η <strong>προστασία με κωδικό πρόσβασης</strong> παράγει κρυπτογραφημένο αρχείο <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (AES-256-GCM, κλειδί παραγόμενο με Argon2id), που επαληθεύεται σε κάθε άνοιγμα και του οποίου η κεφαλίδα παραμένει αναγνώσιμη· η ταυτότητα εξάγεται και εισάγεται ως ένα μόνο αρχείο από τις ρυθμίσεις. Ανασχεδιασμένο παράθυρο εξαγωγής: μία μόνο οθόνη αντί για τέσσερις, υπενθύμιση του τι εξάγεται πραγματικά (οι εμφανιζόμενες θέσεις), το καλυπτόμενο μέρος κάθε συλλογής επισημασμένο με κόκκινο όταν είναι μερικό, τουρνουά εξαγώγιμα μόνο μαζί με τους αγώνες τους — και εξαγωγή τρεις φορές ταχύτερη. Παράθυρο ρυθμίσεων οργανωμένο σε τρεις καρτέλες (Διεπαφή, Χρώματα ταμπλό, Ταυτότητα εκδότη), σταθερού μεγέθους και θέσης. Πίνακας Μεταδεδομένα διατεταγμένος σε ένα ενιαίο πλέγμα. Ο πίνακας Log, που απλώς επαναλάμβανε τις εντολές, αφαιρέθηκε. Αξιοσημείωτες διορθώσεις: ένας λανθασμένος κωδικός δεν ανοίγει πια προστατευμένη βάση, τα πεδία των παραθύρων διαλόγου δεν χάνουν πια την εστίαση με το κλικ, ο υπολογισμός των δεικτών PR/MWC δεν καταρρέει πια σε παιχνίδι για χρήματα, και τα προσωρινά αρχεία (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, κλείδωμα) καθαρίζονται κατά το κλείσιμο. Βλ. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a> και <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Εγχειρίδιο</span></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>9 Αυγούστου 2026</p></td>
+<td><p>Ο πίνακας EPC γίνεται ο πίνακας <strong>Bearoff</strong> και αποκτά πλήρη ανάλυση κούρσας. Σε μια θέση καθαρού bearoff εμφανίζει — εκτός από το EPC, το pip count, το wastage και τον μέσο αριθμό ζαριών κάθε παίκτη, που παρουσιάζονται πλέον σε πίνακα με προσημασμένη γραμμή Δ — τις πιθανότητες νίκης των δύο παικτών και τις ισοδυναμίες money (cubeless, χωρίς διπλασιασμό, διπλασιασμός/αποδοχή, διπλασιασμός/πάσο, με την απόκλιση κάθε απόφασης από την καλύτερη) καθώς και την <strong>καλύτερη απόφαση κύβου</strong>. Δύο σαφώς διακριτά καθεστώτα: <em>ακριβές</em> (ανάγνωση από βάση two-sided· ενσωματωμένη βάση TS-06-06 του GNUbg, που καλύπτει έως 6 πούλια ανά παίκτη) και <em>εκτιμώμενο</em> (βαθμονομημένη συνέλιξη, με εμφανιζόμενο περιθώριο σφάλματος — η ετυμηγορία κύβου δεν εκτιμάται ποτέ). Η εκτεταμένη βάση TS-06-11 (ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη, 1,2 GB) κατεβαίνει από τη νέα καρτέλα <em>Bearoff</em> των ρυθμίσεων, με έλεγχο ακεραιότητας και συνέχιση των διακοπεισών λήψεων· μπορεί επίσης να οριστεί οποιοδήποτε αρχείο <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided του gnubg. <strong>Λειτουργία πρόκλησης</strong> για εξάσκηση: τα αποτελέσματα αποκρύπτονται σε κάθε τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ. Επεξεργασία εξ ολοκλήρου στο ταμπλό: πούλια των δύο εσωτερικών τεταρτημορίων, παίκτης στη βολή (κλικ στο ορθογώνιο εξόδου/σκορ) και θέση του κύβου (κλικ στον κύβο). Το κλικ στο ταμπλό είναι πλέον ακριβές σε κάθε κλίμακα διεπαφής (ένα κλικ στο σημείο 1 μπορούσε να καταλήξει στο σημείο 2). Νέα εντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> στη γραμμή εντολών και επιλογή <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> της λειτουργίας διακομιστή. Μια νέα ενότητα του εγχειριδίου, «Μεθοδολογία και υποθέσεις του πίνακα Bearoff», διατυπώνει εξαντλητικά τις υποθέσεις πίσω από κάθε εμφανιζόμενη τιμή. Δείτε <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Πίνακας Bearoff</span></a> και <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Μεθοδολογία και υποθέσεις του πίνακα Bearoff</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -318,7 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. Πίνακας Αγώνων</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. Πίνακας Τουρνουά</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Πίνακας Stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Πίνακας Bearoff</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Πίνακας Anki</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Πίνακας Μεταδεδομένων</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</a></li>

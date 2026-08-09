@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:57
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 18:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1029,90 +1029,93 @@ LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
 ]
 Chapter 2.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/n' will be
-(Font)              scaled to size 4.49997pt on input line 866.
+(Font)              scaled to size 4.49997pt on input line 882.
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/m/it' will be
-(Font)              scaled to size 8.99994pt on input line 867.
+(Font)              scaled to size 8.99994pt on input line 883.
 [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25]
-[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40]
-[41] [42] [43] [44] [45] [46] [47] [48]
-LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6263.
- [49] [50] [51]
-LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6539.
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35]
+Overfull \vbox (2.02992pt too high) detected at line 4145
+ []
 
-Underfull \hbox (badness 10000) in paragraph at lines 6623--6625
+[36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47]
+LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
+(Font)              scaled to size 8.99994pt on input line 6182.
+ [48] [49] [50]
+[51]
+LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
+(Font)              scaled to size 10.79993pt on input line 6452.
+
+Underfull \hbox (badness 10000) in paragraph at lines 6536--6538
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6626
+Underfull \hbox (badness 10000) detected at line 6539
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6682--6684
+Underfull \hbox (badness 10000) in paragraph at lines 6595--6597
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
-[52] [53] [54]
-Underfull \hbox (badness 10000) in paragraph at lines 7056--7058
+[52] [53]
+Underfull \hbox (badness 10000) in paragraph at lines 6964--6966
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7059
+Underfull \hbox (badness 10000) detected at line 6967
 []\TU/FreeMono(0)/m/n/10 $BLUN-
  []
 
-[55] [56]
-Underfull \hbox (badness 10000) in paragraph at lines 7341--7343
+[54] [55]
+Underfull \hbox (badness 10000) in paragraph at lines 7249--7251
 []\TU/FreeSerif(0)/m/n/10 empty dice on upper
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7357--7359
+Underfull \hbox (badness 10000) in paragraph at lines 7265--7267
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7373--7375
+Underfull \hbox (badness 10000) in paragraph at lines 7281--7283
 []\TU/FreeSerif(0)/m/n/10 made points in home
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7398--7400
+Underfull \hbox (badness 10000) in paragraph at lines 7306--7308
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7398--7400
+Underfull \hbox (badness 10000) in paragraph at lines 7306--7308
 \TU/FreeSerif(0)/m/n/10 Aachen2024 tourna-
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7401
+Underfull \hbox (badness 10000) detected at line 7309
 []\TU/FreeSerif(0)/m/n/10 Position from the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7479--7481
+Underfull \hbox (badness 10000) in paragraph at lines 7387--7389
 []\TU/FreeSerif(0)/m/n/10 empty dice on lower
  []
 
-[57]
+[56] [57]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [58] [59]
+ [58]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [60] [61]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1123,12 +1126,12 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [62] [63] [64] [65] [66] [67] [68] [69] [70] [71]
-[72
-
-]
+ [59] [60] [61] [62] [63] [64] [65] [66] [67] [68] [69] [70]
+[71] [72]
 Chapter 3.
-[73] [74
+[73
+
+] [74
 
 ]
 Chapter 4.
@@ -1142,15 +1145,15 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: A92F88D3AFC9861DD28C424CEA04EE55;32049.
+(rerunfilecheck)             Checksum: 54AA8294759D3AAC14A355B6A0B06509;32051.
  ) 
 Here is how much of TeX's memory you used:
  19326 strings out of 476443
  395254 string characters out of 5793963
- 2025627 words of memory out of 5000000
+ 2034627 words of memory out of 5000000
  40887 multiletter control sequences out of 15000+600000
  565069 words of font info for 103 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,3085b,575s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,3085b,573s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (81 pages).

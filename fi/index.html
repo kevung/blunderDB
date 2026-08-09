@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.31.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.32.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c70a6128"></script>
+      <script src="_static/documentation_options.js?v=5575bfc3"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=aa74d7ce"></script>
@@ -208,7 +208,7 @@
 <td><p>Käyttöliittymän yksinkertaistaminen: otteluiden ja kokoelmien selaus tapahtuu nyt suoraan paneeleiden kautta.</p>
 <p>Tilariviin integroitu komentorivi.</p>
 <p>Console-paneeli nimetty uudelleen Log-paneeliksi.</p>
-<p>Panneau Bearoff dédié dans le panneau inférieur.</p>
+<p>Oma Bearoff-paneeli alapaneelissa.</p>
 <p>Position kopiointi/liittäminen hakupaneelissa.</p>
 <p>Vedä-ja-pudota kokoelmien, kokoelmien sisäisten positioiden sekä turnausten sisäisten otteluiden uudelleenjärjestämiseen.</p>
 <p>Turnaussarake ottelupaneelissa suoralla muokkauksella.</p>
@@ -289,6 +289,10 @@
 <td><p>4.8.2026</p></td>
 <td><p>Tietokannan jakaminen muille: kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja vientihetkellä valittavia. <strong>Alkuperämerkintä</strong> kirjaa tiedostoon, mikä se on ja mistä se tulee, ja sen allekirjoittaa merkitsijän identiteetti, joka syntyy itsestään ensimmäisellä käyttökerralla; merkintää ei voi väärentää, se luetaan Metatiedot-paneelin yläosasta (tai komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, joka ei koskaan kirjoita tiedostoon) eikä se tallenna mitään vastaanottajan puolella — ei lokia, ei seurantaa. <strong>Salasanasuojaus</strong> tuottaa salatun <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedoston (AES-256-GCM, avain johdettu Argon2id:llä), joka tarkistetaan joka avauskerralla ja jonka otsake pysyy luettavana salaamattomana; identiteetti viedään ja tuodaan yhtenä tiedostona asetuksista. Uudistettu vienti-ikkuna: yksi näkymä neljän sijaan, muistutus siitä, mitä todella viedään (näkyvissä olevat asemat), kunkin kokoelman katettu osuus punaisella merkittynä kun se on osittainen, turnaukset vietävissä vain otteluidensa kanssa — ja kolme kertaa nopeampi vienti. Asetusikkuna jaettu kolmeen välilehteen (Käyttöliittymä, Laudan värit, Merkitsijän identiteetti), koko ja sijainti pysyvät vakaina. Metatiedot-paneeli aseteltu yhteen ruudukkoon. Loki-paneeli, joka vain toisti kirjoitetut komennot, on poistettu. Merkittäviä korjauksia: väärä salasana ei enää avaa suojattua tietokantaa, valintaikkunoiden kentät eivät enää menetä kohdistusta napsautuksesta, PR/MWC-tunnuslukujen laskenta ei enää kaadu rahapelissä, ja väliaikaistiedostot (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lukko) siivotaan suljettaessa. Ks. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></td>
 </tr>
+<tr class="row-odd"><td><p>0.32.0</p></td>
+<td><p>9.8.2026</p></td>
+<td><p>EPC-paneelista tulee <strong>Bearoff</strong>-paneeli, ja se saa täydellisen kilpajuoksuanalyysin. Puhtaassa bearoff-asemassa se näyttää — kummankin pelaajan EPC:n, pip countin, wastagen ja keskimääräisen heittomäärän lisäksi, jotka esitetään nyt taulukkona etumerkillisen Δ-rivin kera — molempien pelaajien voittotodennäköisyydet ja money-ekviteetit (cubeless, ei tuplausta, tuplaus/ota, tuplaus/ohita, kunkin päätöksen ero parhaaseen) sekä <strong>parhaan kuutiopäätöksen</strong>. Kaksi selvästi erotettua tilaa: <em>tarkka</em> (luku two-sided-tietokannasta; sisäänrakennettu GNUbg:n TS-06-06-tietokanta, joka kattaa enintään 6 nappulaa pelaajaa kohden) ja <em>arvioitu</em> (kalibroitu konvoluutio, virhemarginaali näytetään — kuutiopäätöstä ei koskaan arvioida). Laajennettu TS-06-11-tietokanta (tarkka päätös 11 nappulaan asti pelaajaa kohden, 1,2 Gt) ladataan asetusten uudelta <em>Bearoff</em>-välilehdeltä eheystarkistuksen ja keskeytyneiden latausten jatkamisen kera; myös mikä tahansa gnubg:n two-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code>-tiedosto voidaan osoittaa. <strong>Haastetila</strong> harjoittelua varten: tulokset piilotetaan jokaisen muutoksen yhteydessä ja ne paljastuvat vyöhyke kerrallaan napsautuksella. Muokkaus kokonaan laudalla: molempien kotikenttien nappulat, vuorossa oleva pelaaja (napsautus ulosotto/pistetilanne-suorakulmioon) ja kuution sijainti (napsautus kuutioon). Laudan napsautus on nyt tarkka kaikilla käyttöliittymän mittakaavoilla (napsautus pisteeseen 1 saattoi osua pisteeseen 2). Uusi komentorivikomento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> ja palvelintilan valitsin <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code>. Käsikirjan uusi osio, « Bearoff-paneelin metodologia ja oletukset », esittää tyhjentävästi kunkin näytetyn arvon taustalla olevat oletukset. Katso <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Bearoff-paneeli</span></a> ja <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Bearoff-paneelin metodologia ja oletukset</span></a>.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -318,7 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.14. Ottelupaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.15. Turnauspaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.16. Stats-paneeli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Panneau Bearoff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-bearoff">2.17. Bearoff-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.18. Anki-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.19. Metatietopaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">2.20. Tietokannan jakaminen: alkuperä ja salasana</a></li>

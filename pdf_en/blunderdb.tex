@@ -80,7 +80,7 @@
 
 \title{blunderDB}
 \date{Aug 09, 2026}
-\release{0.31.0}
+\release{0.32.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -505,7 +505,7 @@ Command line integrated into the status bar.
 Console panel renamed to Log panel.
 
 \sphinxAtStartPar
-Panneau Bearoff dédié dans le panneau inférieur.
+Dedicated Bearoff panel in the bottom panel.
 
 \sphinxAtStartPar
 Copy/paste position in the search panel.
@@ -812,6 +812,22 @@ Handing a database to other people: two independent mechanisms, both optional an
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.32.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+August 9, 2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+The EPC panel becomes the \sphinxstylestrong{Bearoff} panel and gains full race analysis. On a pure bearoff position it displays — in addition to each player’s EPC, pip count, wastage and average number of rolls, now laid out as a table with a signed Δ row — both players’ winning probabilities and the money equities (cubeless, no double, double/take, double/pass, with each decision’s gap to the best one) as well as the \sphinxstylestrong{best cube decision}. Two clearly distinguished regimes: \sphinxstyleemphasis{exact} (looked up in a two\sphinxhyphen{}sided database; GNUbg’s TS\sphinxhyphen{}06\sphinxhyphen{}06 database built in, covering up to 6 checkers per player) and \sphinxstyleemphasis{estimated} (calibrated convolution, error margin displayed — the cube verdict is never estimated). The extended TS\sphinxhyphen{}06\sphinxhyphen{}11 database (exact verdict up to 11 checkers per player, 1.2 GB) can be downloaded from the new \sphinxstyleemphasis{Bearoff} tab of the configuration, with integrity checking and resuming of interrupted downloads; any two\sphinxhyphen{}sided gnubg \sphinxcode{\sphinxupquote{.bd}} file can also be pointed to. \sphinxstylestrong{Challenge mode} for training: results are hidden on every change of the position and revealed area by area, with a click. Editing entirely on the board: checkers of both home boards, player on roll (click the bearoff/score rectangle) and cube position (click the cube). Clicks on the board are now accurate at any interface scale (a click on point 1 could land on point 2). New \sphinxcode{\sphinxupquote{blunderdb epc}} command on the command line and \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} server\sphinxhyphen{}mode option. A new manual section, “Methodology and assumptions of the Bearoff panel”, exhaustively states the assumptions behind every displayed value. See {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Bearoff Panel}}}}} and {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Methodology and assumptions of the Bearoff panel}}}}}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -834,15 +850,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.31.0.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.32.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.31.0.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.32.0.zip}
 
 \end{itemize}
 
@@ -894,7 +910,7 @@ tar\PYG{+w}{ }xzf\PYG{+w}{ }blunderDB\PYGZhy{}linux\PYGZhy{}webkit2gtk\PYGZhy{}4
 \subsubsection{Raw binary (advanced method)}
 \label{\detokenize{telecharge_install:binaire-brut-methode-avancee}}
 \sphinxAtStartPar
-The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.31.0} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
+The raw binary \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.32.0} remains available. Since a browser strips the executable bit on download, you must restore it before the first run:
 
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
@@ -902,7 +918,7 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.31.0}. Native packages select the correct dependency automatically.
+Two Linux variants are published depending on the webkit2gtk library version. If you get the error \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37: cannot open shared object file}}, your distribution uses webkit2gtk\sphinxhyphen{}4.1: use the \sphinxcode{\sphinxupquote{.deb}}/\sphinxcode{\sphinxupquote{.rpm}} package, the AUR package, or download the dedicated build \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.32.0}. Native packages select the correct dependency automatically.
 \end{sphinxadmonition}
 
 
@@ -1032,7 +1048,7 @@ display performance statistics (Stats panel),
 
 \item {} 
 \sphinxAtStartPar
-calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau Bearoff),
+compute the EPC (Effective Pip Count) of a bearoff position (Bearoff panel),
 
 \item {} 
 \sphinxAtStartPar
@@ -1733,205 +1749,115 @@ The MWC cost is cumulative over the full filtered dataset — not a per\sphinxhy
 \end{itemize}
 
 
-\subsection{Panneau Bearoff}
+\subsection{Bearoff Panel}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
 The \sphinxstylestrong{EPC} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) computes the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, clicking the EPC tab in the bottom panel, or running the \sphinxcode{\sphinxupquote{epc}} command.
 
 \sphinxAtStartPar
-Dans ce panneau, l’utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).
+In this panel, the user edits the checker positions in the two home boards: clicking points 1 to 6 places checkers of the bottom player, clicking points 19 to 24 places checkers of the top player (either mouse button works).
 
 \sphinxAtStartPar
-Les résultats sont présentés sous forme de deux tableaux empilés :
+Results are presented as two stacked tables:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-en haut, un \sphinxstylestrong{tableau des joueurs} — une ligne par joueur (repérée par
-sa pastille de couleur, le joueur noir étant toujours en bas), une
-colonne par grandeur : EPC, pip count, wastage (différence entre l’EPC
-et le pip count), nombre moyen de lancers et écart type. Lorsque les
-deux joueurs ont des pions dans leur jan, une ligne \sphinxstylestrong{Δ} donne les
-différences \sphinxstyleemphasis{signées} (bas − haut : négatif quand le joueur noir est en
-avance) d’EPC, de pips et de wastage ;
+at the top, a \sphinxstylestrong{players table} — one row per player (identified by its coloured dot, the black player always at the bottom), one column per quantity: EPC, pip count, wastage (difference between the EPC and the pip count), average number of rolls and standard deviation. When both players have checkers in their home board, a \sphinxstylestrong{Δ} row gives the \sphinxstyleemphasis{signed} differences (bottom − top: negative when the black player is ahead) in EPC, pips and wastage;
 
 \item {} 
 \sphinxAtStartPar
-en dessous, séparé par un filet, un \sphinxstylestrong{tableau course/videau} : deux
-colonnes de probabilité de gain (une par pastille de joueur, valeurs
-sans le signe \%) et les équités money — sous chaque décision autre que
-la meilleure, l’écart d’équité à la meilleure décision est indiqué
-entre parenthèses. La \sphinxstylestrong{décision} s’affiche à droite du tableau, avec
-le badge exact/estimé. Le \sphinxstylestrong{joueur au trait} et la \sphinxstylestrong{position du videau}
-s’éditent directement sur le plateau, comme en mode édition : cliquer
-le rectangle bearoff/score d’un joueur lui donne le trait ; cliquer le
-videau fait tourner centré → possédé bas → possédé haut (clic droit en
-sens inverse). La valeur du videau reste épinglée — en money game les
-équités sont exprimées en unités du videau courant, seul son
-propriétaire compte. L’analyse est recalculée aussitôt. En régime
-estimé, le lien « Voir les paramètres de configuration » ouvre
-directement l’onglet \sphinxstyleemphasis{Bearoff} de la configuration.
+below it, separated by a rule, a \sphinxstylestrong{race/cube table}: two winning\sphinxhyphen{}probability columns (one per player dot, values without the \% sign) and the money equities — under each decision other than the best one, the equity gap to the best decision is shown in parentheses. The \sphinxstylestrong{decision} is displayed to the right of the table, with the exact/estimated badge. The \sphinxstylestrong{player on roll} and the \sphinxstylestrong{cube position} are edited directly on the board, as in edit mode: clicking a player’s bearoff/score rectangle gives that player the roll; clicking the cube cycles centred → owned bottom → owned top (right click cycles the other way). The cube value stays pinned — in money game the equities are expressed in units of the current cube, only its owner matters. The analysis is recomputed immediately. In the estimated regime, the “See the configuration settings” link opens the \sphinxstyleemphasis{Bearoff} tab of the configuration directly.
 
 \end{itemize}
 
 \sphinxAtStartPar
-La case \sphinxstyleemphasis{Défi} reste épinglée en haut à droite du panneau.
+The \sphinxstyleemphasis{Challenge} box stays pinned at the top right of the panel.
 
 \sphinxAtStartPar
-Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :
+When the position is a pure bearoff (all checkers of both players in their home board), the race table shows, for the player on roll:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-la probabilité de gain,
+the winning probability,
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{exact} : les équités money (cubeless, sans double, double/prend,
-double/passe) et le \sphinxstylestrong{verdict de videau money} (pas de double, double/prend
-ou double/passe),
+in the \sphinxstyleemphasis{exact} regime: the money equities (cubeless, no double, double/take, double/pass) and the \sphinxstylestrong{money cube verdict} (no double, double/take or double/pass),
 
 \item {} 
 \sphinxAtStartPar
-en régime \sphinxstyleemphasis{estimé} : la probabilité de gain seule, accompagnée de sa marge
-d’erreur — le verdict de videau n’est alors volontairement pas affiché.
+in the \sphinxstyleemphasis{estimated} regime: the winning probability alone, together with its error margin — the cube verdict is then deliberately not shown.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
-two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau Bearoff}}}}} pour la
-définition précise des deux régimes et de leurs hypothèses.
+A badge indicates the regime: \sphinxstylestrong{exact} (value read from a two\sphinxhyphen{}sided database) or \sphinxstylestrong{estimated ± margin}. See {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Methodology and assumptions of the Bearoff panel}}}}} for the precise definition of the two regimes and their assumptions.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Élargir le domaine exact.} La base intégrée couvre 6 pions par joueur.
-Deux moyens d’aller au\sphinxhyphen{}delà, dans l’onglet \sphinxstyleemphasis{Bearoff} de la configuration :
+\sphinxstylestrong{Widening the exact domain.} The built\sphinxhyphen{}in database covers 6 checkers per player. Two ways to go beyond that, in the \sphinxstyleemphasis{Bearoff} tab of the configuration:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où il s’était arrêté}
-(le fichier partiel est conservé et complété par requête HTTP Range) ;
+download the extended TS\sphinxhyphen{}06\sphinxhyphen{}11 database (1.2 GB, verified by SHA\sphinxhyphen{}256, deletable in the same place): exact verdict up to 11 checkers per player. An interrupted or cancelled download \sphinxstylestrong{resumes where it stopped} (the partial file is kept and completed with an HTTP Range request);
 
 \item {} 
 \sphinxAtStartPar
-indiquer un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided de gnubg quelconque. La base au
-domaine le plus large l’emporte automatiquement.
+point to any two\sphinxhyphen{}sided gnubg \sphinxcode{\sphinxupquote{.bd}} file. The database with the widest domain automatically wins.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Mode défi.} La case \sphinxstyleemphasis{Défi} du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n’apparaît qu’une fois les deux lignes joueurs
-révélées. On peut ainsi s’entraîner à estimer l’EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
+\sphinxstylestrong{Challenge mode.} The panel’s \sphinxstyleemphasis{Challenge} box enables a training mode: on every change of the position, the values of the three areas — the bottom player’s row, the top player’s row and the race table — are hidden (replaced by “···”); clicking an area reveals that area only. The Δ row only appears once both player rows are revealed. You can thus practise estimating each side’s EPC, then committing to a cube decision, before checking. The setting is remembered.
 
 \sphinxAtStartPar
-Pour fermer le panneau Bearoff, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
+To close the Bearoff panel, press \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} or switch to another tab.
 
 
-\subsubsection{Méthodologie et hypothèses du panneau Bearoff}
+\subsubsection{Methodology and assumptions of the Bearoff panel}
 \label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-bearoff}}\label{\detokenize{manuel:epc-methodologie}}
 \sphinxAtStartPar
-Chaque valeur affichée par le panneau repose sur des hypothèses précises,
-énoncées ici exhaustivement.
+Every value displayed by the panel rests on precise assumptions, stated here exhaustively.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Domaine.} Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée \sphinxstyleemphasis{avant le
-lancer} ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.
+\sphinxstylestrong{Domain.} The panel only handles pure bearoff: all remaining checkers of both players in their home board. The position is evaluated \sphinxstyleemphasis{before the roll}; any dice already showing are ignored. No\sphinxhyphen{}contact races with checkers outside the home board are not handled.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Blocs EPC (toujours exacts).} L’EPC, le nombre moyen de lancers et
-l’écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one\sphinxhyphen{}sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L’unique idéalisation est le \sphinxstyleemphasis{jeu one\sphinxhyphen{}sided optimal} : chaque joueur
-minimise ses propres lancers en ignorant l’adversaire — c’est la définition
-standard de l’EPC.
+\sphinxstylestrong{EPC blocks (always exact).} The EPC, the average number of rolls and the standard deviation come from the exact distribution of the number of rolls needed to bear off all checkers, read from GNUbg’s one\sphinxhyphen{}sided database (6 points, 15 checkers, built in). EPC = average rolls × 49/6 (49/6 ≈ 8.167 is the exact average number of pips per roll, doubles counted four times); wastage = EPC − pip count. The only idealisation is \sphinxstyleemphasis{optimal one\sphinxhyphen{}sided play}: each player minimises their own rolls while ignoring the opponent — this is the standard definition of the EPC.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime exact.} Lecture directe dans la base two\sphinxhyphen{}sided
-disponible la plus large (intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06, fichier externe, ou TS\sphinxhyphen{}06\sphinxhyphen{}11
-téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
-two\sphinxhyphen{}sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
-limitée à la quantification (< 0,002 \%).
+\sphinxstylestrong{Winning probability, exact regime.} Direct lookup in the widest available two\sphinxhyphen{}sided database (built\sphinxhyphen{}in TS\sphinxhyphen{}06\sphinxhyphen{}06, external file, or downloaded TS\sphinxhyphen{}06\sphinxhyphen{}11). These databases result from a complete retrograde analysis under optimal two\sphinxhyphen{}sided play by both sides: no additional assumption, error limited to quantisation (< 0.002\%).
 
 \sphinxAtStartPar
-\sphinxstylestrong{Probabilité de gain, régime estimé.} Hors du domaine de la base : la
-probabilité est obtenue en convoluant les deux distributions one\sphinxhyphen{}sided (le
-joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
-de l’adversaire), puis en appliquant une correction polynomiale figée,
-calibrée hors ligne contre la base TS\sphinxhyphen{}06\sphinxhyphen{}11. Trois hypothèses :
+\sphinxstylestrong{Winning probability, estimated regime.} Outside the database’s domain: the probability is obtained by convolving the two one\sphinxhyphen{}sided distributions (the player on roll wins if their number of rolls is less than or equal to the opponent’s), then applying a frozen polynomial correction, calibrated offline against the TS\sphinxhyphen{}06\sphinxhyphen{}11 database. Three assumptions:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{indépendance} des deux processus de sortie — structurelle en course,
-sans contact il n’y a aucune interaction ;
+\sphinxstylestrong{independence} of the two bearoff processes — structural in a race, with no contact there is no interaction whatsoever;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{jeu one\sphinxhyphen{}sided optimal des deux camps} — c’est \sphinxstyleemphasis{l’approximation} : en
-réalité le joueur mené dévie pour jouer la variance et le meneur pour la
-sécurité. L’effet mesuré est un biais antisymétrique (la convolution
-exagère l’avance du meneur) que la correction absorbe statistiquement ;
+\sphinxstylestrong{optimal one\sphinxhyphen{}sided play by both sides} — this is \sphinxstyleemphasis{the approximation}: in reality the trailing player deviates to play for variance and the leader for safety. The measured effect is an antisymmetric bias (the convolution overstates the leader’s advantage) which the correction absorbs statistically;
 
 \item {} 
 \sphinxAtStartPar
-la \sphinxstylestrong{correction} a été calibrée et validée sur le domaine de l’oracle
-(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
-0,05 \%, 99e centile 0,17 \%, maximum observé 0,9 \% (en points de
-probabilité de gain). \sphinxstylestrong{Au\sphinxhyphen{}delà de 11 pions par joueur, cette borne est
-extrapolée} — la tendance est monotone mais aucun oracle ne la certifie.
+the \sphinxstylestrong{correction} was calibrated and validated on the oracle’s domain (up to 11 checkers per player). Measured residual error: standard deviation 0.05\%, 99th percentile 0.17\%, observed maximum 0.9\% (in winning\sphinxhyphen{}probability points). \sphinxstylestrong{Beyond 11 checkers per player, this bound is extrapolated} — the trend is monotonic but no oracle certifies it.
 
 \end{itemize}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Équités et verdict de videau (régime exact seulement).} Les équités
-affichées sont celles du \sphinxstylestrong{money game, sans Jacoby}, dans le référentiel de
-la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
-gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
-n’est pas une approximation. Le verdict (pas de double / double, prend /
-double, passe) est reconstruit exactement des équités stockées, selon la
-règle de GNUbg, validée trait pour trait contre son analyse.
+\sphinxstylestrong{Equities and cube verdict (exact regime only).} The displayed equities are those of the \sphinxstylestrong{money game, without Jacoby}, the reference framework of the bearoff literature. Within the ≤ 11 checkers per player domain, gammons are impossible (each side has already borne off at least 4 checkers): this is not an approximation. The verdict (no double / double, take / double, pass) is reconstructed exactly from the stored equities, following GNUbg’s rule, validated verdict for verdict against its analysis.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Les équités cubeful supposent un \sphinxstylestrong{jeu de videau optimal des deux
-camps jusqu’au bout} : les recubes futurs sont intégralement valorisés
-(analyse rétrograde complète). Dans les courses très volatiles de fin de
-partie, la cascade de recubes mange presque tout l’avantage du camp au
-trait — les équités « sans double » et « double/prend » peuvent alors
-être proches de zéro là où un moteur comme XG, dont le modèle de videau
-ne valorise pas cette cascade, affiche des valeurs proches du dead cube
-(par exemple 2 pions sur le point 3 contre 2 pions sur le point 2 :
-62 \% de gain, D/T exact +0,006 contre +0,475 chez XG). La \sphinxstylestrong{décision}
-affichée, elle, coïncide avec celle des moteurs.
+The cubeful equities assume \sphinxstylestrong{optimal cube play by both sides all the way to the end}: future recubes are fully valued (complete retrograde analysis). In the very volatile races at the end of the game, the cascade of recubes eats up almost all of the advantage of the side on roll — the “no double” and “double/take” equities can then be close to zero where an engine such as XG, whose cube model does not value this cascade, shows values close to the dead cube (for instance 2 checkers on the 3 point against 2 checkers on the 2 point: 62\% winning chances, exact D/T +0.006 versus +0.475 for XG). The displayed \sphinxstylestrong{decision}, however, coincides with the engines’.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-\sphinxstylestrong{Pourquoi le verdict n’est\sphinxhyphen{}il jamais estimé ?} L’équité cubeful est un
-problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu’aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d’équités de match a été mesurée insuffisante (12 \% de
-désaccords avec l’analyse 2\sphinxhyphen{}ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n’affiche le verdict que lorsqu’il est exact — et money.
+\sphinxstylestrong{Why is the verdict never estimated?} Cubeful equity is a \sphinxstyleemphasis{trajectory} problem (when to double) that no statistical summary of the position captures: the best static model measured leaves a residual error (standard deviation 0.016 of equity, maximum 0.20) large enough to flip every close decision. Likewise, converting the verdict to the match score through a match\sphinxhyphen{}equity table was measured to be insufficient (12\% of disagreements with GNUbg’s 2\sphinxhyphen{}ply analysis, including genuine blunders). Since a wrong verdict displayed with confidence is worse than no verdict, blunderDB only shows the verdict when it is exact — and money.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Les bases de bearoff sont des tables mathématiques immuables,
-régénérables avec l’outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg.
+Bearoff databases are immutable mathematical tables, regenerable with GNUbg’s \sphinxcode{\sphinxupquote{makebearoff}} tool.
 \end{sphinxadmonition}
 
 
@@ -2537,8 +2463,7 @@ The EPC (Effective Pip Count) calculator allows you to compute the bearoff stati
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet Bearoff dans le panneau inférieur,
-ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, click the Bearoff tab in the bottom panel, or execute the \sphinxcode{\sphinxupquote{epc}} command.
 
 \item {} 
 \sphinxAtStartPar
@@ -2546,17 +2471,11 @@ Edit the checker positions in the home board (last 6 points).
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel dans le panneau Bearoff dédié:
-EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
-bearoff pur, la probabilité de gain du joueur au trait avec, dans le
-domaine exact, le verdict de videau money (voir la section
-« Méthodologie et hypothèses du panneau Bearoff » du manuel).
+Results are displayed in real time in the dedicated Bearoff panel: EPC, average number of rolls, standard deviation, pip count and wastage — and, in pure bearoff, the winning probability of the player on roll with, within the exact domain, the money cube verdict (see the manual section “Methodology and assumptions of the Bearoff panel”).
 
 \item {} 
 \sphinxAtStartPar
-Pour s’entraîner à estimer ces valeurs, cocher la case \sphinxstyleemphasis{Défi} : les
-résultats sont masqués à chaque modification et se révèlent zone par
-zone, d’un clic.
+To practise estimating these values, tick the \sphinxstyleemphasis{Challenge} box: results are hidden on every change and are revealed area by area, with a click.
 
 \end{enumerate}
 
@@ -2818,7 +2737,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
+Opens the Bearoff panel (Effective Pip Count, winning probability and cube verdict in bearoff).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4876,7 +4795,7 @@ CTRL\sphinxhyphen{}E
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/cacher le panneau Bearoff.
+Show/hide the Bearoff panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6421,13 +6340,7 @@ A collection is a custom grouping of positions. Unlike a filter search which is 
 EPC (Effective Pip Count) is a more accurate measure than the simple pip count for evaluating bearoff positions. The blunderDB EPC calculator uses the GNUbg 6\sphinxhyphen{}point bearoff database and computes in real time the EPC, average number of rolls, standard deviation, pip count, and wastage.
 
 \sphinxAtStartPar
-Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
-gain du joueur au trait et, lorsque la position est couverte par une base
-two\sphinxhyphen{}sided (base intégrée jusqu’à 6 pions par joueur, base téléchargeable
-jusqu’à 11), le verdict de videau money exact. Hors de ce domaine, la
-probabilité est estimée avec sa marge d’erreur et le verdict n’est
-volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
-panneau Bearoff » du manuel pour le détail des hypothèses.
+On pure bearoff positions, the panel also shows the winning probability of the player on roll and, when the position is covered by a two\sphinxhyphen{}sided database (built\sphinxhyphen{}in database up to 6 checkers per player, downloadable database up to 11), the exact money cube verdict. Outside that domain, the probability is estimated with its error margin and the verdict is deliberately not shown. See the manual section “Methodology and assumptions of the Bearoff panel” for the details of the assumptions.
 
 
 \subsection{Does blunderDB have a command\sphinxhyphen{}line interface?}
@@ -6744,7 +6657,7 @@ PostgreSQL: enables per\sphinxhyphen{}tenant Row\sphinxhyphen{}Level Security (d
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts <fichier>}}
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts <file>}}
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -6754,10 +6667,7 @@ PostgreSQL: enables per\sphinxhyphen{}tenant Row\sphinxhyphen{}Level Security (d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-base de bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) optionnelle élargissant la base
-intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 pour l’analyse de course du point d’accès EPC ;
-le démon ne télécharge jamais de base lui\sphinxhyphen{}même — monter le fichier
-en volume et le désigner ici
+optional two\sphinxhyphen{}sided bearoff database (\sphinxcode{\sphinxupquote{.bd}}) widening the built\sphinxhyphen{}in TS\sphinxhyphen{}06\sphinxhyphen{}06 database for the race analysis of the EPC endpoint; the daemon never downloads a database itself — mount the file as a volume and point to it here
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6767,9 +6677,7 @@ en volume et le désigner ici
 \sphinxattableend\end{savenotes}
 
 \sphinxAtStartPar
-La plupart des options peuvent aussi être fournies par variable
-d’environnement (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
-\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
+Most options can also be provided through environment variables (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
 
 
 \subsubsection{Endpoints}
