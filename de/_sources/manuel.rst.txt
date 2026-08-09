@@ -714,9 +714,11 @@ Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une position
 de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet
 EPC dans le panneau inférieur, ou en exécutant la commande ``epc``.
 
-Dans ce panneau, l'utilisateur édite la position des pions dans le jan
-(6 derniers points) et les informations suivantes sont affichées
-en temps réel pour chaque joueur :
+Dans ce panneau, l'utilisateur édite la position des pions dans les deux
+jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
+du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
+(le bouton de souris est indifférent). Les informations suivantes sont
+affichées en temps réel pour chaque joueur :
 
 * l'EPC (Effective Pip Count),
 
