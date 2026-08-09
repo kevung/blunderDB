@@ -231,6 +231,9 @@
     .epc-panel {
         position: relative;
         height: 100%;
+        /* height:100% + vertical padding overflowed the tab body by exactly
+           2×padding in content-box sizing — the phantom scrollbar. */
+        box-sizing: border-box;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 3px 14px;
