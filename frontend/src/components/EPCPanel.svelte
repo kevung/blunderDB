@@ -27,6 +27,14 @@
         epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
     }
 
+    // Défi mode: values are replaced by a placeholder until their zone is
+    // revealed; clicking a masked row/table reveals it.
+    let maskedBottom = $derived(challenge && !revealed.bottom);
+    let maskedTop = $derived(challenge && !revealed.top);
+    let maskedRace = $derived(challenge && !revealed.race);
+
+    const HIDDEN = '···';
+    const show = (masked, v) => (masked ? HIDDEN : v);
     const pct = (x) => (100 * x).toFixed(2);
     const eq = (x) => (x >= 0 ? '+' : '') + x.toFixed(3);
 </script>
@@ -57,177 +65,125 @@
         </div>
     {:else}
         <div class="epc-content">
-            <div class="epc-toolbar">
+            <div class="tables-container">
+                <!-- Players × quantities, Analysis-panel table style. The Δ row
+                     absorbs the old comparison section. -->
+                {#if data.bottomEPC || data.topEPC}
+                    <table class="players-table">
+                        <tbody>
+                            <tr>
+                                <th></th>
+                                <th>{$t('epc.epc')}</th>
+                                <th>{$t('epc.pipCount')}</th>
+                                <th>{$t('epc.wastage')}</th>
+                                <th>{$t('epc.avgRolls')}</th>
+                                <th>{$t('epc.stdDev')}</th>
+                            </tr>
+                            {#if data.bottomEPC}
+                                <tr class:masked={maskedBottom} onclick={() => maskedBottom && reveal('bottom')} title={maskedBottom ? $t('epc.clickToReveal') : undefined}>
+                                    <td class="row-label"><span class="player-indicator bottom"></span>{$t('epc.bottomBlack')}</td>
+                                    <td class="main-value">{show(maskedBottom, data.bottomEPC.epc.toFixed(2))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.pipCount)}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.wastage.toFixed(2))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.meanRolls.toFixed(3))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.stdDev.toFixed(3))}</td>
+                                </tr>
+                            {/if}
+                            {#if data.topEPC}
+                                <tr class:masked={maskedTop} onclick={() => maskedTop && reveal('top')} title={maskedTop ? $t('epc.clickToReveal') : undefined}>
+                                    <td class="row-label"><span class="player-indicator top"></span>{$t('epc.topWhite')}</td>
+                                    <td class="main-value">{show(maskedTop, data.topEPC.epc.toFixed(2))}</td>
+                                    <td>{show(maskedTop, data.topEPC.pipCount)}</td>
+                                    <td>{show(maskedTop, data.topEPC.wastage.toFixed(2))}</td>
+                                    <td>{show(maskedTop, data.topEPC.meanRolls.toFixed(3))}</td>
+                                    <td>{show(maskedTop, data.topEPC.stdDev.toFixed(3))}</td>
+                                </tr>
+                            {/if}
+                            {#if data.bottomEPC && data.topEPC}
+                                {@const bothShown = !maskedBottom && !maskedTop}
+                                <tr class="delta-row">
+                                    <td class="row-label" title={$t('epc.comparison')}>Δ</td>
+                                    <td class="main-value">{show(!bothShown, Math.abs(data.bottomEPC.epc - data.topEPC.epc).toFixed(2))}</td>
+                                    <td>{show(!bothShown, Math.abs(data.bottomEPC.pipCount - data.topEPC.pipCount))}</td>
+                                    <td>{show(!bothShown, Math.abs(data.bottomEPC.wastage - data.topEPC.wastage).toFixed(2))}</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                {/if}
+
+                <!-- Race / cube table, mirroring the Analysis panel's cube
+                     decision table (decision | equity, verdict as best action). -->
+                {#if data.race}
+                    <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
+                        <tbody>
+                            <tr>
+                                <th class="race-title" colspan="2">
+                                    <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
+                                    {$t('epc.race.title')}
+                                    {#if data.race.regime === 'exact'}
+                                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                            {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                                        </span>
+                                    {:else}
+                                        <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                            {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                                        </span>
+                                    {/if}
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>{$t('epc.race.winProb')}</td>
+                                <td class="main-value">{show(maskedRace, pct(data.race.win_prob) + ' %')}</td>
+                            </tr>
+                            {#if data.race.money}
+                                <tr>
+                                    <td>{$t('epc.race.cubeless')}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
+                                </tr>
+                                <tr>
+                                    <td>{$t('epc.race.noDouble')}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.no_double))}</td>
+                                </tr>
+                                <tr>
+                                    <td>{$t('epc.race.doubleTake')}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.double_take))}</td>
+                                </tr>
+                                <tr>
+                                    <td>{$t('epc.race.doublePass')}</td>
+                                    <td>{show(maskedRace, eq(data.race.money.double_pass))}</td>
+                                </tr>
+                                <tr class="best-action-row">
+                                    <td>{$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)})</td>
+                                    <td>
+                                        {#if maskedRace}
+                                            {HIDDEN}
+                                        {:else if data.race.money.verdict}
+                                            {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                                        {:else}
+                                            {$t('epc.race.noDecision')}
+                                        {/if}
+                                    </td>
+                                </tr>
+                            {:else}
+                                <tr>
+                                    <td colspan="2" class="download-hint">
+                                        {$t('epc.race.downloadHint')}
+                                        <button class="link-button" onclick={() => openModal(MODAL.CONFIG)}>{$t('epc.race.openConfig')}</button>
+                                    </td>
+                                </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                {/if}
+
                 <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
                     <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
                     <span>{$t('epc.challenge')}</span>
                 </label>
             </div>
-
-            <div class="epc-columns">
-                <div class="epc-col epc-col-players">
-                    <!-- Bottom player (Black) -->
-                    {#if data.bottomEPC}
-                        <div class="epc-player-section maskable">
-                            {#if challenge && !revealed.bottom}
-                                <button class="mask-overlay" onclick={() => reveal('bottom')}>{$t('epc.clickToReveal')}</button>
-                            {/if}
-                            <div class="epc-player-header">
-                                <span class="player-indicator bottom"></span>
-                                <span class="player-label">{$t('epc.bottomBlack')}</span>
-                            </div>
-                            <div class="epc-grid">
-                                <div class="epc-card epc-main">
-                                    <div class="epc-card-label">{$t('epc.epc')}</div>
-                                    <div class="epc-card-value">{data.bottomEPC.epc.toFixed(2)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.pipCount')}</div>
-                                    <div class="epc-card-value">{data.bottomEPC.pipCount}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.wastage')}</div>
-                                    <div class="epc-card-value">{data.bottomEPC.wastage.toFixed(2)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.avgRolls')}</div>
-                                    <div class="epc-card-value">{data.bottomEPC.meanRolls.toFixed(3)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.stdDev')}</div>
-                                    <div class="epc-card-value">{data.bottomEPC.stdDev.toFixed(3)}</div>
-                                </div>
-                            </div>
-                        </div>
-                    {/if}
-
-                    <!-- Top player (White) -->
-                    {#if data.topEPC}
-                        <div class="epc-player-section maskable">
-                            {#if challenge && !revealed.top}
-                                <button class="mask-overlay" onclick={() => reveal('top')}>{$t('epc.clickToReveal')}</button>
-                            {/if}
-                            <div class="epc-player-header">
-                                <span class="player-indicator top"></span>
-                                <span class="player-label">{$t('epc.topWhite')}</span>
-                            </div>
-                            <div class="epc-grid">
-                                <div class="epc-card epc-main">
-                                    <div class="epc-card-label">{$t('epc.epc')}</div>
-                                    <div class="epc-card-value">{data.topEPC.epc.toFixed(2)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.pipCount')}</div>
-                                    <div class="epc-card-value">{data.topEPC.pipCount}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.wastage')}</div>
-                                    <div class="epc-card-value">{data.topEPC.wastage.toFixed(2)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.avgRolls')}</div>
-                                    <div class="epc-card-value">{data.topEPC.meanRolls.toFixed(3)}</div>
-                                </div>
-                                <div class="epc-card">
-                                    <div class="epc-card-label">{$t('epc.stdDev')}</div>
-                                    <div class="epc-card-value">{data.topEPC.stdDev.toFixed(3)}</div>
-                                </div>
-                            </div>
-                        </div>
-                    {/if}
-                </div>
-
-                <!-- Race zone: win probability + money cube (pure bearoff only),
-                 in its own column on the right so wide panels need no scroll -->
-                {#if data.race}
-                    <div class="epc-col epc-col-race">
-                        <div class="epc-player-section epc-race maskable">
-                            {#if challenge && !revealed.race}
-                                <button class="mask-overlay" onclick={() => reveal('race')}>{$t('epc.clickToReveal')}</button>
-                            {/if}
-                            <div class="epc-player-header">
-                                <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
-                                <span class="player-label">{$t('epc.race.title')}</span>
-                                {#if data.race.regime === 'exact'}
-                                    <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                        {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
-                                    </span>
-                                {:else}
-                                    <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                        {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                                    </span>
-                                {/if}
-                            </div>
-                            <div class="epc-grid">
-                                <div class="epc-card epc-main">
-                                    <div class="epc-card-label">{$t('epc.race.winProb')}</div>
-                                    <div class="epc-card-value">{pct(data.race.win_prob)} %</div>
-                                </div>
-                                {#if data.race.money}
-                                    <div class="epc-card">
-                                        <div class="epc-card-label">{$t('epc.race.cubeless')}</div>
-                                        <div class="epc-card-value">{eq(data.race.money.cubeless)}</div>
-                                    </div>
-                                    <div class="epc-card">
-                                        <div class="epc-card-label">{$t('epc.race.noDouble')}</div>
-                                        <div class="epc-card-value">{eq(data.race.money.no_double)}</div>
-                                    </div>
-                                    <div class="epc-card">
-                                        <div class="epc-card-label">{$t('epc.race.doubleTake')}</div>
-                                        <div class="epc-card-value">{eq(data.race.money.double_take)}</div>
-                                    </div>
-                                    <div class="epc-card">
-                                        <div class="epc-card-label">{$t('epc.race.doublePass')}</div>
-                                        <div class="epc-card-value">{eq(data.race.money.double_pass)}</div>
-                                    </div>
-                                {/if}
-                            </div>
-                            {#if data.race.money}
-                                <div class="verdict-row">
-                                    <span class="verdict-label">{$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)}) :</span>
-                                    {#if data.race.money.verdict}
-                                        <span class="verdict-chip">{$t('epc.race.verdicts.' + data.race.money.verdict)}</span>
-                                    {:else}
-                                        <span class="verdict-chip verdict-none">{$t('epc.race.noDecision')}</span>
-                                    {/if}
-                                </div>
-                            {:else}
-                                <div class="download-hint">
-                                    {$t('epc.race.downloadHint')}
-                                    <button class="link-button" onclick={() => openModal(MODAL.CONFIG)}>{$t('epc.race.openConfig')}</button>
-                                </div>
-                            {/if}
-                        </div>
-                    </div>
-                {/if}
-            </div>
-
-            <!-- Comparison section when both players have data -->
-            {#if data.bottomEPC && data.topEPC && (!challenge || (revealed.bottom && revealed.top))}
-                <div class="epc-comparison">
-                    <div class="epc-comparison-header">{$t('epc.comparison')}</div>
-                    <div class="epc-comparison-grid">
-                        <div class="epc-comp-item">
-                            <span class="comp-label">{$t('epc.epcDiff')}</span>
-                            <span class="comp-value" class:advantage-bottom={data.bottomEPC.epc < data.topEPC.epc} class:advantage-top={data.topEPC.epc < data.bottomEPC.epc}>
-                                {Math.abs(data.bottomEPC.epc - data.topEPC.epc).toFixed(2)}
-                            </span>
-                        </div>
-                        <div class="epc-comp-item">
-                            <span class="comp-label">{$t('epc.pipDiff')}</span>
-                            <span class="comp-value" class:advantage-bottom={data.bottomEPC.pipCount < data.topEPC.pipCount} class:advantage-top={data.topEPC.pipCount < data.bottomEPC.pipCount}>
-                                {Math.abs(data.bottomEPC.pipCount - data.topEPC.pipCount)}
-                            </span>
-                        </div>
-                        <div class="epc-comp-item">
-                            <span class="comp-label">{$t('epc.wastageDiff')}</span>
-                            <span class="comp-value">
-                                {Math.abs(data.bottomEPC.wastage - data.topEPC.wastage).toFixed(2)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            {/if}
         </div>
     {/if}
 </div>
@@ -236,7 +192,8 @@
     .epc-panel {
         height: 100%;
         overflow-y: auto;
-        padding: 8px 12px;
+        overflow-x: hidden;
+        padding: 4px 12px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         font-size: var(--font-size-base);
     }
@@ -277,102 +234,128 @@
     .epc-content {
         display: flex;
         flex-direction: column;
-        gap: 10px;
     }
 
-    .epc-toolbar {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    /* Two-column layout: players on the left, race zone on the right, so a
-       wide bottom panel shows everything without scrolling. Columns wrap and
-       stack again when the panel is narrow (side layout). */
-    .epc-columns {
+    /* Same idiom as the Analysis panel: tables side by side, wrapping when
+       narrow. The défi toggle rides in the same row, top-right. */
+    .tables-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px 24px;
+        gap: 4px 24px;
         align-items: flex-start;
     }
 
-    .epc-col {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .epc-col-players {
-        flex: 1 1 340px;
-        min-width: 0;
-    }
-
-    .epc-col-race {
-        flex: 1 1 300px;
-        min-width: 0;
-    }
-
-    .challenge-toggle {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
-        color: #555;
-        font-size: var(--font-size-small);
-        user-select: none;
-    }
-
-    .challenge-toggle input {
-        font: inherit;
-        margin: 0;
-    }
-
-    .epc-player-section {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .maskable {
-        position: relative;
-    }
-
-    .mask-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f2f2f2;
-        border: 1px dashed #bbb;
-        border-radius: 4px;
-        color: #666;
-        font: inherit;
+    table {
+        border-collapse: collapse;
         font-size: var(--font-size-base);
-        cursor: pointer;
     }
 
-    .mask-overlay:hover {
-        background: #ececec;
-        color: #333;
+    .players-table {
+        flex: 0 1 auto;
     }
 
-    .epc-player-header {
+    .race-table {
+        flex: 0 1 auto;
+        min-width: 230px;
+    }
+
+    th,
+    td {
+        padding: 1px 8px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    th {
+        font-size: var(--font-size-small);
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+    }
+
+    tbody tr + tr td {
+        border-top: 1px solid #eee;
+    }
+
+    .row-label {
         display: flex;
         align-items: center;
         gap: 6px;
-        font-weight: 600;
         font-size: var(--font-size-small);
+        font-weight: 600;
         color: #444;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        text-align: left;
+    }
+
+    .race-table td:first-child {
+        font-size: var(--font-size-small);
+        color: #666;
+        text-align: left;
+    }
+
+    .race-title {
+        text-align: left;
+    }
+
+    .race-title .badge {
+        margin-left: 8px;
+    }
+
+    .main-value {
+        font-weight: 600;
+        color: #1a56c4;
+        font-variant-numeric: tabular-nums;
+    }
+
+    td {
+        font-variant-numeric: tabular-nums;
+        color: #222;
+    }
+
+    .delta-row td {
+        color: #666;
+    }
+
+    .delta-row .main-value {
+        color: #666;
+    }
+
+    .best-action-row td {
+        font-weight: 600;
+        color: #1a56c4;
+        border-top: 1px solid #ddd;
+    }
+
+    tr.masked,
+    table.masked {
+        cursor: pointer;
+    }
+
+    tr.masked td:not(.row-label),
+    table.masked td:not(:first-child) {
+        color: #aaa;
+        letter-spacing: 2px;
+    }
+
+    tr.masked:hover td,
+    table.masked:hover td {
+        background: #f5f5f5;
     }
 
     .player-indicator {
+        display: inline-block;
         width: 10px;
         height: 10px;
         border-radius: 50%;
         flex-shrink: 0;
+        vertical-align: middle;
+    }
+
+    .race-title .player-indicator {
+        margin-right: 4px;
     }
 
     .player-indicator.bottom {
@@ -386,13 +369,13 @@
     }
 
     .badge {
-        margin-left: auto;
-        padding: 1px 8px;
+        padding: 0 8px;
         border-radius: 9px;
         font-size: var(--font-size-small);
         font-weight: 600;
         letter-spacing: 0.3px;
         text-transform: none;
+        white-space: nowrap;
     }
 
     .badge-exact {
@@ -407,77 +390,12 @@
         color: #8a6413;
     }
 
-    .epc-grid {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    .epc-card {
-        background: #f8f8f8;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        padding: 4px 10px;
-        min-width: 70px;
-        text-align: center;
-    }
-
-    .epc-card.epc-main {
-        background: #e8f0fe;
-        border-color: #c4d8f5;
-    }
-
-    .epc-card-label {
-        font-size: var(--font-size-small);
-        color: #777;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        margin-bottom: 1px;
-    }
-
-    .epc-card-value {
-        font-size: var(--font-size-base);
-        font-weight: 600;
-        color: #222;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .epc-main .epc-card-value {
-        font-size: var(--font-size-title);
-        color: #1a56c4;
-    }
-
-    .verdict-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .verdict-label {
-        font-size: var(--font-size-small);
-        color: #666;
-    }
-
-    .verdict-chip {
-        padding: 1px 10px;
-        border-radius: 9px;
-        background: #e8f0fe;
-        border: 1px solid #c4d8f5;
-        color: #1a56c4;
-        font-size: var(--font-size-base);
-        font-weight: 600;
-    }
-
-    .verdict-chip.verdict-none {
-        background: #f2f2f2;
-        border-color: #ddd;
-        color: #777;
-        font-weight: 400;
-    }
-
     .download-hint {
         font-size: var(--font-size-small);
         color: #8a6413;
+        white-space: normal;
+        max-width: 340px;
+        text-align: left;
     }
 
     .link-button {
@@ -490,48 +408,20 @@
         cursor: pointer;
     }
 
-    .epc-comparison {
-        border-top: 1px solid #e0e0e0;
-        padding-top: 6px;
-    }
-
-    .epc-comparison-header {
-        font-size: var(--font-size-small);
-        font-weight: 600;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
-    }
-
-    .epc-comparison-grid {
-        display: flex;
-        gap: 12px;
-    }
-
-    .epc-comp-item {
+    .challenge-toggle {
+        margin-left: auto;
         display: flex;
         align-items: center;
-        gap: 6px;
-    }
-
-    .comp-label {
+        gap: 5px;
+        cursor: pointer;
+        color: #555;
         font-size: var(--font-size-small);
-        color: #777;
+        user-select: none;
+        white-space: nowrap;
     }
 
-    .comp-value {
-        font-size: var(--font-size-base);
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-        color: #444;
-    }
-
-    .comp-value.advantage-bottom {
-        color: #333;
-    }
-
-    .comp-value.advantage-top {
-        color: #888;
+    .challenge-toggle input {
+        font: inherit;
+        margin: 0;
     }
 </style>
