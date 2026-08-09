@@ -717,24 +717,21 @@ EPC dans le panneau inférieur, ou en exécutant la commande ``epc``.
 Dans ce panneau, l'utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
 du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent). Les informations suivantes sont
-affichées en temps réel pour chaque joueur :
+(le bouton de souris est indifférent).
 
-* l'EPC (Effective Pip Count),
+Les résultats sont présentés sous forme de deux tableaux côte à côte :
 
-* le nombre moyen de lancers nécessaires (Mean Rolls),
+* à gauche, un **tableau des joueurs** — une ligne par joueur, une colonne
+  par grandeur : EPC, pip count, wastage (différence entre l'EPC et le pip
+  count), nombre moyen de lancers et écart type. Lorsque les deux joueurs
+  ont des pions dans leur jan, une ligne **Δ** donne les différences
+  d'EPC, de pips et de wastage ;
 
-* l'écart type (Standard Deviation),
-
-* le pip count,
-
-* le wastage (différence entre l'EPC et le pip count).
-
-Lorsque les deux joueurs ont des pions dans leur jan, une section
-de comparaison affiche les différences d'EPC et de pip count.
+* à droite, un **tableau course/videau**, sur le modèle du tableau de
+  décision de videau du panneau d'analyse.
 
 Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), une zone **Course** affiche en plus, pour le joueur au trait :
+leur jan), le tableau course affiche, pour le joueur au trait :
 
 * la probabilité de gain,
 
@@ -759,10 +756,12 @@ Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
   domaine le plus large l'emporte automatiquement.
 
 **Mode défi.** La case *Défi* du panneau active un mode entraînement : à
-chaque modification de la position, les trois zones (joueur bas, joueur haut,
-course) sont masquées ; un clic sur une zone la révèle. On peut ainsi
-s'entraîner à estimer l'EPC de chaque camp, puis à se prononcer sur le
-videau, avant de vérifier. Le réglage est mémorisé.
+chaque modification de la position, les valeurs des trois zones — la ligne
+du joueur du bas, la ligne du joueur du haut et le tableau course — sont
+masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
+seulement. La ligne Δ n'apparaît qu'une fois les deux lignes joueurs
+révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
+se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
 
 Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
