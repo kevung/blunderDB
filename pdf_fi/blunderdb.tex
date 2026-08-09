@@ -1769,11 +1769,140 @@ hukka (wastage) (EPC:n ja pip\sphinxhyphen{}luvun välinen ero).
 Kun molemmilla pelaajilla on pelinappuloita kotitaulussaan, vertailuosio näyttää EPC:n ja pip\sphinxhyphen{}luvun erot.
 
 \sphinxAtStartPar
+Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
+leur jan), une zone \sphinxstylestrong{Course} affiche en plus, pour le joueur au trait :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+la probabilité de gain,
+
+\item {} 
+\sphinxAtStartPar
+en régime \sphinxstyleemphasis{exact} : les équités money (cubeless, sans double, double/prend,
+double/passe) et le \sphinxstylestrong{verdict de videau money} (pas de double, double/prend
+ou double/passe),
+
+\item {} 
+\sphinxAtStartPar
+en régime \sphinxstyleemphasis{estimé} : la probabilité de gain seule, accompagnée de sa marge
+d’erreur — le verdict de videau n’est alors volontairement pas affiché.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Un badge indique le régime : \sphinxstylestrong{exact} (valeur lue dans une base de données
+two\sphinxhyphen{}sided) ou \sphinxstylestrong{estimé ± marge}. Voir {\hyperref[\detokenize{manuel:epc-methodologie}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Méthodologie et hypothèses du panneau EPC}}}}} pour la
+définition précise des deux régimes et de leurs hypothèses.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Élargir le domaine exact.} La base intégrée couvre 6 pions par joueur.
+Deux moyens d’aller au\sphinxhyphen{}delà, dans l’onglet \sphinxstyleemphasis{Bearoff} de la configuration :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur ;
+
+\item {} 
+\sphinxAtStartPar
+indiquer un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided de gnubg quelconque. La base au
+domaine le plus large l’emporte automatiquement.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Mode défi.} La case \sphinxstyleemphasis{Défi} du panneau active un mode entraînement : à
+chaque modification de la position, les trois zones (joueur bas, joueur haut,
+course) sont masquées ; un clic sur une zone la révèle. On peut ainsi
+s’entraîner à estimer l’EPC de chaque camp, puis à se prononcer sur le
+videau, avant de vérifier. Le réglage est mémorisé.
+
+\sphinxAtStartPar
 Sulje EPC\sphinxhyphen{}paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} tai vaihtamalla toiseen välilehteen.
+
+
+\subsubsection{Méthodologie et hypothèses du panneau EPC}
+\label{\detokenize{manuel:methodologie-et-hypotheses-du-panneau-epc}}\label{\detokenize{manuel:epc-methodologie}}
+\sphinxAtStartPar
+Chaque valeur affichée par le panneau repose sur des hypothèses précises,
+énoncées ici exhaustivement.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Domaine.} Le panneau ne traite que le bearoff pur : tous les pions restants
+des deux joueurs dans leur jan intérieur. La position est évaluée \sphinxstyleemphasis{avant le
+lancer} ; les dés éventuellement posés sont ignorés. Les courses sans contact
+dont des pions sont hors du jan ne sont pas traitées.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Blocs EPC (toujours exacts).} L’EPC, le nombre moyen de lancers et
+l’écart type proviennent de la distribution exacte du nombre de lancers pour
+sortir tous les pions, lue dans la base one\sphinxhyphen{}sided de GNUbg (6 points,
+15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
+exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
+count. L’unique idéalisation est le \sphinxstyleemphasis{jeu one\sphinxhyphen{}sided optimal} : chaque joueur
+minimise ses propres lancers en ignorant l’adversaire — c’est la définition
+standard de l’EPC.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Probabilité de gain, régime exact.} Lecture directe dans la base two\sphinxhyphen{}sided
+disponible la plus large (intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06, fichier externe, ou TS\sphinxhyphen{}06\sphinxhyphen{}11
+téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
+two\sphinxhyphen{}sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
+limitée à la quantification (< 0,002 \%).
+
+\sphinxAtStartPar
+\sphinxstylestrong{Probabilité de gain, régime estimé.} Hors du domaine de la base : la
+probabilité est obtenue en convoluant les deux distributions one\sphinxhyphen{}sided (le
+joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
+de l’adversaire), puis en appliquant une correction polynomiale figée,
+calibrée hors ligne contre la base TS\sphinxhyphen{}06\sphinxhyphen{}11. Trois hypothèses :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{indépendance} des deux processus de sortie — structurelle en course,
+sans contact il n’y a aucune interaction ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{jeu one\sphinxhyphen{}sided optimal des deux camps} — c’est \sphinxstyleemphasis{l’approximation} : en
+réalité le joueur mené dévie pour jouer la variance et le meneur pour la
+sécurité. L’effet mesuré est un biais antisymétrique (la convolution
+exagère l’avance du meneur) que la correction absorbe statistiquement ;
+
+\item {} 
+\sphinxAtStartPar
+la \sphinxstylestrong{correction} a été calibrée et validée sur le domaine de l’oracle
+(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
+0,05 \%, 99e centile 0,17 \%, maximum observé 0,9 \% (en points de
+probabilité de gain). \sphinxstylestrong{Au\sphinxhyphen{}delà de 11 pions par joueur, cette borne est
+extrapolée} — la tendance est monotone mais aucun oracle ne la certifie.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Équités et verdict de videau (régime exact seulement).} Les équités
+affichées sont celles du \sphinxstylestrong{money game, sans Jacoby}, dans le référentiel de
+la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
+gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
+n’est pas une approximation. Le verdict (pas de double / double, prend /
+double, passe) est reconstruit exactement des équités stockées, selon la
+règle de GNUbg, validée trait pour trait contre son analyse.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Pourquoi le verdict n’est\sphinxhyphen{}il jamais estimé ?} L’équité cubeful est un
+problème de \sphinxstyleemphasis{trajectoire} (quand doubler), qu’aucun résumé statistique de la
+position ne capture : le meilleur modèle statique mesuré laisse une erreur
+résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
+toutes les décisions serrées. De même, la conversion du verdict au score de
+match via une table d’équités de match a été mesurée insuffisante (12 \% de
+désaccords avec l’analyse 2\sphinxhyphen{}ply de GNUbg, avec de vraies bourdes). Un
+verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
+n’affiche le verdict que lorsqu’il est exact — et money.
 
 \begin{sphinxadmonition}{note}{Muista:}
 \sphinxAtStartPar
-Laskenta perustuu GNUbg:n sisäänrakennettuun 6 pisteen bearoff\sphinxhyphen{}tietokantaan.
+Les bases de bearoff sont des tables mathématiques immuables,
+régénérables avec l’outil \sphinxcode{\sphinxupquote{makebearoff}} de GNUbg.
 \end{sphinxadmonition}
 
 
@@ -2387,7 +2516,17 @@ Muokkaa nappuloiden asemaa kotialueella (6 viimeistä pistettä).
 
 \item {} 
 \sphinxAtStartPar
-Tulokset näytetään reaaliajassa erillisessä EPC\sphinxhyphen{}paneelissa: EPC, heittojen keskimäärä, keskihajonta, pip count ja wastage.
+Les résultats sont affichés en temps réel dans le panneau EPC dédié:
+EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
+bearoff pur, la probabilité de gain du joueur au trait avec, dans le
+domaine exact, le verdict de videau money (voir la section
+« Méthodologie et hypothèses du panneau EPC » du manuel).
+
+\item {} 
+\sphinxAtStartPar
+Pour s’entraîner à estimer ces valeurs, cocher la case \sphinxstyleemphasis{Défi} : les
+résultats sont masqués à chaque modification et se révèlent zone par
+zone, d’un clic.
 
 \end{enumerate}
 
@@ -2649,7 +2788,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Avaa EPC\sphinxhyphen{}paneelin (Effective Pip Count).
+Ouvre le panneau EPC (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6251,6 +6390,15 @@ Kokoelma on asemien mukautettu ryhmittely. Toisin kuin dynaaminen suodatinhaku, 
 \sphinxAtStartPar
 EPC (Effective Pip Count) on tarkempi mittari kuin pelkkä pip count bearoff\sphinxhyphen{}asemien arviointiin. blunderDB:n EPC\sphinxhyphen{}laskuri käyttää GNUbg:n 6\sphinxhyphen{}pisteen bearoff\sphinxhyphen{}tietokantaa ja laskee reaaliajassa EPC:n, heittojen keskimääräisen määrän, keskihajonnan, pip countin ja wastagen.
 
+\sphinxAtStartPar
+Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
+gain du joueur au trait et, lorsque la position est couverte par une base
+two\sphinxhyphen{}sided (base intégrée jusqu’à 6 pions par joueur, base téléchargeable
+jusqu’à 11), le verdict de videau money exact. Hors de ce domaine, la
+probabilité est estimée avec sa marge d’erreur et le verdict n’est
+volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
+panneau EPC » du manuel pour le détail des hypothèses.
+
 
 \subsection{Onko blunderDB:ssä komentorivikäyttöliittymä?}
 \label{\detokenize{faq:blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande}}
@@ -6564,13 +6712,34 @@ PostgreSQL: ottaa käyttöön vuokralaiskohtaisen Row\sphinxhyphen{}Level Securi
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts <fichier>}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+–
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+base de bearoff two\sphinxhyphen{}sided (\sphinxcode{\sphinxupquote{.bd}}) optionnelle élargissant la base
+intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 pour l’analyse de course du point d’accès EPC ;
+le démon ne télécharge jamais de base lui\sphinxhyphen{}même — monter le fichier
+en volume et le désigner ici
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
 \sphinxAtStartPar
-Useimmat valinnat voidaan antaa myös ympäristömuuttujalla (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}).
+La plupart des options peuvent aussi être fournies par variable
+d’environnement (\sphinxcode{\sphinxupquote{BLUNDERDB\_BACKEND}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_DSN}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_ADDR}},
+\sphinxcode{\sphinxupquote{BLUNDERDB\_LOG\_LEVEL}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_RLS}}, \sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}).
 
 
 \subsubsection{Päätepisteet}

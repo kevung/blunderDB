@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 10:29
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 11:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1124,118 +1124,125 @@ Underfull \hbox (badness 10000) in paragraph at lines 898--900
  []
 
 [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26]
-[27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38]
-Underfull \hbox (badness 10000) in paragraph at lines 4785--4787
+[27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39]
+Underfull \hbox (badness 10000) in paragraph at lines 4924--4926
 []\TU/FreeSerif(0)/m/n/10 CTRL-PageDown,
  []
 
-[39] [40] [41] [42] [43] [44] [45] [46] [47]
+[40] [41] [42] [43] [44] [45] [46] [47] [48]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6094.
- [48] [49] [50]
+(Font)              scaled to size 8.99994pt on input line 6233.
+ [49] [50] [51] [52]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6361.
- [51]
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6445--6447
+(Font)              scaled to size 10.79993pt on input line 6509.
+
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6593--6595
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6448
+Overfull \hbox (11.423pt too wide) detected at line 6596
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6504--6506
+Underfull \hbox (badness 10000) in paragraph at lines 6652--6654
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
-[52]
-Underfull \hbox (badness 10000) in paragraph at lines 6620--6622
+
+Underfull \hbox (badness 8151) in paragraph at lines 6739--6743
+[]\TU/FreeSerif(0)/m/n/10 La plupart des options peuvent aussi être fournies pa
+r variable d’environnement (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
+if(0)/m/n/10 ,
+ []
+
+[53]
+Underfull \hbox (badness 10000) in paragraph at lines 6789--6791
 []\TU/FreeSerif(0)/m/n/10 L’immagine ascolta sulla porta 8080 e si configura tr
 amite variabili d’ambiente (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
-[53]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6857--6859
-[]\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
- []
-
-
-Overfull \hbox (1.06567pt too wide) detected at line 6860
-[]\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
- []
-
 [54] [55]
-Underfull \hbox (badness 6412) in paragraph at lines 7142--7144
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7026--7028
+[]\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+
+Overfull \hbox (1.06567pt too wide) detected at line 7029
+[]\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
+ []
+
+[56]
+Underfull \hbox (badness 6412) in paragraph at lines 7311--7313
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 7145
+Underfull \hbox (badness 6412) detected at line 7314
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7158--7160
+Underfull \hbox (badness 6412) in paragraph at lines 7327--7329
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7174--7176
+Underfull \hbox (badness 10000) in paragraph at lines 7343--7345
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7185--7187
+Underfull \hbox (badness 10000) in paragraph at lines 7354--7356
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7199--7201
+Underfull \hbox (badness 10000) in paragraph at lines 7368--7370
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7264--7266
+Underfull \hbox (badness 10000) in paragraph at lines 7433--7435
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7280--7282
+Underfull \hbox (badness 6412) in paragraph at lines 7449--7451
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
-[56]
+[57] [58]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
- [57]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
+ [59] [60]
 File: win1.png Graphic file (type bmp)
 <win1.png>
- [58] [59]
 File: win2.png Graphic file (type bmp)
 <win2.png>
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
+ [61] [62] [63] [64]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [60] [61] [62] [63] [64] [65] [66] [67] [68] [69] [70]
-[71] [72
-
-]
+ [65] [66] [67] [68] [69] [70] [71]
+[72]
 Capitolo 3.
-[73] [74
+[73
+
+] [74
 
 ]
 Capitolo 4.
@@ -1249,15 +1256,15 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 47CC5EF89D1E5197641A75DA4DC32B2F;34790.
+(rerunfilecheck)             Checksum: E419B4E3905E0E1A26631BF0CA1700C8;35086.
  ) 
 Here is how much of TeX's memory you used:
- 19383 strings out of 476443
- 395642 string characters out of 5793963
+ 19386 strings out of 476443
+ 395736 string characters out of 5793963
  2031627 words of memory out of 5000000
- 40940 multiletter control sequences out of 15000+600000
+ 40943 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
- 79i,19n,93p,3335b,580s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 79i,19n,93p,3335b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (81 pages).

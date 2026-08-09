@@ -101,10 +101,16 @@ depuis plusieurs clients.
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
        profondeur, sur option)
+   * - ``--bearoff-ts <fichier>``
+     - –
+     - base de bearoff two-sided (``.bd``) optionnelle élargissant la base
+       intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ;
+       le démon ne télécharge jamais de base lui-même — monter le fichier
+       en volume et le désigner ici
 
 La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``).
+``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``).
 
 Points d'accès
 --------------

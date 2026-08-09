@@ -731,10 +731,107 @@ en temps réel pour chaque joueur :
 Lorsque les deux joueurs ont des pions dans leur jan, une section
 de comparaison affiche les différences d'EPC et de pip count.
 
+Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
+leur jan), une zone **Course** affiche en plus, pour le joueur au trait :
+
+* la probabilité de gain,
+
+* en régime *exact* : les équités money (cubeless, sans double, double/prend,
+  double/passe) et le **verdict de videau money** (pas de double, double/prend
+  ou double/passe),
+
+* en régime *estimé* : la probabilité de gain seule, accompagnée de sa marge
+  d'erreur — le verdict de videau n'est alors volontairement pas affiché.
+
+Un badge indique le régime : **exact** (valeur lue dans une base de données
+two-sided) ou **estimé ± marge**. Voir :ref:`epc_methodologie` pour la
+définition précise des deux régimes et de leurs hypothèses.
+
+**Élargir le domaine exact.** La base intégrée couvre 6 pions par joueur.
+Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
+
+* télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+  supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur ;
+
+* indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
+  domaine le plus large l'emporte automatiquement.
+
+**Mode défi.** La case *Défi* du panneau active un mode entraînement : à
+chaque modification de la position, les trois zones (joueur bas, joueur haut,
+course) sont masquées ; un clic sur une zone la révèle. On peut ainsi
+s'entraîner à estimer l'EPC de chaque camp, puis à se prononcer sur le
+videau, avant de vérifier. Le réglage est mémorisé.
+
 Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
-.. note:: Le calcul repose sur la base de données interne de bearoff
-   à 6 points de GNUbg.
+.. _epc_methodologie:
+
+Méthodologie et hypothèses du panneau EPC
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Chaque valeur affichée par le panneau repose sur des hypothèses précises,
+énoncées ici exhaustivement.
+
+**Domaine.** Le panneau ne traite que le bearoff pur : tous les pions restants
+des deux joueurs dans leur jan intérieur. La position est évaluée *avant le
+lancer* ; les dés éventuellement posés sont ignorés. Les courses sans contact
+dont des pions sont hors du jan ne sont pas traitées.
+
+**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et
+l'écart type proviennent de la distribution exacte du nombre de lancers pour
+sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
+15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
+exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
+count. L'unique idéalisation est le *jeu one-sided optimal* : chaque joueur
+minimise ses propres lancers en ignorant l'adversaire — c'est la définition
+standard de l'EPC.
+
+**Probabilité de gain, régime exact.** Lecture directe dans la base two-sided
+disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
+téléchargée). Ces bases résultent d'une analyse rétrograde complète sous jeu
+two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
+limitée à la quantification (< 0,002 %).
+
+**Probabilité de gain, régime estimé.** Hors du domaine de la base : la
+probabilité est obtenue en convoluant les deux distributions one-sided (le
+joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
+de l'adversaire), puis en appliquant une correction polynomiale figée,
+calibrée hors ligne contre la base TS-06-11. Trois hypothèses :
+
+* **indépendance** des deux processus de sortie — structurelle en course,
+  sans contact il n'y a aucune interaction ;
+
+* **jeu one-sided optimal des deux camps** — c'est *l'approximation* : en
+  réalité le joueur mené dévie pour jouer la variance et le meneur pour la
+  sécurité. L'effet mesuré est un biais antisymétrique (la convolution
+  exagère l'avance du meneur) que la correction absorbe statistiquement ;
+
+* la **correction** a été calibrée et validée sur le domaine de l'oracle
+  (jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type
+  0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
+  probabilité de gain). **Au-delà de 11 pions par joueur, cette borne est
+  extrapolée** — la tendance est monotone mais aucun oracle ne la certifie.
+
+**Équités et verdict de videau (régime exact seulement).** Les équités
+affichées sont celles du **money game, sans Jacoby**, dans le référentiel de
+la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
+gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
+n'est pas une approximation. Le verdict (pas de double / double, prend /
+double, passe) est reconstruit exactement des équités stockées, selon la
+règle de GNUbg, validée trait pour trait contre son analyse.
+
+**Pourquoi le verdict n'est-il jamais estimé ?** L'équité cubeful est un
+problème de *trajectoire* (quand doubler), qu'aucun résumé statistique de la
+position ne capture : le meilleur modèle statique mesuré laisse une erreur
+résiduelle (écart type 0,016 d'équité, maximum 0,20) qui suffit à inverser
+toutes les décisions serrées. De même, la conversion du verdict au score de
+match via une table d'équités de match a été mesurée insuffisante (12 % de
+désaccords avec l'analyse 2-ply de GNUbg, avec de vraies bourdes). Un
+verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
+n'affiche le verdict que lorsqu'il est exact — et money.
+
+.. note:: Les bases de bearoff sont des tables mathématiques immuables,
+   régénérables avec l'outil ``makebearoff`` de GNUbg.
 
 .. _panneau_anki:
 

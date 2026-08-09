@@ -96,7 +96,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.16.9. MWC: rajoitukset</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.17. EPC-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.17. EPC-paneeli</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-epc">2.17.1. Méthodologie et hypothèses du panneau EPC</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.18. Anki-paneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.19. Metatietopaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">2.20. Tietokannan jakaminen: alkuperä ja salasana</a><ul>
@@ -539,11 +542,94 @@
 <li><p>hukka (wastage) (EPC:n ja pip-luvun välinen ero).</p></li>
 </ul>
 <p>Kun molemmilla pelaajilla on pelinappuloita kotitaulussaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
+<p>Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
+leur jan), une zone <strong>Course</strong> affiche en plus, pour le joueur au trait :</p>
+<ul class="simple">
+<li><p>la probabilité de gain,</p></li>
+<li><p>en régime <em>exact</em> : les équités money (cubeless, sans double, double/prend,
+double/passe) et le <strong>verdict de videau money</strong> (pas de double, double/prend
+ou double/passe),</p></li>
+<li><p>en régime <em>estimé</em> : la probabilité de gain seule, accompagnée de sa marge
+d’erreur — le verdict de videau n’est alors volontairement pas affiché.</p></li>
+</ul>
+<p>Un badge indique le régime : <strong>exact</strong> (valeur lue dans une base de données
+two-sided) ou <strong>estimé ± marge</strong>. Voir <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau EPC</span></a> pour la
+définition précise des deux régimes et de leurs hypothèses.</p>
+<p><strong>Élargir le domaine exact.</strong> La base intégrée couvre 6 pions par joueur.
+Deux moyens d’aller au-delà, dans l’onglet <em>Bearoff</em> de la configuration :</p>
+<ul class="simple">
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur ;</p></li>
+<li><p>indiquer un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg quelconque. La base au
+domaine le plus large l’emporte automatiquement.</p></li>
+</ul>
+<p><strong>Mode défi.</strong> La case <em>Défi</em> du panneau active un mode entraînement : à
+chaque modification de la position, les trois zones (joueur bas, joueur haut,
+course) sont masquées ; un clic sur une zone la révèle. On peut ainsi
+s’entraîner à estimer l’EPC de chaque camp, puis à se prononcer sur le
+videau, avant de vérifier. Le réglage est mémorisé.</p>
 <p>Sulje EPC-paneeli painamalla <em>CTRL-E</em> tai vaihtamalla toiseen välilehteen.</p>
+<section id="methodologie-et-hypotheses-du-panneau-epc">
+<span id="epc-methodologie"></span><h3><span class="section-number">2.17.1. </span>Méthodologie et hypothèses du panneau EPC<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-epc" title="Link to this heading"></a></h3>
+<p>Chaque valeur affichée par le panneau repose sur des hypothèses précises,
+énoncées ici exhaustivement.</p>
+<p><strong>Domaine.</strong> Le panneau ne traite que le bearoff pur : tous les pions restants
+des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le
+lancer</em> ; les dés éventuellement posés sont ignorés. Les courses sans contact
+dont des pions sont hors du jan ne sont pas traitées.</p>
+<p><strong>Blocs EPC (toujours exacts).</strong> L’EPC, le nombre moyen de lancers et
+l’écart type proviennent de la distribution exacte du nombre de lancers pour
+sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
+15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
+exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
+count. L’unique idéalisation est le <em>jeu one-sided optimal</em> : chaque joueur
+minimise ses propres lancers en ignorant l’adversaire — c’est la définition
+standard de l’EPC.</p>
+<p><strong>Probabilité de gain, régime exact.</strong> Lecture directe dans la base two-sided
+disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
+téléchargée). Ces bases résultent d’une analyse rétrograde complète sous jeu
+two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
+limitée à la quantification (&lt; 0,002 %).</p>
+<p><strong>Probabilité de gain, régime estimé.</strong> Hors du domaine de la base : la
+probabilité est obtenue en convoluant les deux distributions one-sided (le
+joueur au trait gagne si son nombre de lancers est inférieur ou égal à celui
+de l’adversaire), puis en appliquant une correction polynomiale figée,
+calibrée hors ligne contre la base TS-06-11. Trois hypothèses :</p>
+<ul class="simple">
+<li><p><strong>indépendance</strong> des deux processus de sortie — structurelle en course,
+sans contact il n’y a aucune interaction ;</p></li>
+<li><p><strong>jeu one-sided optimal des deux camps</strong> — c’est <em>l’approximation</em> : en
+réalité le joueur mené dévie pour jouer la variance et le meneur pour la
+sécurité. L’effet mesuré est un biais antisymétrique (la convolution
+exagère l’avance du meneur) que la correction absorbe statistiquement ;</p></li>
+<li><p>la <strong>correction</strong> a été calibrée et validée sur le domaine de l’oracle
+(jusqu’à 11 pions par joueur). Erreur résiduelle mesurée : écart type
+0,05 %, 99e centile 0,17 %, maximum observé 0,9 % (en points de
+probabilité de gain). <strong>Au-delà de 11 pions par joueur, cette borne est
+extrapolée</strong> — la tendance est monotone mais aucun oracle ne la certifie.</p></li>
+</ul>
+<p><strong>Équités et verdict de videau (régime exact seulement).</strong> Les équités
+affichées sont celles du <strong>money game, sans Jacoby</strong>, dans le référentiel de
+la littérature du bearoff. Dans le domaine ≤ 11 pions par joueur, les
+gammons sont impossibles (chaque camp a déjà sorti au moins 4 pions) : ce
+n’est pas une approximation. Le verdict (pas de double / double, prend /
+double, passe) est reconstruit exactement des équités stockées, selon la
+règle de GNUbg, validée trait pour trait contre son analyse.</p>
+<p><strong>Pourquoi le verdict n’est-il jamais estimé ?</strong> L’équité cubeful est un
+problème de <em>trajectoire</em> (quand doubler), qu’aucun résumé statistique de la
+position ne capture : le meilleur modèle statique mesuré laisse une erreur
+résiduelle (écart type 0,016 d’équité, maximum 0,20) qui suffit à inverser
+toutes les décisions serrées. De même, la conversion du verdict au score de
+match via une table d’équités de match a été mesurée insuffisante (12 % de
+désaccords avec l’analyse 2-ply de GNUbg, avec de vraies bourdes). Un
+verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
+n’affiche le verdict que lorsqu’il est exact — et money.</p>
 <div class="admonition note">
 <p class="admonition-title">Muista</p>
-<p>Laskenta perustuu GNUbg:n sisäänrakennettuun 6 pisteen bearoff-tietokantaan.</p>
+<p>Les bases de bearoff sont des tables mathématiques immuables,
+régénérables avec l’outil <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg.</p>
 </div>
+</section>
 </section>
 <section id="panneau-anki">
 <span id="id11"></span><h2><span class="section-number">2.18. </span>Anki-paneeli<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>

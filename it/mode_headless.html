@@ -183,9 +183,18 @@ blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span cla
 <td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
 <td><p>PostgreSQL: abilita la Row-Level Security per tenant (difesa in profondità, opzionale)</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;fichier&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>base de bearoff two-sided (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) optionnelle élargissant la base
+intégrée TS-06-06 pour l’analyse de course du point d’accès EPC ;
+le démon ne télécharge jamais de base lui-même — monter le fichier
+en volume et le désigner ici</p></td>
+</tr>
 </tbody>
 </table>
-<p>La maggior parte delle opzioni può anche essere fornita tramite variabile d’ambiente (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<p>La plupart des options peuvent aussi être fournies par variable
+d’environnement (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>).</p>
 <section id="points-d-acces">
 <h3><span class="section-number">8.2.1. </span>Punti di accesso<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
 <p>Il servizio espone dei punti di accesso operativi, sempre presenti:</p>

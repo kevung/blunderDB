@@ -205,11 +205,18 @@ jamais directement sur l’Internet public.</strong></p>
 <td><p>PostgreSQL : active la Row-Level Security par tenant (défense en
 profondeur, sur option)</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;fichier&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>base de bearoff two-sided (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) optionnelle élargissant la base
+intégrée TS-06-06 pour l’analyse de course du point d’accès EPC ;
+le démon ne télécharge jamais de base lui-même — monter le fichier
+en volume et le désigner ici</p></td>
+</tr>
 </tbody>
 </table>
 <p>La plupart des options peuvent aussi être fournies par variable
 d’environnement (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
-<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>).</p>
+<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>).</p>
 <section id="points-d-acces">
 <h3><span class="section-number">8.2.1. </span>Points d’accès<a class="headerlink" href="#points-d-acces" title="Lien vers cette rubrique"></a></h3>
 <p>Le service expose des points d’accès d’exploitation, toujours présents :</p>

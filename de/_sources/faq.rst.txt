@@ -121,6 +121,14 @@ pour évaluer les positions de bearoff. Le calculateur EPC de blunderDB utilise
 la base de données de bearoff à 6 points de GNUbg et calcule en temps réel
 l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le wastage.
 
+Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
+gain du joueur au trait et, lorsque la position est couverte par une base
+two-sided (base intégrée jusqu'à 6 pions par joueur, base téléchargeable
+jusqu'à 11), le verdict de videau money exact. Hors de ce domaine, la
+probabilité est estimée avec sa marge d'erreur et le verdict n'est
+volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
+panneau EPC » du manuel pour le détail des hypothèses.
+
 
 blunderDB dispose-t-il d'une interface en ligne de commande?
 ------------------------------------------------------------
