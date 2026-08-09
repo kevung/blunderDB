@@ -729,11 +729,12 @@ Les résultats sont présentés sous forme de deux tableaux empilés :
   différences *signées* (bas − haut : négatif quand le joueur noir est en
   avance) d'EPC, de pips et de wastage ;
 
-* en dessous, séparé par un filet, un **tableau course/videau**, sur le
-  modèle du tableau de décision de videau du panneau d'analyse : deux
+* en dessous, séparé par un filet, un **tableau course/videau** : deux
   colonnes de probabilité de gain (une par pastille de joueur, valeurs
-  sans le signe %), les équités money et la **meilleure action** en
-  dernière ligne. Le **joueur au trait** et la **position du videau**
+  sans le signe %) et les équités money — sous chaque décision autre que
+  la meilleure, l'écart d'équité à la meilleure décision est indiqué
+  entre parenthèses. La **décision** s'affiche à droite du tableau, avec
+  le badge exact/estimé. Le **joueur au trait** et la **position du videau**
   s'éditent directement sur le plateau, comme en mode édition : cliquer
   le rectangle bearoff/score d'un joueur lui donne le trait ; cliquer le
   videau fait tourner centré → possédé bas → possédé haut (clic droit en

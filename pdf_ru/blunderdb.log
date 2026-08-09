@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:16
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.9)  9 AUG 2026 17:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1720,64 +1720,64 @@ Underfull \hbox (badness 10000) in paragraph at lines 888--890
 
 [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26]
 [27] [28] [29]
-Underfull \hbox (badness 10000) in paragraph at lines 2294--2296
+Underfull \hbox (badness 10000) in paragraph at lines 2295--2297
 []\TU/FreeSerif(1)/m/n/10 blunderDB автоматически определяет дубликаты и предот
 вращает повторный импорт матча, уже
  []
 
 [30] [31] [32] [33]
-Underfull \hbox (badness 10000) in paragraph at lines 2779--2781
+Underfull \hbox (badness 10000) in paragraph at lines 2780--2782
 []\TU/FreeSerif(1)/m/n/10 Загружает образец базы данных (матчи, турнир, анализы
 ) для знакомства с
  []
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48]
 [49] [50] [51] [52]
-Underfull \hbox (badness 5711) in paragraph at lines 6443--6445
+Underfull \hbox (badness 5711) in paragraph at lines 6444--6446
 []\TU/FreeSerif(1)/m/n/10 Наконец, blunderDB больше не ограничивается настольны
 м приложением: тот же исполняемый файл
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6466--6468
+Underfull \hbox (badness 10000) in paragraph at lines 6467--6469
 []\TU/FreeSerif(1)/m/n/10 Необязательный серверный режим может опираться на [][
 ]PostgreSQL[][] вместо SQLite для
  []
 
 [53]
-Underfull \hbox (badness 8056) in paragraph at lines 6516--6518
+Underfull \hbox (badness 8056) in paragraph at lines 6517--6519
 []\TU/FreeSerif(1)/m/n/10 Эти три варианта использования опираются на общий \TU
 /FreeSerif(1)/b/n/10 слой хранения\TU/FreeSerif(1)/m/n/10 , который умеет работ
 ать с
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 6604--6606
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 6605--6607
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 6607
+Overfull \hbox (19.82352pt too wide) detected at line 6608
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6663--6665
+Underfull \hbox (badness 10000) in paragraph at lines 6664--6666
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6695--6697
+Underfull \hbox (badness 10000) in paragraph at lines 6696--6698
 [][][]\TU/FreeMono(1)/m/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6727--6729
+Underfull \hbox (badness 10000) in paragraph at lines 6728--6730
 [][][]\TU/FreeMono(1)/m/n/10 bearoff[]ts
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6750--6754
+Underfull \hbox (badness 10000) in paragraph at lines 6751--6755
 \TU/FreeMono(1)/m/n/10 BLUNDERDB_DSN\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m
 /n/10 BLUNDERDB_ADDR\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m/n/10 BLUNDERDB_
 LOG_LEVEL\TU/FreeSerif(1)/m/n/10 , \TU/FreeMono(1)/m/n/10 BLUNDERDB_RLS\TU/Free
@@ -1785,68 +1785,68 @@ Serif(1)/m/n/10 ,
  []
 
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 6778--6780
+Underfull \hbox (badness 10000) in paragraph at lines 6779--6781
 []\TU/FreeSerif(1)/m/n/10 Два метода семейства \TU/FreeMono(1)/m/n/10 positions
  \TU/FreeSerif(1)/m/n/10 декодируют позицию, не сохраняя её: \TU/FreeMono(1)/m/
 n/10 positions.fromXGID
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6800--6802
+Underfull \hbox (badness 10000) in paragraph at lines 6801--6803
 []\TU/FreeSerif(1)/m/n/10 Образ слушает порт 8080 и настраивается через перемен
 ные окружения (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(1)/m/n/10 
 ,
  []
 
 [55]
-Underfull \hbox (badness 10000) in paragraph at lines 6852--6854
+Underfull \hbox (badness 10000) in paragraph at lines 6853--6855
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) detected at line 6855
+Underfull \hbox (badness 10000) detected at line 6856
 []\TU/FreeSans(1)/m/n/10 По
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6874--6876
+Underfull \hbox (badness 10000) in paragraph at lines 6875--6877
 []\TU/FreeSerif(1)/m/n/10 исходная база SQLite (\TU/FreeMono(1)/m/n/10 sqlite:/
 //chemin \TU/FreeSerif(1)/m/n/10 или
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 6906--6908
+Underfull \hbox (badness 6412) in paragraph at lines 6907--6909
 []\TU/FreeSerif(1)/m/n/10 область арендатора назначения (обязательна, кроме
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6928--6930
+Underfull \hbox (badness 10000) in paragraph at lines 6929--6931
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 [56]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 7037--7039
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 7038--7040
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 7040
+Overfull \hbox (9.46619pt too wide) detected at line 7041
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7106--7108
+Underfull \hbox (badness 10000) in paragraph at lines 7107--7109
 []\TU/FreeSerif(1)/m/n/10 выводит все методы \TU/FreeMono(1)/m/n/10 <семейство>
 .<метод> \TU/FreeSerif(1)/m/n/10 и
  []
 
 [57] [58]
-Underfull \hbox (badness 10000) in paragraph at lines 7379--7381
+Underfull \hbox (badness 10000) in paragraph at lines 7380--7382
 []\TU/FreeSerif(1)/m/n/10 Позиция турнира
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7614--7616
+Underfull \hbox (badness 10000) in paragraph at lines 7615--7617
 \TU/FreeSerif(1)/m/n/10 стоимостью несколько сотен евро (см., например, [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
