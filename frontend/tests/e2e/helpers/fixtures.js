@@ -114,28 +114,38 @@ export const statsResult = {
 
 // ── Résultat EPC factice ──────────────────────────────────────────────────────
 
-/** Retour simulé de ComputeEPCFromPosition pour positionA. */
+/**
+ * Retour simulé de ComputeEPCFromPosition pour positionA, au contrat typé de
+ * engine/race (ADR-0009) : { bottom, top, race? }. L'adversaire est hors de
+ * son jan → pas d'EPC côté top, pas de zone course (pas de bearoff pur).
+ */
 export const epcResultA = {
-    bottomEPC: {
-        epc: 66.47,
-        pipCount: 61,
-        wastage: 5.47,
-        meanRolls: 11.074,
-        stdDev: 2.341,
+    bottom: {
+        all_in_home: true,
+        checker_count: 15,
+        epc: {
+            epc: 66.47,
+            pipCount: 61,
+            wastage: 5.47,
+            meanRolls: 11.074,
+            stdDev: 2.341,
+        },
     },
-    topEPC: null,
-    error: null,
+    top: { all_in_home: false, checker_count: 15 },
 };
 
 /** Retour simulé de ComputeEPCFromPosition pour positionB (différent de A). */
 export const epcResultB = {
-    bottomEPC: {
-        epc: 72.34,
-        pipCount: 67,
-        wastage: 5.34,
-        meanRolls: 12.056,
-        stdDev: 2.512,
+    bottom: {
+        all_in_home: true,
+        checker_count: 15,
+        epc: {
+            epc: 72.34,
+            pipCount: 67,
+            wastage: 5.34,
+            meanRolls: 12.056,
+            stdDev: 2.512,
+        },
     },
-    topEPC: null,
-    error: null,
+    top: { all_in_home: false, checker_count: 15 },
 };
