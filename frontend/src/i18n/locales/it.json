@@ -612,7 +612,6 @@
             "estimated": "stimato",
             "exactTooltip": "Letto dal database two-sided: esatto fino a {n} pedine per giocatore.",
             "estimatedTooltip": "Stimato per convoluzione delle distribuzioni one-sided + correzione calibrata; p99 = {p99} %.",
-            "winProb": "% di vittoria",
             "cubeless": "Cubeless",
             "noDouble": "Senza raddoppio",
             "doubleTake": "Raddoppio/Prende",
@@ -631,8 +630,7 @@
             "noDecision": "Nessuna decisione (cubo avversario)",
             "downloadHint": "Un verdetto del cubo esatto fino a 11 pedine per giocatore richiede il database scaricabile (1,2 GB).",
             "openConfig": "Vedi le impostazioni di configurazione",
-            "onRoll": "Al tiro",
-            "cube": "Cubo"
+            "winPct": "Vittoria (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Partite",
         "tournaments": "Tornei",
         "stats": "Statistiche",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Metadati"
     },

@@ -612,7 +612,6 @@
             "estimated": "estimated",
             "exactTooltip": "Read from the two-sided database: exact up to {n} checkers per player.",
             "estimatedTooltip": "Estimated by convolving the one-sided distributions + calibrated correction; p99 = {p99} %.",
-            "winProb": "Win %",
             "cubeless": "Cubeless",
             "noDouble": "No double",
             "doubleTake": "Double/Take",
@@ -631,8 +630,7 @@
             "noDecision": "No decision (cube against)",
             "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
             "openConfig": "See configuration settings",
-            "onRoll": "On roll",
-            "cube": "Cube"
+            "winPct": "Win (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Matches",
         "tournaments": "Tournaments",
         "stats": "Stats",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Metadata"
     },

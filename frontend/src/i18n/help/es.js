@@ -41,7 +41,7 @@ export default {
                         <li>estudiar posiciones con repetición espaciada (panel Anki),</li>
                         <li>gestionar torneos (panel Torneo),</li>
                         <li>mostrar estadísticas de rendimiento (panel Stats),</li>
-                        <li>calcular valores de EPC para posiciones de bear off (panel EPC),</li>
+                        <li>calcular valores de EPC para posiciones de bear off (panel Bearoff),</li>
                         <li>consultar filtros de búsqueda guardados (panel Biblioteca de filtros),</li>
                         <li>consultar el historial de búsquedas (panel Historial de búsquedas).</li>
                     </ul>
@@ -99,11 +99,11 @@ export default {
                     <h3>Calculadora EPC</h3>
                     <p>La calculadora EPC (Effective Pip Count) calcula el pip count efectivo de las posiciones de bear off. Utiliza la base de datos de bear off de un solo lado de 6 puntos de GNUbg para obtener valores de EPC exactos.</p>
                     <p>
-                        Para abrir el panel EPC, pulsa <strong>Ctrl+E</strong>, haz clic en la pestaña EPC del panel inferior o escribe <strong>epc</strong> en la línea de comandos. El tablero se inicializa con una configuración estándar
+                        Para abrir el panel Bearoff, pulsa <strong>Ctrl+E</strong>, haz clic en la pestaña Bearoff del panel inferior o escribe <strong>epc</strong> en la línea de comandos. El tablero se inicializa con una configuración estándar
                         de bear off (15 fichas).
                     </p>
                     <p>
-                        Puedes añadir o quitar libremente fichas en los puntos del cuadro interior con el ratón. Los valores de EPC se muestran en tiempo real en el panel EPC dedicado, indicando para cada jugador:
+                        Puedes añadir o quitar libremente fichas en los puntos del cuadro interior con el ratón. Los valores de EPC se muestran en tiempo real en el panel Bearoff dedicado, indicando para cada jugador:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: el número medio de pips necesarios para sacar todas las fichas,</li>
@@ -113,7 +113,7 @@ export default {
                         <li><strong>Std Dev</strong>: desviación estándar del número de tiradas.</li>
                     </ul>
                     <p>Cuando ambos jugadores tienen fichas en su cuadro interior, una sección de comparación muestra las diferencias de EPC y de pip count.</p>
-                    <p>Para cerrar el panel EPC, pulsa <strong>Ctrl+E</strong> de nuevo o cambia a otra pestaña.</p>
+                    <p>Para cerrar el panel Bearoff, pulsa <strong>Ctrl+E</strong> de nuevo o cambia a otra pestaña.</p>
 
                     <h3>Navegación por matches</h3>
                     <p>

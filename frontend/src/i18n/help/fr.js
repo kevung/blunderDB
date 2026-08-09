@@ -41,7 +41,7 @@ export default {
                         <li>étudier des positions par répétition espacée (panneau Anki),</li>
                         <li>gérer des tournois (panneau Tournoi),</li>
                         <li>afficher des statistiques de performance (panneau Stats),</li>
-                        <li>calculer les valeurs d'EPC pour les positions de sortie (panneau EPC),</li>
+                        <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Bearoff),</li>
                         <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
                         <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
                     </ul>
@@ -99,11 +99,11 @@ export default {
                     <h3>Calculatrice EPC</h3>
                     <p>La calculatrice EPC (Effective Pip Count) calcule le pip count effectif des positions de sortie. Elle utilise la base de données de sortie unilatérale à 6 points de GNUbg pour obtenir des valeurs d'EPC exactes.</p>
                     <p>
-                        Pour ouvrir le panneau EPC, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet EPC du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé avec une configuration standard
+                        Pour ouvrir le panneau Bearoff, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Bearoff du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé avec une configuration standard
                         de sortie (15 pions).
                     </p>
                     <p>
-                        Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau EPC dédié, indiquant pour chaque joueur :
+                        Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau Bearoff dédié, indiquant pour chaque joueur :
                     </p>
                     <ul>
                         <li><strong>EPC</strong> : le nombre moyen de pips nécessaires pour sortir tous les pions,</li>
@@ -113,7 +113,7 @@ export default {
                         <li><strong>Std Dev</strong> : écart-type du nombre de jets.</li>
                     </ul>
                     <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
-                    <p>Pour fermer le panneau EPC, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
+                    <p>Pour fermer le panneau Bearoff, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
 
                     <h3>Navigation dans les matchs</h3>
                     <p>
@@ -416,7 +416,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Panneau EPC</td>
+                                <td>Panneau Bearoff</td>
                             </tr>
 
                             <tr>

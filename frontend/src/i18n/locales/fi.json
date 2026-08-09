@@ -612,7 +612,6 @@
             "estimated": "arvioitu",
             "exactTooltip": "Luettu two-sided-tietokannasta: tarkka {n} nappulaan asti pelaajaa kohden.",
             "estimatedTooltip": "Arvioitu one-sided-jakaumien konvoluutiolla + kalibroidulla korjauksella; p99 = {p99} %.",
-            "winProb": "Voitto-%",
             "cubeless": "Cubeless",
             "noDouble": "Ei tuplausta",
             "doubleTake": "Tuplaus/Ota",
@@ -631,8 +630,7 @@
             "noDecision": "Ei päätöstä (kuutio vastustajalla)",
             "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",
             "openConfig": "Näytä asetukset",
-            "onRoll": "Vuorossa",
-            "cube": "Kuutio"
+            "winPct": "Voitto (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Ottelut",
         "tournaments": "Turnaukset",
         "stats": "Tilastot",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Metatiedot"
     },

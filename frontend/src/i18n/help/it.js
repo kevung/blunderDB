@@ -41,7 +41,7 @@ export default {
                         <li>studiare posizioni con la ripetizione dilazionata (pannello Anki),</li>
                         <li>gestire i tornei (pannello Torneo),</li>
                         <li>mostrare statistiche di rendimento (pannello Stats),</li>
-                        <li>calcolare i valori di EPC per posizioni di bearoff (pannello EPC),</li>
+                        <li>calcolare i valori di EPC per posizioni di bearoff (pannello Bearoff),</li>
                         <li>consultare i filtri di ricerca salvati (pannello Libreria filtri),</li>
                         <li>consultare la cronologia delle ricerche (pannello Cronologia ricerche).</li>
                     </ul>
@@ -99,11 +99,11 @@ export default {
                     <h3>Calcolatore EPC</h3>
                     <p>Il calcolatore EPC (Effective Pip Count) calcola il pip count effettivo delle posizioni di bearoff. Utilizza il database di bearoff a un lato a 6 punti di GNUbg per ottenere valori di EPC esatti.</p>
                     <p>
-                        Per aprire il pannello EPC, premi <strong>Ctrl+E</strong>, fai clic sulla scheda EPC del pannello inferiore o digita <strong>epc</strong> nella riga di comando. Il tavoliere viene inizializzato con una configurazione standard
+                        Per aprire il pannello Bearoff, premi <strong>Ctrl+E</strong>, fai clic sulla scheda Bearoff del pannello inferiore o digita <strong>epc</strong> nella riga di comando. Il tavoliere viene inizializzato con una configurazione standard
                         di bearoff (15 pedine).
                     </p>
                     <p>
-                        Puoi aggiungere o rimuovere liberamente pedine sui punti del proprio quadrante interno con il mouse. I valori di EPC vengono mostrati in tempo reale nel pannello EPC dedicato, indicando per ciascun giocatore:
+                        Puoi aggiungere o rimuovere liberamente pedine sui punti del proprio quadrante interno con il mouse. I valori di EPC vengono mostrati in tempo reale nel pannello Bearoff dedicato, indicando per ciascun giocatore:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: il numero medio di pip necessari per portare a casa tutte le pedine,</li>
@@ -113,7 +113,7 @@ export default {
                         <li><strong>Std Dev</strong>: deviazione standard del numero di lanci.</li>
                     </ul>
                     <p>Quando entrambi i giocatori hanno pedine nel proprio quadrante interno, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
-                    <p>Per chiudere il pannello EPC, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
+                    <p>Per chiudere il pannello Bearoff, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
 
                     <h3>Navigazione dei match</h3>
                     <p>

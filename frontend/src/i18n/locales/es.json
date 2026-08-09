@@ -612,7 +612,6 @@
             "estimated": "estimado",
             "exactTooltip": "Leído de la base two-sided: exacto hasta {n} fichas por jugador.",
             "estimatedTooltip": "Estimado por convolución de las distribuciones one-sided + corrección calibrada; p99 = {p99} %.",
-            "winProb": "% de victoria",
             "cubeless": "Cubeless",
             "noDouble": "Sin doblar",
             "doubleTake": "Doblar/Tomar",
@@ -631,8 +630,7 @@
             "noDecision": "Sin decisión (cubo del rival)",
             "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
             "openConfig": "Ver los parámetros de configuración",
-            "onRoll": "Al tiro",
-            "cube": "Cubo"
+            "winPct": "Victoria (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Partidas",
         "tournaments": "Torneos",
         "stats": "Estadísticas",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Metadatos"
     },

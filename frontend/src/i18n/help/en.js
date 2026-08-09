@@ -41,7 +41,7 @@ export default {
                         <li>study positions with spaced repetition (Anki panel),</li>
                         <li>manage tournaments (Tournament panel),</li>
                         <li>display performance statistics (Stats panel),</li>
-                        <li>compute EPC values for bearoff positions (EPC panel),</li>
+                        <li>compute EPC values for bearoff positions (Bearoff panel),</li>
                         <li>browse saved search filters (Filter Library panel),</li>
                         <li>browse search history (Search History panel).</li>
                     </ul>
@@ -99,11 +99,11 @@ export default {
                     <h3>EPC Calculator</h3>
                     <p>The EPC (Effective Pip Count) calculator computes the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database for exact EPC values.</p>
                     <p>
-                        To open the EPC panel, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard
+                        To open the Bearoff panel, press <strong>Ctrl+E</strong>, click the Bearoff tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard
                         bearoff configuration (15 checkers).
                     </p>
                     <p>
-                        You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:
+                        You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated Bearoff panel, showing for each player:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
@@ -113,7 +113,7 @@ export default {
                         <li><strong>Std Dev</strong>: standard deviation of the number of rolls.</li>
                     </ul>
                     <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
-                    <p>To close the EPC panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
+                    <p>To close the Bearoff panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
                     <h3>Match Navigation</h3>
                     <p>
@@ -416,7 +416,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>EPC Panel</td>
+                                <td>Bearoff Panel</td>
                             </tr>
 
                             <tr>

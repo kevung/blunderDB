@@ -612,7 +612,6 @@
             "estimated": "geschätzt",
             "exactTooltip": "Aus der Two-Sided-Datenbank gelesen: exakt bis {n} Steine pro Spieler.",
             "estimatedTooltip": "Geschätzt durch Faltung der One-Sided-Verteilungen + kalibrierte Korrektur; p99 = {p99} %.",
-            "winProb": "Gewinn-%",
             "cubeless": "Cubeless",
             "noDouble": "Kein Dopplen",
             "doubleTake": "Doppeln/Nehmen",
@@ -631,8 +630,7 @@
             "noDecision": "Keine Entscheidung (Würfel beim Gegner)",
             "downloadHint": "Ein exaktes Würfel-Urteil bis 11 Steine pro Spieler erfordert die herunterladbare Datenbank (1,2 GB).",
             "openConfig": "Konfigurationseinstellungen anzeigen",
-            "onRoll": "Am Zug",
-            "cube": "Würfel"
+            "winPct": "Gewinn (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Partien",
         "tournaments": "Turniere",
         "stats": "Statistik",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Metadaten"
     },

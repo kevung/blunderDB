@@ -524,11 +524,11 @@
     }
 
     function handleDoublingCubeClick(event) {
-        if (mode !== 'EDIT') return;
+        if (mode !== 'EDIT' && mode !== 'EPC') return;
 
+        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
 
         // Check if the click is within the doubling cube
         if (
@@ -538,6 +538,19 @@
             mouseY <= cubePosition.y + cubePosition.size / 2
         ) {
             positionStore.update((pos) => {
+                // EPC mode: only the owner matters (money equities are in units
+                // of the current cube), so clicks cycle the owner and pin the
+                // value — centered (face 1) → bottom owns (face 2) → top owns
+                // (face 2) → centered; right-click cycles backwards.
+                if (mode === 'EPC') {
+                    const cycle = [-1, 0, 1];
+                    const dir = event.button === 2 ? -1 : 1;
+                    const cur = cycle.indexOf(pos.cube.owner === undefined ? -1 : pos.cube.owner);
+                    const next = cycle[(cur + dir + 3) % 3];
+                    pos.cube.owner = next;
+                    pos.cube.value = next === -1 ? 0 : 1;
+                    return pos;
+                }
                 // Take/pass search: the cube is an offered (centered) cube. Edit its
                 // value while keeping it centered (owner -1); an offered cube is at
                 // least a double, so value stays ≥ 1 (displayed ≥ 2).
@@ -577,11 +590,11 @@
     }
 
     function handleRectangleAndDiceClick(event) {
-        if (mode !== 'EDIT') return;
+        if (mode !== 'EDIT' && mode !== 'EPC') return;
 
+        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
 
         logger.log('Rectangle or Dice click detected at:', mouseX, mouseY); // Debug log
 
@@ -652,6 +665,20 @@
             logger.log('Die clicked'); // Debug log
         }
 
+        // EPC mode: a player's rectangle only sets who is on roll (the race
+        // analysis follows); dice and decision type stay untouched.
+        if (mode === 'EPC') {
+            positionStore.update((pos) => {
+                if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
+                    pos.player_on_roll = 0;
+                } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
+                    pos.player_on_roll = 1;
+                }
+                return pos;
+            });
+            return;
+        }
+
         positionStore.update((pos) => {
             if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
                 logger.log("Top player's rectangle clicked"); // Debug log
@@ -695,9 +722,9 @@
     function handleScoreClick(event) {
         if (mode !== 'EDIT') return;
 
+        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
         const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
+        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
 
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;

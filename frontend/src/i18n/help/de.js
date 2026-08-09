@@ -41,7 +41,7 @@ export default {
                         <li>Positionen mit verteilter Wiederholung zu studieren (Anki-Panel),</li>
                         <li>Turniere zu verwalten (Tournament-Panel),</li>
                         <li>Leistungsstatistiken anzuzeigen (Stats-Panel),</li>
-                        <li>EPC-Werte für Auswürfelpositionen zu berechnen (EPC-Panel),</li>
+                        <li>EPC-Werte für Auswürfelpositionen zu berechnen (Bearoff-Panel),</li>
                         <li>gespeicherte Suchfilter durchzusehen (Filter Library-Panel),</li>
                         <li>den Suchverlauf durchzusehen (Search History-Panel).</li>
                     </ul>
@@ -99,11 +99,11 @@ export default {
                     <h3>EPC-Rechner</h3>
                     <p>Der EPC-Rechner (Effective Pip Count) berechnet den effektiven Pip-Count von Auswürfelpositionen. Er verwendet die einseitige 6-Punkte-Auswürfeldatenbank von GnuBG für exakte EPC-Werte.</p>
                     <p>
-                        Zum Öffnen des EPC-Panels <strong>Ctrl+E</strong> drücken, im unteren Panel auf den EPC-Tab klicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett wird mit einer Standard-Auswürfelkonfiguration
+                        Zum Öffnen des Bearoff-Panels <strong>Ctrl+E</strong> drücken, im unteren Panel auf den Bearoff-Tab klicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett wird mit einer Standard-Auswürfelkonfiguration
                         (15 Steine) initialisiert.
                     </p>
                     <p>
-                        Sie können Steine auf den Feldern des Heimbretts mit der Maus frei hinzufügen oder entfernen. Die EPC-Werte werden in Echtzeit im dafür vorgesehenen EPC-Panel angezeigt und zeigen für jeden Spieler:
+                        Sie können Steine auf den Feldern des Heimbretts mit der Maus frei hinzufügen oder entfernen. Die EPC-Werte werden in Echtzeit im dafür vorgesehenen Bearoff-Panel angezeigt und zeigen für jeden Spieler:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: die durchschnittliche Anzahl der Pips, die zum Auswürfeln aller Steine benötigt werden,</li>
@@ -113,7 +113,7 @@ export default {
                         <li><strong>Std Dev</strong>: Standardabweichung der Anzahl der Würfe.</li>
                     </ul>
                     <p>Wenn beide Spieler Steine in ihrem Heimbrett haben, zeigt ein Vergleichsbereich die EPC- und Pip-Count-Differenzen.</p>
-                    <p>Zum Schließen des EPC-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
+                    <p>Zum Schließen des Bearoff-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
 
                     <h3>Match-Navigation</h3>
                     <p>
@@ -416,7 +416,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>EPC-Panel</td>
+                                <td>Bearoff-Panel</td>
                             </tr>
 
                             <tr>

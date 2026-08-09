@@ -612,7 +612,6 @@
             "estimated": "estimé",
             "exactTooltip": "Lu dans la base two-sided : exact jusqu'à {n} pions par joueur.",
             "estimatedTooltip": "Estimé par convolution des distributions one-sided + correctif calibré ; p99 = {p99} %.",
-            "winProb": "% de gain",
             "cubeless": "Cubeless",
             "noDouble": "Sans double",
             "doubleTake": "Double/Prend",
@@ -631,8 +630,7 @@
             "noDecision": "Pas de décision (videau adverse)",
             "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
             "openConfig": "Voir les paramètres de configuration",
-            "onRoll": "Au trait",
-            "cube": "Videau"
+            "winPct": "Gain (%)"
         }
     },
     "filterLibrary": {
@@ -792,7 +790,7 @@
         "matches": "Matchs",
         "tournaments": "Tournois",
         "stats": "Stats",
-        "epc": "EPC",
+        "epc": "Bearoff",
         "anki": "Anki",
         "metadata": "Métadonnées"
     },

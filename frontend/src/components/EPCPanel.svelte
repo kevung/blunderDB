@@ -2,7 +2,6 @@
     import { onMount } from 'svelte';
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
-    import { positionStore } from '../stores/positionStore';
     import { GetEpcChallenge, SaveEpcChallenge } from '../../wailsjs/go/main/Config.js';
     import { t } from '../i18n';
 
@@ -28,38 +27,16 @@
         epcRevealedStore.update((r) => ({ ...r, [zone]: true }));
     }
 
-    // The race analysis is computed for the position's on-roll player and
-    // cube owner; both are editable straight from the race table header. The
-    // position store is the single source of truth: changing it re-triggers
-    // updateEPC (and re-masks the défi zones, consistently with board edits).
-    let onRoll = $derived($positionStore?.player_on_roll ?? 0);
-    let cubeState = $derived.by(() => {
-        const owner = $positionStore?.cube?.owner ?? -1;
-        if (owner === -1) return 'centered';
-        return owner === onRoll ? 'owned' : 'against';
-    });
-
-    function setOnRoll(p) {
-        positionStore.update((pos) => {
-            // Keep the cube on the same side relative to the new on-roll player
-            // is NOT what we want: the owner is absolute; just flip the roller.
-            pos.player_on_roll = p;
-            return pos;
-        });
-    }
-
-    function setCubeState(state) {
-        positionStore.update((pos) => {
-            const or = pos.player_on_roll ?? 0;
-            pos.cube.owner = state === 'centered' ? -1 : state === 'owned' ? or : 1 - or;
-            return pos;
-        });
-    }
-
     function openBearoffSettings() {
         configInitialTabStore.set('bearoff');
         openModal(MODAL.CONFIG);
     }
+
+    // The race analysis follows the position: the on-roll player is edited on
+    // the board (click a player's bearoff/score rectangle, as in EDIT mode)
+    // and the cube owner by clicking the cube on the board. The position
+    // store is the single source of truth: any change re-triggers updateEPC
+    // and re-masks the défi zones.
 
     // Défi mode: values are replaced by a placeholder until their zone is
     // revealed; clicking a masked row/table reveals it.
@@ -73,6 +50,10 @@
     const eq = (x) => (x >= 0 ? '+' : '') + x.toFixed(3);
     // Signed difference bottom − top: negative when Black leads the race.
     const sd = (x, digits) => (x >= 0 ? '+' : '') + x.toFixed(digits);
+
+    // Win probabilities per colour (the stored value is the on-roll player's).
+    let winBlack = $derived(data.race ? (data.race.on_roll === 0 ? data.race.win_prob : 1 - data.race.win_prob) : 0);
+    let winWhite = $derived(data.race ? 1 - winBlack : 0);
 </script>
 
 <div class="epc-panel">
@@ -155,62 +136,50 @@
                 </table>
             {/if}
 
-            <!-- Race / cube table, transposed like the players table so both
-                 tables have the same (minimal) height: quantities in columns,
-                 verdict as the Analysis panel's best-action row. -->
+            <!-- Race / cube table, transposed like the players table. Win
+                 chances are given per colour (dots in the headers, no % sign
+                 in the values); equities and the verdict are the on-roll
+                 player's, as in the Analysis panel. -->
             {#if data.race}
                 <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
                     <tbody>
                         <tr>
-                            <th class="race-title" colspan={data.race.money ? 5 : 2}>
+                            <th class="race-title" colspan={data.race.money ? 6 : 2}>
                                 <span class="race-title-inner">
                                     <span class="player-indicator" class:bottom={data.race.on_roll === 0} class:top={data.race.on_roll === 1}></span>
                                     {$t('epc.race.title')}
                                     {#if data.race.regime === 'exact'}
                                         <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                            {$t('epc.race.exact')} · TS-06-{String(data.race.source_checkers).padStart(2, '0')}
+                                            {$t('epc.race.exact')}
                                         </span>
                                     {:else}
                                         <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
                                             {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
                                         </span>
                                     {/if}
-                                    <span class="race-controls" role="group" aria-label={$t('epc.race.title')} onclick={(e) => e.stopPropagation()}>
-                                        <span class="ctl-label">{$t('epc.race.onRoll')}</span>
-                                        <button class="dot-btn" class:active={onRoll === 0} onclick={() => setOnRoll(0)} title={$t('epc.bottomBlack')} aria-pressed={onRoll === 0}>
-                                            <span class="player-indicator bottom"></span>
-                                        </button>
-                                        <button class="dot-btn" class:active={onRoll === 1} onclick={() => setOnRoll(1)} title={$t('epc.topWhite')} aria-pressed={onRoll === 1}>
-                                            <span class="player-indicator top"></span>
-                                        </button>
-                                        <span class="ctl-label">{$t('epc.race.cube')}</span>
-                                        <select class="cube-select" value={cubeState} aria-label={$t('epc.race.cube')} onchange={(e) => setCubeState(e.target.value)}>
-                                            <option value="centered">{$t('epc.race.cubeStates.centered')}</option>
-                                            <option value="owned">{$t('epc.race.cubeStates.owned')}</option>
-                                            <option value="against">{$t('epc.race.cubeStates.against')}</option>
-                                        </select>
-                                    </span>
                                 </span>
                             </th>
                         </tr>
                         {#if data.race.money}
                             <tr>
-                                <th>{$t('epc.race.winProb')}</th>
+                                <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
                                 <th>{$t('epc.race.cubeless')}</th>
                                 <th>{$t('epc.race.noDouble')}</th>
                                 <th>{$t('epc.race.doubleTake')}</th>
                                 <th>{$t('epc.race.doublePass')}</th>
                             </tr>
                             <tr>
-                                <td class="main-value">{show(maskedRace, pct(data.race.win_prob) + ' %')}</td>
+                                <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
                                 <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
                                 <td>{show(maskedRace, eq(data.race.money.no_double))}</td>
                                 <td>{show(maskedRace, eq(data.race.money.double_take))}</td>
                                 <td>{show(maskedRace, eq(data.race.money.double_pass))}</td>
                             </tr>
                             <tr class="best-action-row">
-                                <td colspan="5">
-                                    {$t('epc.race.verdictLabel')} ({$t('epc.race.cubeStates.' + data.race.money.cube_state)}) :
+                                <td colspan="6" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
+                                    {$t('analysis.bestAction')} :
                                     {#if maskedRace}
                                         {HIDDEN}
                                     {:else if data.race.money.verdict}
@@ -222,8 +191,12 @@
                             </tr>
                         {:else}
                             <tr>
-                                <th>{$t('epc.race.winProb')}</th>
-                                <td class="main-value">{show(maskedRace, pct(data.race.win_prob) + ' %')}</td>
+                                <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
+                            </tr>
+                            <tr>
+                                <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
                             </tr>
                             <tr>
                                 <td colspan="2" class="download-hint">
@@ -245,7 +218,7 @@
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 2px 12px;
+        padding: 6px 14px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         font-size: var(--font-size-base);
     }
@@ -286,8 +259,8 @@
     /* The défi toggle stays pinned to the panel's top-right corner. */
     .challenge-toggle {
         position: absolute;
-        top: 4px;
-        right: 12px;
+        top: 6px;
+        right: 14px;
         z-index: 3;
         display: flex;
         align-items: center;
@@ -304,15 +277,22 @@
         margin: 0;
     }
 
-    /* Players table on top, race table right below it — a single compact
+    /* Players table on top, race table right below it — a single airy
        column, all sizes on the app's normal type tokens. Right padding
        leaves room for the pinned défi toggle. */
     .tables-container {
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 14px;
         align-items: flex-start;
         padding-right: 80px;
+    }
+
+    /* Clear visual separation between the two tables. */
+    .race-table {
+        border-top: 2px solid #e0e0e0;
+        padding-top: 6px;
+        margin-top: 2px;
     }
 
     table {
@@ -322,7 +302,7 @@
 
     th,
     td {
-        padding: 0 8px;
+        padding: 3px 20px;
         text-align: center;
         white-space: nowrap;
     }
@@ -354,46 +334,6 @@
         align-items: center;
         gap: 6px;
         flex-wrap: wrap;
-    }
-
-    .race-controls {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        margin-left: 12px;
-    }
-
-    .ctl-label {
-        font-size: var(--font-size-small);
-        color: #777;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .dot-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1px 4px;
-        background: none;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .dot-btn.active {
-        border-color: #1a56c4;
-        background: #e8f0fe;
-    }
-
-    .cube-select {
-        font: inherit;
-        font-size: var(--font-size-small);
-        padding: 0 2px;
-    }
-
-    .race-title .badge {
-        margin-left: 8px;
     }
 
     .main-value {
@@ -447,10 +387,6 @@
         vertical-align: middle;
     }
 
-    .race-title .player-indicator {
-        margin-right: 4px;
-    }
-
     .player-indicator.bottom {
         background: #333;
         border: 1px solid #555;
@@ -487,7 +423,7 @@
         font-size: var(--font-size-small);
         color: #8a6413;
         white-space: normal;
-        max-width: 340px;
+        max-width: 420px;
         text-align: left;
     }
 

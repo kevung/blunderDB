@@ -41,7 +41,7 @@ export default {
                         <li>tutkivat asemia välitoistolla (Anki-paneeli),</li>
                         <li>hallitsevat turnauksia (Turnaus-paneeli),</li>
                         <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
-                        <li>laskevat EPC-arvoja bearoff-asemille (EPC-paneeli),</li>
+                        <li>laskevat EPC-arvoja bearoff-asemille (Bearoff-paneeli),</li>
                         <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
                         <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
                     </ul>
@@ -97,11 +97,11 @@ export default {
                     <h3>EPC-laskin</h3>
                     <p>EPC-laskin (Effective Pip Count) laskee bearoff-asemien efektiivisen pip-luvun. Se käyttää GNUbg:n yksipuolista 6-pisteen bearoff-tietokantaa tarkkoihin EPC-arvoihin.</p>
                     <p>
-                        Avaa EPC-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin EPC-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
+                        Avaa Bearoff-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Bearoff-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
                         bearoff-asetelmalla (15 nappulaa).
                     </p>
                     <p>
-                        Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä EPC-paneelissa, ja niistä näkyy kummankin pelaajan osalta:
+                        Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä Bearoff-paneelissa, ja niistä näkyy kummankin pelaajan osalta:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: keskimääräinen pip-määrä, joka tarvitaan kaikkien nappuloiden poistamiseen,</li>
@@ -111,7 +111,7 @@ export default {
                         <li><strong>Keskihajonta</strong>: heittojen määrän keskihajonta.</li>
                     </ul>
                     <p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
-                    <p>Sulje EPC-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
+                    <p>Sulje Bearoff-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
 
                     <h3>Ottelunavigointi</h3>
                     <p>
@@ -414,7 +414,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>EPC-paneeli</td>
+                                <td>Bearoff-paneeli</td>
                             </tr>
 
                             <tr>
