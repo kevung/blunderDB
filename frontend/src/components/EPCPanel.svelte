@@ -181,24 +181,24 @@
                                     <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
                                     <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2" class="download-hint">
-                                        {$t('epc.race.downloadHint')}
-                                        <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
-                                    </td>
-                                </tr>
                             {/if}
                         </tbody>
                     </table>
-                    {#if data.race.regime === 'exact'}
-                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                            {$t('epc.race.exact')}
-                        </span>
-                    {:else}
-                        <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                            {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                        </span>
-                    {/if}
+                    <div class="race-side">
+                        {#if data.race.regime === 'exact'}
+                            <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                {$t('epc.race.exact')}
+                            </span>
+                        {:else}
+                            <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                            </span>
+                            <span class="download-hint">
+                                {$t('epc.race.downloadHint')}
+                                <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
+                            </span>
+                        {/if}
+                    </div>
                 </div>
             {/if}
         </div>
@@ -403,6 +403,14 @@
         background: #fdf3e1;
         border: 1px solid #ecd7a8;
         color: #8a6413;
+    }
+
+    .race-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        min-width: 0;
     }
 
     .download-hint {
