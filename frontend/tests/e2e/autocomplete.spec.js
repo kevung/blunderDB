@@ -7,10 +7,9 @@ import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
 
 async function openCommandLine(page) {
-    await page.waitForSelector('[data-testid="status-bar"]', { timeout: 8000 });
-    await page.waitForTimeout(200);
-    await page.keyboard.press('Escape'); // dismiss the first-run tour catalog
-    await page.waitForTimeout(100);
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+    await page.keyboard.press('Escape'); // dismiss the first-run tour catalog, if it auto-opened
+    await expect(page.locator('.tour-list')).toHaveCount(0);
     await page.keyboard.press('Space'); // Space opens the command line
     await page.waitForSelector('.command-input', { timeout: 4000 });
 }

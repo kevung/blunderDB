@@ -23,20 +23,18 @@ import { installWailsMock } from './helpers/wailsMock.js';
  * @param {import('@playwright/test').Page} page
  */
 async function waitForApp(page) {
-    await page.waitForSelector('[data-testid="status-bar"]', { timeout: 8000 });
-    // Laisser Svelte finir ses effets initiaux
-    await page.waitForTimeout(200);
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
 }
 
 /**
- * Clique sur un onglet et attend que le DOM se stabilise.
+ * Clique sur un onglet et attend que le DOM se stabilise (l'onglet cliqué
+ * devient effectivement actif).
  * @param {import('@playwright/test').Page} page
  * @param {string} tabId  — identifiant d'onglet (ex: 'stats', 'matches', 'epc')
  */
 async function clickTab(page, tabId) {
     await page.click(`[data-testid="tab-${tabId}"]`);
-    // Pas de waitForTimeout long : si la transition prend > 2 s, le test échoue
-    await page.waitForTimeout(50);
+    await expect(page.locator(`[data-testid="tab-${tabId}"]`)).toHaveClass(/active/);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

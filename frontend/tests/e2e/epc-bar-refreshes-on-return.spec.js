@@ -21,13 +21,12 @@ import { epcResultA, epcResultB } from './helpers/fixtures.js';
 // ── Helper ────────────────────────────────────────────────────────────────────
 
 async function waitForApp(page) {
-    await page.waitForSelector('[data-testid="status-bar"]', { timeout: 8000 });
-    await page.waitForTimeout(200);
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
 }
 
 async function clickTab(page, tabId) {
     await page.click(`[data-testid="tab-${tabId}"]`);
-    await page.waitForTimeout(50);
+    await expect(page.locator(`[data-testid="tab-${tabId}"]`)).toHaveClass(/active/);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

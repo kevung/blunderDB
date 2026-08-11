@@ -5,9 +5,9 @@
  * window.runtime (Wails runtime) dans une page Playwright via addInitScript.
  *
  * Usage :
- *   import { installWailsMock } from './helpers/wailsMock.js';
- *   await installWailsMock(page);               // defaults
- *   await installWailsMock(page, { dbExtra: { ComputeEPCFromPosition: ... } });
+ *   import { installWailsMock, overrideDbMethod } from './helpers/wailsMock.js';
+ *   await installWailsMock(page);                                    // defaults
+ *   await overrideDbMethod(page, 'ComputeEPCFromPosition', result);   // per-method override
  *
  * Stratégie : le script est sérialisé et injecté AVANT tout script de la page
  * (Playwright garantit cela). Les Proxy assurent qu'un appel à une méthode
@@ -16,9 +16,8 @@
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {{ dbExtra?: Record<string, unknown> }} [opts]
  */
-export async function installWailsMock(page, opts = {}) {
+export async function installWailsMock(page) {
     await page.addInitScript(() => {
         // ── Helpers locaux ───────────────────────────────────────────────────
         const noop = () => {};
@@ -31,7 +30,7 @@ export async function installWailsMock(page, opts = {}) {
             return new Proxy(base, {
                 get(target, prop) {
                     return prop in target ? target[prop] : asyncNull;
-                },
+                }
             });
         }
 
@@ -92,9 +91,9 @@ export async function installWailsMock(page, opts = {}) {
                 CanResolveFilePaths: () => Promise.resolve(false),
                 ResolveFilePaths: asyncArr,
                 ScreenGetAll: asyncArr,
-                Environment: () => Promise.resolve({ buildType: 'dev', platform: 'linux', arch: 'amd64' }),
+                Environment: () => Promise.resolve({ buildType: 'dev', platform: 'linux', arch: 'amd64' })
             },
-            { get: (t, p) => (p in t ? t[p] : noop) },
+            { get: (t, p) => (p in t ? t[p] : noop) }
         );
 
         // ── window.go (Wails bindings, namespaced by Go package) ────────────
@@ -113,14 +112,14 @@ export async function installWailsMock(page, opts = {}) {
                     LoadAnalysis: asyncNull,
                     SaveSessionState: asyncVoid,
                     LoadSessionState: asyncNull,
-                    ClearSessionState: asyncVoid,
-                }),
+                    ClearSessionState: asyncVoid
+                })
             },
             gui: {
                 App: makeProxy({
                     ShowAlert: asyncVoid,
-                    ShowQuestionDialog: () => Promise.resolve(false),
-                }),
+                    ShowQuestionDialog: () => Promise.resolve(false)
+                })
             },
             main: {
                 Config: makeProxy({
@@ -135,9 +134,9 @@ export async function installWailsMock(page, opts = {}) {
                     // does not auto-open and intercept clicks. Specs that test the
                     // tour open the catalog explicitly.
                     GetTourSeen: () => Promise.resolve(true),
-                    SaveTourSeen: asyncVoid,
-                }),
-            },
+                    SaveTourSeen: asyncVoid
+                })
+            }
         };
     });
 }
@@ -155,6 +154,6 @@ export async function overrideDbMethod(page, methodName, returnValue) {
         ({ method, value }) => {
             window.go.database.Database[method] = () => Promise.resolve(value);
         },
-        { method: methodName, value: returnValue },
+        { method: methodName, value: returnValue }
     );
 }
