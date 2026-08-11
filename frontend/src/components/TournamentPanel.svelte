@@ -26,6 +26,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
+    import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
 
@@ -497,12 +498,12 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
-        if (event.target.matches('input, textarea')) return;
 
-        // Let Ctrl+key combos pass through to global handler
-        if (event.ctrlKey) return;
+        // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
+        // through to the global handler — see keyboardService.panelKeyGuard.
+        if (panelKeyGuard(event)) return;
 
-        // Block all non-Ctrl keys from propagating (prevents position browsing)
+        // Block all other non-Ctrl keys from propagating (prevents position browsing)
         event.stopPropagation();
 
         if (event.key === 'Escape') {
@@ -570,7 +571,7 @@
     });
 </script>
 
-<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label={$t('tournament.title')}>
+<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="region" aria-label={$t('tournament.title')}>
     <div class="panel-content">
         {#if !selectedTournament}
             <!-- Tournaments list -->

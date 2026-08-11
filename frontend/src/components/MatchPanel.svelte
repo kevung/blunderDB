@@ -20,6 +20,7 @@
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import { exportMatchMat } from '../services/exportService.js';
+    import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import {
@@ -575,14 +576,9 @@
         // Don't intercept keys while the merge players modal is open
         if (showMergePlayersModal) return;
 
-        // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+Tab to toggle panel)
-        if (event.ctrlKey) return;
-
-        // Let Space pass through so the command line can be opened from global handler
-        if (event.code === 'Space') return;
-
-        // Let ? pass through so the help modal can be opened
-        if (event.key === '?') return;
+        // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
+        // through to the global handler — see keyboardService.panelKeyGuard.
+        if (panelKeyGuard(event)) return;
 
         // Stop all keyboard events from propagating to global handlers
         event.stopPropagation();
@@ -702,7 +698,7 @@
     });
 </script>
 
-<section class="match-panel" role="dialog" aria-modal="true" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
+<section class="match-panel" role="region" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>

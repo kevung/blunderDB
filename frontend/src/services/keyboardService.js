@@ -48,6 +48,39 @@ function isTextEditingCombo(event) {
     return TEXT_EDITING_KEYS.has(event.key);
 }
 
+const EDITABLE_FIELD_SELECTOR = 'input, textarea, [contenteditable]';
+
+// Position-browsing keys some panels forward to the board instead of using
+// for their own list navigation (see the allowNavKeys option below).
+const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown']);
+
+/**
+ * Docked panels (MatchPanel, TournamentPanel, CollectionPanel, …) install
+ * their own document-level keydown handler for list navigation (j/k, Esc by
+ * levels, Delete…) and must stop that handler from swallowing a fixed set of
+ * keys the rest of the app always needs, no matter which panel has focus:
+ * Ctrl/Meta combos, Space (opens the command line), '?' (opens help), and
+ * any keystroke while the user is typing in an editable field.
+ *
+ * This centralizes that "always let it through" test — it used to be
+ * reimplemented ad hoc per panel and had drifted (see fiche-09): some panels
+ * forgot the editable-field check, others forgot Space/'?'.
+ *
+ * @param {KeyboardEvent} event
+ * @param {{allowNavKeys?: boolean}} [options] - also let position-browsing
+ *   keys (j/k/h/l/arrows/PageUp/PageDown) through, for panels that don't use
+ *   them for their own in-panel navigation and forward them to the board.
+ * @returns {boolean} true if the panel must return without handling the event.
+ */
+export function panelKeyGuard(event, { allowNavKeys = false } = {}) {
+    if (event.ctrlKey || event.metaKey) return true;
+    if (event.code === 'Space') return true;
+    if (event.key === '?') return true;
+    if (event.target instanceof Element && event.target.matches(EDITABLE_FIELD_SELECTOR)) return true;
+    if (allowNavKeys && NAVIGATION_KEYS.has(event.key)) return true;
+    return false;
+}
+
 export function toggleHelpModal() {
     const wasOpen = get(activeModal) === MODAL.HELP;
     if (wasOpen) {
