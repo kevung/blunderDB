@@ -15,7 +15,8 @@
         "range": "Plage",
         "save": "Enregistrer",
         "search": "Rechercher",
-        "errorWithMsg": "Erreur : {msg}"
+        "errorWithMsg": "Erreur : {msg}",
+        "reset": "Réinitialiser"
     },
     "config": {
         "title": "Paramètres",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Choisir un fichier .bd…",
         "bearoffExternalClear": "Retirer",
         "bearoffResume": "Reprendre le téléchargement",
-        "bearoffPartial": "Téléchargement partiel présent ({gb} Go) — la reprise continuera où il s'était arrêté."
+        "bearoffPartial": "Téléchargement partiel présent ({gb} Go) — la reprise continuera où il s'était arrêté.",
+        "confirmDeleteBearoff": "Supprimer la base téléchargée ({gb} Go) ?"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -432,7 +434,8 @@
         "alreadyExists": "Une collection nommée « {name} » existe déjà",
         "created": "Collection « {name} » créée",
         "errorCreating": "Erreur lors de la création de la collection",
-        "isEmpty": "La collection « {name} » est vide"
+        "isEmpty": "La collection « {name} » est vide",
+        "confirmRemove": "Retirer {count} position(s) de la collection ?"
     },
     "tournament": {
         "addMatchPlaceholder": "Ajouter un match…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Révision terminée ! {count} cartes révisées.",
         "settingsSaved": "Paramètres enregistrés",
         "deckSynced": "Paquet « {name} » synchronisé",
-        "deckReset": "Paquet « {name} » réinitialisé"
+        "deckReset": "Paquet « {name} » réinitialisé",
+        "confirmDeleteDeck": "Supprimer le paquet « {name} » ?",
+        "confirmResetDeck": "Réinitialiser le paquet « {name} » ? Toute la progression sera perdue."
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
@@ -741,7 +746,8 @@
         "dropToImport": "Déposez les fichiers pour les importer"
     },
     "warning": {
-        "title": "Avertissement"
+        "title": "Avertissement",
+        "confirmTitle": "Confirmation"
     },
     "datatable": {
         "title": "Tableau de données"
@@ -867,7 +873,8 @@
         "positionSaved": "Position et analyse enregistrées avec succès",
         "importedPositionSaved": "Position et analyse importées enregistrées avec succès",
         "pastedPositionSaved": "Position et analyse collées enregistrées avec succès",
-        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées"
+        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "confirmDeletePosition": "Supprimer cette position et son analyse associée ?"
     },
     "stats": {
         "title": "Stats",

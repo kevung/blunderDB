@@ -15,7 +15,8 @@
         "range": "Диапазон",
         "save": "Сохранить",
         "search": "Поиск",
-        "errorWithMsg": "Ошибка: {msg}"
+        "errorWithMsg": "Ошибка: {msg}",
+        "reset": "Сбросить"
     },
     "config": {
         "title": "Настройки",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Выбрать файл .bd…",
         "bearoffExternalClear": "Убрать",
         "bearoffResume": "Возобновить загрузку",
-        "bearoffPartial": "Есть частичная загрузка ({gb} ГБ) — возобновление продолжит с места остановки."
+        "bearoffPartial": "Есть частичная загрузка ({gb} ГБ) — возобновление продолжит с места остановки.",
+        "confirmDeleteBearoff": "Удалить загруженную базу ({gb} ГБ)?"
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",
@@ -432,7 +434,8 @@
         "alreadyExists": "Коллекция с именем «{name}» уже существует",
         "created": "Коллекция «{name}» создана",
         "errorCreating": "Ошибка создания коллекции",
-        "isEmpty": "Коллекция «{name}» пуста"
+        "isEmpty": "Коллекция «{name}» пуста",
+        "confirmRemove": "Убрать {count} позиций из коллекции?"
     },
     "tournament": {
         "addMatchPlaceholder": "Добавить матч…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Повторение завершено! Повторено карточек: {count}.",
         "settingsSaved": "Настройки сохранены",
         "deckSynced": "Колода «{name}» синхронизирована",
-        "deckReset": "Колода «{name}» сброшена"
+        "deckReset": "Колода «{name}» сброшена",
+        "confirmDeleteDeck": "Удалить колоду «{name}»?",
+        "confirmResetDeck": "Сбросить колоду «{name}»? Весь прогресс будет потерян."
     },
     "analysis": {
         "analysisDepth": "Глубина анализа",
@@ -741,7 +746,8 @@
         "dropToImport": "Перетащите файлы для импорта"
     },
     "warning": {
-        "title": "Предупреждение"
+        "title": "Предупреждение",
+        "confirmTitle": "Подтверждение"
     },
     "datatable": {
         "title": "Таблица данных"
@@ -867,7 +873,8 @@
         "positionSaved": "Позиция и анализ успешно сохранены",
         "importedPositionSaved": "Импортированные позиция и анализ успешно сохранены",
         "pastedPositionSaved": "Вставленные позиция и анализ успешно сохранены",
-        "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось"
+        "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось",
+        "confirmDeletePosition": "Удалить эту позицию и связанный анализ?"
     },
     "stats": {
         "title": "Статистика",

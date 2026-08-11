@@ -27,6 +27,7 @@ import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, PANEL, closePanel, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
+import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -743,6 +744,8 @@ export async function deletePosition() {
         setStatusBarMessage(tMsg('status.noPositionsToDelete'));
         return;
     }
+
+    if (!(await confirmAction(get(t)('status.confirmDeletePosition'), { confirmLabel: get(t)('common.delete') }))) return;
 
     try {
         const positionID = positions[get(currentPositionIndexStore)].id;

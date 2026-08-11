@@ -15,7 +15,8 @@
         "range": "Väli",
         "save": "Tallenna",
         "search": "Hae",
-        "errorWithMsg": "Virhe: {msg}"
+        "errorWithMsg": "Virhe: {msg}",
+        "reset": "Nollaa"
     },
     "config": {
         "title": "Asetukset",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Valitse .bd-tiedosto…",
         "bearoffExternalClear": "Poista",
         "bearoffResume": "Jatka latausta",
-        "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi."
+        "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi.",
+        "confirmDeleteBearoff": "Poistetaanko ladattu tietokanta ({gb} Gt)?"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -432,7 +434,8 @@
         "alreadyExists": "Kokoelma nimeltä \"{name}\" on jo olemassa",
         "created": "Kokoelma \"{name}\" luotu",
         "errorCreating": "Virhe kokoelman luomisessa",
-        "isEmpty": "Kokoelma \"{name}\" on tyhjä"
+        "isEmpty": "Kokoelma \"{name}\" on tyhjä",
+        "confirmRemove": "Poistetaanko {count} positio(ta) kokoelmasta?"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Kertaus valmis! {count} korttia kerrattu.",
         "settingsSaved": "Asetukset tallennettu",
         "deckSynced": "Pakka \"{name}\" synkronoitu",
-        "deckReset": "Pakka \"{name}\" nollattu"
+        "deckReset": "Pakka \"{name}\" nollattu",
+        "confirmDeleteDeck": "Poistetaanko pakka \"{name}\"?",
+        "confirmResetDeck": "Nollataanko pakka \"{name}\"? Kaikki edistyminen menetetään."
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
@@ -741,7 +746,8 @@
         "dropToImport": "Pudota tiedostot tuodaksesi ne"
     },
     "warning": {
-        "title": "Varoitus"
+        "title": "Varoitus",
+        "confirmTitle": "Vahvistus"
     },
     "datatable": {
         "title": "Taulukko"
@@ -867,7 +873,8 @@
         "positionSaved": "Positio ja analyysi tallennettu onnistuneesti",
         "importedPositionSaved": "Tuotu positio ja analyysi tallennettu onnistuneesti",
         "pastedPositionSaved": "Liitetty positio ja analyysi tallennettu onnistuneesti",
-        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui"
+        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
+        "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?"
     },
     "stats": {
         "title": "Tilastot",

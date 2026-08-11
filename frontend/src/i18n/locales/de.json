@@ -15,7 +15,8 @@
         "range": "Bereich",
         "save": "Speichern",
         "search": "Suchen",
-        "errorWithMsg": "Fehler: {msg}"
+        "errorWithMsg": "Fehler: {msg}",
+        "reset": "Zurücksetzen"
     },
     "config": {
         "title": "Einstellungen",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": ".bd-Datei wählen…",
         "bearoffExternalClear": "Entfernen",
         "bearoffResume": "Download fortsetzen",
-        "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte."
+        "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte.",
+        "confirmDeleteBearoff": "Heruntergeladene Datenbank löschen ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -432,7 +434,8 @@
         "alreadyExists": "Eine Sammlung mit dem Namen „{name}“ existiert bereits",
         "created": "Sammlung „{name}“ erstellt",
         "errorCreating": "Fehler beim Erstellen der Sammlung",
-        "isEmpty": "Sammlung „{name}“ ist leer"
+        "isEmpty": "Sammlung „{name}“ ist leer",
+        "confirmRemove": "{count} Position(en) aus der Sammlung entfernen?"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Wiederholung abgeschlossen! {count} Karten wiederholt.",
         "settingsSaved": "Einstellungen gespeichert",
         "deckSynced": "Stapel „{name}“ synchronisiert",
-        "deckReset": "Stapel „{name}“ zurückgesetzt"
+        "deckReset": "Stapel „{name}“ zurückgesetzt",
+        "confirmDeleteDeck": "Stapel „{name}“ löschen?",
+        "confirmResetDeck": "Stapel „{name}“ zurücksetzen? Der gesamte Fortschritt geht verloren."
     },
     "analysis": {
         "analysisDepth": "Analysetiefe",
@@ -741,7 +746,8 @@
         "dropToImport": "Dateien hier ablegen, um sie zu importieren"
     },
     "warning": {
-        "title": "Warnung"
+        "title": "Warnung",
+        "confirmTitle": "Bestätigung"
     },
     "datatable": {
         "title": "Datentabelle"
@@ -867,7 +873,8 @@
         "positionSaved": "Position und Analyse erfolgreich gespeichert",
         "importedPositionSaved": "Importierte Position und Analyse erfolgreich gespeichert",
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
-        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen"
+        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "confirmDeletePosition": "Diese Position und die zugehörige Analyse löschen?"
     },
     "stats": {
         "title": "Stats",

@@ -15,7 +15,8 @@
         "range": "範囲",
         "save": "保存",
         "search": "検索",
-        "errorWithMsg": "エラー: {msg}"
+        "errorWithMsg": "エラー: {msg}",
+        "reset": "リセット"
     },
     "config": {
         "title": "設定",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": ".bdファイルを選択…",
         "bearoffExternalClear": "解除",
         "bearoffResume": "ダウンロードを再開",
-        "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。"
+        "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。",
+        "confirmDeleteBearoff": "ダウンロード済みデータベースを削除しますか({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -432,7 +434,8 @@
         "alreadyExists": "「{name}」という名前のコレクションは既に存在します",
         "created": "コレクション「{name}」を作成しました",
         "errorCreating": "コレクションの作成エラー",
-        "isEmpty": "コレクション「{name}」は空です"
+        "isEmpty": "コレクション「{name}」は空です",
+        "confirmRemove": "{count}件のポジションをコレクションから削除しますか?"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -515,7 +518,9 @@
         "reviewComplete": "復習完了！{count}枚のカードを復習しました。",
         "settingsSaved": "設定を保存しました",
         "deckSynced": "デッキ「{name}」を同期しました",
-        "deckReset": "デッキ「{name}」をリセットしました"
+        "deckReset": "デッキ「{name}」をリセットしました",
+        "confirmDeleteDeck": "デッキ「{name}」を削除しますか?",
+        "confirmResetDeck": "デッキ「{name}」をリセットしますか? すべての進捗が失われます。"
     },
     "analysis": {
         "analysisDepth": "解析の深さ",
@@ -741,7 +746,8 @@
         "dropToImport": "ファイルをドロップしてインポート"
     },
     "warning": {
-        "title": "警告"
+        "title": "警告",
+        "confirmTitle": "確認"
     },
     "datatable": {
         "title": "データテーブル"
@@ -867,7 +873,8 @@
         "positionSaved": "ポジションと分析を保存しました",
         "importedPositionSaved": "インポートしたポジションと分析を保存しました",
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
-        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗"
+        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",
+        "confirmDeletePosition": "このポジションと関連する分析を削除しますか?"
     },
     "stats": {
         "title": "統計",

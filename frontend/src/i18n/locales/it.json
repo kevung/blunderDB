@@ -15,7 +15,8 @@
         "range": "Intervallo",
         "save": "Salva",
         "search": "Cerca",
-        "errorWithMsg": "Errore: {msg}"
+        "errorWithMsg": "Errore: {msg}",
+        "reset": "Reimposta"
     },
     "config": {
         "title": "Impostazioni",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Scegli un file .bd…",
         "bearoffExternalClear": "Rimuovi",
         "bearoffResume": "Riprendi il download",
-        "bearoffPartial": "Download parziale presente ({gb} GB) — la ripresa continuerà da dove si era fermato."
+        "bearoffPartial": "Download parziale presente ({gb} GB) — la ripresa continuerà da dove si era fermato.",
+        "confirmDeleteBearoff": "Eliminare il database scaricato ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -432,7 +434,8 @@
         "alreadyExists": "Una raccolta denominata \"{name}\" esiste già",
         "created": "Raccolta \"{name}\" creata",
         "errorCreating": "Errore durante la creazione della raccolta",
-        "isEmpty": "La raccolta \"{name}\" è vuota"
+        "isEmpty": "La raccolta \"{name}\" è vuota",
+        "confirmRemove": "Rimuovere {count} posizione/i dalla collezione?"
     },
     "tournament": {
         "addMatchPlaceholder": "Aggiungi match…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Ripasso completato! {count} carte ripassate.",
         "settingsSaved": "Impostazioni salvate",
         "deckSynced": "Mazzo \"{name}\" sincronizzato",
-        "deckReset": "Mazzo \"{name}\" reimpostato"
+        "deckReset": "Mazzo \"{name}\" reimpostato",
+        "confirmDeleteDeck": "Eliminare il mazzo \"{name}\"?",
+        "confirmResetDeck": "Reimpostare il mazzo \"{name}\"? Tutti i progressi andranno persi."
     },
     "analysis": {
         "analysisDepth": "Profondità di analisi",
@@ -741,7 +746,8 @@
         "dropToImport": "Rilascia i file per importarli"
     },
     "warning": {
-        "title": "Avviso"
+        "title": "Avviso",
+        "confirmTitle": "Conferma"
     },
     "datatable": {
         "title": "Tabella dati"
@@ -867,7 +873,8 @@
         "positionSaved": "Posizione e analisi salvate correttamente",
         "importedPositionSaved": "Posizione e analisi importate salvate correttamente",
         "pastedPositionSaved": "Posizione e analisi incollate salvate correttamente",
-        "importDone": "Importazione completata: {succeeded} importate, {skipped} ignorate, {failed} non riuscite"
+        "importDone": "Importazione completata: {succeeded} importate, {skipped} ignorate, {failed} non riuscite",
+        "confirmDeletePosition": "Eliminare questa posizione e la relativa analisi?"
     },
     "stats": {
         "title": "Stats",

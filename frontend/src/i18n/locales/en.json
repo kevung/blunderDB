@@ -15,7 +15,8 @@
         "range": "Range",
         "save": "Save",
         "search": "Search",
-        "errorWithMsg": "Error: {msg}"
+        "errorWithMsg": "Error: {msg}",
+        "reset": "Reset"
     },
     "config": {
         "title": "Settings",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Choose a .bd file…",
         "bearoffExternalClear": "Remove",
         "bearoffResume": "Resume download",
-        "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped."
+        "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped.",
+        "confirmDeleteBearoff": "Delete the downloaded database ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -432,7 +434,8 @@
         "alreadyExists": "A collection named \"{name}\" already exists",
         "created": "Collection \"{name}\" created",
         "errorCreating": "Error creating collection",
-        "isEmpty": "Collection \"{name}\" is empty"
+        "isEmpty": "Collection \"{name}\" is empty",
+        "confirmRemove": "Remove {count} position(s) from the collection?"
     },
     "tournament": {
         "addMatchPlaceholder": "Add match…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Review complete! {count} cards reviewed.",
         "settingsSaved": "Settings saved",
         "deckSynced": "Deck \"{name}\" synced",
-        "deckReset": "Deck \"{name}\" reset"
+        "deckReset": "Deck \"{name}\" reset",
+        "confirmDeleteDeck": "Delete deck \"{name}\"?",
+        "confirmResetDeck": "Reset deck \"{name}\"? All progress will be lost."
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",
@@ -741,7 +746,8 @@
         "dropToImport": "Drop files to import"
     },
     "warning": {
-        "title": "Warning"
+        "title": "Warning",
+        "confirmTitle": "Confirmation"
     },
     "datatable": {
         "title": "Data table"
@@ -867,7 +873,8 @@
         "positionSaved": "Position and analysis saved successfully",
         "importedPositionSaved": "Imported position and analysis saved successfully",
         "pastedPositionSaved": "Pasted position and analysis saved successfully",
-        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed"
+        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed",
+        "confirmDeletePosition": "Delete this position and its associated analysis?"
     },
     "stats": {
         "title": "Stats",

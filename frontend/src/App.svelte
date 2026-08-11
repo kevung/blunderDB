@@ -120,6 +120,7 @@
     import { gammonValue2Table } from './stores/gammonValue2Table';
     import { gammonValue4Table } from './stores/gammonValue4Table';
     import WarningModal from './components/WarningModal.svelte';
+    import { confirmModalStore, resolveConfirm } from './services/confirmService.js';
     import ProtectedCopyModal from './components/ProtectedCopyModal.svelte';
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
@@ -524,6 +525,15 @@
     <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
 
     <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
+    <WarningModal
+        message={$confirmModalStore?.message || ''}
+        visible={$confirmModalStore !== null}
+        mode="confirm"
+        confirmLabel={$confirmModalStore?.confirmLabel || ''}
+        cancelLabel={$confirmModalStore?.cancelLabel || ''}
+        onClose={() => resolveConfirm(false)}
+        onConfirm={() => resolveConfirm(true)}
+    />
 
     <ProtectedCopyModal
         visible={$activeModal === MODAL.PROTECTED_COPY}

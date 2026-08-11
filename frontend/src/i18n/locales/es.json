@@ -15,7 +15,8 @@
         "range": "Rango",
         "save": "Guardar",
         "search": "Buscar",
-        "errorWithMsg": "Error: {msg}"
+        "errorWithMsg": "Error: {msg}",
+        "reset": "Restablecer"
     },
     "config": {
         "title": "Ajustes",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Elegir un archivo .bd…",
         "bearoffExternalClear": "Quitar",
         "bearoffResume": "Reanudar la descarga",
-        "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo."
+        "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo.",
+        "confirmDeleteBearoff": "¿Eliminar la base descargada ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -432,7 +434,8 @@
         "alreadyExists": "Ya existe una colección llamada \"{name}\"",
         "created": "Colección \"{name}\" creada",
         "errorCreating": "Error al crear la colección",
-        "isEmpty": "La colección \"{name}\" está vacía"
+        "isEmpty": "La colección \"{name}\" está vacía",
+        "confirmRemove": "¿Quitar {count} posición(es) de la colección?"
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",
@@ -515,7 +518,9 @@
         "reviewComplete": "¡Repaso completado! {count} tarjetas repasadas.",
         "settingsSaved": "Configuración guardada",
         "deckSynced": "Mazo \"{name}\" sincronizado",
-        "deckReset": "Mazo \"{name}\" restablecido"
+        "deckReset": "Mazo \"{name}\" restablecido",
+        "confirmDeleteDeck": "¿Eliminar el mazo \"{name}\"?",
+        "confirmResetDeck": "¿Restablecer el mazo \"{name}\"? Se perderá todo el progreso."
     },
     "analysis": {
         "analysisDepth": "Profundidad de análisis",
@@ -741,7 +746,8 @@
         "dropToImport": "Suelta los archivos para importarlos"
     },
     "warning": {
-        "title": "Advertencia"
+        "title": "Advertencia",
+        "confirmTitle": "Confirmación"
     },
     "datatable": {
         "title": "Tabla de datos"
@@ -867,7 +873,8 @@
         "positionSaved": "Posición y análisis guardados correctamente",
         "importedPositionSaved": "Posición y análisis importados guardados correctamente",
         "pastedPositionSaved": "Posición y análisis pegados guardados correctamente",
-        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas"
+        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas",
+        "confirmDeletePosition": "¿Eliminar esta posición y su análisis asociado?"
     },
     "stats": {
         "title": "Stats",

@@ -15,7 +15,8 @@
         "range": "Εύρος",
         "save": "Αποθήκευση",
         "search": "Αναζήτηση",
-        "errorWithMsg": "Σφάλμα: {msg}"
+        "errorWithMsg": "Σφάλμα: {msg}",
+        "reset": "Επαναφορά"
     },
     "config": {
         "title": "Ρυθμίσεις",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Επιλογή αρχείου .bd…",
         "bearoffExternalClear": "Αφαίρεση",
         "bearoffResume": "Συνέχιση λήψης",
-        "bearoffPartial": "Υπάρχει μερική λήψη ({gb} GB) — η συνέχιση θα ξεκινήσει από εκεί που σταμάτησε."
+        "bearoffPartial": "Υπάρχει μερική λήψη ({gb} GB) — η συνέχιση θα ξεκινήσει από εκεί που σταμάτησε.",
+        "confirmDeleteBearoff": "Διαγραφή της βάσης ({gb} GB);"
     },
     "toolbar": {
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",
@@ -432,7 +434,8 @@
         "alreadyExists": "Μια συλλογή με το όνομα «{name}» υπάρχει ήδη",
         "created": "Η συλλογή «{name}» δημιουργήθηκε",
         "errorCreating": "Σφάλμα δημιουργίας συλλογής",
-        "isEmpty": "Η συλλογή «{name}» είναι κενή"
+        "isEmpty": "Η συλλογή «{name}» είναι κενή",
+        "confirmRemove": "Αφαίρεση {count} θέσεων από τη συλλογή;"
     },
     "tournament": {
         "addMatchPlaceholder": "Προσθήκη αγώνα…",
@@ -515,7 +518,9 @@
         "reviewComplete": "Η επανάληψη ολοκληρώθηκε! {count} κάρτες επαναλήφθηκαν.",
         "settingsSaved": "Οι ρυθμίσεις αποθηκεύτηκαν",
         "deckSynced": "Η τράπουλα «{name}» συγχρονίστηκε",
-        "deckReset": "Η τράπουλα «{name}» επαναφέρθηκε"
+        "deckReset": "Η τράπουλα «{name}» επαναφέρθηκε",
+        "confirmDeleteDeck": "Διαγραφή της τράπουλας «{name}»;",
+        "confirmResetDeck": "Επαναφορά της τράπουλας «{name}»; Όλη η πρόοδος θα χαθεί."
     },
     "analysis": {
         "analysisDepth": "Βάθος ανάλυσης",
@@ -741,7 +746,8 @@
         "dropToImport": "Αφήστε τα αρχεία εδώ για εισαγωγή"
     },
     "warning": {
-        "title": "Προειδοποίηση"
+        "title": "Προειδοποίηση",
+        "confirmTitle": "Επιβεβαίωση"
     },
     "datatable": {
         "title": "Πίνακας δεδομένων"
@@ -867,7 +873,8 @@
         "positionSaved": "Η θέση και η ανάλυση αποθηκεύτηκαν με επιτυχία",
         "importedPositionSaved": "Η εισαγόμενη θέση και ανάλυση αποθηκεύτηκαν με επιτυχία",
         "pastedPositionSaved": "Η επικολλημένη θέση και ανάλυση αποθηκεύτηκαν με επιτυχία",
-        "importDone": "Η εισαγωγή ολοκληρώθηκε: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν"
+        "importDone": "Η εισαγωγή ολοκληρώθηκε: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν",
+        "confirmDeletePosition": "Διαγραφή αυτής της θέσης και της σχετικής ανάλυσης;"
     },
     "stats": {
         "title": "Στατιστικά",
