@@ -34,3 +34,8 @@ messages.mo
 blunderdb
 gnubg_ts6x11.bd
 *.bd.part
+
+# Compiled test binaries (`go test -c -o <name>.test`). Nothing builds or reads
+# them; they are throwaway profiling tools. One (tmp_perf.test, 13.4 MB) reached
+# 0.32.0 and shipped in every clone of the module before being removed.
+*.test
