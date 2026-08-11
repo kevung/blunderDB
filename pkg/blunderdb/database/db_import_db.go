@@ -42,6 +42,54 @@ func queryable(db *sql.DB, q string) bool {
 	return err == nil || err == sql.ErrNoRows
 }
 
+// decodeSourcePosition reconstructs a Position from a row of the database
+// being imported. Full-JSON state (every pre-2.2.0 database, and every export
+// before fiche-04) is self-describing: json.Unmarshal is enough. Compact state
+// is not — it holds only the board — so the scalar columns that carry
+// everything else (dice, score, cube, decision type) have to be read from the
+// same row.
+//
+// Compact state is only ever produced by a database on the 2.2.0+ schema,
+// which always has those columns (storage/sqlite.Bootstrap creates them
+// unconditionally), so the lookup below cannot fail for a genuine compact
+// export or an ordinary user database. It exists so a hand-built or corrupted
+// fixture degrades to a board-only Position — losing dice/score identity, so
+// it can be merged as "new" rather than aborting the whole import — instead
+// of erroring out.
+//
+// Without this, importing one current-schema database into another (the
+// "Import database" GUI feature, and fiche-04's own exports once they started
+// writing compact state) silently duplicated every position: the decode used
+// to zero every field but the board, so positionIdentityJSON never matched an
+// existing row.
+func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, error) {
+	var pos Position
+	if !isCompactState(state) {
+		if err := json.Unmarshal([]byte(state), &pos); err != nil {
+			return Position{}, err
+		}
+		return pos, nil
+	}
+	pos.Board = decodeBoardCompact(state)
+	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+	err := importDB.QueryRow(`SELECT decision_type, player_on_roll, dice_1, dice_2,
+		cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver
+		FROM position WHERE id = ?`, id).
+		Scan(&dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb)
+	if err != nil {
+		slog.Warn("reading scalar columns for a compact-state import position; identity will be board-only", "id", id, "err", err)
+		return pos, nil
+	}
+	pos.DecisionType = int(dt.Int64)
+	pos.PlayerOnRoll = int(por.Int64)
+	pos.Dice = [2]int{int(d1.Int64), int(d2.Int64)}
+	pos.Cube = Cube{Owner: int(co.Int64), Value: int(cv.Int64)}
+	pos.Score = [2]int{int(s1.Int64), int(s2.Int64)}
+	pos.HasJacoby = int(hj.Int64)
+	pos.HasBeaver = int(hb.Int64)
+	return pos, nil
+}
+
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	d.mu.RLock()
@@ -136,11 +184,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			continue
 		}
 
-		var importPosition Position
-		if isCompactState(stateJSON) {
-			importPosition.Board = decodeBoardCompact(stateJSON)
-		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
-			slog.Warn("unmarshalling position", "err", err)
+		importPosition, decErr := decodeSourcePosition(importDB, id, stateJSON)
+		if decErr != nil {
+			slog.Warn("unmarshalling position", "err", decErr)
 			positionsToSkip++
 			continue
 		}
@@ -343,11 +389,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			continue
 		}
 
-		var importPosition Position
-		if isCompactState(stateJSON) {
-			importPosition.Board = decodeBoardCompact(stateJSON)
-		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
-			slog.Warn("unmarshalling position", "err", err)
+		importPosition, decErr := decodeSourcePosition(importDB, id, stateJSON)
+		if decErr != nil {
+			slog.Warn("unmarshalling position", "err", decErr)
 			continue
 		}
 

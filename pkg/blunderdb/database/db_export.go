@@ -74,264 +74,16 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		}()
 	}
 
-	// Delete the export file if it already exists
-	if _, err := os.Stat(opts.ExportPath); err == nil {
-		// File exists, remove it
-		if err := os.Remove(opts.ExportPath); err != nil {
-			return fmt.Errorf("cannot remove existing export file: %v", err)
-		}
-		slog.Debug("removed existing export file", "path", opts.ExportPath)
-	}
-
-	// Create a new database for export
-	exportDB, err := sql.Open("sqlite", opts.ExportPath)
+	// Create the export database on the current live schema (storage/sqlite.Bootstrap)
+	// instead of a hand-rolled subset — see db_export_position.go. This is what makes
+	// zobrist_hash, every scalar column and the search indexes actually exist in the
+	// exported file (fiche-04): the old two-column "id, state" position table left them
+	// NULL forever, since nothing ever wrote them.
+	exportDB, err := newExportDB(opts.ExportPath)
 	if err != nil {
 		return err
 	}
 	defer exportDB.Close()
-
-	// Pin the export target to a single connection so the PRAGMAs below (which are
-	// per-connection in SQLite) apply to every write in the whole export.
-	exportDB.SetMaxOpenConns(1)
-
-	// The export target is a throwaway file built from scratch; on any error it is
-	// removed/rebuilt, so mid-build durability is irrelevant. Only the positions
-	// phase runs inside a transaction — the match/game/move/analysis phases (the
-	// high-cardinality ones) write in autocommit, and with SQLite's defaults
-	// (journal_mode=DELETE, synchronous=FULL) each of those thousands of INSERTs
-	// does a rollback-journal write + fsync. That fsync-per-row cliff is what makes
-	// exporting a real match appear to hang for minutes. Turning off the journal and
-	// fsync collapses it to a handful of disk writes.
-	for _, pragma := range []string{
-		"PRAGMA journal_mode=OFF",
-		"PRAGMA synchronous=OFF",
-		"PRAGMA temp_store=MEMORY",
-	} {
-		if _, err = exportDB.Exec(pragma); err != nil {
-			return fmt.Errorf("cannot configure export database: %v", err)
-		}
-	}
-
-	// Create the schema for the export database
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS position (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			state TEXT,
-			individually_imported INTEGER NOT NULL DEFAULT 0
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS analysis (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			position_id INTEGER UNIQUE,
-			data JSON,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS comment (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			position_id INTEGER UNIQUE,
-			text TEXT,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS metadata (
-			key TEXT PRIMARY KEY,
-			value TEXT
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS command_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-			scope TEXT NOT NULL DEFAULT ''
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS filter_library (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT,
-			command TEXT,
-			edit_position TEXT,
-			exclude_position TEXT,
-			scope TEXT NOT NULL DEFAULT ''
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Create search_history table (required for version >= 1.3.0)
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS search_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			position TEXT,
-			exclude_position TEXT,
-			timestamp INTEGER,
-			scope TEXT NOT NULL DEFAULT ''
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Create match-related tables (required for version >= 1.4.0)
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS match (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			player1_name TEXT,
-			player2_name TEXT,
-			event TEXT,
-			location TEXT,
-			round TEXT,
-			match_length INTEGER,
-			match_date DATETIME,
-			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-			file_path TEXT,
-			game_count INTEGER DEFAULT 0,
-			match_hash TEXT,
-			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL,
-			last_visited_position INTEGER DEFAULT -1
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Create tournament table
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS tournament (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL,
-			date TEXT,
-			location TEXT,
-			sort_order INTEGER DEFAULT 0,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Create collection tables (required for version >= 1.5.0)
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS collection (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL,
-			description TEXT,
-			sort_order INTEGER DEFAULT 0,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS collection_position (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			collection_id INTEGER NOT NULL,
-			position_id INTEGER NOT NULL,
-			sort_order INTEGER DEFAULT 0,
-			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
-			UNIQUE(collection_id, position_id)
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS game (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			match_id INTEGER,
-			game_number INTEGER,
-			initial_score_1 INTEGER,
-			initial_score_2 INTEGER,
-			winner INTEGER,
-			points_won INTEGER,
-			move_count INTEGER DEFAULT 0,
-			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS move (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			game_id INTEGER,
-			move_number INTEGER,
-			move_type TEXT,
-			position_id INTEGER,
-			player INTEGER,
-			dice_1 INTEGER,
-			dice_2 INTEGER,
-			checker_move TEXT,
-			cube_action TEXT,
-			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS move_analysis (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			move_id INTEGER,
-			analysis_type TEXT,
-			depth TEXT,
-			equity INTEGER,
-			equity_error INTEGER,
-			win_rate INTEGER,
-			gammon_rate INTEGER,
-			backgammon_rate INTEGER,
-			opponent_win_rate INTEGER,
-			opponent_gammon_rate INTEGER,
-			opponent_backgammon_rate INTEGER,
-			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Insert database version
-	_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
-	if err != nil {
-		return err
-	}
 
 	// Copy metadata by ALLOW-LIST, never by exclusion. An exported file is handed to
 	// someone else, and the source database may hold an Issue register listing every other
@@ -388,16 +140,21 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	// compressed blobs, and a whole database's worth would be hundreds of megabytes.
 	idMapping := make(map[int64]int64) // map old position ID to new position ID
 
-	// Prepare the three statements the loop runs for every position. Passing SQL text to
+	// Prepare the statements the loop runs for every position. Passing SQL text to
 	// tx.Exec makes database/sql prepare, execute and close a statement each time: 88 000
-	// positions meant parsing the same three statements 88 000 times, and it showed up as
+	// positions meant parsing the same statements 88 000 times, and it showed up as
 	// the largest cost left on the sequential path once the analyses were decoded in
 	// parallel.
-	insertPosition, err := tx.Prepare(`INSERT INTO position (state, individually_imported) VALUES (?, ?)`)
+	insertPosition, err := tx.Prepare(exportPositionInsertSQL)
 	if err != nil {
 		return fmt.Errorf("cannot prepare the position insert: %w", err)
 	}
 	defer insertPosition.Close()
+	lookupPosition, err := tx.Prepare(exportPositionLookupSQL)
+	if err != nil {
+		return fmt.Errorf("cannot prepare the position lookup: %w", err)
+	}
+	defer lookupPosition.Close()
 	insertAnalysis, err := tx.Prepare(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`)
 	if err != nil {
 		return fmt.Errorf("cannot prepare the analysis insert: %w", err)
@@ -443,29 +200,13 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 
 		oldPositionID := position.ID
 
-		// Reset the ID for the new database
-		position.ID = 0
-
-		// Marshal the full position (export uses full JSON for backward compatibility).
-		//
-		// Measured, not assumed: doing this for a whole batch across every core made the
-		// export *slower* (4.56 s against 4.34 s on an 88 000-position database). The
-		// coordination and the extra batch of strings cost more than the marshalling saved,
-		// which already overlaps with the analysis decoding.
-		positionJSON := fullPositionJSON(position)
-
-		// Insert the position into the export database
-		// Carry provenance so the export round-trips (ADR-0001).
-		result, err := insertPosition.Exec(positionJSON, position.IndividuallyImported)
+		// Insert the position into the export database in the same compact form, with
+		// the same zobrist_hash and scalar columns, that a live SavePosition would
+		// produce (see insertExportPosition in db_export_position.go) — carrying
+		// provenance so the export round-trips (ADR-0001).
+		newPositionID, err := insertExportPosition(insertPosition, lookupPosition, position)
 		if err != nil {
 			slog.Warn("inserting position into export database", "positionID", oldPositionID, "err", err)
-			skipped++
-			continue
-		}
-
-		newPositionID, err := result.LastInsertId()
-		if err != nil {
-			slog.Warn("getting last insert ID for position", "positionID", oldPositionID, "err", err)
 			skipped++
 			continue
 		}
