@@ -416,7 +416,7 @@
     let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);
 </script>
 
-<section class="analysis-panel" role="dialog" aria-modal="true" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
+<section class="analysis-panel" role="region" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
