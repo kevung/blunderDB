@@ -262,7 +262,8 @@ CREATE        INDEX IF NOT EXISTS idx_position_flagged         ON position (tena
 CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position (tenant_id, pip_diff);
 CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position (tenant_id, dice_1, dice_2);
 CREATE        INDEX IF NOT EXISTS idx_position_off            ON position (tenant_id, off_1, off_2);
-CREATE        INDEX IF NOT EXISTS idx_position_score          ON position (tenant_id, match_length, score_1, score_2);
+-- idx_position_score dropped (E3, index redundancy pass, mirrors the SQLite
+-- backend): a strict column prefix of idx_position_score_cube below.
 CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position (tenant_id, match_length, score_1, score_2, cube_value);
 CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis (position_id);
 -- Covering index for the win/gammon combo search (fiche-05 T3): position_id
@@ -270,9 +271,9 @@ CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis (posit
 -- tenant_id = … AND player1_win_rate … AND player1_gammon_rate …)` be
 -- answered from the index alone. See 008_win_gammon_covering_index.sql for
 -- the forward migration that retrofits already-bootstrapped tenants; this
--- baseline only reaches freshly-bootstrapped ones.
+-- baseline only reaches freshly-bootstrapped ones. idx_analysis_win1 dropped
+-- (E3): a strict prefix of this covering index.
 CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis (tenant_id, player1_win_rate, player1_gammon_rate, position_id);
-CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis (tenant_id, player1_win_rate);
 CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis (tenant_id, cube_error);
 CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis (tenant_id, best_move_equity_error);
 CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis (tenant_id) WHERE is_forced;

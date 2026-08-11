@@ -244,7 +244,11 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+	// idx_position_score (match_length, score_1, score_2) is a strict column
+	// prefix of idx_position_score_cube below and is dropped here (E3, index
+	// redundancy pass): any seek idx_position_score could serve, the wider
+	// index serves identically. Existing databases keep the old index —
+	// unused, harmless — until a future migration drops it outright.
 	`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
 	// Covering index for the win/gammon combo search (fiche-05 T3): the query
@@ -259,10 +263,13 @@ var schemaStatements = []string{
 	// needed to pick it up. idx_analysis_win_gammon is simply no longer created
 	// here — existing databases keep the old index (harmless, just unused once
 	// the query no longer references it) until a future migration drops it
-	// outright. idx_analysis_win1, a strict prefix of both, is dropped from
-	// this DDL separately (E3, index redundancy pass).
+	// outright. idx_analysis_win1 (player1_win_rate alone), a strict prefix of
+	// this covering index, is dropped here too (E3): any WinRateFilter-only
+	// search plans identically against the wider index (verified by EXPLAIN
+	// QUERY PLAN — same `SEARCH analysis USING COVERING INDEX
+	// idx_analysis_win_gammon_covering (player1_win_rate>?)` with or without
+	// idx_analysis_win1 present).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,

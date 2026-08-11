@@ -365,7 +365,12 @@ func (d *Database) ensureAllTablesExist() error {
 		`CREATE INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 		`CREATE INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
-		`CREATE INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		// idx_position_score (E3, index redundancy pass): dropped from this list
+		// — a strict column prefix of idx_position_score_cube below, so any seek
+		// it could serve, the wider index serves identically (verified by
+		// EXPLAIN QUERY PLAN). This list runs on every open of an existing
+		// database, so from here on an existing DB simply stops getting this
+		// index re-asserted; it is not dropped from DBs that already have it.
 		`CREATE INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
 		// Covering index for the win/gammon combo search (fiche-05 T3) — see the
@@ -374,10 +379,11 @@ func (d *Database) ensureAllTablesExist() error {
 		// unconditionally at the end of runMigrationChain), so listing the new
 		// name here is what actually gets already-created databases the index —
 		// no separate migration or VACUUM needed. idx_analysis_win_gammon
-		// (2-column) is simply no longer (re)created; existing databases keep it
-		// until a future migration drops it outright.
+		// (2-column) and idx_analysis_win1 (E3: a strict prefix of the covering
+		// index, same reasoning as idx_position_score above) are simply no
+		// longer (re)created; existing databases keep them until a future
+		// migration drops them outright.
 		`CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
 		// The comment-presence filter (`co`/`xco`) probes this table once per
