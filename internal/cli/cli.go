@@ -119,9 +119,11 @@ func (cli *CLI) printUsage() {
 	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
 }
 
-// printVersion prints version information
+// printVersion prints the application version and the database schema
+// version it speaks (they change independently: DatabaseVersion only bumps
+// when the SQLite schema changes).
 func (cli *CLI) printVersion() {
-	fmt.Printf("blunderDB version %s\n", DatabaseVersion)
+	fmt.Printf("blunderDB version %s (database schema %s)\n", appVersion, DatabaseVersion)
 }
 
 // initDatabase initializes the database connection

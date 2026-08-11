@@ -23,6 +23,12 @@
 #
 # After running, the CI workflow (.github/workflows/build.yml) is triggered
 # by the pushed tag to build binaries, PDFs, and update GitHub Pages.
+#
+# `blunderdb version` (CLI) reports the app version from a build-time ldflag
+# (internal/cli.appVersion, see internal/cli/version.go), not from a file this
+# script edits: `make build` and the CI matrix both derive it from `git
+# describe --tags`, i.e. the very tag this script creates. Nothing to update
+# here for that.
 
 set -euo pipefail
 
