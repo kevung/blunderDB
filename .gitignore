@@ -44,3 +44,8 @@ gnubg_ts6x11.bd
 # them; they are throwaway profiling tools. One (tmp_perf.test, 13.4 MB) reached
 # 0.32.0 and shipped in every clone of the module before being removed.
 *.test
+
+# Browser "Save page as" output (e.g. a saved GnuBG Bot Match Report page),
+# dropped under testdata/ by hand while investigating an issue. Not a fixture
+# anything reads.
+testdata/Match Report*
