@@ -738,10 +738,6 @@ export default {
                                 <td>コメントを書く</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>フィルターライブラリを表示</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>検索履歴を表示</td>
                             </tr>
@@ -764,6 +760,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>ヘルプを開く</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>インターフェースのガイド付きツアーのカタログを開く</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>サンプルデータベース（マッチ、トーナメント、分析）を読み込んでツールを試す</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>統計パネルの表示/非表示</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>現在の統計フィルターに基づき、最も悪いミス（equity/MWC）を分析ビューに読み込む（デフォルトは 10 件。例: <em>bl 50</em> で 50 件）</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -849,6 +861,14 @@ export default {
                                 <td>ダイスロールを含める</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>最初のダイスのみでダイスロールを判定する（値はポジションのいずれかのダイスに現れる）</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>順序を問わず 6-5 の目でプレイされたポジションを除外する（複数の目を除外する場合は繰り返し指定可能。例: <em>xD65 xD54</em>）</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>非接触ポジションを含める</td>
                             </tr>
@@ -859,6 +879,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>単独でインポートした局面のみ（マッチのインポートで入ったものを除く）</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>元のソフトウェアでマーク（<em>flag</em>）されたポジション（eXtreme Gammon のマッチをインポートした際のもの）</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1115,6 +1139,14 @@ export default {
                                 <td>テキストを検索</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>内容を問わず、コメントが付いているポジション</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>コメントが付いていないポジション</td>
+                            </tr>
+                            <tr>
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>指定したパターンの少なくとも 1 つを含む最善手</td>
                             </tr>
@@ -1149,6 +1181,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>ID が x から y までのトーナメント内を検索（例: tn1,3）</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>ID が x のポジションを検索（例: id12）</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>ID が x から y までのポジションを検索（例: id5,10）</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>指定したプレイヤーがどちらの側でも関わったマッチのポジションを検索（例: pl'Alice'）。大文字・小文字は区別しない</td>
                             </tr>
                         </tbody>
                     </table>

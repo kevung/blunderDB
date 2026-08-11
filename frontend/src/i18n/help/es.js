@@ -739,10 +739,6 @@ export default {
                                 <td>Escribir comentarios</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>Mostrar la biblioteca de filtros</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>Mostrar el historial de búsquedas</td>
                             </tr>
@@ -765,6 +761,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>Abrir ayuda</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>Abrir el catálogo de visitas guiadas de la interfaz</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>Cargar una base de datos de ejemplo (partidas, torneo, análisis) para descubrir la herramienta</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>Mostrar/ocultar el panel de estadísticas</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>Cargar los peores errores (equity/MWC) en la vista de análisis, según el filtro de estadísticas actual (10 por defecto; p. ej. <em>bl 50</em> para 50)</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -850,6 +862,14 @@ export default {
                                 <td>Incluir la tirada de dados</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>Incluir la tirada de dados solo en el primer dado (su valor aparece en uno de los dos dados de la posición)</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>Excluir las posiciones jugadas con la tirada 6-5, sin importar el orden (repetible para excluir varias tiradas: <em>xD65 xD54</em>)</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>Incluir posiciones sin contacto</td>
                             </tr>
@@ -860,6 +880,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>Solo posiciones importadas por separado, no traídas por la importación de una partida</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>La posición fue marcada (<em>flag</em>) en el software de origen, al importar una partida de eXtreme Gammon</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1116,6 +1140,14 @@ export default {
                                 <td>Buscar texto</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>La posición lleva un comentario, sea cual sea su contenido</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>La posición no lleva ningún comentario</td>
+                            </tr>
+                            <tr>
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>Mejores jugadas que contengan al menos uno de los patrones indicados</td>
                             </tr>
@@ -1150,6 +1182,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>Buscar en los torneos con IDs de x a y (p. ej. tn1,3)</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>Buscar la posición con ID x (p. ej. id12)</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>Buscar posiciones con IDs de x a y (p. ej. id5,10)</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquiera de los dos bandos (p. ej. pl'Alice'). No distingue mayúsculas/minúsculas</td>
                             </tr>
                         </tbody>
                     </table>

@@ -738,10 +738,6 @@ export default {
                                 <td>Kirjoita kommentteja</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>Näytä suodatinkirjasto</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>Näytä hakuhistoria</td>
                             </tr>
@@ -764,6 +760,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>Avaa ohje</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>Avaa käyttöliittymän opastettujen kierrosten luettelo</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>Lataa esimerkkitietokanta (ottelut, turnaus, analyysit) työkaluun tutustumista varten</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>Näytä/piilota tilastopaneeli</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>Lataa pahimmat virheet (equity/MWC) analyysinäkymään nykyisen tilastosuodattimen mukaan (oletus 10; esim. <em>bl 50</em> lataa 50)</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -849,6 +861,14 @@ export default {
                                 <td>Sisällytä noppaheitto</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>Sisällytä noppaheitto vain ensimmäisen nopan osalta (sen arvo näkyy jommassakummassa aseman nopista)</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>Jätä pois asemat, jotka on pelattu heitolla 6-5, järjestyksestä riippumatta (toistettavissa useamman heiton poissulkemiseksi: <em>xD65 xD54</em>)</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>Sisällytä kontaktittomat asemat</td>
                             </tr>
@@ -859,6 +879,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>Vain erikseen tuodut asemat, ei ottelun tuonnin mukanaan tuomat</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>Asema on merkitty (<em>flag</em>) alkuperäisessä ohjelmistossa eXtreme Gammon -ottelun tuonnin yhteydessä</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1115,6 +1139,14 @@ export default {
                                 <td>Tekstihaku</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>Asemalla on kommentti, sisällöstä riippumatta</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>Asemalla ei ole kommenttia</td>
+                            </tr>
+                            <tr>
                                 <td>m"kuvio1;kuvio2;..."</td>
                                 <td>Parhaat siirrot, jotka sisältävät vähintään yhden annetuista kuvioista</td>
                             </tr>
@@ -1149,6 +1181,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>Hae turnauksista, joiden ID:t ovat x:stä y:hyn (esim. tn1,3)</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>Hae asema, jonka ID on x (esim. id12)</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>Hae asemat, joiden ID:t ovat x:stä y:hyn (esim. id5,10)</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>Hae asemia ottelusta, jossa annettu pelaaja on mukana, kummalla puolella tahansa (esim. pl'Alice'). Kirjainkoolla ei ole väliä</td>
                             </tr>
                         </tbody>
                     </table>

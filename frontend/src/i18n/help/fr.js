@@ -741,10 +741,6 @@ export default {
                                 <td>Écrire des commentaires</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>Afficher la bibliothèque de filtres</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>Afficher l'historique des recherches</td>
                             </tr>
@@ -767,6 +763,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>Ouvrir l'aide</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>Ouvrir le catalogue des visites guidées de l'interface</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>Charger une base d'exemple (matchs, tournoi, analyses) pour découvrir l'outil</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>Afficher/masquer le panneau de statistiques</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le filtre courant des statistiques (par défaut 10 ; par ex. <em>bl 50</em> pour 50)</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -852,6 +864,14 @@ export default {
                                 <td>Inclure le jet de dés</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>Inclure le lancer de dés sur le premier dé uniquement (sa valeur apparaît sur l'un des deux dés de la position)</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>Exclure les positions jouées avec le lancer 6-5, peu importe l'ordre (répétable pour exclure plusieurs lancers : <em>xD65 xD54</em>)</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>Inclure les positions sans contact</td>
                             </tr>
@@ -862,6 +882,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>Uniquement les positions importées seules, non apportées par l'import d'un match</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>La position a été marquée (<em>flag</em>) dans le logiciel d'origine, lors de l'import d'un match eXtreme Gammon</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1118,6 +1142,14 @@ export default {
                                 <td>Rechercher du texte</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>La position porte un commentaire, quel qu'en soit le contenu</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>La position ne porte aucun commentaire</td>
+                            </tr>
+                            <tr>
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>Meilleurs coups contenant au moins un des motifs indiqués</td>
                             </tr>
@@ -1152,6 +1184,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>Rechercher dans les tournois d'ID x à y (par ex. tn1,3)</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>Rechercher la position d'identifiant x (par ex. id12)</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>Rechercher les positions d'identifiants x à y (par ex. id5,10)</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (par ex. pl'Alice'). La casse est ignorée</td>
                             </tr>
                         </tbody>
                     </table>

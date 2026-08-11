@@ -740,10 +740,6 @@ export default {
                                 <td>Write Comments</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>Show Filter Library</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>Show Search History</td>
                             </tr>
@@ -766,6 +762,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>Open Help</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>Open the interface's guided tour catalogue</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>Load a sample database (matches, tournament, analyses) to explore the tool</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>Show/hide the statistics panel</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>Load the worst mistakes (equity/MWC) into the analysis view, based on the current statistics filter (default 10; e.g. <em>bl 50</em> for 50)</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -851,6 +863,14 @@ export default {
                                 <td>Include dice roll</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>Include dice roll on the first die only (its value appears on either die of the position)</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>Exclude positions played with the 6-5 roll, regardless of order (repeatable to exclude several rolls: <em>xD65 xD54</em>)</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>Include non-contact positions</td>
                             </tr>
@@ -861,6 +881,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>Only positions imported on their own, not brought in by a match import</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>The position was flagged in the source tool, from an eXtreme Gammon match import</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1117,6 +1141,14 @@ export default {
                                 <td>Search text</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>The position carries a comment, whatever its content</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>The position carries no comment</td>
+                            </tr>
+                            <tr>
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>Best moves containing at least one of the given patterns</td>
                             </tr>
@@ -1151,6 +1183,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>Search in tournaments with IDs from x to y (e.g. tn1,3)</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>Search for the position with ID x (e.g. id12)</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>Search for positions with IDs from x to y (e.g. id5,10)</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>Search positions from a match involving the given player, on either side (e.g. pl'Alice'). Case-insensitive</td>
                             </tr>
                         </tbody>
                     </table>

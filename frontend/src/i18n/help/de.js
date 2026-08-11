@@ -740,10 +740,6 @@ export default {
                                 <td>Kommentare schreiben</td>
                             </tr>
                             <tr>
-                                <td>filter, fl</td>
-                                <td>Filterbibliothek anzeigen</td>
-                            </tr>
-                            <tr>
                                 <td>history, hi</td>
                                 <td>Suchverlauf anzeigen</td>
                             </tr>
@@ -766,6 +762,22 @@ export default {
                             <tr>
                                 <td>help, he, h</td>
                                 <td>Hilfe öffnen</td>
+                            </tr>
+                            <tr>
+                                <td>tutorial, tour</td>
+                                <td>Katalog der geführten Touren durch die Oberfläche öffnen</td>
+                            </tr>
+                            <tr>
+                                <td>demo</td>
+                                <td>Eine Beispieldatenbank (Matches, Turnier, Analysen) laden, um das Tool kennenzulernen</td>
+                            </tr>
+                            <tr>
+                                <td>stats, st</td>
+                                <td>Statistik-Panel anzeigen/ausblenden</td>
+                            </tr>
+                            <tr>
+                                <td>blunders, bl [n]</td>
+                                <td>Die schwersten Fehler (Equity/MWC) in die Analyseansicht laden, gemäß dem aktuellen Statistikfilter (Standard 10; z. B. <em>bl 50</em> für 50)</td>
                             </tr>
                             <tr>
                                 <td>met</td>
@@ -851,6 +863,14 @@ export default {
                                 <td>Würfelwurf einbeziehen</td>
                             </tr>
                             <tr>
+                                <td>D1</td>
+                                <td>Würfelwurf nur für den ersten Würfel einbeziehen (sein Wert erscheint auf einem der beiden Würfel der Position)</td>
+                            </tr>
+                            <tr>
+                                <td>xD65</td>
+                                <td>Positionen ausschließen, die mit dem Wurf 6-5 gespielt wurden, unabhängig von der Reihenfolge (wiederholbar, um mehrere Würfe auszuschließen: <em>xD65 xD54</em>)</td>
+                            </tr>
+                            <tr>
                                 <td>nc</td>
                                 <td>Kontaktlose Positionen einbeziehen</td>
                             </tr>
@@ -861,6 +881,10 @@ export default {
                             <tr>
                                 <td>i</td>
                                 <td>Nur Positionen, die einzeln importiert wurden, nicht durch einen Match-Import</td>
+                            </tr>
+                            <tr>
+                                <td>fl</td>
+                                <td>Die Position wurde in der Ursprungssoftware markiert (<em>flag</em>), beim Import eines eXtreme-Gammon-Matches</td>
                             </tr>
                             <tr>
                                 <td>x</td>
@@ -1117,6 +1141,14 @@ export default {
                                 <td>Textsuche</td>
                             </tr>
                             <tr>
+                                <td>co</td>
+                                <td>Die Position trägt einen Kommentar, unabhängig von dessen Inhalt</td>
+                            </tr>
+                            <tr>
+                                <td>xco</td>
+                                <td>Die Position trägt keinen Kommentar</td>
+                            </tr>
+                            <tr>
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>Beste Züge, die mindestens eines der angegebenen Muster enthalten</td>
                             </tr>
@@ -1151,6 +1183,18 @@ export default {
                             <tr>
                                 <td>tnx,y</td>
                                 <td>In Turnieren mit IDs von x bis y suchen (z. B. tn1,3)</td>
+                            </tr>
+                            <tr>
+                                <td>idx</td>
+                                <td>Position mit ID x suchen (z. B. id12)</td>
+                            </tr>
+                            <tr>
+                                <td>idx,y</td>
+                                <td>Positionen mit IDs von x bis y suchen (z. B. id5,10)</td>
+                            </tr>
+                            <tr>
+                                <td>pl'nom'</td>
+                                <td>Positionen aus einem Match suchen, an dem der angegebene Spieler beteiligt war, auf beiden Seiten (z. B. pl'Alice'). Groß-/Kleinschreibung wird ignoriert</td>
                             </tr>
                         </tbody>
                     </table>
