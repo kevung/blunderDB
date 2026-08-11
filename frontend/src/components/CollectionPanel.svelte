@@ -189,22 +189,6 @@
         }
     }
 
-    async function _selectCollection(collection) {
-        if (mode === 'COLLECTION' && activeCollection) return;
-        if (selectedCollection && selectedCollection.id === collection.id) {
-            selectedCollectionStore.set(null);
-            collectionPositionsStore.set([]);
-            return;
-        }
-        selectedCollectionStore.set(collection);
-        try {
-            const positions = await GetCollectionPositions(collection.id);
-            collectionPositionsStore.set(positions || []);
-        } catch (error) {
-            logger.error('Error loading collection positions:', error);
-        }
-    }
-
     async function openCollection(collection) {
         if (editingCollectionId === collection.id) return;
         try {

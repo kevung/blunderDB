@@ -17,18 +17,7 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore } from './stores/positionStore.js';
     import { analysisStore } from './stores/analysisStore.js';
-    import {
-        currentPositionIndexStore,
-        statusBarModeStore,
-        showCommandInputStore,
-        positionReloadTriggerStore,
-        activeTabStore,
-        activeModal,
-        MODAL,
-        closeModal,
-        toggleModal,
-        isAnyModalOpen
-    } from './stores/uiStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
     import {
         showImportProgressModalStore,
         importModalModeStore,
@@ -141,7 +130,6 @@
     let panelHeight = $state(250);
     let panelWidth = $state(420);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
-    let _isResizing = false;
     let showDropOverlay = $state(false);
     let dragCounter = 0;
     let positions = [];
@@ -294,7 +282,6 @@
 
     function onResizeHandleMouseDown(e) {
         e.preventDefault();
-        _isResizing = true;
         // Side panel: drag horizontally to resize its width (it sits to the
         // right of the board, so dragging left grows it). Bottom panel: drag
         // vertically to resize its height (dragging up grows it).
@@ -312,7 +299,6 @@
             window.dispatchEvent(new Event('resize'));
         }
         function onMouseUp() {
-            _isResizing = false;
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
             window.removeEventListener('mousemove', onMouseMove);
@@ -494,12 +480,10 @@
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
         onCopyBoardImage={copyBoardImage}
-        onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
         onToggleConfig={() => toggleModal(MODAL.CONFIG)}
         onToggleTour={() => toggleModal(MODAL.TOUR)}
         onLoadAllPositions={reloadAllPositions}
-        onToggleEPCMode={toggleEPCMode}
     />
 
     <ViewTabs />

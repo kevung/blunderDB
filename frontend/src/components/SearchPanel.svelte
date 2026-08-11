@@ -160,8 +160,6 @@
     // Saved (filter library) state
     let savedFilters = $derived($filterLibraryStore || []);
     let selectedSavedFilter = $state(null);
-    let _savedFilterName = '';
-    let _savedFilterCommand = '';
 
     let availableFilters = [
         'Include Cube',
@@ -928,8 +926,6 @@
     async function selectSavedFilter(filter) {
         if (selectedSavedFilter && selectedSavedFilter.id === filter.id) {
             selectedSavedFilter = null;
-            _savedFilterName = '';
-            _savedFilterCommand = '';
             if ($positionBeforeFilterLibraryStore) {
                 positionStore.set($positionBeforeFilterLibraryStore);
             }
@@ -945,8 +941,6 @@
             positionIndexBeforeFilterLibraryStore.set($currentPositionIndexStore);
         }
         selectedSavedFilter = filter;
-        _savedFilterName = filter.name;
-        _savedFilterCommand = filter.command;
         const editPosition = await LoadEditPosition(filter.name);
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition));
@@ -970,8 +964,6 @@
             await DeleteFilter(selectedSavedFilter.id);
             await loadSavedFilters();
             selectedSavedFilter = null;
-            _savedFilterName = '';
-            _savedFilterCommand = '';
         }
     }
 

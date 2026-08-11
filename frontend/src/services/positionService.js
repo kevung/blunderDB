@@ -47,11 +47,6 @@ let savedModeBeforeEPC = null;
 // it on every entry based on the mode it was entered from.
 let savedMatchBeforeEdit = null;
 
-// Module-level state for COLLECTION mode save/restore
-let _savedPositionBeforeCollection = null;
-let _savedPositionIndexBeforeCollection = -1;
-let _savedPositionsBeforeCollection = null;
-
 // Session/search tracking state
 let lastSearchCommand = '';
 let lastSearchPosition = null;
@@ -1323,9 +1318,6 @@ export async function exitCollectionMode() {
     selectedCollectionStore.set(null);
     collectionPositionsStore.set([]);
     closePanel(PANEL.COLLECTION);
-    _savedPositionBeforeCollection = null;
-    _savedPositionIndexBeforeCollection = -1;
-    _savedPositionsBeforeCollection = null;
     try {
         const allPositions = await LoadAllPositionsDB();
         positionsStore.set(Array.isArray(allPositions) ? allPositions : []);
@@ -1354,10 +1346,6 @@ export function handleOpenCollection(collection, collectionPositions) {
         statusBarTextStore.set(tMsg('commands.collectionEmpty'));
         return;
     }
-
-    _savedPositionBeforeCollection = get(positionStore);
-    _savedPositionIndexBeforeCollection = get(currentPositionIndexStore);
-    _savedPositionsBeforeCollection = get(positionsStore);
 
     if (get(matchContextStore).isMatchMode) {
         matchContextStore.update((ctx) => ({

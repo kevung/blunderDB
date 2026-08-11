@@ -562,13 +562,6 @@
         }
     }
 
-    function _formatMoveText(mp) {
-        if (mp.move_type === 'cube') {
-            return mp.cube_action || get(t)('match.cubeAction');
-        }
-        return mp.checker_move || '—';
-    }
-
     function getPlayerName(mp) {
         return mp.player_on_roll === 0 ? mp.player1_name || get(t)('match.player1') : mp.player2_name || get(t)('match.player2');
     }

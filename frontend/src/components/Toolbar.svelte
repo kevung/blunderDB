@@ -20,12 +20,10 @@
         onTogglePipcount,
         onRandomPosition,
         onCopyBoardImage,
-        onToggleCommandMode: _onToggleCommandMode,
         onToggleHelp,
         onToggleConfig,
         onToggleTour,
-        onLoadAllPositions,
-        onToggleEPCMode: _onToggleEPCMode
+        onLoadAllPositions
     } = $props();
 
     import { t } from '../i18n';

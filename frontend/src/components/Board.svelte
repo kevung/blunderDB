@@ -21,8 +21,6 @@
     let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
     let showComment = $derived($openPanels.has(PANEL.COMMENT));
     let showPipcount = $derived($showPipcountStore);
-    let _arrowGroup = null; // Track the arrow group for cleanup
-    let _matchContext = $derived($matchContextStore);
 
     let canvasCfg = {
         aspectFactor: 0.72
@@ -66,7 +64,6 @@
     let unsubscribeSelectedMove;
     let unsubscribeAnalysis;
     let unsubscribeOfferedCube;
-    let _isMouseDown = false;
     let startMousePos = null;
     // Manual double-click tracking for the Except "must be empty" marker. Native
     // 'dblclick' is unreliable here because each click redraws (recreates) the
@@ -123,7 +120,6 @@
         const rect = canvas.getBoundingClientRect();
         const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
 
-        _isMouseDown = true;
         startMousePos = {
             x: mouseX,
             y: mouseY,
@@ -140,7 +136,6 @@
         event.preventDefault(); // Prevent text or element selection
         if (mode !== 'EDIT' && mode !== 'EPC') return;
 
-        _isMouseDown = false;
         const rect = canvas.getBoundingClientRect();
         const norm = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
         const endMousePos = {
@@ -633,14 +628,6 @@
             mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
             mouseY >= Math.min(bearoff2Ypos, score2Ypos) &&
             mouseY <= Math.max(bearoff2Ypos, score2Ypos);
-
-        const _rectangle1Xpos = bearoff1Xpos;
-        const _rectangle1Ypos = (bearoff1Ypos + score1Ypos) / 2;
-        const _rectangle2Xpos = bearoff2Xpos;
-        const _rectangle2Ypos = (bearoff2Ypos + score2Ypos) / 2;
-        const _rectangleWidth = 1.5 * boardCheckerSize;
-        const _rectangleHeight1 = Math.abs(bearoff1Ypos - score1Ypos);
-        const _rectangleHeight2 = Math.abs(bearoff2Ypos - score2Ypos);
 
         const diceGap = 0.325 * boardCheckerSize;
         const diceSize = 0.7 * boardCheckerSize;
@@ -1520,15 +1507,18 @@
             greenRectangle2.linewidth = 2;
         }
 
-        const _labels = createLabels();
+        // createLabels()/createQuadrant() draw directly onto the shared two.js
+        // scene via two.makeGroup()/two.makeText() — the returned group is not
+        // used afterwards, but the calls themselves must stay.
+        createLabels();
 
-        const _quadrant4 = createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
+        createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
 
-        const _quadrant3 = createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
+        createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
 
-        const _quadrant2 = createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos + 0.5 * boardCheckerSize, true);
+        createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos + 0.5 * boardCheckerSize, true);
 
-        const _quadrant1 = createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos + 0.5 * boardCheckerSize, true);
+        createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos + 0.5 * boardCheckerSize, true);
 
         // draw bar first to ensure checkers on the bar are drawn above it
         const bar = two.makeRectangle(boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight);

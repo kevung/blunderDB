@@ -16,10 +16,15 @@ export default [
             },
         },
         rules: {
+            // varsIgnorePattern deliberately does NOT cover plain let/const
+            // declarations — an unused `_foo` local should be an error (dead
+            // code), not silently tolerated. destructuredArrayIgnorePattern
+            // keeps the escape hatch for array-destructuring positions you
+            // must name but don't need (e.g. `const [, _second] = pair`).
             'no-unused-vars': [
                 'error',
                 {
-                    varsIgnorePattern: '^_',
+                    destructuredArrayIgnorePattern: '^_',
                     argsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_',
                 },
@@ -30,11 +35,14 @@ export default [
     {
         files: ['**/*.svelte'],
         rules: {
-            // Many "unused" vars in Svelte are used in the template
+            // Many "unused" vars in Svelte are used in the template; store
+            // auto-subscriptions ($store) are the one pattern still allowed
+            // through varsIgnorePattern here. Plain `_foo` locals are not.
             'no-unused-vars': [
                 'error',
                 {
-                    varsIgnorePattern: '^_|^\\$',
+                    varsIgnorePattern: '^\\$',
+                    destructuredArrayIgnorePattern: '^_',
                     argsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_',
                 },

@@ -1,7 +1,7 @@
 <script>
     import { tick } from 'svelte';
     import { logger } from '../utils/logger.js';
-    let { visible = false, onClose: _onClose } = $props();
+    let { visible = false } = $props();
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';

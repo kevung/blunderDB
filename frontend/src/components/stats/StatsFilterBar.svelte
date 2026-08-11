@@ -31,9 +31,10 @@
     let dateError = $state(false);
     let mounted = $state(false);
 
-    // When the metric toggles after mount, persist it
+    // When the metric toggles after mount, persist it. Reading the store here
+    // (discarded via void) is what makes the effect re-run on metric changes.
     $effect(() => {
-        const _metric = $statsMetricStore;
+        void $statsMetricStore;
         if (!mounted) return;
         scheduleSave();
     });
