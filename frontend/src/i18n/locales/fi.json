@@ -403,7 +403,8 @@
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
         "tournamentCleared": "Turnaus poistettu ottelusta",
-        "tournamentSet": "Turnaus \"{name}\" asetettu"
+        "tournamentSet": "Turnaus \"{name}\" asetettu",
+        "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -468,7 +469,8 @@
         "errorOpening": "Virhe ottelun avaamisessa",
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
-        "swappedPlayers": "Pelaajat vaihdettu"
+        "swappedPlayers": "Pelaajat vaihdettu",
+        "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
     },
     "anki": {
         "again": "Uudelleen",
@@ -803,7 +805,10 @@
         "title": "Yhdistä pelaajanimet",
         "use": "käytä",
         "useAsCanonical": "Käytä kanonisena nimenä",
-        "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”"
+        "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”",
+        "errorLoad": "Virhe pelaajien lataamisessa",
+        "errorSelect": "Valitse vähintään kaksi nimeä yhdistettäväksi",
+        "errorCanonical": "Anna säilytettävä kanoninen nimi"
     },
     "tabbedPanel": {
         "analysis": "Analyysi",

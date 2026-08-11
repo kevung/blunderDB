@@ -5,15 +5,13 @@
  * engine falls back to the key itself and the user reads "export.descMany" in the middle of
  * a sentence — which is exactly what shipped, unnoticed, in the export dialog's summary.
  *
- * This test walks the sources for `$t('...')`, `tr('...')`, `tMsg('...')` and
- * `translate('...')`, and checks each key against every locale. English is the fallback, so
- * a key missing there shows raw text in all nine languages.
+ * This test walks the sources for `$t('...')`, `tr('...')`, `tMsg('...')`, `translate('...')`
+ * and `get(t)('...')` (the non-reactive read used outside a template, e.g. inside
+ * `confirm()`), and checks each key against every locale. English is the fallback, so a key
+ * missing there shows raw text in all nine languages.
  *
- * KNOWN_GAPS holds the keys that were already missing when this guard was written. They are
- * real defects — status messages that display raw keys — but they belong to the match,
- * tournament and status-bar areas rather than to export, and are listed here so the guard
- * can be added without dragging that work along. Removing an entry is always welcome; a new
- * one must not appear.
+ * KNOWN_GAPS holds the keys that were already missing when this guard was written and are not
+ * fixed yet. Removing an entry is always welcome; a new one must not appear.
  */
 
 import { describe, test, expect } from 'vitest';
@@ -38,7 +36,7 @@ function sourceFiles(dir) {
 function usedKeys() {
     // Only literal keys: `$t(setting.labelKey)` and friends are built at runtime and cannot
     // be checked here. A trailing dot marks a prefix being concatenated, likewise dynamic.
-    const pattern = /(?:\$t|\btr|\btMsg|\btranslate)\(\s*'([a-zA-Z][\w.]*)'/g;
+    const pattern = /(?:\$t|\btr|\btMsg|\btranslate|get\(t\))\(\s*'([a-zA-Z][\w.]*)'/g;
     const keys = new Set();
     for (const file of sourceFiles(SRC)) {
         if (file.includes(path.join('i18n', 'index.js'))) continue;

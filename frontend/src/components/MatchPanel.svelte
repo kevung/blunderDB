@@ -499,7 +499,7 @@
 
     async function deleteMatchEntry(match, event) {
         event.stopPropagation();
-        if (!confirm(`Delete match between ${match.player1_name} and ${match.player2_name}?`)) return;
+        if (!confirm(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }))) return;
         try {
             await DeleteMatch(match.id);
             await loadMatches();
@@ -563,7 +563,7 @@
     }
 
     function getPlayerName(mp) {
-        return mp.player_on_roll === 0 ? mp.player1_name || get(t)('match.player1') : mp.player2_name || get(t)('match.player2');
+        return mp.player_on_roll === 0 ? mp.player1_name || $t('match.player1') : mp.player2_name || $t('match.player2');
     }
 
     function closeMatchPanel() {

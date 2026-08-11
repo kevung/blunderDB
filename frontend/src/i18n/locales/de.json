@@ -403,7 +403,8 @@
         "noMovesFound": "Keine Züge für dieses Match gefunden",
         "swappedPlayers": "Spieler getauscht",
         "tournamentCleared": "Turnier vom Match entfernt",
-        "tournamentSet": "Turnier „{name}“ zugewiesen"
+        "tournamentSet": "Turnier „{name}“ zugewiesen",
+        "confirmDelete": "Match zwischen {player1} und {player2} löschen?"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -468,7 +469,8 @@
         "errorOpening": "Fehler beim Öffnen des Matches",
         "errorSwapping": "Fehler beim Tauschen der Spieler",
         "noMovesFound": "Keine Züge für dieses Match gefunden",
-        "swappedPlayers": "Spieler getauscht"
+        "swappedPlayers": "Spieler getauscht",
+        "confirmDelete": "Turnier „{name}“ löschen?"
     },
     "anki": {
         "again": "Nochmal",
@@ -803,7 +805,10 @@
         "title": "Spielernamen zusammenführen",
         "use": "verwenden",
         "useAsCanonical": "Als kanonischen Namen verwenden",
-        "merged": "{n} Spielername(n) in „{target}“ zusammengeführt"
+        "merged": "{n} Spielername(n) in „{target}“ zusammengeführt",
+        "errorLoad": "Fehler beim Laden der Spieler",
+        "errorSelect": "Wählen Sie mindestens zwei Namen zum Zusammenführen aus",
+        "errorCanonical": "Geben Sie den zu behaltenden kanonischen Namen ein"
     },
     "tabbedPanel": {
         "analysis": "Analyse",

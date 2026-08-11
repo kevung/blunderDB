@@ -403,7 +403,8 @@
         "noMovesFound": "No moves found for this match",
         "swappedPlayers": "Players swapped",
         "tournamentCleared": "Tournament cleared from match",
-        "tournamentSet": "Tournament \"{name}\" assigned"
+        "tournamentSet": "Tournament \"{name}\" assigned",
+        "confirmDelete": "Delete match between {player1} and {player2}?"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -468,7 +469,8 @@
         "errorOpening": "Error opening match",
         "errorSwapping": "Error swapping players",
         "noMovesFound": "No moves found for this match",
-        "swappedPlayers": "Players swapped"
+        "swappedPlayers": "Players swapped",
+        "confirmDelete": "Delete tournament \"{name}\"?"
     },
     "anki": {
         "again": "Again",
@@ -803,7 +805,10 @@
         "title": "Merge player names",
         "use": "use",
         "useAsCanonical": "Use as canonical name",
-        "merged": "Merged {n} player name(s) into “{target}”"
+        "merged": "Merged {n} player name(s) into “{target}”",
+        "errorLoad": "Error loading players",
+        "errorSelect": "Select at least two names to merge",
+        "errorCanonical": "Enter the canonical name to keep"
     },
     "tabbedPanel": {
         "analysis": "Analysis",

@@ -403,7 +403,8 @@
         "noMovesFound": "No se encontraron jugadas para esta partida",
         "swappedPlayers": "Jugadores intercambiados",
         "tournamentCleared": "Torneo eliminado de la partida",
-        "tournamentSet": "Torneo \"{name}\" asignado"
+        "tournamentSet": "Torneo \"{name}\" asignado",
+        "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -468,7 +469,8 @@
         "errorOpening": "Error al abrir la partida",
         "errorSwapping": "Error al intercambiar jugadores",
         "noMovesFound": "No se encontraron jugadas para esta partida",
-        "swappedPlayers": "Jugadores intercambiados"
+        "swappedPlayers": "Jugadores intercambiados",
+        "confirmDelete": "¿Eliminar el torneo \"{name}\"?"
     },
     "anki": {
         "again": "Otra vez",
@@ -803,7 +805,10 @@
         "title": "Fusionar nombres de jugadores",
         "use": "usar",
         "useAsCanonical": "Usar como nombre canónico",
-        "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»"
+        "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»",
+        "errorLoad": "Error al cargar los jugadores",
+        "errorSelect": "Selecciona al menos dos nombres para fusionar",
+        "errorCanonical": "Indica el nombre canónico que se conservará"
     },
     "tabbedPanel": {
         "analysis": "Análisis",

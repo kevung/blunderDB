@@ -403,7 +403,8 @@
         "noMovesFound": "Nessuna mossa trovata per questo match",
         "swappedPlayers": "Giocatori scambiati",
         "tournamentCleared": "Torneo rimosso dal match",
-        "tournamentSet": "Torneo \"{name}\" assegnato"
+        "tournamentSet": "Torneo \"{name}\" assegnato",
+        "confirmDelete": "Eliminare il match tra {player1} e {player2}?"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -468,7 +469,8 @@
         "errorOpening": "Errore durante l'apertura del match",
         "errorSwapping": "Errore durante lo scambio dei giocatori",
         "noMovesFound": "Nessuna mossa trovata per questo match",
-        "swappedPlayers": "Giocatori scambiati"
+        "swappedPlayers": "Giocatori scambiati",
+        "confirmDelete": "Eliminare il torneo \"{name}\"?"
     },
     "anki": {
         "again": "Di nuovo",
@@ -803,7 +805,10 @@
         "title": "Unisci nomi dei giocatori",
         "use": "usa",
         "useAsCanonical": "Usa come nome canonico",
-        "merged": "{n} nome/i di giocatore uniti in «{target}»"
+        "merged": "{n} nome/i di giocatore uniti in «{target}»",
+        "errorLoad": "Errore durante il caricamento dei giocatori",
+        "errorSelect": "Seleziona almeno due nomi da unire",
+        "errorCanonical": "Inserisci il nome canonico da mantenere"
     },
     "tabbedPanel": {
         "analysis": "Analisi",

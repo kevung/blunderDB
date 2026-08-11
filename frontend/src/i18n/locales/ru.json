@@ -403,7 +403,8 @@
         "noMovesFound": "Для этого матча не найдено ходов",
         "swappedPlayers": "Игроки поменялись местами",
         "tournamentCleared": "Турнир снят с матча",
-        "tournamentSet": "Турнир «{name}» назначен"
+        "tournamentSet": "Турнир «{name}» назначен",
+        "confirmDelete": "Удалить матч между {player1} и {player2}?"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -468,7 +469,8 @@
         "errorOpening": "Ошибка открытия матча",
         "errorSwapping": "Ошибка смены игроков",
         "noMovesFound": "Для этого матча не найдено ходов",
-        "swappedPlayers": "Игроки поменялись местами"
+        "swappedPlayers": "Игроки поменялись местами",
+        "confirmDelete": "Удалить турнир «{name}»?"
     },
     "anki": {
         "again": "Снова",
@@ -803,7 +805,10 @@
         "title": "Объединить имена игроков",
         "use": "использовать",
         "useAsCanonical": "Использовать как каноническое имя",
-        "merged": "Объединено имён игроков: {n} → «{target}»"
+        "merged": "Объединено имён игроков: {n} → «{target}»",
+        "errorLoad": "Ошибка загрузки игроков",
+        "errorSelect": "Выберите не менее двух имён для объединения",
+        "errorCanonical": "Укажите каноническое имя, которое нужно сохранить"
     },
     "tabbedPanel": {
         "analysis": "Анализ",

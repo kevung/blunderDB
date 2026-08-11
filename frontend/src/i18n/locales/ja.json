@@ -403,7 +403,8 @@
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
         "tournamentCleared": "マッチからトーナメントを解除しました",
-        "tournamentSet": "トーナメント「{name}」を設定しました"
+        "tournamentSet": "トーナメント「{name}」を設定しました",
+        "confirmDelete": "{player1}と{player2}のマッチを削除しますか?"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -468,7 +469,8 @@
         "errorOpening": "マッチを開く際にエラーが発生しました",
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
         "noMovesFound": "このマッチには手が見つかりません",
-        "swappedPlayers": "プレイヤーを入れ替えました"
+        "swappedPlayers": "プレイヤーを入れ替えました",
+        "confirmDelete": "トーナメント「{name}」を削除しますか?"
     },
     "anki": {
         "again": "もう一度",
@@ -803,7 +805,10 @@
         "title": "プレイヤー名を統合",
         "use": "使用",
         "useAsCanonical": "正規名として使用",
-        "merged": "{n}件のプレイヤー名を「{target}」に統合しました"
+        "merged": "{n}件のプレイヤー名を「{target}」に統合しました",
+        "errorLoad": "プレイヤーの読み込み中にエラーが発生しました",
+        "errorSelect": "統合するには2つ以上の名前を選択してください",
+        "errorCanonical": "保持する正規名を入力してください"
     },
     "tabbedPanel": {
         "analysis": "分析",
