@@ -166,8 +166,11 @@
 
     // Keep `positions` array in sync with positionsStore.
     // Plain .subscribe() is intentional: `positions` is never read in the
-    // template directly, so $state reactivity is not needed here.
-    positionsStore.subscribe((value) => {
+    // template directly, so $state reactivity is not needed here. The
+    // returned unsubscribe is captured and released in onDestroy below —
+    // App.svelte is mounted once for the app's lifetime, but leaving it
+    // unbound left the store holding a callback with no way to stop it.
+    const unsubscribePositions = positionsStore.subscribe((value) => {
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set(emptyPosition());
@@ -431,6 +434,7 @@
         window.removeEventListener('dragleave', handleDragLeave);
         window.removeEventListener('drop', handleDragEnd);
         OnFileDropOff();
+        unsubscribePositions();
     });
 </script>
 

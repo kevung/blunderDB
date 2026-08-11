@@ -60,10 +60,7 @@
     let canvas;
     let width;
     let height;
-    let unsubscribe;
-    let unsubscribeSelectedMove;
-    let unsubscribeAnalysis;
-    let unsubscribeOfferedCube;
+    let unsubscribeBoardRedrawTriggers;
     let startMousePos = null;
     // Manual double-click tracking for the Except "must be empty" marker. Native
     // 'dblclick' is unreliable here because each click redraws (recreates) the
@@ -72,9 +69,85 @@
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
 
-    // selectedMove is read inside drawBoard() via this derived;
-    // the actual redraw is triggered by the subscribe in onMount (synchronous).
+    // selectedMove is read inside drawBoard() via this derived; the actual
+    // redraw is triggered (coalesced) by scheduleRedraw() — see
+    // subscribeBoardRedrawTriggers() below.
     let selectedMove = $derived($selectedMoveStore);
+
+    // ── Redraw coalescing ──────────────────────────────────────────────────
+    // Several independent triggers can each ask for a board redraw within the
+    // same tick (a position navigation touches positionStore, resets
+    // selectedMoveStore, and often analysisStore reloads right after). Before
+    // this, each trigger called drawBoard() directly and a single navigation
+    // could rebuild the whole two.js scene (two.clear() + ~100 SVG nodes
+    // destroyed/recreated) 3-4 times. scheduleRedraw() sets a dirty flag and
+    // asks for a single requestAnimationFrame; by the time it fires, every
+    // store involved has already settled its final value (Svelte's reactive
+    // updates and the .subscribe() callbacks below all run synchronously,
+    // long before the next animation frame), so drawBoard() — which always
+    // re-reads every store itself — paints the fully-settled state exactly
+    // once per frame.
+    let redrawScheduled = false;
+    let redrawFrameId = null;
+    function scheduleRedraw() {
+        if (redrawScheduled) return;
+        redrawScheduled = true;
+        redrawFrameId = requestAnimationFrame(() => {
+            redrawScheduled = false;
+            redrawFrameId = null;
+            if (two && canvas) drawBoard();
+        });
+    }
+
+    // Svelte 5 invariant exception (CLAUDE.md): four stores each mark the
+    // board dirty for unrelated reasons (position navigation, a move picked
+    // in the analysis panel, analysis reloading, the take/pass "offered cube"
+    // toggle) and drawBoard() re-reads every one of them regardless of which
+    // one changed, so an $effect per store would buy nothing over a single
+    // grouped subscription — it would just multiply the places carrying this
+    // exception by four. Grouping them here keeps it to one documented spot.
+    // positionStore's callback additionally carries a business rule that must
+    // run before scheduleRedraw() fires: reset the selected move only on a
+    // *real* navigation (position id change), not on every store tick (board
+    // edits, analysis refresh). That rule stays inside the subscription
+    // rather than becoming its own $effect — Board.svelte has no rendering
+    // test, and the ordering between "reset selectedMoveStore" and "read
+    // selectedMoveStore at draw time" is exactly the kind of thing a render
+    // regression would hide; the synchronous .subscribe() ordering here is
+    // unambiguous, an $effect's ordering relative to this one would not be
+    // obviously so.
+    function subscribeBoardRedrawTriggers() {
+        let previousPositionId = null;
+        const unsubPosition = positionStore.subscribe(() => {
+            const position = get(positionStore);
+            // Only clear selected move when position ID actually changes (real navigation)
+            // Don't clear it on board redraws or analysis updates
+            if (position.id !== previousPositionId) {
+                selectedMoveStore.set(null);
+                previousPositionId = position.id;
+            }
+            scheduleRedraw();
+        });
+
+        // Redraw when a move is selected/hovered in the analysis panel so its
+        // arrows appear (or clear) on the board.
+        const unsubSelectedMove = selectedMoveStore.subscribe(() => scheduleRedraw());
+
+        // Redraw when analysis loads/changes so the offered cube (take/pass
+        // decisions) appears for the displayed position outside match mode.
+        const unsubAnalysis = analysisStore.subscribe(() => scheduleRedraw());
+
+        // Redraw when the take/pass "offered cube" mode toggles so the cube moves
+        // between its centered (offered) and owner positions immediately.
+        const unsubOfferedCube = searchOfferedCubeStore.subscribe(() => scheduleRedraw());
+
+        return () => {
+            unsubPosition();
+            unsubSelectedMove();
+            unsubAnalysis();
+            unsubOfferedCube();
+        };
+    }
 
     // Apply the user-customisable palette to boardCfg and redraw. boardCfg is a
     // plain object read imperatively by the draw functions, so we mutate it in
@@ -91,7 +164,7 @@
         boardCfg.dice.fill = colors.dice;
         boardCfg.dice.dot = colors.diceDot;
         boardCfg.cube.fill = colors.cube;
-        if (two && canvas) drawBoard();
+        if (two && canvas) scheduleRedraw();
     });
 
     let boardDescription = $derived.by(() => {
@@ -478,8 +551,11 @@
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
-        drawBoard();
-        two.update();
+        // The measurement above must stay synchronous (it reads the live
+        // container box), but the actual repaint is coalesced: a burst of
+        // 'resize' events (window drag, panel toggle) must repaint at most
+        // once per animation frame, not once per event.
+        scheduleRedraw();
     }
 
     function resetBoard() {
@@ -823,36 +899,7 @@
         window.addEventListener('keydown', handleOrientationChange);
         window.addEventListener('keydown', handleKeyDown);
 
-        let previousPositionId = null;
-        unsubscribe = positionStore.subscribe(() => {
-            const position = get(positionStore);
-            // Only clear selected move when position ID actually changes (real navigation)
-            // Don't clear it on board redraws or analysis updates
-            if (position.id !== previousPositionId) {
-                selectedMoveStore.set(null);
-                previousPositionId = position.id;
-            }
-            drawBoard();
-        });
-
-        // Synchronous subscriber so arrows are drawn immediately when a move is selected.
-        // A Svelte 5 $effect would be deferred (async), causing a race where drawBoard()
-        // from positionStore.subscribe could overwrite the arrows before the effect ran.
-        unsubscribeSelectedMove = selectedMoveStore.subscribe(() => {
-            if (two && canvas) drawBoard();
-        });
-
-        // Redraw when analysis loads/changes so the offered cube (take/pass
-        // decisions) appears for the displayed position outside match mode.
-        unsubscribeAnalysis = analysisStore.subscribe(() => {
-            if (two && canvas) drawBoard();
-        });
-
-        // Redraw when the take/pass "offered cube" mode toggles so the cube moves
-        // between its centered (offered) and owner positions immediately.
-        unsubscribeOfferedCube = searchOfferedCubeStore.subscribe(() => {
-            if (two && canvas) drawBoard();
-        });
+        unsubscribeBoardRedrawTriggers = subscribeBoardRedrawTriggers();
 
         logCanvasSize();
         window.addEventListener('resize', logCanvasSize);
@@ -871,10 +918,11 @@
         window.removeEventListener('resize', logCanvasSize);
         window.removeEventListener('keydown', handleOrientationChange);
         window.removeEventListener('keydown', handleKeyDown);
-        if (unsubscribe) unsubscribe();
-        if (unsubscribeSelectedMove) unsubscribeSelectedMove();
-        if (unsubscribeAnalysis) unsubscribeAnalysis();
-        if (unsubscribeOfferedCube) unsubscribeOfferedCube();
+        if (unsubscribeBoardRedrawTriggers) unsubscribeBoardRedrawTriggers();
+        // A redraw can be pending (rAF already requested) at the moment the
+        // component is torn down; cancel it so drawBoard() never runs against
+        // a detached two.js instance.
+        if (redrawFrameId !== null) cancelAnimationFrame(redrawFrameId);
     });
 
     // Helper function to get the position to display
