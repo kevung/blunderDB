@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -23,6 +24,10 @@ Copies positions, analyses, comments, matches (games + moves), tournaments and
 collections under the given tenant scope, inside a single destination
 transaction (atomic; a failed run leaves the destination untouched). App-state
 families (anki, filter library, history, session) are not migrated.
+
+If --from is old enough to still need its own in-place schema upgrade, that
+runs first and emits "schema-migration" NDJSON events (phase/done/total)
+before the row-copy "progress"/"dry-run"/"done" events.
 
 Flags:
 `
@@ -56,9 +61,20 @@ func RunCLI(args []string) error {
 	}
 
 	ctx := context.Background()
+	emit := json.NewEncoder(os.Stdout)
 
+	// A source database old enough to still need the legacy in-place chain
+	// (schemaMigrationEvent below) can be large — surface its progress the
+	// same way the GUI's progress bar does (see
+	// storage/sqlite/migrate_hook.go), instead of an opaque hang before the
+	// row-copy phase even starts.
+	srcOpts := &storage.Options{
+		MigrationProgress: func(phase string, done, total int) {
+			_ = emit.Encode(schemaMigrationEvent{Event: "schema-migration", Phase: phase, Done: done, Total: total})
+		},
+	}
 	srcPath := strings.TrimPrefix(strings.TrimPrefix(*from, "sqlite://"), "sqlite:")
-	src, err := sqlite.Open(ctx, srcPath, nil)
+	src, err := sqlite.Open(ctx, srcPath, srcOpts)
 	if err != nil {
 		return fmt.Errorf("migrate: open source %s: %w", srcPath, err)
 	}
@@ -67,7 +83,6 @@ func RunCLI(args []string) error {
 		return fmt.Errorf("migrate: upgrade source schema: %w", err)
 	}
 
-	emit := json.NewEncoder(os.Stdout)
 	opts := Options{
 		DryRun:     *dryRun,
 		OnConflict: *onConflict,
@@ -104,4 +119,15 @@ func RunCLI(args []string) error {
 type progressEvent struct {
 	Event  string `json:"event"`
 	Report Report `json:"report"`
+}
+
+// schemaMigrationEvent reports progress of the source database's legacy
+// in-place schema upgrade (storage.Options.MigrationProgress), distinct from
+// progressEvent's row-copy Report — it can run before a single row has been
+// read for the copy.
+type schemaMigrationEvent struct {
+	Event string `json:"event"`
+	Phase string `json:"phase"`
+	Done  int    `json:"done"`
+	Total int    `json:"total"`
 }

@@ -14,12 +14,16 @@ import (
 // already wired into this package; the storage package cannot import database
 // (cycle), so it exposes a registration hook instead.
 //
-// The migrator runs on a transient Database bound to the storage handle: it has
-// no progress callback, and cancellation is driven by the caller-supplied ctx
-// (the storage layer's context) rather than the GUI's CancelImport — the right
-// behaviour for the headless path.
+// The migrator runs on a transient Database bound to the storage handle:
+// cancellation is driven by the caller-supplied ctx (the storage layer's
+// context) rather than the GUI's CancelImport — the right behaviour for the
+// headless path. progress forwards storage.Options.MigrationProgress (set by
+// whoever opened the Storage) to the same SetMigrationProgress the GUI uses;
+// nil is fine (emitMigrationProgress no-ops).
 func init() {
-	sqlite.RegisterMigrator(func(ctx context.Context, db *sql.DB) error {
-		return (&Database{db: db}).runMigrationChain(ctx)
+	sqlite.RegisterMigrator(func(ctx context.Context, db *sql.DB, progress func(phase string, done, total int)) error {
+		d := &Database{db: db}
+		d.SetMigrationProgress(progress)
+		return d.runMigrationChain(ctx)
 	})
 }

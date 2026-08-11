@@ -29,6 +29,10 @@ type Storage struct {
 	binder
 	sqlDB  *sql.DB
 	ownsDB bool
+	// migrationProgress is Options.MigrationProgress, captured at Open time
+	// (Migrate's signature is fixed by the storage.Storage interface, so it
+	// cannot take one directly) and forwarded to the registered Migrator.
+	migrationProgress func(phase string, done, total int)
 }
 
 var _ storage.Storage = (*Storage)(nil)
@@ -56,7 +60,11 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 			return nil, err
 		}
 	}
-	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true}, nil
+	var progress func(phase string, done, total int)
+	if opts != nil {
+		progress = opts.MigrationProgress
+	}
+	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true, migrationProgress: progress}, nil
 }
 
 // New wraps an existing *sql.DB handle. The returned Storage does not own the
@@ -184,7 +192,7 @@ func (s *Storage) Migrate(ctx context.Context) error {
 		return Bootstrap(ctx, s.sqlDB)
 	}
 	if registeredMigrator != nil {
-		return registeredMigrator(ctx, s.sqlDB)
+		return registeredMigrator(ctx, s.sqlDB, s.migrationProgress)
 	}
 	version, err := s.Metadata().Version(ctx, "")
 	if err != nil {
