@@ -76,9 +76,9 @@ export function processCommand(command) {
         const n = parseInt(command.split(/\s+/)[1], 10);
         callbacks.onLoadBlunders?.(Number.isInteger(n) && n > 0 ? n : undefined);
     } else if (command.startsWith('ss')) {
-        handleSubSearch(command, positions);
+        handleSearchCommand(command, positions, { isSubSearch: true });
     } else if (command.startsWith('s')) {
-        handleSearch(command);
+        handleSearchCommand(command, positions, { isSubSearch: false });
     } else if (command === 'history' || command === 'hi') {
         callbacks.focusSearchTab?.();
     } else if (command === 'match' || command === 'ma') {
@@ -125,87 +125,65 @@ export function processCommand(command) {
                 logger.error('Error clearing command history:', error);
                 statusBarTextStore.set(tMsg('commands.errorClearingHistory'));
             });
+    } else {
+        statusBarTextStore.set(tMsg('commands.unknown', { command }));
     }
 }
 
-function handleSubSearch(command, positions) {
+// Handles both `s...` (search) and `ss...` (sub-search, restricted to the IDs of the
+// currently displayed positions) — same body throughout, differing only in the command
+// prefix length, the bare-command spelling, whether positions must be non-empty first, and
+// which IDs (if any) get sent as restrictToPositionIDs.
+function handleSearchCommand(command, positions, { isSubSearch }) {
     const mode = get(statusBarModeStore);
-    if (mode === 'NORMAL' || mode === 'EDIT') {
+    if (mode !== 'NORMAL' && mode !== 'EDIT') {
+        statusBarTextStore.set(tMsg(isSubSearch ? 'commands.subSearchModeUnavailable' : 'commands.searchRequiresMode'));
+        return;
+    }
+
+    let currentIDs = '';
+    if (isSubSearch) {
         if (positions.length === 0) {
             statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
-        const currentIDs = positions
+        currentIDs = positions
             .map((p) => p.id)
             .filter((id) => id != null)
             .join(',');
-        const searchHistoryEntry = {
-            command: command,
-            position: JSON.stringify(get(positionStore)),
-            timestamp: Date.now()
-        };
-        searchHistoryStore.update((history) => {
-            const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
-            return newHistory;
-        });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
-            logger.error('Error saving search history:', err);
-        });
-
-        if (command === 'ss') {
-            callbacks.onLoadPositionsByFilters?.({
-                searchCommand: command,
-                restrictToPositionIDs: currentIDs
-            });
-        } else {
-            const filters = stripQuotedTokens(command.slice(2).trim())
-                .split(' ')
-                .map((filter) => filter.trim());
-            const parsedFilters = parseFilters(filters, command);
-            callbacks.onLoadPositionsByFilters?.({
-                filters,
-                ...parsedFilters,
-                searchCommand: command,
-                restrictToPositionIDs: currentIDs
-            });
-        }
-    } else {
-        statusBarTextStore.set(tMsg('commands.subSearchModeUnavailable'));
     }
-}
 
-function handleSearch(command) {
-    const mode = get(statusBarModeStore);
-    if (mode === 'NORMAL' || mode === 'EDIT') {
-        const searchHistoryEntry = {
-            command: command,
-            position: JSON.stringify(get(positionStore)),
-            timestamp: Date.now()
-        };
-        searchHistoryStore.update((history) => {
-            const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
-            return newHistory;
-        });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
-            logger.error('Error saving search history:', err);
-        });
+    const searchHistoryEntry = {
+        command: command,
+        position: JSON.stringify(get(positionStore)),
+        timestamp: Date.now()
+    };
+    searchHistoryStore.update((history) => {
+        const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
+        return newHistory;
+    });
+    SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
+        logger.error('Error saving search history:', err);
+    });
 
-        if (command === 's') {
-            callbacks.onLoadPositionsByFilters?.({ searchCommand: command });
-        } else {
-            const filters = stripQuotedTokens(command.slice(1).trim())
-                .split(' ')
-                .map((filter) => filter.trim());
-            const parsedFilters = parseFilters(filters, command);
-            callbacks.onLoadPositionsByFilters?.({
-                filters,
-                ...parsedFilters,
-                searchCommand: command,
-                restrictToPositionIDs: ''
-            });
-        }
+    const bareCommand = isSubSearch ? 'ss' : 's';
+    if (command === bareCommand) {
+        callbacks.onLoadPositionsByFilters?.({
+            searchCommand: command,
+            ...(isSubSearch ? { restrictToPositionIDs: currentIDs } : {})
+        });
     } else {
-        statusBarTextStore.set(tMsg('commands.searchRequiresMode'));
+        const prefixLength = isSubSearch ? 2 : 1;
+        const filters = stripQuotedTokens(command.slice(prefixLength).trim())
+            .split(' ')
+            .map((filter) => filter.trim());
+        const parsedFilters = parseFilters(filters, command);
+        callbacks.onLoadPositionsByFilters?.({
+            filters,
+            ...parsedFilters,
+            searchCommand: command,
+            restrictToPositionIDs: isSubSearch ? currentIDs : ''
+        });
     }
 }
 

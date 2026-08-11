@@ -1,12 +1,15 @@
 // Guards the invariant stated at the top of commandVocabulary.js: every command
 // offered by autocompletion must actually be handled by commandProcessor.js.
 //
-// processCommand's if/else chain has no trailing `else`, so an unhandled command
-// is a silent no-op — autocomplete keeps offering it and typing it does nothing.
-// That is how `filter`/`fl` survived in the vocabulary long after its panel was
-// folded into the search panel. Rather than grep the source for each name, drive
-// every entry through processCommand and assert it produces *some* observable
-// effect: a callback access, a modal, a status message, a log line, or a Wails call.
+// processCommand's if/else chain ends in a trailing `else` that reports
+// commands.unknown, but that is itself an observable effect (a status message)
+// and would make every vocabulary entry pass trivially if we only checked "did
+// something happen". A vocabulary entry whose branch was removed — that is how
+// `filter`/`fl` survived long after its panel was folded into the search panel —
+// still needs to be caught. So this test drives every entry through
+// processCommand and asserts it produces some effect OTHER than commands.unknown:
+// a callback access, a modal, a status message with a different key, a log
+// line, or a Wails call.
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
@@ -57,13 +60,19 @@ describe('commandVocabulary ↔ commandProcessor sync', () => {
         const before = OBSERVED.map((s) => JSON.stringify(get(s)));
 
         processCommand(form);
-        // Branches like `clear` and the migrations settle their stores in a
-        // promise callback, so let the microtask queue drain before looking.
+        // Branches like `clear` settle their stores in a promise callback, so
+        // let the microtask queue drain before looking.
         await new Promise((resolve) => setTimeout(resolve, 0));
 
         const changed = OBSERVED.some((s, i) => JSON.stringify(get(s)) !== before[i]);
+        const statusText = get(statusBarTextStore);
+        // A dropped branch now falls through to the trailing `else`, which sets
+        // commands.unknown — itself a change to statusBarTextStore, so `changed`
+        // alone would pass trivially. Excluding it is what makes this test still
+        // catch a vocabulary entry whose handler was removed.
+        const fellThroughToUnknown = statusText && typeof statusText === 'object' && statusText.i18nKey === 'commands.unknown';
         expect(
-            touched.size > 0 || changed,
+            (touched.size > 0 || changed) && !fellThroughToUnknown,
             `"${form}" is offered by autocomplete but processCommand does nothing with it. ` + `Either add a branch in commandProcessor.js or drop it from commandVocabulary.js.`
         ).toBe(true);
     });

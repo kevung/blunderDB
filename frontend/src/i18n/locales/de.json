@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "Keine aktuellen Ergebnisse zum Durchsuchen vorhanden.",
         "searchRequiresMode": "Die Suche erfordert den NORMAL- oder EDIT-Modus.",
         "subSearchModeUnavailable": "Die Suche in den Ergebnissen ist im aktuellen Modus nicht verfügbar.",
-        "tagsAdded": "Tags hinzugefügt: {tags}"
+        "tagsAdded": "Tags hinzugefügt: {tags}",
+        "unknown": "Unbekannter Befehl: {command}"
     },
     "search": {
         "actions": "Aktionen",

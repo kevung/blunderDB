@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "検索対象となる現在の結果がありません。",
         "searchRequiresMode": "検索には NORMAL または EDIT モードが必要です。",
         "subSearchModeUnavailable": "結果内の検索は現在のモードでは利用できません。",
-        "tagsAdded": "タグを追加しました: {tags}"
+        "tagsAdded": "タグを追加しました: {tags}",
+        "unknown": "不明なコマンド: {command}"
     },
     "search": {
         "actions": "操作",

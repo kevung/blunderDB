@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "Нет текущих результатов для поиска.",
         "searchRequiresMode": "Для поиска требуется режим NORMAL или EDIT.",
         "subSearchModeUnavailable": "Поиск по результатам недоступен в текущем режиме.",
-        "tagsAdded": "Добавлены теги: {tags}"
+        "tagsAdded": "Добавлены теги: {tags}",
+        "unknown": "Неизвестная команда: {command}"
     },
     "search": {
         "actions": "Действия",

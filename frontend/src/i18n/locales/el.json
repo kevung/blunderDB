@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "Δεν υπάρχουν τρέχοντα αποτελέσματα για αναζήτηση.",
         "searchRequiresMode": "Η αναζήτηση απαιτεί τη λειτουργία NORMAL ή EDIT.",
         "subSearchModeUnavailable": "Η αναζήτηση στα αποτελέσματα δεν είναι διαθέσιμη στην τρέχουσα λειτουργία.",
-        "tagsAdded": "Ετικέτες που προστέθηκαν: {tags}"
+        "tagsAdded": "Ετικέτες που προστέθηκαν: {tags}",
+        "unknown": "Άγνωστη εντολή: {command}"
     },
     "search": {
         "actions": "Ενέργειες",

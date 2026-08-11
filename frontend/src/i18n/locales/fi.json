@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "Ei nykyisiä tuloksia, joista hakea.",
         "searchRequiresMode": "Haku vaatii NORMAL- tai EDIT-tilan.",
         "subSearchModeUnavailable": "Tuloksista hakeminen ei ole käytettävissä nykyisessä tilassa.",
-        "tagsAdded": "Tunnisteet lisätty: {tags}"
+        "tagsAdded": "Tunnisteet lisätty: {tags}",
+        "unknown": "Tuntematon komento: {command}"
     },
     "search": {
         "actions": "Toiminnot",

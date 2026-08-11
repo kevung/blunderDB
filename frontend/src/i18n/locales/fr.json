@@ -229,7 +229,8 @@
         "noResultsToSearchIn": "Aucun résultat actuel dans lequel rechercher.",
         "searchRequiresMode": "La recherche nécessite le mode NORMAL ou EDIT.",
         "subSearchModeUnavailable": "La recherche dans les résultats n'est pas disponible dans le mode actuel.",
-        "tagsAdded": "Étiquettes ajoutées : {tags}"
+        "tagsAdded": "Étiquettes ajoutées : {tags}",
+        "unknown": "Commande inconnue : {command}"
     },
     "search": {
         "actions": "Actions",
