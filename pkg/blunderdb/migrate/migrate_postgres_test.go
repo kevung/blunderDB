@@ -8,6 +8,7 @@ package migrate_test
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -21,6 +22,12 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
+// startPostgres boots a throwaway PostgreSQL 16 container and returns its DSN.
+// The test is skipped when Docker is unavailable — unless BLUNDERDB_REQUIRE_PG=1
+// is set, in which case a missing container is a hard test failure. CI's
+// test-postgres job sets that variable so a broken/absent Docker daemon fails
+// the job loudly instead of silently skipping the SQLite→PostgreSQL migration
+// tests.
 func startPostgres(t *testing.T) string {
 	t.Helper()
 	ctx := context.Background()
@@ -31,6 +38,9 @@ func startPostgres(t *testing.T) string {
 		tcpg.BasicWaitStrategies(),
 	)
 	if err != nil {
+		if os.Getenv("BLUNDERDB_REQUIRE_PG") == "1" {
+			t.Fatalf("postgres container unavailable (BLUNDERDB_REQUIRE_PG=1 requires Docker): %v", err)
+		}
 		t.Skipf("postgres container unavailable (Docker required): %v", err)
 	}
 	t.Cleanup(func() { _ = testcontainers.TerminateContainer(container) })
