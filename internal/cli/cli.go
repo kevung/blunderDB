@@ -116,6 +116,11 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  help      Show this help message")
 	fmt.Println("  version   Show version information")
 	fmt.Println()
+	fmt.Println("Headless mode (advanced, optional — see the 'headless' chapter in the docs):")
+	fmt.Println("  serve     Run the HTTP + JSON daemon (SQLite or multi-tenant PostgreSQL)")
+	fmt.Println("  call      Invoke a daemon handler in-process (scripting/tests)")
+	fmt.Println("  migrate   Copy a SQLite database into PostgreSQL under a tenant")
+	fmt.Println()
 	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
 }
 
