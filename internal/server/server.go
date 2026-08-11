@@ -65,6 +65,9 @@ func New(opts Options) (*Server, error) {
 		Addr:              opts.Addr,
 		Handler:           s.chain(mux),
 		ReadHeaderTimeout: opts.ReadHeaderTimeout,
+		// Read/WriteTimeout stay unset — see Options.IdleTimeout's doc
+		// comment for why.
+		IdleTimeout: opts.IdleTimeout,
 	}
 	return s, nil
 }
