@@ -79,6 +79,8 @@ func (cli *CLI) Run(args []string) error {
 		return cli.runEpc(commandArgs)
 	case "search":
 		return cli.runSearch(commandArgs)
+	case "vacuum":
+		return cli.runVacuum(commandArgs)
 	case "help":
 		cli.printUsage()
 		return nil
@@ -112,6 +114,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")
+	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  help      Show this help message")
 	fmt.Println("  version   Show version information")
