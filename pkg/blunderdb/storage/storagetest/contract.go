@@ -775,12 +775,15 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 }
 
 // testSearchFilterByAnalysisDecodesCompressedBlob exercises the analysis-driven
-// Go-side filters (move pattern, win rate) that only see a match once Find has
+// Go-side filters (move pattern, equity) that only see a match once Find has
 // decoded the stored a.data blob. The blob is always written zlib-compressed
 // (AnalysisStore.Save), so a decode path that forgot to decompress — as the
 // PostgreSQL backend's search once did, unmarshalling the compressed bytes
 // directly as JSON — silently produced ana == nil for every row and these
-// filters matched nothing, on every search, forever. Guards the fix.
+// filters matched nothing, on every search, forever. Guards the fix, and
+// guards needAnalysis actually gating the decode on both filters (fiche-05
+// T1/T2: a filter missing from needAnalysis leaves a.data unselected, same
+// symptom).
 func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
@@ -805,18 +808,18 @@ func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Sto
 		t.Fatalf("Save position without analysis: %v", err)
 	}
 
-	// MovePatternFilter is applied unconditionally against the decoded ana
-	// (never pushed to SQL, unlike WinRateFilter/GammonRateFilter/etc., which
-	// read the denormalised a.player1_win_rate column and would pass even with
-	// a broken decode) — so it is what actually exercises the blob decode.
-	//
-	// EquityFilter belongs to the same "unconditional, ana-only" family but is
-	// covered separately (fiche-05 T2): needAnalysis does not gate the decode
-	// on EquityFilter yet, so ana is nil here too and the filter matches
-	// nothing regardless of this fix — a second, independent bug, fixed and
-	// asserted alongside T2's needAnalysis change.
+	// Both filters are applied unconditionally against the decoded ana (never
+	// pushed to SQL, unlike WinRateFilter/GammonRateFilter/etc., which read the
+	// denormalised a.player1_win_rate column and would pass even with a broken
+	// decode) — so they are what actually exercises the blob decode.
+	// EquityFilter additionally needs DateFilter/MoveErrorFilter's needAnalysis
+	// companion (fiche-05 T2) to be decoded at all; without it ana is nil here
+	// too and the filter silently matches nothing, on both backends.
 	if got := searchIDs(t, s, domain.SearchFilters{MovePatternFilter: `m"13/11"`}); len(got) != 1 || got[0] != idWith {
 		t.Errorf("MovePatternFilter: got %v, want [%d]", got, idWith)
+	}
+	if got := searchIDs(t, s, domain.SearchFilters{EquityFilter: "e>0"}); len(got) != 1 || got[0] != idWith {
+		t.Errorf("EquityFilter: got %v, want [%d]", got, idWith)
 	}
 }
 

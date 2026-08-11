@@ -43,12 +43,30 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
-	// The decoded analysis is consumed only by the move-pattern filter and the
-	// Go-side analysis re-checks of mirror search; every other analysis filter
-	// runs on the denormalised SQL columns. So decode the (zlib-compressed) blob
-	// per row only when one of those paths needs it — a no-move-pattern,
-	// non-mirror search skips the decompress+unmarshal of every result row.
-	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter
+	// The decoded analysis is consumed by the move-pattern filter, the Go-side
+	// analysis re-checks of mirror search, and the date/equity filters below —
+	// every other analysis filter (win/gammon/backgammon rate, cube error,
+	// move error) runs on the denormalised SQL columns instead. So decode the
+	// (zlib-compressed) blob per row only when one of those paths needs it — a
+	// search using none of them skips the decompress+unmarshal of every row.
+	//
+	// MoveErrorFilter is deliberately NOT one of the triggers: it is pushed to
+	// SQL like the rate filters (statsErrExpr in the WHERE builder below), and
+	// its Go-side re-check (matchesMoveErrorFilter) only ever runs inside the
+	// `!useSQLFilters` block, i.e. only when f.MirrorFilter is already true —
+	// already covered by the `|| f.MirrorFilter` term below. Adding it here
+	// too used to force a bulk a.data decode on every plain (non-mirror)
+	// MoveErrorFilter search even though nothing read the result: on the
+	// tournois fixture that turned BenchmarkSearch_ErrorAboveTenth's ~2 200
+	// SQL-matched rows into ~2 200 needless decodes, ~80ms → ~200ms.
+	//
+	// DateFilter has no SQL pushdown at all (unlike MoveErrorFilter) and used
+	// to decode independently, once per candidate row, inside
+	// matchesDateFilter (a second query plus a second decompression on top of
+	// this one whenever both ran). Folding it into needAnalysis makes this the
+	// only decode.
+	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
+		f.DateFilter != "" || f.EquityFilter != ""
 
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
@@ -577,7 +595,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 						return false
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, f.MoveErrorFilter) {
+				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}
@@ -603,7 +621,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
 				return false
 			}
-			if f.DateFilter != "" && !matchesDateFilter(ctx, s.db, &pos, f.DateFilter) {
+			if f.DateFilter != "" && !matchesDateFilter(ana, f.DateFilter) {
 				return false
 			}
 			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {

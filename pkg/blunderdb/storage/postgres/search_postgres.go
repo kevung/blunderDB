@@ -44,13 +44,18 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
-	// The decoded analysis is consumed only by the move-pattern filter and the
-	// Go-side analysis re-checks of mirror search; every other analysis filter
-	// runs on the denormalised SQL columns. So decode the (zlib-compressed) blob
-	// per row only when one of those paths needs it — a no-move-pattern,
-	// non-mirror search skips the decompress+unmarshal of every result row.
-	// Mirrors the SQLite backend (search_sqlite.go).
-	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter
+	// The decoded analysis is consumed by the move-pattern filter, the Go-side
+	// analysis re-checks of mirror search, and the date/equity filters below —
+	// every other analysis filter (win/gammon/backgammon rate, cube error,
+	// move error) runs on the denormalised SQL columns instead. So decode the
+	// (zlib-compressed) blob per row only when one of those paths needs it — a
+	// search using none of them skips the decompress+unmarshal of every row.
+	// Mirrors the SQLite backend (search_sqlite.go); see its comment for why
+	// MoveErrorFilter is deliberately not one of the triggers (it is SQL-pushed
+	// and its Go-side re-check only ever runs when f.MirrorFilter is already
+	// true, which is covered by the `|| f.MirrorFilter` term below).
+	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
+		f.DateFilter != "" || f.EquityFilter != ""
 
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
@@ -565,7 +570,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 						return false
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, f.MoveErrorFilter) {
+				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}
@@ -591,7 +596,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
 				return false
 			}
-			if f.DateFilter != "" && !matchesDateFilter(ctx, s.db, &pos, f.DateFilter) {
+			if f.DateFilter != "" && !matchesDateFilter(ana, f.DateFilter) {
 				return false
 			}
 			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {
