@@ -121,7 +121,7 @@ func (cli *CLI) importMatch(filePath string) error {
 		// XGP files are single-position files, not match files
 		posID, posErr := cli.db.ImportXGPPosition(filePath)
 		if posErr != nil {
-			return fmt.Errorf("failed to import XGP position: %v", posErr)
+			return fmt.Errorf("failed to import XGP position: %w", posErr)
 		}
 		fmt.Printf("Successfully imported XGP position (ID: %d)\n", posID)
 		return nil
@@ -140,7 +140,7 @@ func (cli *CLI) importMatch(filePath string) error {
 		if errors.Is(err, ErrDuplicateMatch) {
 			return fmt.Errorf("this match has already been imported to the database")
 		}
-		return fmt.Errorf("failed to import match: %v", err)
+		return fmt.Errorf("failed to import match: %w", err)
 	}
 
 	fmt.Printf("Successfully imported match (ID: %d)\n", matchID)
@@ -170,7 +170,7 @@ func (cli *CLI) importPosition(filePath string) error {
 	// Read the file
 	content, err := os.ReadFile(filePath)
 	if err != nil {
-		return fmt.Errorf("failed to read file: %v", err)
+		return fmt.Errorf("failed to read file: %w", err)
 	}
 
 	// Check if this is a BGBlitz position text file
@@ -180,7 +180,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		// BGBlitz position text file
 		posID, err := cli.db.ImportBGFPosition(filePath)
 		if err != nil {
-			return fmt.Errorf("failed to import BGBlitz position: %v", err)
+			return fmt.Errorf("failed to import BGBlitz position: %w", err)
 		}
 		fmt.Printf("Successfully imported BGBlitz position (ID: %d)\n", posID)
 		return nil
@@ -280,7 +280,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 	err := filepath.Walk(dirPath, walkFunc)
 	if err != nil {
-		return fmt.Errorf("failed to scan directory: %v", err)
+		return fmt.Errorf("failed to scan directory: %w", err)
 	}
 
 	if len(matchFiles) == 0 {

@@ -53,7 +53,7 @@ func (cli *CLI) runVerify(args []string) error {
 	// Get database stats
 	stats, err := cli.db.GetDatabaseStats()
 	if err != nil {
-		return fmt.Errorf("failed to get database stats: %v", err)
+		return fmt.Errorf("failed to get database stats: %w", err)
 	}
 
 	// Display stats
@@ -79,7 +79,7 @@ func (cli *CLI) runVerify(args []string) error {
 	if *matchID != 0 {
 		err := cli.verifyMatch(*matchID, *matFile)
 		if err != nil {
-			return fmt.Errorf("match verification failed: %v", err)
+			return fmt.Errorf("match verification failed: %w", err)
 		}
 	}
 
@@ -94,13 +94,13 @@ func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
 	// Get match info
 	match, err := cli.db.GetMatchByID(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match: %v", err)
+		return fmt.Errorf("failed to get match: %w", err)
 	}
 
 	// Get match positions
 	positions, err := cli.db.GetMatchMovePositions(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match positions: %v", err)
+		return fmt.Errorf("failed to get match positions: %w", err)
 	}
 
 	fmt.Printf("  Match: %s vs %s\n", match.Player1Name, match.Player2Name)
@@ -113,7 +113,7 @@ func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
 		// Read MAT file
 		content, err := os.ReadFile(matFile)
 		if err != nil {
-			return fmt.Errorf("failed to read MAT file: %v", err)
+			return fmt.Errorf("failed to read MAT file: %w", err)
 		}
 
 		// Count actual dice rolls in MAT file (each represents a checker move)

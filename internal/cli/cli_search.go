@@ -273,7 +273,7 @@ func (cli *CLI) runSearch(args []string) error {
 		CommentFilter:              commentFilter,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to search positions: %v", err)
+		return fmt.Errorf("failed to search positions: %w", err)
 	}
 
 	// Apply errorMin / hasAnalysis using the analysis map from the JOIN (no extra DB queries).
@@ -366,7 +366,7 @@ func (cli *CLI) runSearch(args []string) error {
 
 		jsonData, err := json.MarshalIndent(results, "", "  ")
 		if err != nil {
-			return fmt.Errorf("failed to format JSON: %v", err)
+			return fmt.Errorf("failed to format JSON: %w", err)
 		}
 		fmt.Println(string(jsonData))
 
@@ -433,7 +433,7 @@ func (cli *CLI) runSearch(args []string) error {
 			IncludePlayedMoves: true,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to export database: %v", err)
+			return fmt.Errorf("failed to export database: %w", err)
 		}
 
 		fmt.Println("Export completed successfully")

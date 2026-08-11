@@ -3,10 +3,12 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -209,6 +211,23 @@ func TestCLI_ListPositions(t *testing.T) {
 	}
 	if !bytes.Contains([]byte(out), []byte("position(s)")) {
 		t.Errorf("listPositions output missing position count:\n%s", out)
+	}
+}
+
+// TestCLI_ListStats_TournamentIDsErrorUnwraps guards the %v→%w conversion
+// across internal/cli: "invalid --tournament" wraps parseIDList's error,
+// which itself wraps strconv.ParseInt's error. With %v (the old code) the
+// chain is opaque and errors.Is can never see the underlying
+// strconv.ErrSyntax; with %w (the fix) it does, at both wrapping levels.
+func TestCLI_ListStats_TournamentIDsErrorUnwraps(t *testing.T) {
+	cli := setupCLI(t)
+
+	err := cli.Run([]string{"list", "--db", ":memory:", "--type", "stats", "--tournament", "not-a-number"})
+	if err == nil {
+		t.Fatal("expected an error for a non-numeric --tournament id")
+	}
+	if !errors.Is(err, strconv.ErrSyntax) {
+		t.Errorf("errors.Is(err, strconv.ErrSyntax) = false; err chain is opaque (%%v instead of %%w?): %v", err)
 	}
 }
 

@@ -76,7 +76,7 @@ func (cli *CLI) runInfo(args []string) error {
 	// Get stats
 	stats, err := cli.db.GetDatabaseStats()
 	if err != nil {
-		return fmt.Errorf("failed to get database stats: %v", err)
+		return fmt.Errorf("failed to get database stats: %w", err)
 	}
 
 	// Format output
@@ -89,7 +89,7 @@ func (cli *CLI) runInfo(args []string) error {
 		}
 		jsonData, err := json.MarshalIndent(output, "", "  ")
 		if err != nil {
-			return fmt.Errorf("failed to format JSON: %v", err)
+			return fmt.Errorf("failed to format JSON: %w", err)
 		}
 		fmt.Println(string(jsonData))
 	} else {
@@ -179,14 +179,14 @@ func shortDate(stamp string) string {
 func reportContainer(path string, asJSON bool) error {
 	iss, err := database.InspectIssuance(path)
 	if err != nil {
-		return fmt.Errorf("cannot read the protected file: %v", err)
+		return fmt.Errorf("cannot read the protected file: %w", err)
 	}
 	if asJSON {
 		jsonData, err := json.MarshalIndent(map[string]interface{}{
 			"path": path, "protected": true, "issuance": iss,
 		}, "", "  ")
 		if err != nil {
-			return fmt.Errorf("failed to format JSON: %v", err)
+			return fmt.Errorf("failed to format JSON: %w", err)
 		}
 		fmt.Println(string(jsonData))
 		return nil

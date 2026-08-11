@@ -60,13 +60,13 @@ func (cli *CLI) runMatch(args []string) error {
 	// Get match info
 	match, err := cli.db.GetMatchByID(*matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match: %v", err)
+		return fmt.Errorf("failed to get match: %w", err)
 	}
 
 	// Get match positions
 	positions, err := cli.db.GetMatchMovePositions(*matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match positions: %v", err)
+		return fmt.Errorf("failed to get match positions: %w", err)
 	}
 
 	// Format output based on requested format
@@ -83,14 +83,14 @@ func (cli *CLI) runMatch(args []string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to format output: %v", err)
+		return fmt.Errorf("failed to format output: %w", err)
 	}
 
 	// Output results
 	if *output != "" {
 		err := os.WriteFile(*output, []byte(outputData), 0644)
 		if err != nil {
-			return fmt.Errorf("failed to write output file: %v", err)
+			return fmt.Errorf("failed to write output file: %w", err)
 		}
 		fmt.Printf("Match data written to: %s\n", *output)
 	} else {

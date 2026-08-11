@@ -22,7 +22,7 @@ func parseIDList(s string) ([]int64, error) {
 		}
 		id, err := strconv.ParseInt(p, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("invalid ID %q: %v", p, err)
+			return nil, fmt.Errorf("invalid ID %q: %w", p, err)
 		}
 		ids = append(ids, id)
 	}
@@ -141,7 +141,7 @@ func (cli *CLI) initDatabase(dbPath string) error {
 		// Ensure directory exists
 		dir := filepath.Dir(dbPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create directory: %v", err)
+			return fmt.Errorf("failed to create directory: %w", err)
 		}
 	}
 
@@ -155,7 +155,7 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to open database: %v", err)
+		return fmt.Errorf("failed to open database: %w", err)
 	}
 
 	fmt.Fprintf(os.Stderr, "Connected to database: %s\n", dbPath)
