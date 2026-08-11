@@ -115,21 +115,21 @@ func (cli *CLI) runExport(args []string) error {
 		var parseErr error
 		collectionIDs, parseErr = parseIDList(*collectionIDsStr)
 		if parseErr != nil {
-			return fmt.Errorf("invalid collection-ids: %v", parseErr)
+			return fmt.Errorf("invalid collection-ids: %w", parseErr)
 		}
 	}
 	if *matchIDsStr != "" {
 		var parseErr error
 		matchIDs, parseErr = parseIDList(*matchIDsStr)
 		if parseErr != nil {
-			return fmt.Errorf("invalid match-ids: %v", parseErr)
+			return fmt.Errorf("invalid match-ids: %w", parseErr)
 		}
 	}
 	if *tournamentIDsStr != "" {
 		var parseErr error
 		tournamentIDs, parseErr = parseIDList(*tournamentIDsStr)
 		if parseErr != nil {
-			return fmt.Errorf("invalid tournament-ids: %v", parseErr)
+			return fmt.Errorf("invalid tournament-ids: %w", parseErr)
 		}
 	}
 
@@ -167,7 +167,7 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 	if len(ids) == 0 {
 		matches, err := cli.db.GetAllMatches()
 		if err != nil {
-			return fmt.Errorf("failed to load matches: %v", err)
+			return fmt.Errorf("failed to load matches: %w", err)
 		}
 		for _, m := range matches {
 			ids = append(ids, m.ID)
@@ -184,7 +184,7 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 		}
 		path := ensureMatExt(outputFile)
 		if err := cli.db.ExportMatchMAT(ids[0], path); err != nil {
-			return fmt.Errorf("failed to export match %d: %v", ids[0], err)
+			return fmt.Errorf("failed to export match %d: %w", ids[0], err)
 		}
 		fmt.Printf("Successfully exported match %d to %s\n", ids[0], path)
 		return nil
@@ -192,13 +192,13 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 
 	// Batch into a directory, one auto-named .mat per match.
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
-		return fmt.Errorf("failed to create output directory: %v", err)
+		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 	used := make(map[string]bool)
 	for _, id := range ids {
 		name, err := cli.db.SuggestMatFilename(id)
 		if err != nil {
-			return fmt.Errorf("failed to build filename for match %d: %v", id, err)
+			return fmt.Errorf("failed to build filename for match %d: %w", id, err)
 		}
 		path := filepath.Join(outputDir, name)
 		if used[name] || fileExists(path) {
@@ -207,7 +207,7 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 		}
 		used[name] = true
 		if err := cli.db.ExportMatchMAT(id, path); err != nil {
-			return fmt.Errorf("failed to export match %d: %v", id, err)
+			return fmt.Errorf("failed to export match %d: %w", id, err)
 		}
 		fmt.Printf("Exported match %d -> %s\n", id, path)
 	}
@@ -254,7 +254,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 	// Get all positions
 	positions, err := cli.db.LoadAllPositions()
 	if err != nil {
-		return fmt.Errorf("failed to load positions: %v", err)
+		return fmt.Errorf("failed to load positions: %w", err)
 	}
 
 	// Get metadata
@@ -283,7 +283,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		Password:             marking.password,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to export database: %v", err)
+		return fmt.Errorf("failed to export database: %w", err)
 	}
 
 	// Get file size
@@ -304,7 +304,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 	// Get matches count first
 	matches, err := cli.db.GetAllMatches()
 	if err != nil {
-		return fmt.Errorf("failed to load matches: %v", err)
+		return fmt.Errorf("failed to load matches: %w", err)
 	}
 
 	if len(matches) == 0 {
@@ -324,7 +324,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 	// Get all positions linked to moves in the matches
 	positions, err := cli.db.LoadAllPositions()
 	if err != nil {
-		return fmt.Errorf("failed to load positions: %v", err)
+		return fmt.Errorf("failed to load positions: %w", err)
 	}
 
 	// Export with positions, analysis, comments disabled, but matches enabled
@@ -338,7 +338,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 		IncludeMatches:     true,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to export matches: %v", err)
+		return fmt.Errorf("failed to export matches: %w", err)
 	}
 
 	// Get file size
@@ -359,13 +359,13 @@ func (cli *CLI) exportPositions(outputFile string) error {
 	// Get all positions
 	positions, err := cli.db.LoadAllPositions()
 	if err != nil {
-		return fmt.Errorf("failed to get positions: %v", err)
+		return fmt.Errorf("failed to get positions: %w", err)
 	}
 
 	// Create output file
 	file, err := os.Create(outputFile)
 	if err != nil {
-		return fmt.Errorf("failed to create output file: %v", err)
+		return fmt.Errorf("failed to create output file: %w", err)
 	}
 	defer file.Close()
 

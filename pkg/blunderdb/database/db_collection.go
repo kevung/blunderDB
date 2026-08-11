@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"os"
 )
 
@@ -92,6 +93,7 @@ func (d *Database) GetAllCollections() ([]Collection, error) {
 		var c Collection
 		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt, &c.PositionCount)
 		if err != nil {
+			slog.Warn("scanning collection", "err", err)
 			continue
 		}
 		collections = append(collections, c)
@@ -333,6 +335,7 @@ func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
 	for rows.Next() {
 		var id int64
 		if err := rows.Scan(&id); err != nil {
+			slog.Warn("scanning position id", "err", err)
 			continue
 		}
 		result[id] = index
@@ -370,6 +373,7 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 	for rows.Next() {
 		position, err := scanPositionRow(rows)
 		if err != nil {
+			slog.Warn("scanning collection position", "collectionID", collectionID, "err", err)
 			continue
 		}
 		positions = append(positions, position)
@@ -535,6 +539,7 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 		var c Collection
 		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt)
 		if err != nil {
+			slog.Warn("scanning collection for position", "positionID", positionID, "err", err)
 			continue
 		}
 		collections = append(collections, c)
@@ -564,9 +569,11 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		}
 		for rows.Next() {
 			var posID int64
-			if err := rows.Scan(&posID); err == nil {
-				positionIDsMap[posID] = true
+			if err := rows.Scan(&posID); err != nil {
+				slog.Warn("scanning collection_position id for export", "collectionID", collectionID, "err", err)
+				continue
 			}
+			positionIDsMap[posID] = true
 		}
 		if err := rows.Err(); err != nil {
 			return err
@@ -785,6 +792,7 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	for _, posID := range positionIDs {
 		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
+			slog.Warn("loading position for collection export", "positionID", posID, "err", err)
 			continue
 		}
 
@@ -793,6 +801,7 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 			`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
 			fullPositionJSON(pos), pos.IndividuallyImported)
 		if err != nil {
+			slog.Warn("inserting position into collection export database", "positionID", posID, "err", err)
 			continue
 		}
 		newID, err := result.LastInsertId()
@@ -831,12 +840,14 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
 			Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
 		if err != nil {
+			slog.Warn("reading collection for export", "collectionID", collectionID, "err", err)
 			continue
 		}
 
 		result, err := exportDB.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
 			name, description, sortOrder, createdAt, updatedAt)
 		if err != nil {
+			slog.Warn("inserting collection into export database", "collectionID", collectionID, "err", err)
 			continue
 		}
 		newCollectionID, err := result.LastInsertId()
@@ -848,6 +859,7 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		// Export collection_position mappings
 		rows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
 		if err != nil {
+			slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", err)
 			continue
 		}
 		for rows.Next() {
@@ -855,6 +867,7 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 			var sortOrder int
 			var addedAt string
 			if err := rows.Scan(&oldPosID, &sortOrder, &addedAt); err != nil {
+				slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", err)
 				continue
 			}
 			if newPosID, ok := oldToNewID[oldPosID]; ok {

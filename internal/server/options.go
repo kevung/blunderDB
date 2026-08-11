@@ -43,6 +43,16 @@ type Options struct {
 	// defaultReadHeaderTimeout.
 	ReadHeaderTimeout time.Duration
 
+	// IdleTimeout bounds how long a keep-alive connection may sit idle between
+	// requests before the server closes it. Defaults to defaultIdleTimeout.
+	// Deliberately the only whole-connection timeout set: Read/WriteTimeout
+	// stay unset because they would bound an in-flight request's total
+	// duration, and imports/NDJSON list-style routes legitimately stream for
+	// longer than any fixed request timeout would allow (see streamSeq2 /
+	// handlers_imports.go). IdleTimeout only ever fires between requests, so
+	// it cannot cut a stream short.
+	IdleTimeout time.Duration
+
 	// ShutdownTimeout bounds graceful shutdown. Defaults to
 	// defaultShutdownTimeout.
 	ShutdownTimeout time.Duration
@@ -66,6 +76,7 @@ const (
 	defaultMaxBodyBytes       = 32 << 20  // 32 MiB; import endpoints raise this.
 	defaultImportMaxBodyBytes = 512 << 20 // 512 MiB for uploaded match files.
 	defaultReadHeaderTimeout  = 10 * time.Second
+	defaultIdleTimeout        = 120 * time.Second
 	defaultShutdownTimeout    = 15 * time.Second
 )
 
@@ -87,6 +98,9 @@ func (o *Options) applyDefaults() {
 	}
 	if o.ReadHeaderTimeout == 0 {
 		o.ReadHeaderTimeout = defaultReadHeaderTimeout
+	}
+	if o.IdleTimeout == 0 {
+		o.IdleTimeout = defaultIdleTimeout
 	}
 	if o.ShutdownTimeout == 0 {
 		o.ShutdownTimeout = defaultShutdownTimeout

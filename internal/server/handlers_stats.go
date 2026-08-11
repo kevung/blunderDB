@@ -32,6 +32,12 @@ type matchBadgesResp struct {
 	Badges map[int64]storage.MatchBadge `json:"badges"`
 }
 
+// tournamentBadgesResp keys each badge by its tournament id (JSON object keys
+// are the stringified ids).
+type tournamentBadgesResp struct {
+	Badges map[int64]storage.TournamentBadge `json:"badges"`
+}
+
 func (s *Server) statsRoutes() []route {
 	ss := func() storage.StatsStore { return s.opts.Storage.Stats() }
 	return []route{
@@ -62,6 +68,10 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchBadges", rpc(func(ctx context.Context, scope string, req matchBadgesReq) (matchBadgesResp, error) {
 			badges, err := ss().MatchBadges(ctx, scope, req.MatchIDs)
 			return matchBadgesResp{Badges: badges}, err
+		})},
+		{http.MethodPost, "/v1/stats.tournamentBadges", rpc(func(ctx context.Context, scope string, _ struct{}) (tournamentBadgesResp, error) {
+			badges, err := ss().TournamentBadges(ctx, scope)
+			return tournamentBadgesResp{Badges: badges}, err
 		})},
 	}
 }

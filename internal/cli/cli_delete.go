@@ -68,7 +68,7 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	// Get match details first
 	match, err := cli.db.GetMatchByID(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match: %v", err)
+		return fmt.Errorf("failed to get match: %w", err)
 	}
 	if match == nil {
 		return fmt.Errorf("match with ID %d not found", matchID)
@@ -97,7 +97,7 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	// Delete the match
 	err = cli.db.DeleteMatch(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to delete match: %v", err)
+		return fmt.Errorf("failed to delete match: %w", err)
 	}
 
 	fmt.Printf("Successfully deleted match ID %d\n", matchID)

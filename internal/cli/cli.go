@@ -22,7 +22,7 @@ func parseIDList(s string) ([]int64, error) {
 		}
 		id, err := strconv.ParseInt(p, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("invalid ID %q: %v", p, err)
+			return nil, fmt.Errorf("invalid ID %q: %w", p, err)
 		}
 		ids = append(ids, id)
 	}
@@ -116,12 +116,19 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  help      Show this help message")
 	fmt.Println("  version   Show version information")
 	fmt.Println()
+	fmt.Println("Headless mode (advanced, optional — see the 'headless' chapter in the docs):")
+	fmt.Println("  serve     Run the HTTP + JSON daemon (SQLite or multi-tenant PostgreSQL)")
+	fmt.Println("  call      Invoke a daemon handler in-process (scripting/tests)")
+	fmt.Println("  migrate   Copy a SQLite database into PostgreSQL under a tenant")
+	fmt.Println()
 	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
 }
 
-// printVersion prints version information
+// printVersion prints the application version and the database schema
+// version it speaks (they change independently: DatabaseVersion only bumps
+// when the SQLite schema changes).
 func (cli *CLI) printVersion() {
-	fmt.Printf("blunderDB version %s\n", DatabaseVersion)
+	fmt.Printf("blunderDB version %s (database schema %s)\n", appVersion, DatabaseVersion)
 }
 
 // initDatabase initializes the database connection
@@ -130,11 +137,11 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	fileExists := true
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		fileExists = false
-		fmt.Printf("Database file does not exist, creating new database: %s\n", dbPath)
+		fmt.Fprintf(os.Stderr, "Database file does not exist, creating new database: %s\n", dbPath)
 		// Ensure directory exists
 		dir := filepath.Dir(dbPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create directory: %v", err)
+			return fmt.Errorf("failed to create directory: %w", err)
 		}
 	}
 
@@ -148,9 +155,9 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to open database: %v", err)
+		return fmt.Errorf("failed to open database: %w", err)
 	}
 
-	fmt.Printf("Connected to database: %s\n", dbPath)
+	fmt.Fprintf(os.Stderr, "Connected to database: %s\n", dbPath)
 	return nil
 }

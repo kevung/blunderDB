@@ -11,44 +11,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
-	d.mu.RLock()         // Lock the mutex
-	defer d.mu.RUnlock() // Unlock the mutex when the function returns
-
-	positionJSON, err := positionIdentityJSON(position)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		existingPosition, err := scanPositionRow(rows)
-		if err != nil {
-			return nil, err
-		}
-		positionID := existingPosition.ID
-
-		existingPositionJSON, err := positionIdentityJSON(existingPosition)
-		if err != nil {
-			return nil, err
-		}
-
-		if positionJSON == existingPositionJSON {
-			return map[string]interface{}{"id": positionID, "exists": true}, nil
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{"id": 0, "exists": false}, nil
-}
-
 // IndividualSaveResult reports what SaveIndividualPosition did: the id the
 // position is stored under, and whether it was already there.
 type IndividualSaveResult struct {

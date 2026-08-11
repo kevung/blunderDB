@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -76,6 +77,7 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 		var t Tournament
 		err := rows.Scan(&t.ID, &t.Name, &t.Date, &t.Location, &t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount, &t.Comment)
 		if err != nil {
+			slog.Warn("scanning tournament", "err", err)
 			continue
 		}
 		tournaments = append(tournaments, t)
@@ -330,6 +332,12 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID, &m.LastVisitedPosition,
 			&m.Comment, &m.TournamentSortOrder)
 		if err != nil {
+			// tournamentID here would be the loop's own (still zero-value,
+			// unscanned) sql.NullInt64, not the tournament this query is
+			// scoped to (the function parameter of the same name) — the log
+			// line only names the query, not that value, to avoid printing a
+			// misleading id.
+			slog.Warn("scanning match for GetTournamentMatches", "err", err)
 			continue
 		}
 		if tournamentID.Valid {
@@ -399,9 +407,11 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		}
 		for rows.Next() {
 			var matchID int64
-			if err := rows.Scan(&matchID); err == nil {
-				matchIDs = append(matchIDs, matchID)
+			if err := rows.Scan(&matchID); err != nil {
+				slog.Warn("scanning match id for tournament export", "tournamentID", tournamentID, "err", err)
+				continue
 			}
+			matchIDs = append(matchIDs, matchID)
 		}
 		if err := rows.Err(); err != nil {
 			return err
@@ -413,19 +423,22 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	positionIDsMap := make(map[int64]bool)
 	for _, matchID := range matchIDs {
 		rows, err := d.db.Query(`
-			SELECT DISTINCT m.position_id 
+			SELECT DISTINCT m.position_id
 			FROM move m
 			JOIN game g ON m.game_id = g.id
 			WHERE g.match_id = ? AND m.position_id IS NOT NULL
 		`, matchID)
 		if err != nil {
+			slog.Warn("querying positions for tournament export", "matchID", matchID, "err", err)
 			continue
 		}
 		for rows.Next() {
 			var posID int64
-			if err := rows.Scan(&posID); err == nil {
-				positionIDsMap[posID] = true
+			if err := rows.Scan(&posID); err != nil {
+				slog.Warn("scanning position id for tournament export", "matchID", matchID, "err", err)
+				continue
 			}
+			positionIDsMap[posID] = true
 		}
 		if err := rows.Err(); err != nil {
 			return err
@@ -599,6 +612,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	for _, posID := range positionIDs {
 		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
+			slog.Warn("loading position for tournament export", "positionID", posID, "err", err)
 			continue
 		}
 
@@ -607,6 +621,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
 			fullPositionJSON(pos), pos.IndividuallyImported)
 		if err != nil {
+			slog.Warn("inserting position into tournament export database", "positionID", posID, "err", err)
 			continue
 		}
 		newID, err := result.LastInsertId()
@@ -645,12 +660,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		err := d.db.QueryRow(`SELECT name, COALESCE(date, ''), COALESCE(location, ''), sort_order, created_at, updated_at FROM tournament WHERE id = ?`, tournamentID).
 			Scan(&name, &date, &location, &sortOrder, &createdAt, &updatedAt)
 		if err != nil {
+			slog.Warn("reading tournament for export", "tournamentID", tournamentID, "err", err)
 			continue
 		}
 
 		result, err := exportDB.Exec(`INSERT INTO tournament (name, date, location, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
 			name, date, location, sortOrder, createdAt, updatedAt)
 		if err != nil {
+			slog.Warn("inserting tournament into export database", "tournamentID", tournamentID, "err", err)
 			continue
 		}
 		newTournamentID, err := result.LastInsertId()
@@ -676,6 +693,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			Scan(&player1Name, &player2Name, &event, &location, &round, &matchLength,
 				&matchDate, &importDate, &filePath, &gameCount, &matchHash, &srcTournamentID)
 		if err != nil {
+			slog.Warn("reading match for tournament export", "matchID", matchID, "err", err)
 			continue
 		}
 
@@ -693,6 +711,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			player1Name, player2Name, event, location, round, matchLength,
 			matchDate, importDate, filePath, gameCount, matchHash, newTournamentID)
 		if err != nil {
+			slog.Warn("inserting match into tournament export database", "matchID", matchID, "err", err)
 			continue
 		}
 		newMatchID, err := result.LastInsertId()
@@ -704,6 +723,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		// Export games
 		gameRows, err := d.db.Query(`SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count FROM game WHERE match_id = ?`, matchID)
 		if err != nil {
+			slog.Warn("querying games for tournament export", "matchID", matchID, "err", err)
 			continue
 		}
 
@@ -712,12 +732,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			var gameID int64
 			var gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount int
 			if err := gameRows.Scan(&gameID, &gameNumber, &initialScore1, &initialScore2, &winner, &pointsWon, &moveCount); err != nil {
+				slog.Warn("scanning game for tournament export", "matchID", matchID, "err", err)
 				continue
 			}
 
 			result, err := exportDB.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count) VALUES (?, ?, ?, ?, ?, ?, ?)`,
 				newMatchID, gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount)
 			if err != nil {
+				slog.Warn("inserting game for tournament export", "matchID", matchID, "err", err)
 				continue
 			}
 			newGameID, err := result.LastInsertId()
@@ -735,6 +757,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		for oldGameID, newGameID := range gameIDMapping {
 			moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action FROM move WHERE game_id = ?`, oldGameID)
 			if err != nil {
+				slog.Warn("querying moves for tournament export", "gameID", oldGameID, "err", err)
 				continue
 			}
 
@@ -744,6 +767,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				var moveType, checkerMove, cubeAction string
 				var oldPosID sql.NullInt64
 				if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
+					slog.Warn("scanning move for tournament export", "gameID", oldGameID, "err", err)
 					continue
 				}
 
@@ -757,6 +781,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 					newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction)
 				if err != nil {
+					slog.Warn("inserting move for tournament export", "moveID", moveID, "err", err)
 					continue
 				}
 				newMoveID, err := result.LastInsertId()
@@ -767,12 +792,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				// Export move_analysis
 				analysisRows, err := d.db.Query(`SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate FROM move_analysis WHERE move_id = ?`, moveID)
 				if err != nil {
+					slog.Warn("querying move analysis for tournament export", "moveID", moveID, "err", err)
 					continue
 				}
 				for analysisRows.Next() {
 					var analysisType, depth string
 					var equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate float64
 					if err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &bgRate, &oppWinRate, &oppGammonRate, &oppBgRate); err != nil {
+						slog.Warn("scanning move analysis for tournament export", "moveID", moveID, "err", err)
 						continue
 					}
 					_, _ = exportDB.Exec(`INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

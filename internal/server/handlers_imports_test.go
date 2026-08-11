@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"mime/multipart"
@@ -10,11 +11,14 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // exportJSON returns the NDJSON export of the server's current state.
@@ -293,6 +297,77 @@ func TestImportCancelUnknownID(t *testing.T) {
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)
+	}
+}
+
+func TestExportSQLiteSuccess(t *testing.T) {
+	ts := newTestServer(t)
+
+	p := domain.InitializePosition()
+	post(t, ts, "/v1/positions.save", positionReq{Position: &p}).Body.Close()
+
+	resp := post(t, ts, "/v1/exports.sqlite", nil)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want 200", resp.StatusCode)
+	}
+	if ct := resp.Header.Get("Content-Type"); ct != "application/octet-stream" {
+		t.Fatalf("content-type = %q, want application/octet-stream", ct)
+	}
+	if cd := resp.Header.Get("Content-Disposition"); !strings.Contains(cd, "blunderdb-export.sqlite") {
+		t.Fatalf("content-disposition = %q, want the .sqlite filename", cd)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.HasPrefix(body, []byte("SQLite format 3")) {
+		t.Fatalf("body does not look like a SQLite file (first bytes: %q)", body[:min(32, len(body))])
+	}
+}
+
+// TestExportSQLiteErrorEnvelope covers the fix for the "200 on export
+// failure" bug: an already-cancelled request context makes
+// ingest.SQLiteExporter.Export fail (it opens its temp SQLite file with the
+// same context), before the handler has written anything to the real
+// ResponseWriter. The response must carry a proper error status and a JSON
+// envelope — not HTTP 200 with Content-Type: application/octet-stream and a
+// stray JSON body wearing a .sqlite Content-Disposition, which is what the
+// handler used to produce.
+func TestExportSQLiteErrorEnvelope(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatalf("sqlite.Open: %v", err)
+	}
+	t.Cleanup(func() { st.Close() })
+
+	srv, err := New(Options{Storage: st, Metrics: metrics.New()})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	req := httptest.NewRequest(http.MethodPost, "/v1/exports.sqlite", nil).WithContext(ctx)
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	rec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(rec, req)
+
+	if rec.Code == http.StatusOK {
+		t.Fatalf("status = %d, want a non-200 error status", rec.Code)
+	}
+	if ct := rec.Header().Get("Content-Type"); !strings.HasPrefix(ct, "application/json") {
+		t.Fatalf("content-type = %q, want application/json", ct)
+	}
+	if cd := rec.Header().Get("Content-Disposition"); cd != "" {
+		t.Fatalf("content-disposition = %q, want empty on error", cd)
+	}
+	var env errorEnvelope
+	if err := json.NewDecoder(rec.Body).Decode(&env); err != nil {
+		t.Fatalf("body not a JSON error envelope: %v (body=%s)", err, rec.Body.String())
+	}
+	if env.Error.Code == "" {
+		t.Fatal("error envelope has an empty code")
 	}
 }
 

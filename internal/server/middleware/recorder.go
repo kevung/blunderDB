@@ -14,7 +14,16 @@ type responseRecorder struct {
 	status      int
 	bytes       int64
 	wroteHeader bool
+	err         error
 }
+
+// SetErr attaches the original error behind a response — a handler masking a
+// storage error as the generic "internal error" body a client sees (so
+// backend internals never leak) calls this first, so Logging can still put
+// the real cause in the server-side log line. A handler type-asserts its
+// http.ResponseWriter to `interface{ SetErr(error) }` to reach it without a
+// cross-package dependency on this concrete type.
+func (r *responseRecorder) SetErr(err error) { r.err = err }
 
 func newResponseRecorder(w http.ResponseWriter) *responseRecorder {
 	return &responseRecorder{ResponseWriter: w, status: http.StatusOK}

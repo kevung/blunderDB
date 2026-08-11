@@ -82,7 +82,7 @@ func (cli *CLI) runEdit(args []string) error {
 	// Save metadata
 	err := cli.db.SaveMetadata(metadata)
 	if err != nil {
-		return fmt.Errorf("failed to save metadata: %v", err)
+		return fmt.Errorf("failed to save metadata: %w", err)
 	}
 
 	fmt.Println("Database metadata updated:")

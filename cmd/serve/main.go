@@ -14,6 +14,14 @@ import (
 	"os"
 
 	"github.com/kevung/blunderdb/internal/server"
+
+	// Blank-imported so its init() registers the legacy SQLite migration
+	// chain with storage/sqlite (see pkg/blunderdb/database/migrate_hook.go).
+	// Without it, storage/sqlite.Storage.Migrate refuses to touch a
+	// non-fresh database that isn't already current — see that comment.
+	// The database package is pure Go (no CGO, no Wails), so this keeps
+	// `serve` a static CGO_ENABLED=0 binary.
+	_ "github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 func main() {

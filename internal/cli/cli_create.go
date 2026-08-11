@@ -61,14 +61,14 @@ func (cli *CLI) runCreate(args []string) error {
 	// Create directory if needed
 	dir := filepath.Dir(*dbPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return fmt.Errorf("failed to create directory: %v", err)
+		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
 	// Create the database
 	fmt.Printf("Creating database: %s\n", *dbPath)
 	err := cli.db.SetupDatabase(*dbPath)
 	if err != nil {
-		return fmt.Errorf("failed to create database: %v", err)
+		return fmt.Errorf("failed to create database: %w", err)
 	}
 
 	// Save metadata if provided
@@ -84,7 +84,7 @@ func (cli *CLI) runCreate(args []string) error {
 	if len(metadata) > 0 {
 		err = cli.db.SaveMetadata(metadata)
 		if err != nil {
-			return fmt.Errorf("failed to save metadata: %v", err)
+			return fmt.Errorf("failed to save metadata: %w", err)
 		}
 	}
 

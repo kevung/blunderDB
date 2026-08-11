@@ -20,6 +20,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -28,6 +29,10 @@ type Storage struct {
 	binder
 	sqlDB  *sql.DB
 	ownsDB bool
+	// migrationProgress is Options.MigrationProgress, captured at Open time
+	// (Migrate's signature is fixed by the storage.Storage interface, so it
+	// cannot take one directly) and forwarded to the registered Migrator.
+	migrationProgress func(phase string, done, total int)
 }
 
 var _ storage.Storage = (*Storage)(nil)
@@ -55,7 +60,11 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 			return nil, err
 		}
 	}
-	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true}, nil
+	var progress func(phase string, done, total int)
+	if opts != nil {
+		progress = opts.MigrationProgress
+	}
+	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true, migrationProgress: progress}, nil
 }
 
 // New wraps an existing *sql.DB handle. The returned Storage does not own the
@@ -168,8 +177,12 @@ func (s *Storage) Version(ctx context.Context) (string, error) {
 // Migrate brings the database up to the current schema version. A fresh
 // database is bootstrapped to the current schema; a pre-existing database is
 // upgraded in place through the registered legacy migration chain (P2 PR6).
-// When no migrator is registered (pure-library consumer importing only this
-// package) a non-fresh database is left untouched — assumed already current.
+// When no migrator is registered, a non-fresh database can only be opened if
+// it is already current: Migrate compares its recorded version against
+// domain.DatabaseVersion and errors out rather than silently leaving an older
+// database un-migrated (a pure-library consumer that never imports package
+// database, such as cmd/serve without the blank import, must not pretend to
+// have upgraded a database it cannot actually migrate).
 func (s *Storage) Migrate(ctx context.Context) error {
 	fresh, err := isFreshDB(ctx, s.sqlDB)
 	if err != nil {
@@ -179,7 +192,14 @@ func (s *Storage) Migrate(ctx context.Context) error {
 		return Bootstrap(ctx, s.sqlDB)
 	}
 	if registeredMigrator != nil {
-		return registeredMigrator(ctx, s.sqlDB)
+		return registeredMigrator(ctx, s.sqlDB, s.migrationProgress)
+	}
+	version, err := s.Metadata().Version(ctx, "")
+	if err != nil {
+		return fmt.Errorf("sqlite: read schema version of non-fresh database: %w", err)
+	}
+	if version != domain.DatabaseVersion {
+		return fmt.Errorf("sqlite: database is at schema version %q, need %q, and no migrator is registered (blank-import package database, e.g. `_ \"github.com/kevung/blunderdb/pkg/blunderdb/database\"`, to enable migrating older databases)", version, domain.DatabaseVersion)
 	}
 	return nil
 }

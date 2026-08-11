@@ -101,7 +101,7 @@ func (cli *CLI) runList(args []string) error {
 		if *statsTournament != "" {
 			ids, err := parseIDList(*statsTournament)
 			if err != nil {
-				return fmt.Errorf("invalid --tournament: %v", err)
+				return fmt.Errorf("invalid --tournament: %w", err)
 			}
 			filter.TournamentIDs = ids
 		}
@@ -115,7 +115,7 @@ func (cli *CLI) runList(args []string) error {
 func (cli *CLI) listMatches(limit int) error {
 	matches, err := cli.db.GetAllMatches()
 	if err != nil {
-		return fmt.Errorf("failed to get matches: %v", err)
+		return fmt.Errorf("failed to get matches: %w", err)
 	}
 
 	if len(matches) == 0 {
@@ -160,7 +160,7 @@ func (cli *CLI) listMatches(limit int) error {
 func (cli *CLI) listTournaments(limit int) error {
 	tournaments, err := cli.db.GetAllTournaments()
 	if err != nil {
-		return fmt.Errorf("failed to get tournaments: %v", err)
+		return fmt.Errorf("failed to get tournaments: %w", err)
 	}
 
 	if len(tournaments) == 0 {
@@ -200,7 +200,7 @@ func (cli *CLI) listTournaments(limit int) error {
 func (cli *CLI) listPositions(limit int) error {
 	positions, err := cli.db.LoadAllPositions()
 	if err != nil {
-		return fmt.Errorf("failed to get positions: %v", err)
+		return fmt.Errorf("failed to get positions: %w", err)
 	}
 
 	if len(positions) == 0 {
@@ -244,13 +244,13 @@ func (cli *CLI) listPositions(limit int) error {
 func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) error {
 	result, err := cli.db.ComputeStats(filter)
 	if err != nil {
-		return fmt.Errorf("failed to compute stats: %v", err)
+		return fmt.Errorf("failed to compute stats: %w", err)
 	}
 
 	if strings.ToLower(format) == "json" {
 		data, err := json.MarshalIndent(result, "", "  ")
 		if err != nil {
-			return fmt.Errorf("marshal stats: %v", err)
+			return fmt.Errorf("marshal stats: %w", err)
 		}
 		fmt.Println(string(data))
 		return nil

@@ -48,6 +48,19 @@ type matchIDReq struct {
 	MatchID int64 `json:"matchId"`
 }
 
+// findByHashReq carries the two duplicate-detection hashes MatchStore.Save
+// writes when non-empty (see domain.Match.MatchHash/CanonicalHash).
+type findByHashReq struct {
+	Hash          string `json:"hash"`
+	CanonicalHash string `json:"canonicalHash"`
+}
+
+// findByHashResp mirrors MatchStore.FindByHash's (id, found) result.
+type findByHashResp struct {
+	ID    int64 `json:"id"`
+	Found bool  `json:"found"`
+}
+
 // matchListReq mirrors storage.MatchListOpts over the wire. An all-zero body
 // streams every match, most recent first.
 type matchListReq struct {
@@ -74,6 +87,10 @@ func (s *Server) matchRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/matches.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Match, error) {
 			return ms().Get(ctx, scope, req.ID)
+		})},
+		{http.MethodPost, "/v1/matches.findByHash", rpc(func(ctx context.Context, scope string, req findByHashReq) (findByHashResp, error) {
+			id, found, err := ms().FindByHash(ctx, scope, req.Hash, req.CanonicalHash)
+			return findByHashResp{ID: id, Found: found}, err
 		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
 			return ms().List(ctx, scope, storage.MatchListOpts{
