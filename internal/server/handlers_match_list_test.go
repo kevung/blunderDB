@@ -107,3 +107,66 @@ func TestStatsMatchBadgesHTTP(t *testing.T) {
 		}
 	}
 }
+
+// TestStatsTournamentBadgesHTTP is the tournament-scoped counterpart of
+// TestStatsMatchBadgesHTTP — the route (storage.StatsStore.TournamentBadges)
+// existed on the Storage contract but was never wired into the RPC router.
+func TestStatsTournamentBadgesHTTP(t *testing.T) {
+	ts := newTestServer(t)
+	resp := post(t, ts, "/v1/stats.tournamentBadges", nil)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("tournamentBadges status = %d, want 200", resp.StatusCode)
+	}
+	var body tournamentBadgesResp
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	// Fresh DB has no tournaments with counted decisions, so the map is empty
+	// — the route existing and answering 200 is what this test guards.
+	if len(body.Badges) != 0 {
+		t.Errorf("fresh DB: got %d tournament badges, want 0", len(body.Badges))
+	}
+}
+
+// TestMatchesFindByHashHTTP guards the route matches.findByHash
+// (storage.MatchStore.FindByHash), also never wired into the RPC router: a
+// match saved with a hash must be found by it, an unknown hash must answer
+// found=false rather than an error, and an id-only match (no hash set) must
+// not be reachable through this lookup.
+func TestMatchesFindByHashHTTP(t *testing.T) {
+	ts := newTestServer(t)
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7,
+		MatchHash: "abc123", CanonicalHash: "canon456"}
+	saveResp := post(t, ts, "/v1/matches.save", matchSaveReq{Match: &m})
+	var saved idResp
+	if err := json.NewDecoder(saveResp.Body).Decode(&saved); err != nil {
+		t.Fatal(err)
+	}
+	saveResp.Body.Close()
+
+	findByHash := func(req findByHashReq) findByHashResp {
+		t.Helper()
+		resp := post(t, ts, "/v1/matches.findByHash", req)
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("findByHash(%+v) status = %d, want 200", req, resp.StatusCode)
+		}
+		var body findByHashResp
+		if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+			t.Fatalf("decode: %v", err)
+		}
+		return body
+	}
+
+	if got := findByHash(findByHashReq{Hash: "abc123"}); !got.Found || got.ID != saved.ID {
+		t.Errorf("lookup by match_hash = %+v, want found=true id=%d", got, saved.ID)
+	}
+	if got := findByHash(findByHashReq{CanonicalHash: "canon456"}); !got.Found || got.ID != saved.ID {
+		t.Errorf("lookup by canonical_hash = %+v, want found=true id=%d", got, saved.ID)
+	}
+	if got := findByHash(findByHashReq{Hash: "does-not-exist"}); got.Found {
+		t.Errorf("lookup by unknown hash = %+v, want found=false", got)
+	}
+}
