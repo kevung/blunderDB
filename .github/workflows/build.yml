@@ -16,6 +16,20 @@ on:
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 
+# One in-flight run per branch/tag: a burst of 3 commits collapses to the
+# latest instead of running 3 full matrices. Only pull_request runs cancel a
+# stale in-progress run when superseded — push runs on main/tags always run
+# to completion (a merge shouldn't cancel the build the previous merge
+# started, and a tag build must never be cancelled by the next one).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Default to read-only; jobs that publish (release assets, GitHub Pages)
+# elevate locally with their own `permissions:` block.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -41,7 +55,58 @@ jobs:
         shell: bash
 
       - name: Run Go tests
-        run: go test -timeout 1200s -race -count=1 ./...
+        run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic ./...
+        shell: bash
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f coverage.out ]; then
+            echo '### Go coverage' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            go tool cover -func=coverage.out | tail -1 >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+        shell: bash
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-coverage
+          path: coverage.out
+          if-no-files-found: ignore
+
+  # Runs the shared storage contract, RLS and SQLite→PostgreSQL migration
+  # tests against a real PostgreSQL via testcontainers-go. These live behind
+  # the `postgres` build tag (see postgres_test.go) because they need Docker;
+  # BLUNDERDB_REQUIRE_PG=1 turns the tests' "Docker unavailable" skip into a
+  # hard failure so a broken runner can't silently skip the whole suite.
+  test-postgres:
+    runs-on: ubuntu-latest
+    env:
+      BLUNDERDB_REQUIRE_PG: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version: 1.25.12
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Run PostgreSQL storage + migration tests
+        run: |
+          go test -tags postgres -timeout 1200s \
+            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/...
         shell: bash
 
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
@@ -119,8 +184,14 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
 
+  # Benchmarks only run on push (main branch or a version tag), never on
+  # pull_request: they take minutes and aren't compared against a baseline,
+  # so they add latency to every PR for no signal. -run '^$' skips the
+  # regular test suite (already covered by the `test` job above); -count=1
+  # keeps a single push run fast instead of the previous -count=3.
   benchmark:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -139,7 +210,7 @@ jobs:
         shell: bash
 
       - name: Run benchmarks
-        run: go test -bench=. -benchmem -count=3 -timeout=10m ./... 2>&1 | tee bench.txt
+        run: go test -bench=. -benchmem -run '^$' -count=1 -timeout=10m ./... 2>&1 | tee bench.txt
         shell: bash
 
       - name: Upload benchmark results
@@ -222,6 +293,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-22.04]
 
     runs-on: ${{ matrix.os }}
+    # softprops/action-gh-release below (tag pushes only) needs contents:write
+    # to attach binaries to the release; PR/branch runs never reach that step
+    # but keep the same job-level permission for simplicity.
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -422,6 +498,10 @@ jobs:
   # PDFs. Only the deploy needs serializing — see the `pages` job below.
   docs:
     runs-on: ubuntu-latest
+    # softprops/action-gh-release below (tag pushes only) needs contents:write
+    # to attach the PDFs to the release.
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -493,6 +573,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: docs
     if: github.event_name == 'push'
+    # peaceiris/actions-gh-pages pushes the built site to the gh-pages branch
+    # using github_token below — needs contents:write.
+    permissions:
+      contents: write
     # Serialize Pages deploys so bursts of merges (or a merge racing a tag
     # push) queue instead of colliding on the gh-pages branch. cancel-in-progress
     # stays false: every push should publish, none should be dropped. A deploy
