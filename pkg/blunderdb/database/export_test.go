@@ -4,12 +4,27 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	_ "modernc.org/sqlite"
 )
+
+// captureSlog redirects the package-level slog default to a buffer for the
+// duration of the test (restored via t.Cleanup), so a test can assert on
+// what a function logged via the bare slog.Warn/Info/... package funcs
+// (as opposed to an injected *slog.Logger).
+func captureSlog(t *testing.T) *strings.Builder {
+	t.Helper()
+	var buf strings.Builder
+	old := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&buf, nil)))
+	t.Cleanup(func() { slog.SetDefault(old) })
+	return &buf
+}
 
 // setupExportTestDB creates a source database populated with test data:
 // - 2 positions with analysis (including played moves), comments
@@ -655,6 +670,50 @@ func TestExport_NoTournaments(t *testing.T) {
 
 	if n := countRows(t, edb, "tournament"); n != 0 {
 		t.Errorf("expected 0 tournaments when no IDs provided, got %d", n)
+	}
+}
+
+// TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted covers the
+// "silently ignored scan" fix: a stale collection or tournament id (deleted
+// between the caller listing it and the export running, say) used to just
+// vanish from the export with no trace anywhere. ExportDatabase now logs a
+// slog.Warn for each skipped row and a final aggregate "skipped" count — not
+// threaded through the return value (this function already has 40+
+// early-return error paths and three external CLI callers; see the comment
+// on the `skipped` local in db_export.go), but a real, discoverable signal
+// instead of nothing. The export itself must still succeed: an unknown id is
+// exactly the kind of single-row problem that must not fail the whole run.
+func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) {
+	db, dir, cleanup := setupExportTestDB(t)
+	defer cleanup()
+
+	logs := captureSlog(t)
+
+	exportPath := filepath.Join(dir, "export.db")
+	positions := allPositions(t, db)
+	err := db.ExportDatabase(ExportOptions{
+		ExportPath:         exportPath,
+		Positions:          positions,
+		IncludeCollections: true,
+		CollectionIDs:      []int64{999999},
+		TournamentIDs:      []int64{999999},
+	})
+	if err != nil {
+		t.Fatalf("ExportDatabase with an unknown collection/tournament id should still succeed: %v", err)
+	}
+
+	out := logs.String()
+	if !strings.Contains(out, "reading collection") {
+		t.Errorf("log missing the skipped-collection warning:\n%s", out)
+	}
+	if !strings.Contains(out, "reading tournament") {
+		t.Errorf("log missing the skipped-tournament warning:\n%s", out)
+	}
+	if !strings.Contains(out, "export completed with some rows skipped") {
+		t.Errorf("log missing the aggregate skipped-count summary:\n%s", out)
+	}
+	if !strings.Contains(out, "skipped=2") {
+		t.Errorf("aggregate summary does not report skipped=2:\n%s", out)
 	}
 }
 

@@ -22,6 +22,15 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
+	// skipped counts every row silently dropped below (a scan/insert failure
+	// that only aborts that one row, not the whole export — see the
+	// individual slog.Warn calls for what and why). Not threaded through the
+	// return value: ExportDatabase already has 40+ early-return error paths
+	// and three external callers (CLI); a final aggregate warning is a much
+	// smaller, equally discoverable surface for something that is, by
+	// definition, not fatal to the export.
+	skipped := 0
+
 	// Check that the current database is open
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
@@ -450,12 +459,14 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		result, err := insertPosition.Exec(positionJSON, position.IndividuallyImported)
 		if err != nil {
 			slog.Warn("inserting position into export database", "positionID", oldPositionID, "err", err)
+			skipped++
 			continue
 		}
 
 		newPositionID, err := result.LastInsertId()
 		if err != nil {
 			slog.Warn("getting last insert ID for position", "positionID", oldPositionID, "err", err)
+			skipped++
 			continue
 		}
 
@@ -582,17 +593,22 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 	// Export filter library if includeFilterLibrary is true
 	if opts.IncludeFilterLibrary {
 		rows, err := d.db.Query(`SELECT name, command, COALESCE(edit_position, '') FROM filter_library`)
-		if err == nil {
+		if err != nil {
+			slog.Warn("querying filter library for export", "err", err)
+			skipped++
+		} else {
 			defer rows.Close()
 
 			for rows.Next() {
 				var name, command, editPosition string
-				err := rows.Scan(&name, &command, &editPosition)
-				if err == nil {
-					_, err = exportDB.Exec(`INSERT INTO filter_library (name, command, edit_position) VALUES (?, ?, ?)`, name, command, editPosition)
-					if err != nil {
-						slog.Warn("inserting filter library entry", "name", name, "err", err)
-					}
+				if err := rows.Scan(&name, &command, &editPosition); err != nil {
+					slog.Warn("scanning filter library entry", "err", err)
+					skipped++
+					continue
+				}
+				if _, err := exportDB.Exec(`INSERT INTO filter_library (name, command, edit_position) VALUES (?, ?, ?)`, name, command, editPosition); err != nil {
+					slog.Warn("inserting filter library entry", "name", name, "err", err)
+					skipped++
 				}
 			}
 			if err := rows.Err(); err != nil {
@@ -633,7 +649,10 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				FROM match
 			`)
 		}
-		if err == nil {
+		if err != nil {
+			slog.Warn("querying matches for export", "err", err)
+			skipped++
+		} else {
 			defer matchRows.Close()
 
 			for matchRows.Next() {
@@ -649,6 +668,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					&matchLength, &matchDate, &importDate, &filePath, &gameCountVal, &matchHash, &tournamentID)
 				if err != nil {
 					slog.Warn("scanning match", "err", err)
+					skipped++
 					continue
 				}
 
@@ -671,12 +691,14 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				}
 				if err != nil {
 					slog.Warn("inserting match", "err", err)
+					skipped++
 					continue
 				}
 
 				newMatchID, err := result.LastInsertId()
 				if err != nil {
 					slog.Warn("getting new match ID", "err", err)
+					skipped++
 					continue
 				}
 				matchIDMapping[oldMatchID] = newMatchID
@@ -697,6 +719,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				`, oldMatchID)
 				if err != nil {
 					slog.Warn("querying games for match", "matchID", oldMatchID, "err", err)
+					skipped++
 					continue
 				}
 
@@ -708,6 +731,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					err := gameRows.Scan(&oldGameID, &gameNumber, &score1, &score2, &winner, &pointsWon, &moveCountVal)
 					if err != nil {
 						slog.Warn("scanning game", "err", err)
+						skipped++
 						continue
 					}
 
@@ -717,12 +741,14 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					`, newMatchID, gameNumber, score1, score2, winner, pointsWon, moveCountVal)
 					if err != nil {
 						slog.Warn("inserting game", "err", err)
+						skipped++
 						continue
 					}
 
 					newGameID, err := result.LastInsertId()
 					if err != nil {
 						slog.Warn("getting new game ID", "err", err)
+						skipped++
 						continue
 					}
 					gameIDMapping[oldGameID] = newGameID
@@ -745,6 +771,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				`, oldGameID)
 				if err != nil {
 					slog.Warn("querying moves for game", "gameID", oldGameID, "err", err)
+					skipped++
 					continue
 				}
 
@@ -757,6 +784,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction)
 					if err != nil {
 						slog.Warn("scanning move", "err", err)
+						skipped++
 						continue
 					}
 
@@ -788,12 +816,14 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					}
 					if err != nil {
 						slog.Warn("inserting move", "err", err)
+						skipped++
 						continue
 					}
 
 					newMoveID, err := result.LastInsertId()
 					if err != nil {
 						slog.Warn("getting new move ID", "err", err)
+						skipped++
 						continue
 					}
 					moveIDMapping[oldMoveID] = newMoveID
@@ -814,6 +844,8 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					WHERE move_id = ?
 				`, oldMoveID)
 				if err != nil {
+					slog.Warn("querying move analysis for move", "moveID", oldMoveID, "err", err)
+					skipped++
 					continue
 				}
 
@@ -825,6 +857,8 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &backgammonRate,
 						&oppWinRate, &oppGammonRate, &oppBackgammonRate)
 					if err != nil {
+						slog.Warn("scanning move analysis", "moveID", oldMoveID, "err", err)
+						skipped++
 						continue
 					}
 
@@ -836,6 +870,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 						oppWinRate, oppGammonRate, oppBackgammonRate)
 					if err != nil {
 						slog.Warn("inserting move analysis", "err", err)
+						skipped++
 						continue
 					}
 					moveAnalysisCount++
@@ -863,6 +898,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
 			if err != nil {
 				slog.Warn("reading collection", "collectionID", collectionID, "err", err)
+				skipped++
 				continue
 			}
 
@@ -870,6 +906,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				name, description, sortOrder, createdAt, updatedAt)
 			if err != nil {
 				slog.Warn("inserting collection", "collectionID", collectionID, "err", err)
+				skipped++
 				continue
 			}
 			newCollectionID, err := result.LastInsertId()
@@ -882,6 +919,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			cpRows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
 			if err != nil {
 				slog.Warn("querying collection_position", "collectionID", collectionID, "err", err)
+				skipped++
 				continue
 			}
 			for cpRows.Next() {
@@ -889,6 +927,8 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				var cpSortOrder int
 				var addedAt string
 				if err := cpRows.Scan(&oldPosID, &cpSortOrder, &addedAt); err != nil {
+					slog.Warn("scanning collection_position", "collectionID", collectionID, "err", err)
+					skipped++
 					continue
 				}
 				if newPosID, ok := idMapping[oldPosID]; ok {
@@ -920,6 +960,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				Scan(&name, &date, &location, &sortOrder, &createdAt, &updatedAt)
 			if err != nil {
 				slog.Warn("reading tournament", "tournamentID", tournamentID, "err", err)
+				skipped++
 				continue
 			}
 
@@ -927,6 +968,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 				name, date, location, sortOrder, createdAt, updatedAt)
 			if err != nil {
 				slog.Warn("inserting tournament", "tournamentID", tournamentID, "err", err)
+				skipped++
 				continue
 			}
 			newTournamentID, err := result.LastInsertId()
@@ -940,16 +982,22 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		// Update tournament_id on exported matches that belong to exported tournaments
 		if opts.IncludeMatches && len(matchIDMapping) > 0 {
 			matchTournamentRows, mterr := d.db.Query(`SELECT id, tournament_id FROM match WHERE tournament_id IS NOT NULL`)
-			if mterr == nil {
+			if mterr != nil {
+				slog.Warn("querying match/tournament links", "err", mterr)
+				skipped++
+			} else {
 				for matchTournamentRows.Next() {
 					var oldMatchID int64
 					var oldTournamentID int64
-					if err := matchTournamentRows.Scan(&oldMatchID, &oldTournamentID); err == nil {
-						newMatchID, matchExported := matchIDMapping[oldMatchID]
-						newTournamentID, tournamentExported := tournamentIDMapping[oldTournamentID]
-						if matchExported && tournamentExported {
-							_, _ = exportDB.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, newTournamentID, newMatchID)
-						}
+					if err := matchTournamentRows.Scan(&oldMatchID, &oldTournamentID); err != nil {
+						slog.Warn("scanning match/tournament link", "err", err)
+						skipped++
+						continue
+					}
+					newMatchID, matchExported := matchIDMapping[oldMatchID]
+					newTournamentID, tournamentExported := tournamentIDMapping[oldTournamentID]
+					if matchExported && tournamentExported {
+						_, _ = exportDB.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, newTournamentID, newMatchID)
 					}
 				}
 				if err := matchTournamentRows.Err(); err != nil {
@@ -984,6 +1032,9 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			return err
 		}
 		slog.Info("protected the exported database", "path", finalPath)
+	}
+	if skipped > 0 {
+		slog.Warn("export completed with some rows skipped", "skipped", skipped, "path", finalPath)
 	}
 	return nil
 }
