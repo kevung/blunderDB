@@ -6,8 +6,6 @@ A backgammon blunder analysis tool. Desktop app (GUI + CLI) for importing, stori
 [![Documentation](https://img.shields.io/badge/docs-passing-brightgreen.svg)](https://kevung.github.io/blunderDB/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-![blunderDB screenshot](doc/source/_static/screenshot.png)
-
 ## Features
 
 - **Import matches** from eXtreme Gammon (`.xg`/`.xgp`), GnuBG (`.sgf`), BGBlitz (`.bgf`), and Jellyfish (`.mat`)
@@ -15,7 +13,7 @@ A backgammon blunder analysis tool. Desktop app (GUI + CLI) for importing, stori
 - **Spaced repetition** (FSRS/Anki-style) flash cards for position review
 - **EPC calculator** with embedded GnuBG one-sided bearoff database
 - **Collections and tournaments** for organising positions
-- **Match Equity Tables** display (Kazaross, Rockwell, …)
+- **Match Equity Table** display (Kazaross-XG2)
 - **CLI** for scripted import, export, search, and analysis workflows
 - **Cross-platform:** Linux, macOS, Windows
 
@@ -27,7 +25,7 @@ Grab a pre-built binary from [GitHub Releases](https://github.com/kevung/blunder
 
 ### Build from source
 
-Prerequisites: Go 1.23+, Node.js 23+, [Wails v2](https://wails.io/).
+Prerequisites: Go 1.25+, Node.js 23+, [Wails v2](https://wails.io/).
 
 ```bash
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -57,9 +55,9 @@ Open or create a `.db` file, then import match files via the toolbar or drag-and
 ### CLI
 
 ```bash
-./blunderDB import --db my.db --type match --file game.xg   # import a match
-./blunderDB search --db my.db --error ">0.05"                # search by error
-./blunderDB list   --db my.db --type stats                   # show statistics
+./blunderDB import --db my.db --type match --file game.xg     # import a match
+./blunderDB search --db my.db --error-min 0.05                # search by error
+./blunderDB list   --db my.db --type stats                    # show statistics
 ./blunderDB export --db my.db --type positions --file out.txt # export positions
 ```
 
@@ -72,7 +70,7 @@ See [CLI_USAGE.md](CLI_USAGE.md) for the full command reference.
 | Backend | Go · pure-Go SQLite ([modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite)) |
 | Frontend | Svelte 5 · Vite · two.js (board rendering) |
 | Framework | [Wails v2](https://wails.io/) (Go ↔ WebView bridge) |
-| Docs | Sphinx (French + English) |
+| Docs | Sphinx, 9 languages (French source + 8 gettext translations) |
 
 ## Documentation
 
