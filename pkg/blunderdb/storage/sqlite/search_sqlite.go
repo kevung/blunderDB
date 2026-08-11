@@ -294,12 +294,25 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 	}
 
+	// a.data is the zlib-compressed analysis blob (~600 bytes/row on the tournois
+	// fixture) and is the only column here needAnalysis gates: every other
+	// selected analysis column is a cheap denormalised scalar used by the SQL
+	// WHERE clause itself. A search that needs none of the Go-side
+	// analysis-dependent filters (move pattern, mirror, date, move-error,
+	// equity — see needAnalysis above) has no use for the blob, so skip
+	// fetching and transporting it: NULL is 1 byte on the wire instead of ~600,
+	// for every row, sorted or not.
+	analysisDataCol := "NULL"
+	if needAnalysis {
+		analysisDataCol = "a.data"
+	}
+
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
 		p.individually_imported, p.flagged,
-		a.id, a.data,
+		a.id, ` + analysisDataCol + ` AS data,
 		a.cube_error, a.best_move_equity_error,
 		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
 		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
