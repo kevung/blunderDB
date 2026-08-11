@@ -4924,6 +4924,16 @@ Rinomina la vista.
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
+\begin{sphinxadmonition}{note}{Nota:}
+\sphinxAtStartPar
+Le sens de MAJ\sphinxhyphen{}J / MAJ\sphinxhyphen{}K est inversé par rapport à j / k : \sphinxstyleemphasis{j} avance
+(position suivante) et \sphinxstyleemphasis{k} recule (position précédente), alors que
+\sphinxstyleemphasis{MAJ\sphinxhyphen{}J} revient à la vue précédente et \sphinxstyleemphasis{MAJ\sphinxhyphen{}K} passe à la vue suivante.
+C’est voulu (pas un raccourci à corriger) — MAJ\sphinxhyphen{}J/MAJ\sphinxhyphen{}K suivent la
+convention CTRL\sphinxhyphen{}PageUp/CTRL\sphinxhyphen{}PageDown à laquelle ils sont associés, pas
+celle de j/k.
+\end{sphinxadmonition}
+
 
 \subsection{Riga di comando}
 \label{\detokenize{raccourcis:ligne-de-commande}}\label{\detokenize{raccourcis:raccourcis-command}}
@@ -5325,6 +5335,17 @@ Valuta: Facile.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+p
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Afficher/cacher le compte de course (identique au raccourci général, disponible pendant la révision).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 Esc
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5338,6 +5359,165 @@ Interrompi la revisione e torna all’elenco dei mazzi (ripresa possibile).
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
+
+
+\subsection{Panneau des tournois}
+\label{\detokenize{raccourcis:panneau-des-tournois}}\label{\detokenize{raccourcis:raccourcis-tournament-panel}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Scorciatoia
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Azione
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Clic, Double\sphinxhyphen{}clic
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Sélectionner un tournoi (afficher son détail).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+SU, k
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Sélectionner le tournoi précédent.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+GIÙ, j
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Sélectionner le tournoi suivant.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Double\sphinxhyphen{}clic (sur un match du tournoi)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Naviga nel match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Esc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Annuler l’édition en cours, sinon effacer la recherche d’ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Panneau des collections}
+\label{\detokenize{raccourcis:panneau-des-collections}}\label{\detokenize{raccourcis:raccourcis-collection-panel}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Scorciatoia
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Azione
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Clic
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Ajouter/retirer la position courante de la collection survolée.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Doppio clic
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Ouvrir la collection.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Canc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Retirer la position courante (ou les positions cochées) de la collection ouverte.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Esc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Nota:}
+\sphinxAtStartPar
+Ce panneau ne capture pas les raccourcis de navigation :
+PageUp/h, GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de
+la collection ouverte exactement comme décrit dans
+{\hyperref[\detokenize{raccourcis:raccourcis-navigation}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Navigazione}}}}}.
+\end{sphinxadmonition}
 
 \sphinxstepscope
 

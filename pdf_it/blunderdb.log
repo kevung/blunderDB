@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:17
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1129,92 +1129,92 @@ Underfull \hbox (badness 10000) in paragraph at lines 4890--4892
 []\TU/FreeSerif(0)/m/n/10 CTRL-PageDown,
  []
 
-[41] [42] [43] [44] [45] [46] [47] [48] [49]
+[41] [42] [43] [44] [45] [46] [47] [48] [49] [50]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6199.
- [50] [51] [52] [53]
+(Font)              scaled to size 8.99994pt on input line 6379.
+ [51] [52] [53]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6469.
-
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6553--6555
+(Font)              scaled to size 10.79993pt on input line 6649.
+ [54]
+Overfull \hbox (11.423pt too wide) in paragraph at lines 6733--6735
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6556
+Overfull \hbox (11.423pt too wide) detected at line 6736
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6612--6614
+Underfull \hbox (badness 10000) in paragraph at lines 6792--6794
 [][][]\TU/FreeMono(0)/m/n/10 cors[]allow[]origin
  []
 
-[54]
-Underfull \hbox (badness 10000) in paragraph at lines 6744--6746
+[55]
+Underfull \hbox (badness 10000) in paragraph at lines 6924--6926
 []\TU/FreeSerif(0)/m/n/10 L’immagine ascolta sulla porta 8080 e si configura tr
 amite variabili d’ambiente (\TU/FreeMono(0)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSer
 if(0)/m/n/10 ,
  []
 
-[55] [56]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 6981--6983
+[56]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7161--7163
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 6984
+Overfull \hbox (1.06567pt too wide) detected at line 7164
 []\TU/FreeMono(0)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[57]
-Underfull \hbox (badness 6412) in paragraph at lines 7266--7268
+[57] [58]
+Underfull \hbox (badness 6412) in paragraph at lines 7446--7448
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) detected at line 7269
+Underfull \hbox (badness 6412) detected at line 7449
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7282--7284
+Underfull \hbox (badness 6412) in paragraph at lines 7462--7464
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7298--7300
+Underfull \hbox (badness 10000) in paragraph at lines 7478--7480
 []\TU/FreeSerif(0)/m/n/10 punti fatti nella casa,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7309--7311
+Underfull \hbox (badness 10000) in paragraph at lines 7489--7491
 []\TU/FreeSerif(0)/m/n/10 Errori del giocatore 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7323--7325
+Underfull \hbox (badness 10000) in paragraph at lines 7503--7505
 []\TU/FreeSerif(0)/m/n/10 Posizione del torneo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7388--7390
+Underfull \hbox (badness 10000) in paragraph at lines 7568--7570
 []\TU/FreeSerif(0)/m/n/10 ace point dell’avversario
  []
 
 
-Underfull \hbox (badness 6412) in paragraph at lines 7404--7406
+Underfull \hbox (badness 6412) in paragraph at lines 7584--7586
 []\TU/FreeSerif(0)/m/n/10 dadi vuoti dal lato del
  []
 
-[58] [59]
+[59] [60]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [60] [61]
+ [61] [62]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1223,19 +1223,19 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [62] [63] [64] [65]
+ [63] [64] [65] [66]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [66] [67] [68] [69] [70] [71] [72]
-[73] [74
-
-]
+ [67] [68] [69] [70] [71] [72] [73]
+[74]
 Capitolo 3.
-[75] [76
+[75
+
+] [76
 
 ]
 Capitolo 4.
@@ -1249,13 +1249,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 3B8FA44A09E1704B04A1985EFEE2CB83;35105.
+(rerunfilecheck)             Checksum: 9F3DE12B1065E52F48AA5B4900441A20;35460.
  ) 
 Here is how much of TeX's memory you used:
- 19386 strings out of 476443
- 395751 string characters out of 5793962
+ 19390 strings out of 476443
+ 395900 string characters out of 5793962
  2039627 words of memory out of 5000000
- 40943 multiletter control sequences out of 15000+600000
+ 40947 multiletter control sequences out of 15000+600000
  565134 words of font info for 104 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3335b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s

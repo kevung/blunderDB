@@ -66,6 +66,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#panneau-d-analyse">5.11. Analyysipaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-des-matchs">5.12. Ottelupaneeli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-anki-repetition-espacee">5.13. Anki-paneeli (välitoistoharjoittelu)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-tournois">5.14. Panneau des tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-collections">5.15. Panneau des collections</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
@@ -360,6 +362,15 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : <em>j</em> avance
+(position suivante) et <em>k</em> recule (position précédente), alors que
+<em>MAJ-J</em> revient à la vue précédente et <em>MAJ-K</em> passe à la vue suivante.
+C’est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la
+convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas
+celle de j/k.</p>
+</div>
 </section>
 <section id="ligne-de-commande">
 <span id="raccourcis-command"></span><h2><span class="section-number">5.8. </span>Komentorivi<a class="headerlink" href="#ligne-de-commande" title="Link to this heading"></a></h2>
@@ -522,11 +533,80 @@
 <tr class="row-odd"><td><p>4</p></td>
 <td><p>Arvioi: Helppo.</p></td>
 </tr>
-<tr class="row-even"><td><p>Esc</p></td>
+<tr class="row-even"><td><p>p</p></td>
+<td><p>Afficher/cacher le compte de course (identique au raccourci général, disponible pendant la révision).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Esc</p></td>
 <td><p>Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin).</p></td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="panneau-des-tournois">
+<span id="raccourcis-tournament-panel"></span><h2><span class="section-number">5.14. </span>Panneau des tournois<a class="headerlink" href="#panneau-des-tournois" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Oikotie</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clic, Double-clic</p></td>
+<td><p>Sélectionner un tournoi (afficher son détail).</p></td>
+</tr>
+<tr class="row-odd"><td><p>YLÖS, k</p></td>
+<td><p>Sélectionner le tournoi précédent.</p></td>
+</tr>
+<tr class="row-even"><td><p>ALAS, j</p></td>
+<td><p>Sélectionner le tournoi suivant.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double-clic (sur un match du tournoi)</p></td>
+<td><p>Navigoi ottelussa.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Annuler l’édition en cours, sinon effacer la recherche d’ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-des-collections">
+<span id="raccourcis-collection-panel"></span><h2><span class="section-number">5.15. </span>Panneau des collections<a class="headerlink" href="#panneau-des-collections" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Oikotie</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Napsautus</p></td>
+<td><p>Ajouter/retirer la position courante de la collection survolée.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kaksoisnapsautus</p></td>
+<td><p>Ouvrir la collection.</p></td>
+</tr>
+<tr class="row-even"><td><p>Del</p></td>
+<td><p>Retirer la position courante (ou les positions cochées) de la collection ouverte.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Esc</p></td>
+<td><p>Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Ce panneau ne capture pas les raccourcis de navigation :
+PageUp/h, GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de
+la collection ouverte exactement comme décrit dans
+<a class="reference internal" href="#raccourcis-navigation"><span class="std std-ref">Navigointi</span></a>.</p>
+</div>
 </section>
 </section>
 

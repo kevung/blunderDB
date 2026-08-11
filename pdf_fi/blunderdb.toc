@@ -92,62 +92,64 @@
 \contentsline {subsection}{\numberline {2.5.7}Näkymävälilehdet}{40}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Komentorivi}{40}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Hakuhistoria}{40}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Suodatinkirjasto}{40}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.10}Suodatinkirjasto}{41}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Analyysipaneeli}{41}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Ottelupaneeli}{41}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Anki\sphinxhyphen {}paneeli (välitoistoharjoittelu)}{41}{subsection.2.5.13}%
-\contentsline {section}{\numberline {2.6}Komentoriviliittymä (CLI)}{41}{section.2.6}%
-\contentsline {subsection}{\numberline {2.6.1}Johdanto}{41}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.5.14}Panneau des tournois}{42}{subsection.2.5.14}%
+\contentsline {subsection}{\numberline {2.5.15}Panneau des collections}{42}{subsection.2.5.15}%
+\contentsline {section}{\numberline {2.6}Komentoriviliittymä (CLI)}{42}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Johdanto}{42}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Yleinen syntaksi}{42}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}Käytettävissä olevat komennot}{42}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}create — Luo tietokanta}{42}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.3}Käytettävissä olevat komennot}{43}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}create — Luo tietokanta}{43}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}import — Tuo tietoja}{43}{subsection.2.6.5}%
-\contentsline {subsubsection}{Ottelun tuonti}{43}{subsubsection*.32}%
-\contentsline {subsubsection}{Asemien tuonti}{43}{subsubsection*.33}%
-\contentsline {subsubsection}{Erätuonti}{43}{subsubsection*.34}%
-\contentsline {subsection}{\numberline {2.6.6}export — Vie tietoja}{43}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}search — Hae asemia}{44}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — Luettele sisältö}{45}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Näytä ottelu}{46}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}info — Tietokannan metatiedot}{47}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}edit — Muokkaa metatietoja}{47}{subsection.2.6.11}%
+\contentsline {subsubsection}{Ottelun tuonti}{44}{subsubsection*.32}%
+\contentsline {subsubsection}{Asemien tuonti}{44}{subsubsection*.33}%
+\contentsline {subsubsection}{Erätuonti}{44}{subsubsection*.34}%
+\contentsline {subsection}{\numberline {2.6.6}export — Vie tietoja}{44}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.7}search — Hae asemia}{45}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}list — Luettele sisältö}{46}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}match — Näytä ottelu}{47}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}info — Tietokannan metatiedot}{48}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}edit — Muokkaa metatietoja}{48}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}verify — Tarkista eheys}{48}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}delete — Poista tietoja}{48}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Työnkulkuesimerkkejä}{48}{subsection.2.6.14}%
-\contentsline {subsubsection}{Turnaushakemiston tuonti}{48}{subsubsection*.35}%
-\contentsline {subsubsection}{Säännöllinen varmuuskopiointi}{49}{subsubsection*.36}%
-\contentsline {subsubsection}{Virheiden analysointi}{49}{subsubsection*.37}%
-\contentsline {subsection}{\numberline {2.6.15}Paluukoodit}{49}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{49}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{49}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.6.13}delete — Poista tietoja}{49}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.14}Työnkulkuesimerkkejä}{49}{subsection.2.6.14}%
+\contentsline {subsubsection}{Turnaushakemiston tuonti}{49}{subsubsection*.35}%
+\contentsline {subsubsection}{Säännöllinen varmuuskopiointi}{50}{subsubsection*.36}%
+\contentsline {subsubsection}{Virheiden analysointi}{50}{subsubsection*.37}%
+\contentsline {subsection}{\numberline {2.6.15}Paluukoodit}{50}{subsection.2.6.15}%
+\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{50}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{50}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Mikä motivoi blunderDB:n luomiseen?}{50}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Miten nykyisen tietokannan tila tallennetaan?}{50}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Pitäisikö minun luoda eri tietokantoja eri asemaluokille?}{50}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Miten useita tietokantoja yhdistetään?}{50}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{50}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.3}Miten nykyisen tietokannan tila tallennetaan?}{51}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Pitäisikö minun luoda eri tietokantoja eri asemaluokille?}{51}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Miten useita tietokantoja yhdistetään?}{51}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{51}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Mikä on kokoelma?}{51}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}Mikä on EPC?}{51}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}Onko blunderDB:ssä komentorivikäyttöliittymä?}{51}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Voinko muokata, kopioida ja jakaa blunderDB:tä?}{51}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}Mitä tietomuotoa blunderDB käyttää?}{51}{subsection.2.7.11}%
-\contentsline {subsection}{\numberline {2.7.12}Mitkä olivat blunderDB:n suunnitteluperiaatteet?}{51}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.8}Mikä on EPC?}{52}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}Onko blunderDB:ssä komentorivikäyttöliittymä?}{52}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Voinko muokata, kopioida ja jakaa blunderDB:tä?}{52}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}Mitä tietomuotoa blunderDB käyttää?}{52}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}Mitkä olivat blunderDB:n suunnitteluperiaatteet?}{52}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{52}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}Millä alustoilla blunderDB toimii?}{52}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}Mistä blunderDB:n kuvake on peräisin?}{52}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}tila (palvelin)}{52}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Yleiskatsaus}{52}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{52}{subsection.2.8.2}%
-\contentsline {subsubsection}{Päätepisteet}{53}{subsubsection*.38}%
+\contentsline {subsection}{\numberline {2.7.14}Millä alustoilla blunderDB toimii?}{53}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}Mistä blunderDB:n kuvake on peräisin?}{53}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}tila (palvelin)}{53}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Yleiskatsaus}{53}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{53}{subsection.2.8.2}%
+\contentsline {subsubsection}{Päätepisteet}{54}{subsubsection*.38}%
 \contentsline {subsubsection}{Käyttöönotto Dockerilla}{54}{subsubsection*.39}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{54}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{55}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{55}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{55}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{56}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{56}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{56}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{57}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{57}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Haku nykyisistä tuloksista}{57}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Suodatinkirjasto}{57}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{57}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{58}{section.2.10}%
+\contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{58}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{59}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{59}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{60}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Latauksen eheyden tarkistus (SHA256)}{64}{subsection.2.10.3}%
