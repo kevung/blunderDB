@@ -1,10 +1,8 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log/slog"
-	"os"
 )
 
 // Collection represents a collection of positions
@@ -551,8 +549,11 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 	return collections, nil
 }
 
-// ExportCollections exports specific collections to a database file
-func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool) error {
+// ExportCollections exports specific collections to a database file. watermark
+// and watermarkNote mirror ExportDatabase's Watermark/WatermarkNote: an empty
+// watermark means the export carries none. See db_export_position.go for the
+// schema and position-writing code shared with the other two export paths.
+func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -587,310 +588,146 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		positionIDs = append(positionIDs, id)
 	}
 
-	// Delete the export file if it already exists
-	if _, err := os.Stat(exportPath); err == nil {
-		if err := os.Remove(exportPath); err != nil {
-			return fmt.Errorf("cannot remove existing export file: %v", err)
-		}
-	}
-
-	// Create export database
-	exportDB, err := sql.Open("sqlite", exportPath)
+	exportDB, err := newExportDB(exportPath)
 	if err != nil {
 		return err
 	}
 	defer exportDB.Close()
 
-	// Create schema
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS position (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			state TEXT,
-			individually_imported INTEGER NOT NULL DEFAULT 0
-		)
-	`)
-	if err != nil {
+	if err := writeExportMetadata(exportDB, metadata, watermark, watermarkNote); err != nil {
 		return err
 	}
 
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS analysis (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			position_id INTEGER UNIQUE,
-			data JSON,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
-		)
-	`)
+	// Read every position and (if requested) its analysis/comment in one batched
+	// statement each, instead of the N+1 per-position SELECTs this used to run —
+	// the same helpers ExportDatabase uses (db_export.go).
+	positions, err := d.positionsByIDsLocked(positionIDs)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot read the positions to export: %w", err)
+	}
+	var analysisByPosition map[int64][]byte
+	if includeAnalysis {
+		if analysisByPosition, err = d.analysisForPositions(positionIDs); err != nil {
+			return fmt.Errorf("cannot read analyses to export: %w", err)
+		}
+	}
+	var commentByPosition map[int64]string
+	if includeComments {
+		if commentByPosition, err = d.commentsForPositions(positionIDs); err != nil {
+			return fmt.Errorf("cannot read comments to export: %w", err)
+		}
 	}
 
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS comment (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			position_id INTEGER UNIQUE,
-			text TEXT,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
-		)
-	`)
+	tx, err := exportDB.Begin()
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
 
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS metadata (
-			key TEXT PRIMARY KEY,
-			value TEXT
-		)
-	`)
+	insertPosition, err := tx.Prepare(exportPositionInsertSQL)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot prepare the position insert: %w", err)
 	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS command_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-		)
-	`)
+	defer insertPosition.Close()
+	lookupPosition, err := tx.Prepare(exportPositionLookupSQL)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot prepare the position lookup: %w", err)
 	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS filter_library (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT,
-			command TEXT,
-			edit_position TEXT
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS search_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			position TEXT,
-			timestamp INTEGER
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Create match-related tables (for v1.4.0 compatibility)
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS match (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			player1_name TEXT,
-			player2_name TEXT,
-			event TEXT,
-			location TEXT,
-			round TEXT,
-			match_length INTEGER,
-			match_date DATETIME,
-			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-			file_path TEXT,
-			game_count INTEGER DEFAULT 0,
-			match_hash TEXT,
-			last_visited_position INTEGER DEFAULT -1
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS game (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		match_id INTEGER,
-		game_number INTEGER,
-		initial_score_1 INTEGER,
-		initial_score_2 INTEGER,
-		winner INTEGER,
-		points_won INTEGER,
-		move_count INTEGER DEFAULT 0,
-		FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
-	)`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS move (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		game_id INTEGER,
-		move_number INTEGER,
-		move_type TEXT,
-		position_id INTEGER,
-		player INTEGER,
-		dice_1 INTEGER,
-		dice_2 INTEGER,
-		checker_move TEXT,
-		cube_action TEXT,
-		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
-		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
-	)`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS move_analysis (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		move_id INTEGER,
-		analysis_type TEXT,
-		depth TEXT,
-		equity INTEGER,
-		equity_error INTEGER,
-		win_rate INTEGER,
-		gammon_rate INTEGER,
-		backgammon_rate INTEGER,
-		opponent_win_rate INTEGER,
-		opponent_gammon_rate INTEGER,
-		opponent_backgammon_rate INTEGER,
-		FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
-	)`)
-	if err != nil {
-		return err
-	}
-
-	// Create collection tables
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS collection (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL,
-			description TEXT,
-			sort_order INTEGER DEFAULT 0,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	_, err = exportDB.Exec(`
-		CREATE TABLE IF NOT EXISTS collection_position (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			collection_id INTEGER NOT NULL,
-			position_id INTEGER NOT NULL,
-			sort_order INTEGER DEFAULT 0,
-			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
-			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
-			UNIQUE(collection_id, position_id)
-		)
-	`)
-	if err != nil {
-		return err
-	}
+	defer lookupPosition.Close()
 
 	// Export positions and create ID mapping
-	oldToNewID := make(map[int64]int64)
-	for _, posID := range positionIDs {
-		pos, err := d.loadPositionByIDUnlocked(posID)
-		if err != nil {
-			slog.Warn("loading position for collection export", "positionID", posID, "err", err)
+	oldToNewID := make(map[int64]int64, len(positions))
+	for _, pos := range positions {
+		posID := pos.ID
+		newID, insErr := insertExportPosition(insertPosition, lookupPosition, pos)
+		if insErr != nil {
+			slog.Warn("inserting position into collection export database", "positionID", posID, "err", insErr)
 			continue
-		}
-
-		// Carry provenance so the export round-trips (ADR-0001).
-		result, err := exportDB.Exec(
-			`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
-			fullPositionJSON(pos), pos.IndividuallyImported)
-		if err != nil {
-			slog.Warn("inserting position into collection export database", "positionID", posID, "err", err)
-			continue
-		}
-		newID, err := result.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
 		}
 		oldToNewID[posID] = newID
 
-		// Export analysis if requested
 		if includeAnalysis {
-			var analysisData []byte
-			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
-			if err == nil {
-				// Decompress for export compatibility
-				jsonData, _ := decompressAnalysisData(analysisData)
-				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData))
+			if data, ok := analysisByPosition[posID]; ok {
+				// Decompress for export compatibility (the export's analysis.data holds
+				// plain JSON, like ExportDatabase's).
+				jsonData, decErr := decompressAnalysisData(data)
+				if decErr != nil {
+					slog.Warn("decompressing analysis for collection export", "positionID", posID, "err", decErr)
+				} else if _, insErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData)); insErr != nil {
+					slog.Warn("inserting analysis into collection export database", "positionID", posID, "err", insErr)
+				}
 			}
 		}
 
-		// Export comments if requested
 		if includeComments {
-			var commentText string
-			err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, posID).Scan(&commentText)
-			if err == nil {
-				_, _ = exportDB.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newID, commentText)
+			if text := commentByPosition[posID]; text != "" {
+				if _, insErr := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newID, text); insErr != nil {
+					slog.Warn("inserting comment into collection export database", "positionID", posID, "err", insErr)
+				}
 			}
 		}
 	}
 
 	// Export collections and their position mappings
-	collectionIDMapping := make(map[int64]int64)
 	for _, collectionID := range collectionIDs {
 		var name, description string
 		var sortOrder int
 		var createdAt, updatedAt string
-		err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
+		cErr := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
 			Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
-		if err != nil {
-			slog.Warn("reading collection for export", "collectionID", collectionID, "err", err)
+		if cErr != nil {
+			slog.Warn("reading collection for export", "collectionID", collectionID, "err", cErr)
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+		result, insErr := tx.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
 			name, description, sortOrder, createdAt, updatedAt)
-		if err != nil {
-			slog.Warn("inserting collection into export database", "collectionID", collectionID, "err", err)
+		if insErr != nil {
+			slog.Warn("inserting collection into export database", "collectionID", collectionID, "err", insErr)
 			continue
 		}
-		newCollectionID, err := result.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
+		newCollectionID, idErr := result.LastInsertId()
+		if idErr != nil {
+			err = fmt.Errorf("failed to get last insert ID: %w", idErr)
+			return err
 		}
-		collectionIDMapping[collectionID] = newCollectionID
 
 		// Export collection_position mappings
-		rows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
-		if err != nil {
-			slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", err)
+		rows, qErr := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
+		if qErr != nil {
+			slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", qErr)
 			continue
 		}
 		for rows.Next() {
 			var oldPosID int64
-			var sortOrder int
+			var cpSortOrder int
 			var addedAt string
-			if err := rows.Scan(&oldPosID, &sortOrder, &addedAt); err != nil {
-				slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", err)
+			if sErr := rows.Scan(&oldPosID, &cpSortOrder, &addedAt); sErr != nil {
+				slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", sErr)
 				continue
 			}
 			if newPosID, ok := oldToNewID[oldPosID]; ok {
-				_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
-					newCollectionID, newPosID, sortOrder, addedAt)
+				if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+					newCollectionID, newPosID, cpSortOrder, addedAt); insErr != nil {
+					slog.Warn("inserting collection_position into export database", "collectionID", collectionID, "err", insErr)
+				}
 			}
 		}
-		if err := rows.Err(); err != nil {
+		if rErr := rows.Err(); rErr != nil {
+			rows.Close()
+			err = rErr
 			return err
 		}
 		rows.Close()
 	}
 
-	// Export metadata
-	_, err = exportDB.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
-	if err != nil {
+	if err = tx.Commit(); err != nil {
 		return err
 	}
-
-	for key, value := range metadata {
-		_, _ = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
-	}
-
 	return nil
 }
 

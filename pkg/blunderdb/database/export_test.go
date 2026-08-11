@@ -1102,3 +1102,96 @@ func TestExport_CubeAnalysisPreserved_NoPlayedMoves(t *testing.T) {
 		t.Error("expected at least one analysis with DoublingCubeAnalysis")
 	}
 }
+
+// --- fiche-04: the exported file must be a database on the CURRENT schema ---
+//
+// Before the fix, ExportDatabase hand-rolled a two-column "position(id, state,
+// individually_imported)" table and stamped database_version to the CURRENT
+// version. Reopening that file worked (ensureAllTablesExist backfills the
+// missing columns on open) but left zobrist_hash and every scalar column
+// (dice_1, score_1, pip_diff, …) NULL forever, because nothing had ever
+// written them: the migration chain never runs its ALTER TABLE steps for a
+// database that already claims to be current. Dedup and every SQL-column
+// search were silently dead on a reopened export.
+
+func TestExportDatabase_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
+	db, dir, cleanup := setupExportTestDB(t)
+	defer cleanup()
+
+	exportPath := filepath.Join(dir, "roundtrip.db")
+	p := defaultExportParams()
+	doExport(t, db, exportPath, p)
+
+	reopened := NewDatabase()
+	if err := reopened.OpenDatabase(exportPath); err != nil {
+		t.Fatalf("OpenDatabase(export): %v", err)
+	}
+	defer reopened.Close()
+
+	positions, err := reopened.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions: %v", err)
+	}
+	if len(positions) != 2 {
+		t.Fatalf("expected 2 positions, got %d", len(positions))
+	}
+
+	var nullHashes int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE zobrist_hash IS NULL`).Scan(&nullHashes); err != nil {
+		t.Fatalf("query zobrist_hash: %v", err)
+	}
+	if nullHashes != 0 {
+		t.Errorf("expected 0 NULL zobrist_hash after export+reopen, got %d", nullHashes)
+	}
+
+	var nullScalars int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE dice_1 IS NULL OR score_1 IS NULL OR score_2 IS NULL OR pip_diff IS NULL`).Scan(&nullScalars); err != nil {
+		t.Fatalf("query scalar columns: %v", err)
+	}
+	if nullScalars != 0 {
+		t.Errorf("expected 0 rows with a NULL scalar column, got %d", nullScalars)
+	}
+
+	// A pure-SQL dice search (what search_sqlite.go's DiceRollFilter runs) must find
+	// the position saved with Dice=[6,5] in setupExportTestDB.
+	var found int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE dice_1 = 6 AND dice_2 = 5`).Scan(&found); err != nil {
+		t.Fatalf("query dice search: %v", err)
+	}
+	if found != 1 {
+		t.Errorf("expected 1 position with dice 6-5 findable by SQL, got %d", found)
+	}
+
+	// Search index presence: the unique zobrist index is what makes dedup possible
+	// at all (fiche-04's own criterion — "index créés").
+	var indexCount int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name='idx_position_zobrist'`).Scan(&indexCount); err != nil {
+		t.Fatalf("query sqlite_master: %v", err)
+	}
+	if indexCount != 1 {
+		t.Error("expected the exported file to carry idx_position_zobrist")
+	}
+
+	// Re-importing the export into a database that already holds these positions
+	// must create no duplicates — the actual scenario a recipient hits when they
+	// already have some of a teacher's course and receive an updated export.
+	before, err := db.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions on the source db: %v", err)
+	}
+	beforeCount := len(before)
+	result, err := db.CommitImportDatabase(exportPath)
+	if err != nil {
+		t.Fatalf("CommitImportDatabase(export) into the source db: %v", err)
+	}
+	if added, _ := result["added"].(int); added != 0 {
+		t.Errorf("re-importing the export into its own source added %d new positions, want 0", added)
+	}
+	after, err := db.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions after re-import: %v", err)
+	}
+	if len(after) != beforeCount {
+		t.Errorf("re-importing the export duplicated positions: before=%d after=%d", beforeCount, len(after))
+	}
+}
