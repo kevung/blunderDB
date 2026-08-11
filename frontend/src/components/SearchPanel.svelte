@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import MinMaxFilterRow from './MinMaxFilterRow.svelte';
     import MatchTournamentPickerModal from './MatchTournamentPickerModal.svelte';
     import { t, tMsg } from '../i18n';
@@ -893,6 +894,14 @@
         filterName = '';
     }
 
+    function handleSaveDialogKeyDown(event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            cancelSaveDialog();
+        }
+    }
+
     async function saveToFilterLibrary() {
         if (!filterName || !selectedSearch) {
             statusBarTextStore.set(tMsg('searchHistory.enterFilterName'));
@@ -1719,6 +1728,11 @@
         onclick={(e) => {
             if (e.target === e.currentTarget) cancelSaveDialog(e);
         }}
+        onkeydown={handleSaveDialogKeyDown}
+        role="dialog"
+        aria-modal="true"
+        aria-label={$t('search.saveSearch')}
+        use:trapFocus
     >
         <div class="save-dialog">
             <h3>{$t('search.saveSearch')}</h3>
