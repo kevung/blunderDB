@@ -130,7 +130,7 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	fileExists := true
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		fileExists = false
-		fmt.Printf("Database file does not exist, creating new database: %s\n", dbPath)
+		fmt.Fprintf(os.Stderr, "Database file does not exist, creating new database: %s\n", dbPath)
 		// Ensure directory exists
 		dir := filepath.Dir(dbPath)
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -151,6 +151,6 @@ func (cli *CLI) initDatabase(dbPath string) error {
 		return fmt.Errorf("failed to open database: %v", err)
 	}
 
-	fmt.Printf("Connected to database: %s\n", dbPath)
+	fmt.Fprintf(os.Stderr, "Connected to database: %s\n", dbPath)
 	return nil
 }

@@ -2,10 +2,12 @@ package cli
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -512,6 +514,14 @@ func TestCLI_InfoJSON(t *testing.T) {
 
 	if !bytes.Contains([]byte(out), []byte(`"stats"`)) {
 		t.Errorf("info JSON output missing stats key:\n%s", out)
+	}
+
+	// initDatabase's "Connected to database: ..." status line must not land
+	// on stdout ahead of the JSON — `blunderdb info --format json | jq`
+	// requires stdout to be nothing but the JSON document.
+	trimmed := strings.TrimSpace(out)
+	if !json.Valid([]byte(trimmed)) {
+		t.Errorf("stdout is not a single valid JSON document (status noise leaked onto stdout?):\n%s", out)
 	}
 }
 
