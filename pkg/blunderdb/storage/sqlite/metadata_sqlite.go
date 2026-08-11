@@ -88,8 +88,11 @@ func (s *metadataStore) Counts(ctx context.Context, scope string) (storage.Count
 		(SELECT COUNT(*) FROM analysis),
 		(SELECT COUNT(*) FROM match),
 		(SELECT COUNT(*) FROM game),
-		(SELECT COUNT(*) FROM move)`).
-		Scan(&c.Positions, &c.Analyses, &c.Matches, &c.Games, &c.Moves)
+		(SELECT COUNT(*) FROM move),
+		(SELECT COUNT(*) FROM position WHERE individually_imported = 1),
+		(SELECT COUNT(*) FROM anki_card)`).
+		Scan(&c.Positions, &c.Analyses, &c.Matches, &c.Games, &c.Moves,
+			&c.IndividualPositions, &c.AnkiCards)
 	if err != nil {
 		return storage.Counts{}, fmt.Errorf("sqlite: database counts: %w", err)
 	}

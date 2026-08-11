@@ -1177,11 +1177,31 @@ func testMetadataCounts(t *testing.T, s storage.Storage) {
 		t.Fatalf("CreateMove: %v", err)
 	}
 
+	// A second position carrying the individually_imported provenance flag,
+	// enrolled in a study deck: exercises the IndividualPositions and
+	// AnkiCards counters.
+	ind := cubePos()
+	ind.IndividuallyImported = true
+	indID, err := s.Positions().Save(ctx, "", &ind)
+	if err != nil {
+		t.Fatalf("Save individual position: %v", err)
+	}
+	deckID, err := s.Anki().CreateDeck(ctx, "", "counts-deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{indID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+
 	c, err := s.Metadata().Counts(ctx, "")
 	if err != nil {
 		t.Fatalf("Counts: %v", err)
 	}
-	want := storage.Counts{Positions: 1, Analyses: 1, Matches: 1, Games: 1, Moves: 1}
+	want := storage.Counts{
+		Positions: 2, Analyses: 1, Matches: 1, Games: 1, Moves: 1,
+		IndividualPositions: 1, AnkiCards: 1,
+	}
 	if c != want {
 		t.Fatalf("Counts = %+v, want %+v", c, want)
 	}

@@ -91,8 +91,11 @@ func (s *metadataStore) Counts(ctx context.Context, scope string) (storage.Count
 		(SELECT COUNT(*) FROM analysis WHERE tenant_id = $1),
 		(SELECT COUNT(*) FROM match    WHERE tenant_id = $1),
 		(SELECT COUNT(*) FROM game     WHERE tenant_id = $1),
-		(SELECT COUNT(*) FROM move     WHERE tenant_id = $1)`, tenant).
-		Scan(&c.Positions, &c.Analyses, &c.Matches, &c.Games, &c.Moves)
+		(SELECT COUNT(*) FROM move     WHERE tenant_id = $1),
+		(SELECT COUNT(*) FROM position WHERE tenant_id = $1 AND individually_imported),
+		(SELECT COUNT(*) FROM anki_card WHERE tenant_id = $1)`, tenant).
+		Scan(&c.Positions, &c.Analyses, &c.Matches, &c.Games, &c.Moves,
+			&c.IndividualPositions, &c.AnkiCards)
 	if err != nil {
 		return storage.Counts{}, fmt.Errorf("postgres: database counts: %w", err)
 	}

@@ -9,6 +9,12 @@ type Counts struct {
 	Matches   int `json:"matches"`
 	Games     int `json:"games"`
 	Moves     int `json:"moves"`
+
+	// IndividualPositions is the subset of Positions carrying the sticky
+	// individually_imported provenance flag (ADR-0001).
+	IndividualPositions int `json:"individual_positions"`
+	// AnkiCards is the number of study cards across every deck.
+	AnkiCards int `json:"anki_cards"`
 }
 
 // MetadataStore persists the database-level key/value metadata: schema
