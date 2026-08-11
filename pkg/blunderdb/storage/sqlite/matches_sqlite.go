@@ -285,11 +285,37 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 //   - the user flagged it for study in the source tool: same reasoning as
 //     individually_imported — deleting a match must not delete the very
 //     positions the `fl` filter exists to surface (docs/adr/0006).
-const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND flagged = 1)`
+//
+// Phrased as a WHERE-clause fragment correlated against the outer `position`
+// row (id, individually_imported, flagged) rather than a standalone
+// query — see deleteOrphanedPositions, which embeds it directly into a
+// set-based DELETE instead of running it once per candidate position (P9: the
+// per-row EXISTS check used to be the dominant cost of deleting or swapping a
+// large match).
+const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
+	                       OR position.individually_imported = 1
+	                       OR position.flagged = 1`
+
+// deleteOrphanedPositions removes every position in ids that positionIsHeldSQL
+// says nothing holds any more, as a single set-based DELETE rather than one
+// EXISTS round-trip per id.
+func deleteOrphanedPositions(ctx context.Context, tx execer, ids []int64) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",")
+	args := make([]any, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+	query := fmt.Sprintf(`DELETE FROM position WHERE id IN (%s) AND NOT (%s)`, placeholders, positionIsHeldSQL)
+	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
+		return fmt.Errorf("delete orphaned positions: %w", err)
+	}
+	return nil
+}
 
 // DeleteCascade removes a match and all of its games, moves and move analyses
 // (via ON DELETE CASCADE), then deletes any position the match referenced that
@@ -323,16 +349,8 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 			return err
 		}
 
-		for _, pid := range positionIDs {
-			var held bool
-			if err := tx.QueryRowContext(ctx, positionIsHeldSQL, pid).Scan(&held); err != nil {
-				return fmt.Errorf("ref check position %d: %w", pid, err)
-			}
-			if !held {
-				if _, err := tx.ExecContext(ctx, `DELETE FROM position WHERE id = ?`, pid); err != nil {
-					return fmt.Errorf("delete orphan position %d: %w", pid, err)
-				}
-			}
+		if err := deleteOrphanedPositions(ctx, tx, positionIDs); err != nil {
+			return err
 		}
 		return nil
 	})
@@ -391,6 +409,13 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		}
 
 		ps := &positionStore{db: tx}
+		// Positions this swap repointed away from: each is a delete candidate
+		// (mirrors the orphan cleanup of DeleteCascade), collected here and
+		// checked in one set-based DELETE after the loop rather than one
+		// EXISTS round-trip per position — the repoints must all land first
+		// anyway, since an orphan check run mid-loop could not see a later
+		// position's repoint.
+		var swappedAway []int64
 		for _, pid := range posIDs {
 			pos, err := ps.Load(ctx, scope, pid)
 			if err != nil {
@@ -413,17 +438,10 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 				newID, pid, id); err != nil {
 				return fmt.Errorf("repoint swapped move: %w", err)
 			}
-			// Drop the original if this match was its last holder (mirrors the
-			// orphan cleanup of DeleteCascade).
-			var held bool
-			if err := tx.QueryRowContext(ctx, positionIsHeldSQL, pid).Scan(&held); err != nil {
-				return fmt.Errorf("swap orphan check: %w", err)
-			}
-			if !held {
-				if _, err := tx.ExecContext(ctx, `DELETE FROM position WHERE id = ?`, pid); err != nil {
-					return fmt.Errorf("delete swap orphan: %w", err)
-				}
-			}
+			swappedAway = append(swappedAway, pid)
+		}
+		if err := deleteOrphanedPositions(ctx, tx, swappedAway); err != nil {
+			return fmt.Errorf("swap orphan cleanup: %w", err)
 		}
 		return nil
 	})

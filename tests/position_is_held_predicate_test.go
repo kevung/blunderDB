@@ -69,6 +69,20 @@ var sqlKeywords = map[string]bool{
 	"AND": true, "OR": true, "NOT": true,
 }
 
+// tenantScopingIdentifiers are excluded too: PostgreSQL is multi-tenant (every
+// table the predicate touches carries tenant_id) while SQLite is not (one
+// implicit tenant per file, no such column exists at all) — see
+// storage.go's "Design notes". The Postgres copy's four EXISTS clauses filter
+// on `tenant_id = position.tenant_id` for consistency with the rest of that
+// file (position_id is a globally unique key, so this is not a correctness
+// requirement); that is infrastructure a single-tenant backend has nothing to
+// mirror, not a change to what counts as "held". Excluding it here keeps the
+// test doing its real job: catching a *held-by* clause silently gained or
+// lost, not this expected, deliberate per-backend asymmetry.
+var tenantScopingIdentifiers = map[string]bool{
+	"tenant_id": true,
+}
+
 var identifierPattern = regexp.MustCompile(`[A-Za-z_][A-Za-z0-9_]*`)
 
 // identifiersIn tokenizes a SQL fragment into the set of table/column names
@@ -81,10 +95,12 @@ var identifierPattern = regexp.MustCompile(`[A-Za-z_][A-Za-z0-9_]*`)
 func identifiersIn(sql string) map[string]bool {
 	set := map[string]bool{}
 	for _, tok := range identifierPattern.FindAllString(sql, -1) {
-		if sqlKeywords[strings.ToUpper(tok)] {
+		upper := strings.ToUpper(tok)
+		lower := strings.ToLower(tok)
+		if sqlKeywords[upper] || tenantScopingIdentifiers[lower] {
 			continue
 		}
-		set[strings.ToLower(tok)] = true
+		set[lower] = true
 	}
 	return set
 }

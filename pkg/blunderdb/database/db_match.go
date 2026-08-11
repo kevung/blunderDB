@@ -313,19 +313,30 @@ func (d *Database) DeleteMatch(matchID int64) error {
 
 	// Drop the positions nothing holds any more (see positionIsHeldSQL); their
 	// analyses and comments cascade off the position delete.
-	for _, pid := range positionIDs {
-		var held bool
-		if err := tx.QueryRow(positionIsHeldSQL, pid).Scan(&held); err != nil {
-			return fmt.Errorf("error checking position references for ID %d: %w", pid, err)
-		}
-		if !held {
-			if _, err = tx.Exec(`DELETE FROM position WHERE id = ?`, pid); err != nil {
-				return fmt.Errorf("error deleting orphaned position %d: %w", pid, err)
-			}
-		}
+	if err := deleteOrphanedPositions(tx, positionIDs); err != nil {
+		return err
 	}
 
 	return tx.Commit()
+}
+
+// deleteOrphanedPositions removes every position in ids that positionIsHeldSQL
+// says nothing holds any more, as a single set-based DELETE rather than one
+// EXISTS round-trip per id.
+func deleteOrphanedPositions(tx *sql.Tx, ids []int64) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",")
+	args := make([]any, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+	query := fmt.Sprintf(`DELETE FROM position WHERE id IN (%s) AND NOT (%s)`, placeholders, positionIsHeldSQL)
+	if _, err := tx.Exec(query, args...); err != nil {
+		return fmt.Errorf("error deleting orphaned positions: %w", err)
+	}
+	return nil
 }
 
 // positionIsHeldSQL reports whether anything still holds a position once the
@@ -352,11 +363,16 @@ func (d *Database) DeleteMatch(matchID int64) error {
 //   - the user flagged it for study in the source tool: same reasoning as
 //     individually_imported — deleting a match must not delete the very
 //     positions the `fl` filter exists to surface (docs/adr/0006).
-const positionIsHeldSQL = `SELECT EXISTS (SELECT 1 FROM move               WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = ?1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND individually_imported = 1)
-	                       OR EXISTS (SELECT 1 FROM position            WHERE id = ?1 AND flagged = 1)`
+//
+// Phrased as a WHERE-clause fragment correlated against the outer `position`
+// row (id, individually_imported, flagged) rather than a standalone query —
+// see deleteOrphanedPositions, which embeds it directly into a set-based
+// DELETE instead of running it once per candidate position.
+const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
+	                       OR position.individually_imported = 1
+	                       OR position.flagged = 1`
 
 // GetMatchMovePositions returns all positions from a match in chronological order
 // Positions are returned as they were stored (from player on roll POV)
