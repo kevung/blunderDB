@@ -384,3 +384,143 @@ func TestDeleteMatchKeepsIndividuallyImportedPosition(t *testing.T) {
 		t.Error("a position only the match held survived its deletion; the orphan purge is not running")
 	}
 }
+
+// TestDeleteMatchKeepsFlaggedPosition covers the same code path as
+// TestDeleteMatchKeepsIndividuallyImportedPosition for the other sticky
+// provenance mark: a position the user (or the source tool) flagged for study
+// (docs/adr/0006) must survive deleting the match it happened to occur in,
+// the same way an individually-imported position does.
+func TestDeleteMatchKeepsFlaggedPosition(t *testing.T) {
+	dir := t.TempDir()
+	db := NewDatabase()
+	if err := db.SetupDatabase(filepath.Join(dir, "keep-flagged.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.db.Close()
+
+	matchOnly := InitializePosition()
+	matchOnly.Dice = [2]int{6, 5}
+	matchOnlyID, err := db.SavePosition(&matchOnly)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	flagged := InitializePosition()
+	flagged.Dice = [2]int{3, 1}
+	flagged.Flagged = true
+	flaggedID, err := db.SavePosition(&flagged)
+	if err != nil {
+		t.Fatalf("SavePosition (flagged): %v", err)
+	}
+
+	matchRes, err := db.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, match_date, import_date, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, "Alice", "Bob", 7, time.Now(), time.Now(), 1, "hash-keep-flagged-test")
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := matchRes.LastInsertId()
+	gameRes, err := db.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, matchID, 1, 0, 0, 1, 1, 2)
+	if err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	gameID, _ := gameRes.LastInsertId()
+	for i, pid := range []int64{matchOnlyID, flaggedID} {
+		if _, err := db.db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, gameID, i+1, "checker", pid, 0, 3, 1); err != nil {
+			t.Fatalf("insert move %d: %v", i, err)
+		}
+	}
+
+	if err := db.DeleteMatch(matchID); err != nil {
+		t.Fatalf("DeleteMatch: %v", err)
+	}
+
+	var stillThere int
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, flaggedID).Scan(&stillThere); err != nil {
+		t.Fatalf("count flagged position: %v", err)
+	}
+	if stillThere != 1 {
+		t.Error("deleting the match destroyed a position flagged for study (ADR-0006)")
+	}
+
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, matchOnlyID).Scan(&stillThere); err != nil {
+		t.Fatalf("count match-only position: %v", err)
+	}
+	if stillThere != 0 {
+		t.Error("a position only the match held survived its deletion; the orphan purge is not running")
+	}
+}
+
+// TestDeleteMatchKeepsAnkiCardPosition covers the same code path for the
+// third holder in positionIsHeldSQL that TestDeleteMatchCleansUpAllData and
+// TestDeleteMatchPreservesSharedPositions don't reach: a position that backs
+// an Anki card must survive deleting the match it occurred in.
+func TestDeleteMatchKeepsAnkiCardPosition(t *testing.T) {
+	dir := t.TempDir()
+	db := NewDatabase()
+	if err := db.SetupDatabase(filepath.Join(dir, "keep-anki.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.db.Close()
+
+	matchOnly := InitializePosition()
+	matchOnly.Dice = [2]int{6, 5}
+	matchOnlyID, err := db.SavePosition(&matchOnly)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	inDeck := InitializePosition()
+	inDeck.Dice = [2]int{3, 1}
+	inDeckID, err := db.SavePosition(&inDeck)
+	if err != nil {
+		t.Fatalf("SavePosition (anki): %v", err)
+	}
+
+	deckID, err := db.CreateAnkiDeck("deck", "", AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateAnkiDeck: %v", err)
+	}
+	if err := db.SyncAnkiDeckWithPositions(deckID, []int64{inDeckID}); err != nil {
+		t.Fatalf("SyncAnkiDeckWithPositions: %v", err)
+	}
+
+	matchRes, err := db.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, match_date, import_date, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, "Alice", "Bob", 7, time.Now(), time.Now(), 1, "hash-keep-anki-test")
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := matchRes.LastInsertId()
+	gameRes, err := db.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, matchID, 1, 0, 0, 1, 1, 2)
+	if err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	gameID, _ := gameRes.LastInsertId()
+	for i, pid := range []int64{matchOnlyID, inDeckID} {
+		if _, err := db.db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, gameID, i+1, "checker", pid, 0, 3, 1); err != nil {
+			t.Fatalf("insert move %d: %v", i, err)
+		}
+	}
+
+	if err := db.DeleteMatch(matchID); err != nil {
+		t.Fatalf("DeleteMatch: %v", err)
+	}
+
+	var stillThere int
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, inDeckID).Scan(&stillThere); err != nil {
+		t.Fatalf("count anki-card position: %v", err)
+	}
+	if stillThere != 1 {
+		t.Error("deleting the match destroyed a position backing an Anki card")
+	}
+
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, matchOnlyID).Scan(&stillThere); err != nil {
+		t.Fatalf("count match-only position: %v", err)
+	}
+	if stillThere != 0 {
+		t.Error("a position only the match held survived its deletion; the orphan purge is not running")
+	}
+}
