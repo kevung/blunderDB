@@ -1167,18 +1167,6 @@ export default {
                                 <td>clear, cl</td>
                                 <td>Befehlsverlauf löschen</td>
                             </tr>
-                            <tr>
-                                <td>migrate_from_1_0_to_1_1</td>
-                                <td>Datenbank von Version 1.0 auf 1.1 migrieren</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_1_to_1_2</td>
-                                <td>Datenbank von Version 1.1 auf 1.2 migrieren</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_2_to_1_3</td>
-                                <td>Datenbank von Version 1.2 auf 1.3 migrieren</td>
-                            </tr>
                         </tbody>
                     </table>
 `,

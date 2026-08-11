@@ -4,11 +4,8 @@ import { describe, test, expect, vi } from 'vitest';
 // module graph does not touch window['go'].
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveComment: vi.fn(),
-    Migrate_1_0_0_to_1_1_0: vi.fn(),
     ClearCommandHistory: vi.fn(),
-    SaveSearchHistory: vi.fn(),
-    Migrate_1_1_0_to_1_2_0: vi.fn(),
-    Migrate_1_2_0_to_1_3_0: vi.fn()
+    SaveSearchHistory: vi.fn()
 }));
 
 import { parseFilters } from '../commandProcessor.js';

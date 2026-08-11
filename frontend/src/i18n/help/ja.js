@@ -1165,18 +1165,6 @@ export default {
                                 <td>clear, cl</td>
                                 <td>コマンド履歴を消去</td>
                             </tr>
-                            <tr>
-                                <td>migrate_from_1_0_to_1_1</td>
-                                <td>データベースをバージョン 1.0 から 1.1 に移行</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_1_to_1_2</td>
-                                <td>データベースをバージョン 1.1 から 1.2 に移行</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_2_to_1_3</td>
-                                <td>データベースをバージョン 1.2 から 1.3 に移行</td>
-                            </tr>
                         </tbody>
                     </table>
 `,

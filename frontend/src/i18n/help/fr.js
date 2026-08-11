@@ -1168,18 +1168,6 @@ export default {
                                 <td>clear, cl</td>
                                 <td>Effacer l'historique des commandes</td>
                             </tr>
-                            <tr>
-                                <td>migrate_from_1_0_to_1_1</td>
-                                <td>Migrer la base de données de la version 1.0 vers la 1.1</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_1_to_1_2</td>
-                                <td>Migrer la base de données de la version 1.1 vers la 1.2</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_2_to_1_3</td>
-                                <td>Migrer la base de données de la version 1.2 vers la 1.3</td>
-                            </tr>
                         </tbody>
                     </table>
 `,

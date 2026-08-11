@@ -5,9 +5,8 @@ import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
 import { searchHistoryStore } from './stores/searchHistoryStore';
 import { excludePositionHistoryJSON } from './stores/searchExcludePositionStore';
-import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/database/Database.js';
+import { SaveComment, ClearCommandHistory } from '../wailsjs/go/database/Database.js';
 import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
-import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/database/Database.js';
 import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
@@ -116,33 +115,6 @@ export function processCommand(command) {
         openModal(MODAL.TAKE_POINT_2);
     } else if (command === 'tp4') {
         openModal(MODAL.TAKE_POINT_4);
-    } else if (command === 'migrate_from_1_0_to_1_1') {
-        Migrate_1_0_0_to_1_1_0()
-            .then(() => {
-                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.1.0' }));
-            })
-            .catch((error) => {
-                logger.error('Error migrating database:', error);
-                statusBarTextStore.set(tMsg('commands.errorMigrating'));
-            });
-    } else if (command === 'migrate_from_1_1_to_1_2') {
-        Migrate_1_1_0_to_1_2_0()
-            .then(() => {
-                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.2.0' }));
-            })
-            .catch((error) => {
-                logger.error('Error migrating database:', error);
-                statusBarTextStore.set(tMsg('commands.errorMigrating'));
-            });
-    } else if (command === 'migrate_from_1_2_to_1_3') {
-        Migrate_1_2_0_to_1_3_0()
-            .then(() => {
-                statusBarTextStore.set(tMsg('commands.dbMigrated', { version: '1.3.0' }));
-            })
-            .catch((error) => {
-                logger.error('Error migrating database:', error);
-                statusBarTextStore.set(tMsg('commands.errorMigrating'));
-            });
     } else if (command === 'cl' || command === 'clear') {
         ClearCommandHistory()
             .then(() => {

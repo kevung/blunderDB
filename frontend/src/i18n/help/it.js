@@ -1166,18 +1166,6 @@ export default {
                                 <td>clear, cl</td>
                                 <td>Cancella la cronologia dei comandi</td>
                             </tr>
-                            <tr>
-                                <td>migrate_from_1_0_to_1_1</td>
-                                <td>Migra il database dalla versione 1.0 alla 1.1</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_1_to_1_2</td>
-                                <td>Migra il database dalla versione 1.1 alla 1.2</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_2_to_1_3</td>
-                                <td>Migra il database dalla versione 1.2 alla 1.3</td>
-                            </tr>
                         </tbody>
                     </table>
 `,
