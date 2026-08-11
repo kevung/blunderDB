@@ -779,7 +779,8 @@
         "willAdd": "Wird hinzugefügt",
         "willMakeChanges": "Der Importvorgang nimmt folgende Änderungen vor:",
         "willMerge": "Wird zusammengeführt",
-        "willSkip": "Wird übersprungen"
+        "willSkip": "Wird übersprungen",
+        "dropToImport": "Dateien hier ablegen, um sie zu importieren"
     },
     "warning": {
         "title": "Warnung"

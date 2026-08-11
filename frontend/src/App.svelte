@@ -8,7 +8,7 @@
     import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists } from '../wailsjs/go/gui/App.js';
-    import { initLanguage } from './i18n';
+    import { initLanguage, t } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
     import { initPanelPosition, effectivePositionStore, PANEL_SIDE } from './stores/panelLayoutStore';
@@ -452,7 +452,7 @@
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <span>Drop files to import</span>
+                <span>{$t('import.dropToImport')}</span>
                 <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .txt</span>
             </div>
         </div>

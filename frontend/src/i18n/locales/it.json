@@ -779,7 +779,8 @@
         "willAdd": "Da aggiungere",
         "willMakeChanges": "L'operazione di importazione apporterà le seguenti modifiche:",
         "willMerge": "Da unire",
-        "willSkip": "Da saltare"
+        "willSkip": "Da saltare",
+        "dropToImport": "Rilascia i file per importarli"
     },
     "warning": {
         "title": "Avviso"
