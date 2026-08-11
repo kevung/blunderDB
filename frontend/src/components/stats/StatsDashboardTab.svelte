@@ -206,7 +206,7 @@
     }
 
     .card-value {
-        font-size: 28px;
+        font-size: var(--font-size-stat-figure);
         font-variant-numeric: tabular-nums;
         font-weight: 600;
         color: #1a1a1a;

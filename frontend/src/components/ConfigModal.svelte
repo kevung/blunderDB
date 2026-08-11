@@ -474,7 +474,7 @@
         position: absolute;
         top: 8px;
         right: 8px;
-        font-size: 1.5rem;
+        font-size: var(--font-size-dialog-close);
         font-weight: bold;
         color: #666;
         cursor: pointer;

@@ -183,7 +183,7 @@
         position: absolute;
         top: 8px;
         right: 8px;
-        font-size: 1.5rem;
+        font-size: var(--font-size-dialog-close);
         font-weight: bold;
         color: #666;
         cursor: pointer;
@@ -200,7 +200,10 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
-        font-size: 18px; /* Set font size */
+        /* Larger than body text on purpose: this is the number entry the whole
+           dialog exists for. Reuses the dialog-title token rather than a bespoke
+           size — see docs/adr/0008. */
+        font-size: var(--font-size-dialog-title);
     }
 
     .input-field:focus {

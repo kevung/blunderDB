@@ -228,7 +228,7 @@
     }
 
     .modal-title {
-        font-size: var(--font-size-base);
+        font-size: var(--font-size-dialog-title);
         font-weight: 600;
         color: #222;
         flex: 1;
@@ -237,7 +237,7 @@
     .close-btn {
         background: none;
         border: none;
-        font-size: 18px;
+        font-size: var(--font-size-dialog-close);
         color: #888;
         cursor: pointer;
         line-height: 1;

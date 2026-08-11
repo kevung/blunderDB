@@ -717,7 +717,9 @@
         align-items: center;
         gap: 12px;
         color: #ffffff;
-        font-size: 1.3rem;
+        /* Reuses the dialog-title token rather than a bespoke overlay size — see
+           docs/adr/0008. */
+        font-size: var(--font-size-dialog-title);
         font-weight: 600;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
         border: 3px dashed rgba(255, 255, 255, 0.6);

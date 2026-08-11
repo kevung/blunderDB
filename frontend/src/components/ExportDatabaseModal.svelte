@@ -548,7 +548,7 @@
 
     h2 {
         margin: 0;
-        font-size: 20px;
+        font-size: var(--font-size-dialog-title);
         color: #333;
     }
 

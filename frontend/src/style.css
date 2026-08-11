@@ -4,10 +4,23 @@
 
     /* The interface's type scale — see docs/adr/0008. Components use these rather than
        absolute sizes; hierarchy comes from weight and colour, not from size. Named
-       exceptions: dialog chrome, and the large figures of the statistics tabs. */
+       exceptions: dialog chrome (below), and the large figures of the statistics tabs
+       and import counters (--font-size-stat-figure). */
     --font-size-base: 12px; /* body text, labels, values, controls, buttons */
     --font-size-small: 11px; /* dense lists, secondary notes and hints */
-    --font-size-title: 15px; /* panel and dialog titles */
+    --font-size-title: 15px; /* panel titles, and a few deliberately compact dialog titles */
+
+    /* Dialog chrome — named exceptions under ADR-0008, not part of the body scale above.
+       Most modal titles are larger than a panel title (users scan for the modal's
+       purpose before reading its body); a handful of small utility dialogs (ConfigModal,
+       ProtectedCopyModal) keep --font-size-title on purpose and are left alone. */
+    --font-size-dialog-title: 20px;
+    --font-size-dialog-close: 24px; /* the "×" close cross */
+
+    /* Figures meant to be read at a glance rather than read as text: the large numbers
+       in the statistics tabs and the running counters in the import-progress dialogs.
+       Named exception under ADR-0008 rule 2. */
+    --font-size-stat-figure: 28px;
 }
 
 /* A form control inherits neither size nor family from the page; without this it

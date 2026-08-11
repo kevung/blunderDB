@@ -86,7 +86,7 @@
 
     h2 {
         margin: 0 0 0.5rem;
-        font-size: 1.25rem;
+        font-size: var(--font-size-dialog-title);
     }
 
     .catalog-desc {
@@ -99,7 +99,7 @@
         position: absolute;
         top: 8px;
         right: 8px;
-        font-size: 1.5rem;
+        font-size: var(--font-size-dialog-close);
         font-weight: bold;
         color: #666;
         cursor: pointer;

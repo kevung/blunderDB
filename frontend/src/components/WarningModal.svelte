@@ -113,7 +113,7 @@
         position: absolute;
         top: -8px;
         right: 4px;
-        font-size: 24px;
+        font-size: var(--font-size-dialog-close);
         font-weight: bold;
         color: #666;
         cursor: pointer;

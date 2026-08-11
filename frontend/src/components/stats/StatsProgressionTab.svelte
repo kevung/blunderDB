@@ -237,7 +237,7 @@
     }
 
     .single-value {
-        font-size: 28px;
+        font-size: var(--font-size-stat-figure);
         font-weight: 700;
         font-variant-numeric: tabular-nums;
         color: #1976d2;
