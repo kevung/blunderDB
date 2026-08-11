@@ -219,6 +219,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.PanelPosition = sanitizePanelPosition(config.PanelPosition)
 	config.PanelPosition = c.PanelPosition
 	c.TourSeen = config.TourSeen
+	c.BearoffTsPath = config.BearoffTsPath
+	c.EpcChallenge = config.EpcChallenge
 
 	return &config, nil
 }

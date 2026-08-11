@@ -15,7 +15,7 @@
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
-    import { positionStore, positionsStore } from './stores/positionStore.js';
+    import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore } from './stores/analysisStore.js';
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
     import {
@@ -170,17 +170,7 @@
     positionsStore.subscribe((value) => {
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
-            positionStore.set({
-                id: 0,
-                board: { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [15, 15] },
-                cube: { owner: -1, value: 0 },
-                dice: [3, 1],
-                score: [-1, -1],
-                player_on_roll: 0,
-                decision_type: 0,
-                has_jacoby: 0,
-                has_beaver: 0
-            });
+            positionStore.set(emptyPosition());
             analysisStore.set({
                 positionId: null,
                 xgid: '',
