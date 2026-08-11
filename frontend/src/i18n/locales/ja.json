@@ -874,7 +874,8 @@
         "importedPositionSaved": "インポートしたポジションと分析を保存しました",
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
         "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",
-        "confirmDeletePosition": "このポジションと関連する分析を削除しますか?"
+        "confirmDeletePosition": "このポジションと関連する分析を削除しますか?",
+        "searching": "検索中…"
     },
     "stats": {
         "title": "統計",

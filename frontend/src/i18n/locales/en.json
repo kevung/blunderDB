@@ -874,7 +874,8 @@
         "importedPositionSaved": "Imported position and analysis saved successfully",
         "pastedPositionSaved": "Pasted position and analysis saved successfully",
         "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed",
-        "confirmDeletePosition": "Delete this position and its associated analysis?"
+        "confirmDeletePosition": "Delete this position and its associated analysis?",
+        "searching": "Searching…"
     },
     "stats": {
         "title": "Stats",

@@ -874,7 +874,8 @@
         "importedPositionSaved": "Импортированные позиция и анализ успешно сохранены",
         "pastedPositionSaved": "Вставленные позиция и анализ успешно сохранены",
         "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось",
-        "confirmDeletePosition": "Удалить эту позицию и связанный анализ?"
+        "confirmDeletePosition": "Удалить эту позицию и связанный анализ?",
+        "searching": "Поиск…"
     },
     "stats": {
         "title": "Статистика",

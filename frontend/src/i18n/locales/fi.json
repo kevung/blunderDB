@@ -874,7 +874,8 @@
         "importedPositionSaved": "Tuotu positio ja analyysi tallennettu onnistuneesti",
         "pastedPositionSaved": "Liitetty positio ja analyysi tallennettu onnistuneesti",
         "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
-        "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?"
+        "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?",
+        "searching": "Haetaan…"
     },
     "stats": {
         "title": "Tilastot",

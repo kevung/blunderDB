@@ -397,6 +397,13 @@ export async function loadPositionsByFilters({
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
+
+    // Feedback for the query itself, which can take a moment on a large database. Set before
+    // the backend call so the user sees it immediately, not after the fact.
+    const previousStatusMessage = get(statusBarTextStore);
+    setStatusBarMessage(tMsg('status.searching'));
+    document.body.style.cursor = 'wait';
+
     try {
         let currentPosition = get(positionStore);
 
@@ -533,6 +540,15 @@ export async function loadPositionsByFilters({
         setStatusBarMessage(tMsg('status.errorLoadingByFilters'));
         if (get(activeTabStore) === 'search') {
             statusBarModeStore.set('EDIT');
+        }
+    } finally {
+        document.body.style.cursor = '';
+        // The success path above sets no message of its own (the position count updates
+        // separately); restore whatever was shown before the search only if nothing else
+        // — the no-match or error branch — has already replaced the "searching" placeholder.
+        const current = get(statusBarTextStore);
+        if (current && typeof current === 'object' && current.i18nKey === 'status.searching') {
+            statusBarTextStore.set(previousStatusMessage);
         }
     }
 }
