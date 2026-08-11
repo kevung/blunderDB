@@ -15,7 +15,7 @@
 
     let { labels, datasets, options = {}, onBarClick } = $props();
 
-    const histogramOptions = {
+    let histogramOptions = $derived({
         ...options,
         scales: {
             x: { type: 'category', ...(options?.scales?.x ?? {}) },
@@ -25,7 +25,7 @@
             legend: { display: false },
             ...(options?.plugins ?? {})
         }
-    };
+    });
 </script>
 
 <BarChart {labels} {datasets} options={histogramOptions} {onBarClick} />

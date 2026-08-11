@@ -12,6 +12,7 @@
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
+    import { SvelteSet } from 'svelte/reactivity';
 
     let match = $state(null);
     // Other matches this position also came from (provenance is one-to-many).
@@ -97,7 +98,7 @@
             formatDate(match?.match_date),
             match?.match_length > 0 ? `${match.match_length}${$t('matchInfo.points')}` : ''
         ];
-        const seen = new Set();
+        const seen = new SvelteSet();
         const out = [];
         for (const v of raw) {
             const s = v == null ? '' : String(v).trim();
