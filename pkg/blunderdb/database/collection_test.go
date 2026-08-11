@@ -302,7 +302,7 @@ func TestExportCollections(t *testing.T) {
 	_ = db.AddPositionsToCollection(colID, ids)
 
 	exportPath := filepath.Join(t.TempDir(), "export.db")
-	err := db.ExportCollections(exportPath, []int64{colID}, map[string]string{}, true, true)
+	err := db.ExportCollections(exportPath, []int64{colID}, map[string]string{}, true, true, "", "")
 	if err != nil {
 		t.Fatalf("ExportCollections: %v", err)
 	}
@@ -314,5 +314,138 @@ func TestExportCollections(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Error("export file is empty")
+	}
+}
+
+// TestExportCollections_RoundTrip_ScalarColumnsAndDedup is fiche-04's core
+// regression for the collection export path — same defect and same fix as
+// ExportDatabase (see the comment block above
+// TestExportDatabase_RoundTrip_ScalarColumnsAndDedup in export_test.go):
+// before the fix, ExportCollections hand-rolled its own two-column position
+// table and never wrote zobrist_hash or any scalar column.
+func TestExportCollections_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
+	db := newTestDB(t)
+
+	importTestMatch(t, db)
+	ids := getPositionIDs(t, db, 3)
+	colID, _ := db.CreateCollection("Export", "")
+	if err := db.AddPositionsToCollection(colID, ids); err != nil {
+		t.Fatalf("AddPositionsToCollection: %v", err)
+	}
+
+	exportPath := filepath.Join(t.TempDir(), "export.db")
+	if err := db.ExportCollections(exportPath, []int64{colID}, map[string]string{}, true, true, "", ""); err != nil {
+		t.Fatalf("ExportCollections: %v", err)
+	}
+
+	reopened := NewDatabase()
+	if err := reopened.OpenDatabase(exportPath); err != nil {
+		t.Fatalf("OpenDatabase(export): %v", err)
+	}
+	defer reopened.Close()
+
+	positions, err := reopened.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions: %v", err)
+	}
+	if len(positions) != len(ids) {
+		t.Fatalf("expected %d positions, got %d", len(ids), len(positions))
+	}
+
+	var nullHashes int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE zobrist_hash IS NULL`).Scan(&nullHashes); err != nil {
+		t.Fatalf("query zobrist_hash: %v", err)
+	}
+	if nullHashes != 0 {
+		t.Errorf("expected 0 NULL zobrist_hash after export+reopen, got %d", nullHashes)
+	}
+
+	var nullScalars int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE dice_1 IS NULL OR score_1 IS NULL OR score_2 IS NULL OR pip_diff IS NULL`).Scan(&nullScalars); err != nil {
+		t.Fatalf("query scalar columns: %v", err)
+	}
+	if nullScalars != 0 {
+		t.Errorf("expected 0 rows with a NULL scalar column, got %d", nullScalars)
+	}
+
+	// A pure-SQL score search must find the first position by its own score.
+	first := positions[0]
+	var found int
+	if err := reopened.db.QueryRow(`SELECT COUNT(*) FROM position WHERE score_1 = ? AND score_2 = ?`,
+		first.Score[0], first.Score[1]).Scan(&found); err != nil {
+		t.Fatalf("query score search: %v", err)
+	}
+	if found == 0 {
+		t.Error("expected at least one position findable by score via SQL columns")
+	}
+
+	// Re-importing the export into a database that already holds these positions
+	// must create no duplicates.
+	before, err := db.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions on the source db: %v", err)
+	}
+	result, err := db.CommitImportDatabase(exportPath)
+	if err != nil {
+		t.Fatalf("CommitImportDatabase(export) into the source db: %v", err)
+	}
+	if added, _ := result["added"].(int); added != 0 {
+		t.Errorf("re-importing the export added %d new positions, want 0", added)
+	}
+	after, err := db.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions after re-import: %v", err)
+	}
+	if len(after) != len(before) {
+		t.Errorf("re-importing the export duplicated positions: before=%d after=%d", len(before), len(after))
+	}
+}
+
+// TestExportCollections_MetadataAllowListAndWatermark covers fiche-04's other
+// collection-export defect: metadata used to be copied by raw inclusion
+// (`for key, value := range metadata { INSERT ... }`), and no watermark was
+// ever written. See ADR-0007 and issuance.CarriedMetadataKeys.
+func TestExportCollections_MetadataAllowListAndWatermark(t *testing.T) {
+	db := newTestDB(t)
+
+	importTestMatch(t, db)
+	ids := getPositionIDs(t, db, 1)
+	colID, _ := db.CreateCollection("Export", "")
+	if err := db.AddPositionsToCollection(colID, ids); err != nil {
+		t.Fatalf("AddPositionsToCollection: %v", err)
+	}
+
+	exportPath := filepath.Join(t.TempDir(), "export.db")
+	metadata := map[string]string{
+		"user":           "Jean",
+		"description":    "A course",
+		"issue_register": "list of every recipient and their password", // NOT on the allow-list
+	}
+	if err := db.ExportCollections(exportPath, []int64{colID}, metadata, false, false, "Cours de Jean", "Ne pas redistribuer"); err != nil {
+		t.Fatalf("ExportCollections: %v", err)
+	}
+
+	edb := openExportDB(t, exportPath)
+	defer edb.Close()
+
+	var user string
+	if err := edb.QueryRow(`SELECT value FROM metadata WHERE key = 'user'`).Scan(&user); err != nil || user != "Jean" {
+		t.Errorf("expected allow-listed metadata 'user'='Jean', got %q (err=%v)", user, err)
+	}
+
+	var offAllowList int
+	if err := edb.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = 'issue_register'`).Scan(&offAllowList); err != nil {
+		t.Fatalf("query metadata: %v", err)
+	}
+	if offAllowList != 0 {
+		t.Error("a metadata key outside issuance.CarriedMetadataKeys travelled into the collection export")
+	}
+
+	var watermark string
+	if err := edb.QueryRow(`SELECT value FROM metadata WHERE key = 'watermark'`).Scan(&watermark); err != nil {
+		t.Fatalf("expected a watermark row: %v", err)
+	}
+	if watermark == "" {
+		t.Error("expected a non-empty watermark document")
 	}
 }

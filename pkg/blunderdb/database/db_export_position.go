@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -114,4 +116,41 @@ func insertExportPosition(ins, lookup *sql.Stmt, p Position) (int64, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+// writeExportMetadata copies metadata into the export database by
+// ALLOW-LIST (issuance.Carried), seals and writes a Watermark when origin is
+// non-empty, and fills in a default dateOfCreation when the caller did not
+// supply one — the same three steps ExportDatabase performs inline. Used by
+// ExportCollections and ExportTournaments, which carried metadata by
+// inclusion and never wrote a watermark at all before fiche-04.
+//
+// database_version is not written here: newExportDB's call to
+// sqlite.Bootstrap already stamped it.
+func writeExportMetadata(exportDB *sql.DB, metadata map[string]string, watermarkOrigin, watermarkNote string) error {
+	watermarkDocument, err := sealWatermark(watermarkOrigin, watermarkNote)
+	if err != nil {
+		return fmt.Errorf("cannot sign the watermark: %w", err)
+	}
+
+	for key, value := range issuance.Carried(metadata) {
+		if _, err := exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value); err != nil {
+			return fmt.Errorf("cannot write metadata %q: %w", key, err)
+		}
+	}
+
+	if watermarkDocument != "" {
+		if _, err := exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`,
+			issuance.KeyWatermark, watermarkDocument); err != nil {
+			return fmt.Errorf("cannot write the watermark into the exported file: %w", err)
+		}
+	}
+
+	if metadata["dateOfCreation"] == "" {
+		currentDate := time.Now().Format("2006-01-02")
+		if _, err := exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('dateOfCreation', ?)`, currentDate); err != nil {
+			return fmt.Errorf("cannot write default creation date: %w", err)
+		}
+	}
+	return nil
 }
