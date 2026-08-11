@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -106,18 +107,56 @@ func (s *Server) ingestRoutes() []route {
 }
 
 // handleExportSQLite serializes the caller's tenant into a blunderDB SQLite file
-// and returns it as a binary download. The exporter materializes the whole file
-// before writing any bytes to the response, so a build failure is reported with a
-// proper error status (no partial body).
+// and returns it as a binary download.
+//
+// ingest.SQLiteExporter already materializes the whole file into its own temp
+// path before copying it to the writer it is given, but this handler must not
+// hand it the live ResponseWriter directly: the moment Export writes its first
+// byte, Go commits whatever status/headers are set at that instant, and this
+// handler used to set the binary headers *before* calling Export — so a
+// mid-export failure still went out as HTTP 200 with
+// Content-Type: application/octet-stream and a JSON error body wearing a
+// ".sqlite" Content-Disposition. Instead, Export targets a private temp file
+// here; the binary headers are set, and the file streamed to the client, only
+// once Export has returned successfully. On failure, writeStorageError sets a
+// proper status/content-type — nothing has reached the client yet.
 func (s *Server) handleExportSQLite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		exp := s.exporterFor(ingest.FormatSQLite)
+
+		tmp, err := os.CreateTemp("", "blunderdb-export-resp-*.sqlite")
+		if err != nil {
+			writeStorageError(w, fmt.Errorf("server: create temp export file: %w", err))
+			return
+		}
+		tmpPath := tmp.Name()
+		defer os.Remove(tmpPath)
+
+		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, ingest.ExportOptions{Format: ingest.FormatSQLite})
+		closeErr := tmp.Close()
+		if exportErr != nil {
+			writeStorageError(w, exportErr)
+			return
+		}
+		if closeErr != nil {
+			writeStorageError(w, fmt.Errorf("server: close temp export file: %w", closeErr))
+			return
+		}
+
+		f, err := os.Open(tmpPath)
+		if err != nil {
+			writeStorageError(w, fmt.Errorf("server: reopen temp export file: %w", err))
+			return
+		}
+		defer f.Close()
+
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Disposition", `attachment; filename="blunderdb-export.sqlite"`)
-		if err := exp.Export(r.Context(), scopeOf(r), w, ingest.ExportOptions{Format: ingest.FormatSQLite}); err != nil {
-			_ = json.NewEncoder(w).Encode(errorEnvelope{Error: errorBody{
-				Code: codeForErr(err), Message: err.Error(),
-			}})
+		if _, err := io.Copy(w, f); err != nil {
+			// Headers/status are already committed at this point (the copy is
+			// the first write); nothing more to do than let the client see a
+			// truncated download. slog so it is at least visible server-side.
+			slog.Warn("server: stream sqlite export", "err", err)
 		}
 	}
 }
