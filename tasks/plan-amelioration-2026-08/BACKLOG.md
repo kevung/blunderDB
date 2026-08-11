@@ -6,6 +6,12 @@ commencer « en passant ».
 
 ## Backend
 
+- **Bug `CommitImportDatabase` : colonnes scalaires NULL** (découvert en
+  fiche 04) : le chemin legacy d'import de `.db` insère une position « neuve »
+  sans remplir les colonnes scalaires de recherche, ce qui casse sa propre
+  déduplication au second import et rend ces positions invisibles aux filtres
+  SQL. Voir les Notes d'exécution de la fiche 04. Effort S/M, à corriger en
+  priorité dans le prochain cycle (même famille que le correctif d'export).
 - **Export unifié, schéma unique** : faire de `storage/sqlite/schema_sqlite.go`
   la source DDL unique (7 copies aujourd'hui, 93 `CREATE TABLE`) et fusionner
   les 3+1 chemins d'export en un exporteur paramétré par une sélection
