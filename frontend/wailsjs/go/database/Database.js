@@ -130,8 +130,8 @@ export function DeleteTournament(arg1) {
   return window['go']['database']['Database']['DeleteTournament'](arg1);
 }
 
-export function ExportCollections(arg1, arg2, arg3, arg4, arg5) {
-  return window['go']['database']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5);
+export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['database']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
 export function ExportDatabase(arg1) {
@@ -142,8 +142,8 @@ export function ExportMatchMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportMatchMAT'](arg1, arg2);
 }
 
-export function ExportTournaments(arg1, arg2, arg3, arg4, arg5) {
-  return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5);
+export function ExportTournaments(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
 export function GetAllAnkiDecks() {
@@ -366,18 +366,6 @@ export function MergePlayers(arg1, arg2) {
   return window['go']['database']['Database']['MergePlayers'](arg1, arg2);
 }
 
-export function Migrate_1_0_0_to_1_1_0() {
-  return window['go']['database']['Database']['Migrate_1_0_0_to_1_1_0']();
-}
-
-export function Migrate_1_1_0_to_1_2_0() {
-  return window['go']['database']['Database']['Migrate_1_1_0_to_1_2_0']();
-}
-
-export function Migrate_1_2_0_to_1_3_0() {
-  return window['go']['database']['Database']['Migrate_1_2_0_to_1_3_0']();
-}
-
 export function MovePositionBetweenCollections(arg1, arg2, arg3) {
   return window['go']['database']['Database']['MovePositionBetweenCollections'](arg1, arg2, arg3);
 }
@@ -394,8 +382,8 @@ export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
 }
 
-export function PositionExists(arg1) {
-  return window['go']['database']['Database']['PositionExists'](arg1);
+export function RefreshSearchStatistics() {
+  return window['go']['database']['Database']['RefreshSearchStatistics']();
 }
 
 export function RemoveMatchFromTournament(arg1) {

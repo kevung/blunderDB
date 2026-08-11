@@ -43,12 +43,30 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
-	// The decoded analysis is consumed only by the move-pattern filter and the
-	// Go-side analysis re-checks of mirror search; every other analysis filter
-	// runs on the denormalised SQL columns. So decode the (zlib-compressed) blob
-	// per row only when one of those paths needs it — a no-move-pattern,
-	// non-mirror search skips the decompress+unmarshal of every result row.
-	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter
+	// The decoded analysis is consumed by the move-pattern filter, the Go-side
+	// analysis re-checks of mirror search, and the date/equity filters below —
+	// every other analysis filter (win/gammon/backgammon rate, cube error,
+	// move error) runs on the denormalised SQL columns instead. So decode the
+	// (zlib-compressed) blob per row only when one of those paths needs it — a
+	// search using none of them skips the decompress+unmarshal of every row.
+	//
+	// MoveErrorFilter is deliberately NOT one of the triggers: it is pushed to
+	// SQL like the rate filters (statsErrExpr in the WHERE builder below), and
+	// its Go-side re-check (matchesMoveErrorFilter) only ever runs inside the
+	// `!useSQLFilters` block, i.e. only when f.MirrorFilter is already true —
+	// already covered by the `|| f.MirrorFilter` term below. Adding it here
+	// too used to force a bulk a.data decode on every plain (non-mirror)
+	// MoveErrorFilter search even though nothing read the result: on the
+	// tournois fixture that turned BenchmarkSearch_ErrorAboveTenth's ~2 200
+	// SQL-matched rows into ~2 200 needless decodes, ~80ms → ~200ms.
+	//
+	// DateFilter has no SQL pushdown at all (unlike MoveErrorFilter) and used
+	// to decode independently, once per candidate row, inside
+	// matchesDateFilter (a second query plus a second decompression on top of
+	// this one whenever both ran). Folding it into needAnalysis makes this the
+	// only decode.
+	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
+		f.DateFilter != "" || f.EquityFilter != ""
 
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
@@ -240,10 +258,28 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(f.Player2BackCheckerFilter, "K")
 		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
+		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
+		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
+		// clause on the outer LEFT JOIN. With the LEFT JOIN form the planner's
+		// only efficient path is idx_analysis_win_gammon(win_rate, gammon_rate),
+		// which returns rows ordered by rate, not by p.id — the ORDER BY at the
+		// end of this query then needs a full TEMP B-TREE sort. Feeding p.id
+		// through an IN-subquery instead lets SQLite keep scanning `position` in
+		// its natural (already p.id-ordered) rowid order and test membership per
+		// row, so the sort disappears entirely; idx_analysis_win_gammon now
+		// carries position_id as a third column (schema_sqlite.go) so the
+		// subquery is answered from the index alone, no analysis-table lookup.
+		// See FOLLOWUPS.md #4 and fiche-05 T3 for the verified EXPLAIN QUERY PLAN.
+		var winGammonWhere strings.Builder
+		var winGammonArgs []any
 		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(f.WinRateFilter, "w")
-		appendIntRangeSQL("a.player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &where, &args)
+		appendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
 		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(f.GammonRateFilter, "g")
-		appendIntRangeSQL("a.player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &where, &args)
+		appendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
+		if winGammonWhere.Len() > 0 {
+			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE 1=1" + winGammonWhere.String() + ")")
+			args = append(args, winGammonArgs...)
+		}
 		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(f.BackgammonRateFilter, "b")
 		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
 		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(f.Player2WinRateFilter, "W")
@@ -294,12 +330,25 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 	}
 
+	// a.data is the zlib-compressed analysis blob (~600 bytes/row on the tournois
+	// fixture) and is the only column here needAnalysis gates: every other
+	// selected analysis column is a cheap denormalised scalar used by the SQL
+	// WHERE clause itself. A search that needs none of the Go-side
+	// analysis-dependent filters (move pattern, mirror, date, move-error,
+	// equity — see needAnalysis above) has no use for the blob, so skip
+	// fetching and transporting it: NULL is 1 byte on the wire instead of ~600,
+	// for every row, sorted or not.
+	analysisDataCol := "NULL"
+	if needAnalysis {
+		analysisDataCol = "a.data"
+	}
+
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
 		p.individually_imported, p.flagged,
-		a.id, a.data,
+		a.id, ` + analysisDataCol + ` AS data,
 		a.cube_error, a.best_move_equity_error,
 		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
 		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
@@ -564,7 +613,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 						return false
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, f.MoveErrorFilter) {
+				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}
@@ -590,7 +639,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
 				return false
 			}
-			if f.DateFilter != "" && !matchesDateFilter(ctx, s.db, &pos, f.DateFilter) {
+			if f.DateFilter != "" && !matchesDateFilter(ana, f.DateFilter) {
 				return false
 			}
 			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {

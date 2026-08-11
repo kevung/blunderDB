@@ -34,6 +34,10 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
 - `007_flagged.sql` — `position.flagged` column + index, the source-tool study
   mark (docs/adr/0006). No backfill is possible: the flag exists only in the
   source files, never in an already-imported database.
+- `008_win_gammon_covering_index.sql` — extends the win/gammon combo search
+  index with a trailing `position_id` column so the query's `p.id IN (SELECT
+  position_id FROM analysis WHERE …)` subquery is answered from the index
+  alone (fiche-05 T3). Index-only, like `006`.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

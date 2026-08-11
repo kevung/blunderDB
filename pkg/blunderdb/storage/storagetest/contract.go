@@ -64,6 +64,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
+		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
@@ -771,6 +772,68 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 	if len(ids) != 1 || ids[0] != takeID {
 		t.Errorf("includeCube+takepass filter: got %v, want [%d]", ids, takeID)
 	}
+}
+
+// testSearchFilterByAnalysisDecodesCompressedBlob exercises the analysis-driven
+// Go-side filters (move pattern, equity) that only see a match once Find has
+// decoded the stored a.data blob. The blob is always written zlib-compressed
+// (AnalysisStore.Save), so a decode path that forgot to decompress — as the
+// PostgreSQL backend's search once did, unmarshalling the compressed bytes
+// directly as JSON — silently produced ana == nil for every row and these
+// filters matched nothing, on every search, forever. Guards the fix, and
+// guards needAnalysis actually gating the decode on both filters (fiche-05
+// T1/T2: a filter missing from needAnalysis leaves a.data unselected, same
+// symptom).
+func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	withAnalysis := checkerPos()
+	idWith, err := s.Positions().Save(ctx, "", &withAnalysis)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := s.Analyses().Save(ctx, "", idWith, &domain.PositionAnalysis{
+		AnalysisType: "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{
+			Moves: []domain.CheckerMove{
+				{Index: 0, Move: "13/11 24/23", Equity: 0.123, PlayerWinChance: 62},
+			},
+		},
+	}); err != nil {
+		t.Fatalf("Save analysis: %v", err)
+	}
+
+	without := cubePos() // distinct board (checkerPos vs cubePos), no analysis saved
+	if _, err := s.Positions().Save(ctx, "", &without); err != nil {
+		t.Fatalf("Save position without analysis: %v", err)
+	}
+
+	// Both filters are applied unconditionally against the decoded ana (never
+	// pushed to SQL, unlike WinRateFilter/GammonRateFilter/etc., which read the
+	// denormalised a.player1_win_rate column and would pass even with a broken
+	// decode) — so they are what actually exercises the blob decode.
+	// EquityFilter additionally needs DateFilter/MoveErrorFilter's needAnalysis
+	// companion (fiche-05 T2) to be decoded at all; without it ana is nil here
+	// too and the filter silently matches nothing, on both backends.
+	if got := searchIDs(t, s, domain.SearchFilters{MovePatternFilter: `m"13/11"`}); len(got) != 1 || got[0] != idWith {
+		t.Errorf("MovePatternFilter: got %v, want [%d]", got, idWith)
+	}
+	if got := searchIDs(t, s, domain.SearchFilters{EquityFilter: "e>0"}); len(got) != 1 || got[0] != idWith {
+		t.Errorf("EquityFilter: got %v, want [%d]", got, idWith)
+	}
+}
+
+// searchIDs runs f against s and returns the matched position IDs in result order.
+func searchIDs(t *testing.T, s storage.Storage, f domain.SearchFilters) []int64 {
+	t.Helper()
+	var ids []int64
+	for pos, err := range s.Search().Find(context.Background(), "", f) {
+		if err != nil {
+			t.Fatalf("Find(%+v): %v", f, err)
+		}
+		ids = append(ids, pos.ID)
+	}
+	return ids
 }
 
 func testCollectionMoveBetween(t *testing.T, s storage.Storage) {

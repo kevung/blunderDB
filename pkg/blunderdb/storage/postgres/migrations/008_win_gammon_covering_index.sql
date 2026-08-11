@@ -1,0 +1,29 @@
+-- Forward migration: covering index for the win/gammon combo search
+-- (fiche-05 T3, mirrors idx_analysis_win_gammon_covering in the SQLite
+-- backend's schema_sqlite.go / db_schema.go).
+--
+-- The search query narrows via `p.id IN (SELECT position_id FROM analysis
+-- WHERE tenant_id = … AND player1_win_rate … AND player1_gammon_rate …)`
+-- instead of a plain `AND a.player1_win_rate/gammon_rate …` clause on the
+-- outer LEFT JOIN. With the old 2-column idx_analysis_win_gammon the planner
+-- can satisfy that predicate but must still visit the analysis row to read
+-- position_id, and — before the subquery rewrite — the LEFT JOIN form
+-- returned rows ordered by rate rather than by p.id, forcing a sort. Adding
+-- position_id as a third (trailing) column makes the subquery answerable
+-- from the index alone.
+--
+-- Index-only: no column, no table, no data changes. Nothing here is
+-- schema-visible, so this migration deliberately does NOT bump
+-- database_version in metadata, and domain.DatabaseVersion is left alone —
+-- recording a version with no counterpart in the Go constant would
+-- desynchronise the two (see migrations/README.md).
+--
+-- idx_analysis_win_gammon (the old 2-column index) is not dropped here: it
+-- becomes unused once the query above stops referencing it, but removing it
+-- outright is left to a future migration, exactly as the SQLite backend
+-- leaves its own old index in place on existing databases.
+--
+-- Idempotent, so it is safe on a fresh database whose 001 baseline already
+-- creates the index.
+
+CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis (tenant_id, player1_win_rate, player1_gammon_rate, position_id);

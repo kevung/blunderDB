@@ -61,6 +61,22 @@ func TestStatsStorageParity(t *testing.T) {
 				t.Fatalf("select match id: %v", err)
 			}
 
+			// ANALYZE before either side computes anything. TopBlunders' ORDER BY
+			// is not a total order (ties on ErrorMP — see FOLLOWUPS.md "Rolling
+			// stats non-determinism"), so which row lands in the last slot of a
+			// LIMIT can depend on the query plan the still-empty vs.
+			// already-populated sqlite_stat1 leads the planner to pick. Without
+			// this, legacyAll below ran against a database that had never been
+			// ANALYZEd, while gotAll (below) ran against the same file reopened
+			// after Close — which now also runs PRAGMA optimize (fiche-05 T7) and,
+			// on a freshly-imported database with no prior stats, performs a real
+			// ANALYZE. That asymmetry alone was enough to flip a tied entry.
+			// ANALYZE-ing up front puts both sides on equal footing, which is what
+			// a parity test should be comparing in the first place.
+			if _, err := d.db.Exec(`ANALYZE`); err != nil {
+				t.Fatalf("ANALYZE: %v", err)
+			}
+
 			// 2. Legacy results. These call the legacy* reference implementations
 			// directly (the production Database methods now delegate to storage, so
 			// calling them here would compare storage against itself).

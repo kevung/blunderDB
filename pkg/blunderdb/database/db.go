@@ -158,9 +158,20 @@ func (d *Database) Close() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.releaseFileLock()
+	wasReadOnly := d.readOnly
 	d.readOnly = false
 	if d.db == nil {
 		return nil
+	}
+	// PRAGMA optimize (SQLite docs: run before closing every long-lived
+	// connection) mirrors the standalone Storage backend's Close (storage/
+	// sqlite/sqlite.go, D9/fiche-05 T7) — this wrapper opens its own *sql.DB
+	// rather than going through Storage.Close, so it needs its own call.
+	// Best-effort and skipped on a read-only handle (query_only=ON rejects the
+	// write ANALYZE may attempt internally; nothing useful to optimize there
+	// anyway).
+	if !wasReadOnly {
+		_, _ = d.db.Exec(`PRAGMA optimize`)
 	}
 	err := d.db.Close()
 	d.db = nil
@@ -585,11 +596,21 @@ func (d *Database) SetupDatabase(path string) (err error) {
 		`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
 		`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
 		`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		// idx_position_score dropped (E3): strict column prefix of
+		// idx_position_score_cube below, redundant (verified by EXPLAIN QUERY
+		// PLAN — neither is actually reachable via a leading-column seek from
+		// any search predicate today, since search never filters on
+		// match_length, but that is pre-existing and out of scope here).
 		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		// Covering index for the win/gammon combo search (fiche-05 T3) — see the
+		// long comment on its twin in schema_sqlite.go. This is the DDL
+		// SetupDatabase runs for every FRESH database (":memory:", "create",
+		// GUI "new database"); ensureAllTablesExist (below in this package,
+		// db_schema.go) carries the matching statement for EXISTING databases,
+		// applied on every open. idx_analysis_win1 dropped too (E3): strict
+		// prefix of the covering index below.
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
@@ -720,6 +741,35 @@ func (d *Database) ensureSearchStats() {
 	var n int
 	// Errors (e.g. sqlite_stat1 does not exist yet) count as "no stats".
 	if err := d.db.QueryRow(`SELECT count(*) FROM sqlite_stat1`).Scan(&n); err == nil && n > 0 {
+		return
+	}
+	if _, err := d.db.Exec(`ANALYZE`); err != nil {
+		slog.Warn("ANALYZE for search statistics failed", "err", err)
+	}
+}
+
+// RefreshSearchStatistics runs a full ANALYZE, updating query-planner
+// statistics for every table. Unlike ensureSearchStats (run automatically on
+// open, but only when sqlite_stat1 is entirely empty), this always re-scans:
+// after importing a batch of matches into an already-analysed database, the
+// existing stats are stale rather than absent, so ensureSearchStats would
+// skip them, silently leaving the planner working off pre-import row/value
+// distributions. The CLI's batch importer has always run a plain `ANALYZE`
+// after its file loop (cli_import.go, importBatch); this is the Wails-bound
+// equivalent so the GUI's own batch import path
+// (frontend/src/services/importService.js, importMultipleFiles) can do the
+// same (fiche-05 T7). Best-effort and non-fatal, like ensureSearchStats: a
+// search still works correctly, just possibly less optimally planned,
+// without it.
+//
+// Takes the exclusive lock, like every other statement that writes to the
+// database (ANALYZE rewrites sqlite_stat1/sqlite_stat4) — mirrors
+// OpenDatabase, which holds d.mu.Lock() for the whole call including its own
+// ensureSearchStats.
+func (d *Database) RefreshSearchStatistics() {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.db == nil {
 		return
 	}
 	if _, err := d.db.Exec(`ANALYZE`); err != nil {

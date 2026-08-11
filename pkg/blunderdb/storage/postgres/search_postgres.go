@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"iter"
 	"math"
@@ -44,6 +43,19 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 
 func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
+
+	// The decoded analysis is consumed by the move-pattern filter, the Go-side
+	// analysis re-checks of mirror search, and the date/equity filters below —
+	// every other analysis filter (win/gammon/backgammon rate, cube error,
+	// move error) runs on the denormalised SQL columns instead. So decode the
+	// (zlib-compressed) blob per row only when one of those paths needs it — a
+	// search using none of them skips the decompress+unmarshal of every row.
+	// Mirrors the SQLite backend (search_sqlite.go); see its comment for why
+	// MoveErrorFilter is deliberately not one of the triggers (it is SQL-pushed
+	// and its Go-side re-check only ever runs when f.MirrorFilter is already
+	// true, which is covered by the `|| f.MirrorFilter` term below).
+	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
+		f.DateFilter != "" || f.EquityFilter != ""
 
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
@@ -237,10 +249,26 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(f.Player2BackCheckerFilter, "K")
 		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
+		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
+		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
+		// clause on the outer LEFT JOIN — mirrors the SQLite backend
+		// (search_sqlite.go); see its comment for why (TEMP B-TREE sort on the
+		// ORDER BY, gone once p.id can be scanned in natural order and tested
+		// for subquery membership). idx_analysis_win_gammon_covering carries
+		// position_id as a trailing column so the subquery is answered from the
+		// index alone.
+		var winGammonWhere strings.Builder
+		var winGammonArgs []any
+		winGammonWhere.WriteString(" AND tenant_id = ?")
+		winGammonArgs = append(winGammonArgs, tenant)
 		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(f.WinRateFilter, "w")
-		appendIntRangeSQL("a.player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &where, &args)
+		appendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
 		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(f.GammonRateFilter, "g")
-		appendIntRangeSQL("a.player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &where, &args)
+		appendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
+		if wHasMin || wHasMax || gHasMin || gHasMax {
+			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE 1=1" + winGammonWhere.String() + ")")
+			args = append(args, winGammonArgs...)
+		}
 		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(f.BackgammonRateFilter, "b")
 		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
 		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(f.Player2WinRateFilter, "W")
@@ -290,12 +318,21 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 		}
 	}
 
+	// a.data is the zlib-compressed analysis blob; select it only when a
+	// Go-side filter will actually decode it (see needAnalysis above and its
+	// SQLite-backend counterpart) — NULL otherwise, to avoid transporting the
+	// blob for every row of a search that never reads it.
+	analysisDataCol := "NULL"
+	if needAnalysis {
+		analysisDataCol = "a.data"
+	}
+
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
 		p.individually_imported, p.flagged,
-		a.id, a.data
+		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
 	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort)
@@ -359,8 +396,15 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 
 		var ana *domain.PositionAnalysis
 		if anaID != nil && len(anaData) > 0 {
-			var a domain.PositionAnalysis
-			if jsonErr := json.Unmarshal(anaData, &a); jsonErr == nil {
+			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage;
+			// see analysisStore.Save), so it must go through the same decoder as
+			// AnalysisStore.Load. A bare json.Unmarshal of the compressed bytes
+			// silently failed (first byte is the zlib header, never '{'), leaving
+			// ana nil on every row — which meant WinRateFilter, GammonRateFilter,
+			// the other analysis-derived Go-side filters, EquityFilter and
+			// MovePatternFilter, and the mirror-search re-check, never matched
+			// anything on the PostgreSQL backend.
+			if a, decErr := engine.DecodeAnalysisFromStorage(anaData); decErr == nil {
 				ana = &a
 			}
 		}
@@ -542,7 +586,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 						return false
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, f.MoveErrorFilter) {
+				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}
@@ -568,7 +612,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
 				return false
 			}
-			if f.DateFilter != "" && !matchesDateFilter(ctx, s.db, &pos, f.DateFilter) {
+			if f.DateFilter != "" && !matchesDateFilter(ana, f.DateFilter) {
 				return false
 			}
 			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {

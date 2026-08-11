@@ -273,23 +273,6 @@ func getMatchIDsForTournament(ctx context.Context, db execer, tournamentID int64
 	return ids, rows.Err()
 }
 
-// loadAnalysisJSON loads and decodes the stored analysis for a position,
-// returning nil when none is present or on any error. It is the search-side
-// equivalent of the wrapper's LoadAnalysis without the move-table
-// reconciliation (the predicates here only read the stored JSON fields).
-func loadAnalysisJSON(ctx context.Context, db execer, positionID int64) *domain.PositionAnalysis {
-	var data []byte
-	if err := db.QueryRowContext(ctx,
-		`SELECT data FROM analysis WHERE position_id = ?`, positionID).Scan(&data); err != nil {
-		return nil
-	}
-	a, err := engine.DecodeAnalysisFromStorage(data)
-	if err != nil {
-		return nil
-	}
-	return &a
-}
-
 // loadCommentText returns the concatenated comment text of a position. A
 // position may have several comment entries (see AddComment); all of them are
 // joined so the "Search Text" filter can match against any one of them.
@@ -405,9 +388,11 @@ func isPlayer1TakePassCubeAction(ctx context.Context, db execer, p *domain.Posit
 }
 
 // matchesMoveErrorFilter filters positions by the equity error of player-1's
-// played move (millipoints): E>x, E<x, Ex,y.
-func matchesMoveErrorFilter(ctx context.Context, db execer, p *domain.Position, filter string) bool {
-	analysis := loadAnalysisJSON(ctx, db, p.ID)
+// played move (millipoints): E>x, E<x, Ex,y. analysis is the position's
+// already-decoded analysis (the caller decoded it once from a.data because
+// MoveErrorFilter is in needAnalysis — see search_sqlite.go); this predicate
+// no longer re-queries and re-decompresses it per row.
+func matchesMoveErrorFilter(ctx context.Context, db execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) bool {
 	if analysis == nil {
 		return false
 	}
@@ -490,9 +475,11 @@ func matchesMoveErrorFilter(ctx context.Context, db execer, p *domain.Position, 
 	return false
 }
 
-// matchesDateFilter filters positions by the analysis creation date: T>d, T<d, Td1,d2.
-func matchesDateFilter(ctx context.Context, db execer, p *domain.Position, filter string) bool {
-	analysis := loadAnalysisJSON(ctx, db, p.ID)
+// matchesDateFilter filters positions by the analysis creation date: T>d, T<d,
+// Td1,d2. analysis is the position's already-decoded analysis (DateFilter is
+// in needAnalysis — see search_sqlite.go), so this predicate needs no query or
+// decompression of its own; it previously ran one of each per candidate row.
+func matchesDateFilter(analysis *domain.PositionAnalysis, filter string) bool {
 	if analysis == nil {
 		return false
 	}
