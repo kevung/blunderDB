@@ -15,7 +15,8 @@
         "range": "Väli",
         "save": "Tallenna",
         "search": "Hae",
-        "errorWithMsg": "Virhe: {msg}"
+        "errorWithMsg": "Virhe: {msg}",
+        "reset": "Nollaa"
     },
     "config": {
         "title": "Asetukset",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Valitse .bd-tiedosto…",
         "bearoffExternalClear": "Poista",
         "bearoffResume": "Jatka latausta",
-        "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi."
+        "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi.",
+        "confirmDeleteBearoff": "Poistetaanko ladattu tietokanta ({gb} Gt)?"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Kokoelma \"{name}\" — {count} asema(a)",
         "commandHistoryCleared": "Komentohistoria tyhjennetty.",
         "dbCreated": "Uusi tietokanta luotu onnistuneesti",
-        "dbMigrated": "Tietokanta päivitetty versioon {version} onnistuneesti.",
         "dbOpened": "Tietokanta avattu onnistuneesti",
         "dbReadOnly": "Avattu vain luku -tilassa — tämä tietokanta on jo auki toisessa blunderDB-ikkunassa.",
         "readOnlySuffix": "[vain luku]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: ei saatavilla (kaikki nappulat eivät ole kotialueella)",
         "errorClearingHistory": "Virhe komentohistorian tyhjentämisessä.",
         "errorCreatingDb": "Virhe uuden tietokannan luonnissa",
-        "errorMigrating": "Virhe tietokannan päivityksessä.",
         "errorOpeningDb": "Virhe tietokannan avaamisessa",
         "errorSavingFilter": "Virhe suodattimen tallentamisessa",
         "filterSaved": "Suodatin tallennettu onnistuneesti",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "Haku vaatii NORMAL- tai EDIT-tilan.",
         "subSearchModeUnavailable": "Tuloksista hakeminen ei ole käytettävissä nykyisessä tilassa.",
         "tagsAdded": "Tunnisteet lisätty: {tags}",
-        "searchEditModeOnly": "Haku on käytettävissä vain muokkaustilassa."
+        "unknown": "Tuntematon komento: {command}"
     },
     "search": {
         "actions": "Toiminnot",
@@ -238,7 +238,6 @@
         "atLeast": "Vähintään",
         "atLeastTooltip": "Täsmää asemat, jotka sisältävät vähintään tämän nappularakenteen",
         "bothDice": "Molemmat nopat",
-        "clearFilters": "Tyhjennä",
         "command": "Komento",
         "date": "Päivämäärä",
         "editingExcluded": "Muokataan poissuljettua rakennetta",
@@ -265,10 +264,7 @@
         "saveSearch": "Tallenna haku",
         "saveToBookmarks": "Tallenna kirjanmerkkeihin",
         "savedTab": "Tallennetut",
-        "searchInCurrentResults": "Hae nykyisistä tuloksista",
-        "searchPositions": "Hae asemia",
         "searchTextHint": "Hakuteksti",
-        "selectFilter": "Valitse suodatin",
         "playerHint": "Pelaajan nimi (kumpi tahansa)",
         "decision": {
             "checker": "Siirto",
@@ -393,7 +389,20 @@
         "transcript": "Pelipöytäkirja",
         "unforcedMoves": "Vapaaehtoiset siirrot",
         "vs": "vs",
-        "wonBy": "Voittaja {player} ({points})"
+        "wonBy": "Voittaja {player} ({points})",
+        "commentUpdated": "Kommentti päivitetty",
+        "errorDeleting": "Virhe ottelun poistamisessa",
+        "errorSettingTournament": "Virhe turnauksen asettamisessa",
+        "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "errorUpdating": "Virhe ottelun päivittämisessä",
+        "errorUpdatingComment": "Virhe kommentin päivittämisessä",
+        "matchDeleted": "Ottelu poistettu",
+        "matchUpdated": "Ottelu päivitetty",
+        "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
+        "swappedPlayers": "Pelaajat vaihdettu",
+        "tournamentCleared": "Turnaus poistettu ottelusta",
+        "tournamentSet": "Turnaus \"{name}\" asetettu",
+        "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -426,7 +435,8 @@
         "alreadyExists": "Kokoelma nimeltä \"{name}\" on jo olemassa",
         "created": "Kokoelma \"{name}\" luotu",
         "errorCreating": "Virhe kokoelman luomisessa",
-        "isEmpty": "Kokoelma \"{name}\" on tyhjä"
+        "isEmpty": "Kokoelma \"{name}\" on tyhjä",
+        "confirmRemove": "Poistetaanko {count} positio(ta) kokoelmasta?"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -451,7 +461,15 @@
         "remove": "Poista",
         "swap": "Vaihda",
         "title": "Turnaukset",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Turnaus \"{name}\" luotu",
+        "deleted": "Turnaus poistettu",
+        "errorCreating": "Virhe turnauksen luonnissa",
+        "errorOpening": "Virhe ottelun avaamisessa",
+        "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
+        "swappedPlayers": "Pelaajat vaihdettu",
+        "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
     },
     "anki": {
         "again": "Uudelleen",
@@ -501,7 +519,9 @@
         "reviewComplete": "Kertaus valmis! {count} korttia kerrattu.",
         "settingsSaved": "Asetukset tallennettu",
         "deckSynced": "Pakka \"{name}\" synkronoitu",
-        "deckReset": "Pakka \"{name}\" nollattu"
+        "deckReset": "Pakka \"{name}\" nollattu",
+        "confirmDeleteDeck": "Poistetaanko pakka \"{name}\"?",
+        "confirmResetDeck": "Nollataanko pakka \"{name}\"? Kaikki edistyminen menetetään."
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Luotu",
-        "databaseVersion": "Tietokannan versio",
-        "dateOfCreation": "Luontipäivä",
         "description": "Kuvaus",
-        "modalLabel": "Ottelun metatiedot",
         "user": "Käyttäjä",
         "version": "Versio"
     },
     "issuance": {
-        "origin": "Alkuperä",
         "originLabel": "Alkuperä",
-        "producedBy": "Tekijä",
         "markedOn": "Merkitty",
         "note": "Huomautus",
         "signatureValid": "✓ allekirjoitus vahvistettu",
@@ -596,20 +611,16 @@
         "bottomBlack": "Alhaalla (musta)",
         "comparison": "Vertailu",
         "epc": "EPC",
-        "epcDiff": "EPC-ero",
         "inactive": "EPC-laskuri ei ole käytössä. Muokkaa lautaa laskeaksesi EPC-arvot.",
         "pipCount": "Pip-luku",
-        "pipDiff": "Pip-ero",
         "placeCheckers": "Aseta nappulat kotialueelle laskeaksesi EPC:n.",
         "stdDev": "Keskihajonta",
         "topWhite": "Ylhäällä (valkoinen)",
         "wastage": "Hukka",
-        "wastageDiff": "Hukkaero",
         "challenge": "Haaste",
         "challengeTooltip": "Harjoitustila: tulokset piilotetaan jokaisen muokkauksen jälkeen; paljasta vyöhyke napsauttamalla.",
         "clickToReveal": "Paljasta napsauttamalla",
         "race": {
-            "title": "Kilpajuoksu (vuorossa oleva pelaaja)",
             "exact": "tarkka",
             "estimated": "arvioitu",
             "exactTooltip": "Luettu two-sided-tietokannasta: tarkka {n} nappulaan asti pelaajaa kohden.",
@@ -618,7 +629,6 @@
             "noDouble": "Ei tuplausta",
             "doubleTake": "Tuplaus/Ota",
             "doublePass": "Tuplaus/Ohita",
-            "verdictLabel": "Money-päätös",
             "cubeStates": {
                 "centered": "kuutio keskellä",
                 "owned": "kuutio hallussa",
@@ -635,34 +645,7 @@
             "winPct": "Voitto (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Lisää",
-        "colFilter": "Suodatin",
-        "colName": "Nimi",
-        "commandPlaceholder": "Suodatinkomento",
-        "lastSearch": "Viimeisin haku",
-        "lastSearchTooltip": "Lataa viimeisin haku",
-        "namePlaceholder": "Nimi",
-        "title": "Suodatinkirjasto",
-        "update": "Päivitä",
-        "errorLoading": "Virhe suodattimien lataamisessa",
-        "nameExists": "Suodattimen nimi on jo olemassa",
-        "mustStartWithS": "Suodatinkomennon on alettava merkeillä \"s \"",
-        "noHistoryStatus": "Hakuhistoriaa ei ole saatavilla",
-        "lastSearchLoaded": "Viimeisin haku ladattu. Anna nimi ja tallenna napsauttamalla Lisää."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Lisää suodatinkirjastoon",
-        "colActions": "Toiminnot",
-        "colCommand": "Komento",
-        "colDate": "Päivämäärä",
-        "commandLabel": "Komento: {command}",
-        "deleteTooltip": "Poista historiasta",
-        "empty": "Ei vielä hakuhistoriaa. Asemahaut, jotka alkavat 's ', näkyvät tässä.",
-        "filterNameLabel": "Suodattimen nimi:",
-        "filterNamePlaceholder": "Anna suodattimen nimi",
-        "saveDialogTitle": "Tallenna suodatinkirjastoon",
-        "title": "Hakuhistoria",
         "enterFilterName": "Anna suodattimelle nimi",
         "filterSaved": "Suodatin tallennettu kirjastoon",
         "searchDeleted": "Haku poistettu historiasta",
@@ -760,10 +743,12 @@
         "willAdd": "Lisätään",
         "willMakeChanges": "Tuontitoiminto tekee seuraavat muutokset:",
         "willMerge": "Yhdistetään",
-        "willSkip": "Ohitetaan"
+        "willSkip": "Ohitetaan",
+        "dropToImport": "Pudota tiedostot tuodaksesi ne"
     },
     "warning": {
-        "title": "Varoitus"
+        "title": "Varoitus",
+        "confirmTitle": "Vahvistus"
     },
     "datatable": {
         "title": "Taulukko"
@@ -786,7 +771,10 @@
         "title": "Yhdistä pelaajanimet",
         "use": "käytä",
         "useAsCanonical": "Käytä kanonisena nimenä",
-        "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”"
+        "merged": "{n} pelaajanimeä yhdistetty kohteeseen ”{target}”",
+        "errorLoad": "Virhe pelaajien lataamisessa",
+        "errorSelect": "Valitse vähintään kaksi nimeä yhdistettäväksi",
+        "errorCanonical": "Anna säilytettävä kanoninen nimi"
     },
     "tabbedPanel": {
         "analysis": "Analyysi",
@@ -886,7 +874,9 @@
         "positionSaved": "Positio ja analyysi tallennettu onnistuneesti",
         "importedPositionSaved": "Tuotu positio ja analyysi tallennettu onnistuneesti",
         "pastedPositionSaved": "Liitetty positio ja analyysi tallennettu onnistuneesti",
-        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui"
+        "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
+        "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?",
+        "searching": "Haetaan…"
     },
     "stats": {
         "title": "Tilastot",

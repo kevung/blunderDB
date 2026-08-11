@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"strconv"
 	"time"
 )
@@ -374,119 +373,6 @@ func (d *Database) ClearSessionState() error {
 	}
 
 	return tx.Commit()
-}
-
-func (d *Database) Migrate_1_0_0_to_1_1_0() error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	// Check current database version
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
-	}
-
-	if dbVersion != "1.0.0" {
-		return fmt.Errorf("database version is not 1.0.0, current version: %s", dbVersion)
-	}
-
-	// Create the command_history table
-	_, err = d.db.Exec(`
-		CREATE TABLE IF NOT EXISTS command_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Update the database version to 1.1.0
-	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
-	if err != nil {
-		return err
-	}
-
-	slog.Info("database migrated", "from", "1.0.0", "to", "1.1.0")
-	return nil
-}
-
-func (d *Database) Migrate_1_1_0_to_1_2_0() error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	// Check current database version
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
-	}
-
-	if dbVersion != "1.1.0" {
-		return fmt.Errorf("database version is not 1.1.0, current version: %s", dbVersion)
-	}
-
-	// Create the filter_library table
-	_, err = d.db.Exec(`
-		CREATE TABLE IF NOT EXISTS filter_library (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT,
-			command TEXT,
-			edit_position TEXT
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Update the database version to 1.2.0
-	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
-	if err != nil {
-		return err
-	}
-
-	slog.Info("database migrated", "from", "1.1.0", "to", "1.2.0")
-	return nil
-}
-
-func (d *Database) Migrate_1_2_0_to_1_3_0() error {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	// Check current database version
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
-	}
-
-	if dbVersion != "1.2.0" {
-		return fmt.Errorf("database version is not 1.2.0, current version: %s", dbVersion)
-	}
-
-	// Create the search_history table
-	_, err = d.db.Exec(`
-		CREATE TABLE IF NOT EXISTS search_history (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			command TEXT,
-			position TEXT,
-			timestamp INTEGER
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Update the database version to 1.3.0
-	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
-	if err != nil {
-		return err
-	}
-
-	slog.Info("database migrated", "from", "1.2.0", "to", "1.3.0")
-	return nil
 }
 
 func (d *Database) SaveFilter(name, command string) error {

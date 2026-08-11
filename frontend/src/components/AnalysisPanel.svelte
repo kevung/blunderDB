@@ -139,13 +139,6 @@
         engine: { key: 'analysisEngine', type: 'string' }
     };
 
-    // Detect if multiple engines are present in checker analysis
-    let _hasMultipleEngines = $derived.by(() => {
-        if (!analysisData?.checkerAnalysis?.moves) return false;
-        const engines = new Set(analysisData.checkerAnalysis.moves.map((m) => m.analysisEngine || '').filter((e) => e));
-        return engines.size > 1;
-    });
-
     function handleSort(column) {
         const next = nextSort(sortColumn, sortDirection, column, {
             // Default direction: desc for numeric, asc for string

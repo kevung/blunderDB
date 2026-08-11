@@ -9,6 +9,7 @@
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { parseFilters } from '../commandProcessor';
     import { buildSearchFilterPayload } from '../services/searchFilterService.js';
+    import { confirmAction } from '../services/confirmService.js';
     import { t, tMsg } from '../i18n';
     import {
         CreateAnkiDeck,
@@ -136,6 +137,7 @@
 
     async function deleteDeck(deck, event) {
         event.stopPropagation();
+        if (!(await confirmAction($t('anki.confirmDeleteDeck', { name: deck.name }), { confirmLabel: $t('common.delete') }))) return;
         try {
             await DeleteAnkiDeck(deck.id);
             if (selectedDeck && selectedDeck.id === deck.id) {
@@ -427,6 +429,7 @@
 
     async function resetDeck(deck, event) {
         event.stopPropagation();
+        if (!(await confirmAction($t('anki.confirmResetDeck', { name: deck.name }), { confirmLabel: $t('common.reset') }))) return;
         try {
             await ResetAnkiDeck(deck.id);
             await loadDecks();

@@ -25,7 +25,8 @@ import {
     toggleEPCMode,
     togglePipcount,
     reloadAllPositions,
-    loadRandomPosition
+    loadRandomPosition,
+    showDatesAndMetadata
 } from './positionService.js';
 import { importDatabase, importPosition, importFolder, pastePosition } from './importService.js';
 import { exportDatabase } from './exportService.js';
@@ -65,7 +66,7 @@ export function toggleHelpModal() {
     }
 }
 
-export function toggleSearchHistoryPanel() {
+export function focusSearchTab() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.searchHistoryRequiresDb'));
         return;
@@ -156,14 +157,7 @@ export function handleKeyDown(event) {
 
     // Panel focus handling
     const showComment = get(openPanels).has(PANEL.COMMENT);
-    if (
-        document.activeElement.closest('.filter-library-panel') ||
-        document.activeElement.closest('.search-history-panel') ||
-        document.activeElement.closest('.match-panel') ||
-        document.activeElement.closest('.collection-panel') ||
-        document.activeElement.closest('.tournament-panel') ||
-        showComment
-    ) {
+    if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();
         } else if (event.key === 'Escape' || event.key === 'Tab') {
@@ -183,10 +177,8 @@ export function handleKeyDown(event) {
                 event.key === 'PageUp' ||
                 event.key === 'PageDown';
             if (isNavigationKey) {
-                const filterLibraryHasSelection = document.querySelector('.filter-library-panel tr.highlight');
-                const searchHistoryHasSelection = document.querySelector('.search-history-panel tr.selected');
                 const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');
-                if (filterLibraryHasSelection || searchHistoryHasSelection || matchPanelHasSelection) return;
+                if (matchPanelHasSelection) return;
             } else {
                 return;
             }
@@ -284,7 +276,7 @@ export function handleKeyDown(event) {
         event.preventDefault();
         toggleCommentPanel();
     } else if (event.ctrlKey && letter('f')) {
-        toggleSearchHistoryPanel();
+        focusSearchTab();
     } else if (!event.ctrlKey && event.key === '?') {
         toggleHelpModal();
     } else if (event.ctrlKey && letter('m')) {
@@ -306,6 +298,9 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('e')) {
         event.preventDefault();
         toggleEPCMode();
+    } else if (event.ctrlKey && letter('g')) {
+        event.preventDefault();
+        showDatesAndMetadata();
     } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && event.key === 'J')) {
         event.preventDefault();
         viewStore.selectPreviousView();

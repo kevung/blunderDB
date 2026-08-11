@@ -15,7 +15,8 @@
         "range": "Range",
         "save": "Save",
         "search": "Search",
-        "errorWithMsg": "Error: {msg}"
+        "errorWithMsg": "Error: {msg}",
+        "reset": "Reset"
     },
     "config": {
         "title": "Settings",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Choose a .bd file…",
         "bearoffExternalClear": "Remove",
         "bearoffResume": "Resume download",
-        "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped."
+        "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped.",
+        "confirmDeleteBearoff": "Delete the downloaded database ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Collection \"{name}\" — {count} position(s)",
         "commandHistoryCleared": "Command history cleared.",
         "dbCreated": "New database created successfully",
-        "dbMigrated": "Database migrated to version {version} successfully.",
         "dbOpened": "Database opened successfully",
         "dbReadOnly": "Opened read-only — this database is already open in another blunderDB window.",
         "readOnlySuffix": "[read-only]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: N/A (checkers not all in home board)",
         "errorClearingHistory": "Error clearing command history.",
         "errorCreatingDb": "Error creating new database",
-        "errorMigrating": "Error migrating database.",
         "errorOpeningDb": "Error opening database",
         "errorSavingFilter": "Error saving filter",
         "filterSaved": "Filter saved successfully",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "Search requires NORMAL or EDIT mode.",
         "subSearchModeUnavailable": "Search in results is not available in current mode.",
         "tagsAdded": "Tags added: {tags}",
-        "searchEditModeOnly": "Search is only available in edit mode."
+        "unknown": "Unknown command: {command}"
     },
     "search": {
         "actions": "Actions",
@@ -238,7 +238,6 @@
         "atLeast": "At least",
         "atLeastTooltip": "Match positions that contain at least this checker structure",
         "bothDice": "Both dice",
-        "clearFilters": "Clear",
         "command": "Command",
         "date": "Date",
         "editingExcluded": "Editing excluded structure",
@@ -265,10 +264,7 @@
         "saveSearch": "Save Search",
         "saveToBookmarks": "Save to bookmarks",
         "savedTab": "Saved",
-        "searchInCurrentResults": "Search in current results",
-        "searchPositions": "Search Positions",
         "searchTextHint": "Search text",
-        "selectFilter": "Select a filter",
         "playerHint": "Player name (either side)",
         "decision": {
             "checker": "Checker",
@@ -393,7 +389,20 @@
         "transcript": "Transcript",
         "unforcedMoves": "Unforced Moves",
         "vs": "vs",
-        "wonBy": "Won by {player} ({points})"
+        "wonBy": "Won by {player} ({points})",
+        "commentUpdated": "Comment updated",
+        "errorDeleting": "Error deleting match",
+        "errorSettingTournament": "Error setting tournament",
+        "errorSwapping": "Error swapping players",
+        "errorUpdating": "Error updating match",
+        "errorUpdatingComment": "Error updating comment",
+        "matchDeleted": "Match deleted",
+        "matchUpdated": "Match updated",
+        "noMovesFound": "No moves found for this match",
+        "swappedPlayers": "Players swapped",
+        "tournamentCleared": "Tournament cleared from match",
+        "tournamentSet": "Tournament \"{name}\" assigned",
+        "confirmDelete": "Delete match between {player1} and {player2}?"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -426,7 +435,8 @@
         "alreadyExists": "A collection named \"{name}\" already exists",
         "created": "Collection \"{name}\" created",
         "errorCreating": "Error creating collection",
-        "isEmpty": "Collection \"{name}\" is empty"
+        "isEmpty": "Collection \"{name}\" is empty",
+        "confirmRemove": "Remove {count} position(s) from the collection?"
     },
     "tournament": {
         "addMatchPlaceholder": "Add match…",
@@ -451,7 +461,15 @@
         "remove": "Remove",
         "swap": "Swap",
         "title": "Tournaments",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Tournament \"{name}\" created",
+        "deleted": "Tournament deleted",
+        "errorCreating": "Error creating tournament",
+        "errorOpening": "Error opening match",
+        "errorSwapping": "Error swapping players",
+        "noMovesFound": "No moves found for this match",
+        "swappedPlayers": "Players swapped",
+        "confirmDelete": "Delete tournament \"{name}\"?"
     },
     "anki": {
         "again": "Again",
@@ -501,7 +519,9 @@
         "reviewComplete": "Review complete! {count} cards reviewed.",
         "settingsSaved": "Settings saved",
         "deckSynced": "Deck \"{name}\" synced",
-        "deckReset": "Deck \"{name}\" reset"
+        "deckReset": "Deck \"{name}\" reset",
+        "confirmDeleteDeck": "Delete deck \"{name}\"?",
+        "confirmResetDeck": "Reset deck \"{name}\"? All progress will be lost."
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Created",
-        "databaseVersion": "Database Version",
-        "dateOfCreation": "Date of Creation",
         "description": "Description",
-        "modalLabel": "Match metadata",
         "user": "User",
         "version": "Version"
     },
     "issuance": {
-        "origin": "Origin",
         "originLabel": "Origin",
-        "producedBy": "Produced by",
         "markedOn": "Marked on",
         "note": "Note",
         "signatureValid": "✓ signature verified",
@@ -596,20 +611,16 @@
         "bottomBlack": "Bottom (Black)",
         "comparison": "Comparison",
         "epc": "EPC",
-        "epcDiff": "EPC Diff",
         "inactive": "EPC calculator is inactive. Edit the board to compute EPC values.",
         "pipCount": "Pip Count",
-        "pipDiff": "Pip Diff",
         "placeCheckers": "Place checkers on the home board to compute EPC.",
         "stdDev": "Std Dev",
         "topWhite": "Top (White)",
         "wastage": "Wastage",
-        "wastageDiff": "Wastage Diff",
         "challenge": "Challenge",
         "challengeTooltip": "Training mode: results are masked after every edit; click a zone to reveal it.",
         "clickToReveal": "Click to reveal",
         "race": {
-            "title": "Race (player on roll)",
             "exact": "exact",
             "estimated": "estimated",
             "exactTooltip": "Read from the two-sided database: exact up to {n} checkers per player.",
@@ -618,7 +629,6 @@
             "noDouble": "No double",
             "doubleTake": "Double/Take",
             "doublePass": "Double/Pass",
-            "verdictLabel": "Money verdict",
             "cubeStates": {
                 "centered": "centered cube",
                 "owned": "cube owned",
@@ -635,34 +645,7 @@
             "winPct": "Win (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Add",
-        "colFilter": "Filter",
-        "colName": "Name",
-        "commandPlaceholder": "Filter Command",
-        "lastSearch": "Last Search",
-        "lastSearchTooltip": "Load last search",
-        "namePlaceholder": "Name",
-        "title": "Filter library",
-        "update": "Update",
-        "errorLoading": "Error loading filters",
-        "nameExists": "Filter name already exists",
-        "mustStartWithS": "Filter command must start with \"s \"",
-        "noHistoryStatus": "No search history available",
-        "lastSearchLoaded": "Last search loaded. Enter a name and click Add to save."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Add to filter library",
-        "colActions": "Actions",
-        "colCommand": "Command",
-        "colDate": "Date",
-        "commandLabel": "Command: {command}",
-        "deleteTooltip": "Delete from history",
-        "empty": "No search history yet. Position searches starting with 's ' will appear here.",
-        "filterNameLabel": "Filter Name:",
-        "filterNamePlaceholder": "Enter filter name",
-        "saveDialogTitle": "Save to Filter Library",
-        "title": "Search history",
         "enterFilterName": "Please enter a filter name",
         "filterSaved": "Filter saved to library",
         "searchDeleted": "Search deleted from history",
@@ -760,10 +743,12 @@
         "willAdd": "Will Add",
         "willMakeChanges": "The import operation will make the following changes:",
         "willMerge": "Will Merge",
-        "willSkip": "Will Skip"
+        "willSkip": "Will Skip",
+        "dropToImport": "Drop files to import"
     },
     "warning": {
-        "title": "Warning"
+        "title": "Warning",
+        "confirmTitle": "Confirmation"
     },
     "datatable": {
         "title": "Data table"
@@ -786,7 +771,10 @@
         "title": "Merge player names",
         "use": "use",
         "useAsCanonical": "Use as canonical name",
-        "merged": "Merged {n} player name(s) into “{target}”"
+        "merged": "Merged {n} player name(s) into “{target}”",
+        "errorLoad": "Error loading players",
+        "errorSelect": "Select at least two names to merge",
+        "errorCanonical": "Enter the canonical name to keep"
     },
     "tabbedPanel": {
         "analysis": "Analysis",
@@ -886,7 +874,9 @@
         "positionSaved": "Position and analysis saved successfully",
         "importedPositionSaved": "Imported position and analysis saved successfully",
         "pastedPositionSaved": "Pasted position and analysis saved successfully",
-        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed"
+        "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed",
+        "confirmDeletePosition": "Delete this position and its associated analysis?",
+        "searching": "Searching…"
     },
     "stats": {
         "title": "Stats",

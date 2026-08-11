@@ -6,6 +6,7 @@
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
+    import { confirmAction } from '../services/confirmService.js';
     import {
         GetIssuerIdentity,
         SetIssuerName,
@@ -224,6 +225,7 @@
     }
 
     async function deleteBearoffDownload() {
+        if (!(await confirmAction(get(t)('config.confirmDeleteBearoff', { gb: gb(bearoff.size_bytes) }), { confirmLabel: get(t)('common.delete') }))) return;
         bearoffError = '';
         try {
             await DeleteBearoffDB();

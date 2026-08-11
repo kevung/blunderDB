@@ -233,9 +233,10 @@
     }
 
     $effect(() => {
-        // Re-filter when tournamentMatches or search changes
-        const _m = tournamentMatches;
-        const _s = addMatchSearch;
+        // Re-filter when tournamentMatches or search changes. Reading both
+        // here (discarded via void) is what makes the effect re-run on either.
+        void tournamentMatches;
+        void addMatchSearch;
         updateFilteredMatches();
     });
     async function addMatchToTournament(matchId) {

@@ -15,7 +15,8 @@
         "range": "範囲",
         "save": "保存",
         "search": "検索",
-        "errorWithMsg": "エラー: {msg}"
+        "errorWithMsg": "エラー: {msg}",
+        "reset": "リセット"
     },
     "config": {
         "title": "設定",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": ".bdファイルを選択…",
         "bearoffExternalClear": "解除",
         "bearoffResume": "ダウンロードを再開",
-        "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。"
+        "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。",
+        "confirmDeleteBearoff": "ダウンロード済みデータベースを削除しますか({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -208,7 +210,6 @@
         "collectionLoaded": "コレクション「{name}」 — {count} 件のポジション",
         "commandHistoryCleared": "コマンド履歴をクリアしました。",
         "dbCreated": "新規データベースを正常に作成しました",
-        "dbMigrated": "データベースをバージョン {version} に正常に移行しました。",
         "dbOpened": "データベースを正常に開きました",
         "dbReadOnly": "読み取り専用で開きました — このデータベースは別の blunderDB ウィンドウですでに開かれています。",
         "readOnlySuffix": "[読み取り専用]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: 該当なし（すべてのチェッカーがインナーボードにありません）",
         "errorClearingHistory": "コマンド履歴のクリア中にエラーが発生しました。",
         "errorCreatingDb": "新規データベースの作成中にエラーが発生しました",
-        "errorMigrating": "データベースの移行中にエラーが発生しました。",
         "errorOpeningDb": "データベースを開く際にエラーが発生しました",
         "errorSavingFilter": "フィルターの保存中にエラーが発生しました",
         "filterSaved": "フィルターを正常に保存しました",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "検索には NORMAL または EDIT モードが必要です。",
         "subSearchModeUnavailable": "結果内の検索は現在のモードでは利用できません。",
         "tagsAdded": "タグを追加しました: {tags}",
-        "searchEditModeOnly": "検索は編集モードでのみ利用できます。"
+        "unknown": "不明なコマンド: {command}"
     },
     "search": {
         "actions": "操作",
@@ -238,7 +238,6 @@
         "atLeast": "最低限",
         "atLeastTooltip": "少なくともこのチェッカー構造を含むポジションに一致",
         "bothDice": "両方のダイス",
-        "clearFilters": "クリア",
         "command": "コマンド",
         "date": "日付",
         "editingExcluded": "除外構造を編集中",
@@ -265,10 +264,7 @@
         "saveSearch": "検索を保存",
         "saveToBookmarks": "ブックマークに保存",
         "savedTab": "保存済み",
-        "searchInCurrentResults": "現在の結果内を検索",
-        "searchPositions": "ポジションを検索",
         "searchTextHint": "検索テキスト",
-        "selectFilter": "フィルターを選択",
         "playerHint": "プレイヤー名（どちらの席でも）",
         "decision": {
             "checker": "チェッカー",
@@ -393,7 +389,20 @@
         "transcript": "棋譜",
         "unforcedMoves": "選択可能なムーブ",
         "vs": "vs",
-        "wonBy": "{player} の勝利（{points}）"
+        "wonBy": "{player} の勝利（{points}）",
+        "commentUpdated": "コメントを更新しました",
+        "errorDeleting": "マッチの削除中にエラーが発生しました",
+        "errorSettingTournament": "トーナメントの設定中にエラーが発生しました",
+        "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "errorUpdating": "マッチの更新中にエラーが発生しました",
+        "errorUpdatingComment": "コメントの更新中にエラーが発生しました",
+        "matchDeleted": "マッチを削除しました",
+        "matchUpdated": "マッチを更新しました",
+        "noMovesFound": "このマッチには手が見つかりません",
+        "swappedPlayers": "プレイヤーを入れ替えました",
+        "tournamentCleared": "マッチからトーナメントを解除しました",
+        "tournamentSet": "トーナメント「{name}」を設定しました",
+        "confirmDelete": "{player1}と{player2}のマッチを削除しますか?"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -426,7 +435,8 @@
         "alreadyExists": "「{name}」という名前のコレクションは既に存在します",
         "created": "コレクション「{name}」を作成しました",
         "errorCreating": "コレクションの作成エラー",
-        "isEmpty": "コレクション「{name}」は空です"
+        "isEmpty": "コレクション「{name}」は空です",
+        "confirmRemove": "{count}件のポジションをコレクションから削除しますか?"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -451,7 +461,15 @@
         "remove": "削除",
         "swap": "入れ替え",
         "title": "トーナメント",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "トーナメント「{name}」を作成しました",
+        "deleted": "トーナメントを削除しました",
+        "errorCreating": "トーナメントの作成中にエラーが発生しました",
+        "errorOpening": "マッチを開く際にエラーが発生しました",
+        "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "noMovesFound": "このマッチには手が見つかりません",
+        "swappedPlayers": "プレイヤーを入れ替えました",
+        "confirmDelete": "トーナメント「{name}」を削除しますか?"
     },
     "anki": {
         "again": "もう一度",
@@ -501,7 +519,9 @@
         "reviewComplete": "復習完了！{count}枚のカードを復習しました。",
         "settingsSaved": "設定を保存しました",
         "deckSynced": "デッキ「{name}」を同期しました",
-        "deckReset": "デッキ「{name}」をリセットしました"
+        "deckReset": "デッキ「{name}」をリセットしました",
+        "confirmDeleteDeck": "デッキ「{name}」を削除しますか?",
+        "confirmResetDeck": "デッキ「{name}」をリセットしますか? すべての進捗が失われます。"
     },
     "analysis": {
         "analysisDepth": "解析の深さ",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "作成日",
-        "databaseVersion": "データベースバージョン",
-        "dateOfCreation": "作成日",
         "description": "説明",
-        "modalLabel": "マッチのメタデータ",
         "user": "ユーザー",
         "version": "バージョン"
     },
     "issuance": {
-        "origin": "出所",
         "originLabel": "出所",
-        "producedBy": "作成者",
         "markedOn": "記載日",
         "note": "備考",
         "signatureValid": "✓ 署名を検証",
@@ -596,20 +611,16 @@
         "bottomBlack": "下側（黒）",
         "comparison": "比較",
         "epc": "EPC",
-        "epcDiff": "EPC 差",
         "inactive": "EPC 計算機は無効です。EPC 値を計算するには盤面を編集してください。",
         "pipCount": "pip カウント",
-        "pipDiff": "pip 差",
         "placeCheckers": "EPC を計算するにはインナーボードにチェッカーを配置してください。",
         "stdDev": "標準偏差",
         "topWhite": "上側（白）",
         "wastage": "Wastage",
-        "wastageDiff": "Wastage 差",
         "challenge": "チャレンジ",
         "challengeTooltip": "トレーニングモード:編集のたびに結果が隠されます。ゾーンをクリックすると表示されます。",
         "clickToReveal": "クリックして表示",
         "race": {
-            "title": "レース(手番プレイヤー)",
             "exact": "正確",
             "estimated": "推定",
             "exactTooltip": "two-sidedデータベースから読み取り:プレイヤーごとに{n}枚まで正確。",
@@ -618,7 +629,6 @@
             "noDouble": "ノーダブル",
             "doubleTake": "ダブル/テイク",
             "doublePass": "ダブル/パス",
-            "verdictLabel": "マネー判定",
             "cubeStates": {
                 "centered": "キューブ中央",
                 "owned": "キューブ保有",
@@ -635,34 +645,7 @@
             "winPct": "勝率 (%)"
         }
     },
-    "filterLibrary": {
-        "add": "追加",
-        "colFilter": "フィルター",
-        "colName": "名前",
-        "commandPlaceholder": "フィルターコマンド",
-        "lastSearch": "直近の検索",
-        "lastSearchTooltip": "直近の検索を読み込む",
-        "namePlaceholder": "名前",
-        "title": "フィルターライブラリ",
-        "update": "更新",
-        "errorLoading": "フィルターの読み込みエラー",
-        "nameExists": "フィルター名は既に存在します",
-        "mustStartWithS": "フィルターコマンドは「s 」で始める必要があります",
-        "noHistoryStatus": "検索履歴がありません",
-        "lastSearchLoaded": "最後の検索を読み込みました。名前を入力して「追加」をクリックして保存してください。"
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "フィルターライブラリに追加",
-        "colActions": "操作",
-        "colCommand": "コマンド",
-        "colDate": "日付",
-        "commandLabel": "コマンド: {command}",
-        "deleteTooltip": "履歴から削除",
-        "empty": "検索履歴はまだありません。「s 」で始まるポジション検索がここに表示されます。",
-        "filterNameLabel": "フィルター名:",
-        "filterNamePlaceholder": "フィルター名を入力",
-        "saveDialogTitle": "フィルターライブラリに保存",
-        "title": "検索履歴",
         "enterFilterName": "フィルター名を入力してください",
         "filterSaved": "フィルターをライブラリに保存しました",
         "searchDeleted": "検索を履歴から削除しました",
@@ -760,10 +743,12 @@
         "willAdd": "追加されます",
         "willMakeChanges": "インポート操作により次の変更が行われます:",
         "willMerge": "統合されます",
-        "willSkip": "スキップされます"
+        "willSkip": "スキップされます",
+        "dropToImport": "ファイルをドロップしてインポート"
     },
     "warning": {
-        "title": "警告"
+        "title": "警告",
+        "confirmTitle": "確認"
     },
     "datatable": {
         "title": "データテーブル"
@@ -786,7 +771,10 @@
         "title": "プレイヤー名を統合",
         "use": "使用",
         "useAsCanonical": "正規名として使用",
-        "merged": "{n}件のプレイヤー名を「{target}」に統合しました"
+        "merged": "{n}件のプレイヤー名を「{target}」に統合しました",
+        "errorLoad": "プレイヤーの読み込み中にエラーが発生しました",
+        "errorSelect": "統合するには2つ以上の名前を選択してください",
+        "errorCanonical": "保持する正規名を入力してください"
     },
     "tabbedPanel": {
         "analysis": "分析",
@@ -886,7 +874,9 @@
         "positionSaved": "ポジションと分析を保存しました",
         "importedPositionSaved": "インポートしたポジションと分析を保存しました",
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
-        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗"
+        "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",
+        "confirmDeletePosition": "このポジションと関連する分析を削除しますか?",
+        "searching": "検索中…"
     },
     "stats": {
         "title": "統計",

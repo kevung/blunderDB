@@ -15,7 +15,8 @@
         "range": "Bereich",
         "save": "Speichern",
         "search": "Suchen",
-        "errorWithMsg": "Fehler: {msg}"
+        "errorWithMsg": "Fehler: {msg}",
+        "reset": "Zurücksetzen"
     },
     "config": {
         "title": "Einstellungen",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": ".bd-Datei wählen…",
         "bearoffExternalClear": "Entfernen",
         "bearoffResume": "Download fortsetzen",
-        "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte."
+        "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte.",
+        "confirmDeleteBearoff": "Heruntergeladene Datenbank löschen ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Sammlung \"{name}\" — {count} Position(en)",
         "commandHistoryCleared": "Befehlsverlauf gelöscht.",
         "dbCreated": "Neue Datenbank erfolgreich erstellt",
-        "dbMigrated": "Datenbank erfolgreich auf Version {version} migriert.",
         "dbOpened": "Datenbank erfolgreich geöffnet",
         "dbReadOnly": "Schreibgeschützt geöffnet — diese Datenbank ist bereits in einem anderen blunderDB-Fenster geöffnet.",
         "readOnlySuffix": "[schreibgeschützt]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: nicht verfügbar (nicht alle Steine im Heimfeld)",
         "errorClearingHistory": "Fehler beim Löschen des Befehlsverlaufs.",
         "errorCreatingDb": "Fehler beim Erstellen der neuen Datenbank",
-        "errorMigrating": "Fehler beim Migrieren der Datenbank.",
         "errorOpeningDb": "Fehler beim Öffnen der Datenbank",
         "errorSavingFilter": "Fehler beim Speichern des Filters",
         "filterSaved": "Filter erfolgreich gespeichert",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "Die Suche erfordert den NORMAL- oder EDIT-Modus.",
         "subSearchModeUnavailable": "Die Suche in den Ergebnissen ist im aktuellen Modus nicht verfügbar.",
         "tagsAdded": "Tags hinzugefügt: {tags}",
-        "searchEditModeOnly": "Die Suche ist nur im Bearbeitungsmodus verfügbar."
+        "unknown": "Unbekannter Befehl: {command}"
     },
     "search": {
         "actions": "Aktionen",
@@ -238,7 +238,6 @@
         "atLeast": "Mindestens",
         "atLeastTooltip": "Positionen finden, die mindestens diese Steinstruktur enthalten",
         "bothDice": "Beide Würfel",
-        "clearFilters": "Leeren",
         "command": "Befehl",
         "date": "Datum",
         "editingExcluded": "Ausgeschlossene Struktur bearbeiten",
@@ -265,10 +264,7 @@
         "saveSearch": "Suche speichern",
         "saveToBookmarks": "In Lesezeichen speichern",
         "savedTab": "Gespeichert",
-        "searchInCurrentResults": "In aktuellen Ergebnissen suchen",
-        "searchPositions": "Positionen suchen",
         "searchTextHint": "Suchtext",
-        "selectFilter": "Filter auswählen",
         "playerHint": "Spielername (beide Seiten)",
         "decision": {
             "checker": "Zug",
@@ -393,7 +389,20 @@
         "transcript": "Mitschrift",
         "unforcedMoves": "Erzwungene Züge ausgenommen",
         "vs": "vs",
-        "wonBy": "Gewonnen von {player} ({points})"
+        "wonBy": "Gewonnen von {player} ({points})",
+        "commentUpdated": "Kommentar aktualisiert",
+        "errorDeleting": "Fehler beim Löschen des Matches",
+        "errorSettingTournament": "Fehler beim Zuweisen des Turniers",
+        "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "errorUpdating": "Fehler beim Aktualisieren des Matches",
+        "errorUpdatingComment": "Fehler beim Aktualisieren des Kommentars",
+        "matchDeleted": "Match gelöscht",
+        "matchUpdated": "Match aktualisiert",
+        "noMovesFound": "Keine Züge für dieses Match gefunden",
+        "swappedPlayers": "Spieler getauscht",
+        "tournamentCleared": "Turnier vom Match entfernt",
+        "tournamentSet": "Turnier „{name}“ zugewiesen",
+        "confirmDelete": "Match zwischen {player1} und {player2} löschen?"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -426,7 +435,8 @@
         "alreadyExists": "Eine Sammlung mit dem Namen „{name}“ existiert bereits",
         "created": "Sammlung „{name}“ erstellt",
         "errorCreating": "Fehler beim Erstellen der Sammlung",
-        "isEmpty": "Sammlung „{name}“ ist leer"
+        "isEmpty": "Sammlung „{name}“ ist leer",
+        "confirmRemove": "{count} Position(en) aus der Sammlung entfernen?"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -451,7 +461,15 @@
         "remove": "Entfernen",
         "swap": "Tauschen",
         "title": "Turniere",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Turnier „{name}“ erstellt",
+        "deleted": "Turnier gelöscht",
+        "errorCreating": "Fehler beim Erstellen des Turniers",
+        "errorOpening": "Fehler beim Öffnen des Matches",
+        "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "noMovesFound": "Keine Züge für dieses Match gefunden",
+        "swappedPlayers": "Spieler getauscht",
+        "confirmDelete": "Turnier „{name}“ löschen?"
     },
     "anki": {
         "again": "Nochmal",
@@ -501,7 +519,9 @@
         "reviewComplete": "Wiederholung abgeschlossen! {count} Karten wiederholt.",
         "settingsSaved": "Einstellungen gespeichert",
         "deckSynced": "Stapel „{name}“ synchronisiert",
-        "deckReset": "Stapel „{name}“ zurückgesetzt"
+        "deckReset": "Stapel „{name}“ zurückgesetzt",
+        "confirmDeleteDeck": "Stapel „{name}“ löschen?",
+        "confirmResetDeck": "Stapel „{name}“ zurücksetzen? Der gesamte Fortschritt geht verloren."
     },
     "analysis": {
         "analysisDepth": "Analysetiefe",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Erstellt",
-        "databaseVersion": "Datenbankversion",
-        "dateOfCreation": "Erstellungsdatum",
         "description": "Beschreibung",
-        "modalLabel": "Match-Metadaten",
         "user": "Benutzer",
         "version": "Version"
     },
     "issuance": {
-        "origin": "Herkunft",
         "originLabel": "Herkunft",
-        "producedBy": "Erstellt von",
         "markedOn": "Markiert am",
         "note": "Hinweis",
         "signatureValid": "✓ Signatur geprüft",
@@ -596,20 +611,16 @@
         "bottomBlack": "Unten (Schwarz)",
         "comparison": "Vergleich",
         "epc": "EPC",
-        "epcDiff": "EPC-Diff.",
         "inactive": "Der EPC-Rechner ist inaktiv. Bearbeiten Sie das Brett, um EPC-Werte zu berechnen.",
         "pipCount": "Pip-Count",
-        "pipDiff": "Pip-Diff.",
         "placeCheckers": "Platzieren Sie Steine im Heimfeld, um den EPC zu berechnen.",
         "stdDev": "Std.-Abw.",
         "topWhite": "Oben (Weiß)",
         "wastage": "Verschwendung",
-        "wastageDiff": "Verschwendungs-Diff.",
         "challenge": "Challenge",
         "challengeTooltip": "Trainingsmodus: Ergebnisse werden nach jeder Änderung verdeckt; zum Aufdecken auf eine Zone klicken.",
         "clickToReveal": "Zum Aufdecken klicken",
         "race": {
-            "title": "Rennen (Spieler am Zug)",
             "exact": "exakt",
             "estimated": "geschätzt",
             "exactTooltip": "Aus der Two-Sided-Datenbank gelesen: exakt bis {n} Steine pro Spieler.",
@@ -618,7 +629,6 @@
             "noDouble": "Kein Dopplen",
             "doubleTake": "Doppeln/Nehmen",
             "doublePass": "Doppeln/Passen",
-            "verdictLabel": "Money-Urteil",
             "cubeStates": {
                 "centered": "Würfel in der Mitte",
                 "owned": "Würfel im Besitz",
@@ -635,34 +645,7 @@
             "winPct": "Gewinn (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Hinzufügen",
-        "colFilter": "Filter",
-        "colName": "Name",
-        "commandPlaceholder": "Filterbefehl",
-        "lastSearch": "Letzte Suche",
-        "lastSearchTooltip": "Letzte Suche laden",
-        "namePlaceholder": "Name",
-        "title": "Filterbibliothek",
-        "update": "Aktualisieren",
-        "errorLoading": "Fehler beim Laden der Filter",
-        "nameExists": "Filtername existiert bereits",
-        "mustStartWithS": "Der Filterbefehl muss mit „s “ beginnen",
-        "noHistoryStatus": "Kein Suchverlauf verfügbar",
-        "lastSearchLoaded": "Letzte Suche geladen. Geben Sie einen Namen ein und klicken Sie auf Hinzufügen zum Speichern."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Zur Filterbibliothek hinzufügen",
-        "colActions": "Aktionen",
-        "colCommand": "Befehl",
-        "colDate": "Datum",
-        "commandLabel": "Befehl: {command}",
-        "deleteTooltip": "Aus Verlauf löschen",
-        "empty": "Noch kein Suchverlauf. Positionssuchen, die mit 's ' beginnen, erscheinen hier.",
-        "filterNameLabel": "Filtername:",
-        "filterNamePlaceholder": "Filternamen eingeben",
-        "saveDialogTitle": "In Filterbibliothek speichern",
-        "title": "Suchverlauf",
         "enterFilterName": "Bitte geben Sie einen Filternamen ein",
         "filterSaved": "Filter in der Bibliothek gespeichert",
         "searchDeleted": "Suche aus dem Verlauf gelöscht",
@@ -760,10 +743,12 @@
         "willAdd": "Wird hinzugefügt",
         "willMakeChanges": "Der Importvorgang nimmt folgende Änderungen vor:",
         "willMerge": "Wird zusammengeführt",
-        "willSkip": "Wird übersprungen"
+        "willSkip": "Wird übersprungen",
+        "dropToImport": "Dateien hier ablegen, um sie zu importieren"
     },
     "warning": {
-        "title": "Warnung"
+        "title": "Warnung",
+        "confirmTitle": "Bestätigung"
     },
     "datatable": {
         "title": "Datentabelle"
@@ -786,7 +771,10 @@
         "title": "Spielernamen zusammenführen",
         "use": "verwenden",
         "useAsCanonical": "Als kanonischen Namen verwenden",
-        "merged": "{n} Spielername(n) in „{target}“ zusammengeführt"
+        "merged": "{n} Spielername(n) in „{target}“ zusammengeführt",
+        "errorLoad": "Fehler beim Laden der Spieler",
+        "errorSelect": "Wählen Sie mindestens zwei Namen zum Zusammenführen aus",
+        "errorCanonical": "Geben Sie den zu behaltenden kanonischen Namen ein"
     },
     "tabbedPanel": {
         "analysis": "Analyse",
@@ -886,7 +874,9 @@
         "positionSaved": "Position und Analyse erfolgreich gespeichert",
         "importedPositionSaved": "Importierte Position und Analyse erfolgreich gespeichert",
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
-        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen"
+        "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "confirmDeletePosition": "Diese Position und die zugehörige Analyse löschen?",
+        "searching": "Suche läuft…"
     },
     "stats": {
         "title": "Stats",

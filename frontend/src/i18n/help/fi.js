@@ -1165,18 +1165,6 @@ export default {
                                 <td>clear, cl</td>
                                 <td>Tyhjennä komentohistoria</td>
                             </tr>
-                            <tr>
-                                <td>migrate_from_1_0_to_1_1</td>
-                                <td>Migratoi tietokanta versiosta 1.0 versioon 1.1</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_1_to_1_2</td>
-                                <td>Migratoi tietokanta versiosta 1.1 versioon 1.2</td>
-                            </tr>
-                            <tr>
-                                <td>migrate_from_1_2_to_1_3</td>
-                                <td>Migratoi tietokanta versiosta 1.2 versioon 1.3</td>
-                            </tr>
                         </tbody>
                     </table>
 `,

@@ -8,7 +8,7 @@
     import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists } from '../wailsjs/go/gui/App.js';
-    import { initLanguage } from './i18n';
+    import { initLanguage, t } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
     import { initPanelPosition, effectivePositionStore, PANEL_SIDE } from './stores/panelLayoutStore';
@@ -17,18 +17,7 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore } from './stores/positionStore.js';
     import { analysisStore } from './stores/analysisStore.js';
-    import {
-        currentPositionIndexStore,
-        statusBarModeStore,
-        showCommandInputStore,
-        positionReloadTriggerStore,
-        activeTabStore,
-        activeModal,
-        MODAL,
-        closeModal,
-        toggleModal,
-        isAnyModalOpen
-    } from './stores/uiStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
     import {
         showImportProgressModalStore,
         importModalModeStore,
@@ -103,7 +92,7 @@
     import { exportDatabase, handleExportCommit, handleExportCancel } from './services/exportService.js';
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
-    import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
+    import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
@@ -131,6 +120,7 @@
     import { gammonValue2Table } from './stores/gammonValue2Table';
     import { gammonValue4Table } from './stores/gammonValue4Table';
     import WarningModal from './components/WarningModal.svelte';
+    import { confirmModalStore, resolveConfirm } from './services/confirmService.js';
     import ProtectedCopyModal from './components/ProtectedCopyModal.svelte';
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
@@ -141,7 +131,6 @@
     let panelHeight = $state(250);
     let panelWidth = $state(420);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
-    let _isResizing = false;
     let showDropOverlay = $state(false);
     let dragCounter = 0;
     let positions = [];
@@ -294,7 +283,6 @@
 
     function onResizeHandleMouseDown(e) {
         e.preventDefault();
-        _isResizing = true;
         // Side panel: drag horizontally to resize its width (it sits to the
         // right of the board, so dragging left grows it). Bottom panel: drag
         // vertically to resize its height (dragging up grows it).
@@ -312,7 +300,6 @@
             window.dispatchEvent(new Event('resize'));
         }
         function onMouseUp() {
-            _isResizing = false;
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
             window.removeEventListener('mousemove', onMouseMove);
@@ -381,7 +368,7 @@
             onLoadPositionsByFilters: loadPositionsByFilters,
             onLoadAllPositions: reloadAllPositions,
             toggleMetadataPanel,
-            toggleSearchHistoryPanel,
+            focusSearchTab,
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
@@ -466,7 +453,7 @@
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <span>Drop files to import</span>
+                <span>{$t('import.dropToImport')}</span>
                 <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .txt</span>
             </div>
         </div>
@@ -494,12 +481,10 @@
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
         onCopyBoardImage={copyBoardImage}
-        onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
         onToggleConfig={() => toggleModal(MODAL.CONFIG)}
         onToggleTour={() => toggleModal(MODAL.TOUR)}
         onLoadAllPositions={reloadAllPositions}
-        onToggleEPCMode={toggleEPCMode}
     />
 
     <ViewTabs />
@@ -540,6 +525,15 @@
     <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
 
     <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
+    <WarningModal
+        message={$confirmModalStore?.message || ''}
+        visible={$confirmModalStore !== null}
+        mode="confirm"
+        confirmLabel={$confirmModalStore?.confirmLabel || ''}
+        cancelLabel={$confirmModalStore?.cancelLabel || ''}
+        onClose={() => resolveConfirm(false)}
+        onConfirm={() => resolveConfirm(true)}
+    />
 
     <ProtectedCopyModal
         visible={$activeModal === MODAL.PROTECTED_COPY}

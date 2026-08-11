@@ -4,9 +4,6 @@ import { get } from 'svelte/store';
 // Mock Wails bindings before importing commandProcessor
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveComment: vi.fn().mockResolvedValue(undefined),
-    Migrate_1_0_0_to_1_1_0: vi.fn().mockResolvedValue(undefined),
-    Migrate_1_1_0_to_1_2_0: vi.fn().mockResolvedValue(undefined),
-    Migrate_1_2_0_to_1_3_0: vi.fn().mockResolvedValue(undefined),
     ClearCommandHistory: vi.fn().mockResolvedValue(undefined),
     SaveSearchHistory: vi.fn().mockResolvedValue(undefined)
 }));
@@ -477,7 +474,7 @@ describe('processCommand', () => {
             onLoadAllPositions: vi.fn(),
             onLoadPositionsByFilters: vi.fn(),
             toggleMetadataPanel: vi.fn(),
-            toggleSearchHistoryPanel: vi.fn(),
+            focusSearchTab: vi.fn(),
             toggleMatchPanel: vi.fn(),
             toggleCollectionPanel: vi.fn(),
             toggleEPCMode: vi.fn(),
@@ -565,8 +562,8 @@ describe('processCommand', () => {
         ['he', 'onToggleHelp'],
         ['h', 'onToggleHelp'],
         ['e', 'onLoadAllPositions'],
-        ['history', 'toggleSearchHistoryPanel'],
-        ['hi', 'toggleSearchHistoryPanel'],
+        ['history', 'focusSearchTab'],
+        ['hi', 'focusSearchTab'],
         ['match', 'toggleMatchPanel'],
         ['ma', 'toggleMatchPanel'],
         ['collection', 'toggleCollectionPanel'],

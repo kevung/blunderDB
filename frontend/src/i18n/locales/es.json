@@ -15,7 +15,8 @@
         "range": "Rango",
         "save": "Guardar",
         "search": "Buscar",
-        "errorWithMsg": "Error: {msg}"
+        "errorWithMsg": "Error: {msg}",
+        "reset": "Restablecer"
     },
     "config": {
         "title": "Ajustes",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Elegir un archivo .bd…",
         "bearoffExternalClear": "Quitar",
         "bearoffResume": "Reanudar la descarga",
-        "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo."
+        "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo.",
+        "confirmDeleteBearoff": "¿Eliminar la base descargada ({gb} GB)?"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Colección \"{name}\" — {count} posición(es)",
         "commandHistoryCleared": "Historial de comandos borrado.",
         "dbCreated": "Nueva base de datos creada correctamente",
-        "dbMigrated": "Base de datos migrada a la versión {version} correctamente.",
         "dbOpened": "Base de datos abierta correctamente",
         "dbReadOnly": "Abierta en modo de solo lectura — esta base de datos ya está abierta en otra ventana de blunderDB.",
         "readOnlySuffix": "[solo lectura]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: N/D (las fichas no están todas en el cuadro de casa)",
         "errorClearingHistory": "Error al borrar el historial de comandos.",
         "errorCreatingDb": "Error al crear la nueva base de datos",
-        "errorMigrating": "Error al migrar la base de datos.",
         "errorOpeningDb": "Error al abrir la base de datos",
         "errorSavingFilter": "Error al guardar el filtro",
         "filterSaved": "Filtro guardado correctamente",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "La búsqueda requiere el modo NORMAL o EDIT.",
         "subSearchModeUnavailable": "La búsqueda en los resultados no está disponible en el modo actual.",
         "tagsAdded": "Etiquetas añadidas: {tags}",
-        "searchEditModeOnly": "La búsqueda solo está disponible en modo de edición."
+        "unknown": "Comando desconocido: {command}"
     },
     "search": {
         "actions": "Acciones",
@@ -238,7 +238,6 @@
         "atLeast": "Al menos",
         "atLeastTooltip": "Coincidir con posiciones que contengan al menos esta estructura de fichas",
         "bothDice": "Ambos dados",
-        "clearFilters": "Limpiar",
         "command": "Comando",
         "date": "Fecha",
         "editingExcluded": "Editando estructura excluida",
@@ -265,10 +264,7 @@
         "saveSearch": "Guardar búsqueda",
         "saveToBookmarks": "Guardar en marcadores",
         "savedTab": "Guardados",
-        "searchInCurrentResults": "Buscar en los resultados actuales",
-        "searchPositions": "Buscar posiciones",
         "searchTextHint": "Texto de búsqueda",
-        "selectFilter": "Selecciona un filtro",
         "playerHint": "Nombre del jugador (cualquier lado)",
         "decision": {
             "checker": "Fichas",
@@ -393,7 +389,20 @@
         "transcript": "Transcripción",
         "unforcedMoves": "Jugadas no forzadas",
         "vs": "vs",
-        "wonBy": "Ganada por {player} ({points})"
+        "wonBy": "Ganada por {player} ({points})",
+        "commentUpdated": "Comentario actualizado",
+        "errorDeleting": "Error al eliminar la partida",
+        "errorSettingTournament": "Error al asignar el torneo",
+        "errorSwapping": "Error al intercambiar jugadores",
+        "errorUpdating": "Error al actualizar la partida",
+        "errorUpdatingComment": "Error al actualizar el comentario",
+        "matchDeleted": "Partida eliminada",
+        "matchUpdated": "Partida actualizada",
+        "noMovesFound": "No se encontraron jugadas para esta partida",
+        "swappedPlayers": "Jugadores intercambiados",
+        "tournamentCleared": "Torneo eliminado de la partida",
+        "tournamentSet": "Torneo \"{name}\" asignado",
+        "confirmDelete": "¿Eliminar la partida entre {player1} y {player2}?"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -426,7 +435,8 @@
         "alreadyExists": "Ya existe una colección llamada \"{name}\"",
         "created": "Colección \"{name}\" creada",
         "errorCreating": "Error al crear la colección",
-        "isEmpty": "La colección \"{name}\" está vacía"
+        "isEmpty": "La colección \"{name}\" está vacía",
+        "confirmRemove": "¿Quitar {count} posición(es) de la colección?"
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",
@@ -451,7 +461,15 @@
         "remove": "Quitar",
         "swap": "Intercambiar",
         "title": "Torneos",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Torneo \"{name}\" creado",
+        "deleted": "Torneo eliminado",
+        "errorCreating": "Error al crear el torneo",
+        "errorOpening": "Error al abrir la partida",
+        "errorSwapping": "Error al intercambiar jugadores",
+        "noMovesFound": "No se encontraron jugadas para esta partida",
+        "swappedPlayers": "Jugadores intercambiados",
+        "confirmDelete": "¿Eliminar el torneo \"{name}\"?"
     },
     "anki": {
         "again": "Otra vez",
@@ -501,7 +519,9 @@
         "reviewComplete": "¡Repaso completado! {count} tarjetas repasadas.",
         "settingsSaved": "Configuración guardada",
         "deckSynced": "Mazo \"{name}\" sincronizado",
-        "deckReset": "Mazo \"{name}\" restablecido"
+        "deckReset": "Mazo \"{name}\" restablecido",
+        "confirmDeleteDeck": "¿Eliminar el mazo \"{name}\"?",
+        "confirmResetDeck": "¿Restablecer el mazo \"{name}\"? Se perderá todo el progreso."
     },
     "analysis": {
         "analysisDepth": "Profundidad de análisis",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Creada",
-        "databaseVersion": "Versión de la base de datos",
-        "dateOfCreation": "Fecha de creación",
         "description": "Descripción",
-        "modalLabel": "Metadatos de la partida",
         "user": "Usuario",
         "version": "Versión"
     },
     "issuance": {
-        "origin": "Origen",
         "originLabel": "Origen",
-        "producedBy": "Creada por",
         "markedOn": "Marcada el",
         "note": "Nota",
         "signatureValid": "✓ firma verificada",
@@ -596,20 +611,16 @@
         "bottomBlack": "Abajo (negras)",
         "comparison": "Comparación",
         "epc": "EPC",
-        "epcDiff": "Dif. EPC",
         "inactive": "La calculadora de EPC está inactiva. Edita el tablero para calcular los valores de EPC.",
         "pipCount": "Conteo de pips",
-        "pipDiff": "Dif. de pips",
         "placeCheckers": "Coloca fichas en el cuadro de casa para calcular el EPC.",
         "stdDev": "Desv. estándar",
         "topWhite": "Arriba (blancas)",
         "wastage": "Desperdicio",
-        "wastageDiff": "Dif. de desperdicio",
         "challenge": "Desafío",
         "challengeTooltip": "Modo entrenamiento: los resultados se ocultan tras cada edición; haga clic en una zona para revelarla.",
         "clickToReveal": "Clic para revelar",
         "race": {
-            "title": "Carrera (jugador al tiro)",
             "exact": "exacto",
             "estimated": "estimado",
             "exactTooltip": "Leído de la base two-sided: exacto hasta {n} fichas por jugador.",
@@ -618,7 +629,6 @@
             "noDouble": "Sin doblar",
             "doubleTake": "Doblar/Tomar",
             "doublePass": "Doblar/Pasar",
-            "verdictLabel": "Veredicto money",
             "cubeStates": {
                 "centered": "cubo centrado",
                 "owned": "cubo en posesión",
@@ -635,34 +645,7 @@
             "winPct": "Victoria (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Añadir",
-        "colFilter": "Filtro",
-        "colName": "Nombre",
-        "commandPlaceholder": "Comando de filtro",
-        "lastSearch": "Última búsqueda",
-        "lastSearchTooltip": "Cargar la última búsqueda",
-        "namePlaceholder": "Nombre",
-        "title": "Biblioteca de filtros",
-        "update": "Actualizar",
-        "errorLoading": "Error al cargar los filtros",
-        "nameExists": "El nombre del filtro ya existe",
-        "mustStartWithS": "El comando de filtro debe empezar por \"s \"",
-        "noHistoryStatus": "No hay historial de búsqueda disponible",
-        "lastSearchLoaded": "Última búsqueda cargada. Introduce un nombre y haz clic en Añadir para guardar."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Añadir a la biblioteca de filtros",
-        "colActions": "Acciones",
-        "colCommand": "Comando",
-        "colDate": "Fecha",
-        "commandLabel": "Comando: {command}",
-        "deleteTooltip": "Eliminar del historial",
-        "empty": "Aún no hay historial de búsqueda. Las búsquedas de posiciones que empiecen por 's ' aparecerán aquí.",
-        "filterNameLabel": "Nombre del filtro:",
-        "filterNamePlaceholder": "Introduce el nombre del filtro",
-        "saveDialogTitle": "Guardar en la biblioteca de filtros",
-        "title": "Historial de búsqueda",
         "enterFilterName": "Introduce un nombre para el filtro",
         "filterSaved": "Filtro guardado en la biblioteca",
         "searchDeleted": "Búsqueda eliminada del historial",
@@ -760,10 +743,12 @@
         "willAdd": "Se añadirán",
         "willMakeChanges": "La operación de importación realizará los siguientes cambios:",
         "willMerge": "Se fusionarán",
-        "willSkip": "Se omitirán"
+        "willSkip": "Se omitirán",
+        "dropToImport": "Suelta los archivos para importarlos"
     },
     "warning": {
-        "title": "Advertencia"
+        "title": "Advertencia",
+        "confirmTitle": "Confirmación"
     },
     "datatable": {
         "title": "Tabla de datos"
@@ -786,7 +771,10 @@
         "title": "Fusionar nombres de jugadores",
         "use": "usar",
         "useAsCanonical": "Usar como nombre canónico",
-        "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»"
+        "merged": "{n} nombre(s) de jugador fusionado(s) en «{target}»",
+        "errorLoad": "Error al cargar los jugadores",
+        "errorSelect": "Selecciona al menos dos nombres para fusionar",
+        "errorCanonical": "Indica el nombre canónico que se conservará"
     },
     "tabbedPanel": {
         "analysis": "Análisis",
@@ -886,7 +874,9 @@
         "positionSaved": "Posición y análisis guardados correctamente",
         "importedPositionSaved": "Posición y análisis importados guardados correctamente",
         "pastedPositionSaved": "Posición y análisis pegados guardados correctamente",
-        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas"
+        "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas",
+        "confirmDeletePosition": "¿Eliminar esta posición y su análisis asociado?",
+        "searching": "Buscando…"
     },
     "stats": {
         "title": "Stats",

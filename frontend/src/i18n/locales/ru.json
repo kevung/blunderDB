@@ -15,7 +15,8 @@
         "range": "Диапазон",
         "save": "Сохранить",
         "search": "Поиск",
-        "errorWithMsg": "Ошибка: {msg}"
+        "errorWithMsg": "Ошибка: {msg}",
+        "reset": "Сбросить"
     },
     "config": {
         "title": "Настройки",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Выбрать файл .bd…",
         "bearoffExternalClear": "Убрать",
         "bearoffResume": "Возобновить загрузку",
-        "bearoffPartial": "Есть частичная загрузка ({gb} ГБ) — возобновление продолжит с места остановки."
+        "bearoffPartial": "Есть частичная загрузка ({gb} ГБ) — возобновление продолжит с места остановки.",
+        "confirmDeleteBearoff": "Удалить загруженную базу ({gb} ГБ)?"
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Коллекция «{name}» — {count} позиц.",
         "commandHistoryCleared": "История команд очищена.",
         "dbCreated": "Новая база данных успешно создана",
-        "dbMigrated": "База данных успешно перенесена на версию {version}.",
         "dbOpened": "База данных успешно открыта",
         "dbReadOnly": "Открыто только для чтения — эта база данных уже открыта в другом окне blunderDB.",
         "readOnlySuffix": "[только чтение]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC: н/д (не все шашки в доме)",
         "errorClearingHistory": "Ошибка при очистке истории команд.",
         "errorCreatingDb": "Ошибка создания новой базы данных",
-        "errorMigrating": "Ошибка переноса базы данных.",
         "errorOpeningDb": "Ошибка открытия базы данных",
         "errorSavingFilter": "Ошибка сохранения фильтра",
         "filterSaved": "Фильтр успешно сохранён",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "Для поиска требуется режим NORMAL или EDIT.",
         "subSearchModeUnavailable": "Поиск по результатам недоступен в текущем режиме.",
         "tagsAdded": "Добавлены теги: {tags}",
-        "searchEditModeOnly": "Поиск доступен только в режиме редактирования."
+        "unknown": "Неизвестная команда: {command}"
     },
     "search": {
         "actions": "Действия",
@@ -238,7 +238,6 @@
         "atLeast": "Не менее",
         "atLeastTooltip": "Найти позиции, содержащие как минимум эту структуру шашек",
         "bothDice": "Обе кости",
-        "clearFilters": "Очистить",
         "command": "Команда",
         "date": "Дата",
         "editingExcluded": "Редактирование исключаемой структуры",
@@ -265,10 +264,7 @@
         "saveSearch": "Сохранить поиск",
         "saveToBookmarks": "Сохранить в закладки",
         "savedTab": "Сохранённые",
-        "searchInCurrentResults": "Поиск в текущих результатах",
-        "searchPositions": "Поиск позиций",
         "searchTextHint": "Текст поиска",
-        "selectFilter": "Выберите фильтр",
         "playerHint": "Имя игрока (любая сторона)",
         "decision": {
             "checker": "Шашки",
@@ -393,7 +389,20 @@
         "transcript": "Запись партии",
         "unforcedMoves": "Непринуждённые ходы",
         "vs": "против",
-        "wonBy": "Победил {player} ({points})"
+        "wonBy": "Победил {player} ({points})",
+        "commentUpdated": "Комментарий обновлён",
+        "errorDeleting": "Ошибка удаления матча",
+        "errorSettingTournament": "Ошибка назначения турнира",
+        "errorSwapping": "Ошибка смены игроков",
+        "errorUpdating": "Ошибка обновления матча",
+        "errorUpdatingComment": "Ошибка обновления комментария",
+        "matchDeleted": "Матч удалён",
+        "matchUpdated": "Матч обновлён",
+        "noMovesFound": "Для этого матча не найдено ходов",
+        "swappedPlayers": "Игроки поменялись местами",
+        "tournamentCleared": "Турнир снят с матча",
+        "tournamentSet": "Турнир «{name}» назначен",
+        "confirmDelete": "Удалить матч между {player1} и {player2}?"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -426,7 +435,8 @@
         "alreadyExists": "Коллекция с именем «{name}» уже существует",
         "created": "Коллекция «{name}» создана",
         "errorCreating": "Ошибка создания коллекции",
-        "isEmpty": "Коллекция «{name}» пуста"
+        "isEmpty": "Коллекция «{name}» пуста",
+        "confirmRemove": "Убрать {count} позиций из коллекции?"
     },
     "tournament": {
         "addMatchPlaceholder": "Добавить матч…",
@@ -451,7 +461,15 @@
         "remove": "Удалить",
         "swap": "Поменять местами",
         "title": "Турниры",
-        "vs": "против"
+        "vs": "против",
+        "created": "Турнир «{name}» создан",
+        "deleted": "Турнир удалён",
+        "errorCreating": "Ошибка создания турнира",
+        "errorOpening": "Ошибка открытия матча",
+        "errorSwapping": "Ошибка смены игроков",
+        "noMovesFound": "Для этого матча не найдено ходов",
+        "swappedPlayers": "Игроки поменялись местами",
+        "confirmDelete": "Удалить турнир «{name}»?"
     },
     "anki": {
         "again": "Снова",
@@ -501,7 +519,9 @@
         "reviewComplete": "Повторение завершено! Повторено карточек: {count}.",
         "settingsSaved": "Настройки сохранены",
         "deckSynced": "Колода «{name}» синхронизирована",
-        "deckReset": "Колода «{name}» сброшена"
+        "deckReset": "Колода «{name}» сброшена",
+        "confirmDeleteDeck": "Удалить колоду «{name}»?",
+        "confirmResetDeck": "Сбросить колоду «{name}»? Весь прогресс будет потерян."
     },
     "analysis": {
         "analysisDepth": "Глубина анализа",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Создано",
-        "databaseVersion": "Версия базы данных",
-        "dateOfCreation": "Дата создания",
         "description": "Описание",
-        "modalLabel": "Метаданные матча",
         "user": "Пользователь",
         "version": "Версия"
     },
     "issuance": {
-        "origin": "Происхождение",
         "originLabel": "Происхождение",
-        "producedBy": "Создал",
         "markedOn": "Отмечено",
         "note": "Примечание",
         "signatureValid": "✓ подпись проверена",
@@ -596,20 +611,16 @@
         "bottomBlack": "Низ (чёрные)",
         "comparison": "Сравнение",
         "epc": "EPC",
-        "epcDiff": "Разница EPC",
         "inactive": "Калькулятор EPC неактивен. Измените доску, чтобы вычислить значения EPC.",
         "pipCount": "Подсчёт pip",
-        "pipDiff": "Разница pip",
         "placeCheckers": "Разместите шашки в доме, чтобы вычислить EPC.",
         "stdDev": "Станд. откл.",
         "topWhite": "Верх (белые)",
         "wastage": "Потери",
-        "wastageDiff": "Разница потерь",
         "challenge": "Вызов",
         "challengeTooltip": "Режим тренировки: результаты скрываются после каждого изменения; нажмите на зону, чтобы открыть её.",
         "clickToReveal": "Нажмите, чтобы открыть",
         "race": {
-            "title": "Гонка (игрок на ходу)",
             "exact": "точно",
             "estimated": "оценка",
             "exactTooltip": "Из базы two-sided: точно до {n} шашек на игрока.",
@@ -618,7 +629,6 @@
             "noDouble": "Без дабла",
             "doubleTake": "Дабл/Тейк",
             "doublePass": "Дабл/Пас",
-            "verdictLabel": "Вердикт (money)",
             "cubeStates": {
                 "centered": "куб в центре",
                 "owned": "куб у игрока",
@@ -635,34 +645,7 @@
             "winPct": "Победа (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Добавить",
-        "colFilter": "Фильтр",
-        "colName": "Имя",
-        "commandPlaceholder": "Команда фильтра",
-        "lastSearch": "Последний поиск",
-        "lastSearchTooltip": "Загрузить последний поиск",
-        "namePlaceholder": "Имя",
-        "title": "Библиотека фильтров",
-        "update": "Обновить",
-        "errorLoading": "Ошибка загрузки фильтров",
-        "nameExists": "Имя фильтра уже существует",
-        "mustStartWithS": "Команда фильтра должна начинаться с «s »",
-        "noHistoryStatus": "История поиска недоступна",
-        "lastSearchLoaded": "Последний поиск загружен. Введите имя и нажмите «Добавить» для сохранения."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Добавить в библиотеку фильтров",
-        "colActions": "Действия",
-        "colCommand": "Команда",
-        "colDate": "Дата",
-        "commandLabel": "Команда: {command}",
-        "deleteTooltip": "Удалить из истории",
-        "empty": "Истории поиска пока нет. Поиски позиций, начинающиеся с «s », появятся здесь.",
-        "filterNameLabel": "Имя фильтра:",
-        "filterNamePlaceholder": "Введите имя фильтра",
-        "saveDialogTitle": "Сохранить в библиотеку фильтров",
-        "title": "История поиска",
         "enterFilterName": "Введите имя фильтра",
         "filterSaved": "Фильтр сохранён в библиотеку",
         "searchDeleted": "Поиск удалён из истории",
@@ -760,10 +743,12 @@
         "willAdd": "Будет добавлено",
         "willMakeChanges": "Операция импорта внесёт следующие изменения:",
         "willMerge": "Будет объединено",
-        "willSkip": "Будет пропущено"
+        "willSkip": "Будет пропущено",
+        "dropToImport": "Перетащите файлы для импорта"
     },
     "warning": {
-        "title": "Предупреждение"
+        "title": "Предупреждение",
+        "confirmTitle": "Подтверждение"
     },
     "datatable": {
         "title": "Таблица данных"
@@ -786,7 +771,10 @@
         "title": "Объединить имена игроков",
         "use": "использовать",
         "useAsCanonical": "Использовать как каноническое имя",
-        "merged": "Объединено имён игроков: {n} → «{target}»"
+        "merged": "Объединено имён игроков: {n} → «{target}»",
+        "errorLoad": "Ошибка загрузки игроков",
+        "errorSelect": "Выберите не менее двух имён для объединения",
+        "errorCanonical": "Укажите каноническое имя, которое нужно сохранить"
     },
     "tabbedPanel": {
         "analysis": "Анализ",
@@ -886,7 +874,9 @@
         "positionSaved": "Позиция и анализ успешно сохранены",
         "importedPositionSaved": "Импортированные позиция и анализ успешно сохранены",
         "pastedPositionSaved": "Вставленные позиция и анализ успешно сохранены",
-        "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось"
+        "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось",
+        "confirmDeletePosition": "Удалить эту позицию и связанный анализ?",
+        "searching": "Поиск…"
     },
     "stats": {
         "title": "Статистика",

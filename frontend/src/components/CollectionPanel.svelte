@@ -22,6 +22,7 @@
         LoadAnalysis
     } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
+    import { confirmAction } from '../services/confirmService.js';
 
     let { onOpenCollection } = $props();
 
@@ -189,22 +190,6 @@
         }
     }
 
-    async function _selectCollection(collection) {
-        if (mode === 'COLLECTION' && activeCollection) return;
-        if (selectedCollection && selectedCollection.id === collection.id) {
-            selectedCollectionStore.set(null);
-            collectionPositionsStore.set([]);
-            return;
-        }
-        selectedCollectionStore.set(collection);
-        try {
-            const positions = await GetCollectionPositions(collection.id);
-            collectionPositionsStore.set(positions || []);
-        } catch (error) {
-            logger.error('Error loading collection positions:', error);
-        }
-    }
-
     async function openCollection(collection) {
         if (editingCollectionId === collection.id) return;
         try {
@@ -366,6 +351,7 @@
 
     async function removeSelectedFromCollection() {
         if (!activeCollection || selectedPositionIndices.size === 0) return;
+        if (!(await confirmAction($t('collection.confirmRemove', { count: selectedPositionIndices.size }), { confirmLabel: $t('common.delete') }))) return;
         const sorted = [...selectedPositionIndices].sort((a, b) => b - a);
         try {
             for (const idx of sorted) {
@@ -575,6 +561,7 @@
 
     async function removeFromCollectionSingle(positionId) {
         if (!activeCollection) return;
+        if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;
         try {
             await RemovePositionFromCollection(activeCollection.id, positionId);
             const positions = await GetCollectionPositions(activeCollection.id);

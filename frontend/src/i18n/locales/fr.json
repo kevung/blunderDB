@@ -15,7 +15,8 @@
         "range": "Plage",
         "save": "Enregistrer",
         "search": "Rechercher",
-        "errorWithMsg": "Erreur : {msg}"
+        "errorWithMsg": "Erreur : {msg}",
+        "reset": "Réinitialiser"
     },
     "config": {
         "title": "Paramètres",
@@ -69,7 +70,8 @@
         "bearoffExternalPick": "Choisir un fichier .bd…",
         "bearoffExternalClear": "Retirer",
         "bearoffResume": "Reprendre le téléchargement",
-        "bearoffPartial": "Téléchargement partiel présent ({gb} Go) — la reprise continuera où il s'était arrêté."
+        "bearoffPartial": "Téléchargement partiel présent ({gb} Go) — la reprise continuera où il s'était arrêté.",
+        "confirmDeleteBearoff": "Supprimer la base téléchargée ({gb} Go) ?"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -208,7 +210,6 @@
         "collectionLoaded": "Collection \"{name}\" — {count} position(s)",
         "commandHistoryCleared": "Historique des commandes effacé.",
         "dbCreated": "Nouvelle base de données créée avec succès",
-        "dbMigrated": "Base de données migrée vers la version {version} avec succès.",
         "dbOpened": "Base de données ouverte avec succès",
         "dbReadOnly": "Ouverte en lecture seule — cette base est déjà ouverte dans une autre fenêtre blunderDB.",
         "readOnlySuffix": "[lecture seule]",
@@ -218,7 +219,6 @@
         "epcNotAvailable": "EPC : N/D (les pions ne sont pas tous dans le jan intérieur)",
         "errorClearingHistory": "Erreur lors de l'effacement de l'historique des commandes.",
         "errorCreatingDb": "Erreur lors de la création de la nouvelle base de données",
-        "errorMigrating": "Erreur lors de la migration de la base de données.",
         "errorOpeningDb": "Erreur lors de l'ouverture de la base de données",
         "errorSavingFilter": "Erreur lors de l'enregistrement du filtre",
         "filterSaved": "Filtre enregistré avec succès",
@@ -230,7 +230,7 @@
         "searchRequiresMode": "La recherche nécessite le mode NORMAL ou EDIT.",
         "subSearchModeUnavailable": "La recherche dans les résultats n'est pas disponible dans le mode actuel.",
         "tagsAdded": "Étiquettes ajoutées : {tags}",
-        "searchEditModeOnly": "La recherche n'est disponible qu'en mode édition."
+        "unknown": "Commande inconnue : {command}"
     },
     "search": {
         "actions": "Actions",
@@ -238,7 +238,6 @@
         "atLeast": "Au moins",
         "atLeastTooltip": "Correspond aux positions qui contiennent au moins cette structure de pions",
         "bothDice": "Les deux dés",
-        "clearFilters": "Effacer",
         "command": "Commande",
         "date": "Date",
         "editingExcluded": "Modification de la structure exclue",
@@ -265,10 +264,7 @@
         "saveSearch": "Enregistrer la recherche",
         "saveToBookmarks": "Enregistrer dans les favoris",
         "savedTab": "Enregistrés",
-        "searchInCurrentResults": "Rechercher dans les résultats actuels",
-        "searchPositions": "Rechercher des positions",
         "searchTextHint": "Texte de recherche",
-        "selectFilter": "Sélectionner un filtre",
         "playerHint": "Nom du joueur (l'un ou l'autre camp)",
         "decision": {
             "checker": "Pions",
@@ -393,7 +389,20 @@
         "transcript": "Transcription",
         "unforcedMoves": "Coups non forcés",
         "vs": "vs",
-        "wonBy": "Gagné par {player} ({points})"
+        "wonBy": "Gagné par {player} ({points})",
+        "commentUpdated": "Commentaire mis à jour",
+        "errorDeleting": "Erreur lors de la suppression du match",
+        "errorSettingTournament": "Erreur lors de l'attribution du tournoi",
+        "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "errorUpdating": "Erreur lors de la mise à jour du match",
+        "errorUpdatingComment": "Erreur lors de la mise à jour du commentaire",
+        "matchDeleted": "Match supprimé",
+        "matchUpdated": "Match mis à jour",
+        "noMovesFound": "Aucun coup trouvé pour ce match",
+        "swappedPlayers": "Joueurs échangés",
+        "tournamentCleared": "Tournoi retiré du match",
+        "tournamentSet": "Tournoi « {name} » assigné",
+        "confirmDelete": "Supprimer le match entre {player1} et {player2} ?"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -426,7 +435,8 @@
         "alreadyExists": "Une collection nommée « {name} » existe déjà",
         "created": "Collection « {name} » créée",
         "errorCreating": "Erreur lors de la création de la collection",
-        "isEmpty": "La collection « {name} » est vide"
+        "isEmpty": "La collection « {name} » est vide",
+        "confirmRemove": "Retirer {count} position(s) de la collection ?"
     },
     "tournament": {
         "addMatchPlaceholder": "Ajouter un match…",
@@ -451,7 +461,15 @@
         "remove": "Supprimer",
         "swap": "Échanger",
         "title": "Tournois",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Tournoi « {name} » créé",
+        "deleted": "Tournoi supprimé",
+        "errorCreating": "Erreur lors de la création du tournoi",
+        "errorOpening": "Erreur lors de l'ouverture du match",
+        "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "noMovesFound": "Aucun coup trouvé pour ce match",
+        "swappedPlayers": "Joueurs échangés",
+        "confirmDelete": "Supprimer le tournoi « {name} » ?"
     },
     "anki": {
         "again": "À revoir",
@@ -501,7 +519,9 @@
         "reviewComplete": "Révision terminée ! {count} cartes révisées.",
         "settingsSaved": "Paramètres enregistrés",
         "deckSynced": "Paquet « {name} » synchronisé",
-        "deckReset": "Paquet « {name} » réinitialisé"
+        "deckReset": "Paquet « {name} » réinitialisé",
+        "confirmDeleteDeck": "Supprimer le paquet « {name} » ?",
+        "confirmResetDeck": "Réinitialiser le paquet « {name} » ? Toute la progression sera perdue."
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
@@ -545,17 +565,12 @@
     },
     "metadata": {
         "created": "Créé",
-        "databaseVersion": "Version de la base de données",
-        "dateOfCreation": "Date de création",
         "description": "Description",
-        "modalLabel": "Métadonnées du match",
         "user": "Utilisateur",
         "version": "Version"
     },
     "issuance": {
-        "origin": "Origine",
         "originLabel": "Origine",
-        "producedBy": "Produite par",
         "markedOn": "Marquée le",
         "note": "Note",
         "signatureValid": "✓ signature vérifiée",
@@ -596,20 +611,16 @@
         "bottomBlack": "Bas (Noir)",
         "comparison": "Comparaison",
         "epc": "EPC",
-        "epcDiff": "Diff. EPC",
         "inactive": "Le calculateur EPC est inactif. Modifiez le plateau pour calculer les valeurs EPC.",
         "pipCount": "Pipcount",
-        "pipDiff": "Diff. de pips",
         "placeCheckers": "Placez des pions dans le jan intérieur pour calculer l'EPC.",
         "stdDev": "Écart-type",
         "topWhite": "Haut (Blanc)",
         "wastage": "Gaspillage",
-        "wastageDiff": "Diff. de gaspillage",
         "challenge": "Défi",
         "challengeTooltip": "Mode entraînement : les résultats sont masqués à chaque modification ; cliquez sur une zone pour la révéler.",
         "clickToReveal": "Cliquer pour révéler",
         "race": {
-            "title": "Course (joueur au trait)",
             "exact": "exact",
             "estimated": "estimé",
             "exactTooltip": "Lu dans la base two-sided : exact jusqu'à {n} pions par joueur.",
@@ -618,7 +629,6 @@
             "noDouble": "Sans double",
             "doubleTake": "Double/Prend",
             "doublePass": "Double/Passe",
-            "verdictLabel": "Verdict money",
             "cubeStates": {
                 "centered": "videau centré",
                 "owned": "videau possédé",
@@ -635,34 +645,7 @@
             "winPct": "Gain (%)"
         }
     },
-    "filterLibrary": {
-        "add": "Ajouter",
-        "colFilter": "Filtre",
-        "colName": "Nom",
-        "commandPlaceholder": "Commande de filtre",
-        "lastSearch": "Dernière recherche",
-        "lastSearchTooltip": "Charger la dernière recherche",
-        "namePlaceholder": "Nom",
-        "title": "Bibliothèque de filtres",
-        "update": "Mettre à jour",
-        "errorLoading": "Erreur lors du chargement des filtres",
-        "nameExists": "Ce nom de filtre existe déjà",
-        "mustStartWithS": "La commande de filtre doit commencer par « s »",
-        "noHistoryStatus": "Aucun historique de recherche disponible",
-        "lastSearchLoaded": "Dernière recherche chargée. Saisissez un nom et cliquez sur Ajouter pour enregistrer."
-    },
     "searchHistory": {
-        "addToLibraryTooltip": "Ajouter à la bibliothèque de filtres",
-        "colActions": "Actions",
-        "colCommand": "Commande",
-        "colDate": "Date",
-        "commandLabel": "Commande : {command}",
-        "deleteTooltip": "Supprimer de l'historique",
-        "empty": "Aucun historique de recherche pour le moment. Les recherches de position commençant par « s » apparaîtront ici.",
-        "filterNameLabel": "Nom du filtre :",
-        "filterNamePlaceholder": "Saisir le nom du filtre",
-        "saveDialogTitle": "Enregistrer dans la bibliothèque de filtres",
-        "title": "Historique de recherche",
         "enterFilterName": "Veuillez saisir un nom de filtre",
         "filterSaved": "Filtre enregistré dans la bibliothèque",
         "searchDeleted": "Recherche supprimée de l'historique",
@@ -760,10 +743,12 @@
         "willAdd": "À ajouter",
         "willMakeChanges": "L'opération d'import effectuera les modifications suivantes :",
         "willMerge": "À fusionner",
-        "willSkip": "À ignorer"
+        "willSkip": "À ignorer",
+        "dropToImport": "Déposez les fichiers pour les importer"
     },
     "warning": {
-        "title": "Avertissement"
+        "title": "Avertissement",
+        "confirmTitle": "Confirmation"
     },
     "datatable": {
         "title": "Tableau de données"
@@ -786,7 +771,10 @@
         "title": "Fusionner les noms de joueurs",
         "use": "utiliser",
         "useAsCanonical": "Utiliser comme nom canonique",
-        "merged": "{n} nom(s) de joueur fusionné(s) dans « {target} »"
+        "merged": "{n} nom(s) de joueur fusionné(s) dans « {target} »",
+        "errorLoad": "Erreur lors du chargement des joueurs",
+        "errorSelect": "Sélectionnez au moins deux noms à fusionner",
+        "errorCanonical": "Indiquez le nom canonique à conserver"
     },
     "tabbedPanel": {
         "analysis": "Analyse",
@@ -886,7 +874,9 @@
         "positionSaved": "Position et analyse enregistrées avec succès",
         "importedPositionSaved": "Position et analyse importées enregistrées avec succès",
         "pastedPositionSaved": "Position et analyse collées enregistrées avec succès",
-        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées"
+        "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "confirmDeletePosition": "Supprimer cette position et son analyse associée ?",
+        "searching": "Recherche…"
     },
     "stats": {
         "title": "Stats",

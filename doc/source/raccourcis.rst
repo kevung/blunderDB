@@ -52,7 +52,7 @@ Position
    "CTRL-V", "Coller une position depuis le presse-papier (détection automatique du format)."
    "CTRL-S", "Enregistrer une position."
    "CTRL-U", "Mettre à jour une position."
-   "Del", "Supprimer la position courante."
+   "Del", "Supprimer la position courante (confirmation demandée)."
    "RETOUR ARRIERE", "Réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
 

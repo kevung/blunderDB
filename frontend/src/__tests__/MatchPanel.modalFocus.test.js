@@ -9,8 +9,6 @@
  * `document` for the whole life of the panel, to drop focus when the user clicks away from
  * it. Nothing scoped it to the panel's own context, so it also fired for clicks inside a
  * modal: the field took focus on mousedown, and the click that followed blurred it.
- *
- * SearchHistoryPanel carries the same listener and the same guard.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
