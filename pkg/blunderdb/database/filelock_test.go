@@ -79,3 +79,75 @@ func TestFileLock_MemorySkipsLock(t *testing.T) {
 		t.Error(":memory: must not hold a file lock")
 	}
 }
+
+// assertLockFree fails the test unless the single-writer lock for path is
+// free, by taking and immediately releasing it directly (bypassing Database
+// entirely).
+func assertLockFree(t *testing.T, path string) {
+	t.Helper()
+	lock, ok, err := tryLockExclusive(lockPathFor(path))
+	if err != nil {
+		t.Fatalf("tryLockExclusive: %v", err)
+	}
+	if !ok {
+		t.Fatalf("lock for %q still held", path)
+	}
+	if err := lock.release(); err != nil {
+		t.Fatalf("release probe lock: %v", err)
+	}
+}
+
+// TestSetupDatabase_MidSetupFailureReleasesLock guards the fix for a wedged
+// wrapper: a failure between acquiring the write lock and finishing setup
+// used to return with the lock still held and d.db still set — a directory
+// standing in for a "path" makes sql.Open succeed lazily but every Exec
+// SetupDatabase issues right after (pragmas, table creation) fail with
+// "unable to open database file". Both the lock and the handle must be
+// rolled back so the wrapper is usable again.
+func TestSetupDatabase_MidSetupFailureReleasesLock(t *testing.T) {
+	badPath := t.TempDir() // a directory, not a file: every Exec on it fails
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(badPath); err == nil {
+		d.Close()
+		t.Fatal("SetupDatabase on a directory path should fail")
+	}
+	if d.db != nil {
+		t.Error("d.db should be nil after a failed SetupDatabase")
+	}
+	if d.lock != nil {
+		t.Error("d.lock should be released after a failed SetupDatabase")
+	}
+	assertLockFree(t, badPath)
+
+	// The wrapper itself must stay usable for a genuine retry.
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatalf("SetupDatabase(:memory:) after a prior failure: %v", err)
+	}
+	d.Close()
+}
+
+// TestOpenDatabase_MidOpenFailureReleasesLock is the OpenDatabase analogue of
+// TestSetupDatabase_MidSetupFailureReleasesLock: applyPragmas fails on a
+// directory path, after the write lock was already taken.
+func TestOpenDatabase_MidOpenFailureReleasesLock(t *testing.T) {
+	badPath := t.TempDir()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(badPath); err == nil {
+		d.Close()
+		t.Fatal("OpenDatabase on a directory path should fail")
+	}
+	if d.db != nil {
+		t.Error("d.db should be nil after a failed OpenDatabase")
+	}
+	if d.lock != nil {
+		t.Error("d.lock should be released after a failed OpenDatabase")
+	}
+	assertLockFree(t, badPath)
+
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatalf("SetupDatabase(:memory:) after a prior failure: %v", err)
+	}
+	d.Close()
+}

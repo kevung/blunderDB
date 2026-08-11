@@ -147,12 +147,16 @@ func NewDatabase() *Database {
 // outside the database package that need to run maintenance statements or
 // raw queries (CLI maintenance, tests). It may be nil before Setup/Open.
 func (d *Database) Conn() *sql.DB {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	return d.db
 }
 
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	d.releaseFileLock()
 	d.readOnly = false
 	if d.db == nil {
@@ -170,7 +174,7 @@ func (d *Database) applyPragmas(path string) error {
 	return sqlite.ApplyPragmas(d.db, path)
 }
 
-func (d *Database) SetupDatabase(path string) error {
+func (d *Database) SetupDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
@@ -187,11 +191,26 @@ func (d *Database) SetupDatabase(path string) error {
 		return fmt.Errorf("database %q is open in another instance; close it before creating/replacing it", path)
 	}
 
+	// From here on, neither the file lock nor an opened *sql.DB handle may
+	// leak on a mid-setup failure: any pragma/table-creation error below used
+	// to return with the lock still held and d.db still set, wedging the
+	// wrapper (a later Setup/Open could never re-acquire the lock, and the
+	// leaked handle was never closed). Roll back to a clean "never opened"
+	// state on any error, named-return style so every existing `return err`
+	// below is covered without threading cleanup through each one.
+	defer func() {
+		if err != nil {
+			if d.db != nil {
+				d.db.Close()
+				d.db = nil
+			}
+			d.releaseFileLock()
+		}
+	}()
+
 	// Open the database using string path
-	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
-		d.releaseFileLock()
 		return err
 	}
 
@@ -605,7 +624,7 @@ func (d *Database) SetupDatabase(path string) error {
 	return nil
 }
 
-func (d *Database) OpenDatabase(path string) error {
+func (d *Database) OpenDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
@@ -619,11 +638,26 @@ func (d *Database) OpenDatabase(path string) error {
 	// "last database not reopened" failure — ADR-0004).
 	d.acquireFileLock(path)
 
+	// Neither the file lock nor an opened *sql.DB handle may leak on a
+	// mid-open failure (pragmas, migration): any error below used to return
+	// with the lock still held and (outside the read-only branch, which
+	// already cleans up by hand) d.db still set, wedging the wrapper for any
+	// later Setup/Open. Named-return style so every existing `return err`
+	// below is covered without threading cleanup through each one; a no-op
+	// when the read-only branch already closed d.db / never took the lock.
+	defer func() {
+		if err != nil {
+			if d.db != nil {
+				d.db.Close()
+				d.db = nil
+			}
+			d.releaseFileLock()
+		}
+	}()
+
 	// Open the database using string path
-	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
-		d.releaseFileLock()
 		return err
 	}
 
@@ -647,8 +681,6 @@ func (d *Database) OpenDatabase(path string) error {
 			slog.Warn("read-only pragma setup partially failed", "err", err)
 		}
 		if _, err = d.db.Exec(`PRAGMA query_only = ON`); err != nil {
-			d.db.Close()
-			d.db = nil
 			return fmt.Errorf("cannot open database read-only: %w", err)
 		}
 		d.rebuildStore()
