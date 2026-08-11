@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Pannello Raccolte<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p>Il pannello <strong>Raccolte</strong> (<em>CTRL-B</em>) permette di gestire raccolte di posizioni. Le raccolte possono essere create, rinominate ed eliminate. Le posizioni possono esservi aggiunte o rimosse. Fare doppio clic su una raccolta per scorrere le sue posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. L’ordine delle raccolte e delle posizioni al loro interno può essere modificato tramite trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code class="docutils literal notranslate"><span class="pre">collection</span></code> per mostrare o nascondere il pannello.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Pannello Match<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>Un badge indica il regime: <strong>esatto</strong> (valore letto in un database two-sided) o <strong>stimato ± margine</strong>. Vedere <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Metodologia e ipotesi del pannello Bearoff</span></a> per la definizione precisa dei due regimi e delle loro ipotesi.</p>
 <p><strong>Estendere il dominio esatto.</strong> Il database integrato copre 6 pedine per giocatore. Due modi per andare oltre, nella scheda <em>Bearoff</em> della configurazione:</p>
 <ul class="simple">
-<li><p>scaricare il database esteso TS-06-11 (1,2 GB, verificato tramite SHA-256, eliminabile nello stesso punto): verdetto esatto fino a 11 pedine per giocatore. Un download interrotto o annullato <strong>riprende da dove si era fermato</strong> (il file parziale viene conservato e completato con una richiesta HTTP Range);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>indicare un qualsiasi file <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided di gnubg. Il database con il dominio più ampio prevale automaticamente.</p></li>
 </ul>
 <p><strong>Modalità sfida.</strong> La casella <em>Sfida</em> del pannello attiva una modalità di allenamento: a ogni modifica della posizione, i valori delle tre zone — la riga del giocatore in basso, la riga del giocatore in alto e la tabella corsa — vengono nascosti (sostituiti da « ··· »); un clic su una zona rivela solo quella zona. La riga Δ appare solo una volta rivelate le due righe dei giocatori. Ci si può così allenare a stimare l’EPC di ciascun campo, poi a pronunciarsi sul cubo, prima di verificare. L’impostazione viene memorizzata.</p>
@@ -585,7 +596,11 @@
 <p><strong>Revisione:</strong> Selezionare un mazzo e poi cliccare su <em>Study</em> (oppure fare doppio clic su un mazzo) per iniziare la revisione delle carte in scadenza. Ogni carta mostra la posizione corrispondente sul board. Valutare il proprio richiamo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Bene) o <em>4</em> (Facile). Premere <em>Esc</em> per interrompere e tornare all’elenco dei mazzi.</p>
 <p><strong>Allenamento libero (cram):</strong> Il pulsante <em>Cram</em>, accanto a <em>Study</em>, avvia una sessione di allenamento libero: ti vengono mostrate posizioni casuali del mazzo senza tenere conto della pianificazione FSRS. Questa modalità <strong>non modifica mai il piano di ripetizione dilazionata</strong> — ideale per scaldarsi prima di un torneo o per ripassare intensamente un mazzo tematico senza alterarne l’ordine. Un’etichetta <em>Cram</em> sostituisce lo stato della carta e un pulsante <em>Avanti</em> (tasti <em>1</em>–<em>4</em>) scorre le posizioni. <em>Esc</em> torna all’elenco senza salvare una sessione interrotta.</p>
 <p><strong>Interruzione/Ripresa:</strong> È possibile interrompere una sessione di revisione in qualsiasi momento con <em>Esc</em>. Il pulsante cambia in <em>Resume</em> e mostra la tua progressione. Cliccarci sopra per riprendere da dove ci si era fermati.</p>
-<p><strong>Gestione dei mazzi:</strong> Usare i pulsanti di azione per rinominare, sincronizzare, reimpostare o eliminare i mazzi. I parametri FSRS (ritenzione obiettivo, intervallo massimo, fattore di casualità) possono essere configurati per mazzo nelle Impostazioni (icona a ingranaggio).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Pannello Metadati<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

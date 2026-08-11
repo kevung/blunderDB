@@ -1303,7 +1303,14 @@ Katso saatavilla olevien suodattimien luettelo kohdasta \hyperref[\detokenize{cm
 \subsection{Kokoelmapaneeli}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-\sphinxstylestrong{Kokoelmapaneeli} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) mahdollistaa asemakokoelmien hallinnan. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Asemia voi lisätä niihin tai poistaa niistä. Kaksoisnapsauta kokoelmaa selataksesi sen asemia näppäimillä \sphinxstyleemphasis{VASEN} ja \sphinxstyleemphasis{OIKEA}. Kokoelmien ja niiden sisältämien asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Näytä tai piilota paneeli painamalla \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} tai suorittamalla komento \sphinxcode{\sphinxupquote{collection}}.
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Ottelupaneeli}
@@ -1800,7 +1807,11 @@ Merkki osoittaa tilan: \sphinxstylestrong{tarkka} (arvo luettu two\sphinxhyphen{
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-lataa laajennettu TS\sphinxhyphen{}06\sphinxhyphen{}11\sphinxhyphen{}tietokanta (1,2 Gt, tarkistetaan SHA\sphinxhyphen{}256:lla, poistettavissa samasta paikasta): tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden. Keskeytynyt tai peruutettu lataus \sphinxstylestrong{jatkuu siitä, mihin se jäi} (osittainen tiedosto säilytetään ja täydennetään HTTP Range \sphinxhyphen{}pyynnöllä);
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1881,7 +1892,11 @@ Bearoff\sphinxhyphen{}tietokannat ovat muuttumattomia matemaattisia tauluja, jot
 \sphinxstylestrong{Keskeytys/Jatkaminen:} Voit keskeyttää kertausistunnon milloin tahansa näppäimellä \sphinxstyleemphasis{Esc}. Painike muuttuu muotoon \sphinxstyleemphasis{Resume} ja näyttää edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Pakkojen hallinta:} Käytä toimintopainikkeita pakkojen uudelleennimeämiseen, synkronointiin, nollaamiseen tai poistamiseen. FSRS\sphinxhyphen{}parametrit (tavoiteretentio, enimmäisväli, satunnaiskerroin) voidaan määrittää pakkakohtaisesti Asetuksissa (hammasrataskuvake).
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Metatietopaneeli}
@@ -2897,7 +2912,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Poistaa nykyisen aseman.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4429,7 +4444,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Poista nykyinen asema.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

@@ -1287,7 +1287,14 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \subsection{Πίνακας Συλλογών}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-Ο πίνακας \sphinxstylestrong{Συλλογών} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) επιτρέπει τη διαχείριση συλλογών θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Μπορούν να προστεθούν ή να αφαιρεθούν θέσεις σε αυτές. Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα \sphinxstyleemphasis{ΑΡΙΣΤΕΡΑ} και \sphinxstyleemphasis{ΔΕΞΙΑ}. Η σειρά των συλλογών και των θέσεων εντός των συλλογών μπορεί να τροποποιηθεί με μεταφορά και απόθεση. Πατήστε \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ή εκτελέστε την εντολή \sphinxcode{\sphinxupquote{collection}} για να εμφανίσετε ή να αποκρύψετε τον πίνακα.
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Πίνακας Αγώνων}
@@ -1784,7 +1791,11 @@ Expert
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-λήψη της εκτεταμένης βάσης TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 GB, επαληθευμένη με SHA\sphinxhyphen{}256, με δυνατότητα διαγραφής στο ίδιο σημείο): ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη. Μια διακοπείσα ή ακυρωμένη λήψη \sphinxstylestrong{συνεχίζεται από εκεί όπου είχε σταματήσει} (το μερικό αρχείο διατηρείται και συμπληρώνεται με αίτημα HTTP Range)·
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1865,7 +1876,11 @@ Expert
 \sphinxstylestrong{Διακοπή/Συνέχιση:} Μπορείτε να διακόψετε μια συνεδρία επανάληψης ανά πάσα στιγμή με το \sphinxstyleemphasis{Esc}. Το κουμπί αλλάζει σε \sphinxstyleemphasis{Resume} και εμφανίζει την πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που σταματήσατε.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Διαχείριση πακέτων:} Χρησιμοποιήστε τα κουμπιά ενεργειών για να μετονομάσετε, να συγχρονίσετε, να επαναφέρετε ή να διαγράψετε πακέτα. Οι παράμετροι FSRS (στόχος διατήρησης, μέγιστο διάστημα, παράγοντας τυχαιότητας) μπορούν να ρυθμιστούν ανά πακέτο στις Ρυθμίσεις (εικονίδιο γραναζιού).
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Πίνακας Μεταδεδομένων}
@@ -2881,7 +2896,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Διαγράφει την τρέχουσα θέση.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4413,7 +4428,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Διαγραφή της τρέχουσας θέσης.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

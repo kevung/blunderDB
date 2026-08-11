@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>コレクションパネル<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p><strong>コレクション</strong> パネル（<em>CTRL-B</em>）では、ポジションのコレクションを管理できます。コレクションは作成、名前変更、削除ができます。ポジションを追加したり取り除いたりできます。コレクションをダブルクリックすると、<em>左</em> キーと <em>右</em> キーでそのポジションを閲覧できます。コレクションの順序やコレクション内のポジションの順序は、ドラッグ＆ドロップで変更できます。パネルを表示または非表示にするには、<em>CTRL-B</em> を押すか <code class="docutils literal notranslate"><span class="pre">collection</span></code> コマンドを実行します。</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L'ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>マッチパネル<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>バッジが方式を示します：<strong>正確</strong>（two-sidedデータベースから読み取った値）または<strong>推定 ± 誤差</strong>。2つの方式とその仮定の正確な定義については <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">ベアオフパネルの方法論と仮定</span></a> を参照してください。</p>
 <p><strong>正確な範囲を広げる。</strong> 内蔵データベースは各プレイヤー6チェッカーまでをカバーします。それを超えるには、設定の<em>ベアオフ</em>タブに2つの方法があります：</p>
 <ul class="simple">
-<li><p>拡張データベースTS-06-11（1.2 GB、SHA-256で検証、同じ場所から削除可能）をダウンロードする：各プレイヤー11チェッカーまでの正確な判定。中断またはキャンセルされたダウンロードは<strong>停止したところから再開されます</strong>（部分ファイルが保持され、HTTP Rangeリクエストで補完されます）；</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu'à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s'était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>gnubgの任意のtwo-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code> ファイルを指定する。最も広い範囲を持つデータベースが自動的に優先されます。</p></li>
 </ul>
 <p><strong>チャレンジモード。</strong> パネルの<em>チャレンジ</em>チェックボックスはトレーニングモードを有効にします。ポジションを変更するたびに、3つの領域——下側プレイヤーの行、上側プレイヤーの行、レースの表——の値が隠され（「···」に置き換えられ）、領域をクリックするとその領域だけが表示されます。Δ行は、両方のプレイヤー行が表示されて初めて現れます。こうして、各陣営のEPCを推定し、次にキューブについて判断する練習をしてから、答えを確認できます。この設定は記憶されます。</p>
@@ -585,7 +596,11 @@
 <p><strong>復習：</strong> デッキを選択してから <em>Study</em> をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。各カードは対応するポジションをボード上に表示します。あなたの想起度を <em>1</em>（もう一度）、<em>2</em>（難しい）、<em>3</em>（普通）、または <em>4</em>（簡単）のキーで評価してください。<em>Esc</em> を押すと停止してデッキのリストに戻ります。</p>
 <p><strong>フリー練習（cram）：</strong> <em>Study</em> の隣にある <em>Cram</em> ボタンは、フリー練習セッションを開始します。FSRS のスケジュールに関係なく、デッキからランダムな局面が表示されます。このモードは<strong>間隔反復の計画を一切変更しません</strong>。トーナメント前のウォームアップや、順序を乱さずにテーマ別デッキを集中的に復習するのに最適です。カードの状態の代わりに <em>Cram</em> バッジが表示され、<em>次へ</em> ボタン（キー <em>1</em>〜<em>4</em>）で局面を切り替えます。<em>Esc</em> を押すと、中断したセッションを保存せずに一覧に戻ります。</p>
 <p><strong>停止／再開：</strong> 復習セッションは <em>Esc</em> でいつでも中断できます。ボタンが <em>Resume</em> に変わり、進捗状況が表示されます。それをクリックすると、中断した場所から再開できます。</p>
-<p><strong>デッキの管理：</strong> アクションボタンを使って、デッキの名前変更、同期、リセット、削除ができます。FSRS のパラメータ（目標保持率、最大間隔、ランダム性）は、設定（歯車アイコン）でデッキごとに構成できます。</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d'action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>メタデータパネル<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

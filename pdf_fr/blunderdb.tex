@@ -1486,11 +1486,12 @@ disponibles.
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
-positions peuvent y être ajoutées ou retirées. Double\sphinxhyphen{}cliquer sur une
-collection pour parcourir ses positions avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}.
-L’ordre des collections et des positions au sein des collections peut être
-modifié par glisser\sphinxhyphen{}déposer. Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande
-\sphinxcode{\sphinxupquote{collection}} pour afficher ou masquer le panneau.
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Panneau Matchs}
@@ -2106,9 +2107,10 @@ Deux moyens d’aller au\sphinxhyphen{}delà, dans l’onglet \sphinxstyleemphas
 \item {} 
 \sphinxAtStartPar
 télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
-supprimable au même endroit) : verdict exact jusqu’à 11 pions par joueur.
-Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où il s’était arrêté}
-(le fichier partiel est conservé et complété par requête HTTP Range) ;
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -2265,9 +2267,10 @@ Cliquez dessus pour reprendre là où vous vous êtes arrêté.
 
 \sphinxAtStartPar
 \sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
-synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
-(rétention cible, intervalle maximum, aléa) peuvent être configurés par
-paquet dans les Paramètres (icône engrenage).
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Panneau Métadonnées}
@@ -3452,7 +3455,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Supprime la position courante.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5017,7 +5020,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Supprimer la position courante.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

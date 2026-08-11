@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Pueden añadirse o quitarse posiciones de ellas. Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El orden de las colecciones y de las posiciones dentro de ellas puede modificarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">collection</span></code> para mostrar u ocultar el panel.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Panel de Partidas<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>Un distintivo indica el régimen: <strong>exacto</strong> (valor leído en una base de datos two-sided) o <strong>estimado ± margen</strong>. Véase <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Metodología e hipótesis del panel Bearoff</span></a> para la definición precisa de los dos regímenes y de sus hipótesis.</p>
 <p><strong>Ampliar el dominio exacto.</strong> La base integrada cubre 6 fichas por jugador. Dos maneras de ir más allá, en la pestaña <em>Bearoff</em> de la configuración:</p>
 <ul class="simple">
-<li><p>descargar la base ampliada TS-06-11 (1,2 GB, verificada por SHA-256, suprimible en el mismo lugar): veredicto exacto hasta 11 fichas por jugador. Una descarga interrumpida o cancelada <strong>se reanuda donde se había detenido</strong> (el archivo parcial se conserva y se completa mediante una petición HTTP Range);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>indicar cualquier archivo <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided de gnubg. La base con el dominio más amplio prevalece automáticamente.</p></li>
 </ul>
 <p><strong>Modo desafío.</strong> La casilla <em>Desafío</em> del panel activa un modo de entrenamiento: con cada modificación de la posición, los valores de las tres zonas — la fila del jugador de abajo, la fila del jugador de arriba y la tabla de carrera — se ocultan (sustituidos por « ··· »); un clic en una zona revela solo esa zona. La línea Δ solo aparece una vez reveladas las dos filas de jugadores. Así puede uno entrenarse a estimar el EPC de cada bando, y luego a pronunciarse sobre el cubo, antes de comprobar. El ajuste se memoriza.</p>
@@ -585,7 +596,11 @@
 <p><strong>Repaso:</strong> Seleccione un mazo y luego haga clic en <em>Study</em> (o haga doble clic en un mazo) para empezar a repasar las cartas pendientes. Cada carta muestra la posición correspondiente en el tablero. Evalúe su recuerdo con las teclas <em>1</em> (Repetir), <em>2</em> (Difícil), <em>3</em> (Bien) o <em>4</em> (Fácil). Pulse <em>Esc</em> para detenerse y volver a la lista de mazos.</p>
 <p><strong>Práctica libre (cram):</strong> El botón <em>Cram</em>, junto a <em>Study</em>, inicia una sesión de práctica libre: se le muestran posiciones aleatorias del mazo sin tener en cuenta el calendario FSRS. Este modo <strong>nunca modifica el plan de repetición espaciada</strong> — ideal para calentar antes de un torneo o repasar intensamente un mazo temático sin alterar su orden. Una etiqueta <em>Cram</em> reemplaza el estado de la carta y un botón <em>Siguiente</em> (teclas <em>1</em> a <em>4</em>) recorre las posiciones. <em>Esc</em> vuelve a la lista sin guardar una sesión interrumpida.</p>
 <p><strong>Pausa/Reanudación:</strong> Puede interrumpir una sesión de repaso en cualquier momento con <em>Esc</em>. El botón cambia a <em>Resume</em> y muestra su progreso. Haga clic en él para retomar donde lo dejó.</p>
-<p><strong>Gestión de mazos:</strong> Utilice los botones de acción para renombrar, sincronizar, reiniciar o eliminar mazos. Los parámetros FSRS (retención objetivo, intervalo máximo, factor de aleatoriedad) pueden configurarse por mazo en los Ajustes (icono de engranaje).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Panel de Metadatos<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

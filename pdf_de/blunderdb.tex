@@ -1303,7 +1303,14 @@ Siehe \hyperref[\detokenize{cmd_mode:cmd-mode}]{Abschnitt \ref{\detokenize{cmd_m
 \subsection{Sammlungen\sphinxhyphen{}Panel}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-Das Panel \sphinxstylestrong{Sammlungen} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) ermöglicht es, Stellungssammlungen zu verwalten. Sammlungen können erstellt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder daraus entfernt werden. Doppelklicken Sie auf eine Sammlung, um ihre Stellungen mit den Tasten \sphinxstyleemphasis{LINKS} und \sphinxstyleemphasis{RECHTS} zu durchblättern. Die Reihenfolge der Sammlungen und der Stellungen innerhalb der Sammlungen kann per Drag\sphinxhyphen{}and\sphinxhyphen{}drop geändert werden. Drücken Sie \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} oder führen Sie den Befehl \sphinxcode{\sphinxupquote{collection}} aus, um das Panel ein\sphinxhyphen{} oder auszublenden.
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Matches\sphinxhyphen{}Panel}
@@ -1800,7 +1807,11 @@ Ein Badge zeigt das Regime an: \sphinxstylestrong{exakt} (Wert aus einer Two\sph
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-die erweiterte Datenbank TS\sphinxhyphen{}06\sphinxhyphen{}11 herunterladen (1,2 GB, per SHA\sphinxhyphen{}256 geprüft, an derselben Stelle löschbar): exaktes Urteil bis 11 Steine pro Spieler. Ein unterbrochener oder abgebrochener Download \sphinxstylestrong{wird dort fortgesetzt, wo er aufgehört hat} (die Teildatei bleibt erhalten und wird per HTTP\sphinxhyphen{}Range\sphinxhyphen{}Anfrage vervollständigt);
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1881,7 +1892,11 @@ Das Panel \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) 
 \sphinxstylestrong{Anhalten/Fortsetzen:} Sie können eine Wiederholungssitzung jederzeit mit \sphinxstyleemphasis{Esc} unterbrechen. Die Schaltfläche wechselt zu \sphinxstyleemphasis{Resume} und zeigt Ihren Fortschritt an. Klicken Sie darauf, um dort fortzufahren, wo Sie aufgehört haben.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Stapelverwaltung:} Verwenden Sie die Aktionsschaltflächen, um Stapel umzubenennen, zu synchronisieren, zurückzusetzen oder zu löschen. Die FSRS\sphinxhyphen{}Parameter (Zielretention, maximales Intervall, Streuung) können pro Stapel in den Einstellungen (Zahnradsymbol) konfiguriert werden.
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Metadaten\sphinxhyphen{}Panel}
@@ -2897,7 +2912,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Löscht die aktuelle Position.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4429,7 +4444,7 @@ Entf
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Die aktuelle Position löschen.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

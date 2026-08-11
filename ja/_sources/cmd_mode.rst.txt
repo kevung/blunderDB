@@ -52,7 +52,7 @@ Positions et navigation
    :align: center
 
    "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf)."
-   "delete, del, d", "Supprime la position courante."
+   "delete, del, d", "Supprime la position courante (confirmation demandée)."
    "[number]", "Aller à la position d'indice indiqué."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."

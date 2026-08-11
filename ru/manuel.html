@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
-<p>Панель <strong>Коллекции</strong> (<em>CTRL-B</em>) управляет коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно добавлять или удалять из них. Дважды щёлкните на коллекции для просмотра её позиций с помощью клавиш <em>ВЛЕВО</em> и <em>ВПРАВО</em>. Порядок коллекций и позиций внутри них можно изменять перетаскиванием. Нажмите <em>CTRL-B</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">collection</span></code> для отображения или скрытия панели.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Панель матчей<a class="headerlink" href="#panneau-matchs" title="Ссылка на этот заголовок"></a></h2>
@@ -549,7 +556,11 @@
 <p>Значок указывает режим: <strong>точно</strong> (значение прочитано из two-sided базы данных) или <strong>оценка ± погрешность</strong>. Точное определение обоих режимов и их допущений см. в <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Методология и допущения панели Bearoff</span></a>.</p>
 <p><strong>Расширение точной области.</strong> Встроенная база покрывает до 6 шашек у каждого игрока. Выйти за эти пределы можно двумя способами на вкладке <em>Bearoff</em> конфигурации:</p>
 <ul class="simple">
-<li><p>загрузить расширенную базу TS-06-11 (1,2 ГБ, проверяется по SHA-256, удаляется там же): точный вердикт до 11 шашек у каждого игрока. Прерванная или отменённая загрузка <strong>возобновляется с места остановки</strong> (частичный файл сохраняется и дополняется запросом HTTP Range);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>указать любой two-sided файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code> из gnubg. База с самой широкой областью автоматически имеет приоритет.</p></li>
 </ul>
 <p><strong>Режим «Вызов».</strong> Флажок <em>Défi</em> на панели включает режим тренировки: при каждом изменении позиции значения трёх зон — строки нижнего игрока, строки верхнего игрока и таблицы гонки — скрываются (заменяются на « ··· »); щелчок по зоне открывает только её. Строка Δ появляется лишь после открытия обеих строк игроков. Так можно тренироваться оценивать EPC каждой стороны, затем принимать решение по кубу и только потом проверять себя. Настройка запоминается.</p>
@@ -585,7 +596,11 @@
 <p><strong>Повторение:</strong> Выберите колоду и нажмите <em>Study</em> (или дважды щёлкните на колоде) для начала повторения карточек с наступившим сроком. Каждая карточка показывает соответствующую позицию на доске. Оцените своё запоминание клавишами <em>1</em> (Снова), <em>2</em> (Сложно), <em>3</em> (Хорошо) или <em>4</em> (Легко). Нажмите <em>Esc</em> для остановки и возврата к списку колод.</p>
 <p><strong>Свободная тренировка (cram):</strong> Кнопка <em>Cram</em> рядом с <em>Study</em> запускает сессию свободной тренировки: вам показываются случайные позиции из колоды без учёта расписания FSRS. Этот режим <strong>никогда не изменяет план интервального повторения</strong> — идеально для разминки перед турниром или интенсивного повторения тематической колоды, не нарушая её порядок. Значок <em>Cram</em> заменяет состояние карточки, а кнопка <em>Далее</em> (клавиши <em>1</em>–<em>4</em>) перелистывает позиции. <em>Esc</em> возвращает к списку, не сохраняя прерванную сессию.</p>
 <p><strong>Пауза/Продолжение:</strong> Вы можете прервать сеанс повторения в любой момент с помощью <em>Esc</em>. Кнопка меняется на <em>Resume</em> и показывает ваш прогресс. Нажмите её, чтобы продолжить с того места, где остановились.</p>
-<p><strong>Управление колодами:</strong> Используйте кнопки действий для переименования, синхронизации, сброса или удаления колод. Параметры FSRS (целевое удержание, максимальный интервал, случайный фактор) можно настраивать для каждой колоды в Настройках (значок шестерёнки).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Панель метаданных<a class="headerlink" href="#panneau-metadonnees" title="Ссылка на этот заголовок"></a></h2>

@@ -369,11 +369,12 @@ Panneau Collections
 
 Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
-positions peuvent y être ajoutées ou retirées. Double-cliquer sur une
-collection pour parcourir ses positions avec les touches *GAUCHE* et *DROITE*.
-L'ordre des collections et des positions au sein des collections peut être
-modifié par glisser-déposer. Appuyer sur *CTRL-B* ou exécuter la commande
-``collection`` pour afficher ou masquer le panneau.
+positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches *GAUCHE* et *DROITE*. L'ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
+masquer le panneau.
 
 .. _panneau_matchs:
 
@@ -766,9 +767,10 @@ définition précise des deux régimes et de leurs hypothèses.
 Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
 
 * télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-  supprimable au même endroit) : verdict exact jusqu'à 11 pions par joueur.
-  Un téléchargement interrompu ou annulé **reprend où il s'était arrêté**
-  (le fichier partiel est conservé et complété par requête HTTP Range) ;
+  supprimable au même endroit après confirmation) : verdict exact jusqu'à
+  11 pions par joueur. Un téléchargement interrompu ou annulé **reprend où
+  il s'était arrêté** (le fichier partiel est conservé et complété par
+  requête HTTP Range) ;
 
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
@@ -896,9 +898,10 @@ avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
 Cliquez dessus pour reprendre là où vous vous êtes arrêté.
 
 **Gestion des paquets :** Utilisez les boutons d'action pour renommer,
-synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
-(rétention cible, intervalle maximum, aléa) peuvent être configurés par
-paquet dans les Paramètres (icône engrenage).
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 .. _panneau_metadata:
 

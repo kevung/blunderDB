@@ -1301,7 +1301,14 @@ Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_
 \subsection{Collections Panel}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-The \sphinxstylestrong{Collections} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) manages collections of positions. Collections can be created, renamed, and deleted. Positions can be added to or removed from them. Double\sphinxhyphen{}click a collection to browse its positions using the \sphinxstyleemphasis{LEFT} and \sphinxstyleemphasis{RIGHT} keys. The order of collections and positions within them can be changed by drag and drop. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} or run the \sphinxcode{\sphinxupquote{collection}} command to show or hide the panel.
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Matches Panel}
@@ -1798,7 +1805,11 @@ A badge indicates the regime: \sphinxstylestrong{exact} (value read from a two\s
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-download the extended TS\sphinxhyphen{}06\sphinxhyphen{}11 database (1.2 GB, verified by SHA\sphinxhyphen{}256, deletable in the same place): exact verdict up to 11 checkers per player. An interrupted or cancelled download \sphinxstylestrong{resumes where it stopped} (the partial file is kept and completed with an HTTP Range request);
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1879,7 +1890,11 @@ The \sphinxstylestrong{Anki} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) 
 \sphinxstylestrong{Pause/Resume:} You can interrupt a review session at any time with \sphinxstyleemphasis{Esc}. The button changes to \sphinxstyleemphasis{Resume} and shows your progress. Click it to pick up where you left off.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Deck management:} Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (target retention, maximum interval, fuzz factor) can be configured per deck in the Settings (gear icon).
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Metadata Panel}
@@ -2895,7 +2910,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Delete the current position.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4427,7 +4442,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Delete the current position.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

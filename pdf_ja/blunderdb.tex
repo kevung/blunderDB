@@ -1276,7 +1276,14 @@ blunderDB は、ユーザーが送信したリクエストが有効である限�
 \subsection{コレクションパネル}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-\sphinxstylestrong{コレクション} パネル（\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}）では、ポジションのコレクションを管理できます。コレクションは作成、名前変更、削除ができます。ポジションを追加したり取り除いたりできます。コレクションをダブルクリックすると、\sphinxstyleemphasis{左} キーと \sphinxstyleemphasis{右} キーでそのポジションを閲覧できます。コレクションの順序やコレクション内のポジションの順序は、ドラッグ＆ドロップで変更できます。パネルを表示または非表示にするには、\sphinxstyleemphasis{CTRL\sphinxhyphen{}B} を押すか \sphinxcode{\sphinxupquote{collection}} コマンドを実行します。
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L\textquotesingle{}ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{マッチパネル}
@@ -1773,7 +1780,11 @@ MWC cost はフィルターされたデータセット全体にわたる累積�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-拡張データベースTS\sphinxhyphen{}06\sphinxhyphen{}11（1.2 GB、SHA\sphinxhyphen{}256で検証、同じ場所から削除可能）をダウンロードする：各プレイヤー11チェッカーまでの正確な判定。中断またはキャンセルされたダウンロードは\sphinxstylestrong{停止したところから再開されます}（部分ファイルが保持され、HTTP Rangeリクエストで補完されます）；
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu\textquotesingle{}à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s\textquotesingle{}était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1854,7 +1865,11 @@ gnubgの任意のtwo\sphinxhyphen{}sided \sphinxcode{\sphinxupquote{.bd}} ファ
 \sphinxstylestrong{停止／再開：} 復習セッションは \sphinxstyleemphasis{Esc} でいつでも中断できます。ボタンが \sphinxstyleemphasis{Resume} に変わり、進捗状況が表示されます。それをクリックすると、中断した場所から再開できます。
 
 \sphinxAtStartPar
-\sphinxstylestrong{デッキの管理：} アクションボタンを使って、デッキの名前変更、同期、リセット、削除ができます。FSRS のパラメータ（目標保持率、最大間隔、ランダム性）は、設定（歯車アイコン）でデッキごとに構成できます。
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d\textquotesingle{}action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{メタデータパネル}
@@ -2870,7 +2885,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-現在の局面を削除します。
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4402,7 +4417,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-現在のポジションを削除する。
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

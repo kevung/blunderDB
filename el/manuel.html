@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Πίνακας Συλλογών<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p>Ο πίνακας <strong>Συλλογών</strong> (<em>CTRL-B</em>) επιτρέπει τη διαχείριση συλλογών θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Μπορούν να προστεθούν ή να αφαιρεθούν θέσεις σε αυτές. Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>. Η σειρά των συλλογών και των θέσεων εντός των συλλογών μπορεί να τροποποιηθεί με μεταφορά και απόθεση. Πατήστε <em>CTRL-B</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">collection</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Πίνακας Αγώνων<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>Ένα σήμα υποδεικνύει το καθεστώς: <strong>ακριβές</strong> (τιμή που διαβάζεται από βάση δεδομένων two-sided) ή <strong>εκτιμώμενο ± περιθώριο</strong>. Δείτε <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Μεθοδολογία και υποθέσεις του πίνακα Bearoff</span></a> για τον ακριβή ορισμό των δύο καθεστώτων και των υποθέσεών τους.</p>
 <p><strong>Διεύρυνση του ακριβούς πεδίου.</strong> Η ενσωματωμένη βάση καλύπτει 6 πούλια ανά παίκτη. Δύο τρόποι για να πάτε πιο πέρα, στην καρτέλα <em>Bearoff</em> των ρυθμίσεων:</p>
 <ul class="simple">
-<li><p>λήψη της εκτεταμένης βάσης TS-06-11 (1,2 GB, επαληθευμένη με SHA-256, με δυνατότητα διαγραφής στο ίδιο σημείο): ακριβής ετυμηγορία έως 11 πούλια ανά παίκτη. Μια διακοπείσα ή ακυρωμένη λήψη <strong>συνεχίζεται από εκεί όπου είχε σταματήσει</strong> (το μερικό αρχείο διατηρείται και συμπληρώνεται με αίτημα HTTP Range)·</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>ορισμός οποιουδήποτε αρχείου <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided του gnubg. Η βάση με το ευρύτερο πεδίο υπερισχύει αυτόματα.</p></li>
 </ul>
 <p><strong>Λειτουργία πρόκλησης.</strong> Το πλαίσιο <em>Πρόκληση</em> του πίνακα ενεργοποιεί μια λειτουργία εξάσκησης: σε κάθε τροποποίηση της θέσης, οι τιμές των τριών ζωνών — η γραμμή του κάτω παίκτη, η γραμμή του πάνω παίκτη και ο πίνακας κούρσας — αποκρύπτονται (αντικαθίστανται από « ··· »)· ένα κλικ σε μια ζώνη αποκαλύπτει μόνο αυτή τη ζώνη. Η γραμμή Δ εμφανίζεται μόνο αφού αποκαλυφθούν και οι δύο γραμμές παικτών. Μπορείτε έτσι να εξασκηθείτε στην εκτίμηση του EPC κάθε πλευράς, και έπειτα να αποφανθείτε για τον κύβο, πριν επαληθεύσετε. Η ρύθμιση απομνημονεύεται.</p>
@@ -585,7 +596,11 @@
 <p><strong>Επανάληψη:</strong> Επιλέξτε ένα πακέτο και έπειτα κάντε κλικ στο <em>Study</em> (ή κάντε διπλό κλικ σε ένα πακέτο) για να ξεκινήσετε την επανάληψη των καρτών που οφείλονται. Κάθε κάρτα εμφανίζει την αντίστοιχη θέση στο ταμπλό. Αξιολογήστε την ανάκλησή σας με τα πλήκτρα <em>1</em> (Ξανά), <em>2</em> (Δύσκολο), <em>3</em> (Καλό), ή <em>4</em> (Εύκολο). Πατήστε <em>Esc</em> για να σταματήσετε και να επιστρέψετε στη λίστα των πακέτων.</p>
 <p><strong>Ελεύθερη εξάσκηση (cram):</strong> Το κουμπί <em>Cram</em>, δίπλα στο <em>Study</em>, ξεκινά μια συνεδρία ελεύθερης εξάσκησης: σας παρουσιάζονται τυχαίες θέσεις από την τράπουλα χωρίς να λαμβάνεται υπόψη το πρόγραμμα FSRS. Αυτή η λειτουργία <strong>δεν τροποποιεί ποτέ το πρόγραμμα επαναλαμβανόμενης μελέτης</strong> — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας θεματικής τράπουλας χωρίς να διαταράσσεται η σειρά της. Μια ένδειξη <em>Cram</em> αντικαθιστά την κατάσταση της κάρτας και ένα κουμπί <em>Επόμενο</em> (πλήκτρα <em>1</em> έως <em>4</em>) μετακινείται στις θέσεις. Το <em>Esc</em> επιστρέφει στη λίστα χωρίς να αποθηκεύει διακοπείσα συνεδρία.</p>
 <p><strong>Διακοπή/Συνέχιση:</strong> Μπορείτε να διακόψετε μια συνεδρία επανάληψης ανά πάσα στιγμή με το <em>Esc</em>. Το κουμπί αλλάζει σε <em>Resume</em> και εμφανίζει την πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που σταματήσατε.</p>
-<p><strong>Διαχείριση πακέτων:</strong> Χρησιμοποιήστε τα κουμπιά ενεργειών για να μετονομάσετε, να συγχρονίσετε, να επαναφέρετε ή να διαγράψετε πακέτα. Οι παράμετροι FSRS (στόχος διατήρησης, μέγιστο διάστημα, παράγοντας τυχαιότητας) μπορούν να ρυθμιστούν ανά πακέτο στις Ρυθμίσεις (εικονίδιο γραναζιού).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Πίνακας Μεταδεδομένων<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

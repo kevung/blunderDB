@@ -307,7 +307,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Collections Panel<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed, and deleted. Positions can be added to or removed from them. Double-click a collection to browse its positions using the <em>LEFT</em> and <em>RIGHT</em> keys. The order of collections and positions within them can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code class="docutils literal notranslate"><span class="pre">collection</span></code> command to show or hide the panel.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Matches Panel<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -548,7 +555,11 @@
 <p>A badge indicates the regime: <strong>exact</strong> (value read from a two-sided database) or <strong>estimated ± margin</strong>. See <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodology and assumptions of the Bearoff panel</span></a> for the precise definition of the two regimes and their assumptions.</p>
 <p><strong>Widening the exact domain.</strong> The built-in database covers 6 checkers per player. Two ways to go beyond that, in the <em>Bearoff</em> tab of the configuration:</p>
 <ul class="simple">
-<li><p>download the extended TS-06-11 database (1.2 GB, verified by SHA-256, deletable in the same place): exact verdict up to 11 checkers per player. An interrupted or cancelled download <strong>resumes where it stopped</strong> (the partial file is kept and completed with an HTTP Range request);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>point to any two-sided gnubg <code class="docutils literal notranslate"><span class="pre">.bd</span></code> file. The database with the widest domain automatically wins.</p></li>
 </ul>
 <p><strong>Challenge mode.</strong> The panel’s <em>Challenge</em> box enables a training mode: on every change of the position, the values of the three areas — the bottom player’s row, the top player’s row and the race table — are hidden (replaced by “···”); clicking an area reveals that area only. The Δ row only appears once both player rows are revealed. You can thus practise estimating each side’s EPC, then committing to a cube decision, before checking. The setting is remembered.</p>
@@ -584,7 +595,11 @@
 <p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
 <p><strong>Free drill (cram):</strong> The <em>Cram</em> button, next to <em>Study</em>, starts a free-drill session: random positions from the deck are shown to you regardless of the FSRS schedule. This mode <strong>never alters the spaced-repetition plan</strong> — ideal for warming up before a tournament or intensively reviewing a themed deck without disturbing its ordering. A <em>Cram</em> badge replaces the card state and a <em>Next</em> button (keys <em>1</em> to <em>4</em>) cycles through the positions. <em>Esc</em> returns to the list without saving an interrupted session.</p>
 <p><strong>Pause/Resume:</strong> You can interrupt a review session at any time with <em>Esc</em>. The button changes to <em>Resume</em> and shows your progress. Click it to pick up where you left off.</p>
-<p><strong>Deck management:</strong> Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (target retention, maximum interval, fuzz factor) can be configured per deck in the Settings (gear icon).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Metadata Panel<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Kokoelmapaneeli<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p><strong>Kokoelmapaneeli</strong> (<em>CTRL-B</em>) mahdollistaa asemakokoelmien hallinnan. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Asemia voi lisätä niihin tai poistaa niistä. Kaksoisnapsauta kokoelmaa selataksesi sen asemia näppäimillä <em>VASEN</em> ja <em>OIKEA</em>. Kokoelmien ja niiden sisältämien asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Näytä tai piilota paneeli painamalla <em>CTRL-B</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">collection</span></code>.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Ottelupaneeli<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>Merkki osoittaa tilan: <strong>tarkka</strong> (arvo luettu two-sided-tietokannasta) tai <strong>arvioitu ± marginaali</strong>. Katso <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Bearoff-paneelin metodologia ja oletukset</span></a>, jossa määritellään täsmällisesti molemmat tilat ja niiden oletukset.</p>
 <p><strong>Tarkan alueen laajentaminen.</strong> Sisäänrakennettu tietokanta kattaa 6 nappulaa pelaajaa kohden. Asetusten <em>Bearoff</em>-välilehdellä on kaksi tapaa mennä pidemmälle:</p>
 <ul class="simple">
-<li><p>lataa laajennettu TS-06-11-tietokanta (1,2 Gt, tarkistetaan SHA-256:lla, poistettavissa samasta paikasta): tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden. Keskeytynyt tai peruutettu lataus <strong>jatkuu siitä, mihin se jäi</strong> (osittainen tiedosto säilytetään ja täydennetään HTTP Range -pyynnöllä);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>osoita mikä tahansa gnubg:n two-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code>-tiedosto. Alueeltaan laajin tietokanta voittaa automaattisesti.</p></li>
 </ul>
 <p><strong>Haastetila.</strong> Paneelin <em>Haaste</em>-valintaruutu ottaa käyttöön harjoitustilan: jokaisen asemamuutoksen yhteydessä kolmen vyöhykkeen — alapelaajan rivin, yläpelaajan rivin ja kilpajuoksutaulukon — arvot piilotetaan (korvataan merkinnällä « ··· »); vyöhykkeen napsauttaminen paljastaa vain kyseisen vyöhykkeen. Δ-rivi ilmestyy vasta, kun molemmat pelaajarivit on paljastettu. Näin voi harjoitella kummankin puolen EPC:n arviointia ja sitten kuutiopäätöksen tekemistä ennen tarkistusta. Asetus muistetaan.</p>
@@ -585,7 +596,11 @@
 <p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
 <p><strong>Vapaa harjoittelu (cram):</strong> <em>Cram</em>-painike <em>Study</em>-painikkeen vieressä aloittaa vapaan harjoittelusession: sinulle näytetään satunnaisia asemia pakasta FSRS-aikataulusta riippumatta. Tämä tila <strong>ei koskaan muuta kertausaikataulua</strong> — ihanteellinen lämmittelyyn ennen turnausta tai teemapakan tehokkaaseen kertaamiseen ilman, että sen järjestys häiriintyy. <em>Cram</em>-merkki korvaa kortin tilan, ja <em>Seuraava</em>-painike (näppäimet <em>1</em>–<em>4</em>) selaa asemia. <em>Esc</em> palaa luetteloon tallentamatta keskeytettyä sessiota.</p>
 <p><strong>Keskeytys/Jatkaminen:</strong> Voit keskeyttää kertausistunnon milloin tahansa näppäimellä <em>Esc</em>. Painike muuttuu muotoon <em>Resume</em> ja näyttää edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit.</p>
-<p><strong>Pakkojen hallinta:</strong> Käytä toimintopainikkeita pakkojen uudelleennimeämiseen, synkronointiin, nollaamiseen tai poistamiseen. FSRS-parametrit (tavoiteretentio, enimmäisväli, satunnaiskerroin) voidaan määrittää pakkakohtaisesti Asetuksissa (hammasrataskuvake).</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Metatietopaneeli<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

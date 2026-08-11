@@ -308,7 +308,14 @@
 </section>
 <section id="panneau-collections">
 <span id="id6"></span><h2><span class="section-number">2.13. </span>Sammlungen-Panel<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
-<p>Das Panel <strong>Sammlungen</strong> (<em>CTRL-B</em>) ermöglicht es, Stellungssammlungen zu verwalten. Sammlungen können erstellt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder daraus entfernt werden. Doppelklicken Sie auf eine Sammlung, um ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em> zu durchblättern. Die Reihenfolge der Sammlungen und der Stellungen innerhalb der Sammlungen kann per Drag-and-drop geändert werden. Drücken Sie <em>CTRL-B</em> oder führen Sie den Befehl <code class="docutils literal notranslate"><span class="pre">collection</span></code> aus, um das Panel ein- oder auszublenden.</p>
+<p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation
+demandée). Double-cliquer sur une collection pour parcourir ses positions
+avec les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser-déposer.
+Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">collection</span></code> pour afficher ou
+masquer le panneau.</p>
 </section>
 <section id="panneau-matchs">
 <span id="id7"></span><h2><span class="section-number">2.14. </span>Matches-Panel<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
@@ -549,7 +556,11 @@
 <p>Ein Badge zeigt das Regime an: <strong>exakt</strong> (Wert aus einer Two-Sided-Datenbank gelesen) oder <strong>geschätzt ± Marge</strong>. Siehe <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodik und Annahmen des Bearoff-Panels</span></a> für die genaue Definition der beiden Regime und ihrer Annahmen.</p>
 <p><strong>Den exakten Bereich erweitern.</strong> Die integrierte Datenbank deckt 6 Steine pro Spieler ab. Zwei Wege, darüber hinauszugehen, im Reiter <em>Bearoff</em> der Konfiguration:</p>
 <ul class="simple">
-<li><p>die erweiterte Datenbank TS-06-11 herunterladen (1,2 GB, per SHA-256 geprüft, an derselben Stelle löschbar): exaktes Urteil bis 11 Steine pro Spieler. Ein unterbrochener oder abgebrochener Download <strong>wird dort fortgesetzt, wo er aufgehört hat</strong> (die Teildatei bleibt erhalten und wird per HTTP-Range-Anfrage vervollständigt);</p></li>
+<li><p>télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé <strong>reprend où
+il s’était arrêté</strong> (le fichier partiel est conservé et complété par
+requête HTTP Range) ;</p></li>
 <li><p>eine beliebige Two-Sided-<code class="docutils literal notranslate"><span class="pre">.bd</span></code>-Datei von gnubg angeben. Die Datenbank mit dem größten Bereich hat automatisch Vorrang.</p></li>
 </ul>
 <p><strong>Challenge-Modus.</strong> Das Kontrollkästchen <em>Challenge</em> des Panels aktiviert einen Trainingsmodus: Bei jeder Änderung der Stellung werden die Werte der drei Zonen — die Zeile des unteren Spielers, die Zeile des oberen Spielers und die Rennen-Tabelle — verdeckt (ersetzt durch „···“); ein Klick auf eine Zone deckt nur diese Zone auf. Die Δ-Zeile erscheint erst, wenn beide Spielerzeilen aufgedeckt sind. So kann man trainieren, den EPC jeder Seite zu schätzen und sich dann zum Verdopplungswürfel zu äußern, bevor man nachprüft. Die Einstellung wird gespeichert.</p>
@@ -585,7 +596,11 @@
 <p><strong>Wiederholung:</strong> Wählen Sie einen Stapel aus und klicken Sie dann auf <em>Study</em> (oder doppelklicken Sie auf einen Stapel), um mit der Wiederholung der fälligen Karten zu beginnen. Jede Karte zeigt die entsprechende Stellung auf dem Brett an. Bewerten Sie Ihre Erinnerung mit den Tasten <em>1</em> (Nochmal), <em>2</em> (Schwierig), <em>3</em> (Gut) oder <em>4</em> (Einfach). Drücken Sie <em>Esc</em>, um anzuhalten und zur Stapelliste zurückzukehren.</p>
 <p><strong>Freies Üben (Cram):</strong> Die Schaltfläche <em>Cram</em> neben <em>Study</em> startet eine freie Übungssitzung: Es werden Ihnen zufällige Stellungen aus dem Deck angezeigt, unabhängig vom FSRS-Zeitplan. Dieser Modus <strong>verändert niemals den Plan der verteilten Wiederholung</strong> — ideal zum Aufwärmen vor einem Turnier oder zum intensiven Wiederholen eines thematischen Decks, ohne dessen Reihenfolge zu stören. Eine <em>Cram</em>-Plakette ersetzt den Kartenstatus, und eine Schaltfläche <em>Weiter</em> (Tasten <em>1</em> bis <em>4</em>) blättert durch die Stellungen. <em>Esc</em> kehrt zur Liste zurück, ohne eine unterbrochene Sitzung zu speichern.</p>
 <p><strong>Anhalten/Fortsetzen:</strong> Sie können eine Wiederholungssitzung jederzeit mit <em>Esc</em> unterbrechen. Die Schaltfläche wechselt zu <em>Resume</em> und zeigt Ihren Fortschritt an. Klicken Sie darauf, um dort fortzufahren, wo Sie aufgehört haben.</p>
-<p><strong>Stapelverwaltung:</strong> Verwenden Sie die Aktionsschaltflächen, um Stapel umzubenennen, zu synchronisieren, zurückzusetzen oder zu löschen. Die FSRS-Parameter (Zielretention, maximales Intervall, Streuung) können pro Stapel in den Einstellungen (Zahnradsymbol) konfiguriert werden.</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).</p>
 </section>
 <section id="panneau-metadonnees">
 <span id="panneau-metadata"></span><h2><span class="section-number">2.19. </span>Metadaten-Panel<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>

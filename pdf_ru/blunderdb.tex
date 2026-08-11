@@ -1285,7 +1285,14 @@ blunderDB выполняет запросы пользователя при ус
 \subsection{Панель коллекций}
 \label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-Панель \sphinxstylestrong{Коллекции} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) управляет коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно добавлять или удалять из них. Дважды щёлкните на коллекции для просмотра её позиций с помощью клавиш \sphinxstyleemphasis{ВЛЕВО} и \sphinxstyleemphasis{ВПРАВО}. Порядок коллекций и позиций внутри них можно изменять перетаскиванием. Нажмите \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} или выполните команду \sphinxcode{\sphinxupquote{collection}} для отображения или скрытия панели.
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées (touche \sphinxstyleemphasis{Suppr}, confirmation
+demandée). Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions
+avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections et des
+positions au sein des collections peut être modifié par glisser\sphinxhyphen{}déposer.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande \sphinxcode{\sphinxupquote{collection}} pour afficher ou
+masquer le panneau.
 
 
 \subsection{Панель матчей}
@@ -1782,7 +1789,11 @@ MWC cost является накопительным по всему отфил�
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-загрузить расширенную базу TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 ГБ, проверяется по SHA\sphinxhyphen{}256, удаляется там же): точный вердикт до 11 шашек у каждого игрока. Прерванная или отменённая загрузка \sphinxstylestrong{возобновляется с места остановки} (частичный файл сохраняется и дополняется запросом HTTP Range);
+télécharger la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 (1,2 Go, vérifiée par SHA\sphinxhyphen{}256,
+supprimable au même endroit après confirmation) : verdict exact jusqu’à
+11 pions par joueur. Un téléchargement interrompu ou annulé \sphinxstylestrong{reprend où
+il s’était arrêté} (le fichier partiel est conservé et complété par
+requête HTTP Range) ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1863,7 +1874,11 @@ Cubeful\sphinxhyphen{}эквити предполагают \sphinxstylestrong{�
 \sphinxstylestrong{Пауза/Продолжение:} Вы можете прервать сеанс повторения в любой момент с помощью \sphinxstyleemphasis{Esc}. Кнопка меняется на \sphinxstyleemphasis{Resume} и показывает ваш прогресс. Нажмите её, чтобы продолжить с того места, где остановились.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Управление колодами:} Используйте кнопки действий для переименования, синхронизации, сброса или удаления колод. Параметры FSRS (целевое удержание, максимальный интервал, случайный фактор) можно настраивать для каждой колоды в Настройках (значок шестерёнки).
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets (confirmation demandée
+pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
+intervalle maximum, aléa) peuvent être configurés par paquet dans les
+Paramètres (icône engrenage).
 
 
 \subsection{Панель метаданных}
@@ -2879,7 +2894,7 @@ delete, del, d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Удаляет текущую позицию.
+Supprime la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4411,7 +4426,7 @@ Del
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Удалить текущую позицию.
+Supprimer la position courante (confirmation demandée).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
