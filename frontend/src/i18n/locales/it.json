@@ -71,7 +71,15 @@
         "bearoffExternalClear": "Rimuovi",
         "bearoffResume": "Riprendi il download",
         "bearoffPartial": "Download parziale presente ({gb} GB) — la ripresa continuerà da dove si era fermato.",
-        "confirmDeleteBearoff": "Eliminare il database scaricato ({gb} GB)?"
+        "confirmDeleteBearoff": "Eliminare il database scaricato ({gb} GB)?",
+        "vacuumIntro": "La compattazione riscrive il file per recuperare lo spazio lasciato dalle eliminazioni (partite, tornei, epurazioni). Richiede circa il doppio della dimensione attuale in spazio libero su disco; può richiedere tempo su un database grande.",
+        "vacuumButton": "Compatta il database",
+        "vacuumRunning": "Compattazione in corso…",
+        "vacuumConfirm": "Compattare il database può richiedere tempo e serve circa il doppio della sua dimensione in spazio libero su disco. Continuare?",
+        "vacuumConfirmButton": "Compatta",
+        "vacuumDone": "Database compattato: {mb} MB recuperati",
+        "vacuumNothing": "Database compattato: niente da recuperare",
+        "vacuumError": "Compattazione non riuscita: {error}"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

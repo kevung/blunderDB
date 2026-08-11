@@ -71,7 +71,15 @@
         "bearoffExternalClear": "解除",
         "bearoffResume": "ダウンロードを再開",
         "bearoffPartial": "部分ダウンロードがあります({gb} GB)— 再開すると中断したところから続きます。",
-        "confirmDeleteBearoff": "ダウンロード済みデータベースを削除しますか({gb} GB)?"
+        "confirmDeleteBearoff": "ダウンロード済みデータベースを削除しますか({gb} GB)?",
+        "vacuumIntro": "コンパクト化はファイルを書き直し、削除(マッチ、トーナメント、パージ)で生じた空き領域を回収します。現在のサイズの約2倍の空きディスク容量が必要です。大きなデータベースでは時間がかかることがあります。",
+        "vacuumButton": "データベースをコンパクト化",
+        "vacuumRunning": "コンパクト化中…",
+        "vacuumConfirm": "データベースのコンパクト化には時間がかかることがあり、そのサイズの約2倍の空きディスク容量が必要です。続行しますか?",
+        "vacuumConfirmButton": "コンパクト化",
+        "vacuumDone": "データベースをコンパクト化しました:{mb} MB を回収",
+        "vacuumNothing": "データベースをコンパクト化しました:回収するものはありません",
+        "vacuumError": "コンパクト化に失敗しました:{error}"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

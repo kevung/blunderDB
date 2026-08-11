@@ -71,7 +71,15 @@
         "bearoffExternalClear": "Quitar",
         "bearoffResume": "Reanudar la descarga",
         "bearoffPartial": "Descarga parcial presente ({gb} GB) — la reanudación continuará donde se detuvo.",
-        "confirmDeleteBearoff": "¿Eliminar la base descargada ({gb} GB)?"
+        "confirmDeleteBearoff": "¿Eliminar la base descargada ({gb} GB)?",
+        "vacuumIntro": "Compactar reescribe el archivo para recuperar el espacio dejado por las eliminaciones (partidas, torneos, purgas). Necesita aproximadamente el doble del tamaño actual en espacio libre en disco; puede tardar en una base grande.",
+        "vacuumButton": "Compactar la base",
+        "vacuumRunning": "Compactando…",
+        "vacuumConfirm": "Compactar la base puede tardar y necesita aproximadamente el doble de su tamaño en espacio libre en disco. ¿Continuar?",
+        "vacuumConfirmButton": "Compactar",
+        "vacuumDone": "Base compactada: {mb} MB recuperados",
+        "vacuumNothing": "Base compactada: nada que recuperar",
+        "vacuumError": "Error al compactar: {error}"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",

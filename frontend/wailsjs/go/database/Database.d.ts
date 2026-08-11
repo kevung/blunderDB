@@ -279,3 +279,5 @@ export function UpdatePosition(arg1:domain.Position):Promise<void>;
 export function UpdateTournament(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 
 export function UpdateTournamentComment(arg1:number,arg2:string):Promise<void>;
+
+export function Vacuum():Promise<database.VacuumResult>;

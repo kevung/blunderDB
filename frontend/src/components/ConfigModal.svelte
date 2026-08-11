@@ -1,8 +1,8 @@
 <script>
     import { get } from 'svelte/store';
-    import { configInitialTabStore } from '../stores/uiStore';
+    import { configInitialTabStore, statusBarTextStore } from '../stores/uiStore';
     import { trapFocus } from '../utils/focusTrap.js';
-    import { t, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
+    import { t, tMsg, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
     import { uiScaleStore, setUIScale, previewUIScale, MIN_UI_SCALE, MAX_UI_SCALE, UI_SCALE_STEP } from '../stores/uiScaleStore';
     import { panelPositionStore, setPanelPosition, PANEL_BOTTOM, PANEL_SIDE, PANEL_AUTO } from '../stores/panelLayoutStore';
@@ -20,6 +20,7 @@
         DeleteBearoffDB,
         OpenBearoffFileDialog
     } from '../../wailsjs/go/gui/App.js';
+    import { Vacuum } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTsPath, SaveBearoffTsPath } from '../../wailsjs/go/main/Config.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { onDestroy } from 'svelte';
@@ -37,6 +38,13 @@
     // Regenerating is a two-step gesture: the first click only reveals what it does and,
     // more to the point, what it does not do. See RegenerateIssuerIdentity.
     let confirmingRegenerate = $state(false);
+
+    // Compacting the database file (Database.Vacuum) can take a while on a large
+    // database and needs headroom on disk, so it is confirmed like a destructive
+    // action even though nothing is deleted; the result (or a failure) is reported
+    // through the status bar rather than inline, since the modal is usually closed
+    // by the time a big VACUUM finishes.
+    let vacuumBusy = $state(false);
 
     // Three concerns, and the third is not a preference at all: language, scale and colours
     // are settings one adjusts, whereas the identity is an object one manages, with its own
@@ -235,6 +243,27 @@
         }
     }
 
+    // Compacts the currently open database file. Goes through the same
+    // Database.Vacuum() the CLI's `blunderdb vacuum` uses (CLI/GUI parity) —
+    // WAL checkpoint, free-space guard, VACUUM, ANALYZE all happen there.
+    async function vacuumDatabase() {
+        if (!(await confirmAction(get(t)('config.vacuumConfirm'), { confirmLabel: get(t)('config.vacuumConfirmButton') }))) return;
+        vacuumBusy = true;
+        try {
+            const result = await Vacuum();
+            const reclaimed = Math.max(0, (result?.SizeBefore ?? 0) - (result?.SizeAfter ?? 0));
+            if (reclaimed > 0) {
+                statusBarTextStore.set(tMsg('config.vacuumDone', { mb: (reclaimed / 1e6).toFixed(1) }));
+            } else {
+                statusBarTextStore.set(tMsg('config.vacuumNothing'));
+            }
+        } catch (error) {
+            statusBarTextStore.set(tMsg('config.vacuumError', { error: String(error) }));
+        } finally {
+            vacuumBusy = false;
+        }
+    }
+
     async function pickBearoffExternal() {
         bearoffError = '';
         try {
@@ -314,6 +343,12 @@
                                 <option value={opt.value}>{$t(opt.labelKey)}</option>
                             {/each}
                         </select>
+                    </div>
+                    <p class="setting-note">{$t('config.vacuumIntro')}</p>
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
+                            {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
+                        </button>
                     </div>
                 {:else if activeTab === 'colors'}
                     {#each COLOR_SETTINGS as setting (setting.key)}

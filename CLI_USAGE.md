@@ -40,6 +40,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
+- `vacuum` - Compact the database file, reclaiming freed space
 - `delete` - Delete data from the database
 - `help` - Show help message
 - `version` - Show version information
@@ -789,6 +790,40 @@ Verifying match 1...
   Database total positions: 234
 
 Verification complete!
+```
+
+## Vacuum Command
+
+Reclaim disk space left behind by deletions (matches, tournaments, purges).
+SQLite never shrinks the database file on its own when rows are deleted — this
+is the only way to compact it, and it never happens automatically at open,
+since the cost is unpredictable on a large database.
+
+```bash
+./blunderDB vacuum --db database.db
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+
+The command first runs a WAL checkpoint so the reported "before" size is
+honest, then checks that the volume has roughly twice the current file size
+free (SQLite rebuilds the whole database before swapping it in — it refuses
+with a clear error rather than run out of room partway through), runs
+`VACUUM`, and finishes with `ANALYZE` so the query planner's statistics match
+the rebuilt file.
+
+**Example:**
+```bash
+./blunderDB vacuum --db database.db
+```
+
+**Example output:**
+```
+Compacting database...
+  Before: 128.4 MiB
+  After:  41.2 MiB
+  Reclaimed: 87.2 MiB
 ```
 
 ## Common Workflows
