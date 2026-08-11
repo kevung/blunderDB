@@ -22,10 +22,23 @@
         onCommit,
         onClose
     } = $props();
+
+    // Escape only closes once a terminal state with a visible "Fermer" button is
+    // reached: mode 'completed', or the 'preview' branch that has nothing to
+    // import (its own "Fermer" button, no commit/cancel choice to make). While
+    // analyzing/committing, Escape must not silently abandon the import.
+    let closable = $derived(mode === 'completed' || (mode === 'preview' && analysis.toAdd === 0 && analysis.toMerge === 0));
+
+    function handleKeyDown(event) {
+        if (event.key === 'Escape' && closable) {
+            event.preventDefault();
+            onClose();
+        }
+    }
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('import.progressTitle')} use:trapFocus>
+    <div class="modal-overlay" onkeydown={handleKeyDown} role="dialog" aria-modal="true" aria-label={$t('import.progressTitle')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'analyzing'}
                 <h2>{$t('import.analyzing')} <span class="spinner"></span></h2>

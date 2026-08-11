@@ -5,14 +5,26 @@
     let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
 
     let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
+    // Escape only closes once the terminal state is reached (the "Fermer" button
+    // is visible) — while importing is in progress, Escape must not silently
+    // abandon it: the user has Annuler for that, deliberately.
+    let closable = $derived(mode === 'completed');
+
     function basename(path) {
         if (!path) return '';
         return path.split('/').pop().split('\\').pop();
     }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Escape' && closable) {
+            event.preventDefault();
+            onClose();
+        }
+    }
 </script>
 
 {#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
+    <div class="modal-overlay" onkeydown={handleKeyDown} role="dialog" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'importing'}
                 <h2>{$t('import.importingFiles')} <span class="spinner"></span></h2>
