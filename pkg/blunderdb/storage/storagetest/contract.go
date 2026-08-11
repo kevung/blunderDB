@@ -356,7 +356,7 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save position: %v", err)
 	}
 
-	makeMatch := func(p1, p2 string) int64 {
+	makeMatch := func(p1, p2 string, posID int64) int64 {
 		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7}
 		mid, err := s.Matches().Save(ctx, "", &m)
 		if err != nil {
@@ -367,14 +367,14 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 		if err != nil {
 			t.Fatalf("CreateGame: %v", err)
 		}
-		mv := domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: sharedID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+		mv := domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
 		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
 			t.Fatalf("CreateMove: %v", err)
 		}
 		return mid
 	}
-	matchA := makeMatch("Alice", "Bob")
-	matchB := makeMatch("Carol", "Dave")
+	matchA := makeMatch("Alice", "Bob", sharedID)
+	matchB := makeMatch("Carol", "Dave", sharedID)
 
 	if err := s.Matches().SwapPlayers(ctx, "", matchA); err != nil {
 		t.Fatalf("SwapPlayers: %v", err)
@@ -423,6 +423,41 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 	}
 	if reSaved != aID {
 		t.Errorf("swapped position has a stale Zobrist: re-save returned %d, want %d", reSaved, aID)
+	}
+
+	// The swap's orphan cleanup mirrors DeleteCascade's (see positionIsHeldSQL):
+	// a position that was only this match's, and that nothing else holds once
+	// the move repoints to the swapped copy, must be purged under its old id.
+	orphan := checkerPos()
+	orphan.Score = [2]int{2, 0}
+	orphanID, err := s.Positions().Save(ctx, "", &orphan)
+	if err != nil {
+		t.Fatalf("Save orphan position: %v", err)
+	}
+	matchC := makeMatch("Eve", "Frank", orphanID)
+	if err := s.Matches().SwapPlayers(ctx, "", matchC); err != nil {
+		t.Fatalf("SwapPlayers (orphan case): %v", err)
+	}
+	if _, err := s.Positions().Load(ctx, "", orphanID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("swap did not purge the orphaned old position: got %v, want ErrNotFound", err)
+	}
+
+	// A retained position (flagged, ADR-0006) must survive the swap under its
+	// old id even though no move points at it any more: positionIsHeldSQL keeps
+	// it alive the same way it would across a match deletion.
+	retained := checkerPos()
+	retained.Score = [2]int{4, 0}
+	retained.Flagged = true
+	retainedID, err := s.Positions().Save(ctx, "", &retained)
+	if err != nil {
+		t.Fatalf("Save retained position: %v", err)
+	}
+	matchD := makeMatch("Gina", "Hank", retainedID)
+	if err := s.Matches().SwapPlayers(ctx, "", matchD); err != nil {
+		t.Fatalf("SwapPlayers (retained case): %v", err)
+	}
+	if _, err := s.Positions().Load(ctx, "", retainedID); err != nil {
+		t.Errorf("swap purged a flagged position that should have been retained: %v", err)
 	}
 }
 
@@ -1392,6 +1427,43 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	inCollection := inMatch(3, false)
 	commented := inMatch(4, false)
 	inDeck := inMatch(5, false)
+	ankiCard := inMatch(7, false)
+
+	// The user flagged this one for study in the source tool (docs/adr/0006):
+	// same reasoning as individually_imported — the retention predicate must
+	// keep it, or deleting a match would delete the very positions the `fl`
+	// filter exists to surface.
+	flaggedPos := provenancePos(6)
+	flaggedPos.Flagged = true
+	flagged, err := s.Positions().Save(ctx, "", &flaggedPos)
+	if err != nil {
+		t.Fatalf("Save flagged position: %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{
+		GameID: gameID, MoveNumber: 6, MoveType: "checker", PositionID: flagged, Player: 1,
+	}); err != nil {
+		t.Fatalf("CreateMove (flagged): %v", err)
+	}
+
+	// The most common real-world case: a position (typically an opening
+	// position) that recurs in a second, still-live match. This is the FIRST
+	// clause of positionIsHeldSQL, not one of the "extra" holders below.
+	sharedWithSecondMatch := inMatch(8, false)
+	m2 := domain.Match{Player1Name: "Eve", Player2Name: "Frank"}
+	matchID2, err := s.Matches().Save(ctx, "", &m2)
+	if err != nil {
+		t.Fatalf("Save second match: %v", err)
+	}
+	g2 := domain.Game{MatchID: matchID2, GameNumber: 1}
+	gameID2, err := s.Matches().CreateGame(ctx, "", &g2)
+	if err != nil {
+		t.Fatalf("CreateGame (second match): %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{
+		GameID: gameID2, MoveNumber: 1, MoveType: "checker", PositionID: sharedWithSecondMatch, Player: 1,
+	}); err != nil {
+		t.Fatalf("CreateMove (second match): %v", err)
+	}
 
 	// Neither an analysis nor a comment holds a position: both can arrive with
 	// the match, so holding on them would mean never purging anything.
@@ -1413,7 +1485,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("CreateDeck: %v", err)
 	}
-	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{inDeck}); err != nil {
+	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{inDeck, ankiCard}); err != nil {
 		t.Fatalf("SyncWithPositions: %v", err)
 	}
 
@@ -1431,6 +1503,9 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		{"individually imported", individual, true},
 		{"in a collection", inCollection, true},
 		{"in an Anki deck", inDeck, true},
+		{"flagged (ADR-0006)", flagged, true},
+		{"referenced by an Anki card", ankiCard, true},
+		{"shared with a second, still-live match", sharedWithSecondMatch, true},
 	} {
 		_, err := s.Positions().Load(ctx, "", tc.id)
 		switch {
