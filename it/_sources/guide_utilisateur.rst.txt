@@ -10,8 +10,8 @@ Créer une nouvelle base de données
 ----------------------------------
 
 Pour créer une nouvelle base de données, cliquer dans la barre d'outils sur le
-bouton "New Database". Choisir un chemin où enregistrer la base de données,
-ainsi qu'un nom et cliquer sur "Save".
+bouton "Nouvelle base de données". Choisir un chemin où enregistrer la base de
+données, ainsi qu'un nom et cliquer sur "Save".
 
 .. note::
    L'extension des bases de données blunderDB est *.db*.
@@ -24,8 +24,8 @@ Ouvrir une base de donnée existante
 -----------------------------------
 
 Pour charger une base de données existante, cliquer dans la barre d'outils sur
-le bouton "Open Database". Choisir le chemin où se trouve la base de données,
-choisir le fichier *.db* et cliquer sur "Open".
+le bouton "Ouvrir une base de données". Choisir le chemin où se trouve la base
+de données, choisir le fichier *.db* et cliquer sur "Open".
 
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
@@ -35,7 +35,8 @@ Importer et fusionner une base de données
 
 Pour importer et fusionner une autre base de données blunderDB dans la base de
 données actuellement ouverte, cliquer dans la barre d'outils sur le bouton
-"Import Database". Choisir le fichier *.db* à importer et cliquer sur "Open".
+"Importer une base de données". Choisir le fichier *.db* à importer et
+cliquer sur "Open".
 
 blunderDB va fusionner intelligemment les deux bases de données:
 
@@ -414,4 +415,34 @@ Méthode 2 (avancée):
 
 Les positions affichées sont celles de la base de données ayant vérifié
 les critères de recherche entrés par l'utilisateur.
+
+Pour aller plus loin
+---------------------
+
+Ce guide couvre les usages les plus courants. blunderDB propose plusieurs
+fonctionnalités supplémentaires, détaillées dans le manuel :
+
+* **Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une
+  collection ou une recherche en paquet de cartes à réviser selon
+  l'algorithme FSRS, avec un mode d'entraînement libre (*cram*) qui ne
+  perturbe pas l'échéancier. Voir :ref:`panneau_anki`.
+
+* **Vues multiples** — une barre d'onglets sous la barre d'outils permet de
+  garder plusieurs espaces de travail indépendants ouverts en parallèle (par
+  exemple une recherche et la navigation dans un match), chacun avec sa
+  propre liste de positions et son propre contexte. Voir :ref:`onglets_vues`.
+
+* **Diffusion filigranée** — un export peut être signé avec votre identité
+  d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et
+  protégé par mot de passe pour son transport. Voir :ref:`diffusion_controlee`.
+
+* **Visites guidées et base de démonstration** — la commande ``tour``
+  (alias ``tutorial``) ouvre un catalogue de visites guidées de l'interface,
+  et la commande ``demo`` charge une base d'exemple pour découvrir l'outil
+  sans base de données personnelle. Voir :ref:`visites_guidees`.
+
+* **Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``)
+  charge directement les pires erreurs (équité ou MWC) dans la vue
+  d'analyse, selon le filtre courant du panneau Stats, sans passer par une
+  recherche manuelle. Voir :ref:`stats`.
 

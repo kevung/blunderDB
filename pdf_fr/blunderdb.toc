@@ -16,7 +16,7 @@
 \contentsline {subsection}{\numberline {2.2.5}Configuration}{14}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Visites guidées et base d’exemple}{15}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Navigation dans les positions}{15}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}Édition de positions}{15}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.8}Édition de positions}{16}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}La ligne de commande}{16}{subsection.2.2.9}%
 \contentsline {subsection}{\numberline {2.2.10}Panneau Analyse}{16}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Panneau Commentaires}{16}{subsection.2.2.11}%
@@ -28,7 +28,7 @@
 \contentsline {subsubsection}{Introduction}{19}{subsubsection*.7}%
 \contentsline {subsubsection}{Ouverture du panneau}{19}{subsubsection*.8}%
 \contentsline {subsubsection}{Barre de filtre}{19}{subsubsection*.9}%
-\contentsline {paragraph}{Perspective joueur}{20}{paragraph*.10}%
+\contentsline {paragraph}{Perspective joueur}{19}{paragraph*.10}%
 \contentsline {paragraph}{Filtres disponibles}{20}{paragraph*.11}%
 \contentsline {subsubsection}{Toggle PR / MWC}{20}{subsubsection*.12}%
 \contentsline {subsubsection}{Onglet Dashboard}{21}{subsubsection*.13}%
@@ -75,6 +75,7 @@
 \contentsline {subsection}{\numberline {2.3.19}Exporter une position vers XG}{33}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Visualiser les différentes positions}{33}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Rechercher des positions selon des critères}{33}{subsection.2.3.21}%
+\contentsline {subsection}{\numberline {2.3.22}Pour aller plus loin}{34}{subsection.2.3.22}%
 \contentsline {section}{\numberline {2.4}Liste des commandes}{34}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Opérations globales}{35}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}Positions et navigation}{35}{subsection.2.4.2}%
@@ -107,72 +108,75 @@
 \contentsline {subsubsection}{Import de positions}{45}{subsubsection*.33}%
 \contentsline {subsubsection}{Import par lot}{45}{subsubsection*.34}%
 \contentsline {subsection}{\numberline {2.6.6}export — Exporter des données}{45}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}search — Rechercher des positions}{46}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}list — Lister le contenu}{47}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}match — Afficher un match}{48}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}info — Métadonnées de la base}{49}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}edit — Modifier les métadonnées}{49}{subsection.2.6.11}%
-\contentsline {subsection}{\numberline {2.6.12}verify — Vérifier l’intégrité}{50}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}delete — Supprimer des données}{50}{subsection.2.6.13}%
-\contentsline {subsection}{\numberline {2.6.14}Exemples de flux de travail}{51}{subsection.2.6.14}%
-\contentsline {subsubsection}{Import d’un répertoire de tournoi}{51}{subsubsection*.35}%
-\contentsline {subsubsection}{Sauvegarde régulière}{51}{subsubsection*.36}%
-\contentsline {subsubsection}{Analyse des erreurs}{51}{subsubsection*.37}%
-\contentsline {subsection}{\numberline {2.6.15}Codes de retour}{51}{subsection.2.6.15}%
-\contentsline {section}{\numberline {2.7}Foire aux questions}{51}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Quel est l’utilité de blunderDB?}{51}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Qu’est ce qui a motivé la création de blunderDB?}{52}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Comment sauvegarder la base de données courante?}{52}{subsection.2.7.3}%
-\contentsline {subsection}{\numberline {2.7.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{52}{subsection.2.7.4}%
-\contentsline {subsection}{\numberline {2.7.5}Comment fusionner plusieurs bases de données?}{52}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Quels formats de fichiers de match sont supportés?}{53}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Qu’est\sphinxhyphen {}ce qu’une collection?}{53}{subsection.2.7.7}%
-\contentsline {subsection}{\numberline {2.7.8}Qu’est\sphinxhyphen {}ce que l’EPC?}{53}{subsection.2.7.8}%
-\contentsline {subsection}{\numberline {2.7.9}blunderDB dispose\sphinxhyphen {}t\sphinxhyphen {}il d’une interface en ligne de commande?}{53}{subsection.2.7.9}%
-\contentsline {subsection}{\numberline {2.7.10}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{53}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}Quel format de données utilise blunderDB?}{53}{subsection.2.7.11}%
-\contentsline {subsection}{\numberline {2.7.12}Quelles ont été les principes de conception de blunderDB?}{53}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Quel est l’architecture logicielle de blunderDB?}{54}{subsection.2.7.13}%
-\contentsline {subsection}{\numberline {2.7.14}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{54}{subsection.2.7.14}%
-\contentsline {subsection}{\numberline {2.7.15}D’où vient l’icône de blunderDB?}{54}{subsection.2.7.15}%
-\contentsline {section}{\numberline {2.8}Mode headless (serveur)}{54}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Vue d’ensemble}{54}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Le démon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{55}{subsection.2.8.2}%
-\contentsline {subsubsection}{Points d’accès}{55}{subsubsection*.38}%
-\contentsline {subsubsection}{Déploiement avec Docker}{56}{subsubsection*.39}%
-\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL et multi\sphinxhyphen {}utilisateurs}{56}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}Migrer une base SQLite vers PostgreSQL}{57}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}Le dispatcher générique \sphinxstyleliteralintitle {\sphinxupquote {call}}}{57}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}Annexe: Utilisation avancée des filtres}{58}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Recherche de positions en ligne de commande}{58}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Recherche dans les résultats courants}{59}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Bibliothèque de filtres}{59}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Exemples}{59}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{60}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Avertissement Windows SmartScreen}{61}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Blocage Windows Defender}{61}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{64}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Annexe Mac : Blocage éventuel de blunderDB}{70}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Installation de blunderDB}{70}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Autorisation de l’exécution de blunderDB}{70}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}Annexe: Schéma de la base de données}{70}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Versionnage et migrations}{71}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Principales tables}{71}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Principes de conception}{71}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB}{72}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Définitions formelles}{72}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{72}{subsubsection*.53}%
-\contentsline {subsubsection}{Snowie Error Rate}{72}{subsubsection*.54}%
-\contentsline {subsubsection}{Perte MWC (Match Winning Chance)}{73}{subsubsection*.55}%
-\contentsline {subsection}{\numberline {2.13.2}Décisions comptées au dénominateur du PR}{73}{subsection.2.13.2}%
-\contentsline {subsubsection}{Coups de pions — décisions comptées}{73}{subsubsection*.56}%
-\contentsline {subsubsection}{Décisions de cube — décisions comptées}{73}{subsubsection*.57}%
-\contentsline {subsubsection}{Résumé du filtre}{73}{subsubsection*.58}%
-\contentsline {subsection}{\numberline {2.13.3}Correspondance blunderDB ↔ XG ↔ gnuBG}{74}{subsection.2.13.3}%
-\contentsline {subsubsection}{Comparaison XG ↔ blunderDB (même moteur d’analyse)}{74}{subsubsection*.59}%
-\contentsline {subsubsection}{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}{74}{subsubsection*.60}%
-\contentsline {subsection}{\numberline {2.13.4}Valider vos propres chiffres}{74}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}Référence gnuBG}{74}{subsection.2.13.5}%
-\contentsline {chapter}{\numberline {3}Contacts}{77}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Faire un don}{79}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Remerciements}{81}{chapter.5}%
+\contentsline {subsection}{\numberline {2.6.7}identity — Identité d’émetteur}{47}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}open — Ouvrir un fichier protégé}{47}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}search — Rechercher des positions}{47}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}list — Lister le contenu}{49}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}match — Afficher un match}{50}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.12}epc — Calculatrice EPC}{50}{subsection.2.6.12}%
+\contentsline {subsection}{\numberline {2.6.13}info — Métadonnées de la base}{51}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.14}edit — Modifier les métadonnées}{51}{subsection.2.6.14}%
+\contentsline {subsection}{\numberline {2.6.15}verify — Vérifier l’intégrité}{51}{subsection.2.6.15}%
+\contentsline {subsection}{\numberline {2.6.16}delete — Supprimer des données}{52}{subsection.2.6.16}%
+\contentsline {subsection}{\numberline {2.6.17}Exemples de flux de travail}{52}{subsection.2.6.17}%
+\contentsline {subsubsection}{Import d’un répertoire de tournoi}{52}{subsubsection*.35}%
+\contentsline {subsubsection}{Sauvegarde régulière}{53}{subsubsection*.36}%
+\contentsline {subsubsection}{Analyse des erreurs}{53}{subsubsection*.37}%
+\contentsline {subsection}{\numberline {2.6.18}Codes de retour}{53}{subsection.2.6.18}%
+\contentsline {section}{\numberline {2.7}Foire aux questions}{53}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Quel est l’utilité de blunderDB?}{53}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Qu’est ce qui a motivé la création de blunderDB?}{54}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Comment sauvegarder la base de données courante?}{54}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{54}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}Comment fusionner plusieurs bases de données?}{54}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}Quels formats de fichiers de match sont supportés?}{55}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}Qu’est\sphinxhyphen {}ce qu’une collection?}{55}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}Qu’est\sphinxhyphen {}ce que l’EPC?}{55}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}blunderDB dispose\sphinxhyphen {}t\sphinxhyphen {}il d’une interface en ligne de commande?}{55}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{55}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}Quel format de données utilise blunderDB?}{55}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}Quelles ont été les principes de conception de blunderDB?}{56}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.13}Quel est l’architecture logicielle de blunderDB?}{56}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.14}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{56}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}D’où vient l’icône de blunderDB?}{56}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}Mode headless (serveur)}{56}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Vue d’ensemble}{56}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Le démon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{57}{subsection.2.8.2}%
+\contentsline {subsubsection}{Points d’accès}{58}{subsubsection*.38}%
+\contentsline {subsubsection}{Déploiement avec Docker}{58}{subsubsection*.39}%
+\contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL et multi\sphinxhyphen {}utilisateurs}{58}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Migrer une base SQLite vers PostgreSQL}{59}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Le dispatcher générique \sphinxstyleliteralintitle {\sphinxupquote {call}}}{60}{subsection.2.8.5}%
+\contentsline {section}{\numberline {2.9}Annexe: Utilisation avancée des filtres}{60}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Recherche de positions en ligne de commande}{61}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Recherche dans les résultats courants}{61}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Bibliothèque de filtres}{61}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}Exemples}{62}{subsection.2.9.4}%
+\contentsline {section}{\numberline {2.10}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{63}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Avertissement Windows SmartScreen}{63}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Blocage Windows Defender}{64}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Vérifier l’intégrité du téléchargement (SHA256)}{67}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Annexe Mac : Blocage éventuel de blunderDB}{72}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Installation de blunderDB}{72}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Autorisation de l’exécution de blunderDB}{72}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Annexe: Schéma de la base de données}{72}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Versionnage et migrations}{72}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Principales tables}{73}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Principes de conception}{73}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB}{74}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Définitions formelles}{74}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{74}{subsubsection*.53}%
+\contentsline {subsubsection}{Snowie Error Rate}{74}{subsubsection*.54}%
+\contentsline {subsubsection}{Perte MWC (Match Winning Chance)}{75}{subsubsection*.55}%
+\contentsline {subsection}{\numberline {2.13.2}Décisions comptées au dénominateur du PR}{75}{subsection.2.13.2}%
+\contentsline {subsubsection}{Coups de pions — décisions comptées}{75}{subsubsection*.56}%
+\contentsline {subsubsection}{Décisions de cube — décisions comptées}{75}{subsubsection*.57}%
+\contentsline {subsubsection}{Résumé du filtre}{75}{subsubsection*.58}%
+\contentsline {subsection}{\numberline {2.13.3}Correspondance blunderDB ↔ XG ↔ gnuBG}{75}{subsection.2.13.3}%
+\contentsline {subsubsection}{Comparaison XG ↔ blunderDB (même moteur d’analyse)}{76}{subsubsection*.59}%
+\contentsline {subsubsection}{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}{76}{subsubsection*.60}%
+\contentsline {subsection}{\numberline {2.13.4}Valider vos propres chiffres}{76}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}Référence gnuBG}{76}{subsection.2.13.5}%
+\contentsline {chapter}{\numberline {3}Contacts}{79}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Faire un don}{81}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Remerciements}{83}{chapter.5}%

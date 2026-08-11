@@ -1134,7 +1134,9 @@ blunderDB を設定する。特にインターフェースの言語を設定す�
 \subsection{設定}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-ツールバーのヘルプボタンの左にある設定ボタン（歯車の形のアイコン）を押すと、blunderDB の設定ウィンドウが開きます。ウィンドウは三つのタブで構成されています。
+Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d\textquotesingle{}outils, à gauche du bouton d\textquotesingle{}aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -1143,6 +1145,11 @@ blunderDB を設定する。特にインターフェースの言語を設定す�
 \item {} 
 \sphinxAtStartPar
 \sphinxstylestrong{ボードの色} — ボードの配色。
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Bearoff} — la base de sortie two\sphinxhyphen{}sided étendue utilisée par le panneau
+Bearoff ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1155,6 +1162,19 @@ blunderDB を設定する。特にインターフェースの言語を設定す�
 
 \sphinxAtStartPar
 \sphinxstyleemphasis{ボードの色}タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。\sphinxstyleemphasis{リセット}ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。
+
+\sphinxAtStartPar
+L\textquotesingle{}onglet \sphinxstyleemphasis{Bearoff} gère la base two\sphinxhyphen{}sided qui étend le domaine exact du
+panneau Bearoff (voir {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ベアオフパネル}}}}}) au\sphinxhyphen{}delà de la base TS\sphinxhyphen{}06\sphinxhyphen{}06
+embarquée dans l\textquotesingle{}exécutable. Il affiche le domaine actuellement actif
+(\sphinxcode{\sphinxupquote{TS\sphinxhyphen{}06\sphinxhyphen{}06}} ou \sphinxcode{\sphinxupquote{TS\sphinxhyphen{}06\sphinxhyphen{}11}} une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 avec une barre de
+progression, et \sphinxstylestrong{reprend automatiquement un téléchargement interrompu} au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L\textquotesingle{}onglet
+permet aussi de pointer vers un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided externe (par exemple
+une base générée soi\sphinxhyphen{}même) plutôt que d\textquotesingle{}utiliser le téléchargement intégré.
 
 \sphinxAtStartPar
 設定ウィンドウには、インターフェースの表示設定もまとめられています。\sphinxstylestrong{インターフェースの拡大率} のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。\sphinxstylestrong{パネルの位置} メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： \sphinxstyleemphasis{下}、\sphinxstyleemphasis{横} または \sphinxstyleemphasis{自動}（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。
@@ -1187,6 +1207,12 @@ blunderDB を設定する。特にインターフェースの言語を設定す�
 ポジションのコメントを表示、追加、編集する。
 
 \end{itemize}
+
+\sphinxAtStartPar
+Le bouton \sphinxstylestrong{Aller à la position} de la barre d\textquotesingle{}outils ouvre une fenêtre où
+saisir directement l\textquotesingle{}indice d\textquotesingle{}une position pour y sauter, sans avoir à
+défiler. C\textquotesingle{}est l\textquotesingle{}équivalent graphique de la commande \sphinxcode{\sphinxupquote{{[}number{]}}} en ligne de
+commande (voir {\hyperref[\detokenize{cmd_mode:cmd-positions}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{局面とナビゲーション}}}}}).
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
@@ -1734,7 +1760,10 @@ MWC cost はフィルターされたデータセット全体にわたる累積�
 \subsection{ベアオフパネル}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
-\sphinxstylestrong{EPC} パネル（\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。\sphinxstyleemphasis{CTRL\sphinxhyphen{}E} を押すか、下部パネルの EPC タブをクリックするか、\sphinxcode{\sphinxupquote{epc}} コマンドを実行することで有効になります。
+Le panneau \sphinxstylestrong{Bearoff} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) calcule l\textquotesingle{}EPC (Effective Pip Count) d\textquotesingle{}une
+position de bearoff. Il est activé en appuyant sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur
+l\textquotesingle{}onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+\sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
 このパネルでは、両方のインナーボードのチェッカーの配置を編集できます。ポイント1〜6をクリックすると下側のプレイヤーのチェッカーが置かれ、ポイント19〜24をクリックすると上側のプレイヤーのチェッカーが置かれます（マウスのボタンはどちらでも構いません）。
@@ -2020,7 +2049,9 @@ Paramètres (icône engrenage).
 \subsection{新しいデータベースを作成する}
 \label{\detokenize{guide_utilisateur:creer-une-nouvelle-base-de-donnees}}
 \sphinxAtStartPar
-新しいデータベースを作成するには、ツールバーの「New Database」ボタンをクリックします。データベースを保存するパスとファイル名を選択し、「Save」をクリックします。
+Pour créer une nouvelle base de données, cliquer dans la barre d\textquotesingle{}outils sur le
+bouton "Nouvelle base de données". Choisir un chemin où enregistrer la base de
+données, ainsi qu\textquotesingle{}un nom et cliquer sur "Save".
 
 \begin{sphinxadmonition}{note}{注釈:}
 \sphinxAtStartPar
@@ -2036,7 +2067,9 @@ blunderDB のデータベースファイルの拡張子は \sphinxstyleemphasis{
 \subsection{既存のデータベースを開く}
 \label{\detokenize{guide_utilisateur:ouvrir-une-base-de-donnee-existante}}
 \sphinxAtStartPar
-既存のデータベースを読み込むには、ツールバーの「Open Database」ボタンをクリックします。データベースのあるパスに移動し、\sphinxstyleemphasis{.db} ファイルを選択して「Open」をクリックします。
+Pour charger une base de données existante, cliquer dans la barre d\textquotesingle{}outils sur
+le bouton "Ouvrir une base de données". Choisir le chemin où se trouve la base
+de données, choisir le fichier \sphinxstyleemphasis{.db} et cliquer sur "Open".
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
@@ -2047,7 +2080,10 @@ blunderDB のデータベースファイルの拡張子は \sphinxstyleemphasis{
 \subsection{データベースをインポートして統合する}
 \label{\detokenize{guide_utilisateur:importer-et-fusionner-une-base-de-donnees}}
 \sphinxAtStartPar
-現在開いているデータベースに別の blunderDB データベースをインポートして統合するには、ツールバーの「Import Database」ボタンをクリックします。インポートする \sphinxstyleemphasis{.db} ファイルを選択し、「Open」をクリックします。
+Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d\textquotesingle{}outils sur le bouton
+"Importer une base de données". Choisir le fichier \sphinxstyleemphasis{.db} à importer et
+cliquer sur "Open".
 
 \sphinxAtStartPar
 blunderDB は 2 つのデータベースをインテリジェントに統合します：
@@ -2591,6 +2627,49 @@ XGを開き、\sphinxstyleemphasis{CTRL\sphinxhyphen{}V} を押します。
 
 \sphinxAtStartPar
 表示されるポジションは、ユーザーが入力した検索条件を満たすデータベース内のポジションです。
+
+
+\subsection{Pour aller plus loin}
+\label{\detokenize{guide_utilisateur:pour-aller-plus-loin}}
+\sphinxAtStartPar
+Ce guide couvre les usages les plus courants. blunderDB propose plusieurs
+fonctionnalités supplémentaires, détaillées dans le manuel :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Répétition espacée (Anki)} — le panneau Anki (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) transforme une
+collection ou une recherche en paquet de cartes à réviser selon
+l\textquotesingle{}algorithme FSRS, avec un mode d\textquotesingle{}entraînement libre (\sphinxstyleemphasis{cram}) qui ne
+perturbe pas l\textquotesingle{}échéancier. Voir {\hyperref[\detokenize{manuel:panneau-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Anki パネル}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Vues multiples} — une barre d\textquotesingle{}onglets sous la barre d\textquotesingle{}outils permet de
+garder plusieurs espaces de travail indépendants ouverts en parallèle (par
+exemple une recherche et la navigation dans un match), chacun avec sa
+propre liste de positions et son propre contexte. Voir {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ビュータブ}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Diffusion filigranée} — un export peut être signé avec votre identité
+d\textquotesingle{}émetteur (filigrane infalsifiable indiquant l\textquotesingle{}origine du fichier) et
+protégé par mot de passe pour son transport. Voir {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{データベースの配布：出所とパスワード}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Visites guidées et base de démonstration} — la commande \sphinxcode{\sphinxupquote{tour}}
+(alias \sphinxcode{\sphinxupquote{tutorial}}) ouvre un catalogue de visites guidées de l\textquotesingle{}interface,
+et la commande \sphinxcode{\sphinxupquote{demo}} charge une base d\textquotesingle{}exemple pour découvrir l\textquotesingle{}outil
+sans base de données personnelle. Voir {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{ガイドツアーとサンプルデータベース}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Charger les pires erreurs} — la commande \sphinxcode{\sphinxupquote{bl}} (ou \sphinxcode{\sphinxupquote{blunders}})
+charge directement les pires erreurs (équité ou MWC) dans la vue
+d\textquotesingle{}analyse, selon le filtre courant du panneau Stats, sans passer par une
+recherche manuelle. Voir {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats パネル}}}}}.
+
+\end{itemize}
 
 \sphinxstepscope
 
@@ -5594,6 +5673,28 @@ export
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+identity
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche ou déplace l\textquotesingle{}identité d\textquotesingle{}émetteur (clé de signature des filigranes).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+open
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 search
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5622,6 +5723,17 @@ match
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 マッチのポジションと分析を表示する。
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+epc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Calcule l\textquotesingle{}Effective Pip Count et le verdict de videau d\textquotesingle{}une position de sortie (XGID).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5877,6 +5989,20 @@ version
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament\sphinxhyphen{}ids}} — エクスポートするトーナメントのID（カンマ区切り）。
 
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} — Enveloppe le résultat dans un conteneur chiffré (\sphinxcode{\sphinxupquote{.dbx}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} — Écrit une déclaration d\textquotesingle{}origine \sphinxstylestrong{signée} dans le fichier
+exporté (voir {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{データベースの配布：出所とパスワード}}}}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark\sphinxhyphen{}note}} — Texte libre associé au filigrane (conditions
+d\textquotesingle{}usage, contact) ; utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}}.
+
 \end{itemize}
 
 \sphinxAtStartPar
@@ -5898,7 +6024,104 @@ version
 \PYG{c+c1}{\PYGZsh{} Export de plusieurs matchs (ou de tous) en .mat dans un répertoire}
 ./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{5},9,12\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
 ./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
+
+\PYG{c+c1}{\PYGZsh{} Export filigrané et protégé par mot de passe (fichier .dbx)}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }database\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }cours\PYGZhy{}diffusion.dbx\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}watermark\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Cours de Jean Dupont — 12 mars 2026\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}watermark\PYGZhy{}note\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Merci de ne pas rediffuser.\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret
 \end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Un filigrane est signé avec l\textquotesingle{}identité d\textquotesingle{}émetteur locale (voir la commande
+\sphinxcode{\sphinxupquote{identity}} ci\sphinxhyphen{}dessous) : il est infalsifiable, mais pas inamovible — le
+fichier reste une base SQLite ordinaire. Il ne protège rien, il indique
+seulement d\textquotesingle{}où vient le fichier. Un mot de passe protège le \sphinxstyleemphasis{transport} du
+fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
+elle\sphinxhyphen{}même : quiconque a reçu le mot de passe peut l\textquotesingle{}ouvrir. blunderDB
+n\textquotesingle{}enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
+voir \sphinxcode{\sphinxupquote{docs/adr/0007\sphinxhyphen{}watermarks\sphinxhyphen{}mark\sphinxhyphen{}origin\sphinxhyphen{}and\sphinxhyphen{}nothing\sphinxhyphen{}else.md}}.
+
+
+\subsection{identity — Identité d\textquotesingle{}émetteur}
+\label{\detokenize{cli:identity-identite-d-emetteur}}
+\sphinxAtStartPar
+Affiche ou déplace votre \sphinxstylestrong{identité d\textquotesingle{}émetteur} : la clé Ed25519 qui signe
+chaque filigrane. Elle est créée d\textquotesingle{}elle\sphinxhyphen{}même au premier filigrane apposé ; il
+n\textquotesingle{}y a rien à configurer. Elle appartient à une personne, pas à une base de
+données : tout ce que vous marquez porte une seule empreinte publique.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{                                       }\PYG{c+c1}{\PYGZsh{} nom et empreinte}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}name\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Jean Dupont\PYGZdq{}}\PYG{+w}{                  }\PYG{c+c1}{\PYGZsh{} renommer}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }jean.bdbid\PYG{+w}{ }\PYGZhy{}\PYGZhy{}passphrase\PYG{+w}{ }pw\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} exporter vers une autre machine}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}import\PYG{+w}{ }jean.bdbid\PYG{+w}{ }\PYGZhy{}\PYGZhy{}passphrase\PYG{+w}{ }pw
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{オプション：}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}name}} — Change le nom affiché de l\textquotesingle{}identité.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}export}} — Exporte l\textquotesingle{}identité vers un fichier \sphinxcode{\sphinxupquote{.bdbid}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}import}} — Importe une identité depuis un fichier \sphinxcode{\sphinxupquote{.bdbid}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}passphrase}} — Phrase de passe optionnelle protégeant le fichier
+exporté/importé (l\textquotesingle{}identité locale, elle, est volontairement non protégée).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
+le partagez pas. Renommer ne change qu\textquotesingle{}un libellé : les fichiers déjà marqués
+conservent le nom sous lequel ils ont été scellés, et continuent de se
+vérifier.
+
+
+\subsection{open — Ouvrir un fichier protégé}
+\label{\detokenize{cli:open-ouvrir-un-fichier-protege}}
+\sphinxAtStartPar
+Transforme un fichier protégé par mot de passe (\sphinxcode{\sphinxupquote{.dbx}}) en base ordinaire.
+Le mot de passe est demandé une seule fois ; ensuite, c\textquotesingle{}est un fichier normal.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }open\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.dbx\PYG{+w}{ }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret
+./blunderdb\PYG{+w}{ }open\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.dbx\PYG{+w}{ }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }./mon\PYGZhy{}cours.db
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{オプション：}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Fichier \sphinxcode{\sphinxupquote{.dbx}} à ouvrir (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} — Mot de passe du conteneur (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Chemin de sortie pour la base ordinaire (défaut: même nom,
+extension \sphinxcode{\sphinxupquote{.db}}).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Ce que le mot de passe protège : le \sphinxstyleemphasis{transport} du fichier — la copie égarée
+dans un dossier de téléchargements, la pièce jointe envoyée par erreur. Pas la
+base : quiconque a reçu le mot de passe peut l\textquotesingle{}ouvrir. L\textquotesingle{}en\sphinxhyphen{}tête du conteneur
+est en clair, si bien que \sphinxcode{\sphinxupquote{blunderdb info}} lit l\textquotesingle{}origine d\textquotesingle{}un fichier
+protégé sans son mot de passe.
 
 
 \subsection{search — ポジションを検索する}
@@ -5993,6 +6216,24 @@ version
 \item {} 
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}} — 単独でインポートされた局面のみ。つまり、マッチのインポートで入ったものではなく、自分で追加した局面です。
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}flagged}} — Uniquement les positions marquées (\sphinxstyleemphasis{flag}) pour étude dans
+le logiciel d\textquotesingle{}origine (marques eXtreme Gammon). Non rétroactif : les
+matchs déjà importés doivent l\textquotesingle{}être à nouveau pour livrer leurs marques.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}has\sphinxhyphen{}comment}} — Uniquement les positions portant un commentaire.
+L\textquotesingle{}origine n\textquotesingle{}est pas distinguée : une note tapée à la main et un commentaire
+apporté par l\textquotesingle{}import d\textquotesingle{}un match comptent tous les deux. Les commentaires de
+match ou de tournoi ne sont pas consultés.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}no\sphinxhyphen{}comment}} — Uniquement les positions sans commentaire. Mutuellement
+exclusif avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}has\sphinxhyphen{}comment}}.
 
 \end{itemize}
 
@@ -6156,6 +6397,53 @@ version
 
 \PYG{c+c1}{\PYGZsh{} Export JSON vers un fichier}
 ./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}output\PYG{+w}{ }match1.json
+\end{sphinxVerbatim}
+
+
+\subsection{epc — Calculatrice EPC}
+\label{\detokenize{cli:epc-calculatrice-epc}}
+\sphinxAtStartPar
+Calcule l\textquotesingle{}Effective Pip Count, la probabilité de gain et le verdict de videau
+money d\textquotesingle{}une position de sortie donnée par XGID. Calcul pur : aucun fichier de
+base de données n\textquotesingle{}est impliqué.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZlt{}XGID\PYGZgt{}\PYGZsq{}}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{オプション：}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — 出力フォーマット：\sphinxcode{\sphinxupquote{text}} または \sphinxcode{\sphinxupquote{json}}（デフォルト：\sphinxcode{\sphinxupquote{text}}）。
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} — Base bearoff two\sphinxhyphen{}sided optionnelle (\sphinxcode{\sphinxupquote{.bd}}) élargissant
+la base intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 (également lue depuis la variable d\textquotesingle{}environnement
+\sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}). La base valide la plus large l\textquotesingle{}emporte ; un fichier
+invalide est ignoré avec un avertissement.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Régimes.} Dans le domaine couvert par la base two\sphinxhyphen{}sided, la probabilité de
+gain et l\textquotesingle{}analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
+\sphinxstylestrong{exactes}. En dehors, la probabilité de gain est \sphinxstylestrong{estimée} (convolution
+des distributions de lancers one\sphinxhyphen{}sided plus une correction calibrée) et
+affichée avec sa marge d\textquotesingle{}erreur mesurée ; le verdict de videau n\textquotesingle{}est
+volontairement jamais estimé (voir ADR\sphinxhyphen{}0009).
+
+\sphinxAtStartPar
+\sphinxstylestrong{例：}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Régime exact (les deux joueurs ont 6 pions ou moins)}
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}XGID=\PYGZhy{}BBB\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}bbb\PYGZhy{}:0:0:1:00:0:0:0:0:10\PYGZsq{}}
+
+\PYG{c+c1}{\PYGZsh{} Avec la base TS\PYGZhy{}06\PYGZhy{}11 téléchargée (exact jusqu\PYGZsq{}à 11 pions par joueur)}
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYGZhy{}\PYGZhy{}bearoff\PYGZhy{}ts\PYG{+w}{ }\PYGZti{}/.local/share/blunderdb/gnubg\PYGZus{}ts6x11.bd\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}XGID=…\PYGZsq{}}
 \end{sphinxVerbatim}
 
 
@@ -6870,7 +7158,14 @@ EPCエンドポイントのレース分析のために内蔵のTS\sphinxhyphen{}
 \end{itemize}
 
 \sphinxAtStartPar
-ビジネスロジックのインターフェースは \sphinxcode{\sphinxupquote{POST /v1/\textless{}famille\textgreater{}.\textless{}méthode\textgreater{}}} のスキーマに従います（例：\sphinxcode{\sphinxupquote{/v1/positions.save}}、\sphinxcode{\sphinxupquote{/v1/matches.get}}）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、検索、メタデータ、統計、インポートが含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}} で正常に停止します。
+La surface métier suit le schéma \sphinxcode{\sphinxupquote{POST /v1/\textless{}famille\textgreater{}.\textless{}méthode\textgreater{}}} (par exemple
+\sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Les familles couvrent les
+positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
+filtres, sessions, historique (recherche et commandes), recherche,
+métadonnées, statistiques, import et export, ainsi que le cycle de vie des
+tenants (\sphinxcode{\sphinxupquote{tenant.purge}}, réservé au backend PostgreSQL). Les endpoints de
+listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
+s\textquotesingle{}arrête proprement sur \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
 
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{positions}} ファミリーの2つのメソッドは、局面を保存せずにデコードします。\sphinxcode{\sphinxupquote{positions.fromXGID}} は XGID 文字列から局面を再構築し、\sphinxcode{\sphinxupquote{positions.fromXGP}} は単一局面ファイル \sphinxcode{\sphinxupquote{.xgp}} から再構築します。
@@ -7284,7 +7579,8 @@ JSONレスポンス（または \sphinxcode{\sphinxupquote{*.list}} エンドポ
 コマンドラインでは、\sphinxcode{\sphinxupquote{ss}}コマンドに続けてフィルターを入力します（例: \sphinxcode{\sphinxupquote{ss nc}}、\sphinxcode{\sphinxupquote{ss E\textgreater{}40}}）。\sphinxcode{\sphinxupquote{ss}}コマンドは、事前に検索を行った後に機能します。
 
 \sphinxAtStartPar
-検索ウィンドウ（\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}）にも、同じ機能のための"Search in current results"チェックボックスがあります。
+La fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
+"Rechercher dans les résultats actuels" pour la même fonctionnalité.
 
 
 \subsection{フィルターライブラリ}

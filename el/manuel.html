@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Ρυθμίσεις<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Το κουμπί ρυθμίσεων (εικονίδιο γραναζιού) στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB. Είναι οργανωμένο σε τρεις καρτέλες:</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>Διεπαφή</strong> — γλώσσα, κλίμακα εμφάνισης, θέση του πίνακα·</p></li>
 <li><p><strong>Χρώματα ταμπλό</strong> — τα χρώματα του ταμπλό·</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>Ταυτότητα εκδότη</strong> — το κλειδί που υπογράφει τις σημάνσεις προέλευσής σας, το οποίο περιγράφεται στην ενότητα <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>.</p></li>
 </ul>
 <p>Η καρτέλα <em>Διεπαφή</em> επιτρέπει την επιλογή γλώσσας ανάμεσα σε αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά και ρωσικά. Ολόκληρη η διεπαφή (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή γλώσσας αποθηκεύεται και διατηρείται από τη μία συνεδρία στην άλλη.</p>
 <p>Η καρτέλα <em>Χρώματα ταμπλό</em> επιτρέπει την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτόχρωμες και σκουρόχρωμες γλώσσες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι βούλες των ζαριών και ο κύβος. Το κουμπί <em>Επαναφορά</em> επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.</p>
+<p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Πίνακας Bearoff</span></a>) au-delà de la base TS-06-06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d’utiliser le téléchargement intégré.</p>
 <p>Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα ρυθμιστικό <strong>κλίμακας διεπαφής</strong> σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού <strong>θέσης των πλαισίων</strong> καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) σε σχέση με το ταμπλό: <em>κάτω</em>, <em>στο πλάι</em> ή <em>αυτόματα</em> (το πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>την εμφάνιση των πληροφοριών ανάλυσης που σχετίζονται με μια θέση,</p></li>
 <li><p>την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης.</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Θέσεις και πλοήγηση</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Πρακτική συμβουλή</p>
 <p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Πίνακας Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
-<p>Ο πίνακας <strong>EPC</strong> (<em>CTRL-E</em>) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας <em>CTRL-E</em>, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>Σε αυτόν τον πίνακα, ο χρήστης επεξεργάζεται τη θέση των πουλιών στα δύο εσωτερικά τεταρτημόρια: ένα κλικ στα σημεία 1 έως 6 τοποθετεί πούλια του κάτω παίκτη, ένα κλικ στα σημεία 19 έως 24 τοποθετεί πούλια του πάνω παίκτη (το κουμπί του ποντικιού δεν έχει σημασία).</p>
 <p>Τα αποτελέσματα παρουσιάζονται με τη μορφή δύο στοιβαγμένων πινάκων:</p>
 <ul class="simple">

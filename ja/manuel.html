@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>設定<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>ツールバーのヘルプボタンの左にある設定ボタン（歯車の形のアイコン）を押すと、blunderDB の設定ウィンドウが開きます。ウィンドウは三つのタブで構成されています。</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>インターフェース</strong> — 言語、表示倍率、パネルの位置。</p></li>
 <li><p><strong>ボードの色</strong> — ボードの配色。</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>発行者の識別情報</strong> — 出所の記載に署名する鍵。<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>の節で説明します。</p></li>
 </ul>
 <p><em>インターフェース</em>タブでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から言語を選べます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。</p>
 <p><em>ボードの色</em>タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。<em>リセット</em>ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。</p>
+<p>L'onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">ベアオフパネル</span></a>) au-delà de la base TS-06-06
+embarquée dans l'exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L'onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d'utiliser le téléchargement intégré.</p>
 <p>設定ウィンドウには、インターフェースの表示設定もまとめられています。<strong>インターフェースの拡大率</strong> のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。<strong>パネルの位置</strong> メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： <em>下</em>、<em>横</em> または <em>自動</em>（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>ポジションに関連する分析情報を表示する、</p></li>
 <li><p>ポジションのコメントを表示、追加、編集する。</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d'outils ouvre une fenêtre où
+saisir directement l'indice d'une position pour y sauter, sans avoir à
+défiler. C'est l'équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">局面とナビゲーション</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>ベアオフパネル<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
-<p><strong>EPC</strong> パネル（<em>CTRL-E</em>）は、ベアオフポジションの EPC（Effective Pip Count）を計算します。<em>CTRL-E</em> を押すか、下部パネルの EPC タブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行することで有効になります。</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l'EPC (Effective Pip Count) d'une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l'onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>このパネルでは、両方のインナーボードのチェッカーの配置を編集できます。ポイント1〜6をクリックすると下側のプレイヤーのチェッカーが置かれ、ポイント19〜24をクリックすると上側のプレイヤーのチェッカーが置かれます（マウスのボタンはどちらでも構いません）。</p>
 <p>結果は上下に並んだ2つの表として表示されます：</p>
 <ul class="simple">

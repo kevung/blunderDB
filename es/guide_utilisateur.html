@@ -72,6 +72,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.19. Exportar una posición a XG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.20. Visualizar las distintas posiciones</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.21. Buscar posiciones según criterios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">3.22. Pour aller plus loin</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Lista de comandos</a></li>
@@ -114,7 +115,9 @@
 <p>Esta guía es una introducción práctica a blunderDB para empezar a usarlo rápidamente.</p>
 <section id="creer-une-nouvelle-base-de-donnees">
 <h2><span class="section-number">3.1. </span>Crear una nueva base de datos<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Link to this heading"></a></h2>
-<p>Para crear una nueva base de datos, haga clic en el botón «New Database» de la barra de herramientas. Elija una ruta donde guardar la base de datos, así como un nombre, y haga clic en «Save».</p>
+<p>Pour créer une nouvelle base de données, cliquer dans la barre d’outils sur le
+bouton «Nouvelle base de données». Choisir un chemin où enregistrer la base de
+données, ainsi qu’un nom et cliquer sur «Save».</p>
 <div class="admonition note">
 <p class="admonition-title">Nota</p>
 <p>La extensión de las bases de datos de blunderDB es <em>.db</em>.</p>
@@ -126,7 +129,9 @@
 </section>
 <section id="ouvrir-une-base-de-donnee-existante">
 <h2><span class="section-number">3.2. </span>Abrir una base de datos existente<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Link to this heading"></a></h2>
-<p>Para cargar una base de datos existente, haga clic en el botón «Open Database» de la barra de herramientas. Vaya a la ruta donde se encuentra la base de datos, seleccione el archivo <em>.db</em> y haga clic en «Open».</p>
+<p>Pour charger une base de données existante, cliquer dans la barre d’outils sur
+le bouton «Ouvrir une base de données». Choisir le chemin où se trouve la base
+de données, choisir le fichier <em>.db</em> et cliquer sur «Open».</p>
 <div class="admonition tip">
 <p class="admonition-title">Truco</p>
 <p>Atajos de teclado: <em>CTRL-O</em>. Comando: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
@@ -134,7 +139,10 @@
 </section>
 <section id="importer-et-fusionner-une-base-de-donnees">
 <h2><span class="section-number">3.3. </span>Importar y fusionar una base de datos<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
-<p>Para importar y fusionar otra base de datos de blunderDB en la base de datos actualmente abierta, haga clic en el botón «Import Database» de la barra de herramientas. Seleccione el archivo <em>.db</em> que desea importar y haga clic en «Open».</p>
+<p>Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
+«Importer une base de données». Choisir le fichier <em>.db</em> à importer et
+cliquer sur «Open».</p>
 <p>blunderDB fusionará de forma inteligente las dos bases de datos:</p>
 <ul class="simple">
 <li><p>Las posiciones que no existen en la base de datos actual se añadirán con sus análisis y comentarios.</p></li>
@@ -388,6 +396,32 @@
 <li><p>confirme la consulta pulsando <em>INTRO</em>.</p></li>
 </ul>
 <p>Las posiciones mostradas son las de la base de datos que cumplen los criterios de búsqueda introducidos por el usuario.</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2><span class="section-number">3.22. </span>Pour aller plus loin<a class="headerlink" href="#pour-aller-plus-loin" title="Link to this heading"></a></h2>
+<p>Ce guide couvre les usages les plus courants. blunderDB propose plusieurs
+fonctionnalités supplémentaires, détaillées dans le manuel :</p>
+<ul class="simple">
+<li><p><strong>Répétition espacée (Anki)</strong> — le panneau Anki (<em>CTRL-K</em>) transforme une
+collection ou une recherche en paquet de cartes à réviser selon
+l’algorithme FSRS, avec un mode d’entraînement libre (<em>cram</em>) qui ne
+perturbe pas l’échéancier. Voir <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Panel Anki</span></a>.</p></li>
+<li><p><strong>Vues multiples</strong> — une barre d’onglets sous la barre d’outils permet de
+garder plusieurs espaces de travail indépendants ouverts en parallèle (par
+exemple une recherche et la navigation dans un match), chacun avec sa
+propre liste de positions et son propre contexte. Voir <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Pestañas de vistas</span></a>.</p></li>
+<li><p><strong>Diffusion filigranée</strong> — un export peut être signé avec votre identité
+d’émetteur (filigrane infalsifiable indiquant l’origine du fichier) et
+protégé par mot de passe pour son transport. Voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Distribuir una base de datos: origen y contraseña</span></a>.</p></li>
+<li><p><strong>Visites guidées et base de démonstration</strong> — la commande <code class="docutils literal notranslate"><span class="pre">tour</span></code>
+(alias <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>) ouvre un catalogue de visites guidées de l’interface,
+et la commande <code class="docutils literal notranslate"><span class="pre">demo</span></code> charge une base d’exemple pour découvrir l’outil
+sans base de données personnelle. Voir <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visitas guiadas y base de ejemplo</span></a>.</p></li>
+<li><p><strong>Charger les pires erreurs</strong> — la commande <code class="docutils literal notranslate"><span class="pre">bl</span></code> (ou <code class="docutils literal notranslate"><span class="pre">blunders</span></code>)
+charge directement les pires erreurs (équité ou MWC) dans la vue
+d’analyse, selon le filtre courant du panneau Stats, sans passer par une
+recherche manuelle. Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panel Stats</span></a>.</p></li>
+</ul>
 </section>
 </section>
 

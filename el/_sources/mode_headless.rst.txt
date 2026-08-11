@@ -124,9 +124,11 @@ Le service expose des points d'accès d'exploitation, toujours présents :
 La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exemple
 ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent les
 positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
-filtres, sessions, recherche, métadonnées, statistiques et import. Les
-endpoints de listing renvoient un flux NDJSON (un objet JSON par ligne). Le
-serveur s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
+filtres, sessions, historique (recherche et commandes), recherche,
+métadonnées, statistiques, import et export, ainsi que le cycle de vie des
+tenants (``tenant.purge``, réservé au backend PostgreSQL). Les endpoints de
+listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
+s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
 
 Deux méthodes de la famille ``positions`` décodent une position sans
 l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une

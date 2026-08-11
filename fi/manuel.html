@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Asetukset<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kolmeen välilehteen:</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti;</p></li>
 <li><p><strong>Laudan värit</strong> — laudan värit;</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>Merkitsijän identiteetti</strong> — avain, jolla alkuperämerkintäsi allekirjoitetaan; kuvattu luvussa <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>.</p></li>
 </ul>
 <p><em>Käyttöliittymä</em>-välilehdellä voi valita kielen vaihtoehdoista englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka ja venäjä. Koko käyttöliittymä (työkalurivi, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta toiseen.</p>
 <p><em>Laudan värit</em> -välilehdellä voi mukauttaa laudan värejä. Jokaisella osalla on oma värivalitsimensa: tausta, reunus, vaaleat ja tummat kolmiot, pelaajan 1 ja pelaajan 2 nappulat, nopat, noppien silmäluvut ja tuplauskuutio. <em>Palauta</em>-painike palauttaa kaikki oletusvärit. Kielen tavoin valitut värit säilyvät istunnosta toiseen.</p>
+<p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Bearoff-paneeli</span></a>) au-delà de la base TS-06-06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d’utiliser le téléchargement intégré.</p>
 <p>Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. <strong>Käyttöliittymän skaalaus</strong> -liukusäätimellä voi suurentaa tai pienentää kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden näytöillä tai luettavuuden parantamiseksi. <strong>Paneelien sijainti</strong> -valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa lautaan: <em>alhaalla</em>, <em>sivulla</em> tai <em>automaattinen</em> (sivu valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>näyttää asemaan liittyvät analyysitiedot,</p></li>
 <li><p>näyttää, lisätä ja muokata aseman kommentteja.</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Asemat ja navigointi</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Vihje</p>
 <p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Bearoff-paneeli<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
-<p><strong>EPC-paneeli</strong> (<em>CTRL-E</em>) laskee bearoff-aseman EPC:n (Effective Pip Count). Se aktivoidaan painamalla <em>CTRL-E</em>, napsauttamalla EPC-välilehteä alapaneelissa tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>Tässä paneelissa käyttäjä muokkaa nappuloiden sijaintia molemmissa kotikentissä: napsautus pisteisiin 1–6 asettaa alapelaajan nappuloita, napsautus pisteisiin 19–24 asettaa yläpelaajan nappuloita (hiiren painikkeella ei ole väliä).</p>
 <p>Tulokset esitetään kahtena päällekkäisenä taulukkona:</p>
 <ul class="simple">

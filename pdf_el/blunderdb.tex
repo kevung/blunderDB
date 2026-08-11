@@ -1145,7 +1145,9 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \subsection{Ρυθμίσεις}
 \label{\detokenize{manuel:configuration}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Το κουμπί ρυθμίσεων (εικονίδιο γραναζιού) στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB. Είναι οργανωμένο σε τρεις καρτέλες:
+Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -1154,6 +1156,11 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 \item {} 
 \sphinxAtStartPar
 \sphinxstylestrong{Χρώματα ταμπλό} — τα χρώματα του ταμπλό·
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Bearoff} — la base de sortie two\sphinxhyphen{}sided étendue utilisée par le panneau
+Bearoff ;
 
 \item {} 
 \sphinxAtStartPar
@@ -1166,6 +1173,19 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 
 \sphinxAtStartPar
 Η καρτέλα \sphinxstyleemphasis{Χρώματα ταμπλό} επιτρέπει την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτόχρωμες και σκουρόχρωμες γλώσσες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι βούλες των ζαριών και ο κύβος. Το κουμπί \sphinxstyleemphasis{Επαναφορά} επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.
+
+\sphinxAtStartPar
+L’onglet \sphinxstyleemphasis{Bearoff} gère la base two\sphinxhyphen{}sided qui étend le domaine exact du
+panneau Bearoff (voir {\hyperref[\detokenize{manuel:panneau-epc}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Bearoff}}}}}) au\sphinxhyphen{}delà de la base TS\sphinxhyphen{}06\sphinxhyphen{}06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(\sphinxcode{\sphinxupquote{TS\sphinxhyphen{}06\sphinxhyphen{}06}} ou \sphinxcode{\sphinxupquote{TS\sphinxhyphen{}06\sphinxhyphen{}11}} une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS\sphinxhyphen{}06\sphinxhyphen{}11 avec une barre de
+progression, et \sphinxstylestrong{reprend automatiquement un téléchargement interrompu} au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier \sphinxcode{\sphinxupquote{.bd}} two\sphinxhyphen{}sided externe (par exemple
+une base générée soi\sphinxhyphen{}même) plutôt que d’utiliser le téléchargement intégré.
 
 \sphinxAtStartPar
 Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα ρυθμιστικό \sphinxstylestrong{κλίμακας διεπαφής} σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού \sphinxstylestrong{θέσης των πλαισίων} καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) σε σχέση με το ταμπλό: \sphinxstyleemphasis{κάτω}, \sphinxstyleemphasis{στο πλάι} ή \sphinxstyleemphasis{αυτόματα} (το πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη.
@@ -1198,6 +1218,12 @@ chmod\PYG{+w}{ }+x\PYG{+w}{ }./blunderDB\PYGZhy{}linux\PYGZhy{}x.y.z
 την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης.
 
 \end{itemize}
+
+\sphinxAtStartPar
+Le bouton \sphinxstylestrong{Aller à la position} de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande \sphinxcode{\sphinxupquote{{[}number{]}}} en ligne de
+commande (voir {\hyperref[\detokenize{cmd_mode:cmd-positions}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Θέσεις και πλοήγηση}}}}}).
 
 \begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
 \sphinxAtStartPar
@@ -1745,7 +1771,10 @@ Expert
 \subsection{Πίνακας Bearoff}
 \label{\detokenize{manuel:panneau-bearoff}}\label{\detokenize{manuel:panneau-epc}}
 \sphinxAtStartPar
-Ο πίνακας \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή \sphinxcode{\sphinxupquote{epc}}.
+Le panneau \sphinxstylestrong{Bearoff} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+\sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
 Σε αυτόν τον πίνακα, ο χρήστης επεξεργάζεται τη θέση των πουλιών στα δύο εσωτερικά τεταρτημόρια: ένα κλικ στα σημεία 1 έως 6 τοποθετεί πούλια του κάτω παίκτη, ένα κλικ στα σημεία 19 έως 24 τοποθετεί πούλια του πάνω παίκτη (το κουμπί του ποντικιού δεν έχει σημασία).
@@ -2031,7 +2060,9 @@ Paramètres (icône engrenage).
 \subsection{Δημιουργία νέας βάσης δεδομένων}
 \label{\detokenize{guide_utilisateur:creer-une-nouvelle-base-de-donnees}}
 \sphinxAtStartPar
-Για να δημιουργήσετε μια νέα βάση δεδομένων, κάντε κλικ στο κουμπί «New Database» στη γραμμή εργαλείων. Επιλέξτε μια διαδρομή για την αποθήκευση της βάσης δεδομένων, καθώς και ένα όνομα, και κάντε κλικ στο «Save».
+Pour créer une nouvelle base de données, cliquer dans la barre d’outils sur le
+bouton «Nouvelle base de données». Choisir un chemin où enregistrer la base de
+données, ainsi qu’un nom et cliquer sur «Save».
 
 \begin{sphinxadmonition}{note}{Σημείωση:}
 \sphinxAtStartPar
@@ -2047,7 +2078,9 @@ Paramètres (icône engrenage).
 \subsection{Άνοιγμα υπάρχουσας βάσης δεδομένων}
 \label{\detokenize{guide_utilisateur:ouvrir-une-base-de-donnee-existante}}
 \sphinxAtStartPar
-Για να φορτώσετε μια υπάρχουσα βάση δεδομένων, κάντε κλικ στο κουμπί «Open Database» στη γραμμή εργαλείων. Μεταβείτε στη διαδρομή όπου βρίσκεται η βάση δεδομένων, επιλέξτε το αρχείο \sphinxstyleemphasis{.db} και κάντε κλικ στο «Open».
+Pour charger une base de données existante, cliquer dans la barre d’outils sur
+le bouton «Ouvrir une base de données». Choisir le chemin où se trouve la base
+de données, choisir le fichier \sphinxstyleemphasis{.db} et cliquer sur «Open».
 
 \begin{sphinxadmonition}{tip}{Πρακτική συμβουλή:}
 \sphinxAtStartPar
@@ -2058,7 +2091,10 @@ Paramètres (icône engrenage).
 \subsection{Εισαγωγή και συγχώνευση βάσης δεδομένων}
 \label{\detokenize{guide_utilisateur:importer-et-fusionner-une-base-de-donnees}}
 \sphinxAtStartPar
-Για να εισαγάγετε και να συγχωνεύσετε μια άλλη βάση δεδομένων blunderDB στη βάση δεδομένων που είναι ανοιχτή αυτή τη στιγμή, κάντε κλικ στο κουμπί «Import Database» στη γραμμή εργαλείων. Επιλέξτε το αρχείο \sphinxstyleemphasis{.db} προς εισαγωγή και κάντε κλικ στο «Open».
+Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
+«Importer une base de données». Choisir le fichier \sphinxstyleemphasis{.db} à importer et
+cliquer sur «Open».
 
 \sphinxAtStartPar
 Το blunderDB θα συγχωνεύσει έξυπνα τις δύο βάσεις δεδομένων:
@@ -2602,6 +2638,49 @@ BGBlitz: αρχεία \sphinxstyleemphasis{.bgf} και \sphinxstyleemphasis{.tx
 
 \sphinxAtStartPar
 Οι θέσεις που εμφανίζονται είναι αυτές της βάσης δεδομένων που πληρούν τα κριτήρια αναζήτησης που εισήγαγε ο χρήστης.
+
+
+\subsection{Pour aller plus loin}
+\label{\detokenize{guide_utilisateur:pour-aller-plus-loin}}
+\sphinxAtStartPar
+Ce guide couvre les usages les plus courants. blunderDB propose plusieurs
+fonctionnalités supplémentaires, détaillées dans le manuel :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Répétition espacée (Anki)} — le panneau Anki (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) transforme une
+collection ou une recherche en paquet de cartes à réviser selon
+l’algorithme FSRS, avec un mode d’entraînement libre (\sphinxstyleemphasis{cram}) qui ne
+perturbe pas l’échéancier. Voir {\hyperref[\detokenize{manuel:panneau-anki}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Anki}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Vues multiples} — une barre d’onglets sous la barre d’outils permet de
+garder plusieurs espaces de travail indépendants ouverts en parallèle (par
+exemple une recherche et la navigation dans un match), chacun avec sa
+propre liste de positions et son propre contexte. Voir {\hyperref[\detokenize{manuel:onglets-vues}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Καρτέλες προβολών}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Diffusion filigranée} — un export peut être signé avec votre identité
+d’émetteur (filigrane infalsifiable indiquant l’origine du fichier) et
+protégé par mot de passe pour son transport. Voir {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Visites guidées et base de démonstration} — la commande \sphinxcode{\sphinxupquote{tour}}
+(alias \sphinxcode{\sphinxupquote{tutorial}}) ouvre un catalogue de visites guidées de l’interface,
+et la commande \sphinxcode{\sphinxupquote{demo}} charge une base d’exemple pour découvrir l’outil
+sans base de données personnelle. Voir {\hyperref[\detokenize{manuel:visites-guidees}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Ξεναγήσεις και βάση δείγματος}}}}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Charger les pires erreurs} — la commande \sphinxcode{\sphinxupquote{bl}} (ou \sphinxcode{\sphinxupquote{blunders}})
+charge directement les pires erreurs (équité ou MWC) dans la vue
+d’analyse, selon le filtre courant du panneau Stats, sans passer par une
+recherche manuelle. Voir {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Πίνακας Stats}}}}}.
+
+\end{itemize}
 
 \sphinxstepscope
 
@@ -5605,6 +5684,28 @@ export
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+identity
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche ou déplace l’identité d’émetteur (clé de signature des filigranes).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+open
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 search
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -5633,6 +5734,17 @@ match
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Εμφανίζει τις θέσεις και τις αναλύσεις ενός αγώνα.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+epc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Calcule l’Effective Pip Count et le verdict de videau d’une position de sortie (XGID).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5888,6 +6000,20 @@ version
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament\sphinxhyphen{}ids}} — IDs τουρνουά προς εξαγωγή (χωρισμένα με κόμματα).
 
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} — Enveloppe le résultat dans un conteneur chiffré (\sphinxcode{\sphinxupquote{.dbx}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}} — Écrit une déclaration d’origine \sphinxstylestrong{signée} dans le fichier
+exporté (voir {\hyperref[\detokenize{manuel:diffusion-controlee}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης}}}}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark\sphinxhyphen{}note}} — Texte libre associé au filigrane (conditions
+d’usage, contact) ; utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}watermark}}.
+
 \end{itemize}
 
 \sphinxAtStartPar
@@ -5909,7 +6035,104 @@ version
 \PYG{c+c1}{\PYGZsh{} Export de plusieurs matchs (ou de tous) en .mat dans un répertoire}
 ./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{5},9,12\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
 ./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }mat\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }sorties/
+
+\PYG{c+c1}{\PYGZsh{} Export filigrané et protégé par mot de passe (fichier .dbx)}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }database\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }cours\PYGZhy{}diffusion.dbx\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}watermark\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Cours de Jean Dupont — 12 mars 2026\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}watermark\PYGZhy{}note\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Merci de ne pas rediffuser.\PYGZdq{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret
 \end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Un filigrane est signé avec l’identité d’émetteur locale (voir la commande
+\sphinxcode{\sphinxupquote{identity}} ci\sphinxhyphen{}dessous) : il est infalsifiable, mais pas inamovible — le
+fichier reste une base SQLite ordinaire. Il ne protège rien, il indique
+seulement d’où vient le fichier. Un mot de passe protège le \sphinxstyleemphasis{transport} du
+fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
+elle\sphinxhyphen{}même : quiconque a reçu le mot de passe peut l’ouvrir. blunderDB
+n’enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
+voir \sphinxcode{\sphinxupquote{docs/adr/0007\sphinxhyphen{}watermarks\sphinxhyphen{}mark\sphinxhyphen{}origin\sphinxhyphen{}and\sphinxhyphen{}nothing\sphinxhyphen{}else.md}}.
+
+
+\subsection{identity — Identité d’émetteur}
+\label{\detokenize{cli:identity-identite-d-emetteur}}
+\sphinxAtStartPar
+Affiche ou déplace votre \sphinxstylestrong{identité d’émetteur} : la clé Ed25519 qui signe
+chaque filigrane. Elle est créée d’elle\sphinxhyphen{}même au premier filigrane apposé ; il
+n’y a rien à configurer. Elle appartient à une personne, pas à une base de
+données : tout ce que vous marquez porte une seule empreinte publique.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{                                       }\PYG{c+c1}{\PYGZsh{} nom et empreinte}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}name\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Jean Dupont\PYGZdq{}}\PYG{+w}{                  }\PYG{c+c1}{\PYGZsh{} renommer}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }jean.bdbid\PYG{+w}{ }\PYGZhy{}\PYGZhy{}passphrase\PYG{+w}{ }pw\PYG{+w}{   }\PYG{c+c1}{\PYGZsh{} exporter vers une autre machine}
+./blunderdb\PYG{+w}{ }identity\PYG{+w}{ }\PYGZhy{}\PYGZhy{}import\PYG{+w}{ }jean.bdbid\PYG{+w}{ }\PYGZhy{}\PYGZhy{}passphrase\PYG{+w}{ }pw
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Επιλογές:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}name}} — Change le nom affiché de l’identité.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}export}} — Exporte l’identité vers un fichier \sphinxcode{\sphinxupquote{.bdbid}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}import}} — Importe une identité depuis un fichier \sphinxcode{\sphinxupquote{.bdbid}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}passphrase}} — Phrase de passe optionnelle protégeant le fichier
+exporté/importé (l’identité locale, elle, est volontairement non protégée).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
+le partagez pas. Renommer ne change qu’un libellé : les fichiers déjà marqués
+conservent le nom sous lequel ils ont été scellés, et continuent de se
+vérifier.
+
+
+\subsection{open — Ouvrir un fichier protégé}
+\label{\detokenize{cli:open-ouvrir-un-fichier-protege}}
+\sphinxAtStartPar
+Transforme un fichier protégé par mot de passe (\sphinxcode{\sphinxupquote{.dbx}}) en base ordinaire.
+Le mot de passe est demandé une seule fois ; ensuite, c’est un fichier normal.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }open\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.dbx\PYG{+w}{ }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret
+./blunderdb\PYG{+w}{ }open\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }cours.dbx\PYG{+w}{ }\PYGZhy{}\PYGZhy{}password\PYG{+w}{ }secret\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }./mon\PYGZhy{}cours.db
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Επιλογές:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Fichier \sphinxcode{\sphinxupquote{.dbx}} à ouvrir (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}password}} — Mot de passe du conteneur (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Chemin de sortie pour la base ordinaire (défaut: même nom,
+extension \sphinxcode{\sphinxupquote{.db}}).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Ce que le mot de passe protège : le \sphinxstyleemphasis{transport} du fichier — la copie égarée
+dans un dossier de téléchargements, la pièce jointe envoyée par erreur. Pas la
+base : quiconque a reçu le mot de passe peut l’ouvrir. L’en\sphinxhyphen{}tête du conteneur
+est en clair, si bien que \sphinxcode{\sphinxupquote{blunderdb info}} lit l’origine d’un fichier
+protégé sans son mot de passe.
 
 
 \subsection{search — Αναζήτηση θέσεων}
@@ -6004,6 +6227,24 @@ version
 \item {} 
 \sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}individual}} — Μόνο οι θέσεις που εισήχθησαν μεμονωμένα, δηλαδή αυτές που προσθέσατε εσείς και όχι όσες έφερε μια εισαγωγή αγώνα.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}flagged}} — Uniquement les positions marquées (\sphinxstyleemphasis{flag}) pour étude dans
+le logiciel d’origine (marques eXtreme Gammon). Non rétroactif : les
+matchs déjà importés doivent l’être à nouveau pour livrer leurs marques.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}has\sphinxhyphen{}comment}} — Uniquement les positions portant un commentaire.
+L’origine n’est pas distinguée : une note tapée à la main et un commentaire
+apporté par l’import d’un match comptent tous les deux. Les commentaires de
+match ou de tournoi ne sont pas consultés.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}no\sphinxhyphen{}comment}} — Uniquement les positions sans commentaire. Mutuellement
+exclusif avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}has\sphinxhyphen{}comment}}.
 
 \end{itemize}
 
@@ -6167,6 +6408,53 @@ version
 
 \PYG{c+c1}{\PYGZsh{} Export JSON vers un fichier}
 ./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}output\PYG{+w}{ }match1.json
+\end{sphinxVerbatim}
+
+
+\subsection{epc — Calculatrice EPC}
+\label{\detokenize{cli:epc-calculatrice-epc}}
+\sphinxAtStartPar
+Calcule l’Effective Pip Count, la probabilité de gain et le verdict de videau
+money d’une position de sortie donnée par XGID. Calcul pur : aucun fichier de
+base de données n’est impliqué.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZlt{}XGID\PYGZgt{}\PYGZsq{}}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Επιλογές:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — Μορφή εξόδου: \sphinxcode{\sphinxupquote{text}} ή \sphinxcode{\sphinxupquote{json}} (προεπιλογή: \sphinxcode{\sphinxupquote{text}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}bearoff\sphinxhyphen{}ts}} — Base bearoff two\sphinxhyphen{}sided optionnelle (\sphinxcode{\sphinxupquote{.bd}}) élargissant
+la base intégrée TS\sphinxhyphen{}06\sphinxhyphen{}06 (également lue depuis la variable d’environnement
+\sphinxcode{\sphinxupquote{BLUNDERDB\_TS\_PATH}}). La base valide la plus large l’emporte ; un fichier
+invalide est ignoré avec un avertissement.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Régimes.} Dans le domaine couvert par la base two\sphinxhyphen{}sided, la probabilité de
+gain et l’analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
+\sphinxstylestrong{exactes}. En dehors, la probabilité de gain est \sphinxstylestrong{estimée} (convolution
+des distributions de lancers one\sphinxhyphen{}sided plus une correction calibrée) et
+affichée avec sa marge d’erreur mesurée ; le verdict de videau n’est
+volontairement jamais estimé (voir ADR\sphinxhyphen{}0009).
+
+\sphinxAtStartPar
+\sphinxstylestrong{Παραδείγματα:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Régime exact (les deux joueurs ont 6 pions ou moins)}
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}XGID=\PYGZhy{}BBB\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}bbb\PYGZhy{}:0:0:1:00:0:0:0:0:10\PYGZsq{}}
+
+\PYG{c+c1}{\PYGZsh{} Avec la base TS\PYGZhy{}06\PYGZhy{}11 téléchargée (exact jusqu\PYGZsq{}à 11 pions par joueur)}
+./blunderdb\PYG{+w}{ }epc\PYG{+w}{ }\PYGZhy{}\PYGZhy{}bearoff\PYGZhy{}ts\PYG{+w}{ }\PYGZti{}/.local/share/blunderdb/gnubg\PYGZus{}ts6x11.bd\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}XGID=…\PYGZsq{}}
 \end{sphinxVerbatim}
 
 
@@ -6881,7 +7169,14 @@ PostgreSQL: ενεργοποιεί το Row\sphinxhyphen{}Level Security ανά 
 \end{itemize}
 
 \sphinxAtStartPar
-Η επιφάνεια λειτουργιών ακολουθεί το σχήμα \sphinxcode{\sphinxupquote{POST /v1/<famille>.<méthode>}} (για παράδειγμα \sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Οι οικογένειες καλύπτουν τις θέσεις, τις αναλύσεις, τους αγώνες, τα σχόλια, τις συλλογές, τα τουρνουά, τις κάρτες Anki, τα φίλτρα, τις συνεδρίες, την αναζήτηση, τα μεταδεδομένα, τα στατιστικά και την εισαγωγή. Τα σημεία πρόσβασης καταχώρισης επιστρέφουν μια ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζεται καθαρά με \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
+La surface métier suit le schéma \sphinxcode{\sphinxupquote{POST /v1/<famille>.<méthode>}} (par exemple
+\sphinxcode{\sphinxupquote{/v1/positions.save}}, \sphinxcode{\sphinxupquote{/v1/matches.get}}). Les familles couvrent les
+positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
+filtres, sessions, historique (recherche et commandes), recherche,
+métadonnées, statistiques, import et export, ainsi que le cycle de vie des
+tenants (\sphinxcode{\sphinxupquote{tenant.purge}}, réservé au backend PostgreSQL). Les endpoints de
+listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
+s’arrête proprement sur \sphinxcode{\sphinxupquote{SIGINT}} / \sphinxcode{\sphinxupquote{SIGTERM}}.
 
 \sphinxAtStartPar
 Δύο μέθοδοι της οικογένειας \sphinxcode{\sphinxupquote{positions}} αποκωδικοποιούν μια θέση χωρίς να την αποθηκεύουν: η \sphinxcode{\sphinxupquote{positions.fromXGID}} ανακατασκευάζει μια θέση από μια συμβολοσειρά XGID και η \sphinxcode{\sphinxupquote{positions.fromXGP}} από ένα αρχείο μεμονωμένης θέσης \sphinxcode{\sphinxupquote{.xgp}}.
@@ -7295,7 +7590,8 @@ scope tenant (αποστέλλεται ως \sphinxcode{\sphinxupquote{X\sphinxh
 Στη γραμμή εντολών, χρησιμοποιήστε την εντολή \sphinxcode{\sphinxupquote{ss}} ακολουθούμενη από φίλτρα (π.χ.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Η εντολή \sphinxcode{\sphinxupquote{ss}} λειτουργεί μετά από μια προηγούμενη αναζήτηση.
 
 \sphinxAtStartPar
-Το παράθυρο αναζήτησης (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) προσφέρει επίσης ένα πλαίσιο ελέγχου «Search in current results» για την ίδια λειτουργικότητα.
+La fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
+«Rechercher dans les résultats actuels» pour la même fonctionnalité.
 
 
 \subsection{Βιβλιοθήκη φίλτρων}

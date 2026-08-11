@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Konfiguration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Die Konfigurationsschaltfläche (zahnradförmiges Symbol) in der Werkzeugleiste, links von der Hilfe-Schaltfläche, öffnet das Konfigurationsfenster von blunderDB. Es ist in drei Registerkarten gegliedert:</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>Oberfläche</strong> — Sprache, Anzeigeskalierung, Position des Panels;</p></li>
 <li><p><strong>Brettfarben</strong> — die Farben des Bretts;</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>Ausstelleridentität</strong> — der Schlüssel, mit dem Ihre Wasserzeichen signiert werden; beschrieben im Abschnitt <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Eine Datenbank weitergeben: Herkunft und Passwort</span></a>.</p></li>
 </ul>
 <p>Auf der Registerkarte <em>Oberfläche</em> kann die Sprache unter Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch und Russisch gewählt werden. Die gesamte Benutzeroberfläche (Werkzeugleiste, Panels, Meldungen, Hilfe) wird in die gewählte Sprache übersetzt. Die Sprachwahl wird gespeichert und über die Sitzungen hinweg beibehalten.</p>
 <p>Auf der Registerkarte <em>Brettfarben</em> lassen sich die Farben des Bretts anpassen. Jedes Element besitzt einen eigenen Farbwähler: der Hintergrund, der Rahmen, die hellen und dunklen Zungen, die Steine von Spieler 1 und Spieler 2, die Würfel, die Würfelaugen und der Dopplerwürfel. Die Schaltfläche <em>Zurücksetzen</em> stellt alle Standardfarben wieder her. Wie die Sprache bleiben auch die gewählten Farben von einer Sitzung zur nächsten erhalten.</p>
+<p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Bearoff-Panel</span></a>) au-delà de la base TS-06-06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d’utiliser le téléchargement intégré.</p>
 <p>Das Konfigurationsfenster enthält außerdem Anzeigeeinstellungen für die Oberfläche. Ein Schieberegler für die <strong>Oberflächenskalierung</strong> ermöglicht es, alle Oberflächenelemente zu vergrößern oder zu verkleinern, was auf hochauflösenden Bildschirmen oder zur Verbesserung der Lesbarkeit nützlich ist. Ein Menü <strong>Panel-Position</strong> legt fest, wo die Panels (Suche, Matchs, Analyse) relativ zum Brett angezeigt werden: <em>unten</em>, <em>seitlich</em> oder <em>automatisch</em> (auf breiten Bildschirmen wird dann die seitliche Anordnung gewählt, um den verfügbaren Platz besser auszunutzen). Wie die anderen Einstellungen werden auch diese Festlegungen von einer Sitzung zur nächsten beibehalten.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>die mit einer Stellung verknüpften Analyseinformationen anzuzeigen,</p></li>
 <li><p>die Kommentare einer Stellung anzuzeigen, hinzuzufügen und zu bearbeiten.</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Positionen und Navigation</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Tipp</p>
 <p>Siehe <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Tastenkürzel</span></a> für die verfügbaren Tastenkürzel.</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Bearoff-Panel<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
-<p>Das Panel <strong>EPC</strong> (<em>CTRL-E</em>) berechnet den EPC (Effective Pip Count) einer Bearoff-Stellung. Es wird aktiviert, indem man <em>CTRL-E</em> drückt, auf den Tab EPC im unteren Panel klickt oder den Befehl <code class="docutils literal notranslate"><span class="pre">epc</span></code> ausführt.</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>In diesem Panel bearbeitet der Benutzer die Position der Steine in den beiden Heimfeldern: Ein Klick auf die Punkte 1 bis 6 platziert Steine des unteren Spielers, ein Klick auf die Punkte 19 bis 24 platziert Steine des oberen Spielers (die Maustaste spielt keine Rolle).</p>
 <p>Die Ergebnisse werden in Form zweier übereinander angeordneter Tabellen dargestellt:</p>
 <ul class="simple">

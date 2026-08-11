@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Configurazione<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
-<p>Il pulsante di configurazione (icona a forma di ingranaggio) nella barra degli strumenti, a sinistra del pulsante di aiuto, apre la finestra di configurazione di blunderDB. È organizzata in tre schede:</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>Interfaccia</strong> — lingua, scala di visualizzazione, posizione del pannello;</p></li>
 <li><p><strong>Colori della board</strong> — i colori della board;</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>Identità dell’emittente</strong> — la chiave che firma i tuoi contrassegni di origine, descritta nella sezione <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Distribuire un database: origine e password</span></a>.</p></li>
 </ul>
 <p>La scheda <em>Interfaccia</em> permette di scegliere la lingua tra inglese, francese, tedesco, italiano, spagnolo, finlandese, giapponese, greco e russo. L’intera interfaccia (barra degli strumenti, pannelli, messaggi, aiuto) viene tradotta nella lingua selezionata. La scelta della lingua viene salvata e mantenuta da una sessione all’altra.</p>
 <p>La scheda <em>Colori della board</em> permette di personalizzare i colori della board. Ogni elemento dispone di un proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante <em>Reimposta</em> ripristina tutti i colori predefiniti. Come la lingua, i colori scelti vengono mantenuti da una sessione all’altra.</p>
+<p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Pannello Bearoff</span></a>) au-delà de la base TS-06-06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d’utiliser le téléchargement intégré.</p>
 <p>La finestra di configurazione raggruppa anche alcune impostazioni di visualizzazione dell’interfaccia. Un cursore di <strong>scala dell’interfaccia</strong> consente di ingrandire o ridurre l’insieme degli elementi, il che è utile sugli schermi ad alta densità o per migliorare la leggibilità. Un menu <strong>posizione dei pannelli</strong> determina la collocazione dei pannelli (ricerca, match, analisi) rispetto al tavoliere: <em>in basso</em>, <em>di lato</em> o <em>automatica</em> (il lato viene allora scelto sugli schermi larghi per sfruttare meglio lo spazio disponibile). Come le altre impostazioni, queste scelte vengono conservate da una sessione all’altra.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>visualizzare le informazioni di analisi associate a una posizione,</p></li>
 <li><p>visualizzare, aggiungere e modificare i commenti di una posizione.</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Posizioni e navigazione</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Suggerimento</p>
 <p>Fare riferimento a <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Scorciatoie da tastiera</span></a> per le scorciatoie disponibili.</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Pannello Bearoff<a class="headerlink" href="#panneau-bearoff" title="Link to this heading"></a></h2>
-<p>Il pannello <strong>EPC</strong> (<em>CTRL-E</em>) calcola l’EPC (Effective Pip Count) di una posizione di bearoff. Si attiva premendo <em>CTRL-E</em>, cliccando sulla scheda EPC nel pannello inferiore o eseguendo il comando <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>In questo pannello l’utente modifica la posizione delle pedine nelle due tavole interne: un clic sulle punte da 1 a 6 colloca pedine del giocatore in basso, un clic sulle punte da 19 a 24 colloca pedine del giocatore in alto (il pulsante del mouse è indifferente).</p>
 <p>I risultati sono presentati sotto forma di due tabelle impilate:</p>
 <ul class="simple">

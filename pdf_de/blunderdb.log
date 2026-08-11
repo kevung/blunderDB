@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:54
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 17:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1378,182 +1378,183 @@ Underfull \hbox (badness 10000) in paragraph at lines 914--916
  []
 
 [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24]
-Underfull \hbox (badness 10000) in paragraph at lines 1777--1779
+Underfull \hbox (badness 10000) in paragraph at lines 1806--1808
 []\TU/FreeSerif(1)/m/n/10 darunter, durch eine Linie getrennt, eine \TU/FreeSer
 if(1)/b/n/10 Rennen-/Würfel-Tabelle\TU/FreeSerif(1)/m/n/10 : zwei Spalten mit d
 er
  []
 
 [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39]
-[40] [41] [42]
-Underfull \hbox (badness 10000) in paragraph at lines 4879--4881
+[40] [41] [42] [43]
+Underfull \hbox (badness 10000) in paragraph at lines 4958--4960
 []\TU/FreeSerif(1)/m/n/10 STRG-Bild-auf,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 4890--4892
+Underfull \hbox (badness 10000) in paragraph at lines 4969--4971
 []\TU/FreeSerif(1)/m/n/10 STRG-Bild-ab,
  []
 
 
-Underfull \hbox (badness 10000) detected at line 4893
+Underfull \hbox (badness 10000) detected at line 4972
 []\TU/FreeSerif(1)/m/n/10 STRG-Bild-ab,
  []
 
-[43] [44] [45] [46] [47] [48] [49] [50] [51] [52] [53]
+[44] [45] [46] [47] [48]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6379.
- [54] [55] [56] [57]
+(Font)              scaled to size 8.99994pt on input line 6056.
+ [49] [50] [51] [52] [53] [54] [55] [56] [57] [58]
+[59]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6649.
+(Font)              scaled to size 10.79993pt on input line 6937.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6649.
+(Font)              scaled to size 10.79993pt on input line 6937.
 
-Overfull \hbox (11.423pt too wide) in paragraph at lines 6733--6735
+Overfull \hbox (11.423pt too wide) in paragraph at lines 7021--7023
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 6736
+Overfull \hbox (11.423pt too wide) detected at line 7024
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6792--6794
+Underfull \hbox (badness 10000) in paragraph at lines 7080--7082
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6802--6804
+Underfull \hbox (badness 10000) in paragraph at lines 7090--7092
 []\TU/FreeSerif(1)/m/n/10 aktiviert CORS für diesen Ursprung (standardmäßig
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6850--6852
+Underfull \hbox (badness 10000) in paragraph at lines 7138--7140
 []\TU/FreeSerif(1)/m/n/10 PostgreSQL: aktiviert Row-Level Security pro Tenant
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6866--6868
+Underfull \hbox (badness 10000) in paragraph at lines 7154--7156
 []\TU/FreeSerif(1)/m/n/10 optionale Two-Sided-Bearoff-Datenbank (\TU/FreeMono(1
 )/m/n/10 .bd\TU/FreeSerif(1)/m/n/10 ), die die
  []
 
 
-Underfull \hbox (badness 6268) detected at line 6869
+Underfull \hbox (badness 6268) detected at line 7157
 []\TU/FreeSerif(1)/m/n/10 optionale Two-Sided-Bearoff-Datenbank (\TU/FreeMono(1
 )/m/n/10 .bd\TU/FreeSerif(1)/m/n/10 ), die die
  []
 
 
-Underfull \hbox (badness 5475) in paragraph at lines 6876--6878
+Underfull \hbox (badness 5475) in paragraph at lines 7164--7166
 []\TU/FreeSerif(1)/m/n/10 Die meisten Optionen können auch über Umgebungsvariab
 len bereitgestellt werden (\TU/FreeMono(1)/m/n/10 BLUNDERDB_BACKEND\TU/FreeSeri
 f(1)/m/n/10 ,
  []
 
-[58] [59]
-Underfull \hbox (badness 5817) in paragraph at lines 7007--7009
+[60] [61]
+Underfull \hbox (badness 5817) in paragraph at lines 7302--7304
 []\TU/FreeSerif(1)/m/n/10 SQLite-Quelldatenbank (\TU/FreeMono(1)/m/n/10 sqlite:
 ///chemin \TU/FreeSerif(1)/m/n/10 oder ein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7061--7063
+Underfull \hbox (badness 10000) in paragraph at lines 7356--7358
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 
-Underfull \hbox (badness 7256) in paragraph at lines 7082--7084
+Underfull \hbox (badness 7256) in paragraph at lines 7377--7379
 []\TU/FreeSerif(1)/m/n/10 Noch nicht migriert werden die Anwendungszustände: An
 ki-Decks/-Karten, Filterbibliothek, Such- und
  []
 
-[60]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7170--7172
+[62]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7465--7467
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7173
+Overfull \hbox (1.06567pt too wide) detected at line 7468
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 5592) in paragraph at lines 7239--7241
+Underfull \hbox (badness 5592) in paragraph at lines 7534--7536
 []\TU/FreeSerif(1)/m/n/10 zeigt alle Methoden \TU/FreeMono(1)/m/n/10 <famille>.
 <méthode> \TU/FreeSerif(1)/m/n/10 an und
  []
 
-[61]
-Underfull \hbox (badness 6316) in paragraph at lines 7420--7422
+[63]
+Underfull \hbox (badness 6316) in paragraph at lines 7716--7718
 []\TU/FreeSerif(1)/m/n/10 Schlagen auf dem Ass-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7450--7452
+Underfull \hbox (badness 10000) in paragraph at lines 7746--7748
 []\TU/FreeSerif(1)/m/n/10 Take/Pass-Entscheidung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7487--7489
+Underfull \hbox (badness 10000) in paragraph at lines 7783--7785
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7490
+Underfull \hbox (badness 10000) detected at line 7786
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7526--7528
+Underfull \hbox (badness 10000) in paragraph at lines 7822--7824
 []\TU/FreeSerif(1)/m/n/10 Ein rückständiger Stein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7577--7579
+Underfull \hbox (badness 10000) in paragraph at lines 7873--7875
 []\TU/FreeSerif(1)/m/n/10 Ass-Punkt des Gegners
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7618--7620
+Underfull \hbox (badness 10000) in paragraph at lines 7914--7916
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7632--7634
+Underfull \hbox (badness 10000) in paragraph at lines 7928--7930
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
-[62]
-Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
+[64]
+Underfull \hbox (badness 10000) in paragraph at lines 8043--8045
 \TU/FreeSerif(1)/m/n/10 Windows verlangt heutzutage von Softwareherstellern ode
 r unabhängigen Softwareentwicklern, ihre
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
+Underfull \hbox (badness 10000) in paragraph at lines 8043--8045
 \TU/FreeSerif(1)/m/n/10 Anwendungen digital zu zertifizieren oder sie sogar übe
 r den Windows Store zu vertreiben. Es wird
  []
 
 
-Underfull \hbox (badness 6125) in paragraph at lines 7747--7749
+Underfull \hbox (badness 6125) in paragraph at lines 8043--8045
 \TU/FreeSerif(1)/m/n/10 daher empfohlen, sich an externe Unternehmen zu wenden,
  um ein digitales Zertifikat zu erhalten, das
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
+Underfull \hbox (badness 10000) in paragraph at lines 8043--8045
 \TU/FreeSerif(1)/m/n/10 mehrere hundert Euro kostet (siehe zum Beispiel [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []
  []
 
-[63]
+[65]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
- [64]
+ [66]
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
@@ -1562,7 +1563,7 @@ File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
- [65] [66] [67]
+ [67] [68] [69]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
@@ -1573,34 +1574,34 @@ File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [68] [69] [70] [71] [72] [73] [74] [75] [76] [77]
-[78]
+ [70] [71] [72] [73] [74] [75] [76] [77] [78] [79]
+[80]
 Kapitel 3.
-[79
+[81
 
-] [80
+] [82
 
 ]
 Kapitel 4.
-[81] [82
+[83] [84
 
 ]
 Kapitel 5.
-(./blunderdb.ind) [83] (./blunderdb.aux)
+(./blunderdb.ind) [85] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: DD2A42ECB4315C7B04CC2D094EE015A2;35307.
+(rerunfilecheck)             Checksum: A75DD8C860F0A2739E7E10662161CBAE;36149.
  ) 
 Here is how much of TeX's memory you used:
- 19639 strings out of 476443
- 402557 string characters out of 5793962
+ 19643 strings out of 476443
+ 402693 string characters out of 5793962
  2035627 words of memory out of 5000000
- 41161 multiletter control sequences out of 15000+600000
+ 41165 multiletter control sequences out of 15000+600000
  566823 words of font info for 137 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3653b,672s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (87 pages).
+Output written on blunderdb.pdf (89 pages).

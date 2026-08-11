@@ -158,10 +158,12 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en trois onglets :
+blunderDB. Elle est organisée en quatre onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau ;
 * **Couleurs** — les couleurs du plateau ;
+* **Bearoff** — la base de sortie two-sided étendue utilisée par le panneau
+  Bearoff ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
@@ -177,6 +179,18 @@ la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 2, les dés, les points des dés et le videau. Le bouton *Réinitialiser* rétablit
 l'ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
 conservées d'une session à l'autre.
+
+L'onglet *Bearoff* gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir :ref:`panneau_epc`) au-delà de la base TS-06-06
+embarquée dans l'exécutable. Il affiche le domaine actuellement actif
+(``TS-06-06`` ou ``TS-06-11`` une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et **reprend automatiquement un téléchargement interrompu** au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L'onglet
+permet aussi de pointer vers un fichier ``.bd`` two-sided externe (par exemple
+une base générée soi-même) plutôt que d'utiliser le téléchargement intégré.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de
@@ -217,6 +231,11 @@ Par défaut, blunderDB permet de:
 * afficher les informations d'analyse associées à une position,
 
 * afficher, ajouter et modifier les commentaires d'une position.
+
+Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre où
+saisir directement l'indice d'une position pour y sauter, sans avoir à
+défiler. C'est l'équivalent graphique de la commande ``[number]`` en ligne de
+commande (voir :ref:`cmd_positions`).
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
@@ -711,9 +730,10 @@ MWC : limitations
 Panneau Bearoff
 ---------------
 
-Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une position
-de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet
-EPC dans le panneau inférieur, ou en exécutant la commande ``epc``.
+Le panneau **Bearoff** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une
+position de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur
+l'onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+``epc``.
 
 Dans ce panneau, l'utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur

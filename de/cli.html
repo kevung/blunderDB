@@ -65,20 +65,23 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#export-exporter-des-donnees">6.6. export — Daten exportieren</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#search-rechercher-des-positions">6.7. search — Positionen suchen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#list-lister-le-contenu">6.8. list — Inhalt auflisten</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#match-afficher-un-match">6.9. match — Ein Match anzeigen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">6.10. info — Datenbank-Metadaten</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">6.11. edit — Metadaten ändern</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">6.12. verify — Integrität prüfen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">6.13. delete — Daten löschen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">6.14. Workflow-Beispiele</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">6.14.1. Ein Turnierverzeichnis importieren</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">6.14.2. Regelmäßige Sicherung</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">6.14.3. Fehleranalyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#identity-identite-d-emetteur">6.7. identity — Identité d’émetteur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">6.8. open — Ouvrir un fichier protégé</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-rechercher-des-positions">6.9. search — Positionen suchen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-lister-le-contenu">6.10. list — Inhalt auflisten</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#match-afficher-un-match">6.11. match — Ein Match anzeigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#epc-calculatrice-epc">6.12. epc — Calculatrice EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">6.13. info — Datenbank-Metadaten</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">6.14. edit — Metadaten ändern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">6.15. verify — Integrität prüfen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">6.16. delete — Daten löschen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">6.17. Workflow-Beispiele</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">6.17.1. Ein Turnierverzeichnis importieren</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">6.17.2. Regelmäßige Sicherung</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">6.17.3. Fehleranalyse</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">6.15. Rückgabecodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">6.18. Rückgabecodes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Häufig gestellte Fragen (FAQ)</a></li>
@@ -159,6 +162,12 @@
 <tr class="row-even"><td><p>export</p></td>
 <td><p>Exportiert Daten.</p></td>
 </tr>
+<tr class="row-odd"><td><p>identity</p></td>
+<td><p>Affiche ou déplace l’identité d’émetteur (clé de signature des filigranes).</p></td>
+</tr>
+<tr class="row-even"><td><p>open</p></td>
+<td><p>Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire.</p></td>
+</tr>
 <tr class="row-odd"><td><p>search</p></td>
 <td><p>Sucht Positionen mit Filtern.</p></td>
 </tr>
@@ -168,22 +177,25 @@
 <tr class="row-odd"><td><p>match</p></td>
 <td><p>Zeigt die Positionen und Analysen eines Matches an.</p></td>
 </tr>
-<tr class="row-even"><td><p>info</p></td>
+<tr class="row-even"><td><p>epc</p></td>
+<td><p>Calcule l’Effective Pip Count et le verdict de videau d’une position de sortie (XGID).</p></td>
+</tr>
+<tr class="row-odd"><td><p>info</p></td>
 <td><p>Zeigt die Metadaten der Datenbank an.</p></td>
 </tr>
-<tr class="row-odd"><td><p>edit</p></td>
+<tr class="row-even"><td><p>edit</p></td>
 <td><p>Ändert die Metadaten der Datenbank.</p></td>
 </tr>
-<tr class="row-even"><td><p>verify</p></td>
+<tr class="row-odd"><td><p>verify</p></td>
 <td><p>Prüft die Integrität der Datenbank.</p></td>
 </tr>
-<tr class="row-odd"><td><p>delete</p></td>
+<tr class="row-even"><td><p>delete</p></td>
 <td><p>Löscht Daten.</p></td>
 </tr>
-<tr class="row-even"><td><p>help</p></td>
+<tr class="row-odd"><td><p>help</p></td>
 <td><p>Zeigt die Hilfe an.</p></td>
 </tr>
-<tr class="row-odd"><td><p>version</p></td>
+<tr class="row-even"><td><p>version</p></td>
 <td><p>Zeigt die Version an.</p></td>
 </tr>
 </tbody>
@@ -271,6 +283,11 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — Zu exportierende Sammlungs-IDs (durch Kommas getrennt).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Zu exportierende Match-IDs (durch Kommas getrennt, leer = alle).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Zu exportierende Turnier-IDs (durch Kommas getrennt).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Enveloppe le résultat dans un conteneur chiffré (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Écrit une déclaration d’origine <strong>signée</strong> dans le fichier
+exporté (voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Eine Datenbank weitergeben: Herkunft und Passwort</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Texte libre associé au filigrane (conditions
+d’usage, contact) ; utilisé avec <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>.</p></li>
 </ul>
 <p><strong>Beispiele:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export complet de la base</span>
@@ -288,11 +305,71 @@
 <span class="c1"># Export de plusieurs matchs (ou de tous) en .mat dans un répertoire</span>
 ./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
 ./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># Export filigrané et protégé par mot de passe (fichier .dbx)</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">&quot;Cours de Jean Dupont — 12 mars 2026&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">&quot;Merci de ne pas rediffuser.&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
 </pre></div>
 </div>
+<p>Un filigrane est signé avec l’identité d’émetteur locale (voir la commande
+<code class="docutils literal notranslate"><span class="pre">identity</span></code> ci-dessous) : il est infalsifiable, mais pas inamovible — le
+fichier reste une base SQLite ordinaire. Il ne protège rien, il indique
+seulement d’où vient le fichier. Un mot de passe protège le <em>transport</em> du
+fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
+elle-même : quiconque a reçu le mot de passe peut l’ouvrir. blunderDB
+n’enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
+voir <code class="docutils literal notranslate"><span class="pre">docs/adr/0007-watermarks-mark-origin-and-nothing-else.md</span></code>.</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2><span class="section-number">6.7. </span>identity — Identité d’émetteur<a class="headerlink" href="#identity-identite-d-emetteur" title="Link to this heading"></a></h2>
+<p>Affiche ou déplace votre <strong>identité d’émetteur</strong> : la clé Ed25519 qui signe
+chaque filigrane. Elle est créée d’elle-même au premier filigrane apposé ; il
+n’y a rien à configurer. Elle appartient à une personne, pas à une base de
+données : tout ce que vous marquez porte une seule empreinte publique.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity<span class="w">                                       </span><span class="c1"># nom et empreinte</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;Jean Dupont&quot;</span><span class="w">                  </span><span class="c1"># renommer</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw<span class="w">   </span><span class="c1"># exporter vers une autre machine</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Change le nom affiché de l’identité.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Exporte l’identité vers un fichier <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Importe une identité depuis un fichier <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Phrase de passe optionnelle protégeant le fichier
+exporté/importé (l’identité locale, elle, est volontairement non protégée).</p></li>
+</ul>
+<p>Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
+le partagez pas. Renommer ne change qu’un libellé : les fichiers déjà marqués
+conservent le nom sous lequel ils ont été scellés, et continuent de se
+vérifier.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2><span class="section-number">6.8. </span>open — Ouvrir un fichier protégé<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Link to this heading"></a></h2>
+<p>Transforme un fichier protégé par mot de passe (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) en base ordinaire.
+Le mot de passe est demandé une seule fois ; ensuite, c’est un fichier normal.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Fichier <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> à ouvrir (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Mot de passe du conteneur (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Chemin de sortie pour la base ordinaire (défaut: même nom,
+extension <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Ce que le mot de passe protège : le <em>transport</em> du fichier — la copie égarée
+dans un dossier de téléchargements, la pièce jointe envoyée par erreur. Pas la
+base : quiconque a reçu le mot de passe peut l’ouvrir. L’en-tête du conteneur
+est en clair, si bien que <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> lit l’origine d’un fichier
+protégé sans son mot de passe.</p>
 </section>
 <section id="search-rechercher-des-positions">
-<h2><span class="section-number">6.7. </span>search — Positionen suchen<a class="headerlink" href="#search-rechercher-des-positions" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.9. </span>search — Positionen suchen<a class="headerlink" href="#search-rechercher-des-positions" title="Link to this heading"></a></h2>
 <p>Sucht Positionen in der Datenbank anhand kombinierbarer Kriterien.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
 </pre></div>
@@ -321,6 +398,15 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Nach Turnier-IDs filtern (durch Kommas getrennt).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Nach Positions-IDs filtern: Intervall <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (Positionen 2 bis 7) oder explizite, durch Semikolons getrennte Liste <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Nur einzeln importierte Stellungen, also die, die Sie selbst hinzugefügt haben, und nicht die aus einem Match-Import.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — Uniquement les positions marquées (<em>flag</em>) pour étude dans
+le logiciel d’origine (marques eXtreme Gammon). Non rétroactif : les
+matchs déjà importés doivent l’être à nouveau pour livrer leurs marques.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — Uniquement les positions portant un commentaire.
+L’origine n’est pas distinguée : une note tapée à la main et un commentaire
+apporté par l’import d’un match comptent tous les deux. Les commentaires de
+match ou de tournoi ne sont pas consultés.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — Uniquement les positions sans commentaire. Mutuellement
+exclusif avec <code class="docutils literal notranslate"><span class="pre">--has-comment</span></code>.</p></li>
 </ul>
 <p><strong>Beispiele:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rechercher les décisions de videau</span>
@@ -347,7 +433,7 @@
 </div>
 </section>
 <section id="list-lister-le-contenu">
-<h2><span class="section-number">6.8. </span>list — Inhalt auflisten<a class="headerlink" href="#list-lister-le-contenu" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.10. </span>list — Inhalt auflisten<a class="headerlink" href="#list-lister-le-contenu" title="Link to this heading"></a></h2>
 <p>Zeigt den Inhalt der Datenbank an.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
 </pre></div>
@@ -392,7 +478,7 @@
 </div>
 </section>
 <section id="match-afficher-un-match">
-<h2><span class="section-number">6.9. </span>match — Ein Match anzeigen<a class="headerlink" href="#match-afficher-un-match" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.11. </span>match — Ein Match anzeigen<a class="headerlink" href="#match-afficher-un-match" title="Link to this heading"></a></h2>
 <p>Zeigt die Positionen und Analysen eines importierten Matches an.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id_match&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;fichier&gt;<span class="o">]</span>
 </pre></div>
@@ -416,8 +502,39 @@
 </pre></div>
 </div>
 </section>
+<section id="epc-calculatrice-epc">
+<h2><span class="section-number">6.12. </span>epc — Calculatrice EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Link to this heading"></a></h2>
+<p>Calcule l’Effective Pip Count, la probabilité de gain et le verdict de videau
+money d’une position de sortie donnée par XGID. Calcul pur : aucun fichier de
+base de données n’est impliqué.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">&#39;&lt;XGID&gt;&#39;</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Base bearoff two-sided optionnelle (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) élargissant
+la base intégrée TS-06-06 (également lue depuis la variable d’environnement
+<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). La base valide la plus large l’emporte ; un fichier
+invalide est ignoré avec un avertissement.</p></li>
+</ul>
+<p><strong>Régimes.</strong> Dans le domaine couvert par la base two-sided, la probabilité de
+gain et l’analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
+<strong>exactes</strong>. En dehors, la probabilité de gain est <strong>estimée</strong> (convolution
+des distributions de lancers one-sided plus une correction calibrée) et
+affichée avec sa marge d’erreur mesurée ; le verdict de videau n’est
+volontairement jamais estimé (voir ADR-0009).</p>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact (les deux joueurs ont 6 pions ou moins)</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">&#39;XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10&#39;</span>
+
+<span class="c1"># Avec la base TS-06-11 téléchargée (exact jusqu&#39;à 11 pions par joueur)</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">&#39;XGID=…&#39;</span>
+</pre></div>
+</div>
+</section>
 <section id="info-metadonnees-de-la-base">
-<h2><span class="section-number">6.10. </span>info — Datenbank-Metadaten<a class="headerlink" href="#info-metadonnees-de-la-base" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.13. </span>info — Datenbank-Metadaten<a class="headerlink" href="#info-metadonnees-de-la-base" title="Link to this heading"></a></h2>
 <p>Zeigt die Metadaten und Statistiken einer Datenbank an.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span>
 </pre></div>
@@ -437,7 +554,7 @@
 </div>
 </section>
 <section id="edit-modifier-les-metadonnees">
-<h2><span class="section-number">6.11. </span>edit — Metadaten ändern<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.14. </span>edit — Metadaten ändern<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Link to this heading"></a></h2>
 <p>Ändert den Benutzernamen oder die Beschreibung einer Datenbank.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
 </pre></div>
@@ -461,7 +578,7 @@
 </div>
 </section>
 <section id="verify-verifier-l-integrite">
-<h2><span class="section-number">6.12. </span>verify — Integrität prüfen<a class="headerlink" href="#verify-verifier-l-integrite" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.15. </span>verify — Integrität prüfen<a class="headerlink" href="#verify-verifier-l-integrite" title="Link to this heading"></a></h2>
 <p>Prüft die Integrität der Datenbank und vergleicht optional ein Match mit seiner Quelldatei.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--match<span class="w"> </span>&lt;id&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--mat<span class="w"> </span>&lt;fichier.mat&gt;<span class="o">]</span>
 </pre></div>
@@ -486,7 +603,7 @@
 </div>
 </section>
 <section id="delete-supprimer-des-donnees">
-<h2><span class="section-number">6.13. </span>delete — Daten löschen<a class="headerlink" href="#delete-supprimer-des-donnees" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.16. </span>delete — Daten löschen<a class="headerlink" href="#delete-supprimer-des-donnees" title="Link to this heading"></a></h2>
 <p>Löscht ein Match und alle zugehörigen Daten (Spiele, Züge, Analysen).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
 </pre></div>
@@ -508,9 +625,9 @@
 </div>
 </section>
 <section id="exemples-de-flux-de-travail">
-<h2><span class="section-number">6.14. </span>Workflow-Beispiele<a class="headerlink" href="#exemples-de-flux-de-travail" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.17. </span>Workflow-Beispiele<a class="headerlink" href="#exemples-de-flux-de-travail" title="Link to this heading"></a></h2>
 <section id="import-d-un-repertoire-de-tournoi">
-<h3><span class="section-number">6.14.1. </span>Ein Turnierverzeichnis importieren<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Link to this heading"></a></h3>
+<h3><span class="section-number">6.17.1. </span>Ein Turnierverzeichnis importieren<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Créer une base dédiée au tournoi</span>
 ./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">&quot;Jean&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Open de Paris 2025&quot;</span>
 
@@ -523,14 +640,14 @@
 </div>
 </section>
 <section id="sauvegarde-reguliere">
-<h3><span class="section-number">6.14.2. </span>Regelmäßige Sicherung<a class="headerlink" href="#sauvegarde-reguliere" title="Link to this heading"></a></h3>
+<h3><span class="section-number">6.17.2. </span>Regelmäßige Sicherung<a class="headerlink" href="#sauvegarde-reguliere" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export complet pour sauvegarde</span>
 ./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
 </pre></div>
 </div>
 </section>
 <section id="analyse-des-erreurs">
-<h3><span class="section-number">6.14.3. </span>Fehleranalyse<a class="headerlink" href="#analyse-des-erreurs" title="Link to this heading"></a></h3>
+<h3><span class="section-number">6.17.3. </span>Fehleranalyse<a class="headerlink" href="#analyse-des-erreurs" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraire les blunders dans une base séparée</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
 
@@ -541,7 +658,7 @@
 </section>
 </section>
 <section id="codes-de-retour">
-<h2><span class="section-number">6.15. </span>Rückgabecodes<a class="headerlink" href="#codes-de-retour" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.18. </span>Rückgabecodes<a class="headerlink" href="#codes-de-retour" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Erfolg.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Fehler.</p></li>

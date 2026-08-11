@@ -45,7 +45,7 @@ En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc
 ``ss E>40``). La commande ``ss`` fonctionne après une recherche préalable.
 
 La fenêtre de recherche (``CTRL-F``) propose également une case à cocher
-"Search in current results" pour la même fonctionnalité.
+"Rechercher dans les résultats actuels" pour la même fonctionnalité.
 
 Bibliothèque de filtres
 -----------------------

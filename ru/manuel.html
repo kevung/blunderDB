@@ -230,14 +230,29 @@
 </section>
 <section id="configuration">
 <span id="id2"></span><h2><span class="section-number">2.5. </span>Конфигурация<a class="headerlink" href="#configuration" title="Ссылка на этот заголовок"></a></h2>
-<p>Кнопка настроек (значок шестерёнки) на панели инструментов, слева от кнопки справки, открывает окно настроек blunderDB. Оно разделено на три вкладки:</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre
+d’outils, à gauche du bouton d’aide, ouvre la fenêtre de configuration de
+blunderDB. Elle est organisée en quatre onglets :</p>
 <ul class="simple">
 <li><p><strong>Интерфейс</strong> — язык, масштаб отображения, положение панели;</p></li>
 <li><p><strong>Цвета доски</strong> — цвета игровой доски;</p></li>
+<li><p><strong>Bearoff</strong> — la base de sortie two-sided étendue utilisée par le panneau
+Bearoff ;</p></li>
 <li><p><strong>Идентичность автора</strong> — ключ, которым подписываются ваши отметки происхождения; описан в разделе <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>.</p></li>
 </ul>
 <p>Вкладка <em>Интерфейс</em> позволяет выбрать язык из английского, французского, немецкого, итальянского, испанского, финского, японского, греческого и русского. Весь интерфейс (панель инструментов, панели, сообщения, справка) переводится на выбранный язык. Выбор языка сохраняется и переносится из сеанса в сеанс.</p>
 <p>Вкладка <em>Цвета доски</em> позволяет настроить цвета доски. У каждого элемента свой выбор цвета: фон, рамка, светлые и тёмные пункты, шашки игрока 1 и игрока 2, кубики, точки на кубиках и куб удвоения. Кнопка <em>Сбросить</em> возвращает все цвета по умолчанию. Как и язык, выбранные цвета сохраняются между сеансами.</p>
+<p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
+panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Панель Bearoff</span></a>) au-delà de la base TS-06-06
+embarquée dans l’exécutable. Il affiche le domaine actuellement actif
+(<code class="docutils literal notranslate"><span class="pre">TS-06-06</span></code> ou <code class="docutils literal notranslate"><span class="pre">TS-06-11</span></code> une fois téléchargée) et son origine, propose de
+lancer le téléchargement de la base étendue TS-06-11 avec une barre de
+progression, et <strong>reprend automatiquement un téléchargement interrompu</strong> au
+lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
+base peut être supprimée — une confirmation est demandée avant toute
+suppression, la taille du fichier étant rappelée dans le message. L’onglet
+permet aussi de pointer vers un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided externe (par exemple
+une base générée soi-même) plutôt que d’utiliser le téléchargement intégré.</p>
 <p>Окно конфигурации также содержит настройки отображения интерфейса. Ползунок <strong>масштаба интерфейса</strong> позволяет увеличить или уменьшить все элементы интерфейса, что полезно на экранах высокой плотности или для улучшения читаемости. Меню <strong>расположения панелей</strong> определяет, где панели (поиск, матчи, анализ) располагаются относительно доски: <em>снизу</em>, <em>сбоку</em> или <em>автоматически</em> (тогда на широких экранах выбирается боковое расположение, чтобы лучше использовать доступное пространство). Как и другие настройки, эти выборы сохраняются от сеанса к сеансу.</p>
 </section>
 <section id="visites-guidees-et-base-d-exemple">
@@ -253,6 +268,10 @@
 <li><p>отображать информацию анализа, связанную с позицией,</p></li>
 <li><p>отображать, добавлять и изменять комментарии к позиции.</p></li>
 </ul>
+<p>Le bouton <strong>Aller à la position</strong> de la barre d’outils ouvre une fenêtre où
+saisir directement l’indice d’une position pour y sauter, sans avoir à
+défiler. C’est l’équivalent graphique de la commande <code class="docutils literal notranslate"><span class="pre">[number]</span></code> en ligne de
+commande (voir <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Позиции и навигация</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Совет</p>
 <p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
@@ -539,7 +558,10 @@ masquer le panneau.</p>
 </section>
 <section id="panneau-bearoff">
 <span id="panneau-epc"></span><h2><span class="section-number">2.17. </span>Панель Bearoff<a class="headerlink" href="#panneau-bearoff" title="Ссылка на этот заголовок"></a></h2>
-<p>Панель <strong>EPC</strong> (<em>CTRL-E</em>) вычисляет EPC (Effective Pip Count) позиции снятия шашек. Активируется нажатием <em>CTRL-E</em>, щелчком на вкладке EPC в нижней панели или выполнением команды <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Le panneau <strong>Bearoff</strong> (<em>CTRL-E</em>) calcule l’EPC (Effective Pip Count) d’une
+position de bearoff. Il est activé en appuyant sur <em>CTRL-E</em>, en cliquant sur
+l’onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
+<code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
 <p>В этой панели пользователь редактирует расположение шашек в обоих домах (внутренних полях): щелчок по пунктам 1–6 ставит шашки нижнего игрока, щелчок по пунктам 19–24 — шашки верхнего игрока (кнопка мыши не имеет значения).</p>
 <p>Результаты представлены в виде двух таблиц, расположенных одна над другой:</p>
 <ul class="simple">
