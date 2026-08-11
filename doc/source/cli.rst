@@ -51,9 +51,12 @@ Commandes disponibles
    "create", "Crée une nouvelle base de données."
    "import", "Importe des données (match, position, lot)."
    "export", "Exporte des données."
+   "identity", "Affiche ou déplace l'identité d'émetteur (clé de signature des filigranes)."
+   "open", "Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire."
    "search", "Recherche des positions avec filtres."
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
+   "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID)."
    "info", "Affiche les métadonnées de la base."
    "edit", "Modifie les métadonnées de la base."
    "verify", "Vérifie l'intégrité de la base."
@@ -170,6 +173,11 @@ Exporte le contenu de la base vers des fichiers.
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des virgules).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).
 * ``--tournament-ids`` — IDs de tournois à exporter (séparés par des virgules).
+* ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
+* ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier
+  exporté (voir :ref:`diffusion_controlee`).
+* ``--watermark-note`` — Texte libre associé au filigrane (conditions
+  d'usage, contact) ; utilisé avec ``--watermark``.
 
 **Exemples:**
 
@@ -190,6 +198,73 @@ Exporte le contenu de la base vers des fichiers.
    # Export de plusieurs matchs (ou de tous) en .mat dans un répertoire
    ./blunderdb export --db base.db --type mat --match-ids 5,9,12 --dir sorties/
    ./blunderdb export --db base.db --type mat --dir sorties/
+
+   # Export filigrané et protégé par mot de passe (fichier .dbx)
+   ./blunderdb export --db cours.db --type database --file cours-diffusion.dbx \
+       --watermark "Cours de Jean Dupont — 12 mars 2026" \
+       --watermark-note "Merci de ne pas rediffuser." \
+       --password secret
+
+Un filigrane est signé avec l'identité d'émetteur locale (voir la commande
+``identity`` ci-dessous) : il est infalsifiable, mais pas inamovible — le
+fichier reste une base SQLite ordinaire. Il ne protège rien, il indique
+seulement d'où vient le fichier. Un mot de passe protège le *transport* du
+fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
+elle-même : quiconque a reçu le mot de passe peut l'ouvrir. blunderDB
+n'enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
+voir ``docs/adr/0007-watermarks-mark-origin-and-nothing-else.md``.
+
+identity — Identité d'émetteur
+-------------------------------
+
+Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui signe
+chaque filigrane. Elle est créée d'elle-même au premier filigrane apposé ; il
+n'y a rien à configurer. Elle appartient à une personne, pas à une base de
+données : tout ce que vous marquez porte une seule empreinte publique.
+
+.. code-block:: bash
+
+   ./blunderdb identity                                       # nom et empreinte
+   ./blunderdb identity --name "Jean Dupont"                  # renommer
+   ./blunderdb identity --export jean.bdbid --passphrase pw   # exporter vers une autre machine
+   ./blunderdb identity --import jean.bdbid --passphrase pw
+
+**Options:**
+
+* ``--name`` — Change le nom affiché de l'identité.
+* ``--export`` — Exporte l'identité vers un fichier ``.bdbid``.
+* ``--import`` — Importe une identité depuis un fichier ``.bdbid``.
+* ``--passphrase`` — Phrase de passe optionnelle protégeant le fichier
+  exporté/importé (l'identité locale, elle, est volontairement non protégée).
+
+Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
+le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà marqués
+conservent le nom sous lequel ils ont été scellés, et continuent de se
+vérifier.
+
+open — Ouvrir un fichier protégé
+-----------------------------------
+
+Transforme un fichier protégé par mot de passe (``.dbx``) en base ordinaire.
+Le mot de passe est demandé une seule fois ; ensuite, c'est un fichier normal.
+
+.. code-block:: bash
+
+   ./blunderdb open --db cours.dbx --password secret
+   ./blunderdb open --db cours.dbx --password secret --file ./mon-cours.db
+
+**Options:**
+
+* ``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire).
+* ``--password`` — Mot de passe du conteneur (obligatoire).
+* ``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom,
+  extension ``.db``).
+
+Ce que le mot de passe protège : le *transport* du fichier — la copie égarée
+dans un dossier de téléchargements, la pièce jointe envoyée par erreur. Pas la
+base : quiconque a reçu le mot de passe peut l'ouvrir. L'en-tête du conteneur
+est en clair, si bien que ``blunderdb info`` lit l'origine d'un fichier
+protégé sans son mot de passe.
 
 search — Rechercher des positions
 ----------------------------------
@@ -232,6 +307,15 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--individual`` — Uniquement les positions importées seules, c'est-à-dire
   celles que vous avez ajoutées vous-même et non celles qu'un import de match
   a apportées.
+* ``--flagged`` — Uniquement les positions marquées (*flag*) pour étude dans
+  le logiciel d'origine (marques eXtreme Gammon). Non rétroactif : les
+  matchs déjà importés doivent l'être à nouveau pour livrer leurs marques.
+* ``--has-comment`` — Uniquement les positions portant un commentaire.
+  L'origine n'est pas distinguée : une note tapée à la main et un commentaire
+  apporté par l'import d'un match comptent tous les deux. Les commentaires de
+  match ou de tournoi ne sont pas consultés.
+* ``--no-comment`` — Uniquement les positions sans commentaire. Mutuellement
+  exclusif avec ``--has-comment``.
 
 **Exemples:**
 
@@ -340,6 +424,42 @@ Affiche les positions et analyses d'un match importé.
 
    # Export JSON vers un fichier
    ./blunderdb match --db base.db --id 1 --output match1.json
+
+epc — Calculatrice EPC
+------------------------
+
+Calcule l'Effective Pip Count, la probabilité de gain et le verdict de videau
+money d'une position de sortie donnée par XGID. Calcul pur : aucun fichier de
+base de données n'est impliqué.
+
+.. code-block:: bash
+
+   ./blunderdb epc [options] '<XGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+* ``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) élargissant
+  la base intégrée TS-06-06 (également lue depuis la variable d'environnement
+  ``BLUNDERDB_TS_PATH``). La base valide la plus large l'emporte ; un fichier
+  invalide est ignoré avec un avertissement.
+
+**Régimes.** Dans le domaine couvert par la base two-sided, la probabilité de
+gain et l'analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
+**exactes**. En dehors, la probabilité de gain est **estimée** (convolution
+des distributions de lancers one-sided plus une correction calibrée) et
+affichée avec sa marge d'erreur mesurée ; le verdict de videau n'est
+volontairement jamais estimé (voir ADR-0009).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Régime exact (les deux joueurs ont 6 pions ou moins)
+   ./blunderdb epc 'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'
+
+   # Avec la base TS-06-11 téléchargée (exact jusqu'à 11 pions par joueur)
+   ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 
 info — Métadonnées de la base
 ------------------------------
