@@ -25,7 +25,8 @@ import {
     ImportBGFPosition,
     ImportBGFPositionFromText,
     ImportXGPPosition,
-    ParsePositionText
+    ParsePositionText,
+    RefreshSearchStatistics
 } from '../../wailsjs/go/database/Database.js';
 import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 
@@ -670,6 +671,17 @@ export async function importMultipleFiles(files) {
     }
 
     fileImportModeStore.set('completed');
+
+    // Mirrors the CLI batch importer (cli_import.go), which runs a plain
+    // ANALYZE once after its own file loop: a GUI drag-drop/folder import can
+    // add as many rows as a CLI batch, but until now only the CLI path
+    // refreshed query-planner statistics afterwards — the GUI relied entirely
+    // on ensureSearchStats' one-time backfill at file open, which never fires
+    // again once a database has any stats at all, however stale (fiche-05
+    // T7). Best-effort and skipped when nothing actually got imported.
+    if (get(fileImportResultsStore).succeeded > 0) {
+        RefreshSearchStatistics();
+    }
 
     if (hadMatches) {
         matchPanelRefreshTriggerStore.update((n) => n + 1);

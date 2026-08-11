@@ -156,6 +156,14 @@ func (s *Storage) Close() error {
 	if !s.ownsDB || s.sqlDB == nil {
 		return nil
 	}
+	// PRAGMA optimize (SQLite docs: run before closing every long-lived
+	// connection) is a cheap, targeted ANALYZE: it only touches tables whose
+	// content has changed enough since the last full ANALYZE to plausibly have
+	// stale sqlite_stat1 rows, so it is a no-op on a connection that did
+	// little writing and inexpensive even after a heavy import (fiche-05 T7).
+	// Best-effort: a failed optimize must not turn a normal shutdown into an
+	// error the caller has no useful way to react to.
+	_, _ = s.sqlDB.Exec(`PRAGMA optimize`)
 	return s.sqlDB.Close()
 }
 

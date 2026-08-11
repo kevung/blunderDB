@@ -158,9 +158,20 @@ func (d *Database) Close() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.releaseFileLock()
+	wasReadOnly := d.readOnly
 	d.readOnly = false
 	if d.db == nil {
 		return nil
+	}
+	// PRAGMA optimize (SQLite docs: run before closing every long-lived
+	// connection) mirrors the standalone Storage backend's Close (storage/
+	// sqlite/sqlite.go, D9/fiche-05 T7) — this wrapper opens its own *sql.DB
+	// rather than going through Storage.Close, so it needs its own call.
+	// Best-effort and skipped on a read-only handle (query_only=ON rejects the
+	// write ANALYZE may attempt internally; nothing useful to optimize there
+	// anyway).
+	if !wasReadOnly {
+		_, _ = d.db.Exec(`PRAGMA optimize`)
 	}
 	err := d.db.Close()
 	d.db = nil
@@ -730,6 +741,35 @@ func (d *Database) ensureSearchStats() {
 	var n int
 	// Errors (e.g. sqlite_stat1 does not exist yet) count as "no stats".
 	if err := d.db.QueryRow(`SELECT count(*) FROM sqlite_stat1`).Scan(&n); err == nil && n > 0 {
+		return
+	}
+	if _, err := d.db.Exec(`ANALYZE`); err != nil {
+		slog.Warn("ANALYZE for search statistics failed", "err", err)
+	}
+}
+
+// RefreshSearchStatistics runs a full ANALYZE, updating query-planner
+// statistics for every table. Unlike ensureSearchStats (run automatically on
+// open, but only when sqlite_stat1 is entirely empty), this always re-scans:
+// after importing a batch of matches into an already-analysed database, the
+// existing stats are stale rather than absent, so ensureSearchStats would
+// skip them, silently leaving the planner working off pre-import row/value
+// distributions. The CLI's batch importer has always run a plain `ANALYZE`
+// after its file loop (cli_import.go, importBatch); this is the Wails-bound
+// equivalent so the GUI's own batch import path
+// (frontend/src/services/importService.js, importMultipleFiles) can do the
+// same (fiche-05 T7). Best-effort and non-fatal, like ensureSearchStats: a
+// search still works correctly, just possibly less optimally planned,
+// without it.
+//
+// Takes the exclusive lock, like every other statement that writes to the
+// database (ANALYZE rewrites sqlite_stat1/sqlite_stat4) — mirrors
+// OpenDatabase, which holds d.mu.Lock() for the whole call including its own
+// ensureSearchStats.
+func (d *Database) RefreshSearchStatistics() {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.db == nil {
 		return
 	}
 	if _, err := d.db.Exec(`ANALYZE`); err != nil {

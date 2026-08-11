@@ -70,13 +70,13 @@ export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;
 
-export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
+export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
 export function ExportDatabase(arg1:domain.ExportOptions):Promise<void>;
 
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
-export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
+export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
 export function GetAllAnkiDecks():Promise<Array<domain.AnkiDeck>>;
 
@@ -188,12 +188,6 @@ export function LoadSessionState():Promise<database.SessionState>;
 
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
-export function Migrate_1_0_0_to_1_1_0():Promise<void>;
-
-export function Migrate_1_1_0_to_1_2_0():Promise<void>;
-
-export function Migrate_1_2_0_to_1_3_0():Promise<void>;
-
 export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
@@ -202,7 +196,7 @@ export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
-export function PositionExists(arg1:domain.Position):Promise<Record<string, any>>;
+export function RefreshSearchStatistics():Promise<void>;
 
 export function RemoveMatchFromTournament(arg1:number):Promise<void>;
 
