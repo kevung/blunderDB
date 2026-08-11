@@ -1,23 +1,37 @@
 import { writable } from 'svelte/store';
 
+// emptyPosition() is the one canonical "nothing loaded yet" position: 26
+// empty points ({checkers, color: -1} — the shape Board.svelte and the rest
+// of the app expect everywhere else), no cube owner, no score. Every point
+// object is freshly allocated (not Array(26).fill({...}), which would give
+// every slot the *same* object reference) so a future per-point mutation
+// can't silently corrupt all 26 points at once.
+//
+// This is a factory, not a shared constant, so each caller gets its own
+// object graph — callers that then mutate the result in place (as
+// positionStore's own set() consumers do) never see each other's edits.
+export function emptyPosition() {
+    return {
+        id: 0,
+        board: {
+            points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })), // 24 points + 2 bars
+            bearoff: [15, 15]
+        },
+        cube: {
+            owner: -1,
+            value: 0
+        },
+        dice: [3, 1],
+        score: [-1, -1],
+        player_on_roll: 0,
+        decision_type: 0,
+        has_jacoby: 0,
+        has_beaver: 0
+    };
+}
+
 export const pastePositionTextStore = writable('');
-export const positionStore = writable({
-    id: 0, // Add ID field
-    board: {
-        points: Array(26).fill({ checkers: 0, color: -1 }), // 24 points + 2 bars
-        bearoff: [15, 15]
-    },
-    cube: {
-        owner: -1,
-        value: 0
-    },
-    dice: [3, 1],
-    score: [-1, -1],
-    player_on_roll: 0,
-    decision_type: 0,
-    has_jacoby: 0,
-    has_beaver: 0
-});
+export const positionStore = writable(emptyPosition());
 export const positionsStore = writable([]); // Add positions store
 export const positionBeforeFilterLibraryStore = writable(null); // Store position before opening filter library
 export const positionIndexBeforeFilterLibraryStore = writable(-1); // Store position index before opening filter library

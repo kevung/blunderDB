@@ -1,25 +1,8 @@
 import { writable, get } from 'svelte/store';
-import { positionStore, positionsStore, matchContextStore } from './positionStore';
+import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 import { logger } from '../utils/logger.js';
-
-function createDefaultPosition() {
-    return {
-        id: 0,
-        board: {
-            points: [0, -2, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, -5, 5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, 0],
-            bearoff: [0, 0]
-        },
-        cube: { owner: -1, value: 0 },
-        dice: [3, 1],
-        score: [-1, -1],
-        player_on_roll: 1,
-        decision_type: '',
-        has_jacoby: 0,
-        has_beaver: 0
-    };
-}
 
 function createDefaultAnalysis() {
     return {
@@ -49,7 +32,7 @@ function createDefaultView(id) {
         name: `#${id}`,
         positions: [],
         positionIndex: 0,
-        position: createDefaultPosition(),
+        position: emptyPosition(),
         analysis: createDefaultAnalysis(),
         selectedMove: null,
         activeTab: 'matches',
@@ -189,7 +172,7 @@ function createViewStore() {
                     name: sv.name,
                     positions,
                     positionIndex: Math.min(sv.positionIndex || 0, Math.max(positions.length - 1, 0)),
-                    position: positions[sv.positionIndex] || createDefaultPosition(),
+                    position: positions[sv.positionIndex] || emptyPosition(),
                     analysis: createDefaultAnalysis(),
                     selectedMove: sv.selectedMove ?? null,
                     activeTab: sv.activeTab || 'analysis',
