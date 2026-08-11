@@ -140,6 +140,15 @@ Onglets de vues
    "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
    "Double-clic sur l'onglet", "Renommer la vue."
 
+.. note::
+
+   Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance
+   (position suivante) et *k* recule (position précédente), alors que
+   *MAJ-J* revient à la vue précédente et *MAJ-K* passe à la vue suivante.
+   C'est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la
+   convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas
+   celle de j/k.
+
 .. _raccourcis_command:
 
 Ligne de commande
@@ -233,5 +242,44 @@ Panneau Anki (répétition espacée)
    "2", "Évaluer : Difficile."
    "3", "Évaluer : Bien."
    "4", "Évaluer : Facile."
+   "p", "Afficher/cacher le compte de course (identique au raccourci général, disponible pendant la révision)."
    "Esc", "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+
+.. _raccourcis_tournament_panel:
+
+Panneau des tournois
+---------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic, Double-clic", "Sélectionner un tournoi (afficher son détail)."
+   "HAUT, k", "Sélectionner le tournoi précédent."
+   "BAS, j", "Sélectionner le tournoi suivant."
+   "Double-clic (sur un match du tournoi)", "Naviguer dans le match."
+   "Esc", "Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+
+.. _raccourcis_collection_panel:
+
+Panneau des collections
+------------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Ajouter/retirer la position courante de la collection survolée."
+   "Double-clic", "Ouvrir la collection."
+   "Del", "Retirer la position courante (ou les positions cochées) de la collection ouverte."
+   "Esc", "Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers)."
+
+.. note::
+
+   Ce panneau ne capture pas les raccourcis de navigation :
+   PageUp/h, GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de
+   la collection ouverte exactement comme décrit dans
+   :ref:`raccourcis_navigation`.
 
