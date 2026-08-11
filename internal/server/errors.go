@@ -79,13 +79,27 @@ func writeErrorDetails(w http.ResponseWriter, code, message string, details map[
 	}})
 }
 
+// errSetter is implemented by the logging middleware's response wrapper
+// (internal/server/middleware.responseRecorder). Matched structurally so this
+// package does not need to import the concrete type.
+type errSetter interface {
+	SetErr(error)
+}
+
 // writeStorageError maps a storage error onto the envelope. For internal
 // errors the raw message is hidden behind a generic string to avoid leaking
-// backend internals to clients.
+// backend internals to clients — but the real error must not vanish
+// entirely: it is stashed on the ResponseWriter (when it supports it, which
+// it always does once the request has passed through the Logging
+// middleware — see server.go's chain()) so the request's server-side log
+// line still carries the actual cause instead of just "internal error".
 func writeStorageError(w http.ResponseWriter, err error) {
 	code := codeForErr(err)
 	msg := err.Error()
 	if code == CodeInternal {
+		if es, ok := w.(errSetter); ok {
+			es.SetErr(err)
+		}
 		msg = "internal error"
 	}
 	writeErrorCode(w, code, msg)

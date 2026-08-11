@@ -22,7 +22,7 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 			if logger == nil {
 				return
 			}
-			logger.Info("http request",
+			args := []any{
 				"method", r.Method,
 				"route", routeLabel(r, known),
 				"path", r.URL.Path,
@@ -30,7 +30,19 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 				"bytes", rec.bytes,
 				"tenant", r.Header.Get(TenantHeader),
 				"duration_ms", float64(now().Sub(start).Microseconds())/1000.0,
-			)
+			}
+			// A masked "internal error" response is otherwise a dead end for
+			// diagnosing what actually failed: the client only ever sees the
+			// generic message (backend internals must not leak), so the real
+			// cause — stashed via SetErr — has to surface somewhere. Error
+			// level (rather than Info) so it is not lost in request-volume
+			// noise.
+			if rec.err != nil {
+				args = append(args, "err", rec.err.Error())
+				logger.Error("http request", args...)
+				return
+			}
+			logger.Info("http request", args...)
 		})
 	}
 }
