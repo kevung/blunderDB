@@ -115,8 +115,8 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	fmt.Fprintln(w, "# HELP blunderdb_http_requests_total Total HTTP requests handled.")
-	fmt.Fprintln(w, "# TYPE blunderdb_http_requests_total counter")
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_http_requests_total Total HTTP requests handled.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_http_requests_total counter")
 	ckeys := make([]counterKey, 0, len(r.counters))
 	for k := range r.counters {
 		ckeys = append(ckeys, k)
@@ -132,12 +132,12 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 		return a.status < b.status
 	})
 	for _, k := range ckeys {
-		fmt.Fprintf(w, "blunderdb_http_requests_total{method=%q,path=%q,status=\"%d\"} %d\n",
+		_, _ = fmt.Fprintf(w, "blunderdb_http_requests_total{method=%q,path=%q,status=\"%d\"} %d\n",
 			k.method, k.path, k.status, r.counters[k])
 	}
 
-	fmt.Fprintln(w, "# HELP blunderdb_http_request_duration_seconds HTTP request latency.")
-	fmt.Fprintln(w, "# TYPE blunderdb_http_request_duration_seconds histogram")
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_http_request_duration_seconds HTTP request latency.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_http_request_duration_seconds histogram")
 	hkeys := make([]histKey, 0, len(r.hists))
 	for k := range r.hists {
 		hkeys = append(hkeys, k)
@@ -156,22 +156,22 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 		// is already the cumulative ("le") count Prometheus expects.
 		for i, ub := range r.buckets {
 			le := strconv.FormatFloat(ub, 'g', -1, 64)
-			fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_bucket{method=%q,path=%q,le=%q} %d\n",
+			_, _ = fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_bucket{method=%q,path=%q,le=%q} %d\n",
 				k.method, k.path, le, h.counts[i])
 		}
-		fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_bucket{method=%q,path=%q,le=\"+Inf\"} %d\n",
+		_, _ = fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_bucket{method=%q,path=%q,le=\"+Inf\"} %d\n",
 			k.method, k.path, h.count)
-		fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_sum{method=%q,path=%q} %g\n",
+		_, _ = fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_sum{method=%q,path=%q} %g\n",
 			k.method, k.path, h.sum)
-		fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_count{method=%q,path=%q} %d\n",
+		_, _ = fmt.Fprintf(w, "blunderdb_http_request_duration_seconds_count{method=%q,path=%q} %d\n",
 			k.method, k.path, h.count)
 	}
 
-	fmt.Fprintln(w, "# HELP blunderdb_ratelimit_rejected_total Requests rejected by the per-tenant rate limiter.")
-	fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_rejected_total counter")
-	fmt.Fprintf(w, "blunderdb_ratelimit_rejected_total %d\n", atomic.LoadUint64(&r.rlRejected))
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_ratelimit_rejected_total Requests rejected by the per-tenant rate limiter.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_rejected_total counter")
+	_, _ = fmt.Fprintf(w, "blunderdb_ratelimit_rejected_total %d\n", atomic.LoadUint64(&r.rlRejected))
 
-	fmt.Fprintln(w, "# HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.")
-	fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_buckets gauge")
-	fmt.Fprintf(w, "blunderdb_ratelimit_buckets %d\n", atomic.LoadUint64(&r.rlBuckets))
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_buckets gauge")
+	_, _ = fmt.Fprintf(w, "blunderdb_ratelimit_buckets %d\n", atomic.LoadUint64(&r.rlBuckets))
 }

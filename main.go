@@ -58,7 +58,7 @@ func runCLI() {
 	args := os.Args[1:]
 
 	if err := c.Run(args); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -66,7 +66,7 @@ func runCLI() {
 func runServe() {
 	initLogging("serve")
 	if err := server.RunServe(os.Args[2:]); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -74,7 +74,7 @@ func runServe() {
 func runCall() {
 	initLogging("cli")
 	if err := server.RunCall(os.Args[2:]); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -82,7 +82,7 @@ func runCall() {
 func runMigrate() {
 	initLogging("cli")
 	if err := migrate.RunCLI(os.Args[2:]); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -95,7 +95,7 @@ func runGUI() {
 	// Load the configuration file
 	config, err := cfg.LoadConfig()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error loading configuration file:", err)
+		_, _ = fmt.Fprintln(os.Stderr, "Error loading configuration file:", err)
 		os.Exit(1)
 	}
 
@@ -106,13 +106,13 @@ func runGUI() {
 
 	// Set up the in-memory database
 	if err := db.SetupDatabase(":memory:"); err != nil {
-		fmt.Fprintln(os.Stderr, "Error setting up in-memory database:", err)
+		_, _ = fmt.Fprintln(os.Stderr, "Error setting up in-memory database:", err)
 		os.Exit(1)
 	}
 
 	// Bind the database and config alongside the GUI App struct.
 	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, []interface{}{db, cfg}); err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
+		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 }

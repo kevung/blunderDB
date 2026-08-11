@@ -93,7 +93,7 @@ func RunCall(args []string) error {
 
 	if *list {
 		for _, p := range srv.Paths() {
-			fmt.Println(strings.TrimPrefix(p, "/v1/"))
+			_, _ = fmt.Println(strings.TrimPrefix(p, "/v1/"))
 		}
 		return nil
 	}

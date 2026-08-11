@@ -10,13 +10,7 @@ linters:
 
   settings:
     errcheck:
-      # Suppress unchecked-error warnings on print functions until task 07
-      # (slog migration) replaces them.
       exclude-functions:
-        - fmt.Println
-        - fmt.Printf
-        - fmt.Fprintf
-        - fmt.Fprintln
         # defer tx.Rollback() is idiomatic Go — the error is irrelevant
         # after a successful Commit, and on failure the deferred call is
         # best-effort cleanup.
@@ -49,11 +43,13 @@ linters:
       # (test utilities) introduces proper helpers.
       - linters: [errcheck]
         path: "_test\\.go$"
-      # db.go has ~48 unchecked Exec/Scan calls, mostly in migration code
-      # that intentionally ignores "column already exists" errors.  Will be
-      # enforced per-file after task 06 (split db.go).
+      # internal/cli and cmd/ print user-facing output straight to stdout/stderr
+      # via fmt.Print*; checking those errors buys nothing (the process is about
+      # to exit either way). Everywhere else, an unchecked fmt.Print* error is
+      # still a real errcheck finding.
       - linters: [errcheck]
-        path: "^db\\.go$"
+        path: "^(internal/cli/|cmd/)"
+        text: "Error return value of `fmt\\.(Println|Printf|Fprintf|Fprintln)` is not checked"
 
 issues:
   max-issues-per-linter: 0   # no cap — show everything
