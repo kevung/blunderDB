@@ -71,7 +71,15 @@
         "bearoffExternalClear": "Remove",
         "bearoffResume": "Resume download",
         "bearoffPartial": "Partial download present ({gb} GB) — resuming will continue where it stopped.",
-        "confirmDeleteBearoff": "Delete the downloaded database ({gb} GB)?"
+        "confirmDeleteBearoff": "Delete the downloaded database ({gb} GB)?",
+        "vacuumIntro": "Compacting rewrites the file to reclaim space left behind by deletions (matches, tournaments, purges). Needs roughly twice the current size in free disk space; can take a while on a large database.",
+        "vacuumButton": "Compact database",
+        "vacuumRunning": "Compacting…",
+        "vacuumConfirm": "Compacting the database can take a while and needs roughly twice its size in free disk space. Continue?",
+        "vacuumConfirmButton": "Compact",
+        "vacuumDone": "Database compacted: {mb} MB reclaimed",
+        "vacuumNothing": "Database compacted: nothing to reclaim",
+        "vacuumError": "Compacting failed: {error}"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

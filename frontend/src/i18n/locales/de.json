@@ -71,7 +71,15 @@
         "bearoffExternalClear": "Entfernen",
         "bearoffResume": "Download fortsetzen",
         "bearoffPartial": "Teil-Download vorhanden ({gb} GB) — die Fortsetzung macht dort weiter, wo er aufhörte.",
-        "confirmDeleteBearoff": "Heruntergeladene Datenbank löschen ({gb} GB)?"
+        "confirmDeleteBearoff": "Heruntergeladene Datenbank löschen ({gb} GB)?",
+        "vacuumIntro": "Beim Komprimieren wird die Datei neu geschrieben, um Speicherplatz zurückzugewinnen, der durch Löschungen (Spiele, Turniere, Bereinigungen) frei wurde. Benötigt etwa das Doppelte der aktuellen Größe an freiem Speicherplatz; kann bei einer großen Datenbank dauern.",
+        "vacuumButton": "Datenbank komprimieren",
+        "vacuumRunning": "Komprimierung läuft…",
+        "vacuumConfirm": "Das Komprimieren der Datenbank kann dauern und benötigt etwa das Doppelte ihrer Größe an freiem Speicherplatz. Fortfahren?",
+        "vacuumConfirmButton": "Komprimieren",
+        "vacuumDone": "Datenbank komprimiert: {mb} MB zurückgewonnen",
+        "vacuumNothing": "Datenbank komprimiert: nichts zurückzugewinnen",
+        "vacuumError": "Komprimierung fehlgeschlagen: {error}"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

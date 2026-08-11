@@ -71,7 +71,15 @@
         "bearoffExternalClear": "Poista",
         "bearoffResume": "Jatka latausta",
         "bearoffPartial": "Osittainen lataus olemassa ({gb} Gt) — jatkaminen jatkuu siitä, mihin se jäi.",
-        "confirmDeleteBearoff": "Poistetaanko ladattu tietokanta ({gb} Gt)?"
+        "confirmDeleteBearoff": "Poistetaanko ladattu tietokanta ({gb} Gt)?",
+        "vacuumIntro": "Tiivistäminen kirjoittaa tiedoston uudelleen ja vapauttaa poistojen (ottelut, turnaukset, siivoukset) jättämän tilan. Vaatii vapaata levytilaa noin kaksi kertaa nykyisen koon verran; voi kestää kauan suuressa tietokannassa.",
+        "vacuumButton": "Tiivistä tietokanta",
+        "vacuumRunning": "Tiivistetään…",
+        "vacuumConfirm": "Tietokannan tiivistäminen voi kestää kauan ja vaatii vapaata levytilaa noin kaksi kertaa sen koon verran. Jatketaanko?",
+        "vacuumConfirmButton": "Tiivistä",
+        "vacuumDone": "Tietokanta tiivistetty: {mb} Mt vapautettu",
+        "vacuumNothing": "Tietokanta tiivistetty: ei vapautettavaa",
+        "vacuumError": "Tiivistäminen epäonnistui: {error}"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

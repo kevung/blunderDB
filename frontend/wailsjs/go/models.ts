@@ -440,6 +440,21 @@ export namespace database {
 		}
 	}
 	
+	
+	export class VacuumResult {
+	    SizeBefore: number;
+	    SizeAfter: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new VacuumResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.SizeBefore = source["SizeBefore"];
+	        this.SizeAfter = source["SizeAfter"];
+	    }
+	}
 
 }
 
