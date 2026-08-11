@@ -465,12 +465,6 @@
         text-align: center;
     }
 
-    input,
-    select,
-    button {
-        font: inherit;
-    }
-
     h2 {
         margin: 0 0 1rem;
         font-size: var(--font-size-title);
@@ -598,7 +592,6 @@
         border: none;
         border-bottom: 2px solid transparent;
         background: none;
-        font: inherit;
         color: #5f6368;
         cursor: pointer;
     }

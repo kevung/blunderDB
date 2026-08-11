@@ -291,7 +291,6 @@
     }
 
     .challenge-toggle input {
-        font: inherit;
         margin: 0;
     }
 
@@ -460,7 +459,6 @@
         background: none;
         border: none;
         padding: 0;
-        font: inherit;
         color: #1a56c4;
         text-decoration: underline;
         cursor: pointer;

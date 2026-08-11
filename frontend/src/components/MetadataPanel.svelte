@@ -158,7 +158,6 @@
 
     input,
     textarea {
-        font: inherit;
         min-width: 0;
     }
 

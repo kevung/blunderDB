@@ -313,15 +313,6 @@
 </div>
 
 <style>
-    /* A form control inherits neither size nor family; without this it renders in
-       the browser's own control font. See docs/adr/0008. */
-    input,
-    select,
-    textarea,
-    button {
-        font: inherit;
-    }
-
     .filter-bar {
         display: flex;
         flex-wrap: wrap;

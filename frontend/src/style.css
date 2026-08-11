@@ -10,6 +10,17 @@
     --font-size-title: 15px; /* panel and dialog titles */
 }
 
+/* A form control inherits neither size nor family from the page; without this it
+   renders in the browser's own control font, even when its label sits right next
+   to it in Nunito. Declared globally since the ADR-0008 amendment (2026-08-11) —
+   components used to repeat this per-file; see docs/adr/0008. */
+input,
+select,
+textarea,
+button {
+    font: inherit;
+}
+
 html,
 body {
     margin: 0;
