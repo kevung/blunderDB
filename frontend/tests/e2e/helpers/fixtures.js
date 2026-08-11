@@ -33,7 +33,7 @@ export const positionA = {
             pts[24] = { checkers: 2, color: 1 };
             return pts;
         })(),
-        bearoff: [0, 0],
+        bearoff: [0, 0]
     },
     cube: { owner: -1, value: 0 },
     dice: [3, 1],
@@ -41,7 +41,7 @@ export const positionA = {
     player_on_roll: 0,
     decision_type: 0,
     has_jacoby: 0,
-    has_beaver: 0,
+    has_beaver: 0
 };
 
 /**
@@ -63,7 +63,7 @@ export const positionB = {
             pts[24] = { checkers: 2, color: 1 };
             return pts;
         })(),
-        bearoff: [0, 0],
+        bearoff: [0, 0]
     },
     cube: { owner: -1, value: 0 },
     dice: [4, 2],
@@ -71,7 +71,7 @@ export const positionB = {
     player_on_roll: 0,
     decision_type: 0,
     has_jacoby: 0,
-    has_beaver: 0,
+    has_beaver: 0
 };
 
 // ── Match factice ─────────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ export const matchesSample = [
         player2: 'Bob',
         score: '5pt',
         result: 1,
-        source: 'test',
+        source: 'test'
     },
     {
         id: 2,
@@ -93,8 +93,8 @@ export const matchesSample = [
         player2: 'Alice',
         score: '7pt',
         result: 2,
-        source: 'test',
-    },
+        source: 'test'
+    }
 ];
 
 // ── Résultat stats factice ────────────────────────────────────────────────────
@@ -106,10 +106,10 @@ export const statsResult = {
     totals: {
         numDecisions: 42,
         numCheckerDecisions: 35,
-        numCubeDecisions: 7,
+        numCubeDecisions: 7
     },
     byDecisionType: [],
-    byDice: [],
+    byDice: []
 };
 
 // ── Résultat EPC factice ──────────────────────────────────────────────────────
@@ -128,10 +128,10 @@ export const epcResultA = {
             pipCount: 61,
             wastage: 5.47,
             meanRolls: 11.074,
-            stdDev: 2.341,
-        },
+            stdDev: 2.341
+        }
     },
-    top: { all_in_home: false, checker_count: 15 },
+    top: { all_in_home: false, checker_count: 15 }
 };
 
 /** Retour simulé de ComputeEPCFromPosition pour positionB (différent de A). */
@@ -144,8 +144,8 @@ export const epcResultB = {
             pipCount: 67,
             wastage: 5.34,
             meanRolls: 12.056,
-            stdDev: 2.512,
-        },
+            stdDev: 2.512
+        }
     },
-    top: { all_in_home: false, checker_count: 15 },
+    top: { all_in_home: false, checker_count: 15 }
 };

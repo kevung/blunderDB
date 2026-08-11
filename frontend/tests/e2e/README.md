@@ -42,8 +42,8 @@ Les méthodes non surchargées retournent `Promise.resolve(null)`.
 import { installWailsMock } from './helpers/wailsMock.js';
 
 test.beforeEach(async ({ page }) => {
-  await installWailsMock(page);
-  await page.goto('http://localhost:5173/');
+    await installWailsMock(page);
+    await page.goto('http://localhost:5173/');
 });
 ```
 
@@ -70,11 +70,13 @@ await overrideDbMethod(page, 'ComputeEPCFromPosition', epcResultB);
 ## Mode wails dev (debug local avancé)
 
 Pour tester avec le vrai binaire Wails (bindings réels, pas de mock) :
+
 ```bash
 # Terminal 1 — depuis la racine du projet
 wails dev
 # Terminal 2 — depuis frontend/
 BASE_URL=http://localhost:34115 npx playwright test
 ```
+
 Adapter `playwright.config.js` en remplaçant `webServer` par l'URL fixe et en
 désactivant le mock Wails.
