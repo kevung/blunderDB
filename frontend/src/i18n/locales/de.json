@@ -391,7 +391,19 @@
         "transcript": "Mitschrift",
         "unforcedMoves": "Erzwungene Züge ausgenommen",
         "vs": "vs",
-        "wonBy": "Gewonnen von {player} ({points})"
+        "wonBy": "Gewonnen von {player} ({points})",
+        "commentUpdated": "Kommentar aktualisiert",
+        "errorDeleting": "Fehler beim Löschen des Matches",
+        "errorSettingTournament": "Fehler beim Zuweisen des Turniers",
+        "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "errorUpdating": "Fehler beim Aktualisieren des Matches",
+        "errorUpdatingComment": "Fehler beim Aktualisieren des Kommentars",
+        "matchDeleted": "Match gelöscht",
+        "matchUpdated": "Match aktualisiert",
+        "noMovesFound": "Keine Züge für dieses Match gefunden",
+        "swappedPlayers": "Spieler getauscht",
+        "tournamentCleared": "Turnier vom Match entfernt",
+        "tournamentSet": "Turnier „{name}“ zugewiesen"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -449,7 +461,14 @@
         "remove": "Entfernen",
         "swap": "Tauschen",
         "title": "Turniere",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Turnier „{name}“ erstellt",
+        "deleted": "Turnier gelöscht",
+        "errorCreating": "Fehler beim Erstellen des Turniers",
+        "errorOpening": "Fehler beim Öffnen des Matches",
+        "errorSwapping": "Fehler beim Tauschen der Spieler",
+        "noMovesFound": "Keine Züge für dieses Match gefunden",
+        "swappedPlayers": "Spieler getauscht"
     },
     "anki": {
         "again": "Nochmal",

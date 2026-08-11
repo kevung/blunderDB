@@ -391,7 +391,19 @@
         "transcript": "棋譜",
         "unforcedMoves": "選択可能なムーブ",
         "vs": "vs",
-        "wonBy": "{player} の勝利（{points}）"
+        "wonBy": "{player} の勝利（{points}）",
+        "commentUpdated": "コメントを更新しました",
+        "errorDeleting": "マッチの削除中にエラーが発生しました",
+        "errorSettingTournament": "トーナメントの設定中にエラーが発生しました",
+        "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "errorUpdating": "マッチの更新中にエラーが発生しました",
+        "errorUpdatingComment": "コメントの更新中にエラーが発生しました",
+        "matchDeleted": "マッチを削除しました",
+        "matchUpdated": "マッチを更新しました",
+        "noMovesFound": "このマッチには手が見つかりません",
+        "swappedPlayers": "プレイヤーを入れ替えました",
+        "tournamentCleared": "マッチからトーナメントを解除しました",
+        "tournamentSet": "トーナメント「{name}」を設定しました"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -449,7 +461,14 @@
         "remove": "削除",
         "swap": "入れ替え",
         "title": "トーナメント",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "トーナメント「{name}」を作成しました",
+        "deleted": "トーナメントを削除しました",
+        "errorCreating": "トーナメントの作成中にエラーが発生しました",
+        "errorOpening": "マッチを開く際にエラーが発生しました",
+        "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
+        "noMovesFound": "このマッチには手が見つかりません",
+        "swappedPlayers": "プレイヤーを入れ替えました"
     },
     "anki": {
         "again": "もう一度",

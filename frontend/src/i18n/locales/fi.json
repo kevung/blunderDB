@@ -391,7 +391,19 @@
         "transcript": "Pelipöytäkirja",
         "unforcedMoves": "Vapaaehtoiset siirrot",
         "vs": "vs",
-        "wonBy": "Voittaja {player} ({points})"
+        "wonBy": "Voittaja {player} ({points})",
+        "commentUpdated": "Kommentti päivitetty",
+        "errorDeleting": "Virhe ottelun poistamisessa",
+        "errorSettingTournament": "Virhe turnauksen asettamisessa",
+        "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "errorUpdating": "Virhe ottelun päivittämisessä",
+        "errorUpdatingComment": "Virhe kommentin päivittämisessä",
+        "matchDeleted": "Ottelu poistettu",
+        "matchUpdated": "Ottelu päivitetty",
+        "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
+        "swappedPlayers": "Pelaajat vaihdettu",
+        "tournamentCleared": "Turnaus poistettu ottelusta",
+        "tournamentSet": "Turnaus \"{name}\" asetettu"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -449,7 +461,14 @@
         "remove": "Poista",
         "swap": "Vaihda",
         "title": "Turnaukset",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Turnaus \"{name}\" luotu",
+        "deleted": "Turnaus poistettu",
+        "errorCreating": "Virhe turnauksen luonnissa",
+        "errorOpening": "Virhe ottelun avaamisessa",
+        "errorSwapping": "Virhe pelaajien vaihtamisessa",
+        "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
+        "swappedPlayers": "Pelaajat vaihdettu"
     },
     "anki": {
         "again": "Uudelleen",

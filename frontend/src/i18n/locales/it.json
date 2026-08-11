@@ -391,7 +391,19 @@
         "transcript": "Trascrizione",
         "unforcedMoves": "Mosse non forzate",
         "vs": "vs",
-        "wonBy": "Vinto da {player} ({points})"
+        "wonBy": "Vinto da {player} ({points})",
+        "commentUpdated": "Commento aggiornato",
+        "errorDeleting": "Errore durante l'eliminazione del match",
+        "errorSettingTournament": "Errore durante l'assegnazione del torneo",
+        "errorSwapping": "Errore durante lo scambio dei giocatori",
+        "errorUpdating": "Errore durante l'aggiornamento del match",
+        "errorUpdatingComment": "Errore durante l'aggiornamento del commento",
+        "matchDeleted": "Match eliminato",
+        "matchUpdated": "Match aggiornato",
+        "noMovesFound": "Nessuna mossa trovata per questo match",
+        "swappedPlayers": "Giocatori scambiati",
+        "tournamentCleared": "Torneo rimosso dal match",
+        "tournamentSet": "Torneo \"{name}\" assegnato"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -449,7 +461,14 @@
         "remove": "Rimuovi",
         "swap": "Scambia",
         "title": "Tornei",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Torneo \"{name}\" creato",
+        "deleted": "Torneo eliminato",
+        "errorCreating": "Errore durante la creazione del torneo",
+        "errorOpening": "Errore durante l'apertura del match",
+        "errorSwapping": "Errore durante lo scambio dei giocatori",
+        "noMovesFound": "Nessuna mossa trovata per questo match",
+        "swappedPlayers": "Giocatori scambiati"
     },
     "anki": {
         "again": "Di nuovo",

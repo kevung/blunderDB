@@ -391,7 +391,19 @@
         "transcript": "Transcripción",
         "unforcedMoves": "Jugadas no forzadas",
         "vs": "vs",
-        "wonBy": "Ganada por {player} ({points})"
+        "wonBy": "Ganada por {player} ({points})",
+        "commentUpdated": "Comentario actualizado",
+        "errorDeleting": "Error al eliminar la partida",
+        "errorSettingTournament": "Error al asignar el torneo",
+        "errorSwapping": "Error al intercambiar jugadores",
+        "errorUpdating": "Error al actualizar la partida",
+        "errorUpdatingComment": "Error al actualizar el comentario",
+        "matchDeleted": "Partida eliminada",
+        "matchUpdated": "Partida actualizada",
+        "noMovesFound": "No se encontraron jugadas para esta partida",
+        "swappedPlayers": "Jugadores intercambiados",
+        "tournamentCleared": "Torneo eliminado de la partida",
+        "tournamentSet": "Torneo \"{name}\" asignado"
     },
     "collection": {
         "addDescription": "Añadir una descripción…",
@@ -449,7 +461,14 @@
         "remove": "Quitar",
         "swap": "Intercambiar",
         "title": "Torneos",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Torneo \"{name}\" creado",
+        "deleted": "Torneo eliminado",
+        "errorCreating": "Error al crear el torneo",
+        "errorOpening": "Error al abrir la partida",
+        "errorSwapping": "Error al intercambiar jugadores",
+        "noMovesFound": "No se encontraron jugadas para esta partida",
+        "swappedPlayers": "Jugadores intercambiados"
     },
     "anki": {
         "again": "Otra vez",

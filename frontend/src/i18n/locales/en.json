@@ -391,7 +391,19 @@
         "transcript": "Transcript",
         "unforcedMoves": "Unforced Moves",
         "vs": "vs",
-        "wonBy": "Won by {player} ({points})"
+        "wonBy": "Won by {player} ({points})",
+        "commentUpdated": "Comment updated",
+        "errorDeleting": "Error deleting match",
+        "errorSettingTournament": "Error setting tournament",
+        "errorSwapping": "Error swapping players",
+        "errorUpdating": "Error updating match",
+        "errorUpdatingComment": "Error updating comment",
+        "matchDeleted": "Match deleted",
+        "matchUpdated": "Match updated",
+        "noMovesFound": "No moves found for this match",
+        "swappedPlayers": "Players swapped",
+        "tournamentCleared": "Tournament cleared from match",
+        "tournamentSet": "Tournament \"{name}\" assigned"
     },
     "collection": {
         "addDescription": "Add a description…",
@@ -449,7 +461,14 @@
         "remove": "Remove",
         "swap": "Swap",
         "title": "Tournaments",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Tournament \"{name}\" created",
+        "deleted": "Tournament deleted",
+        "errorCreating": "Error creating tournament",
+        "errorOpening": "Error opening match",
+        "errorSwapping": "Error swapping players",
+        "noMovesFound": "No moves found for this match",
+        "swappedPlayers": "Players swapped"
     },
     "anki": {
         "again": "Again",

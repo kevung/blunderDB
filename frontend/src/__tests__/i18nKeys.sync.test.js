@@ -25,27 +25,7 @@ import { LOCALES } from '../i18n/index.js';
 
 const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-const KNOWN_GAPS = new Set([
-    'match.commentUpdated',
-    'match.errorDeleting',
-    'match.errorSettingTournament',
-    'match.errorSwapping',
-    'match.errorUpdating',
-    'match.errorUpdatingComment',
-    'match.matchDeleted',
-    'match.matchUpdated',
-    'match.noMovesFound',
-    'match.swappedPlayers',
-    'match.tournamentCleared',
-    'match.tournamentSet',
-    'tournament.created',
-    'tournament.deleted',
-    'tournament.errorCreating',
-    'tournament.errorOpening',
-    'tournament.errorSwapping',
-    'tournament.noMovesFound',
-    'tournament.swappedPlayers'
-]);
+const KNOWN_GAPS = new Set([]);
 
 function sourceFiles(dir) {
     return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {

@@ -391,7 +391,19 @@
         "transcript": "Запись партии",
         "unforcedMoves": "Непринуждённые ходы",
         "vs": "против",
-        "wonBy": "Победил {player} ({points})"
+        "wonBy": "Победил {player} ({points})",
+        "commentUpdated": "Комментарий обновлён",
+        "errorDeleting": "Ошибка удаления матча",
+        "errorSettingTournament": "Ошибка назначения турнира",
+        "errorSwapping": "Ошибка смены игроков",
+        "errorUpdating": "Ошибка обновления матча",
+        "errorUpdatingComment": "Ошибка обновления комментария",
+        "matchDeleted": "Матч удалён",
+        "matchUpdated": "Матч обновлён",
+        "noMovesFound": "Для этого матча не найдено ходов",
+        "swappedPlayers": "Игроки поменялись местами",
+        "tournamentCleared": "Турнир снят с матча",
+        "tournamentSet": "Турнир «{name}» назначен"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -449,7 +461,14 @@
         "remove": "Удалить",
         "swap": "Поменять местами",
         "title": "Турниры",
-        "vs": "против"
+        "vs": "против",
+        "created": "Турнир «{name}» создан",
+        "deleted": "Турнир удалён",
+        "errorCreating": "Ошибка создания турнира",
+        "errorOpening": "Ошибка открытия матча",
+        "errorSwapping": "Ошибка смены игроков",
+        "noMovesFound": "Для этого матча не найдено ходов",
+        "swappedPlayers": "Игроки поменялись местами"
     },
     "anki": {
         "again": "Снова",

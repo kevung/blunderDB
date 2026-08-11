@@ -391,7 +391,19 @@
         "transcript": "Transcription",
         "unforcedMoves": "Coups non forcés",
         "vs": "vs",
-        "wonBy": "Gagné par {player} ({points})"
+        "wonBy": "Gagné par {player} ({points})",
+        "commentUpdated": "Commentaire mis à jour",
+        "errorDeleting": "Erreur lors de la suppression du match",
+        "errorSettingTournament": "Erreur lors de l'attribution du tournoi",
+        "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "errorUpdating": "Erreur lors de la mise à jour du match",
+        "errorUpdatingComment": "Erreur lors de la mise à jour du commentaire",
+        "matchDeleted": "Match supprimé",
+        "matchUpdated": "Match mis à jour",
+        "noMovesFound": "Aucun coup trouvé pour ce match",
+        "swappedPlayers": "Joueurs échangés",
+        "tournamentCleared": "Tournoi retiré du match",
+        "tournamentSet": "Tournoi « {name} » assigné"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -449,7 +461,14 @@
         "remove": "Supprimer",
         "swap": "Échanger",
         "title": "Tournois",
-        "vs": "vs"
+        "vs": "vs",
+        "created": "Tournoi « {name} » créé",
+        "deleted": "Tournoi supprimé",
+        "errorCreating": "Erreur lors de la création du tournoi",
+        "errorOpening": "Erreur lors de l'ouverture du match",
+        "errorSwapping": "Erreur lors de l'échange des joueurs",
+        "noMovesFound": "Aucun coup trouvé pour ce match",
+        "swappedPlayers": "Joueurs échangés"
     },
     "anki": {
         "again": "À revoir",
