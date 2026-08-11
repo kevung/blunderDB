@@ -66,7 +66,7 @@ var wantTables = []string{
 var wantIndexes = []string{
 	"idx_analysis_cube_error", "idx_analysis_is_close_cube",
 	"idx_analysis_is_forced", "idx_analysis_move_error",
-	"idx_analysis_position", "idx_analysis_win1", "idx_analysis_win_gammon",
+	"idx_analysis_position", "idx_analysis_win1", "idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck",
 	"idx_collection_position_collection", "idx_comment_position",

@@ -258,10 +258,28 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(f.Player2BackCheckerFilter, "K")
 		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
+		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
+		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
+		// clause on the outer LEFT JOIN. With the LEFT JOIN form the planner's
+		// only efficient path is idx_analysis_win_gammon(win_rate, gammon_rate),
+		// which returns rows ordered by rate, not by p.id — the ORDER BY at the
+		// end of this query then needs a full TEMP B-TREE sort. Feeding p.id
+		// through an IN-subquery instead lets SQLite keep scanning `position` in
+		// its natural (already p.id-ordered) rowid order and test membership per
+		// row, so the sort disappears entirely; idx_analysis_win_gammon now
+		// carries position_id as a third column (schema_sqlite.go) so the
+		// subquery is answered from the index alone, no analysis-table lookup.
+		// See FOLLOWUPS.md #4 and fiche-05 T3 for the verified EXPLAIN QUERY PLAN.
+		var winGammonWhere strings.Builder
+		var winGammonArgs []any
 		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(f.WinRateFilter, "w")
-		appendIntRangeSQL("a.player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &where, &args)
+		appendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
 		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(f.GammonRateFilter, "g")
-		appendIntRangeSQL("a.player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &where, &args)
+		appendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
+		if winGammonWhere.Len() > 0 {
+			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE 1=1" + winGammonWhere.String() + ")")
+			args = append(args, winGammonArgs...)
+		}
 		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(f.BackgammonRateFilter, "b")
 		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
 		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(f.Player2WinRateFilter, "W")

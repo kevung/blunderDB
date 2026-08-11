@@ -50,7 +50,10 @@ func TestSchemaV200_PositionColumns(t *testing.T) {
 	}
 }
 
-// TestSchemaV200_Indexes verifies that all expected v2.0.0 indexes are created.
+// TestSchemaV200_Indexes verifies that all expected v2.0.0-and-later indexes
+// are created. idx_analysis_win_gammon_covering superseded the 2-column
+// idx_analysis_win_gammon (fiche-05 T3): the old name is no longer created on
+// a fresh database, so it is not in wantIndexes below.
 func TestSchemaV200_Indexes(t *testing.T) {
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
@@ -68,7 +71,7 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_position_score",
 		"idx_position_score_cube",
 		"idx_analysis_position",
-		"idx_analysis_win_gammon",
+		"idx_analysis_win_gammon_covering",
 		"idx_analysis_win1",
 		"idx_analysis_cube_error",
 		"idx_analysis_move_error",

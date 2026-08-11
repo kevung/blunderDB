@@ -588,7 +588,13 @@ func (d *Database) SetupDatabase(path string) (err error) {
 		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
 		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		// Covering index for the win/gammon combo search (fiche-05 T3) — see the
+		// long comment on its twin in schema_sqlite.go. This is the DDL
+		// SetupDatabase runs for every FRESH database (":memory:", "create",
+		// GUI "new database"); ensureAllTablesExist (below in this package,
+		// db_schema.go) carries the matching statement for EXISTING databases,
+		// applied on every open.
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
