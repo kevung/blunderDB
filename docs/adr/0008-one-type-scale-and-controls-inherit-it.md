@@ -2,9 +2,10 @@
 
 ## Status
 
-accepted — and applied: every component now uses the tokens. The twenty absolute sizes that
-remain are the named exceptions below, and `input, select, textarea, button { font: inherit }`
-is declared per component rather than globally (see *Consequences*).
+accepted — and applied: every component now uses the tokens. `input, select, textarea,
+button { font: inherit }` is declared globally in `style.css` since 2026-08-11 (it was
+declared per component until then — see *Consequences*). The absolute sizes that remain are
+the named exceptions below, each now behind its own token.
 
 ## Context
 
@@ -55,10 +56,11 @@ The tokens exist as of this decision. The companion rule —
 input, select, textarea, button { font: inherit; }
 ```
 
-— is deliberately **not** applied globally yet: it would change the appearance of every field
-in the application in one commit, and nothing tests that. Each component declares it for
-itself as it is migrated; the global line is the last step, once no component depends on the
-browser's control font any more.
+— was deliberately **not** applied globally at first: it would have changed the appearance
+of every field in the application in one commit, and nothing tested that. Each component
+declared it for itself as it was migrated, nineteen times over. Once no component depended
+on the browser's control font any more, the per-component copies were removed and the line
+was moved into `style.css`, declared once (2026-08-11).
 
 Four rules follow from it, and they are what a reviewer should check:
 
@@ -72,9 +74,21 @@ Four rules follow from it, and they are what a reviewer should check:
    monospaced face reads a size larger at equal nominal size.
 
 Named exceptions, because a rule with no exceptions gets broken silently instead of
-argued: **chrome** (a dialog's title, its close cross), and **figures meant to be read at a
-glance** — the large numbers in the statistics tabs, at 20 and 28 px, are the point of those
-tabs and are not "text".
+argued, each now behind its own token rather than a repeated magic number:
+
+- **Dialog titles** — `--font-size-dialog-title` (20 px). A modal's title is scanned before
+  its body is read, so it sits a size above a panel title. Two small utility dialogs,
+  `ConfigModal` and `ProtectedCopyModal`, keep `--font-size-title` (15 px) on their title
+  instead — a deliberate choice, not an oversight, made when the token was introduced
+  (2026-08-11): both are compact, low-ceremony dialogs where a panel-sized title reads right.
+- **Dialog close crosses** — `--font-size-dialog-close` (24 px).
+- **Figures meant to be read at a glance** — `--font-size-stat-figure` (28 px): the large
+  numbers in the statistics tabs, and the running counters in the import-progress dialogs
+  (`FileImportProgressModal`, `ImportProgressModal`). Both are numbers the screen exists to
+  show, not "text".
+- **Monospace nudged to `0.92em`** (rule 4 above) and explicit `font-size: inherit` (which is
+  rule 1's "or nothing at all, and inherits" spelled out) are not exceptions to name — they
+  already comply with the rule as written.
 
 ## Considered options
 
@@ -94,17 +108,24 @@ tabs and are not "text".
 
 - **The migration was transversal and visual, and no test covered it.** It was therefore
   done in two passes — the four heaviest panels first, checked on screen, then the remaining
-  twenty-seven components — rather than in one commit. `font: inherit` is declared by each
-  component that has controls (seventeen of them) instead of once globally, so a future
-  component that deliberately wants the platform's control font can still say so.
+  twenty-seven components — rather than in one commit. `font: inherit` was declared by each
+  component that had controls (nineteen of them by the end) instead of once globally, so a
+  future component that deliberately wanted the platform's control font could still say so.
+- **The global line landed on 2026-08-11**, once the per-component count had grown to
+  nineteen with no exception among them: every component with form controls wanted the
+  inherited font, so the reason to keep the rule local (letting a future component opt out)
+  had never been exercised. `input, select, textarea, button { font: inherit; }` now lives
+  once in `style.css`; the nineteen local copies (and their repeated comment) are gone. A
+  component that genuinely wants the platform's control font can still override with its own
+  `font-family`/`font-size` — the global rule does not forbid that, it just stops it being the
+  silent default.
 - The four heaviest components — `MatchPanel` (33 declarations), `AnkiPanel` (29, seven
   distinct sizes), `SearchPanel` (26), `TournamentPanel` (17) — held 37% of all declarations
   and were migrated first, for that reason.
 - **Progress is measurable**, which is the point of writing the baseline down. The migration
-  took the codebase from 285 declarations over 20 distinct values to **263 using the tokens
-  and 20 absolute ones**, all of them named exceptions: modal titles (18–20 px), close
-  crosses (24 px, `1.5rem`), the large statistics figures (28 px), and two monospace nudges
-  at `0.92em`. What should stay near zero is the count of *unexplained* absolute values:
+  took the codebase from 285 declarations over 20 distinct values to 263 using the tokens and
+  20 absolute ones, all of them named exceptions. What should stay near zero is the count of
+  *unexplained* absolute values:
 
   ```bash
   cd frontend/src && grep -rho 'font-size:[^;]*;' components/ *.svelte \
@@ -116,3 +137,39 @@ tabs and are not "text".
   become 11 px and lean on colour instead — a deliberate, visible change on a few badges.
 - A reviewer now has something to point at. "Why is this 11 px?" has an answer other than
   taste.
+- **The exceptions themselves converged onto tokens on 2026-08-11** (fiche-08). The 20
+  absolute values counted above had, by then, fragmented into duplicates: dialog titles alone
+  spanned four values (a 15 px token use, 20 px, `1.25rem`, and a 12 px base-token misuse in
+  `MergePlayersModal`), close crosses spanned three (24 px, `1.5rem`, 18 px), and three
+  absolutes sat outside any named exception (`App.svelte`'s drop overlay at `1.3rem`, and the
+  28 px import counters, which had never been folded into the statistics-figure exception).
+  Two tokens fixed the first two: `--font-size-dialog-title` (20 px) and
+  `--font-size-dialog-close` (24 px). The statistics-figure exception grew a token too,
+  `--font-size-stat-figure` (28 px), reused by the import-progress counters since they are the
+  same kind of figure. Before:
+
+  ```
+        4 font-size: 28px;
+        4 font-size: 20px;
+        3 font-size: 1.5rem;
+        2 font-size: inherit;
+        2 font-size: 24px;
+        2 font-size: 18px;
+        2 font-size: 0.92em;
+        1 font-size: 1.3rem;
+        1 font-size: 1.25rem;
+  ```
+
+  After:
+
+  ```
+        2 font-size: inherit;
+        2 font-size: 0.92em;
+  ```
+
+  Both remaining lines already comply with rule 1 as written (`inherit` *is* "nothing at all,
+  and inherits") and rule 4 (the monospace nudge) — zero unexplained absolute values.
+  `ConfigModal` and `ProtectedCopyModal` keep `--font-size-title` on their dialog title
+  instead of adopting the new `--font-size-dialog-title`: both are compact utility dialogs
+  where the smaller, panel-scale title was judged to read right, so they were left alone
+  rather than folded into the new token for uniformity's sake.
