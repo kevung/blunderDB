@@ -25,7 +25,8 @@ import {
     toggleEPCMode,
     togglePipcount,
     reloadAllPositions,
-    loadRandomPosition
+    loadRandomPosition,
+    showDatesAndMetadata
 } from './positionService.js';
 import { importDatabase, importPosition, importFolder, pastePosition } from './importService.js';
 import { exportDatabase } from './exportService.js';
@@ -158,7 +159,6 @@ export function handleKeyDown(event) {
     const showComment = get(openPanels).has(PANEL.COMMENT);
     if (
         document.activeElement.closest('.filter-library-panel') ||
-        document.activeElement.closest('.search-history-panel') ||
         document.activeElement.closest('.match-panel') ||
         document.activeElement.closest('.collection-panel') ||
         document.activeElement.closest('.tournament-panel') ||
@@ -306,6 +306,9 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('e')) {
         event.preventDefault();
         toggleEPCMode();
+    } else if (event.ctrlKey && letter('g')) {
+        event.preventDefault();
+        showDatesAndMetadata();
     } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && event.key === 'J')) {
         event.preventDefault();
         viewStore.selectPreviousView();
