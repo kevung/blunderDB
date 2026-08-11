@@ -44,8 +44,54 @@
     let dragStartX = 0;
     let tabBarEl;
 
+    // Roving tabindex: only one tab button is in the Tab order at a time (the
+    // ARIA "manual activation" tabs pattern — fits this component especially
+    // well since selecting a tab remounts the panel below, see the file-top
+    // comment, so arrow keys should move focus without forcing a remount).
+    // Kept in sync with the selected tab; local arrow-key navigation updates
+    // it without touching activeTabStore until the user actually activates
+    // the focused tab (Enter/Space).
+    let rovingIndex = $state(0);
+    $effect(() => {
+        const idx = tabs.findIndex((tab) => tab.id === $activeTabStore);
+        if (idx !== -1) rovingIndex = idx;
+    });
+
     function selectTab(tabId) {
         activeTabStore.set(tabId);
+    }
+
+    function focusTabAt(index) {
+        const buttons = tabBarEl?.children;
+        if (!buttons || !buttons[index]) return;
+        rovingIndex = index;
+        /** @type {HTMLElement} */ (buttons[index]).focus();
+    }
+
+    function handleTabKeyDown(event, index) {
+        switch (event.key) {
+            case 'Enter':
+            case ' ':
+                event.preventDefault();
+                selectTab(tabs[index].id);
+                break;
+            case 'ArrowRight':
+                event.preventDefault();
+                focusTabAt((index + 1) % tabs.length);
+                break;
+            case 'ArrowLeft':
+                event.preventDefault();
+                focusTabAt((index - 1 + tabs.length) % tabs.length);
+                break;
+            case 'Home':
+                event.preventDefault();
+                focusTabAt(0);
+                break;
+            case 'End':
+                event.preventDefault();
+                focusTabAt(tabs.length - 1);
+                break;
+        }
     }
 
     // The native horizontal scrollbar is hidden (see CSS) so it doesn't eat
@@ -111,7 +157,7 @@
 </script>
 
 <div class="tabbed-panel">
-    <div class="tab-bar" bind:this={tabBarEl} onwheel={handleTabBarWheel}>
+    <div class="tab-bar" bind:this={tabBarEl} onwheel={handleTabBarWheel} role="tablist">
         {#each tabs as tab, i (tab.id)}
             <button
                 class="tab-button"
@@ -121,7 +167,11 @@
                 title={tab.shortcut ? `${$t(tab.labelKey)} (${tab.shortcut})` : $t(tab.labelKey)}
                 data-testid="tab-{tab.id}"
                 data-tour="tab-{tab.id}"
+                role="tab"
+                aria-selected={$activeTabStore === tab.id}
+                tabindex={rovingIndex === i ? 0 : -1}
                 onmousedown={(e) => handleMouseDown(e, i)}
+                onkeydown={(e) => handleTabKeyDown(e, i)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
                     {#if tab.icon === 'analysis'}
@@ -187,7 +237,7 @@
         {/each}
     </div>
 
-    <div class="tab-content" data-testid="tab-content">
+    <div class="tab-content" data-testid="tab-content" role="tabpanel">
         {#if $activeTabStore === 'analysis'}
             <AnalysisPanel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}

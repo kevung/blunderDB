@@ -23,6 +23,7 @@
     } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
     import { confirmAction } from '../services/confirmService.js';
+    import { panelKeyGuard } from '../services/keyboardService.js';
 
     let { onOpenCollection } = $props();
 
@@ -513,22 +514,11 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
-        if (event.target.matches('input, textarea')) return;
 
-        // Let Ctrl+key combos pass through to global handler
-        if (event.ctrlKey) return;
-
-        // Let navigation keys pass through to global handler for position browsing
-        const isNavigationKey =
-            event.key === 'j' ||
-            event.key === 'k' ||
-            event.key === 'ArrowLeft' ||
-            event.key === 'ArrowRight' ||
-            event.key === 'h' ||
-            event.key === 'l' ||
-            event.key === 'PageUp' ||
-            event.key === 'PageDown';
-        if (isNavigationKey) return;
+        // Let Ctrl/Meta combos, Space, '?', typing in an editable field, and
+        // position-browsing keys (this panel has no in-panel list navigation of
+        // its own) pass through to the global handler — see keyboardService.panelKeyGuard.
+        if (panelKeyGuard(event, { allowNavKeys: true })) return;
 
         // Stop other keyboard events from propagating to global handlers
         event.stopPropagation();
@@ -593,7 +583,7 @@
     });
 </script>
 
-<section class="collection-panel" id="collectionPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label={$t('collection.title')}>
+<section class="collection-panel" id="collectionPanel" tabindex="-1" role="region" aria-label={$t('collection.title')}>
     {#if view === 'list'}
         <!-- Collections list -->
         <div class="table-wrapper">
