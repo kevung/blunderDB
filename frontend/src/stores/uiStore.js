@@ -41,7 +41,6 @@ export const MODAL = {
 export const PANEL = {
     ANALYSIS: 'analysis',
     COMMENT: 'comment',
-    SEARCH_HISTORY: 'searchHistory',
     MATCH: 'match',
     COLLECTION: 'collection',
     TOURNAMENT: 'tournament',

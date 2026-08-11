@@ -103,7 +103,7 @@
     import { exportDatabase, handleExportCommit, handleExportCancel } from './services/exportService.js';
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
-    import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
+    import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
@@ -381,7 +381,7 @@
             onLoadPositionsByFilters: loadPositionsByFilters,
             onLoadAllPositions: reloadAllPositions,
             toggleMetadataPanel,
-            toggleSearchHistoryPanel,
+            focusSearchTab,
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,

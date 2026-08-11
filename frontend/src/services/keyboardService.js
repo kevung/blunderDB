@@ -65,7 +65,7 @@ export function toggleHelpModal() {
     }
 }
 
-export function toggleSearchHistoryPanel() {
+export function focusSearchTab() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.searchHistoryRequiresDb'));
         return;
@@ -284,7 +284,7 @@ export function handleKeyDown(event) {
         event.preventDefault();
         toggleCommentPanel();
     } else if (event.ctrlKey && letter('f')) {
-        toggleSearchHistoryPanel();
+        focusSearchTab();
     } else if (!event.ctrlKey && event.key === '?') {
         toggleHelpModal();
     } else if (event.ctrlKey && letter('m')) {

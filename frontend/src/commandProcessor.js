@@ -81,7 +81,7 @@ export function processCommand(command) {
     } else if (command.startsWith('s')) {
         handleSearch(command);
     } else if (command === 'history' || command === 'hi') {
-        callbacks.toggleSearchHistoryPanel?.();
+        callbacks.focusSearchTab?.();
     } else if (command === 'match' || command === 'ma') {
         callbacks.toggleMatchPanel?.();
     } else if (command === 'collection' || command === 'coll') {
