@@ -4,9 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"strings"
 
@@ -112,18 +110,64 @@ func RunCall(args []string) error {
 		body = string(b)
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/v1/"+method, strings.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "/v1/"+method, strings.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("call: build request: %w", err)
+	}
 	req.Header.Set(middleware.TenantHeader, *scope)
-	rec := httptest.NewRecorder()
-	srv.Handler().ServeHTTP(rec, req)
+
+	// A minimal ResponseWriter that streams straight to stdout, rather than
+	// httptest.NewRecorder buffering the entire response in memory before a
+	// single copy at the end: list-style routes and exports stream NDJSON
+	// through http.Flusher (see ndjson.go, handlers_imports.go), and a large
+	// export or a long-running list previously had to finish (and sit fully
+	// in RAM) before the caller saw a single byte.
+	w := newStdoutResponseWriter()
+	srv.Handler().ServeHTTP(w, req)
 
 	// The response body (JSON or the error envelope) always goes to stdout so
 	// it stays parseable; an error status maps to a non-zero exit code.
-	if _, err := io.Copy(os.Stdout, rec.Body); err != nil {
-		return err
-	}
-	if rec.Code >= 400 {
-		return fmt.Errorf("call: %s returned HTTP %d", method, rec.Code)
+	if w.status >= 400 {
+		return fmt.Errorf("call: %s returned HTTP %d", method, w.status)
 	}
 	return nil
 }
+
+// stdoutResponseWriter is a minimal http.ResponseWriter/http.Flusher that
+// writes response bytes straight to os.Stdout as the handler produces them,
+// tracking only the status code (needed to decide the process exit code) —
+// everything else in the response the handler wrote is already on stdout by
+// the time ServeHTTP returns, so there is nothing left to copy.
+type stdoutResponseWriter struct {
+	header    http.Header
+	status    int
+	wroteHead bool
+}
+
+func newStdoutResponseWriter() *stdoutResponseWriter {
+	return &stdoutResponseWriter{header: make(http.Header)}
+}
+
+func (w *stdoutResponseWriter) Header() http.Header { return w.header }
+
+func (w *stdoutResponseWriter) WriteHeader(status int) {
+	if w.wroteHead {
+		return
+	}
+	w.status = status
+	w.wroteHead = true
+}
+
+func (w *stdoutResponseWriter) Write(b []byte) (int, error) {
+	if !w.wroteHead {
+		w.WriteHeader(http.StatusOK) // implicit 200, matching net/http's own ResponseWriter
+	}
+	return os.Stdout.Write(b)
+}
+
+// Flush satisfies http.Flusher. Every Write already lands on os.Stdout
+// immediately (no intermediate buffer in this type), so there is nothing to
+// flush; it exists so handlers that type-assert w.(http.Flusher) before
+// streaming NDJSON (ndjson.go, handlers_imports.go) find one, same as
+// httptest.ResponseRecorder did.
+func (w *stdoutResponseWriter) Flush() {}

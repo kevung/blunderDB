@@ -115,6 +115,44 @@ func TestRunCallEndToEnd(t *testing.T) {
 	}
 }
 
+// TestStdoutResponseWriter_ImplicitStatus covers the writer RunCall now feeds
+// to ServeHTTP instead of httptest.NewRecorder: a handler that never calls
+// WriteHeader still reports 200 (matching net/http's own ResponseWriter
+// convention), and bytes reach stdout the instant Write is called rather than
+// being held until some later flush the type doesn't have.
+func TestStdoutResponseWriter_ImplicitStatus(t *testing.T) {
+	out, err := captureStdout(t, func() error {
+		w := newStdoutResponseWriter()
+		if _, werr := w.Write([]byte("hello")); werr != nil {
+			return werr
+		}
+		if w.status != http.StatusOK {
+			t.Errorf("status after an unheadered Write = %d, want %d", w.status, http.StatusOK)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out != "hello" {
+		t.Errorf("stdout = %q, want %q", out, "hello")
+	}
+}
+
+// TestStdoutResponseWriter_ExplicitStatus covers a handler that does call
+// WriteHeader (e.g. an error envelope) before writing its body: the writer
+// must keep that status rather than defaulting to 200, and a second
+// WriteHeader call (some handlers call it defensively) must not override it —
+// mirroring net/http's own ResponseWriter contract.
+func TestStdoutResponseWriter_ExplicitStatus(t *testing.T) {
+	w := newStdoutResponseWriter()
+	w.WriteHeader(http.StatusNotFound)
+	w.WriteHeader(http.StatusInternalServerError) // must be ignored
+	if w.status != http.StatusNotFound {
+		t.Errorf("status = %d, want %d (first WriteHeader wins)", w.status, http.StatusNotFound)
+	}
+}
+
 // TestRunCallErrorExit verifies an unknown method prints the error envelope and
 // returns a non-zero (error) result.
 func TestRunCallErrorExit(t *testing.T) {
