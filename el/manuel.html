@@ -241,6 +241,16 @@ Bearoff ;</p></li>
 <li><p><strong>Ταυτότητα εκδότη</strong> — το κλειδί που υπογράφει τις σημάνσεις προέλευσής σας, το οποίο περιγράφεται στην ενότητα <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>.</p></li>
 </ul>
 <p>Η καρτέλα <em>Διεπαφή</em> επιτρέπει την επιλογή γλώσσας ανάμεσα σε αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά και ρωσικά. Ολόκληρη η διεπαφή (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή γλώσσας αποθηκεύεται και διατηρείται από τη μία συνεδρία στην άλλη.</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>).</p>
 <p>Η καρτέλα <em>Χρώματα ταμπλό</em> επιτρέπει την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτόχρωμες και σκουρόχρωμες γλώσσες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι βούλες των ζαριών και ο κύβος. Το κουμπί <em>Επαναφορά</em> επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.</p>
 <p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Πίνακας Bearoff</span></a>) au-delà de la base TS-06-06

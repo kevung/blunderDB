@@ -241,6 +241,16 @@ Bearoff ;</p></li>
 <li><p><strong>Идентичность автора</strong> — ключ, которым подписываются ваши отметки происхождения; описан в разделе <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>.</p></li>
 </ul>
 <p>Вкладка <em>Интерфейс</em> позволяет выбрать язык из английского, французского, немецкого, итальянского, испанского, финского, японского, греческого и русского. Весь интерфейс (панель инструментов, панели, сообщения, справка) переводится на выбранный язык. Выбор языка сохраняется и переносится из сеанса в сеанс.</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>).</p>
 <p>Вкладка <em>Цвета доски</em> позволяет настроить цвета доски. У каждого элемента свой выбор цвета: фон, рамка, светлые и тёмные пункты, шашки игрока 1 и игрока 2, кубики, точки на кубиках и куб удвоения. Кнопка <em>Сбросить</em> возвращает все цвета по умолчанию. Как и язык, выбранные цвета сохраняются между сеансами.</p>
 <p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Панель Bearoff</span></a>) au-delà de la base TS-06-06

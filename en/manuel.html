@@ -240,6 +240,16 @@ Bearoff ;</p></li>
 <li><p><strong>Issuer identity</strong> — the key that signs your watermarks, described in <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>.</p></li>
 </ul>
 <p>The <em>Interface</em> tab lets you choose the language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>).</p>
 <p>The <em>Board colours</em> tab lets you customise the board’s colours. Each element has its own colour picker: the background, the border, the light and dark points, player 1’s and player 2’s checkers, the dice, the dice pips and the cube. The <em>Reset</em> button restores all the default colours. Like the language, the chosen colours are kept across sessions.</p>
 <p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Bearoff Panel</span></a>) au-delà de la base TS-06-06

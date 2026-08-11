@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 18:08
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 18:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1142,78 +1142,75 @@ LaTeX Font Info:    Font shape `TU/FreeMono(1)/m/it' will be
 [11
 
 ] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25]
-[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37]
-Underfull \vbox (badness 1668) detected at line 4256
- []
-
-[38] [39] [40] [41] [42] [43] [44] [45]
+[26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40]
+[41] [42] [43] [44] [45]
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 8.99994pt on input line 6056.
- [46] [47] [48] [49] [50] [51] [52]
-[53] [54] [55]
+(Font)              scaled to size 8.99994pt on input line 6079.
+ [46] [47] [48] [49] [50] [51] [52] [53] [54] [55]
+[56]
 LaTeX Font Info:    Font shape `TU/FreeMono(0)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6937.
+(Font)              scaled to size 10.79993pt on input line 7004.
 LaTeX Font Info:    Font shape `TU/FreeMono(1)/b/n' will be
-(Font)              scaled to size 10.79993pt on input line 6937.
- [56]
-Overfull \hbox (11.423pt too wide) in paragraph at lines 7021--7023
+(Font)              scaled to size 10.79993pt on input line 7004.
+
+Overfull \hbox (11.423pt too wide) in paragraph at lines 7088--7090
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (11.423pt too wide) detected at line 7024
+Overfull \hbox (11.423pt too wide) detected at line 7091
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7080--7082
+Underfull \hbox (badness 10000) in paragraph at lines 7147--7149
 [][][]\TU/FreeMono(1)/m/n/10 cors[]allow[]origin
  []
 
-[57] [58]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7465--7467
+[57] [58] [59]
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7532--7534
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7468
+Overfull \hbox (1.06567pt too wide) detected at line 7535
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[59] [60]
-Underfull \hbox (badness 10000) in paragraph at lines 7762--7764
+[60] [61]
+Underfull \hbox (badness 10000) in paragraph at lines 7829--7831
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7808--7810
+Underfull \hbox (badness 10000) in paragraph at lines 7875--7877
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 7822--7824
+Underfull \hbox (badness 6876) in paragraph at lines 7889--7891
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7873--7875
+Underfull \hbox (badness 10000) in paragraph at lines 7940--7942
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
-[61]
-Underfull \hbox (badness 7221) in paragraph at lines 8043--8045
+[62]
+Underfull \hbox (badness 7221) in paragraph at lines 8110--8112
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
 
-[62]
+[63]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [63] [64]
+ [64] [65]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
@@ -1222,47 +1219,47 @@ File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [65] [66] [67] [68]
+ [66] [67] [68] [69]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [69] [70] [71] [72]
-Underfull \hbox (badness 6741) in paragraph at lines 8354--8356
+ [70] [71] [72] [73]
+Underfull \hbox (badness 6741) in paragraph at lines 8421--8423
 []\TU/FreeSerif(1)/b/n/10 Colecciones\TU/FreeSerif(1)/m/n/10 : \TU/FreeMono(1)/
 m/n/10 collection \TU/FreeSerif(1)/m/n/10 y \TU/FreeMono(1)/m/n/10 collection_p
 osition \TU/FreeSerif(1)/m/n/10 (tabla de enlace) agrupan posiciones elegidas
  []
 
-[73] [74] [75] [76]
-Capítulo 3.
-[77
-
-] [78
+[74] [75] [76] [77] [78
 
 ]
-Capítulo 4.
+Capítulo 3.
 [79] [80
 
 ]
+Capítulo 4.
+[81] [82
+
+]
 Capítulo 5.
-(./blunderdb.ind) [81] (./blunderdb.aux)
+(./blunderdb.ind) [83] (./blunderdb.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 56ED8F1956A69D288E70C141AFC8A6D6;37504.
+(rerunfilecheck)             Checksum: 1C093756CC4DE40B43ACEA049B0DF506;37777.
  ) 
 Here is how much of TeX's memory you used:
- 19444 strings out of 476443
- 399359 string characters out of 5793962
+ 19445 strings out of 476443
+ 399400 string characters out of 5793962
  2044627 words of memory out of 5000000
- 40969 multiletter control sequences out of 15000+600000
+ 40970 multiletter control sequences out of 15000+600000
  566823 words of font info for 137 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3329b,672s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.pdf (85 pages).
+Output written on blunderdb.pdf (87 pages).

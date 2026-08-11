@@ -241,6 +241,16 @@ Bearoff ;</p></li>
 <li><p><strong>Ausstelleridentität</strong> — der Schlüssel, mit dem Ihre Wasserzeichen signiert werden; beschrieben im Abschnitt <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Eine Datenbank weitergeben: Herkunft und Passwort</span></a>.</p></li>
 </ul>
 <p>Auf der Registerkarte <em>Oberfläche</em> kann die Sprache unter Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch und Russisch gewählt werden. Die gesamte Benutzeroberfläche (Werkzeugleiste, Panels, Meldungen, Hilfe) wird in die gewählte Sprache übersetzt. Die Sprachwahl wird gespeichert und über die Sitzungen hinweg beibehalten.</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Befehlszeilenschnittstelle (CLI)</span></a>).</p>
 <p>Auf der Registerkarte <em>Brettfarben</em> lassen sich die Farben des Bretts anpassen. Jedes Element besitzt einen eigenen Farbwähler: der Hintergrund, der Rahmen, die hellen und dunklen Zungen, die Steine von Spieler 1 und Spieler 2, die Würfel, die Würfelaugen und der Dopplerwürfel. Die Schaltfläche <em>Zurücksetzen</em> stellt alle Standardfarben wieder her. Wie die Sprache bleiben auch die gewählten Farben von einer Sitzung zur nächsten erhalten.</p>
 <p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Bearoff-Panel</span></a>) au-delà de la base TS-06-06

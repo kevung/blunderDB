@@ -17,37 +17,37 @@
 \contentsline {subsection}{\numberline {2.2.5}Asetukset}{14}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Opastetut kierrokset ja esimerkkitietokanta}{15}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Asemien selaaminen}{15}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}Asemien muokkaus}{15}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.8}Asemien muokkaus}{16}{subsection.2.2.8}%
 \contentsline {subsection}{\numberline {2.2.9}Komentorivi}{16}{subsection.2.2.9}%
 \contentsline {subsection}{\numberline {2.2.10}Analyysipaneeli}{16}{subsection.2.2.10}%
 \contentsline {subsection}{\numberline {2.2.11}Kommenttipaneeli}{16}{subsection.2.2.11}%
 \contentsline {subsection}{\numberline {2.2.12}Hakupaneeli}{16}{subsection.2.2.12}%
-\contentsline {subsection}{\numberline {2.2.13}Kokoelmapaneeli}{17}{subsection.2.2.13}%
-\contentsline {subsection}{\numberline {2.2.14}Ottelupaneeli}{17}{subsection.2.2.14}%
-\contentsline {subsection}{\numberline {2.2.15}Turnauspaneeli}{18}{subsection.2.2.15}%
-\contentsline {subsection}{\numberline {2.2.16}Stats\sphinxhyphen {}paneeli}{18}{subsection.2.2.16}%
-\contentsline {subsubsection}{Johdanto}{18}{subsubsection*.7}%
+\contentsline {subsection}{\numberline {2.2.13}Kokoelmapaneeli}{18}{subsection.2.2.13}%
+\contentsline {subsection}{\numberline {2.2.14}Ottelupaneeli}{18}{subsection.2.2.14}%
+\contentsline {subsection}{\numberline {2.2.15}Turnauspaneeli}{19}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.16}Stats\sphinxhyphen {}paneeli}{19}{subsection.2.2.16}%
+\contentsline {subsubsection}{Johdanto}{19}{subsubsection*.7}%
 \contentsline {subsubsection}{Paneelin avaaminen}{19}{subsubsection*.8}%
 \contentsline {subsubsection}{Suodatinpalkki}{19}{subsubsection*.9}%
 \contentsline {paragraph}{Pelaajanäkökulma}{19}{paragraph*.10}%
-\contentsline {paragraph}{Saatavilla olevat suodattimet}{19}{paragraph*.11}%
+\contentsline {paragraph}{Saatavilla olevat suodattimet}{20}{paragraph*.11}%
 \contentsline {subsubsection}{PR / MWC \sphinxhyphen {}vaihto}{20}{subsubsection*.12}%
-\contentsline {subsubsection}{Dashboard\sphinxhyphen {}välilehti}{20}{subsubsection*.13}%
-\contentsline {paragraph}{Tasokortit}{20}{paragraph*.14}%
+\contentsline {subsubsection}{Dashboard\sphinxhyphen {}välilehti}{21}{subsubsection*.13}%
+\contentsline {paragraph}{Tasokortit}{21}{paragraph*.14}%
 \contentsline {paragraph}{Liukuva PR viimeisten N päätöksen perusteella}{21}{paragraph*.15}%
 \contentsline {paragraph}{Top blunders}{21}{paragraph*.16}%
 \contentsline {subsubsection}{Progression\sphinxhyphen {}välilehti}{21}{subsubsection*.17}%
 \contentsline {paragraph}{Turnauskohtainen viivakaavio}{21}{paragraph*.18}%
 \contentsline {paragraph}{Ottelukohtainen hajontakaavio}{21}{paragraph*.19}%
-\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{21}{subsubsection*.20}%
-\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{21}{paragraph*.21}%
+\contentsline {subsubsection}{Erreurs\sphinxhyphen {}välilehti}{22}{subsubsection*.20}%
+\contentsline {paragraph}{Jakauma kuutiotoimen mukaan}{22}{paragraph*.21}%
 \contentsline {paragraph}{Checker / Cube \sphinxhyphen {}vertailu}{22}{paragraph*.22}%
 \contentsline {paragraph}{Virheiden suuruusjakauman histogrammi}{22}{paragraph*.23}%
 \contentsline {subsubsection}{Yhdistämissääntö}{22}{subsubsection*.24}%
 \contentsline {subsubsection}{MWC: rajoitukset}{22}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Bearoff\sphinxhyphen {}paneeli}{22}{subsection.2.2.17}%
-\contentsline {subsubsection}{Bearoff\sphinxhyphen {}paneelin metodologia ja oletukset}{23}{subsubsection*.26}%
-\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}paneeli}{24}{subsection.2.2.18}%
+\contentsline {subsection}{\numberline {2.2.17}Bearoff\sphinxhyphen {}paneeli}{23}{subsection.2.2.17}%
+\contentsline {subsubsection}{Bearoff\sphinxhyphen {}paneelin metodologia ja oletukset}{24}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}paneeli}{25}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metatietopaneeli}{25}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Tietokannan jakaminen: alkuperä ja salasana}{25}{subsection.2.2.20}%
 \contentsline {subsubsection}{Tietokannan merkitseminen alkuperällään}{25}{subsubsection*.27}%
@@ -56,7 +56,7 @@
 \contentsline {subsubsection}{Tiedoston alkuperän lukeminen}{27}{subsubsection*.30}%
 \contentsline {section}{\numberline {2.3}Käyttöopas}{27}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Luo uusi tietokanta}{27}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{27}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.2}Avaa olemassa oleva tietokanta}{28}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Tuo ja yhdistä tietokanta}{28}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Muokkaa asemaa}{28}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Lisää asema tietokantaan}{29}{subsection.2.3.5}%
@@ -73,7 +73,7 @@
 \contentsline {subsection}{\numberline {2.3.16}Näytä suoritustilastot}{32}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Laske EPC}{32}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Näytä XG:stä tuodun aseman analyysi}{32}{subsection.2.3.18}%
-\contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{32}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.19}Vie asema XG:hen}{33}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Tarkastele eri asemia}{33}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Hae asemia kriteerien perusteella}{33}{subsection.2.3.21}%
 \contentsline {subsection}{\numberline {2.3.22}Pour aller plus loin}{33}{subsection.2.3.22}%
@@ -118,66 +118,67 @@
 \contentsline {subsection}{\numberline {2.6.13}info — Tietokannan metatiedot}{51}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}edit — Muokkaa metatietoja}{51}{subsection.2.6.14}%
 \contentsline {subsection}{\numberline {2.6.15}verify — Tarkista eheys}{51}{subsection.2.6.15}%
-\contentsline {subsection}{\numberline {2.6.16}delete — Poista tietoja}{52}{subsection.2.6.16}%
-\contentsline {subsection}{\numberline {2.6.17}Työnkulkuesimerkkejä}{52}{subsection.2.6.17}%
-\contentsline {subsubsection}{Turnaushakemiston tuonti}{52}{subsubsection*.35}%
+\contentsline {subsection}{\numberline {2.6.16}vacuum — Compacter la base de données}{52}{subsection.2.6.16}%
+\contentsline {subsection}{\numberline {2.6.17}delete — Poista tietoja}{52}{subsection.2.6.17}%
+\contentsline {subsection}{\numberline {2.6.18}Työnkulkuesimerkkejä}{53}{subsection.2.6.18}%
+\contentsline {subsubsection}{Turnaushakemiston tuonti}{53}{subsubsection*.35}%
 \contentsline {subsubsection}{Säännöllinen varmuuskopiointi}{53}{subsubsection*.36}%
 \contentsline {subsubsection}{Virheiden analysointi}{53}{subsubsection*.37}%
-\contentsline {subsection}{\numberline {2.6.18}Paluukoodit}{53}{subsection.2.6.18}%
-\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{53}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{53}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Mikä motivoi blunderDB:n luomiseen?}{53}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.6.19}Paluukoodit}{53}{subsection.2.6.19}%
+\contentsline {section}{\numberline {2.7}Usein kysytyt kysymykset (UKK)}{54}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Mihin blunderDB:tä käytetään?}{54}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Mikä motivoi blunderDB:n luomiseen?}{54}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Miten nykyisen tietokannan tila tallennetaan?}{54}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Pitäisikö minun luoda eri tietokantoja eri asemaluokille?}{54}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}Miten useita tietokantoja yhdistetään?}{54}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{54}{subsection.2.7.6}%
-\contentsline {subsection}{\numberline {2.7.7}Mikä on kokoelma?}{54}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.6}Mitä ottelutiedostomuotoja tuetaan?}{55}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}Mikä on kokoelma?}{55}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Mikä on EPC?}{55}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}Onko blunderDB:ssä komentorivikäyttöliittymä?}{55}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}Voinko muokata, kopioida ja jakaa blunderDB:tä?}{55}{subsection.2.7.10}%
 \contentsline {subsection}{\numberline {2.7.11}Mitä tietomuotoa blunderDB käyttää?}{55}{subsection.2.7.11}%
 \contentsline {subsection}{\numberline {2.7.12}Mitkä olivat blunderDB:n suunnitteluperiaatteet?}{55}{subsection.2.7.12}%
-\contentsline {subsection}{\numberline {2.7.13}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{55}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.13}Mikä on blunderDB:n ohjelmistoarkkitehtuuri?}{56}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Millä alustoilla blunderDB toimii?}{56}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Mistä blunderDB:n kuvake on peräisin?}{56}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}tila (palvelin)}{56}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Yleiskatsaus}{56}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{56}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.2}\sphinxstyleliteralintitle {\sphinxupquote {serve}}\sphinxhyphen {}demoni}{57}{subsection.2.8.2}%
 \contentsline {subsubsection}{Päätepisteet}{57}{subsubsection*.38}%
-\contentsline {subsubsection}{Käyttöönotto Dockerilla}{57}{subsubsection*.39}%
+\contentsline {subsubsection}{Käyttöönotto Dockerilla}{58}{subsubsection*.39}%
 \contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}taustajärjestelmä ja monikäyttäjäisyys}{58}{subsection.2.8.3}%
-\contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{58}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.4}SQLite\sphinxhyphen {}tietokannan siirtäminen PostgreSQL:ään}{59}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Yleiskäyttöinen \sphinxstyleliteralintitle {\sphinxupquote {call}}\sphinxhyphen {}välittäjä}{59}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Liite: Suodattimien edistynyt käyttö}{60}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Asemien haku komentorivillä}{60}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Haku nykyisistä tuloksista}{60}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Suodatinkirjasto}{60}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.2}Haku nykyisistä tuloksista}{61}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Suodatinkirjasto}{61}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Esimerkkejä}{61}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{62}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{62}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{63}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{63}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{64}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Latauksen eheyden tarkistus (SHA256)}{68}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{71}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}blunderDB:n asennus}{71}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Luvan antaminen blunderDB:n suorittamiseen}{71}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}Liite: Tietokannan skeema}{71}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Versiointi ja migraatiot}{71}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Päätaulut}{72}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Suunnitteluperiaatteet}{72}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Liite: Tilastomalli — XG / gnuBG / blunderDB \sphinxhyphen {}yhdenmukaisuus}{72}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Muodolliset määritelmät}{73}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{73}{subsubsection*.53}%
-\contentsline {subsubsection}{Snowie Error Rate}{73}{subsubsection*.54}%
-\contentsline {subsubsection}{MWC\sphinxhyphen {}tappio (Match Winning Chance)}{73}{subsubsection*.55}%
-\contentsline {subsection}{\numberline {2.13.2}PR:n nimittäjässä lasketut päätökset}{74}{subsection.2.13.2}%
-\contentsline {subsubsection}{Nappulasiirrot — lasketut päätökset}{74}{subsubsection*.56}%
-\contentsline {subsubsection}{Tuplauskuution päätökset — lasketut päätökset}{74}{subsubsection*.57}%
-\contentsline {subsubsection}{Suodattimen yhteenveto}{74}{subsubsection*.58}%
-\contentsline {subsection}{\numberline {2.13.3}Vastaavuus blunderDB ↔ XG ↔ gnuBG}{74}{subsection.2.13.3}%
-\contentsline {subsubsection}{Vertailu XG ↔ blunderDB (sama analyysimoottori)}{74}{subsubsection*.59}%
-\contentsline {subsubsection}{Vertailu gnuBG ↔ blunderDB (SGF\sphinxhyphen {}tuonti — eri moottorit)}{75}{subsubsection*.60}%
-\contentsline {subsection}{\numberline {2.13.4}Omien lukujen tarkistaminen}{75}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}gnuBG\sphinxhyphen {}viite}{75}{subsection.2.13.5}%
+\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{72}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}blunderDB:n asennus}{72}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Luvan antaminen blunderDB:n suorittamiseen}{72}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Liite: Tietokannan skeema}{72}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Versiointi ja migraatiot}{72}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Päätaulut}{73}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Suunnitteluperiaatteet}{73}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Liite: Tilastomalli — XG / gnuBG / blunderDB \sphinxhyphen {}yhdenmukaisuus}{73}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Muodolliset määritelmät}{74}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{74}{subsubsection*.53}%
+\contentsline {subsubsection}{Snowie Error Rate}{74}{subsubsection*.54}%
+\contentsline {subsubsection}{MWC\sphinxhyphen {}tappio (Match Winning Chance)}{75}{subsubsection*.55}%
+\contentsline {subsection}{\numberline {2.13.2}PR:n nimittäjässä lasketut päätökset}{75}{subsection.2.13.2}%
+\contentsline {subsubsection}{Nappulasiirrot — lasketut päätökset}{75}{subsubsection*.56}%
+\contentsline {subsubsection}{Tuplauskuution päätökset — lasketut päätökset}{75}{subsubsection*.57}%
+\contentsline {subsubsection}{Suodattimen yhteenveto}{75}{subsubsection*.58}%
+\contentsline {subsection}{\numberline {2.13.3}Vastaavuus blunderDB ↔ XG ↔ gnuBG}{75}{subsection.2.13.3}%
+\contentsline {subsubsection}{Vertailu XG ↔ blunderDB (sama analyysimoottori)}{75}{subsubsection*.59}%
+\contentsline {subsubsection}{Vertailu gnuBG ↔ blunderDB (SGF\sphinxhyphen {}tuonti — eri moottorit)}{76}{subsubsection*.60}%
+\contentsline {subsection}{\numberline {2.13.4}Omien lukujen tarkistaminen}{76}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG\sphinxhyphen {}viite}{76}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Yhteystiedot}{77}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Lahjoita}{79}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Kiitokset}{81}{chapter.5}%

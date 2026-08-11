@@ -173,6 +173,17 @@ et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d'une session à l'autre.
 
+Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
+l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L'opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
+ensuite dans la barre d'état. La même opération est disponible en ligne de
+commande via ``blunderdb vacuum`` (voir :ref:`cli`).
+
 L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
 la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur

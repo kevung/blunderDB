@@ -74,14 +74,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">6.13. info — Метаданные базы данных</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">6.14. edit — Изменить метаданные</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">6.15. verify — Проверка целостности</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">6.16. delete — Удалить данные</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">6.17. Примеры рабочих процессов</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">6.17.1. Импорт каталога турнира</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">6.17.2. Регулярное резервное копирование</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">6.17.3. Анализ ошибок</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vacuum-compacter-la-base-de-donnees">6.16. vacuum — Compacter la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">6.17. delete — Удалить данные</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">6.18. Примеры рабочих процессов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">6.18.1. Импорт каталога турнира</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">6.18.2. Регулярное резервное копирование</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">6.18.3. Анализ ошибок</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">6.18. Коды возврата</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">6.19. Коды возврата</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
@@ -189,13 +190,16 @@
 <tr class="row-odd"><td><p>verify</p></td>
 <td><p>Проверить целостность базы.</p></td>
 </tr>
-<tr class="row-even"><td><p>delete</p></td>
+<tr class="row-even"><td><p>vacuum</p></td>
+<td><p>Compacte le fichier de base de données, récupère l’espace libéré.</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete</p></td>
 <td><p>Удалить данные.</p></td>
 </tr>
-<tr class="row-odd"><td><p>help</p></td>
+<tr class="row-even"><td><p>help</p></td>
 <td><p>Показать справку.</p></td>
 </tr>
-<tr class="row-even"><td><p>version</p></td>
+<tr class="row-odd"><td><p>version</p></td>
 <td><p>Показать версию.</p></td>
 </tr>
 </tbody>
@@ -602,8 +606,39 @@ volontairement jamais estimé (voir ADR-0009).</p>
 </pre></div>
 </div>
 </section>
+<section id="vacuum-compacter-la-base-de-donnees">
+<h2><span class="section-number">6.16. </span>vacuum — Compacter la base de données<a class="headerlink" href="#vacuum-compacter-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Récupère l’espace disque laissé par des suppressions (matchs, tournois,
+purges): SQLite ne réduit jamais le fichier tout seul lorsqu’on supprime des
+données, il faut le lui demander explicitement. C’est la seule façon de
+déclencher un compactage — il ne se produit jamais automatiquement à
+l’ouverture d’une base, car son coût est imprévisible sur une grosse base.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+</ul>
+<p>La commande commence par un <code class="docutils literal notranslate"><span class="pre">wal_checkpoint(TRUNCATE)</span></code> pour que la taille
+affichée avant compactage soit honnête, vérifie qu’il reste sur le disque
+environ deux fois la taille actuelle du fichier (SQLite reconstruit
+entièrement la base avant de basculer dessus), effectue le <code class="docutils literal notranslate"><span class="pre">VACUUM</span></code> puis un
+<code class="docutils literal notranslate"><span class="pre">ANALYZE</span></code> pour rafraîchir les statistiques utilisées par le planificateur de
+requêtes. Si l’espace disque manque, la commande refuse de démarrer avec un
+message explicite plutôt que de risquer un compactage interrompu.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Compacting database...</span>
+<span class="c1">#   Before: 128.4 MiB</span>
+<span class="c1">#   After:  41.2 MiB</span>
+<span class="c1">#   Reclaimed: 87.2 MiB</span>
+</pre></div>
+</div>
+</section>
 <section id="delete-supprimer-des-donnees">
-<h2><span class="section-number">6.16. </span>delete — Удалить данные<a class="headerlink" href="#delete-supprimer-des-donnees" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">6.17. </span>delete — Удалить данные<a class="headerlink" href="#delete-supprimer-des-donnees" title="Ссылка на этот заголовок"></a></h2>
 <p>Удаляет матч и все связанные данные (партии, ходы, анализы).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
 </pre></div>
@@ -625,9 +660,9 @@ volontairement jamais estimé (voir ADR-0009).</p>
 </div>
 </section>
 <section id="exemples-de-flux-de-travail">
-<h2><span class="section-number">6.17. </span>Примеры рабочих процессов<a class="headerlink" href="#exemples-de-flux-de-travail" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">6.18. </span>Примеры рабочих процессов<a class="headerlink" href="#exemples-de-flux-de-travail" title="Ссылка на этот заголовок"></a></h2>
 <section id="import-d-un-repertoire-de-tournoi">
-<h3><span class="section-number">6.17.1. </span>Импорт каталога турнира<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Ссылка на этот заголовок"></a></h3>
+<h3><span class="section-number">6.18.1. </span>Импорт каталога турнира<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Ссылка на этот заголовок"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Créer une base dédiée au tournoi</span>
 ./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">&quot;Jean&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Open de Paris 2025&quot;</span>
 
@@ -640,14 +675,14 @@ volontairement jamais estimé (voir ADR-0009).</p>
 </div>
 </section>
 <section id="sauvegarde-reguliere">
-<h3><span class="section-number">6.17.2. </span>Регулярное резервное копирование<a class="headerlink" href="#sauvegarde-reguliere" title="Ссылка на этот заголовок"></a></h3>
+<h3><span class="section-number">6.18.2. </span>Регулярное резервное копирование<a class="headerlink" href="#sauvegarde-reguliere" title="Ссылка на этот заголовок"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export complet pour sauvegarde</span>
 ./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
 </pre></div>
 </div>
 </section>
 <section id="analyse-des-erreurs">
-<h3><span class="section-number">6.17.3. </span>Анализ ошибок<a class="headerlink" href="#analyse-des-erreurs" title="Ссылка на этот заголовок"></a></h3>
+<h3><span class="section-number">6.18.3. </span>Анализ ошибок<a class="headerlink" href="#analyse-des-erreurs" title="Ссылка на этот заголовок"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraire les blunders dans une base séparée</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
 
@@ -658,7 +693,7 @@ volontairement jamais estimé (voir ADR-0009).</p>
 </section>
 </section>
 <section id="codes-de-retour">
-<h2><span class="section-number">6.18. </span>Коды возврата<a class="headerlink" href="#codes-de-retour" title="Ссылка на этот заголовок"></a></h2>
+<h2><span class="section-number">6.19. </span>Коды возврата<a class="headerlink" href="#codes-de-retour" title="Ссылка на этот заголовок"></a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Успех.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Ошибка.</p></li>

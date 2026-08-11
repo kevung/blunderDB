@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 18:08
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 18:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1536,148 +1536,148 @@ Underfull \hbox (badness 5711) in paragraph at lines 906--908
 ] [] [][][][] [] [][] [] []$[][].
  []
 
-[14] [15] [16] [17] [18] [19] [20]
-Underfull \hbox (badness 6542) in paragraph at lines 1384--1386
+[14] [15] [16] [17] [18] [19] [20] [21]
+Underfull \hbox (badness 6542) in paragraph at lines 1396--1398
 []\TU/FreeSerif(2)/m/n/10 Ο πίνακας \TU/FreeSerif(2)/b/n/10 Τουρνουά \TU/FreeSe
 rif(2)/m/n/10 (\TU/FreeSerif(2)/m/it/10 CTRL-Y\TU/FreeSerif(2)/m/n/10 ) επιτρέπ
 ει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη
  []
 
-[21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32]
-Underfull \hbox (badness 8019) in paragraph at lines 2265--2267
+[22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33]
+Underfull \hbox (badness 8019) in paragraph at lines 2277--2279
 []\TU/FreeSerif(2)/m/n/10 Ένα παράθυρο προόδου εμφανίζει τον αριθμό των αρχείων
  που εισήχθησαν, απέτυχαν και
  []
 
-[33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47]
-[48] [49] [50] [51] [52]
-Underfull \hbox (badness 10000) in paragraph at lines 6245--6248
+[34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48]
+[49] [50] [51] [52]
+Underfull \hbox (badness 10000) in paragraph at lines 6268--6271
 [][][]\TU/FreeMono(1)/b/n/10 no[]comment \TU/FreeSerif(2)/m/n/10 — Uniquement l
 es positions sans commentaire. Mutuellement exclusif avec
  []
 
-[53] [54] [55] [56] [57] [58] [59] [60] [61]
-Underfull \hbox (badness 5954) in paragraph at lines 6937--6939
+[53] [54] [55] [56] [57] [58] [59] [60] [61] [62]
+Underfull \hbox (badness 5954) in paragraph at lines 7004--7006
 []\TU/FreeSerif(2)/b/n/10 Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας. 
 \TU/FreeSerif(2)/m/n/10 Εμπιστεύεται την κεφαλίδα αιτήματος
  []
 
 
-Overfull \hbox (19.82352pt too wide) in paragraph at lines 7005--7007
+Overfull \hbox (19.82352pt too wide) in paragraph at lines 7072--7074
 []\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (19.82352pt too wide) detected at line 7008
+Overfull \hbox (19.82352pt too wide) detected at line 7075
 []\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7064--7066
+Underfull \hbox (badness 10000) in paragraph at lines 7131--7133
 [][][]\TU/FreeMono(1)/b/n/10 cors[]allow[]origin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7074--7076
+Underfull \hbox (badness 10000) in paragraph at lines 7141--7143
 []\TU/FreeSerif(2)/m/n/10 ενεργοποιεί CORS για αυτή την προέλευση
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7096--7098
+Underfull \hbox (badness 10000) in paragraph at lines 7163--7165
 [][][]\TU/FreeMono(1)/b/n/10 rate[]limit[]burst
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7128--7130
+Underfull \hbox (badness 10000) in paragraph at lines 7195--7197
 [][][]\TU/FreeMono(1)/b/n/10 bearoff[]ts
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7148--7150
+Underfull \hbox (badness 10000) in paragraph at lines 7215--7217
 []\TU/FreeSerif(2)/m/n/10 Οι περισσότερες επιλογές μπορούν επίσης να παρασχεθού
 ν μέσω μεταβλητής περιβάλλοντος
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7148--7150
+Underfull \hbox (badness 10000) in paragraph at lines 7215--7217
 \TU/FreeSerif(2)/m/n/10 (\TU/FreeMono(1)/b/n/10 BLUNDERDB_BACKEND\TU/FreeSerif(
 2)/m/n/10 , \TU/FreeMono(1)/b/n/10 BLUNDERDB_DSN\TU/FreeSerif(2)/m/n/10 , \TU/F
 reeMono(1)/b/n/10 BLUNDERDB_ADDR\TU/FreeSerif(2)/m/n/10 , \TU/FreeMono(1)/b/n/1
 0 BLUNDERDB_LOG_LEVEL\TU/FreeSerif(2)/m/n/10 ,
  []
 
-[62] [63]
-Underfull \hbox (badness 7595) in paragraph at lines 7318--7320
+[63] [64]
+Underfull \hbox (badness 7595) in paragraph at lines 7385--7387
 []\TU/FreeSerif(2)/m/n/10 scope tenant προορισμού (υποχρεωτικό εκτός από
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7340--7342
+Underfull \hbox (badness 10000) in paragraph at lines 7407--7409
 [][][]\TU/FreeMono(1)/b/n/10 on[]conflict
  []
 
-[64]
-Overfull \hbox (9.46619pt too wide) in paragraph at lines 7449--7451
+[65]
+Overfull \hbox (9.46619pt too wide) in paragraph at lines 7516--7518
 []\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (9.46619pt too wide) detected at line 7452
+Overfull \hbox (9.46619pt too wide) detected at line 7519
 []\TU/FreeMono(1)/b/n/10 $BLUNDERDB_DSN 
  []
 
-[65] [66]
-Underfull \hbox (badness 10000) in paragraph at lines 7746--7748
+[66]
+Underfull \hbox (badness 10000) in paragraph at lines 7813--7815
 []\TU/FreeSerif(2)/m/n/10 Πολύ καλό για
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7767--7769
+Underfull \hbox (badness 10000) in paragraph at lines 7834--7836
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7770
+Underfull \hbox (badness 10000) detected at line 7837
 []\TU/FreeSerif(2)/m/n/10 δεμένα σημεία στο
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7778--7780
+Underfull \hbox (badness 10000) in paragraph at lines 7845--7847
 []\TU/FreeSerif(2)/m/n/10 Λάθη του παίκτη 1
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7778--7780
+Underfull \hbox (badness 10000) in paragraph at lines 7845--7847
 \TU/FreeSerif(2)/m/n/10 μεγαλύτερα από 40
  []
 
 
-Underfull \hbox (badness 5288) in paragraph at lines 7806--7808
+Underfull \hbox (badness 5288) in paragraph at lines 7873--7875
 []\TU/FreeSerif(2)/m/n/10 Ένα πίσω πούλι προς
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7836--7838
+Underfull \hbox (badness 10000) in paragraph at lines 7903--7905
 []\TU/FreeSerif(2)/m/n/10 Φράγμα εναντίον
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7868--7870
+Underfull \hbox (badness 10000) in paragraph at lines 7935--7937
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7868--7870
+Underfull \hbox (badness 10000) in paragraph at lines 7935--7937
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7871
+Underfull \hbox (badness 10000) detected at line 7938
 \TU/FreeSerif(2)/m/n/10 με προβάδισμα
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7871
+Underfull \hbox (badness 10000) detected at line 7938
 []\TU/FreeSerif(2)/m/n/10 Διπλασιασμός
  []
 
@@ -1706,7 +1706,7 @@ File: win7.png Graphic file (type bmp)
 <win7.png>
  [72] [73] [74] [75] [76] [77] [78] [79] [80] [81]
 [82]
-Underfull \hbox (badness 7522) in paragraph at lines 8836--8838
+Underfull \hbox (badness 7522) in paragraph at lines 8903--8905
 []\TU/FreeMono(1)/b/n/10 gnubg/analysis.c:458–462 \TU/FreeSerif(2)/m/n/10 — Συσ
 σώρευση checker, αποκλεισμός αναγκαστικών κινήσεων
  []
@@ -1729,13 +1729,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 33A17362A10446BD11604CDD953386E7;47133.
+(rerunfilecheck)             Checksum: E068FF7D5D6492E6AF976D1B6E1C0A17;47406.
  ) 
 Here is how much of TeX's memory you used:
- 19573 strings out of 476443
- 401555 string characters out of 5793962
+ 19574 strings out of 476443
+ 401596 string characters out of 5793962
  2039627 words of memory out of 5000000
- 41058 multiletter control sequences out of 15000+600000
+ 41059 multiletter control sequences out of 15000+600000
  568227 words of font info for 170 fonts, out of 8000000 for 9000
  265 hyphenation exceptions out of 8191
  79i,19n,93p,3356b,667s stack positions out of 10000i,1000n,20000p,200000b,200000s

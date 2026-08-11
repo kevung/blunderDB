@@ -241,6 +241,16 @@ Bearoff ;</p></li>
 <li><p><strong>Identità dell’emittente</strong> — la chiave che firma i tuoi contrassegni di origine, descritta nella sezione <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Distribuire un database: origine e password</span></a>.</p></li>
 </ul>
 <p>La scheda <em>Interfaccia</em> permette di scegliere la lingua tra inglese, francese, tedesco, italiano, spagnolo, finlandese, giapponese, greco e russo. L’intera interfaccia (barra degli strumenti, pannelli, messaggi, aiuto) viene tradotta nella lingua selezionata. La scelta della lingua viene salvata e mantenuta da una sessione all’altra.</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaccia a riga di comando (CLI)</span></a>).</p>
 <p>La scheda <em>Colori della board</em> permette di personalizzare i colori della board. Ogni elemento dispone di un proprio selettore di colore: lo sfondo, il bordo, le punte chiare e scure, le pedine del giocatore 1 e del giocatore 2, i dadi, i punti dei dadi e il cubo. Il pulsante <em>Reimposta</em> ripristina tutti i colori predefiniti. Come la lingua, i colori scelti vengono mantenuti da una sessione all’altra.</p>
 <p>L’onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Pannello Bearoff</span></a>) au-delà de la base TS-06-06

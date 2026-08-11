@@ -1188,6 +1188,18 @@ Bearoff ;
 Auf der Registerkarte \sphinxstyleemphasis{Oberfläche} kann die Sprache unter Englisch, Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, Griechisch und Russisch gewählt werden. Die gesamte Benutzeroberfläche (Werkzeugleiste, Panels, Meldungen, Hilfe) wird in die gewählte Sprache übersetzt. Die Sprachwahl wird gespeichert und über die Sitzungen hinweg beibehalten.
 
 \sphinxAtStartPar
+Le même onglet propose aussi le bouton \sphinxstylestrong{Compacter la base}, qui récupère
+l’espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L’opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l’opération. Le résultat — l’espace gagné, en mégaoctets — s’affiche
+ensuite dans la barre d’état. La même opération est disponible en ligne de
+commande via \sphinxcode{\sphinxupquote{blunderdb vacuum}} (voir {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Befehlszeilenschnittstelle (CLI)}}}}}).
+
+\sphinxAtStartPar
 Auf der Registerkarte \sphinxstyleemphasis{Brettfarben} lassen sich die Farben des Bretts anpassen. Jedes Element besitzt einen eigenen Farbwähler: der Hintergrund, der Rahmen, die hellen und dunklen Zungen, die Steine von Spieler 1 und Spieler 2, die Würfel, die Würfelaugen und der Dopplerwürfel. Die Schaltfläche \sphinxstyleemphasis{Zurücksetzen} stellt alle Standardfarben wieder her. Wie die Sprache bleiben auch die gewählten Farben von einer Sitzung zur nächsten erhalten.
 
 \sphinxAtStartPar
@@ -5799,6 +5811,17 @@ Prüft die Integrität der Datenbank.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+vacuum
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Compacte le fichier de base de données, récupère l’espace libéré.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 delete
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -6598,6 +6621,50 @@ Ohne die Option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match}}
 
 \PYG{c+c1}{\PYGZsh{} Comparer avec le fichier source}
 ./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}mat\PYG{+w}{ }original.mat
+\end{sphinxVerbatim}
+
+
+\subsection{vacuum — Compacter la base de données}
+\label{\detokenize{cli:vacuum-compacter-la-base-de-donnees}}
+\sphinxAtStartPar
+Récupère l’espace disque laissé par des suppressions (matchs, tournois,
+purges): SQLite ne réduit jamais le fichier tout seul lorsqu’on supprime des
+données, il faut le lui demander explicitement. C’est la seule façon de
+déclencher un compactage — il ne se produit jamais automatiquement à
+l’ouverture d’une base, car son coût est imprévisible sur une grosse base.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }vacuum\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Optionen:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Datenbank (erforderlich).
+
+\end{itemize}
+
+\sphinxAtStartPar
+La commande commence par un \sphinxcode{\sphinxupquote{wal\_checkpoint(TRUNCATE)}} pour que la taille
+affichée avant compactage soit honnête, vérifie qu’il reste sur le disque
+environ deux fois la taille actuelle du fichier (SQLite reconstruit
+entièrement la base avant de basculer dessus), effectue le \sphinxcode{\sphinxupquote{VACUUM}} puis un
+\sphinxcode{\sphinxupquote{ANALYZE}} pour rafraîchir les statistiques utilisées par le planificateur de
+requêtes. Si l’espace disque manque, la commande refuse de démarrer avec un
+message explicite plutôt que de risquer un compactage interrompu.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Beispiel:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }vacuum\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db
+
+\PYG{c+c1}{\PYGZsh{} Compacting database...}
+\PYG{c+c1}{\PYGZsh{}   Before: 128.4 MiB}
+\PYG{c+c1}{\PYGZsh{}   After:  41.2 MiB}
+\PYG{c+c1}{\PYGZsh{}   Reclaimed: 87.2 MiB}
 \end{sphinxVerbatim}
 
 

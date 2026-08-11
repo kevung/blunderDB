@@ -60,6 +60,7 @@ Commandes disponibles
    "info", "Affiche les métadonnées de la base."
    "edit", "Modifie les métadonnées de la base."
    "verify", "Vérifie l'intégrité de la base."
+   "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
    "delete", "Supprime des données."
    "help", "Affiche l'aide."
    "version", "Affiche la version."
@@ -546,6 +547,42 @@ avec le fichier source original.
 
    # Comparer avec le fichier source
    ./blunderdb verify --db base.db --match 1 --mat original.mat
+
+vacuum — Compacter la base de données
+---------------------------------------
+
+Récupère l'espace disque laissé par des suppressions (matchs, tournois,
+purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime des
+données, il faut le lui demander explicitement. C'est la seule façon de
+déclencher un compactage — il ne se produit jamais automatiquement à
+l'ouverture d'une base, car son coût est imprévisible sur une grosse base.
+
+.. code-block:: bash
+
+   ./blunderdb vacuum --db <chemin>
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+
+La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la taille
+affichée avant compactage soit honnête, vérifie qu'il reste sur le disque
+environ deux fois la taille actuelle du fichier (SQLite reconstruit
+entièrement la base avant de basculer dessus), effectue le ``VACUUM`` puis un
+``ANALYZE`` pour rafraîchir les statistiques utilisées par le planificateur de
+requêtes. Si l'espace disque manque, la commande refuse de démarrer avec un
+message explicite plutôt que de risquer un compactage interrompu.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb vacuum --db base.db
+
+   # Compacting database...
+   #   Before: 128.4 MiB
+   #   After:  41.2 MiB
+   #   Reclaimed: 87.2 MiB
 
 delete — Supprimer des données
 -------------------------------

@@ -241,6 +241,16 @@ Bearoff ;</p></li>
 <li><p><strong>発行者の識別情報</strong> — 出所の記載に署名する鍵。<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>の節で説明します。</p></li>
 </ul>
 <p><em>インターフェース</em>タブでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から言語を選べます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。</p>
+<p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère
+l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L'opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
+ensuite dans la barre d'état. La même opération est disponible en ligne de
+commande via <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>).</p>
 <p><em>ボードの色</em>タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。<em>リセット</em>ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。</p>
 <p>L'onglet <em>Bearoff</em> gère la base two-sided qui étend le domaine exact du
 panneau Bearoff (voir <a class="reference internal" href="#panneau-epc"><span class="std std-ref">ベアオフパネル</span></a>) au-delà de la base TS-06-06

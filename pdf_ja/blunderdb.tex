@@ -1161,6 +1161,18 @@ Bearoff ;
 \sphinxstyleemphasis{インターフェース}タブでは、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から言語を選べます。インターフェース全体（ツールバー、パネル、メッセージ、ヘルプ）が選択した言語に翻訳されます。言語の選択は保存され、セッションをまたいで保持されます。
 
 \sphinxAtStartPar
+Le même onglet propose aussi le bouton \sphinxstylestrong{Compacter la base}, qui récupère
+l\textquotesingle{}espace disque laissé par les suppressions (matchs, tournois, purges) : la
+base de données ne rétrécit jamais toute seule quand on supprime des données,
+il faut demander explicitement ce compactage. L\textquotesingle{}opération peut prendre du
+temps sur une grosse base et nécessite, temporairement, environ deux fois sa
+taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
+risquer un compactage interrompu) ; une confirmation est donc demandée avant
+de lancer l\textquotesingle{}opération. Le résultat — l\textquotesingle{}espace gagné, en mégaoctets — s\textquotesingle{}affiche
+ensuite dans la barre d\textquotesingle{}état. La même opération est disponible en ligne de
+commande via \sphinxcode{\sphinxupquote{blunderdb vacuum}} (voir {\hyperref[\detokenize{cli:cli}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{コマンドラインインターフェース（CLI）}}}}}).
+
+\sphinxAtStartPar
 \sphinxstyleemphasis{ボードの色}タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。\sphinxstyleemphasis{リセット}ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。
 
 \sphinxAtStartPar
@@ -5772,6 +5784,17 @@ verify
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+vacuum
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Compacte le fichier de base de données, récupère l\textquotesingle{}espace libéré.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 delete
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -6571,6 +6594,50 @@ volontairement jamais estimé (voir ADR\sphinxhyphen{}0009).
 
 \PYG{c+c1}{\PYGZsh{} Comparer avec le fichier source}
 ./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}mat\PYG{+w}{ }original.mat
+\end{sphinxVerbatim}
+
+
+\subsection{vacuum — Compacter la base de données}
+\label{\detokenize{cli:vacuum-compacter-la-base-de-donnees}}
+\sphinxAtStartPar
+Récupère l\textquotesingle{}espace disque laissé par des suppressions (matchs, tournois,
+purges): SQLite ne réduit jamais le fichier tout seul lorsqu\textquotesingle{}on supprime des
+données, il faut le lui demander explicitement. C\textquotesingle{}est la seule façon de
+déclencher un compactage — il ne se produit jamais automatiquement à
+l\textquotesingle{}ouverture d\textquotesingle{}une base, car son coût est imprévisible sur une grosse base.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }vacuum\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{オプション：}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — データベース（必須）。
+
+\end{itemize}
+
+\sphinxAtStartPar
+La commande commence par un \sphinxcode{\sphinxupquote{wal\_checkpoint(TRUNCATE)}} pour que la taille
+affichée avant compactage soit honnête, vérifie qu\textquotesingle{}il reste sur le disque
+environ deux fois la taille actuelle du fichier (SQLite reconstruit
+entièrement la base avant de basculer dessus), effectue le \sphinxcode{\sphinxupquote{VACUUM}} puis un
+\sphinxcode{\sphinxupquote{ANALYZE}} pour rafraîchir les statistiques utilisées par le planificateur de
+requêtes. Si l\textquotesingle{}espace disque manque, la commande refuse de démarrer avec un
+message explicite plutôt que de risquer un compactage interrompu.
+
+\sphinxAtStartPar
+\sphinxstylestrong{例：}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }vacuum\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db
+
+\PYG{c+c1}{\PYGZsh{} Compacting database...}
+\PYG{c+c1}{\PYGZsh{}   Before: 128.4 MiB}
+\PYG{c+c1}{\PYGZsh{}   After:  41.2 MiB}
+\PYG{c+c1}{\PYGZsh{}   Reclaimed: 87.2 MiB}
 \end{sphinxVerbatim}
 
 
