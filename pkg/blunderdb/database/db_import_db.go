@@ -506,7 +506,12 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		} else {
 			// Position doesn't exist, add it (using transaction)
 			// Store as full JSON (import DB may not have denormalized columns)
-			fullJSON := fullPositionJSON(importPosition)
+			fullJSON, marshalErr := fullPositionJSON(importPosition)
+			if marshalErr != nil {
+				slog.Warn("marshalling position for import", "err", marshalErr)
+				positionsSkipped++
+				continue
+			}
 			result, err := tx.Exec(
 				`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
 				fullJSON, sourceIndividual)

@@ -95,11 +95,21 @@ func scanPositionRow(scanner interface {
 	return pos, nil
 }
 
-// fullPositionJSON reconstructs a full Position from DB row values and marshals
-// it to JSON. Used by export functions to produce backwards-compatible state blobs.
-func fullPositionJSON(pos Position) string {
-	data, _ := json.Marshal(pos)
-	return string(data)
+// fullPositionJSON marshals pos to the legacy full-JSON state representation.
+// The only remaining caller is CommitImportDatabase's "brand new position"
+// path (db_import_db.go), which writes straight into the currently-open
+// database without going through Save/PopulatePositionColumns; every export
+// path writes the compact form instead (see db_export_position.go). A
+// domain.Position marshals with json.Marshal's only failure modes being
+// unsupported types (channels, funcs) or cyclic structures — neither can
+// occur here — but the error was previously swallowed into a "" state, which
+// would have inserted a NULL-like empty position silently. Propagate it.
+func fullPositionJSON(pos Position) (string, error) {
+	data, err := json.Marshal(pos)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal position: %w", err)
+	}
+	return string(data), nil
 }
 
 // positionIdentityJSON marshals only what makes two positions the same position.
