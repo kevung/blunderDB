@@ -239,7 +239,16 @@ blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span clas
 <span class="w">    </span>--tenant-id<span class="w"> </span>mon-tenant<span class="w"> </span>--dry-run
 </pre></div>
 </div>
-<p>The migration copies the <strong>positions, their analyses and comments, the matches (games + moves), the tournaments (with their match links) and the collections (with their composition)</strong>, reassigning primary and foreign keys, all within a <strong>single transaction</strong> on the destination side: the operation is atomic (a failure leaves the destination intact, just run it again). Progress and the final summary are emitted as NDJSON on standard output.</p>
+<p>La migration copie les <strong>positions, leurs analyses et commentaires, les matchs
+(parties + coups), les tournois (avec leurs liens de match) et les collections
+(avec leur composition)</strong>, en réattribuant les clés primaires et étrangères, le
+tout dans une <strong>seule transaction</strong> côté destination : l’opération est atomique
+(un échec laisse la destination intacte, il suffit de relancer). La progression
+et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
+est assez ancienne pour nécessiter sa propre mise à niveau de schéma sur place,
+celle-ci s’exécute d’abord et émet ses propres événements
+<code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> (phase/effectué/total) avant que la copie ligne à ligne
+ne commence.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 31.6%" />

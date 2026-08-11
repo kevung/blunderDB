@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.0-u1.29-230214-2.6 (utf8.uptex) (TeX Live 2023/Debian) (preloaded format=uplatex 2026.8.11)  11 AUG 2026 16:23
+This is e-upTeX, Version 3.141592653-p4.1.0-u1.29-230214-2.6 (utf8.uptex) (TeX Live 2023/Debian) (preloaded format=uplatex 2026.8.11)  11 AUG 2026 16:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2299,7 +2299,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
 (Font)              No change on input line 6929.
 
-Underfull \hbox (badness 10000) in paragraph at lines 7025--7027
+Underfull \hbox (badness 10000) in paragraph at lines 7034--7036
 [][][]\T1/txtt/m/n/10 on[]conflict
  []
 
@@ -2313,26 +2313,26 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [66]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7054.
+(Font)              No change on input line 7063.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 7057.
+(Font)              No change on input line 7066.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 7060.
+(Font)              No change on input line 7069.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 7065.
+(Font)              No change on input line 7074.
 
-Underfull \hbox (badness 10000) in paragraph at lines 7107--7109
+Underfull \hbox (badness 10000) in paragraph at lines 7116--7118
 []\T1/qtm/m/n/10 SQLite \JY2/mc/m/n/10 フ ァイル （[][]\T1/txtt/m/n/10 bac
 kend sqlite [][]dsn
  []
 
 
-Overfull \hbox (2.19186pt too wide) in paragraph at lines 7134--7136
+Overfull \hbox (2.19186pt too wide) in paragraph at lines 7143--7145
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (2.19186pt too wide) detected at line 7137
+Overfull \hbox (2.19186pt too wide) detected at line 7146
 []\T1/txtt/m/n/10 $BLUNDERDB_DSN 
  []
 
@@ -2355,9 +2355,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [68]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7296.
+(Font)              No change on input line 7305.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7314.
+(Font)              No change on input line 7323.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2377,14 +2377,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.0pt}.
 
 [70]
-Underfull \hbox (badness 10000) in paragraph at lines 7711--7713
+Underfull \hbox (badness 10000) in paragraph at lines 7720--7722
 \T1/qtm/m/n/10 en-[]us / archive / blogs / ie _ fr / certi^^\cats-[]de-[]signat
 ure-[]de-[]code-[]ev-[]extended-[]validation-[]et-[]microsoft-[]smartscreen$[][
 ] \JY2/mc/m/n/10 を
  []
 
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7715.
+(Font)              No change on input line 7724.
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 
@@ -2434,7 +2434,7 @@ File: win6.png Graphic file (type bmp)
 File: win7.png Graphic file (type bmp)
 <win7.png>
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7910.
+(Font)              No change on input line 7919.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2473,9 +2473,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [77]
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 7926.
+(Font)              No change on input line 7935.
 LaTeX Font Info:    Kanji font shape `JY2/mc/m/it' undefined
-(Font)              No change on input line 7927.
+(Font)              No change on input line 7936.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2496,9 +2496,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [79]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7989.
+(Font)              No change on input line 7998.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 7999.
+(Font)              No change on input line 8008.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2519,31 +2519,31 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [81]
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8079.
+(Font)              No change on input line 8088.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8083.
+(Font)              No change on input line 8092.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8087.
+(Font)              No change on input line 8096.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8091.
+(Font)              No change on input line 8100.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8097.
+(Font)              No change on input line 8106.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8101.
+(Font)              No change on input line 8110.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8105.
+(Font)              No change on input line 8114.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8109.
+(Font)              No change on input line 8118.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8115.
+(Font)              No change on input line 8124.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8119.
+(Font)              No change on input line 8128.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8123.
+(Font)              No change on input line 8132.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8129.
+(Font)              No change on input line 8138.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8133.
+(Font)              No change on input line 8142.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2593,9 +2593,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 ]
 第 5 章
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8605.
+(Font)              No change on input line 8614.
 LaTeX Font Info:    Kanji font shape `JY2/gt/m/it' undefined
-(Font)              No change on input line 8609.
+(Font)              No change on input line 8618.
 (./blunderdb.ind) [91] (./blunderdb.aux)
  ***********
 pLaTeX2e <2023-02-14u04>+1, based on
@@ -2614,4 +2614,4 @@ Here is how much of TeX's memory you used:
  265 hyphenation exceptions out of 8191
  72i,19n,83p,4105b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on blunderdb.dvi (95 pages, 619448 bytes).
+Output written on blunderdb.dvi (95 pages, 619564 bytes).

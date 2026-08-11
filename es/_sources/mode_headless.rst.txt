@@ -228,7 +228,11 @@ La migration copie les **positions, leurs analyses et commentaires, les matchs
 (avec leur composition)**, en réattribuant les clés primaires et étrangères, le
 tout dans une **seule transaction** côté destination : l'opération est atomique
 (un échec laisse la destination intacte, il suffit de relancer). La progression
-et le bilan final sont émis en NDJSON sur la sortie standard.
+et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
+est assez ancienne pour nécessiter sa propre mise à niveau de schéma sur place,
+celle-ci s'exécute d'abord et émet ses propres événements
+``"schema-migration"`` (phase/effectué/total) avant que la copie ligne à ligne
+ne commence.
 
 .. list-table::
    :header-rows: 1

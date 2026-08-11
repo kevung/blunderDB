@@ -6941,7 +6941,16 @@ blunderdb\PYG{+w}{ }migrate\PYG{+w}{ }\PYGZhy{}\PYGZhy{}from\PYG{+w}{ }sqlite://
 \end{sphinxVerbatim}
 
 \sphinxAtStartPar
-Миграция копирует \sphinxstylestrong{позиции, их анализы и комментарии, матчи (партии + ходы), турниры (с их связями матчей) и коллекции (с их составом)}, переназначая первичные и внешние ключи, всё в \sphinxstylestrong{одной транзакции} на стороне назначения: операция атомарна (сбой оставляет назначение нетронутым, достаточно повторить запуск). Прогресс и итоговый отчёт выводятся в NDJSON на стандартный вывод.
+La migration copie les \sphinxstylestrong{positions, leurs analyses et commentaires, les matchs
+(parties + coups), les tournois (avec leurs liens de match) et les collections
+(avec leur composition)}, en réattribuant les clés primaires et étrangères, le
+tout dans une \sphinxstylestrong{seule transaction} côté destination : l’opération est atomique
+(un échec laisse la destination intacte, il suffit de relancer). La progression
+et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
+est assez ancienne pour nécessiter sa propre mise à niveau de schéma sur place,
+celle\sphinxhyphen{}ci s’exécute d’abord et émet ses propres événements
+\sphinxcode{\sphinxupquote{"schema\sphinxhyphen{}migration"}} (phase/effectué/total) avant que la copie ligne à ligne
+ne commence.
 
 
 \begin{savenotes}\sphinxattablestart

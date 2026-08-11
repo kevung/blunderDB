@@ -316,7 +316,11 @@ blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span clas
 (avec leur composition)</strong>, en réattribuant les clés primaires et étrangères, le
 tout dans une <strong>seule transaction</strong> côté destination : l’opération est atomique
 (un échec laisse la destination intacte, il suffit de relancer). La progression
-et le bilan final sont émis en NDJSON sur la sortie standard.</p>
+et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
+est assez ancienne pour nécessiter sa propre mise à niveau de schéma sur place,
+celle-ci s’exécute d’abord et émet ses propres événements
+<code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> (phase/effectué/total) avant que la copie ligne à ligne
+ne commence.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 31.6%" />

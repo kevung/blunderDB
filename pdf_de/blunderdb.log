@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:22
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1453,98 +1453,98 @@ f(1)/m/n/10 ,
  []
 
 [58] [59]
-Underfull \hbox (badness 5817) in paragraph at lines 6998--7000
+Underfull \hbox (badness 5817) in paragraph at lines 7007--7009
 []\TU/FreeSerif(1)/m/n/10 SQLite-Quelldatenbank (\TU/FreeMono(1)/m/n/10 sqlite:
 ///chemin \TU/FreeSerif(1)/m/n/10 oder ein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7052--7054
+Underfull \hbox (badness 10000) in paragraph at lines 7061--7063
 [][][]\TU/FreeMono(1)/m/n/10 on[]conflict
  []
 
 
-Underfull \hbox (badness 7256) in paragraph at lines 7073--7075
+Underfull \hbox (badness 7256) in paragraph at lines 7082--7084
 []\TU/FreeSerif(1)/m/n/10 Noch nicht migriert werden die Anwendungszustände: An
 ki-Decks/-Karten, Filterbibliothek, Such- und
  []
 
 [60]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7161--7163
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7170--7172
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7164
+Overfull \hbox (1.06567pt too wide) detected at line 7173
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Underfull \hbox (badness 5592) in paragraph at lines 7230--7232
+Underfull \hbox (badness 5592) in paragraph at lines 7239--7241
 []\TU/FreeSerif(1)/m/n/10 zeigt alle Methoden \TU/FreeMono(1)/m/n/10 <famille>.
 <méthode> \TU/FreeSerif(1)/m/n/10 an und
  []
 
 [61]
-Underfull \hbox (badness 6316) in paragraph at lines 7411--7413
+Underfull \hbox (badness 6316) in paragraph at lines 7420--7422
 []\TU/FreeSerif(1)/m/n/10 Schlagen auf dem Ass-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7441--7443
+Underfull \hbox (badness 10000) in paragraph at lines 7450--7452
 []\TU/FreeSerif(1)/m/n/10 Take/Pass-Entscheidung
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7478--7480
+Underfull \hbox (badness 10000) in paragraph at lines 7487--7489
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) detected at line 7481
+Underfull \hbox (badness 10000) detected at line 7490
 []\TU/FreeSerif(1)/m/n/10 gemachte Punkte im
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7517--7519
+Underfull \hbox (badness 10000) in paragraph at lines 7526--7528
 []\TU/FreeSerif(1)/m/n/10 Ein rückständiger Stein
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7568--7570
+Underfull \hbox (badness 10000) in paragraph at lines 7577--7579
 []\TU/FreeSerif(1)/m/n/10 Ass-Punkt des Gegners
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7609--7611
+Underfull \hbox (badness 10000) in paragraph at lines 7618--7620
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7623--7625
+Underfull \hbox (badness 10000) in paragraph at lines 7632--7634
 []\TU/FreeSerif(1)/m/n/10 Positionen aus den
  []
 
 [62]
-Underfull \hbox (badness 10000) in paragraph at lines 7738--7740
+Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
 \TU/FreeSerif(1)/m/n/10 Windows verlangt heutzutage von Softwareherstellern ode
 r unabhängigen Softwareentwicklern, ihre
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7738--7740
+Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
 \TU/FreeSerif(1)/m/n/10 Anwendungen digital zu zertifizieren oder sie sogar übe
 r den Windows Store zu vertreiben. Es wird
  []
 
 
-Underfull \hbox (badness 6125) in paragraph at lines 7738--7740
+Underfull \hbox (badness 6125) in paragraph at lines 7747--7749
 \TU/FreeSerif(1)/m/n/10 daher empfohlen, sich an externe Unternehmen zu wenden,
  um ein digitales Zertifikat zu erhalten, das
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7738--7740
+Underfull \hbox (badness 10000) in paragraph at lines 7747--7749
 \TU/FreeSerif(1)/m/n/10 mehrere hundert Euro kostet (siehe zum Beispiel [][]$[]
 [][][][] [] [] [] [][][][][] [] [][][][][][][][][] [] [][][] [] [][][][][][] []
  [][][][][][][] [] [][][][][] [] [][] [] [][] []

@@ -152,7 +152,7 @@
 \contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi}{59}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Windows SmartScreen \sphinxhyphen {}varoitus}{59}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Windows Defenderin esto}{60}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Latauksen eheyden tarkistus (SHA256)}{64}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Latauksen eheyden tarkistus (SHA256)}{65}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}liite: blunderDB:n mahdollinen esto}{68}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}blunderDB:n asennus}{68}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Luvan antaminen blunderDB:n suorittamiseen}{68}{subsection.2.11.2}%
@@ -164,7 +164,7 @@
 \contentsline {subsection}{\numberline {2.13.1}Muodolliset määritelmät}{70}{subsection.2.13.1}%
 \contentsline {subsubsection}{PR (Performance Rate)}{70}{subsubsection*.53}%
 \contentsline {subsubsection}{Snowie Error Rate}{70}{subsubsection*.54}%
-\contentsline {subsubsection}{MWC\sphinxhyphen {}tappio (Match Winning Chance)}{71}{subsubsection*.55}%
+\contentsline {subsubsection}{MWC\sphinxhyphen {}tappio (Match Winning Chance)}{70}{subsubsection*.55}%
 \contentsline {subsection}{\numberline {2.13.2}PR:n nimittäjässä lasketut päätökset}{71}{subsection.2.13.2}%
 \contentsline {subsubsection}{Nappulasiirrot — lasketut päätökset}{71}{subsubsection*.56}%
 \contentsline {subsubsection}{Tuplauskuution päätökset — lasketut päätökset}{71}{subsubsection*.57}%

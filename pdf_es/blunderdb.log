@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:22
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.8.11)  11 AUG 2026 16:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1167,66 +1167,65 @@ Underfull \hbox (badness 10000) in paragraph at lines 6792--6794
  []
 
 [54] [55] [56]
-Overfull \hbox (1.06567pt too wide) in paragraph at lines 7161--7163
+Overfull \hbox (1.06567pt too wide) in paragraph at lines 7170--7172
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
 
-Overfull \hbox (1.06567pt too wide) detected at line 7164
+Overfull \hbox (1.06567pt too wide) detected at line 7173
 []\TU/FreeMono(1)/m/n/10 $BLUNDERDB_DSN 
  []
 
-[57]
-Underfull \hbox (badness 10000) in paragraph at lines 7457--7459
+[57] [58]
+Underfull \hbox (badness 10000) in paragraph at lines 7466--7468
 []\TU/FreeSerif(1)/m/n/10 Demasiado bueno para
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7503--7505
+Underfull \hbox (badness 10000) in paragraph at lines 7512--7514
 []\TU/FreeSerif(1)/m/n/10 Posición del torneo
  []
 
 
-Underfull \hbox (badness 6876) in paragraph at lines 7517--7519
+Underfull \hbox (badness 6876) in paragraph at lines 7526--7528
 []\TU/FreeSerif(1)/m/n/10 Una ficha rezagada por
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7568--7570
+Underfull \hbox (badness 10000) in paragraph at lines 7577--7579
 []\TU/FreeSerif(1)/m/n/10 punto 1 hecho por el
  []
 
-[58]
-Underfull \hbox (badness 7221) in paragraph at lines 7738--7740
+[59]
+Underfull \hbox (badness 7221) in paragraph at lines 7747--7749
 []\TU/FreeSerif(1)/m/n/10 Hoy en día, Windows exige a las empresas editoras de 
 software o a los desarrolladores de software
  []
 
-[59]
 File: smartscreen_en.png Graphic file (type bmp)
 <smartscreen_en.png>
 File: blunderdb_potential_virus.png Graphic file (type bmp)
 <blunderdb_potential_virus.png>
 File: threat_found_action_needed.png Graphic file (type bmp)
 <threat_found_action_needed.png>
- [60] [61]
+[60] [61]
 File: win1.png Graphic file (type bmp)
 <win1.png>
 File: win2.png Graphic file (type bmp)
 <win2.png>
+ [62] [63]
 File: win3.png Graphic file (type bmp)
 <win3.png>
 File: win4.png Graphic file (type bmp)
 <win4.png>
- [62] [63] [64] [65]
 File: win5.png Graphic file (type bmp)
 <win5.png>
 File: win6.png Graphic file (type bmp)
 <win6.png>
 File: win7.png Graphic file (type bmp)
 <win7.png>
- [66] [67] [68] [69]
-Underfull \hbox (badness 6741) in paragraph at lines 8049--8051
+ [64] [65] [66] [67] [68] [69]
+Underfull \hbox (badness 6741) in paragraph at lines 8058--8060
 []\TU/FreeSerif(1)/b/n/10 Colecciones\TU/FreeSerif(1)/m/n/10 : \TU/FreeMono(1)/
 m/n/10 collection \TU/FreeSerif(1)/m/n/10 y \TU/FreeMono(1)/m/n/10 collection_p
 osition \TU/FreeSerif(1)/m/n/10 (tabla de enlace) agrupan posiciones elegidas

@@ -143,16 +143,16 @@
 \contentsline {subsubsection}{Despliegue con Docker}{55}{subsubsection*.39}%
 \contentsline {subsection}{\numberline {2.8.3}Backend PostgreSQL y multiusuario}{55}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Migrar una base SQLite a PostgreSQL}{56}{subsection.2.8.4}%
-\contentsline {subsection}{\numberline {2.8.5}El despachador genérico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{56}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.5}El despachador genérico \sphinxstyleliteralintitle {\sphinxupquote {call}}}{57}{subsection.2.8.5}%
 \contentsline {section}{\numberline {2.9}Anexo: Uso avanzado de los filtros}{57}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Búsqueda de posiciones en la línea de comandos}{57}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.1}Búsqueda de posiciones en la línea de comandos}{58}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Búsqueda dentro de los resultados actuales}{58}{subsection.2.9.2}%
 \contentsline {subsection}{\numberline {2.9.3}Biblioteca de filtros}{58}{subsection.2.9.3}%
-\contentsline {subsection}{\numberline {2.9.4}Ejemplos}{58}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.4}Ejemplos}{59}{subsection.2.9.4}%
 \contentsline {section}{\numberline {2.10}Anexo Windows: detección errónea de blunderDB como software malicioso}{59}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Advertencia de Windows SmartScreen}{60}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Bloqueo de Windows Defender}{60}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Verificar la integridad de la descarga (SHA256)}{66}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.3}Verificar la integridad de la descarga (SHA256)}{64}{subsection.2.10.3}%
 \contentsline {section}{\numberline {2.11}Anexo Mac: posible bloqueo de blunderDB}{69}{section.2.11}%
 \contentsline {subsection}{\numberline {2.11.1}Instalación de blunderDB}{69}{subsection.2.11.1}%
 \contentsline {subsection}{\numberline {2.11.2}Autorización para ejecutar blunderDB}{69}{subsection.2.11.2}%
