@@ -53,6 +53,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/ListFilterSortPaginate", testMatchListFilterSortPaginate},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
+		{"Collection/CopyPosition", testCollectionCopyPosition},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
 		{"Filter/SaveAndList", testFilterSaveAndList},
 		{"History/SaveLoadClear", testCommandHistory},
@@ -64,6 +65,9 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
+		{"Stats/MatchDetail", testStatsMatchDetail},
+		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
+		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}
@@ -356,7 +360,7 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save position: %v", err)
 	}
 
-	makeMatch := func(p1, p2 string) int64 {
+	makeMatch := func(p1, p2 string, posID int64) int64 {
 		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7}
 		mid, err := s.Matches().Save(ctx, "", &m)
 		if err != nil {
@@ -367,14 +371,14 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 		if err != nil {
 			t.Fatalf("CreateGame: %v", err)
 		}
-		mv := domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: sharedID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+		mv := domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
 		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
 			t.Fatalf("CreateMove: %v", err)
 		}
 		return mid
 	}
-	matchA := makeMatch("Alice", "Bob")
-	matchB := makeMatch("Carol", "Dave")
+	matchA := makeMatch("Alice", "Bob", sharedID)
+	matchB := makeMatch("Carol", "Dave", sharedID)
 
 	if err := s.Matches().SwapPlayers(ctx, "", matchA); err != nil {
 		t.Fatalf("SwapPlayers: %v", err)
@@ -423,6 +427,41 @@ func testMatchSwapCopyOnWrite(t *testing.T, s storage.Storage) {
 	}
 	if reSaved != aID {
 		t.Errorf("swapped position has a stale Zobrist: re-save returned %d, want %d", reSaved, aID)
+	}
+
+	// The swap's orphan cleanup mirrors DeleteCascade's (see positionIsHeldSQL):
+	// a position that was only this match's, and that nothing else holds once
+	// the move repoints to the swapped copy, must be purged under its old id.
+	orphan := checkerPos()
+	orphan.Score = [2]int{2, 0}
+	orphanID, err := s.Positions().Save(ctx, "", &orphan)
+	if err != nil {
+		t.Fatalf("Save orphan position: %v", err)
+	}
+	matchC := makeMatch("Eve", "Frank", orphanID)
+	if err := s.Matches().SwapPlayers(ctx, "", matchC); err != nil {
+		t.Fatalf("SwapPlayers (orphan case): %v", err)
+	}
+	if _, err := s.Positions().Load(ctx, "", orphanID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("swap did not purge the orphaned old position: got %v, want ErrNotFound", err)
+	}
+
+	// A retained position (flagged, ADR-0006) must survive the swap under its
+	// old id even though no move points at it any more: positionIsHeldSQL keeps
+	// it alive the same way it would across a match deletion.
+	retained := checkerPos()
+	retained.Score = [2]int{4, 0}
+	retained.Flagged = true
+	retainedID, err := s.Positions().Save(ctx, "", &retained)
+	if err != nil {
+		t.Fatalf("Save retained position: %v", err)
+	}
+	matchD := makeMatch("Gina", "Hank", retainedID)
+	if err := s.Matches().SwapPlayers(ctx, "", matchD); err != nil {
+		t.Fatalf("SwapPlayers (retained case): %v", err)
+	}
+	if _, err := s.Positions().Load(ctx, "", retainedID); err != nil {
+		t.Errorf("swap purged a flagged position that should have been retained: %v", err)
 	}
 }
 
@@ -794,6 +833,57 @@ func testCollectionMoveBetween(t *testing.T, s storage.Storage) {
 	}
 	if len(cols) != 1 || cols[0] != dst {
 		t.Errorf("CollectionsOf: got %v, want [%d]", cols, dst)
+	}
+}
+
+// testCollectionCopyPosition pins CopyPosition against MovePosition: unlike a
+// move, a copy leaves the position in the source collection as well as adding
+// it to the destination, so it belongs to both afterwards.
+func testCollectionCopyPosition(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	cp := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &cp)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+
+	src, err := s.Collections().Create(ctx, "", "src", "source")
+	if err != nil {
+		t.Fatalf("Create src: %v", err)
+	}
+	dst, err := s.Collections().Create(ctx, "", "dst", "destination")
+	if err != nil {
+		t.Fatalf("Create dst: %v", err)
+	}
+	if err := s.Collections().AddPosition(ctx, "", src, posID); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+
+	if err := s.Collections().CopyPosition(ctx, "", dst, posID); err != nil {
+		t.Fatalf("CopyPosition: %v", err)
+	}
+	// Copying the same position again is a no-op, not an error (mirrors
+	// AddPosition's dedup).
+	if err := s.Collections().CopyPosition(ctx, "", dst, posID); err != nil {
+		t.Fatalf("CopyPosition again: %v", err)
+	}
+
+	if c, _ := s.Collections().Get(ctx, "", src); c.PositionCount != 1 {
+		t.Errorf("src count after copy: got %d, want 1 (copy must not remove from source)", c.PositionCount)
+	}
+	if c, _ := s.Collections().Get(ctx, "", dst); c.PositionCount != 1 {
+		t.Errorf("dst count after copy: got %d, want 1", c.PositionCount)
+	}
+
+	var cols []int64
+	for c, err := range s.Collections().CollectionsOf(ctx, "", posID) {
+		if err != nil {
+			t.Fatalf("CollectionsOf: %v", err)
+		}
+		cols = append(cols, c.ID)
+	}
+	if len(cols) != 2 {
+		t.Errorf("CollectionsOf after copy: got %v, want both %d and %d", cols, src, dst)
 	}
 }
 
@@ -1286,6 +1376,204 @@ func testStatsAggregateCounts(t *testing.T, s storage.Storage) {
 	}
 }
 
+// statsDicePairs are the 21 distinct unordered dice pairs (faces 1..6,
+// doubles included). Zobrist hashes dice as an unordered pair (see
+// engine/zobrist.go), so this list is exactly the set of values that cannot
+// collide with one another.
+var statsDicePairs = [][2]int{
+	{1, 1}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6},
+	{2, 2}, {2, 3}, {2, 4}, {2, 5}, {2, 6},
+	{3, 3}, {3, 4}, {3, 5}, {3, 6},
+	{4, 4}, {4, 5}, {4, 6},
+	{5, 5}, {5, 6},
+	{6, 6},
+}
+
+// statsDecisionPos returns a position unique to slot via its dice (rather
+// than score, unlike provenancePos): the stats fixtures below need a
+// realistic, non-degenerate score so the MWC-loss computation doesn't hit an
+// edge case, so uniqueness comes from statsDicePairs instead.
+func statsDecisionPos(t *testing.T, slot int) domain.Position {
+	t.Helper()
+	if slot < 0 || slot >= len(statsDicePairs) {
+		t.Fatalf("statsDecisionPos: slot %d out of range (only %d fixture decisions supported)", slot, len(statsDicePairs))
+	}
+	p := domain.InitializePosition()
+	p.DecisionType = domain.CheckerAction
+	p.Score = [2]int{4, 4}
+	d := statsDicePairs[slot]
+	p.Dice = [2]int{d[0], d[1]}
+	return p
+}
+
+// statsFixtureMatch saves a match with one non-forced, counted checker
+// decision per player. slotBase and slotBase+1 pick each decision's dice (see
+// statsDecisionPos), so callers passing disjoint slot ranges can build
+// several fixtures in the same storage instance without their positions
+// colliding. Each decision carries an analysis with two candidate moves and a
+// known equity error on the one actually played, which is what
+// statsCountedExpr/MatchDetail need to treat it as real data instead of an
+// empty aggregate. It returns the match id and the two decisions' position
+// ids (index 0 = player 1, index 1 = player 2).
+func statsFixtureMatch(t *testing.T, s storage.Storage, slotBase int, p1, p2 string) (matchID int64, posIDs [2]int64) {
+	t.Helper()
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7,
+		MatchDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+
+	mkDecision := func(slot int, player int32) int64 {
+		pos := statsDecisionPos(t, slot)
+		posID, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save position (slot %d): %v", slot, err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(slot), MoveType: "checker",
+			PositionID: posID, Player: player, CheckerMove: "13/11 24/23"}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove (slot %d): %v", slot, err)
+		}
+		equityError := 0.05
+		a := domain.PositionAnalysis{
+			PlayedMoves: []string{"13/11 24/23"},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{Move: "8/6 6/4", Equity: 0.50},
+				{Move: "13/11 24/23", Equity: 0.45, EquityError: &equityError},
+			}},
+		}
+		if err := s.Analyses().Save(ctx, "", posID, &a); err != nil {
+			t.Fatalf("Save analysis (slot %d): %v", slot, err)
+		}
+		return posID
+	}
+
+	posIDs[0] = mkDecision(slotBase, 1)
+	posIDs[1] = mkDecision(slotBase+1, -1)
+	return matchID, posIDs
+}
+
+// testStatsMatchDetail exercises MatchDetail on both backends: only the
+// PostgreSQL side had a dedicated test (via the fixture-driven parity gate in
+// stats_parity_postgres_test.go, which compares real XG imports against the
+// legacy Database — a different and heavier kind of coverage), so SQLite had
+// none in the storage layer itself.
+func testStatsMatchDetail(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	matchID, _ := statsFixtureMatch(t, s, 0, "Alice", "Bob")
+
+	detail, err := s.Stats().MatchDetail(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("MatchDetail: %v", err)
+	}
+	if detail.MatchID != matchID {
+		t.Errorf("MatchID: got %d, want %d", detail.MatchID, matchID)
+	}
+	if detail.Player1.TotalDecisions != 1 || detail.Player2.TotalDecisions != 1 {
+		t.Errorf("TotalDecisions: player1=%d player2=%d, want 1 and 1",
+			detail.Player1.TotalDecisions, detail.Player2.TotalDecisions)
+	}
+	if detail.Player1.PR <= 0 || detail.Player2.PR <= 0 {
+		t.Errorf("PR: player1=%v player2=%v, want both > 0 (a real equity error was recorded)",
+			detail.Player1.PR, detail.Player2.PR)
+	}
+
+	// A match with no counted decisions returns zero-valued stats, not an
+	// error: MatchDetail must be safe to call on every match in a list.
+	empty := domain.Match{Player1Name: "Nobody", Player2Name: "Nowhere"}
+	emptyID, err := s.Matches().Save(ctx, "", &empty)
+	if err != nil {
+		t.Fatalf("Save empty match: %v", err)
+	}
+	emptyDetail, err := s.Stats().MatchDetail(ctx, "", emptyID)
+	if err != nil {
+		t.Fatalf("MatchDetail(empty): %v", err)
+	}
+	if emptyDetail.Player1.TotalDecisions != 0 || emptyDetail.Player2.TotalDecisions != 0 {
+		t.Errorf("MatchDetail(empty): got %+v, want zero decisions", emptyDetail)
+	}
+}
+
+// testStatsPositionIDsByMatch exercises PositionIDsByMatch on both backends
+// (previously PostgreSQL-only, via the parity test's count comparison).
+func testStatsPositionIDsByMatch(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	matchA, posA := statsFixtureMatch(t, s, 0, "Alice", "Bob")
+	matchB, _ := statsFixtureMatch(t, s, 2, "Carol", "Dave")
+
+	ids, err := s.Stats().PositionIDsByMatch(ctx, "", matchA)
+	if err != nil {
+		t.Fatalf("PositionIDsByMatch: %v", err)
+	}
+	if len(ids) != 2 {
+		t.Fatalf("PositionIDsByMatch(matchA): got %v, want 2 ids", ids)
+	}
+	got := map[int64]bool{ids[0]: true, ids[1]: true}
+	if !got[posA[0]] || !got[posA[1]] {
+		t.Errorf("PositionIDsByMatch(matchA): got %v, want %v", ids, posA)
+	}
+
+	// Match B's positions must not leak into match A's result.
+	for _, id := range ids {
+		if id != posA[0] && id != posA[1] {
+			t.Errorf("PositionIDsByMatch(matchA) returned a foreign position %d", id)
+		}
+	}
+	_ = matchB
+}
+
+// testStatsPositionIDsByTournament exercises PositionIDsByTournament, which
+// had no test at all on either backend before this (not even in the
+// PostgreSQL parity test): it aggregates by tournament, one level above
+// PositionIDsByMatch.
+func testStatsPositionIDsByTournament(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	matchA, posA := statsFixtureMatch(t, s, 0, "Alice", "Bob")
+	matchB, posB := statsFixtureMatch(t, s, 2, "Carol", "Dave")
+	_, posOutside := statsFixtureMatch(t, s, 4, "Eve", "Frank") // never joins the tournament
+
+	tID, err := s.Tournaments().Create(ctx, "", "Cup", "2025-06-01", "Paris")
+	if err != nil {
+		t.Fatalf("Create tournament: %v", err)
+	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID, matchA); err != nil {
+		t.Fatalf("AddMatch A: %v", err)
+	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID, matchB); err != nil {
+		t.Fatalf("AddMatch B: %v", err)
+	}
+
+	ids, err := s.Stats().PositionIDsByTournament(ctx, "", tID)
+	if err != nil {
+		t.Fatalf("PositionIDsByTournament: %v", err)
+	}
+	if len(ids) != 4 {
+		t.Fatalf("PositionIDsByTournament: got %v, want 4 ids", ids)
+	}
+	got := map[int64]bool{}
+	for _, id := range ids {
+		got[id] = true
+	}
+	for _, want := range append(posA[:], posB[:]...) {
+		if !got[want] {
+			t.Errorf("PositionIDsByTournament: missing %d, got %v", want, ids)
+		}
+	}
+	for _, outside := range posOutside {
+		if got[outside] {
+			t.Errorf("PositionIDsByTournament: leaked position %d from a match outside the tournament", outside)
+		}
+	}
+}
+
 // provenancePos returns a position unique to n (the score is part of a
 // position's identity, so each n hashes to its own row).
 func provenancePos(n int) domain.Position {
@@ -1392,6 +1680,43 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	inCollection := inMatch(3, false)
 	commented := inMatch(4, false)
 	inDeck := inMatch(5, false)
+	ankiCard := inMatch(7, false)
+
+	// The user flagged this one for study in the source tool (docs/adr/0006):
+	// same reasoning as individually_imported — the retention predicate must
+	// keep it, or deleting a match would delete the very positions the `fl`
+	// filter exists to surface.
+	flaggedPos := provenancePos(6)
+	flaggedPos.Flagged = true
+	flagged, err := s.Positions().Save(ctx, "", &flaggedPos)
+	if err != nil {
+		t.Fatalf("Save flagged position: %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{
+		GameID: gameID, MoveNumber: 6, MoveType: "checker", PositionID: flagged, Player: 1,
+	}); err != nil {
+		t.Fatalf("CreateMove (flagged): %v", err)
+	}
+
+	// The most common real-world case: a position (typically an opening
+	// position) that recurs in a second, still-live match. This is the FIRST
+	// clause of positionIsHeldSQL, not one of the "extra" holders below.
+	sharedWithSecondMatch := inMatch(8, false)
+	m2 := domain.Match{Player1Name: "Eve", Player2Name: "Frank"}
+	matchID2, err := s.Matches().Save(ctx, "", &m2)
+	if err != nil {
+		t.Fatalf("Save second match: %v", err)
+	}
+	g2 := domain.Game{MatchID: matchID2, GameNumber: 1}
+	gameID2, err := s.Matches().CreateGame(ctx, "", &g2)
+	if err != nil {
+		t.Fatalf("CreateGame (second match): %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{
+		GameID: gameID2, MoveNumber: 1, MoveType: "checker", PositionID: sharedWithSecondMatch, Player: 1,
+	}); err != nil {
+		t.Fatalf("CreateMove (second match): %v", err)
+	}
 
 	// Neither an analysis nor a comment holds a position: both can arrive with
 	// the match, so holding on them would mean never purging anything.
@@ -1413,7 +1738,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("CreateDeck: %v", err)
 	}
-	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{inDeck}); err != nil {
+	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{inDeck, ankiCard}); err != nil {
 		t.Fatalf("SyncWithPositions: %v", err)
 	}
 
@@ -1431,6 +1756,9 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		{"individually imported", individual, true},
 		{"in a collection", inCollection, true},
 		{"in an Anki deck", inDeck, true},
+		{"flagged (ADR-0006)", flagged, true},
+		{"referenced by an Anki card", ankiCard, true},
+		{"shared with a second, still-live match", sharedWithSecondMatch, true},
 	} {
 		_, err := s.Positions().Load(ctx, "", tc.id)
 		switch {
