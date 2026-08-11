@@ -157,13 +157,7 @@ export function handleKeyDown(event) {
 
     // Panel focus handling
     const showComment = get(openPanels).has(PANEL.COMMENT);
-    if (
-        document.activeElement.closest('.filter-library-panel') ||
-        document.activeElement.closest('.match-panel') ||
-        document.activeElement.closest('.collection-panel') ||
-        document.activeElement.closest('.tournament-panel') ||
-        showComment
-    ) {
+    if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();
         } else if (event.key === 'Escape' || event.key === 'Tab') {
@@ -183,10 +177,8 @@ export function handleKeyDown(event) {
                 event.key === 'PageUp' ||
                 event.key === 'PageDown';
             if (isNavigationKey) {
-                const filterLibraryHasSelection = document.querySelector('.filter-library-panel tr.highlight');
-                const searchHistoryHasSelection = document.querySelector('.search-history-panel tr.selected');
                 const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');
-                if (filterLibraryHasSelection || searchHistoryHasSelection || matchPanelHasSelection) return;
+                if (matchPanelHasSelection) return;
             } else {
                 return;
             }
