@@ -1,6 +1,51 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/adrg/xdg"
+)
+
+// isolateXDGConfig points XDG_CONFIG_HOME at a throwaway directory so a test
+// run never touches (or reuses) the developer's real config.yaml.
+func isolateXDGConfig(t *testing.T) {
+	t.Helper()
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	xdg.Reload()
+	t.Cleanup(xdg.Reload)
+}
+
+// TestLoadConfigPropagatesBearoffAndEpcChallenge is a regression test for a
+// bug found while writing the fuller round-trip test in
+// TestConfigRoundTripLoadSave: LoadConfig read BearoffTsPath and EpcChallenge
+// from disk into the *returned* Config, but never copied them onto the
+// receiver `c` (unlike every other field). Since the Wails binding exposes
+// methods on that receiver, GetBearoffTsPath()/GetEpcChallenge() — what the
+// frontend actually calls — silently reported the zero value after every
+// restart, even though the value was correctly persisted and even correctly
+// applied to the race engine once via the separate `config` return value in
+// main.go's runGUI(). See config.go LoadConfig.
+func TestLoadConfigPropagatesBearoffAndEpcChallenge(t *testing.T) {
+	isolateXDGConfig(t)
+
+	saver := NewConfig()
+	saver.BearoffTsPath = "/tmp/some/external.bd"
+	saver.EpcChallenge = true
+	if err := saver.SaveConfig(saver); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+
+	loader := &Config{}
+	if _, err := loader.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if loader.BearoffTsPath != "/tmp/some/external.bd" {
+		t.Errorf("receiver BearoffTsPath = %q, want %q (frontend calls GetBearoffTsPath() on this receiver)", loader.BearoffTsPath, "/tmp/some/external.bd")
+	}
+	if !loader.EpcChallenge {
+		t.Error("receiver EpcChallenge = false, want true (frontend calls GetEpcChallenge() on this receiver)")
+	}
+}
 
 func TestDefaultBoardColors(t *testing.T) {
 	d := DefaultBoardColors()
