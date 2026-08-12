@@ -3,21 +3,55 @@ package engine
 import "math"
 
 // ============================================================================
-// GNUbg Match Equity Table (MET) — Kazaross-XG2 (GNUbg default) with Zadeh fallback
+// Match Equity Table (MET) — Kazaross-XG2, with a Zadeh fallback beyond 25 points
 //
-// GNUbg loads the Kazaross-XG2 explicit MET by default (met/Kazaross-XG2.xml).
-// This table was generated using XG rollouts to 9pts, GNUbg Supremo full rollouts
-// to 15pts, and extended to 25pts by projecting take points.
+// ATTRIBUTION. The explicit table below is the **Kazaross-XG2** MET, the work of
+// **Neil Kazaross**. It was produced by XG rollouts to 9 points, extended with
+// Supremo full rollouts to 15 points, then to 25 points by projecting take
+// points; its author describes the genesis himself: "I did not involve anyone
+// else in creating Kazaross-XG2 since I did it prior to public release of XG so
+// it could be included as default with XG2."
 //
-// For entries beyond the 25×25 explicit table (matches > 25 points), GNUbg uses
-// the Zadeh model (N. Zadeh, Management Science 23, 986, 1977) as a fallback.
-// We replicate this by computing Zadeh first (full 64×64), then overlaying
-// the Kazaross-XG2 explicit values for indices 0-24.
+// The table is published IN FULL by its author — 25 away, every digit of
+// precision, post-Crawford equities included — in Tom Keith's article "The
+// Kazaross-XG2 Match Equity Table":
 //
-// gnuBGPreCrawfordMET[i][j] = player 0's MWC when player 0 needs i+1 pts, player 1 needs j+1 pts.
-// gnuBGPostCrawfordMET[n] = trailer's MWC when trailer needs n+1 pts and leader needs 1 pt.
+//	https://bkgm.com/articles/Keith/KazarossXG2MET/index.html
 //
-// Antisymmetry: gnuBGPreCrawfordMET[i][j] + gnuBGPreCrawfordMET[j][i] = 1.0
+// GNU Backgammon ships that table as met/Kazaross-XG2.xml and loads it as its
+// default, and that file is what the values here were transcribed from. But
+// GNUbg is NEITHER the source NOR the first publisher — only one more vehicle of
+// distribution. This table is not a GNUbg derivative. The header of this file
+// used to claim it was ("GNUbg Match Equity Table"), and the identifiers used to
+// say so too; both were wrong, and both were corrected on 2026-08-12
+// (gammonGo#490, after the mirror-image error was corrected in gammonGo#380).
+//
+// blunderDB's in-app help already gets this right — "The Kazaross-XG2 Match
+// Equity Table (MET) is credited to Neil Kazaross", in the Acknowledgements of
+// frontend/src/i18n/help/*.js, where it sits next to a SEPARATE credit to GNUbg
+// for the one-sided bearoff database. The help is the reference this file now
+// conforms to, not the other way round.
+//
+// A note for anyone tempted to reuse the bearoff-database argument — "an exact
+// computation, two correct implementations produce identical files, therefore a
+// fact and not a work" — it does NOT transpose to this table. Rollouts are
+// stochastic: two campaigns do not yield the same numbers. The table carries a
+// trace of its author that a bearoff database does not, and that is why
+// attribution is due here.
+//
+// WHAT DOES COME FROM GNUBG: the fallback. Beyond the explicit 25×25 table
+// (matches longer than 25 points) we compute the **Zadeh** model (N. Zadeh,
+// Management Science 23, 986, 1977) the way GNUbg does — this file's
+// gnuBGInitPreCrawfordMET/gnuBGInitPostCrawfordMET are a faithful translation of
+// initMETZadeh() from matchequity.c, full 64×64, float32 throughout to match its
+// C `float` precision — and then overlay the Kazaross-XG2 explicit values for
+// indices 0-24. The gnuBG* identifiers left in this file name that machinery and
+// the getME/GET_MET lookups it mirrors. None of them names the table.
+//
+// preCrawfordMET[i][j] = player 0's MWC when player 0 needs i+1 pts, player 1 needs j+1 pts.
+// postCrawfordMET[n] = trailer's MWC when trailer needs n+1 pts and leader needs 1 pt.
+//
+// Antisymmetry: preCrawfordMET[i][j] + preCrawfordMET[j][i] = 1.0
 // This means MET[myAway-1][theirAway-1] gives "my" MWC for either player.
 //
 // This MET machinery lives in package engine (rather than database) so both the
@@ -34,18 +68,24 @@ const (
 // Uses float32 to match GNUbg's native precision exactly.
 type d3Array [gnuBGMaxScore][gnuBGMaxScore][gnuBGMaxCubeLevel]float32
 
+// The live MET, as consulted by every lookup below: Neil Kazaross's Kazaross-XG2
+// values for indices 0-24, the Zadeh fallback beyond. They deliberately carry no
+// author in their name, because they hold both.
+//
 // MET tables use float32 internally to match GNUbg's C `float` type exactly.
 // The accumulated precision of float32 arithmetic in the Zadeh iteration
 // produces MET values that match GNUbg's, ensuring correct equity conversions.
 var (
-	gnuBGPreCrawfordMET  [gnuBGMaxScore][gnuBGMaxScore]float32
-	gnuBGPostCrawfordMET [gnuBGMaxScore]float32
+	preCrawfordMET  [gnuBGMaxScore][gnuBGMaxScore]float32
+	postCrawfordMET [gnuBGMaxScore]float32
 )
 
-// kazarossXG2PreCrawford is the Kazaross-XG2 pre-Crawford Match Equity Table (25×25).
-// This is GNUbg's DEFAULT MET (loaded from met/Kazaross-XG2.xml).
-// Generated using XG rollouts to 9pts, GNUbg Supremo full rollouts to 15pts,
-// extended to 25pts by projecting take points.
+// kazarossXG2PreCrawford is the Kazaross-XG2 pre-Crawford Match Equity Table (25×25),
+// the work of Neil Kazaross (see the file header for provenance and source).
+// Generated using XG rollouts to 9pts, Supremo full rollouts to 15pts,
+// extended to 25pts by projecting take points. GNUbg distributes it as
+// met/Kazaross-XG2.xml and loads it as its default MET; that file is the vehicle
+// these values were transcribed from, not their origin.
 // Index [i][j] = player 0's MWC when player 0 needs i+1 pts, player 1 needs j+1 pts.
 var kazarossXG2PreCrawford = [25][25]float32{
 	{0.50000, 0.67736, 0.75076, 0.81436, 0.84179, 0.88731, 0.90724, 0.93250, 0.94402, 0.959275, 0.966442, 0.975534, 0.979845, 0.985273, 0.987893, 0.99114, 0.99273, 0.99467, 0.99563, 0.99679, 0.99737, 0.99807, 0.99842, 0.99884, 0.99905},
@@ -89,30 +129,29 @@ var kazarossXG2PostCrawford = [24]float32{
 func init() {
 	gnuBGInitPostCrawfordMET()
 	gnuBGInitPreCrawfordMET()
-	// Overlay Kazaross-XG2 values (GNUbg's default MET) onto the Zadeh-computed tables.
-	// For matches ≤ 25 points this gives exact GNUbg values; beyond 25 uses Zadeh as fallback.
-	gnuBGOverlayKazarossXG2()
+	// Overlay the Kazaross-XG2 table onto the Zadeh-computed arrays: exact
+	// Kazaross-XG2 values for matches ≤ 25 points, Zadeh as the fallback beyond.
+	overlayKazarossXG2()
 }
 
-// gnuBGOverlayKazarossXG2 overlays the Kazaross-XG2 explicit table values onto
-// the Zadeh-computed MET arrays. GNUbg's default is Kazaross-XG2 (met/Kazaross-XG2.xml),
-// not Zadeh. The explicit table covers matches up to 25 points; beyond that,
-// the Zadeh values remain as a reasonable fallback.
-func gnuBGOverlayKazarossXG2() {
+// overlayKazarossXG2 overlays the Kazaross-XG2 explicit table values onto
+// the Zadeh-computed MET arrays. The explicit table covers matches up to
+// 25 points; beyond that, the Zadeh values remain as a reasonable fallback.
+func overlayKazarossXG2() {
 	// Pre-Crawford: copy 25×25 explicit values
 	for i := 0; i < 25; i++ {
 		for j := 0; j < 25; j++ {
-			gnuBGPreCrawfordMET[i][j] = kazarossXG2PreCrawford[i][j]
+			preCrawfordMET[i][j] = kazarossXG2PreCrawford[i][j]
 		}
 	}
 
 	// Post-Crawford: copy 24 explicit entries (GNUbg copies 0..nLength-2 = 0..23)
 	for i := 0; i < 24; i++ {
-		gnuBGPostCrawfordMET[i] = kazarossXG2PostCrawford[i]
+		postCrawfordMET[i] = kazarossXG2PostCrawford[i]
 	}
 }
 
-// gnuBGGetMETEntry returns gnuBGPreCrawfordMET[i][j] with boundary handling.
+// gnuBGGetMETEntry returns preCrawfordMET[i][j] with boundary handling.
 // Mirrors the GET_MET macro: i<0 → 1.0, j<0 → 0.0.
 func gnuBGGetMETEntry(i, j int) float32 {
 	if i < 0 {
@@ -121,7 +160,7 @@ func gnuBGGetMETEntry(i, j int) float32 {
 	if j < 0 {
 		return 0.0
 	}
-	return gnuBGPreCrawfordMET[i][j]
+	return preCrawfordMET[i][j]
 }
 
 // gnuBGGetCubePrimeValue mirrors GetCubePrimeValue from matchequity.c.
@@ -143,19 +182,19 @@ func gnuBGInitPostCrawfordMET() {
 	for i := 0; i < gnuBGMaxScore; i++ {
 		pc4 := float32(1.0)
 		if i-4 >= 0 {
-			pc4 = gnuBGPostCrawfordMET[i-4]
+			pc4 = postCrawfordMET[i-4]
 		}
 		pc2 := float32(1.0)
 		if i-2 >= 0 {
-			pc2 = gnuBGPostCrawfordMET[i-2]
+			pc2 = postCrawfordMET[i-2]
 		}
-		gnuBGPostCrawfordMET[i] = rG*0.5*pc4 + (1.0-rG)*0.5*pc2
+		postCrawfordMET[i] = rG*0.5*pc4 + (1.0-rG)*0.5*pc2
 
 		if i == 1 {
-			gnuBGPostCrawfordMET[i] -= rFD2
+			postCrawfordMET[i] -= rFD2
 		}
 		if i == 3 {
-			gnuBGPostCrawfordMET[i] -= rFD4
+			postCrawfordMET[i] -= rFD4
 		}
 	}
 }
@@ -169,8 +208,8 @@ func gnuBGInitPreCrawfordMET() {
 	rDelta := float32(0.08)
 	rDeltaBar := float32(0.06)
 
-	pc := &gnuBGPostCrawfordMET
-	met := &gnuBGPreCrawfordMET
+	pc := &postCrawfordMET
+	met := &preCrawfordMET
 	getMET := gnuBGGetMETEntry
 	getCPV := gnuBGGetCubePrimeValue
 
@@ -339,22 +378,22 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 		if n0 == 0 {
 			// Player 0 at 1-away after game
 			if fPlayer != 0 {
-				return float64(gnuBGPostCrawfordMET[n1])
+				return float64(postCrawfordMET[n1])
 			}
-			return float64(1.0 - gnuBGPostCrawfordMET[n1])
+			return float64(1.0 - postCrawfordMET[n1])
 		}
 		// Player 1 must be at or near match point
 		if fPlayer != 0 {
-			return float64(1.0 - gnuBGPostCrawfordMET[n0])
+			return float64(1.0 - postCrawfordMET[n0])
 		}
-		return float64(gnuBGPostCrawfordMET[n0])
+		return float64(postCrawfordMET[n0])
 	}
 
 	// Normal pre-Crawford lookup
 	if fPlayer != 0 {
-		return float64(1.0 - gnuBGPreCrawfordMET[n0][n1])
+		return float64(1.0 - preCrawfordMET[n0][n1])
 	}
-	return float64(gnuBGPreCrawfordMET[n0][n1])
+	return float64(preCrawfordMET[n0][n1])
 }
 
 // ConvertEMGLossToMWCLoss converts a loss expressed in EMG millipoints (the
