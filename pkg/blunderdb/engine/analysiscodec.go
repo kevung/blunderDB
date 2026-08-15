@@ -8,6 +8,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -155,21 +156,72 @@ func ComputeIsCloseCube(dca *domain.DoublingCubeAnalysis, playedCubeAction strin
 // tolerates the abbreviations (nd/dt/dp/drop) that appear in move.cube_action
 // and in filter input.
 func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) (float64, bool) {
-	if dca == nil || playedCubeAction == "" {
+	if dca == nil {
 		return 0, false
 	}
-	s := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(playedCubeAction)), " ", "")
-	switch {
-	case s == "nd" || strings.Contains(s, "nodouble"):
+	switch CanonicalCubeAction(playedCubeAction) {
+	case CubeNoDouble:
 		return dca.CubefulNoDoubleError, true
-	case strings.Contains(s, "double"): // double, double/take, double/pass, redouble
+	case CubeDouble:
 		return math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError), true
-	case s == "dt" || strings.Contains(s, "take"):
+	case CubeTake:
 		return math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity, true
-	case s == "dp" || strings.Contains(s, "pass") || strings.Contains(s, "drop"):
+	case CubePass:
 		return math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity, true
 	}
 	return 0, false
+}
+
+// The four cube actions a player can take, as returned by CanonicalCubeAction.
+// CubeUnknown is the zero value, so an unrecognised label never silently passes
+// for a real action.
+const (
+	CubeUnknown  = ""
+	CubeNoDouble = "no double"
+	CubeDouble   = "double"
+	CubeTake     = "take"
+	CubePass     = "pass"
+)
+
+// CanonicalCubeAction maps every spelling of a cube action met in the wild onto
+// one of the four constants above, or CubeUnknown.
+//
+// It exists because matching these labels with a chain of strings.Contains is a
+// trap: the labels are written by several producers and no two agree. The XG
+// importer alone writes BOTH "No Double" and "Double No" for a no-double — and
+// the latter, once spaces are stripped, does not contain "nodouble" but does
+// contain "double". Every Contains-based test therefore classified it as a
+// DOUBLE and scored it with the error of the double that never happened
+// (kevung/blunderDB#115). Adding one more Contains would have closed that case
+// and left the next one open, so the recognition is stated once, here.
+//
+// The doubler's combined labels ("Double/Take", "Double/Pass") are DOUBLES: they
+// name what the doubler did, the response being the opponent's. The bare
+// abbreviations dt/dp, however, are the responses take/pass — that is how they
+// reach us from move.cube_action and from filter input.
+func CanonicalCubeAction(action string) string {
+	s := strings.Map(func(r rune) rune {
+		switch r {
+		case ' ', '\t', '/', ',', '-', '_', '.':
+			return -1
+		}
+		return unicode.ToLower(r)
+	}, action)
+
+	switch {
+	case s == "":
+		return CubeUnknown
+	// Before the "double" test: "doubleno" contains "double".
+	case s == "nd" || strings.Contains(s, "nodouble") || strings.Contains(s, "doubleno"):
+		return CubeNoDouble
+	case strings.Contains(s, "double"): // double, double/take, double/pass, redouble
+		return CubeDouble
+	case s == "dt" || strings.Contains(s, "take"):
+		return CubeTake
+	case s == "dp" || strings.Contains(s, "pass") || strings.Contains(s, "drop"):
+		return CubePass
+	}
+	return CubeUnknown
 }
 
 // IsResponseCubeAction reports whether a cube action is a pure take/pass
@@ -178,12 +230,11 @@ func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) 
 // actions ("Double/Take", "Double/Pass") are NOT responses. Used for board
 // orientation and to decide whether to render the offered cube on the board.
 func IsResponseCubeAction(action string) bool {
-	s := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(action)), " ", "")
-	if strings.Contains(s, "double") { // double, double/take, double/pass, nodouble, redouble
-		return false
+	switch CanonicalCubeAction(action) {
+	case CubeTake, CubePass:
+		return true
 	}
-	return s == "dt" || s == "dp" ||
-		strings.Contains(s, "take") || strings.Contains(s, "pass") || strings.Contains(s, "drop")
+	return false
 }
 
 // PopulateAnalysisColumns computes the scalar analysis columns from a

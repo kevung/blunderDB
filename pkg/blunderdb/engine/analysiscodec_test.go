@@ -40,9 +40,17 @@ func TestCubeActionError_DoublingDecisions(t *testing.T) {
 	}
 }
 
+// TestCubeActionError_NoDouble covers every spelling of "the cube stayed put".
+//
+// "Double No" is not a typo: it is what the XG importer writes into
+// PlayedCubeActions for a no-double, alongside "No Double" — 194 occurrences in
+// a 151-match tournament corpus. Normalised, it reads "doubleno", which does NOT
+// contain "nodouble"; it therefore used to fall through to the doubling branch
+// and be scored with min(DoubleTakeError, DoublePassError) — the error of the
+// double that never happened. See kevung/blunderDB#115.
 func TestCubeActionError_NoDouble(t *testing.T) {
 	d := dca()
-	for _, action := range []string{"No Double", "NoDouble", "nd", "ND"} {
+	for _, action := range []string{"No Double", "NoDouble", "nd", "ND", "Double No", "double no"} {
 		got, ok := CubeActionError(d, action)
 		if !ok || !approx(got, d.CubefulNoDoubleError) {
 			t.Errorf("CubeActionError(%q) = (%v,%v), want (%v,true)", action, got, ok, d.CubefulNoDoubleError)
@@ -66,6 +74,33 @@ func TestCubeActionError_Responses(t *testing.T) {
 		got, ok := CubeActionError(d, action)
 		if !ok || !approx(got, wantPass) {
 			t.Errorf("CubeActionError(%q) = (%v,%v), want (%v,true)", action, got, ok, wantPass)
+		}
+	}
+}
+
+// TestCanonicalCubeAction_ImporterLabels pins the exact labels the XG importer
+// writes, as counted over a 151-match tournament corpus (57 820 positions):
+//
+//	No Double 19286 · Double/Take 508 · Take 508 · Double/Pass 411 · Pass 411 · Double No 194
+//
+// Six spellings for four actions, two of them for the same one. This test is
+// the record of what the data actually contains: if a new label appears, it
+// belongs here with its count, not in a new strings.Contains somewhere.
+func TestCanonicalCubeAction_ImporterLabels(t *testing.T) {
+	for _, tc := range []struct{ label, want string }{
+		{"No Double", CubeNoDouble},
+		{"Double No", CubeNoDouble}, // 194 occurrences — the one that was misread
+		{"Double/Take", CubeDouble}, // the DOUBLER's action, not the response
+		{"Double/Pass", CubeDouble},
+		{"Take", CubeTake},
+		{"Pass", CubePass},
+		// Abbreviations and spacing variants met in move.cube_action and filters.
+		{"nd", CubeNoDouble}, {"dt", CubeTake}, {"dp", CubePass},
+		{"  no  double ", CubeNoDouble}, {"NO-DOUBLE", CubeNoDouble}, {"Redouble", CubeDouble},
+		{"Drop", CubePass}, {"", CubeUnknown}, {"   ", CubeUnknown}, {"garbage", CubeUnknown},
+	} {
+		if got := CanonicalCubeAction(tc.label); got != tc.want {
+			t.Errorf("CanonicalCubeAction(%q) = %q, want %q", tc.label, got, tc.want)
 		}
 	}
 }
