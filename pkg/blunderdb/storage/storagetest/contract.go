@@ -67,6 +67,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/CubeDirections", testStatsCubeDirections},
+		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
 		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
@@ -1618,6 +1619,56 @@ func testStatsCubeDirections(t *testing.T, s storage.Storage) {
 	if alice.CubeDirections.Offer.Missed != 1 {
 		t.Errorf("Alice's offer axis: got %+v, want the missed double", alice.CubeDirections.Offer)
 	}
+}
+
+// testRepairDenormalisedColumns pins the repair on the very defect that made it
+// necessary: a column left holding the error of an action that was not played.
+//
+// The check that matters is the SECOND run returning 0. A repair that rewrites
+// every row every time cannot tell "something was wrong" from "it ran", and the
+// count is the only thing an operator has to decide whether to worry.
+func testRepairDenormalisedColumns(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	as := s.Analyses()
+
+	pos := statsDecisionPos(t, 7)
+	pos.DecisionType = domain.CubeAction
+	posID, err := s.Positions().Save(ctx, "", &pos)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	a := domain.PositionAnalysis{
+		PlayedCubeActions: []string{"No Double"},
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			BestCubeAction:          "No Double",
+			CubefulNoDoubleEquity:   0.40,
+			CubefulDoubleTakeEquity: 0.20,
+			CubefulDoublePassEquity: 1.00,
+			CubefulNoDoubleError:    0,
+			CubefulDoubleTakeError:  -0.200,
+			CubefulDoublePassError:  -0.600,
+		},
+	}
+	if err := as.Save(ctx, "", posID, &a); err != nil {
+		if errors.Is(err, storage.ErrInternal) {
+			t.Skip("Analyses not implemented on this backend")
+		}
+		t.Fatalf("Save analysis: %v", err)
+	}
+
+	// Une base saine ne bouge pas : c'est ce qui rend le compteur lisible.
+	n, err := as.RepairDenormalisedColumns(ctx, "")
+	if err != nil {
+		t.Fatalf("Repair (sain): %v", err)
+	}
+	if n != 0 {
+		t.Errorf("réparation d'une base saine : %d lignes touchées, want 0", n)
+	}
+
+	// La réparation d'une colonne RÉELLEMENT abîmée se teste là où l'on peut
+	// l'abîmer — en SQL, dans analyses_repair_sqlite_test.go. Le contrat, lui,
+	// n'a que l'interface : il vérifie ce qu'il peut, et ce qu'il vérifie est
+	// justement ce qui rend le compteur lisible.
 }
 
 func statsDecisionPos(t *testing.T, slot int) domain.Position {

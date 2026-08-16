@@ -118,3 +118,65 @@ func firstOf(s []string) string {
 	}
 	return ""
 }
+
+// RepairDenormalisedColumns — see storage.AnalysisStore.
+//
+// Rows are read, decoded and rewritten one at a time rather than loaded whole:
+// a real database holds tens of thousands of analyses, and the point of a repair
+// is to run on the biggest ones. Only rows whose columns actually change are
+// written, so a second run reports 0 and touches nothing — the count is the
+// answer to "was anything wrong?", not merely to "did it run?".
+func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string) (int, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`SELECT id, data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
+		 FROM analysis ORDER BY id`)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: repair: read analyses: %w", err)
+	}
+	type row struct {
+		id                                     int64
+		data                                   []byte
+		bestCube                               sql.NullString
+		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
+	}
+	var all []row
+	for rows.Next() {
+		var r row
+		if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
+			rows.Close()
+			return 0, fmt.Errorf("sqlite: repair: scan: %w", err)
+		}
+		all = append(all, r)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return 0, fmt.Errorf("sqlite: repair: iterate: %w", err)
+	}
+
+	repaired := 0
+	for _, r := range all {
+		a, err := engine.DecodeAnalysisFromStorage(r.data)
+		if err != nil {
+			// An unreadable blob is LEFT ALONE, never zeroed: the columns we have
+			// may be wrong, but blanking them would lose the only information
+			// left about that position.
+			continue
+		}
+		c := engine.PopulateAnalysisColumns(&a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+		if c.BestCubeAction == r.bestCube.String &&
+			c.CubeError == r.cubeErr.Int64 &&
+			c.BestMoveEquityError == r.bestMoveErr.Int64 &&
+			c.IsForced == r.forced.Int64 &&
+			c.IsCloseCube == r.closeCub.Int64 {
+			continue
+		}
+		if _, err := s.db.ExecContext(ctx,
+			`UPDATE analysis SET best_cube_action=?, cube_error=?, best_move_equity_error=?,
+			 is_forced=?, is_close_cube=? WHERE id=?`,
+			c.BestCubeAction, c.CubeError, c.BestMoveEquityError, c.IsForced, c.IsCloseCube, r.id); err != nil {
+			return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
+		}
+		repaired++
+	}
+	return repaired, nil
+}
