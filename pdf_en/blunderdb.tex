@@ -79,7 +79,7 @@
 
 
 \title{blunderDB}
-\date{Aug 15, 2026}
+\date{Aug 16, 2026}
 \release{0.32.0}
 \author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1728,6 +1728,48 @@ A bar chart displays the PR (or MWC) for each type of cube decision: \sphinxstyl
 
 \sphinxAtStartPar
 Clicking a bar loads the positions matching that cube action, \sphinxstylestrong{only those with an error} (drill\sphinxhyphen{}down).
+
+
+\paragraph{Direction des erreurs de videau}
+\label{\detokenize{manuel:direction-des-erreurs-de-videau}}
+\sphinxAtStartPar
+La répartition ci\sphinxhyphen{}dessus indique \sphinxstyleemphasis{combien} coûtent les décisions de videau ;
+ce tableau indique dans \sphinxstyleemphasis{quel sens} elles se trompent.
+
+\sphinxAtStartPar
+Une position de videau porte deux décisions prises par deux joueurs
+différents, présentées ici en deux lignes :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Offrir} — le joueur qui tient le videau double ou ne double pas. Ses
+erreurs sont les \sphinxstylestrong{doubles manqués} (il fallait doubler) et les \sphinxstylestrong{doubles
+prématurés} (il ne fallait pas).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Répondre} — le joueur à qui le videau est offert prend ou passe. Ses
+erreurs sont les \sphinxstylestrong{passes à tort} (une prise correcte a été passée) et les
+\sphinxstylestrong{prises à tort} (une passe correcte a été prise).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les deux lignes restent séparées à dessein : un joueur peut parfaitement
+doubler tard \sphinxstyleemphasis{et} prendre large, et un indicateur unique appellerait cela
+« équilibré » en perdant les deux moitiés de l’information.
+
+\sphinxAtStartPar
+Chaque case affiche le nombre de décisions ; l’infobulle donne l’équité perdue
+cumulée. Cliquer sur une case charge les positions correspondantes. Une case à
+zéro n’est pas cliquable.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Ce tableau compte des décisions, il ne porte pas de jugement. À partir de
+quel écart une tendance mérite d’être nommée dépend de l’effectif et d’un
+point de référence, qui ne sont pas des données du moteur.
+\end{sphinxadmonition}
 
 
 \paragraph{Checker / Cube comparison}

@@ -88,8 +88,9 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.16.7. Erreurs-välilehti</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.16.7.1. Jakauma kuutiotoimen mukaan</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.16.7.2. Checker / Cube -vertailu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.16.7.3. Virheiden suuruusjakauman histogrammi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#direction-des-erreurs-de-videau">2.16.7.2. Direction des erreurs de videau</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.16.7.3. Checker / Cube -vertailu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.16.7.4. Virheiden suuruusjakauman histogrammi</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.16.8. Yhdistämissääntö</a></li>
@@ -530,12 +531,39 @@ masquer le panneau.</p>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
 </section>
+<section id="direction-des-erreurs-de-videau">
+<h4><span class="section-number">2.16.7.2. </span>Direction des erreurs de videau<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Link to this heading"></a></h4>
+<p>La répartition ci-dessus indique <em>combien</em> coûtent les décisions de videau ;
+ce tableau indique dans <em>quel sens</em> elles se trompent.</p>
+<p>Une position de videau porte deux décisions prises par deux joueurs
+différents, présentées ici en deux lignes :</p>
+<ul class="simple">
+<li><p><strong>Offrir</strong> — le joueur qui tient le videau double ou ne double pas. Ses
+erreurs sont les <strong>doubles manqués</strong> (il fallait doubler) et les <strong>doubles
+prématurés</strong> (il ne fallait pas).</p></li>
+<li><p><strong>Répondre</strong> — le joueur à qui le videau est offert prend ou passe. Ses
+erreurs sont les <strong>passes à tort</strong> (une prise correcte a été passée) et les
+<strong>prises à tort</strong> (une passe correcte a été prise).</p></li>
+</ul>
+<p>Les deux lignes restent séparées à dessein : un joueur peut parfaitement
+doubler tard <em>et</em> prendre large, et un indicateur unique appellerait cela
+« équilibré » en perdant les deux moitiés de l’information.</p>
+<p>Chaque case affiche le nombre de décisions ; l’infobulle donne l’équité perdue
+cumulée. Cliquer sur une case charge les positions correspondantes. Une case à
+zéro n’est pas cliquable.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Ce tableau compte des décisions, il ne porte pas de jugement. À partir de
+quel écart une tendance mérite d’être nommée dépend de l’effectif et d’un
+point de référence, qui ne sont pas des données du moteur.</p>
+</div>
+</section>
 <section id="repartition-checker-cube">
-<h4><span class="section-number">2.16.7.2. </span>Checker / Cube -vertailu<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.16.7.3. </span>Checker / Cube -vertailu<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
 <p>Vertailukaavio asettaa rinnakkain pelinappulasiirtojen ja kuutiopäätösten PR:n. Pylvään napsauttaminen lataa osajoukon asemat, joissa on virhe.</p>
 </section>
 <section id="histogramme-des-magnitudes-d-erreur">
-<h4><span class="section-number">2.16.7.3. </span>Virheiden suuruusjakauman histogrammi<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<h4><span class="section-number">2.16.7.4. </span>Virheiden suuruusjakauman histogrammi<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
 <p>Histogrammi jakaa virheet niiden suuruuden mukaan pisteen tuhannesosina (luokat: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Pylvään napsauttaminen lataa luokan asemat.</p>
 </section>
 </section>

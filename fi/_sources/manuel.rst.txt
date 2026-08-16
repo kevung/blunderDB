@@ -681,6 +681,36 @@ indique également le nombre de décisions et le taux de blunders en infobulle.
 Cliquer sur une barre charge les positions correspondant à cette action de
 videau, **uniquement celles avec une erreur** (drill-down).
 
+Direction des erreurs de videau
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+La répartition ci-dessus indique *combien* coûtent les décisions de videau ;
+ce tableau indique dans *quel sens* elles se trompent.
+
+Une position de videau porte deux décisions prises par deux joueurs
+différents, présentées ici en deux lignes :
+
+* **Offrir** — le joueur qui tient le videau double ou ne double pas. Ses
+  erreurs sont les **doubles manqués** (il fallait doubler) et les **doubles
+  prématurés** (il ne fallait pas).
+
+* **Répondre** — le joueur à qui le videau est offert prend ou passe. Ses
+  erreurs sont les **passes à tort** (une prise correcte a été passée) et les
+  **prises à tort** (une passe correcte a été prise).
+
+Les deux lignes restent séparées à dessein : un joueur peut parfaitement
+doubler tard *et* prendre large, et un indicateur unique appellerait cela
+« équilibré » en perdant les deux moitiés de l'information.
+
+Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité perdue
+cumulée. Cliquer sur une case charge les positions correspondantes. Une case à
+zéro n'est pas cliquable.
+
+.. note::
+   Ce tableau compte des décisions, il ne porte pas de jugement. À partir de
+   quel écart une tendance mérite d'être nommée dépend de l'effectif et d'un
+   point de référence, qui ne sont pas des données du moteur.
+
 Répartition Checker / Cube
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

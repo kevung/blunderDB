@@ -54,7 +54,7 @@
 
 
 \title{blunderDB}
-\date{2026年08月15日}
+\date{2026年08月16日}
 \release{0.32.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1703,6 +1703,48 @@ PR ↔ MWC の切り替えは瞬時に行われます。バックエンドでの
 
 \sphinxAtStartPar
 バーをクリックすると、そのキューブのアクションに対応するポジションのうち \sphinxstylestrong{エラーがあるものだけ} が読み込まれます（ドリルダウン）。
+
+
+\paragraph{Direction des erreurs de videau}
+\label{\detokenize{manuel:direction-des-erreurs-de-videau}}
+\sphinxAtStartPar
+La répartition ci\sphinxhyphen{}dessus indique \sphinxstyleemphasis{combien} coûtent les décisions de videau ;
+ce tableau indique dans \sphinxstyleemphasis{quel sens} elles se trompent.
+
+\sphinxAtStartPar
+Une position de videau porte deux décisions prises par deux joueurs
+différents, présentées ici en deux lignes :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Offrir} — le joueur qui tient le videau double ou ne double pas. Ses
+erreurs sont les \sphinxstylestrong{doubles manqués} (il fallait doubler) et les \sphinxstylestrong{doubles
+prématurés} (il ne fallait pas).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Répondre} — le joueur à qui le videau est offert prend ou passe. Ses
+erreurs sont les \sphinxstylestrong{passes à tort} (une prise correcte a été passée) et les
+\sphinxstylestrong{prises à tort} (une passe correcte a été prise).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les deux lignes restent séparées à dessein : un joueur peut parfaitement
+doubler tard \sphinxstyleemphasis{et} prendre large, et un indicateur unique appellerait cela
+« équilibré » en perdant les deux moitiés de l\textquotesingle{}information.
+
+\sphinxAtStartPar
+Chaque case affiche le nombre de décisions ; l\textquotesingle{}infobulle donne l\textquotesingle{}équité perdue
+cumulée. Cliquer sur une case charge les positions correspondantes. Une case à
+zéro n\textquotesingle{}est pas cliquable.
+
+\begin{sphinxadmonition}{note}{注釈:}
+\sphinxAtStartPar
+Ce tableau compte des décisions, il ne porte pas de jugement. À partir de
+quel écart une tendance mérite d\textquotesingle{}être nommée dépend de l\textquotesingle{}effectif et d\textquotesingle{}un
+point de référence, qui ne sont pas des données du moteur.
+\end{sphinxadmonition}
 
 
 \paragraph{Checker / Cube の内訳}

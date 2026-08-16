@@ -41,144 +41,145 @@
 \contentsline {paragraph}{Streudiagramm pro Match}{24}{paragraph*.19}%
 \contentsline {subsubsection}{Tab Fehler}{24}{subsubsection*.20}%
 \contentsline {paragraph}{Aufteilung nach Doppler\sphinxhyphen {}Aktion}{24}{paragraph*.21}%
-\contentsline {paragraph}{Aufteilung Checker / Cube}{24}{paragraph*.22}%
-\contentsline {paragraph}{Histogramm der Fehlergrößen}{24}{paragraph*.23}%
-\contentsline {subsubsection}{Aggregationsregel}{25}{subsubsection*.24}%
-\contentsline {subsubsection}{MWC: Einschränkungen}{25}{subsubsection*.25}%
-\contentsline {subsection}{\numberline {2.2.17}Bearoff\sphinxhyphen {}Panel}{25}{subsection.2.2.17}%
-\contentsline {subsubsection}{Methodik und Annahmen des Bearoff\sphinxhyphen {}Panels}{26}{subsubsection*.26}%
-\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{27}{subsection.2.2.18}%
+\contentsline {paragraph}{Direction des erreurs de videau}{24}{paragraph*.22}%
+\contentsline {paragraph}{Aufteilung Checker / Cube}{25}{paragraph*.23}%
+\contentsline {paragraph}{Histogramm der Fehlergrößen}{25}{paragraph*.24}%
+\contentsline {subsubsection}{Aggregationsregel}{25}{subsubsection*.25}%
+\contentsline {subsubsection}{MWC: Einschränkungen}{25}{subsubsection*.26}%
+\contentsline {subsection}{\numberline {2.2.17}Bearoff\sphinxhyphen {}Panel}{26}{subsection.2.2.17}%
+\contentsline {subsubsection}{Methodik und Annahmen des Bearoff\sphinxhyphen {}Panels}{27}{subsubsection*.27}%
+\contentsline {subsection}{\numberline {2.2.18}Anki\sphinxhyphen {}Panel}{28}{subsection.2.2.18}%
 \contentsline {subsection}{\numberline {2.2.19}Metadaten\sphinxhyphen {}Panel}{28}{subsection.2.2.19}%
 \contentsline {subsection}{\numberline {2.2.20}Eine Datenbank weitergeben: Herkunft und Passwort}{28}{subsection.2.2.20}%
-\contentsline {subsubsection}{Eine Datenbank mit ihrer Herkunft kennzeichnen}{28}{subsubsection*.27}%
-\contentsline {subsubsection}{Ausstelleridentität}{29}{subsubsection*.28}%
-\contentsline {subsubsection}{Eine Datenbank mit einem Passwort schützen}{29}{subsubsection*.29}%
-\contentsline {subsubsection}{Die Herkunft einer Datei lesen}{30}{subsubsection*.30}%
+\contentsline {subsubsection}{Eine Datenbank mit ihrer Herkunft kennzeichnen}{29}{subsubsection*.28}%
+\contentsline {subsubsection}{Ausstelleridentität}{29}{subsubsection*.29}%
+\contentsline {subsubsection}{Eine Datenbank mit einem Passwort schützen}{30}{subsubsection*.30}%
+\contentsline {subsubsection}{Die Herkunft einer Datei lesen}{30}{subsubsection*.31}%
 \contentsline {section}{\numberline {2.3}Benutzerhandbuch}{30}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{30}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{30}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.1}Eine neue Datenbank anlegen}{31}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Eine bestehende Datenbank öffnen}{31}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}Eine Datenbank importieren und zusammenführen}{31}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{31}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.4}Eine Position bearbeiten}{32}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Eine Position zur Datenbank hinzufügen}{32}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Eine Position mit einem Tag versehen}{32}{subsection.2.3.6}%
 \contentsline {subsection}{\numberline {2.3.7}Eine Position löschen}{32}{subsection.2.3.7}%
-\contentsline {subsection}{\numberline {2.3.8}Eine Position aus XG importieren}{32}{subsection.2.3.8}%
-\contentsline {subsection}{\numberline {2.3.9}Ein Match importieren}{32}{subsection.2.3.9}%
-\contentsline {subsection}{\numberline {2.3.10}Einen Ordner mit Matches importieren}{33}{subsection.2.3.10}%
-\contentsline {subsection}{\numberline {2.3.11}Ziehen und Ablegen (Drag and Drop)}{33}{subsection.2.3.11}%
-\contentsline {subsection}{\numberline {2.3.12}Durch ein Match navigieren}{33}{subsection.2.3.12}%
+\contentsline {subsection}{\numberline {2.3.8}Eine Position aus XG importieren}{33}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.9}Ein Match importieren}{33}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.10}Einen Ordner mit Matches importieren}{34}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.11}Ziehen und Ablegen (Drag and Drop)}{34}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.12}Durch ein Match navigieren}{34}{subsection.2.3.12}%
 \contentsline {subsection}{\numberline {2.3.13}Das Match\sphinxhyphen {}Panel verwalten}{34}{subsection.2.3.13}%
-\contentsline {subsection}{\numberline {2.3.14}Sammlungen verwalten}{34}{subsection.2.3.14}%
-\contentsline {subsection}{\numberline {2.3.15}Turniere verwalten}{34}{subsection.2.3.15}%
+\contentsline {subsection}{\numberline {2.3.14}Sammlungen verwalten}{35}{subsection.2.3.14}%
+\contentsline {subsection}{\numberline {2.3.15}Turniere verwalten}{35}{subsection.2.3.15}%
 \contentsline {subsection}{\numberline {2.3.16}Leistungsstatistiken anzeigen}{35}{subsection.2.3.16}%
 \contentsline {subsection}{\numberline {2.3.17}Den EPC berechnen}{35}{subsection.2.3.17}%
-\contentsline {subsection}{\numberline {2.3.18}Die Analyse einer aus XG importierten Position anzeigen}{35}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.18}Die Analyse einer aus XG importierten Position anzeigen}{36}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}Eine Position nach XG exportieren}{36}{subsection.2.3.19}%
 \contentsline {subsection}{\numberline {2.3.20}Die verschiedenen Positionen anzeigen}{36}{subsection.2.3.20}%
 \contentsline {subsection}{\numberline {2.3.21}Positionen nach Kriterien suchen}{36}{subsection.2.3.21}%
 \contentsline {subsection}{\numberline {2.3.22}Pour aller plus loin}{37}{subsection.2.3.22}%
-\contentsline {section}{\numberline {2.4}Liste der Befehle}{37}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Liste der Befehle}{38}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Globale Operationen}{38}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Positionen und Navigation}{38}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.2}Positionen und Navigation}{39}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}Bearbeitung und Suche}{39}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Suchfilter}{39}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Verschiedene Befehle}{42}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.5}Verschiedene Befehle}{43}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Tastenkürzel}{43}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Datenbank}{43}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Position}{43}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{44}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigation}{44}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Anzeige}{44}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Aktionen}{44}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Werkzeuge}{44}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.6}Werkzeuge}{45}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Ansichts\sphinxhyphen {}Reiter}{45}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Befehlszeile}{45}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Suchverlauf}{45}{subsection.2.5.9}%
-\contentsline {subsection}{\numberline {2.5.10}Filterbibliothek}{45}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.10}Filterbibliothek}{46}{subsection.2.5.10}%
 \contentsline {subsection}{\numberline {2.5.11}Analyse\sphinxhyphen {}Fenster}{46}{subsection.2.5.11}%
 \contentsline {subsection}{\numberline {2.5.12}Match\sphinxhyphen {}Fenster}{46}{subsection.2.5.12}%
 \contentsline {subsection}{\numberline {2.5.13}Anki\sphinxhyphen {}Fenster (verteiltes Wiederholen)}{46}{subsection.2.5.13}%
-\contentsline {subsection}{\numberline {2.5.14}Panneau des tournois}{46}{subsection.2.5.14}%
+\contentsline {subsection}{\numberline {2.5.14}Panneau des tournois}{47}{subsection.2.5.14}%
 \contentsline {subsection}{\numberline {2.5.15}Panneau des collections}{47}{subsection.2.5.15}%
 \contentsline {section}{\numberline {2.6}Befehlszeilenschnittstelle (CLI)}{47}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Einführung}{47}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}Allgemeine Syntax}{47}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.2}Allgemeine Syntax}{48}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Verfügbare Befehle}{48}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}create — Eine Datenbank erstellen}{48}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}import — Daten importieren}{48}{subsection.2.6.5}%
-\contentsline {subsubsection}{Ein Match importieren}{49}{subsubsection*.32}%
-\contentsline {subsubsection}{Positionen importieren}{49}{subsubsection*.33}%
-\contentsline {subsubsection}{Stapelimport}{49}{subsubsection*.34}%
+\contentsline {subsection}{\numberline {2.6.5}import — Daten importieren}{49}{subsection.2.6.5}%
+\contentsline {subsubsection}{Ein Match importieren}{49}{subsubsection*.33}%
+\contentsline {subsubsection}{Positionen importieren}{49}{subsubsection*.34}%
+\contentsline {subsubsection}{Stapelimport}{49}{subsubsection*.35}%
 \contentsline {subsection}{\numberline {2.6.6}export — Daten exportieren}{49}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}identity — Identité d’émetteur}{50}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.7}identity — Identité d’émetteur}{51}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}open — Ouvrir un fichier protégé}{51}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}search — Positionen suchen}{51}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}list — Inhalt auflisten}{52}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}match — Ein Match anzeigen}{53}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.10}list — Inhalt auflisten}{53}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}match — Ein Match anzeigen}{54}{subsection.2.6.11}%
 \contentsline {subsection}{\numberline {2.6.12}epc — Calculatrice EPC}{54}{subsection.2.6.12}%
-\contentsline {subsection}{\numberline {2.6.13}info — Datenbank\sphinxhyphen {}Metadaten}{54}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.13}info — Datenbank\sphinxhyphen {}Metadaten}{55}{subsection.2.6.13}%
 \contentsline {subsection}{\numberline {2.6.14}edit — Metadaten ändern}{55}{subsection.2.6.14}%
 \contentsline {subsection}{\numberline {2.6.15}verify — Integrität prüfen}{55}{subsection.2.6.15}%
 \contentsline {subsection}{\numberline {2.6.16}vacuum — Compacter la base de données}{56}{subsection.2.6.16}%
 \contentsline {subsection}{\numberline {2.6.17}delete — Daten löschen}{56}{subsection.2.6.17}%
-\contentsline {subsection}{\numberline {2.6.18}Workflow\sphinxhyphen {}Beispiele}{56}{subsection.2.6.18}%
-\contentsline {subsubsection}{Ein Turnierverzeichnis importieren}{56}{subsubsection*.35}%
-\contentsline {subsubsection}{Regelmäßige Sicherung}{57}{subsubsection*.36}%
-\contentsline {subsubsection}{Fehleranalyse}{57}{subsubsection*.37}%
+\contentsline {subsection}{\numberline {2.6.18}Workflow\sphinxhyphen {}Beispiele}{57}{subsection.2.6.18}%
+\contentsline {subsubsection}{Ein Turnierverzeichnis importieren}{57}{subsubsection*.36}%
+\contentsline {subsubsection}{Regelmäßige Sicherung}{57}{subsubsection*.37}%
+\contentsline {subsubsection}{Fehleranalyse}{57}{subsubsection*.38}%
 \contentsline {subsection}{\numberline {2.6.19}Rückgabecodes}{57}{subsection.2.6.19}%
-\contentsline {section}{\numberline {2.7}Häufig gestellte Fragen (FAQ)}{57}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Wozu dient blunderDB?}{57}{subsection.2.7.1}%
+\contentsline {section}{\numberline {2.7}Häufig gestellte Fragen (FAQ)}{58}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Wozu dient blunderDB?}{58}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Was hat die Entwicklung von blunderDB motiviert?}{58}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Wie speichert man den Zustand der aktuellen Datenbank?}{58}{subsection.2.7.3}%
 \contentsline {subsection}{\numberline {2.7.4}Sollte ich für verschiedene Kategorien von Positionen unterschiedliche Datenbanken anlegen?}{58}{subsection.2.7.4}%
 \contentsline {subsection}{\numberline {2.7.5}Wie führt man mehrere Datenbanken zusammen?}{58}{subsection.2.7.5}%
-\contentsline {subsection}{\numberline {2.7.6}Welche Match\sphinxhyphen {}Dateiformate werden unterstützt?}{58}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.6}Welche Match\sphinxhyphen {}Dateiformate werden unterstützt?}{59}{subsection.2.7.6}%
 \contentsline {subsection}{\numberline {2.7.7}Was ist eine Sammlung?}{59}{subsection.2.7.7}%
 \contentsline {subsection}{\numberline {2.7.8}Was ist der EPC?}{59}{subsection.2.7.8}%
 \contentsline {subsection}{\numberline {2.7.9}Verfügt blunderDB über eine Befehlszeilen\sphinxhyphen {}Schnittstelle?}{59}{subsection.2.7.9}%
 \contentsline {subsection}{\numberline {2.7.10}Darf ich blunderDB verändern, kopieren und weitergeben?}{59}{subsection.2.7.10}%
-\contentsline {subsection}{\numberline {2.7.11}Welches Datenformat verwendet blunderDB?}{59}{subsection.2.7.11}%
-\contentsline {subsection}{\numberline {2.7.12}Was waren die Entwurfsprinzipien von blunderDB?}{59}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.11}Welches Datenformat verwendet blunderDB?}{60}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}Was waren die Entwurfsprinzipien von blunderDB?}{60}{subsection.2.7.12}%
 \contentsline {subsection}{\numberline {2.7.13}Wie ist die Softwarearchitektur von blunderDB aufgebaut?}{60}{subsection.2.7.13}%
 \contentsline {subsection}{\numberline {2.7.14}Auf welchen Plattformen läuft blunderDB?}{60}{subsection.2.7.14}%
 \contentsline {subsection}{\numberline {2.7.15}Woher stammt das Symbol von blunderDB?}{60}{subsection.2.7.15}%
 \contentsline {section}{\numberline {2.8}Headless\sphinxhyphen {}Modus (Server)}{60}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Überblick}{60}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.1}Überblick}{61}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Der Daemon \sphinxstyleliteralintitle {\sphinxupquote {serve}}}{61}{subsection.2.8.2}%
-\contentsline {subsubsection}{Endpunkte}{62}{subsubsection*.38}%
-\contentsline {subsubsection}{Bereitstellung mit Docker}{62}{subsubsection*.39}%
-\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}Backend und Mehrbenutzerbetrieb}{62}{subsection.2.8.3}%
+\contentsline {subsubsection}{Endpunkte}{62}{subsubsection*.39}%
+\contentsline {subsubsection}{Bereitstellung mit Docker}{63}{subsubsection*.40}%
+\contentsline {subsection}{\numberline {2.8.3}PostgreSQL\sphinxhyphen {}Backend und Mehrbenutzerbetrieb}{63}{subsection.2.8.3}%
 \contentsline {subsection}{\numberline {2.8.4}Eine SQLite\sphinxhyphen {}Datenbank nach PostgreSQL migrieren}{63}{subsection.2.8.4}%
 \contentsline {subsection}{\numberline {2.8.5}Der generische Dispatcher \sphinxstyleliteralintitle {\sphinxupquote {call}}}{64}{subsection.2.8.5}%
-\contentsline {section}{\numberline {2.9}Anhang: Fortgeschrittene Nutzung der Filter}{64}{section.2.9}%
+\contentsline {section}{\numberline {2.9}Anhang: Fortgeschrittene Nutzung der Filter}{65}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Positionssuche über die Befehlszeile}{65}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Suche in den aktuellen Ergebnissen}{65}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Filterbibliothek}{65}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.2}Suche in den aktuellen Ergebnissen}{66}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}Filterbibliothek}{66}{subsection.2.9.3}%
 \contentsline {subsection}{\numberline {2.9.4}Beispiele}{66}{subsection.2.9.4}%
-\contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware}{66}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Windows\sphinxhyphen {}SmartScreen\sphinxhyphen {}Warnung}{67}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Blockierung durch Windows Defender}{68}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Integrität des Downloads überprüfen (SHA256)}{71}{subsection.2.10.3}%
-\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}Anhang: Mögliche Blockierung von blunderDB}{76}{section.2.11}%
-\contentsline {subsection}{\numberline {2.11.1}Installation von blunderDB}{76}{subsection.2.11.1}%
-\contentsline {subsection}{\numberline {2.11.2}Erlauben der Ausführung von blunderDB}{76}{subsection.2.11.2}%
-\contentsline {section}{\numberline {2.12}Anhang: Datenbankschema}{76}{section.2.12}%
-\contentsline {subsection}{\numberline {2.12.1}Versionierung und Migrationen}{77}{subsection.2.12.1}%
-\contentsline {subsection}{\numberline {2.12.2}Wichtigste Tabellen}{77}{subsection.2.12.2}%
-\contentsline {subsection}{\numberline {2.12.3}Gestaltungsprinzipien}{77}{subsection.2.12.3}%
-\contentsline {section}{\numberline {2.13}Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB}{78}{section.2.13}%
-\contentsline {subsection}{\numberline {2.13.1}Formale Definitionen}{78}{subsection.2.13.1}%
-\contentsline {subsubsection}{PR (Performance Rate)}{78}{subsubsection*.53}%
-\contentsline {subsubsection}{Snowie Error Rate}{78}{subsubsection*.54}%
-\contentsline {subsubsection}{MWC\sphinxhyphen {}Verlust (Match Winning Chance)}{79}{subsubsection*.55}%
-\contentsline {subsection}{\numberline {2.13.2}Im PR\sphinxhyphen {}Nenner gezählte Entscheidungen}{79}{subsection.2.13.2}%
-\contentsline {subsubsection}{Steinzüge — gezählte Entscheidungen}{79}{subsubsection*.56}%
-\contentsline {subsubsection}{Cube\sphinxhyphen {}Entscheidungen — gezählte Entscheidungen}{79}{subsubsection*.57}%
-\contentsline {subsubsection}{Zusammenfassung des Filters}{79}{subsubsection*.58}%
-\contentsline {subsection}{\numberline {2.13.3}Übereinstimmung blunderDB ↔ XG ↔ gnuBG}{79}{subsection.2.13.3}%
-\contentsline {subsubsection}{Vergleich XG ↔ blunderDB (gleiche Analyse\sphinxhyphen {}Engine)}{80}{subsubsection*.59}%
-\contentsline {subsubsection}{Vergleich gnuBG ↔ blunderDB (SGF\sphinxhyphen {}Import — unterschiedliche Engines)}{80}{subsubsection*.60}%
-\contentsline {subsection}{\numberline {2.13.4}Eigene Zahlen überprüfen}{80}{subsection.2.13.4}%
-\contentsline {subsection}{\numberline {2.13.5}gnuBG\sphinxhyphen {}Referenz}{80}{subsection.2.13.5}%
+\contentsline {section}{\numberline {2.10}Windows\sphinxhyphen {}Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware}{67}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Windows\sphinxhyphen {}SmartScreen\sphinxhyphen {}Warnung}{68}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Blockierung durch Windows Defender}{69}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Integrität des Downloads überprüfen (SHA256)}{72}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Mac\sphinxhyphen {}Anhang: Mögliche Blockierung von blunderDB}{77}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Installation von blunderDB}{77}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Erlauben der Ausführung von blunderDB}{77}{subsection.2.11.2}%
+\contentsline {section}{\numberline {2.12}Anhang: Datenbankschema}{77}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Versionierung und Migrationen}{78}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Wichtigste Tabellen}{78}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Gestaltungsprinzipien}{78}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB}{79}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}Formale Definitionen}{79}{subsection.2.13.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{79}{subsubsection*.54}%
+\contentsline {subsubsection}{Snowie Error Rate}{79}{subsubsection*.55}%
+\contentsline {subsubsection}{MWC\sphinxhyphen {}Verlust (Match Winning Chance)}{80}{subsubsection*.56}%
+\contentsline {subsection}{\numberline {2.13.2}Im PR\sphinxhyphen {}Nenner gezählte Entscheidungen}{80}{subsection.2.13.2}%
+\contentsline {subsubsection}{Steinzüge — gezählte Entscheidungen}{80}{subsubsection*.57}%
+\contentsline {subsubsection}{Cube\sphinxhyphen {}Entscheidungen — gezählte Entscheidungen}{80}{subsubsection*.58}%
+\contentsline {subsubsection}{Zusammenfassung des Filters}{80}{subsubsection*.59}%
+\contentsline {subsection}{\numberline {2.13.3}Übereinstimmung blunderDB ↔ XG ↔ gnuBG}{80}{subsection.2.13.3}%
+\contentsline {subsubsection}{Vergleich XG ↔ blunderDB (gleiche Analyse\sphinxhyphen {}Engine)}{81}{subsubsection*.60}%
+\contentsline {subsubsection}{Vergleich gnuBG ↔ blunderDB (SGF\sphinxhyphen {}Import — unterschiedliche Engines)}{81}{subsubsection*.61}%
+\contentsline {subsection}{\numberline {2.13.4}Eigene Zahlen überprüfen}{81}{subsection.2.13.4}%
+\contentsline {subsection}{\numberline {2.13.5}gnuBG\sphinxhyphen {}Referenz}{81}{subsection.2.13.5}%
 \contentsline {chapter}{\numberline {3}Kontakt}{83}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Spenden}{85}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Danksagungen}{87}{chapter.5}%
