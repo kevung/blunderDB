@@ -105,6 +105,41 @@ func TestCanonicalCubeAction_ImporterLabels(t *testing.T) {
 	}
 }
 
+// TestBestCubeVerdict covers the OTHER side of the label problem: a single
+// bestCubeAction states TWO rulings at once — whether the cube should have been
+// offered, and how it should have been answered. Reading it as one action loses
+// half of it: "Double, Take" and "Double, Pass" agree on the offer and disagree
+// on the answer, while "No Double" rules on the offer and still implies that
+// taking is right if the cube comes anyway.
+func TestBestCubeVerdict(t *testing.T) {
+	for _, tc := range []struct {
+		best       string
+		wantDouble bool
+		wantPass   bool
+		wantOK     bool
+	}{
+		{"No Double", false, false, true},
+		{"Double, Take", true, false, true},
+		{"Double, Pass", true, true, true},
+		// "Too good" contains "double" but rules AGAINST doubling: the player is
+		// too strong to cash and should play on for the gammon.
+		{"Too good to double, take", false, false, true},
+		{"Too good to double, pass", false, true, true},
+		{"", false, false, false},
+		{"garbage", false, false, false},
+	} {
+		got, ok := BestCubeVerdict(tc.best)
+		if ok != tc.wantOK {
+			t.Errorf("BestCubeVerdict(%q) ok = %v, want %v", tc.best, ok, tc.wantOK)
+			continue
+		}
+		if ok && (got.ShouldDouble != tc.wantDouble || got.ShouldPass != tc.wantPass) {
+			t.Errorf("BestCubeVerdict(%q) = {double:%v pass:%v}, want {double:%v pass:%v}",
+				tc.best, got.ShouldDouble, got.ShouldPass, tc.wantDouble, tc.wantPass)
+		}
+	}
+}
+
 func TestCubeActionError_Unrecognized(t *testing.T) {
 	d := dca()
 	for _, action := range []string{"", "   ", "garbage"} {

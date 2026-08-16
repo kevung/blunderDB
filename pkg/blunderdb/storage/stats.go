@@ -91,8 +91,12 @@ type StatsResult struct {
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
 	CubeActionBreakdown []CubeActionStats `json:"CubeActionBreakdown"`
-	ErrorHistogram      []ErrorBucket     `json:"ErrorHistogram"`
-	TopBlunders         []BlunderEntry    `json:"TopBlunders"`
+	// CubeDirections says in WHICH direction the cube decisions went wrong,
+	// where CubeActionBreakdown says how much they cost. See
+	// stats_cubedirections.go.
+	CubeDirections CubeDirections `json:"CubeDirections"`
+	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
+	TopBlunders    []BlunderEntry `json:"TopBlunders"`
 }
 
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the

@@ -367,6 +367,37 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 		}()
 	}
 
+	// ── 5b. Cube direction matrix ─────────────────────────────────────────────
+	// Same scope as 5, crossed with the action actually played. The labels are
+	// interpreted in Go (storage.TallyCubeDirections), never in SQL: their
+	// spellings vary by importer and the recognition is stated in exactly one
+	// place — see kevung/blunderDB#115.
+	{
+		cubeWhere := whereSQL + " AND p.decision_type = 1"
+		rows, err = s.db.Query(ctx, rebind(
+			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+				` CAST(COALESCE(SUM(a.cube_error),0) AS BIGINT) `+
+				statsBaseJoin+cubeWhere+
+				` GROUP BY a.best_cube_action, mv.cube_action`),
+			baseArgs...,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cube direction query: %w", err)
+		}
+		var cells []storage.CubeDirectionRow
+		func() {
+			defer rows.Close()
+			for rows.Next() {
+				var c storage.CubeDirectionRow
+				if err2 := rows.Scan(&c.Best, &c.Played, &c.Count, &c.ErrorMP); err2 != nil {
+					return
+				}
+				cells = append(cells, c)
+			}
+		}()
+		result.CubeDirections = storage.TallyCubeDirections(cells)
+	}
+
 	// ── 6. Error histogram ────────────────────────────────────────────────────
 	histogramSQL := `SELECT
 		CASE

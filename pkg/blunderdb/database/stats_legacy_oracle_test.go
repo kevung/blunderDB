@@ -12,6 +12,8 @@ import (
 	"fmt"
 	"math"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 func legacyGetStatsDateRange(d *Database) StatsDateRange {
@@ -307,6 +309,48 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 				result.CubeActionBreakdown = append(result.CubeActionBreakdown, cs)
 			}
 		}()
+	}
+
+	// ── 5b. Cube direction matrix ─────────────────────────────────────────────
+	// Independent SQL, on purpose: this oracle exists to catch a wrong join or
+	// a wrong scope in the production query. The classification itself is NOT
+	// re-implemented here — it is one pure function with its own table-driven
+	// test (storage.TallyCubeDirections), and a second hand-written copy would
+	// be a second thing to keep in sync for no extra coverage.
+	{
+		cubeWhere := whereSQL + " AND p.decision_type = 1"
+		rows, err = d.db.Query(
+			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+				` COALESCE(SUM(a.cube_error),0) `+
+				statsBaseJoin+cubeWhere+
+				` GROUP BY a.best_cube_action, mv.cube_action`,
+			baseArgs...,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cube direction query: %w", err)
+		}
+		var cells []storage.CubeDirectionRow
+		func() {
+			defer rows.Close()
+			for rows.Next() {
+				var c storage.CubeDirectionRow
+				if err2 := rows.Scan(&c.Best, &c.Played, &c.Count, &c.ErrorMP); err2 != nil {
+					return
+				}
+				cells = append(cells, c)
+			}
+		}()
+		cd := storage.TallyCubeDirections(cells)
+		result.CubeDirections = CubeDirections{
+			Offer: CubeOfferCounts{
+				Right: cd.Offer.Right, Missed: cd.Offer.Missed, MissedMP: cd.Offer.MissedMP,
+				Premature: cd.Offer.Premature, PrematureMP: cd.Offer.PrematureMP,
+			},
+			Answer: CubeAnswerCounts{
+				Right: cd.Answer.Right, WrongPass: cd.Answer.WrongPass, WrongPassMP: cd.Answer.WrongPassMP,
+				WrongTake: cd.Answer.WrongTake, WrongTakeMP: cd.Answer.WrongTakeMP,
+			},
+		}
 	}
 
 	// ── 6. Error histogram ────────────────────────────────────────────────────

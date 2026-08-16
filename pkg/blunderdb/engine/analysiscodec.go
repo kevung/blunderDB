@@ -172,6 +172,59 @@ func CubeActionError(dca *domain.DoublingCubeAnalysis, playedCubeAction string) 
 	return 0, false
 }
 
+// normaliseCubeLabel folds a cube label to lowercase and drops the separators
+// its producers disagree about, so that "Double, Take", "Double/Take" and
+// "double take" all reduce to the same string. Shared by every reader of these
+// labels: the whole point of #115 is that there is exactly one place where a
+// spelling becomes a meaning.
+func normaliseCubeLabel(label string) string {
+	return strings.Map(func(r rune) rune {
+		switch r {
+		case ' ', '\t', '/', ',', '-', '_', '.':
+			return -1
+		}
+		return unicode.ToLower(r)
+	}, label)
+}
+
+// CubeVerdict is what the analysis engine ruled about a cube position, split
+// into the two decisions it actually contains: whether the cube should be
+// offered, and how it should be answered if it is.
+//
+// The two belong to different players and are scored separately, which is why
+// they cannot stay welded into one string. ShouldPass is meaningful even when
+// ShouldDouble is false: "No Double" says the offer would be wrong AND that
+// taking is right should the cube come anyway.
+type CubeVerdict struct {
+	ShouldDouble bool
+	ShouldPass   bool
+}
+
+// BestCubeVerdict decodes an engine's bestCubeAction — "No Double",
+// "Double, Take", "Double, Pass", "Too good to double, take" — into its two
+// rulings. ok is false on an empty or unrecognised label, so an unknown
+// spelling is never silently read as "no double".
+//
+// "Too good" is the trap: it contains "double" while ruling AGAINST doubling
+// (the player is too strong to cash and plays on for the gammon), so it is
+// tested before the plain "double" case — the same ordering discipline that
+// CanonicalCubeAction applies to "Double No".
+func BestCubeVerdict(bestCubeAction string) (CubeVerdict, bool) {
+	s := normaliseCubeLabel(bestCubeAction)
+	pass := strings.Contains(s, "pass") || strings.Contains(s, "drop")
+	switch {
+	case s == "":
+		return CubeVerdict{}, false
+	case strings.Contains(s, "toogood"):
+		return CubeVerdict{ShouldDouble: false, ShouldPass: pass}, true
+	case strings.Contains(s, "nodouble") || strings.Contains(s, "doubleno"):
+		return CubeVerdict{ShouldDouble: false, ShouldPass: false}, true
+	case strings.Contains(s, "double"):
+		return CubeVerdict{ShouldDouble: true, ShouldPass: pass}, true
+	}
+	return CubeVerdict{}, false
+}
+
 // The four cube actions a player can take, as returned by CanonicalCubeAction.
 // CubeUnknown is the zero value, so an unrecognised label never silently passes
 // for a real action.
@@ -200,13 +253,7 @@ const (
 // abbreviations dt/dp, however, are the responses take/pass — that is how they
 // reach us from move.cube_action and from filter input.
 func CanonicalCubeAction(action string) string {
-	s := strings.Map(func(r rune) rune {
-		switch r {
-		case ' ', '\t', '/', ',', '-', '_', '.':
-			return -1
-		}
-		return unicode.ToLower(r)
-	}, action)
+	s := normaliseCubeLabel(action)
 
 	switch {
 	case s == "":

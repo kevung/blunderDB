@@ -360,6 +360,36 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 		}()
 	}
 
+	// ── 5b. Cube direction matrix ─────────────────────────────────────────────
+	// Port of the PostgreSQL section of the same name. The classification is
+	// deliberately NOT written in SQL: it lives once in
+	// storage.TallyCubeDirections, so the two backends cannot drift apart on it.
+	{
+		cubeWhere := whereSQL + " AND p.decision_type = 1"
+		rows, err = s.db.QueryContext(ctx,
+			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+				` COALESCE(SUM(a.cube_error),0) `+
+				statsBaseJoin+cubeWhere+
+				` GROUP BY a.best_cube_action, mv.cube_action`,
+			baseArgs...,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cube direction query: %w", err)
+		}
+		var cells []storage.CubeDirectionRow
+		func() {
+			defer rows.Close()
+			for rows.Next() {
+				var c storage.CubeDirectionRow
+				if err2 := rows.Scan(&c.Best, &c.Played, &c.Count, &c.ErrorMP); err2 != nil {
+					return
+				}
+				cells = append(cells, c)
+			}
+		}()
+		result.CubeDirections = storage.TallyCubeDirections(cells)
+	}
+
 	// ── 6. Error histogram ────────────────────────────────────────────────────
 	histogramSQL := `SELECT
 		CASE

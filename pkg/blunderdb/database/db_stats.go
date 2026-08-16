@@ -104,8 +104,42 @@ type StatsResult struct {
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
 	CubeActionBreakdown []CubeActionStats `json:"CubeActionBreakdown"`
-	ErrorHistogram      []ErrorBucket     `json:"ErrorHistogram"`
-	TopBlunders         []BlunderEntry    `json:"TopBlunders"`
+	// CubeDirections says in WHICH direction cube decisions went wrong, where
+	// CubeActionBreakdown says how much they cost. Mirrors
+	// storage.CubeDirections field for field (the conversion is by json tag).
+	CubeDirections CubeDirections `json:"CubeDirections"`
+	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
+	TopBlunders    []BlunderEntry `json:"TopBlunders"`
+}
+
+// CubeOfferCounts tallies the decision of the player holding the cube: Missed,
+// the cube should have been offered and was not; Premature, it was offered and
+// should not have been.
+type CubeOfferCounts struct {
+	Right       int   `json:"Right"`
+	Missed      int   `json:"Missed"`
+	MissedMP    int64 `json:"MissedMP"`
+	Premature   int   `json:"Premature"`
+	PrematureMP int64 `json:"PrematureMP"`
+}
+
+// CubeAnswerCounts tallies the decision of the player receiving the cube:
+// WrongPass, a correct take was passed; WrongTake, a correct pass was taken.
+type CubeAnswerCounts struct {
+	Right       int   `json:"Right"`
+	WrongPass   int   `json:"WrongPass"`
+	WrongPassMP int64 `json:"WrongPassMP"`
+	WrongTake   int   `json:"WrongTake"`
+	WrongTakeMP int64 `json:"WrongTakeMP"`
+}
+
+// CubeDirections is the per-axis breakdown of cube decisions. Offering and
+// answering are two decisions taken by two different players, and one can be
+// late to double while taking too wide — a single aggregate would call that
+// "balanced" and lose both halves.
+type CubeDirections struct {
+	Offer  CubeOfferCounts  `json:"Offer"`
+	Answer CubeAnswerCounts `json:"Answer"`
 }
 
 // ComputeStats aggregates performance metrics for the given filter.
