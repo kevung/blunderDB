@@ -372,3 +372,53 @@ describe('StatsErrorsTab — drill-down calls', () => {
         }
     });
 });
+
+// ── Cube error directions ────────────────────────────────────────────────────
+
+const SAMPLE_DIRECTIONS = {
+    Offer: { Right: 13, Missed: 2, MissedMP: 164, Premature: 3, PrematureMP: 1194 },
+    Answer: { Right: 4, WrongPass: 0, WrongPassMP: 0, WrongTake: 1, WrongTakeMP: 68 }
+};
+
+/** Mirrors the component's directionTotal. */
+function directionTotal(d) {
+    if (!d) return 0;
+    return d.Offer.Right + d.Offer.Missed + d.Offer.Premature + d.Answer.Right + d.Answer.WrongPass + d.Answer.WrongTake;
+}
+
+describe('StatsErrorsTab — cube error directions', () => {
+    test('an absent CubeDirections reads as empty, never as zeros to display', () => {
+        expect(directionTotal(null)).toBe(0);
+        expect(directionTotal(undefined)).toBe(0);
+    });
+
+    test('the section appears only when at least one cube decision exists', () => {
+        expect(directionTotal(SAMPLE_DIRECTIONS)).toBe(23);
+        const noCube = {
+            Offer: { Right: 0, Missed: 0, MissedMP: 0, Premature: 0, PrematureMP: 0 },
+            Answer: { Right: 0, WrongPass: 0, WrongPassMP: 0, WrongTake: 0, WrongTakeMP: 0 }
+        };
+        expect(directionTotal(noCube)).toBe(0);
+    });
+
+    test('right decisions alone keep the section visible: "no mistake" is a result', () => {
+        const flawless = {
+            Offer: { Right: 9, Missed: 0, MissedMP: 0, Premature: 0, PrematureMP: 0 },
+            Answer: { Right: 2, WrongPass: 0, WrongPassMP: 0, WrongTake: 0, WrongTakeMP: 0 }
+        };
+        expect(directionTotal(flawless)).toBe(11);
+    });
+
+    test('each cell drills down to its own cube_direction selection', async () => {
+        const filter = get(statsFilterStore);
+        for (const cell of ['offer_right', 'offer_missed', 'offer_premature', 'answer_right', 'answer_wrong_pass', 'answer_wrong_take']) {
+            vi.resetAllMocks();
+            GetPositionIDsByStatsSelection.mockResolvedValue([]);
+            await loadPositionsFromStatsSelection(filter, { Kind: 'cube_direction', CubeCell: cell });
+            expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, {
+                Kind: 'cube_direction',
+                CubeCell: cell
+            });
+        }
+    });
+});

@@ -59,6 +59,66 @@
         });
     }
 
+    // ── 1b. Cube error directions ─────────────────────────────────────────────
+    // Section 1 says how much the cube costs; this one says in which direction
+    // it goes wrong. Offering and answering are two decisions taken by two
+    // different players, hence two rows and never one score: a player can be
+    // late to double while taking too wide, and an average calls that
+    // "balanced".
+    let directions = $derived(result?.CubeDirections ?? null);
+    let directionTotal = $derived(
+        !directions ? 0 : directions.Offer.Right + directions.Offer.Missed + directions.Offer.Premature + directions.Answer.Right + directions.Answer.WrongPass + directions.Answer.WrongTake
+    );
+
+    let directionRows = $derived(
+        !directions
+            ? []
+            : [
+                  {
+                      axis: $t('stats.cubeAxisOffer'),
+                      cells: [
+                          { cell: 'offer_right', label: $t('stats.cubeRight'), n: directions.Offer.Right, mp: 0 },
+                          {
+                              cell: 'offer_missed',
+                              label: $t('stats.cubeOfferMissed'),
+                              n: directions.Offer.Missed,
+                              mp: directions.Offer.MissedMP
+                          },
+                          {
+                              cell: 'offer_premature',
+                              label: $t('stats.cubeOfferPremature'),
+                              n: directions.Offer.Premature,
+                              mp: directions.Offer.PrematureMP
+                          }
+                      ]
+                  },
+                  {
+                      axis: $t('stats.cubeAxisAnswer'),
+                      cells: [
+                          { cell: 'answer_right', label: $t('stats.cubeRight'), n: directions.Answer.Right, mp: 0 },
+                          {
+                              cell: 'answer_wrong_pass',
+                              label: $t('stats.cubeAnswerWrongPass'),
+                              n: directions.Answer.WrongPass,
+                              mp: directions.Answer.WrongPassMP
+                          },
+                          {
+                              cell: 'answer_wrong_take',
+                              label: $t('stats.cubeAnswerWrongTake'),
+                              n: directions.Answer.WrongTake,
+                              mp: directions.Answer.WrongTakeMP
+                          }
+                      ]
+                  }
+              ]
+    );
+
+    function handleDirectionClick(cell, n) {
+        if (n === 0) return; // nothing behind an empty cell
+        const filter = get(statsFilterStore);
+        loadPositionsFromStatsSelection(filter, { Kind: 'cube_direction', CubeCell: cell });
+    }
+
     // ── 2. Checker vs Cube comparison ─────────────────────────────────────────
     let compDatasets = $derived([
         {
@@ -149,6 +209,39 @@
         {/if}
     </section>
 
+    <!-- ── 1b. Cube error directions ──────────────────────────────────────── -->
+    <section class="chart-section">
+        <h3 class="section-title">{$t('stats.cubeDirections')}</h3>
+        {#if directionTotal === 0}
+            <p class="empty-subsection">{$t('stats.noCubeDecisions')}</p>
+        {:else}
+            <table class="direction-table">
+                <tbody>
+                    {#each directionRows as row (row.axis)}
+                        <tr>
+                            <th scope="row">{row.axis}</th>
+                            {#each row.cells as c (c.cell)}
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="direction-cell"
+                                        class:is-empty={c.n === 0}
+                                        disabled={c.n === 0}
+                                        title={c.mp > 0 ? `${(c.mp / 1000).toFixed(3)}` : ''}
+                                        onclick={() => handleDirectionClick(c.cell, c.n)}
+                                    >
+                                        <span class="direction-count">{c.n}</span>
+                                        <span class="direction-label">{c.label}</span>
+                                    </button>
+                                </td>
+                            {/each}
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
+    </section>
+
     <!-- ── 2. Checker vs Cube ─────────────────────────────────────────────── -->
     <section class="chart-section">
         <h3 class="section-title">{$t('stats.checkerVsCube', { metric: yAxisLabel() })}</h3>
@@ -211,5 +304,58 @@
 
     .chart-wrapper--small {
         height: 120px;
+    }
+
+    /* ── Cube error directions ── */
+    .direction-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .direction-table th {
+        text-align: left;
+        font-weight: 500;
+        color: #555;
+        width: 22%;
+        padding-right: 8px;
+    }
+
+    .direction-table td {
+        padding: 2px;
+    }
+
+    .direction-cell {
+        font: inherit;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 6px 4px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .direction-cell:hover:not(:disabled) {
+        background: #f0f0f0;
+    }
+
+    .direction-cell.is-empty {
+        cursor: default;
+        opacity: 0.45;
+    }
+
+    .direction-count {
+        font-weight: 600;
+    }
+
+    .direction-label {
+        font-size: var(--font-size-small);
+        color: #777;
+        text-align: center;
+        line-height: 1.2;
     }
 </style>
