@@ -1591,6 +1591,21 @@ func testStatsCubeDirections(t *testing.T, s storage.Storage) {
 		t.Errorf("PositionIDsBySelection(no cell): got %d ids, want none", len(ids))
 	}
 
+	// A player who signed under several spellings must be matched under all of
+	// them. Asking for "Alice" plus an alias that happens to be Bob is the
+	// sharpest check that aliases are really OR-ed in rather than ignored: the
+	// two seats together must give back exactly the unfiltered result. The
+	// duplicate alias also pins that repeating a name does not double-count.
+	both, err := s.Stats().Compute(ctx, "", storage.StatsFilter{
+		DecisionType: -1, PlayerName: "Alice", PlayerAliases: []string{"Bob", "Alice"},
+	})
+	if err != nil {
+		t.Fatalf("Compute(aliases): %v", err)
+	}
+	if both.CubeDirections != d {
+		t.Errorf("aliases covering both seats: got %+v, want the unfiltered %+v", both.CubeDirections, d)
+	}
+
 	// Scoping to one player must split the two axes: in this fixture Alice only
 	// ever holds the cube and Bob only ever answers.
 	alice, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})

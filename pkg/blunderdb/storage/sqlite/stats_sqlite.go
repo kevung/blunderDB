@@ -76,9 +76,15 @@ func snowieER(sumErrMP int64, nMovesBoth int) float64 {
 func buildBaseWhereClause(filter storage.StatsFilter) (whereSQL string, args []any) {
 	var clauses []string
 
-	if filter.PlayerName != "" {
-		clauses = append(clauses, "((m.player1_name = ? AND mv.player = 1) OR (m.player2_name = ? AND mv.player = -1))")
-		args = append(args, filter.PlayerName, filter.PlayerName)
+	if names := storage.PlayerNameSet(filter); len(names) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(names)), ",")
+		clauses = append(clauses,
+			"((m.player1_name IN ("+ph+") AND mv.player = 1) OR (m.player2_name IN ("+ph+") AND mv.player = -1))")
+		for range 2 {
+			for _, n := range names {
+				args = append(args, n)
+			}
+		}
 	}
 
 	if len(filter.TournamentIDs) > 0 {

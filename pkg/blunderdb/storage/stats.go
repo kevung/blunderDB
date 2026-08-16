@@ -4,7 +4,19 @@ import "context"
 
 // StatsFilter defines the filtering criteria for a stats computation.
 type StatsFilter struct {
-	PlayerName    string
+	PlayerName string
+	// PlayerAliases are the other spellings the same person signed under. A
+	// player's name is typed by hand into every file, so one person routinely
+	// appears as "Kévin Unger", "Kévin UNGER" and "UNGER Kevin" — in a real
+	// 151-match corpus, 12 % of the matches sat under the two minor spellings.
+	// Matching a single string computes on part of the data and nothing looks
+	// wrong, which is the worst kind of defect.
+	//
+	// The filter keeps the decisions of ANY of PlayerName + PlayerAliases: the
+	// field is purely additive, so filling both is not a trap. Merging the names
+	// in place (MergePlayers) is the other answer, and the wrong one as soon as
+	// the database is shared — it would rewrite other people's matches.
+	PlayerAliases []string
 	TournamentIDs []int64
 	DateFrom      string // ISO "YYYY-MM-DD"
 	DateTo        string // ISO "YYYY-MM-DD"

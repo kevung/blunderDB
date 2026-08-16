@@ -127,3 +127,24 @@ func TallyCubeDirections(rows []CubeDirectionRow) CubeDirections {
 	}
 	return d
 }
+
+// PlayerNameSet returns every spelling a stats filter should match, in a stable
+// order and without duplicates or blanks. PlayerName and PlayerAliases are
+// additive, so a caller that fills both gets the union rather than a surprise.
+//
+// Shared by the backends: the SQL differs, which names to look for must not.
+func PlayerNameSet(f StatsFilter) []string {
+	seen := make(map[string]struct{}, len(f.PlayerAliases)+1)
+	var out []string
+	for _, n := range append([]string{f.PlayerName}, f.PlayerAliases...) {
+		if n == "" {
+			continue
+		}
+		if _, dup := seen[n]; dup {
+			continue
+		}
+		seen[n] = struct{}{}
+		out = append(out, n)
+	}
+	return out
+}

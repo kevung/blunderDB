@@ -23,7 +23,11 @@ func (d *Database) GetStatsDateRange() StatsDateRange {
 
 // StatsFilter defines the filtering criteria for ComputeStats.
 type StatsFilter struct {
-	PlayerName    string
+	PlayerName string
+	// PlayerAliases: other spellings the same person signed under. Additive with
+	// PlayerName (the filter keeps the decisions of ANY of them). See
+	// storage.StatsFilter for why a single string is not enough.
+	PlayerAliases []string
 	TournamentIDs []int64
 	DateFrom      string // ISO "YYYY-MM-DD"
 	DateTo        string // ISO "YYYY-MM-DD"
