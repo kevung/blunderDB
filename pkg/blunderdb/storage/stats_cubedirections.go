@@ -50,50 +50,79 @@ type CubeDirections struct {
 	Answer CubeAnswerCounts `json:"Answer"`
 }
 
+// The six cells of the matrix, as returned by ClassifyCubeDirection. They are
+// also the values a SelectionSpec carries to drill from a cell down to the
+// positions behind it — so a cell displayed and a cell clicked cannot drift
+// apart ("ce qu'on clique = ce qu'on voit").
+const (
+	CubeCellNone            = ""
+	CubeCellOfferRight      = "offer_right"
+	CubeCellOfferMissed     = "offer_missed"
+	CubeCellOfferPremature  = "offer_premature"
+	CubeCellAnswerRight     = "answer_right"
+	CubeCellAnswerWrongPass = "answer_wrong_pass"
+	CubeCellAnswerWrongTake = "answer_wrong_take"
+)
+
+// ClassifyCubeDirection places one (ruling, action) pair in its cell, or
+// returns CubeCellNone when either label cannot be read.
+//
+// An unreadable label is DROPPED, never guessed: counted as "no double" — by
+// far the most common action — it would quietly inflate the busiest cell of the
+// matrix, and nothing downstream would look wrong.
+func ClassifyCubeDirection(best, played string) string {
+	verdict, ok := engine.BestCubeVerdict(best)
+	if !ok {
+		return CubeCellNone
+	}
+	switch engine.CanonicalCubeAction(played) {
+	case engine.CubeNoDouble:
+		if verdict.ShouldDouble {
+			return CubeCellOfferMissed
+		}
+		return CubeCellOfferRight
+	case engine.CubeDouble:
+		if verdict.ShouldDouble {
+			return CubeCellOfferRight
+		}
+		return CubeCellOfferPremature
+	case engine.CubePass:
+		if verdict.ShouldPass {
+			return CubeCellAnswerRight
+		}
+		return CubeCellAnswerWrongPass
+	case engine.CubeTake:
+		if verdict.ShouldPass {
+			return CubeCellAnswerWrongTake
+		}
+		return CubeCellAnswerRight
+	}
+	return CubeCellNone
+}
+
 // TallyCubeDirections sorts raw cells onto the two axes. It is pure and shared
 // by every backend on purpose: the SQL differs between SQLite and PostgreSQL,
 // the classification must not.
-//
-// A cell whose ruling or action cannot be read is DROPPED, never guessed — an
-// unrecognised label counted as "no double" would quietly inflate the most
-// common cell of all. The caller can spot the loss by comparing these totals
-// with the decision count it already has.
 func TallyCubeDirections(rows []CubeDirectionRow) CubeDirections {
 	var d CubeDirections
 	for _, r := range rows {
-		verdict, ok := engine.BestCubeVerdict(r.Best)
-		if !ok {
-			continue
-		}
-		switch engine.CanonicalCubeAction(r.Played) {
-		case engine.CubeNoDouble:
-			if verdict.ShouldDouble {
-				d.Offer.Missed += r.Count
-				d.Offer.MissedMP += r.ErrorMP
-			} else {
-				d.Offer.Right += r.Count
-			}
-		case engine.CubeDouble:
-			if verdict.ShouldDouble {
-				d.Offer.Right += r.Count
-			} else {
-				d.Offer.Premature += r.Count
-				d.Offer.PrematureMP += r.ErrorMP
-			}
-		case engine.CubePass:
-			if verdict.ShouldPass {
-				d.Answer.Right += r.Count
-			} else {
-				d.Answer.WrongPass += r.Count
-				d.Answer.WrongPassMP += r.ErrorMP
-			}
-		case engine.CubeTake:
-			if verdict.ShouldPass {
-				d.Answer.WrongTake += r.Count
-				d.Answer.WrongTakeMP += r.ErrorMP
-			} else {
-				d.Answer.Right += r.Count
-			}
+		switch ClassifyCubeDirection(r.Best, r.Played) {
+		case CubeCellOfferRight:
+			d.Offer.Right += r.Count
+		case CubeCellOfferMissed:
+			d.Offer.Missed += r.Count
+			d.Offer.MissedMP += r.ErrorMP
+		case CubeCellOfferPremature:
+			d.Offer.Premature += r.Count
+			d.Offer.PrematureMP += r.ErrorMP
+		case CubeCellAnswerRight:
+			d.Answer.Right += r.Count
+		case CubeCellAnswerWrongPass:
+			d.Answer.WrongPass += r.Count
+			d.Answer.WrongPassMP += r.ErrorMP
+		case CubeCellAnswerWrongTake:
+			d.Answer.WrongTake += r.Count
+			d.Answer.WrongTakeMP += r.ErrorMP
 		}
 	}
 	return d

@@ -183,6 +183,25 @@ func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orde
 
 // scanPositionIDs scans a single-int64-column result set into a slice, closing
 // rows and propagating any iteration error.
+// scanCubeDirectionIDs keeps the ids whose (ruling, action) pair falls in cell.
+// An empty cell name keeps nothing: a drill-down that names no cell is a caller
+// bug, and returning "everything" would look like a working feature.
+func scanCubeDirectionIDs(rows *sql.Rows, cell string) ([]int64, error) {
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		var best, played string
+		if err := rows.Scan(&id, &best, &played); err != nil {
+			return nil, fmt.Errorf("scan cube direction row: %w", err)
+		}
+		if cell != "" && storage.ClassifyCubeDirection(best, played) == cell {
+			ids = append(ids, id)
+		}
+	}
+	return ids, rows.Err()
+}
+
 func scanPositionIDs(rows *sql.Rows) ([]int64, error) {
 	defer rows.Close()
 	var ids []int64
@@ -600,6 +619,20 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 // IDs correspond exactly to what is displayed in the panel.
 func (s *statsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
 	whereSQL, baseArgs := buildStatsWhereClause(filter)
+
+	// See the PostgreSQL backend: a cube-direction cell cannot be expressed in
+	// SQL, so the labels come back with the ids and the reading happens once,
+	// in storage.ClassifyCubeDirection.
+	if sel.Kind == "cube_direction" {
+		rows, err := s.db.QueryContext(ctx,
+			"SELECT DISTINCT p.id, COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,'') "+
+				statsBaseJoin+whereSQL+" AND p.decision_type = 1", baseArgs...)
+		if err != nil {
+			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
+		}
+		return scanCubeDirectionIDs(rows, sel.CubeCell)
+	}
+
 	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(sel)
 
 	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd

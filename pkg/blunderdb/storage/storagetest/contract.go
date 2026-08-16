@@ -1563,6 +1563,34 @@ func testStatsCubeDirections(t *testing.T, s storage.Storage) {
 		t.Errorf("answer axis: got %+v, want 1 right / 1 wrong-pass / 1 wrong-take", d.Answer)
 	}
 
+	// Every cell must be clickable: a figure that leads nowhere is the defect
+	// this panel already avoids everywhere else ("ce qu'on clique = ce qu'on
+	// voit"). One decision per cell in this fixture, so one id each.
+	for _, cell := range []string{
+		storage.CubeCellOfferRight, storage.CubeCellOfferMissed, storage.CubeCellOfferPremature,
+		storage.CubeCellAnswerRight, storage.CubeCellAnswerWrongPass, storage.CubeCellAnswerWrongTake,
+	} {
+		ids, err := s.Stats().PositionIDsBySelection(ctx, "",
+			storage.StatsFilter{DecisionType: -1},
+			storage.SelectionSpec{Kind: "cube_direction", CubeCell: cell})
+		if err != nil {
+			t.Fatalf("PositionIDsBySelection(%s): %v", cell, err)
+		}
+		if len(ids) != 1 {
+			t.Errorf("PositionIDsBySelection(%s): got %d ids, want 1", cell, len(ids))
+		}
+	}
+	// A drill-down naming no cell selects nothing: returning everything would
+	// pass for a working feature.
+	ids, err := s.Stats().PositionIDsBySelection(ctx, "",
+		storage.StatsFilter{DecisionType: -1}, storage.SelectionSpec{Kind: "cube_direction"})
+	if err != nil {
+		t.Fatalf("PositionIDsBySelection(no cell): %v", err)
+	}
+	if len(ids) != 0 {
+		t.Errorf("PositionIDsBySelection(no cell): got %d ids, want none", len(ids))
+	}
+
 	// Scoping to one player must split the two axes: in this fixture Alice only
 	// ever holds the cube and Bob only ever answers.
 	alice, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})

@@ -180,6 +180,25 @@ func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orde
 
 // scanPositionIDs drains a single-int64-column result set, closing rows and
 // propagating any iteration error.
+// scanCubeDirectionIDs keeps the ids whose (ruling, action) pair falls in cell.
+// An empty cell name keeps nothing: a drill-down that names no cell is a caller
+// bug, and returning "everything" would look like a working feature.
+func scanCubeDirectionIDs(rows pgx.Rows, cell string) ([]int64, error) {
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		var best, played string
+		if err := rows.Scan(&id, &best, &played); err != nil {
+			return nil, fmt.Errorf("scan cube direction row: %w", err)
+		}
+		if cell != "" && storage.ClassifyCubeDirection(best, played) == cell {
+			ids = append(ids, id)
+		}
+	}
+	return ids, rows.Err()
+}
+
 func scanPositionIDs(rows pgx.Rows) ([]int64, error) {
 	defer rows.Close()
 	var ids []int64
@@ -602,6 +621,22 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 // applied so the ids match what the panel displays.
 func (s *statsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
 	whereSQL, baseArgs := buildStatsWhereClause(tenantID(scope), filter)
+
+	// A cube-direction cell cannot be expressed in SQL: which cell a decision
+	// belongs to depends on reading two free-form labels, and that reading is
+	// stated once, in Go (storage.ClassifyCubeDirection). So the rows come back
+	// with their labels and are filtered here — the scope is one player's cube
+	// decisions, not the whole database.
+	if sel.Kind == "cube_direction" {
+		rows, err := s.db.Query(ctx, rebind(
+			"SELECT DISTINCT p.id, COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,'') "+
+				statsBaseJoin+whereSQL+" AND p.decision_type = 1"), baseArgs...)
+		if err != nil {
+			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
+		}
+		return scanCubeDirectionIDs(rows, sel.CubeCell)
+	}
+
 	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(sel)
 
 	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd

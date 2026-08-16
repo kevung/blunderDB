@@ -102,10 +102,16 @@ type StatsResult struct {
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
 type SelectionSpec struct {
-	Kind          string // "all","checker","cube","cube_action","error_bucket","tournament","match","last_n","position","top_blunders"
-	CubeAction    string // "NoDouble" | "DoubleTake" | "DoublePass" | "TooGood"
-	BucketMinMP   int    // inclusive
-	BucketMaxMP   int    // exclusive; -1 = +∞
+	Kind string // "all","checker","cube","cube_action","cube_direction","error_bucket","tournament","match","last_n","position","top_blunders"
+	// CubeAction matches analysis.best_cube_action VERBATIM, in whatever
+	// spelling the importer wrote ("No Double", "Double, Take"…) — not the
+	// canonical form.
+	CubeAction string
+	// CubeCell, for Kind "cube_direction", names one cell of the cube matrix:
+	// one of the CubeCell* constants in stats_cubedirections.go.
+	CubeCell      string
+	BucketMinMP   int // inclusive
+	BucketMaxMP   int // exclusive; -1 = +∞
 	TournamentID  int64
 	MatchID       int64
 	LastN         int

@@ -160,12 +160,16 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 // a bar, point, or row). The frontend passes this to GetPositionIDsByStatsSelection
 // to obtain the matching position IDs for navigation.
 type SelectionSpec struct {
-	Kind string // "all", "checker", "cube", "cube_action",
+	Kind string // "all", "checker", "cube", "cube_action", "cube_direction",
 	// "error_bucket", "tournament", "match",
 	// "last_n", "position", "top_blunders"
-	CubeAction    string // "NoDouble" | "DoubleTake" | "DoublePass" | "TooGood"
-	BucketMinMP   int    // inclusive
-	BucketMaxMP   int    // exclusive; -1 = +∞
+	CubeAction string // matches analysis.best_cube_action verbatim ("No Double", "Double, Take"…)
+	// CubeCell, for Kind "cube_direction", names one cell of the cube matrix:
+	// "offer_right" | "offer_missed" | "offer_premature" |
+	// "answer_right" | "answer_wrong_pass" | "answer_wrong_take".
+	CubeCell      string
+	BucketMinMP   int // inclusive
+	BucketMaxMP   int // exclusive; -1 = +∞
 	TournamentID  int64
 	MatchID       int64
 	LastN         int
