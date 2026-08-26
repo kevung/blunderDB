@@ -117,6 +117,9 @@ Conséquences pratiques :
 * Un match dont *tous* les lancers auraient une chance exactement nulle est
   considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 aussi
   bien pour « neutre » que pour « non calculé ») : ses lancers restent inconnus.
+  Côté gnuBG la distinction est explicite — un lancer non évalué porte
+  ``LU[-inf]`` — et ces lancers restent inconnus eux aussi, plutôt que d'être
+  convertis en une valeur.
 
 Victoires et défaites
 ~~~~~~~~~~~~~~~~~~~~~

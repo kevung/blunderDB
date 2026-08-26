@@ -11,7 +11,7 @@ embarqué sa documentation, comme le veut la règle CLAUDE.md.
 | Lot | Contenu | Ce que l'exécution a appris |
 |---|---|---|
 | 0 | Corrections de stats préalables | Le dénominateur Snowie filtré par joueur était bien deux fois trop petit ; corrigé sur les deux backends, seuil blunder harmonisé sur `>= 100`. Le test de contrat épingle l'additivité des deux Snowie ER d'un match. |
-| 1 | `move.luck_mp`, schéma **2.15.0** | Convention et unité vérifiées empiriquement : le même match en `.xg` et en `.sgf` gnuBG, 189 lancers comparés un à un. Règle ajoutée en cours de route — XG écrit 0 aussi bien pour un lancer neutre que pour une chance non calculée, donc un match entièrement à zéro est lu comme dépourvu de données. **Les imports gnuBG ne fournissent encore aucune chance** : bug amont dans gnubgparser, voir FOLLOWUPS 9. |
+| 1 | `move.luck_mp`, schéma **2.15.0** | Convention et unité vérifiées empiriquement : le même match en `.xg` et en `.sgf` gnuBG, 189 lancers comparés un à un. Règle ajoutée en cours de route — XG écrit 0 aussi bien pour un lancer neutre que pour une chance non calculée, donc un match entièrement à zéro est lu comme dépourvu de données. Les imports gnuBG ne fournissaient d'abord aucune chance (bug amont) ; corrigé depuis dans **gnubgparser v1.4.0**, dont blunderDB dépend désormais — voir FOLLOWUPS 9. |
 | 2 | `StatsStore.PlayerTable` | Arithmétique partagée dans `storage/stats_playertable.go`. La convention de siège de `game.winner` a été validée sur un vrai match importé — une fixture écrite sur la même hypothèse n'aurait rien prouvé. |
 | 3 | Onglet « Joueurs » | Libellés dans les 9 langues, `manuel.rst` à jour. |
 | 4 | Parité CLI + serveur | `list --type players` (text/json/csv) et `POST /v1/stats.playerTable`. |
