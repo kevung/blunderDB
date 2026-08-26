@@ -896,6 +896,7 @@
         "tabDashboard": "Ταμπλό",
         "tabProgression": "Εξέλιξη",
         "tabErrors": "Σφάλματα",
+        "tabPlayers": "Παίκτες",
         "importMatchesHint": "Εισαγάγετε παιχνίδια για να ενεργοποιήσετε τα φίλτρα.",
         "playerLabel": "Παίκτης",
         "allPerspectives": "Όλες οι προοπτικές",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR ανά τουρνουά ({metric})",
         "tournament": "Τουρνουά",
         "prPerMatch": "PR ανά αγώνα ({metric})",
-        "pointSizeHint": "Το μέγεθος της κουκκίδας είναι ανάλογο με τον αριθμό αποφάσεων."
+        "pointSizeHint": "Το μέγεθος της κουκκίδας είναι ανάλογο με τον αριθμό αποφάσεων.",
+        "playersColPlayer": "Παίκτης",
+        "playersColMatches": "Αγώνες",
+        "playersColRecord": "Ν–Η",
+        "playersColDecisions": "Αποφάσεις",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR πούλια",
+        "playersColPRCube": "PR κύβος",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Blunders",
+        "playersColLuck": "Τύχη",
+        "playersEmpty": "Κανένας παίκτης στην επιλεγμένη περίοδο.",
+        "playersRowHint": "Εμφάνιση στατιστικών του {name}",
+        "playersLuckUnknown": "Άγνωστη τύχη: εισαγάγετε ξανά τους αγώνες.",
+        "playersLuckRolls": "Μέσος όρος σε {n} μετρημένες ζαριές (χιλιοστά πόντου)",
+        "playersNote": "Κάντε κλικ σε μια γραμμή για τα στατιστικά του παίκτη. Το «—» δηλώνει τιμή που δεν μετρήθηκε ποτέ.",
+        "filterDisabledOnPlayersTab": "Δεν ισχύει στην καρτέλα Παίκτες"
     }
 }

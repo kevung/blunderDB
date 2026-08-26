@@ -217,6 +217,75 @@ type PlayerFrequency struct {
 	Count int
 }
 
+// PlayerRow is one line of the players table. Mirrors storage.PlayerRow; see
+// its doc for what each figure means and why a row is a name rather than a
+// person.
+type PlayerRow struct {
+	Name string `json:"name"`
+
+	Matches int `json:"matches"`
+	Wins    int `json:"wins"`
+	Losses  int `json:"losses"`
+
+	Decisions        int `json:"decisions"`
+	CheckerDecisions int `json:"checker_decisions"`
+	CubeDecisions    int `json:"cube_decisions"`
+
+	PR        float64 `json:"pr"`
+	PRChecker float64 `json:"pr_checker"`
+	PRCube    float64 `json:"pr_cube"`
+
+	SnowieER float64 `json:"snowie_er"`
+
+	Errors   int `json:"errors"`
+	Blunders int `json:"blunders"`
+
+	// LuckRateMP is the average luck per MEASURED roll, in signed millipoints,
+	// and LuckKnown says whether anything was measured at all. Callers must
+	// test LuckKnown rather than the rate: a player whose matches carry no luck
+	// would otherwise be shown with a perfectly average luck nobody measured
+	// (ADR-0010).
+	LuckRateMP float64 `json:"luck_rate_mp"`
+	LuckKnown  bool    `json:"luck_known"`
+	LuckRolls  int     `json:"luck_rolls"`
+}
+
+// GetPlayerTable returns one statistics row per player over the matches the
+// filter retains, for the Players tab of the Stats panel. It delegates to the
+// storage StatsStore, whose contract also states what the filter honours
+// (dates, tournaments, match lengths) and what it ignores by design (the player
+// selection and the decision type).
+func (d *Database) GetPlayerTable(filter StatsFilter) ([]PlayerRow, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	rows, err := d.store.Stats().PlayerTable(context.Background(), "", toStorageStatsFilter(filter))
+	if err != nil {
+		return nil, err
+	}
+	out := make([]PlayerRow, 0, len(rows))
+	for _, r := range rows {
+		y := PlayerRow{
+			Name:             r.Name,
+			Matches:          r.Matches,
+			Wins:             r.Wins,
+			Losses:           r.Losses,
+			Decisions:        r.Decisions,
+			CheckerDecisions: r.CheckerDecisions,
+			CubeDecisions:    r.CubeDecisions,
+			PR:               r.PR,
+			PRChecker:        r.PRChecker,
+			PRCube:           r.PRCube,
+			SnowieER:         r.SnowieER,
+			Errors:           r.Errors,
+			Blunders:         r.Blunders,
+			LuckRolls:        r.LuckRolls,
+		}
+		y.LuckRateMP, y.LuckKnown = r.LuckRateMP()
+		out = append(out, y)
+	}
+	return out, nil
+}
+
 // GetAllPlayerNames returns all player names found in the match table, ranked by
 // the total number of matches (player1 + player2 appearances) descending.
 // Names that are equal in frequency are sorted alphabetically.

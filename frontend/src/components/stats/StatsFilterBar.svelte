@@ -7,6 +7,15 @@
     import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
+    /**
+     * Whether the Players tab is the one on screen. That table is about every
+     * player at once and splits checker from cube into its own columns, so the
+     * two controls that would contradict it are disabled rather than left to
+     * silently do nothing: the player selection and the decision type.
+     * @type {{ playersTab?: boolean }}
+     */
+    let { playersTab = false } = $props();
+
     /** @type {Array<{Name: string, Count: number}>} */
     let playerList = $state([]);
     /** @type {Array<{id: number, name: string}>} */
@@ -184,7 +193,8 @@
         <select
             id="fb-player"
             class="fb-select"
-            disabled={dbEmpty}
+            disabled={dbEmpty || playersTab}
+            title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : undefined}
             value={localFilter.playerName}
             onchange={(e) => {
                 localFilter = { ...localFilter, playerName: e.target.value };
@@ -264,7 +274,7 @@
         />
 
         <!-- Decision type -->
-        <fieldset class="fb-radio-group" aria-label={$t('stats.decisionTypeLabel')}>
+        <fieldset class="fb-radio-group" aria-label={$t('stats.decisionTypeLabel')} disabled={playersTab} title={playersTab ? $t('stats.filterDisabledOnPlayersTab') : undefined}>
             <legend class="fb-label-inline">{$t('stats.decisionLegend')}</legend>
             {#each [[-1, $t('stats.decisionAll')], [0, $t('stats.decisionChecker')], [1, $t('stats.decisionCube')]] as [val, lbl] (val)}
                 <label class="fb-radio-label">

@@ -896,6 +896,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progression",
         "tabErrors": "Errors",
+        "tabPlayers": "Players",
         "importMatchesHint": "Import matches to activate filters.",
         "playerLabel": "Player",
         "allPerspectives": "All perspectives",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR per tournament ({metric})",
         "tournament": "Tournament",
         "prPerMatch": "PR per match ({metric})",
-        "pointSizeHint": "Point size is proportional to the number of decisions."
+        "pointSizeHint": "Point size is proportional to the number of decisions.",
+        "playersColPlayer": "Player",
+        "playersColMatches": "Matches",
+        "playersColRecord": "W–L",
+        "playersColDecisions": "Decisions",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR checker",
+        "playersColPRCube": "PR cube",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Blunders",
+        "playersColLuck": "Luck",
+        "playersEmpty": "No player in the selected period.",
+        "playersRowHint": "Show {name}'s statistics",
+        "playersLuckUnknown": "Luck unknown: re-import the matches to get it.",
+        "playersLuckRolls": "Average over {n} measured rolls (millipoints)",
+        "playersNote": "Click a row to open that player's statistics. “—” marks a figure that was never measured.",
+        "filterDisabledOnPlayersTab": "No effect on the Players tab"
     }
 }

@@ -896,6 +896,7 @@
         "tabDashboard": "Панель",
         "tabProgression": "Прогресс",
         "tabErrors": "Ошибки",
+        "tabPlayers": "Игроки",
         "importMatchesHint": "Импортируйте партии для активации фильтров.",
         "playerLabel": "Игрок",
         "allPerspectives": "Все перспективы",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR на турнир ({metric})",
         "tournament": "Турнир",
         "prPerMatch": "PR на партию ({metric})",
-        "pointSizeHint": "Размер точки пропорционален количеству решений."
+        "pointSizeHint": "Размер точки пропорционален количеству решений.",
+        "playersColPlayer": "Игрок",
+        "playersColMatches": "Матчи",
+        "playersColRecord": "П–Пр",
+        "playersColDecisions": "Решения",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR шашки",
+        "playersColPRCube": "PR куб",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Бландеры",
+        "playersColLuck": "Удача",
+        "playersEmpty": "Нет игроков за выбранный период.",
+        "playersRowHint": "Показать статистику игрока {name}",
+        "playersLuckUnknown": "Удача неизвестна: переимпортируйте матчи.",
+        "playersLuckRolls": "Среднее по {n} измеренным броскам (миллипункты)",
+        "playersNote": "Щёлкните строку, чтобы открыть статистику игрока. «—» означает, что величина не измерялась.",
+        "filterDisabledOnPlayersTab": "Не действует на вкладке «Игроки»"
     }
 }
