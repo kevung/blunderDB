@@ -66,6 +66,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
 		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
+		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/CubeDirections", testStatsCubeDirections},
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
@@ -1779,6 +1780,84 @@ func testStatsMatchDetail(t *testing.T, s storage.Storage) {
 	}
 	if emptyDetail.Player1.TotalDecisions != 0 || emptyDetail.Player2.TotalDecisions != 0 {
 		t.Errorf("MatchDetail(empty): got %+v, want zero decisions", emptyDetail)
+	}
+}
+
+// testMoveLuckRoundTrip pins the three states move.luck_mp has to keep apart on
+// both backends: a lucky roll, an unlucky one, and a roll whose luck is
+// unknown. The unknown case is the one worth a test — a backend that reads a
+// NULL column back as 0 would silently turn "we don't know" into "the dice were
+// exactly fair", which is what every luck average must not average over.
+// Negative values matter too: luck is signed, and a column or scan that lost
+// the sign would still look plausible on a lucky roll.
+func testMoveLuckRoundTrip(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	matchID, err := s.Matches().Save(ctx, "",
+		&domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+
+	lucky, unlucky := int32(214), int32(-329)
+	cases := []struct {
+		name string
+		want *int32
+	}{
+		{"lucky", &lucky},
+		{"unlucky", &unlucky},
+		{"unknown", nil},
+	}
+	for i, c := range cases {
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(i), MoveType: "checker",
+			Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5", LuckMP: c.want}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove(%s): %v", c.name, err)
+		}
+	}
+
+	var got []*int32
+	for mv, err := range s.Matches().Moves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		got = append(got, mv.LuckMP)
+	}
+	if len(got) != len(cases) {
+		t.Fatalf("Moves: got %d moves, want %d", len(got), len(cases))
+	}
+	for i, c := range cases {
+		switch {
+		case c.want == nil && got[i] != nil:
+			t.Errorf("%s roll: got luck %d, want unknown (NULL)", c.name, *got[i])
+		case c.want != nil && got[i] == nil:
+			t.Errorf("%s roll: got unknown, want luck %d", c.name, *c.want)
+		case c.want != nil && *got[i] != *c.want:
+			t.Errorf("%s roll: got luck %d, want %d", c.name, *got[i], *c.want)
+		}
+	}
+
+	// MovesByMatch reads the same column through a different query; it must
+	// agree with Moves rather than quietly drop the value.
+	var byMatch []*int32
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		byMatch = append(byMatch, mv.LuckMP)
+	}
+	if len(byMatch) != len(got) {
+		t.Fatalf("MovesByMatch: got %d moves, want %d", len(byMatch), len(got))
+	}
+	for i := range got {
+		if (byMatch[i] == nil) != (got[i] == nil) ||
+			(got[i] != nil && *byMatch[i] != *got[i]) {
+			t.Errorf("move %d: MovesByMatch and Moves disagree on luck", i)
+		}
 	}
 }
 

@@ -107,6 +107,7 @@ func (d *Database) ensureAllTablesExist() error {
 			dice_2 INTEGER,
 			checker_move TEXT,
 			cube_action TEXT,
+			luck_mp INTEGER,
 			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 		)
@@ -339,6 +340,15 @@ func (d *Database) ensureAllTablesExist() error {
 		`ALTER TABLE position ADD COLUMN flagged INTEGER NOT NULL DEFAULT 0`,
 	}
 	for _, stmt := range newPositionCols {
+		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	// Nullable on purpose: NULL means "luck unknown for this roll", which is
+	// not the same as a neutral roll (see ADR-0010), so no DEFAULT here.
+	newMoveCols := []string{
+		`ALTER TABLE move ADD COLUMN luck_mp INTEGER`,
+	}
+	for _, stmt := range newMoveCols {
 		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
 	}
 

@@ -1141,6 +1141,7 @@ export namespace domain {
 	    dice: number[];
 	    checker_move?: string;
 	    cube_action?: string;
+	    luck_mp?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Move(source);
@@ -1157,6 +1158,7 @@ export namespace domain {
 	        this.dice = source["dice"];
 	        this.checker_move = source["checker_move"];
 	        this.cube_action = source["cube_action"];
+	        this.luck_mp = source["luck_mp"];
 	    }
 	}
 	

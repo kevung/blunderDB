@@ -431,6 +431,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 			dice_2 INTEGER,
 			checker_move TEXT,
 			cube_action TEXT,
+			luck_mp INTEGER,
 			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 		)

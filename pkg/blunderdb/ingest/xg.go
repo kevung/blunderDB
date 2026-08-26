@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -37,7 +38,7 @@ func MapXG(path string) (*MatchGraph, error) {
 	}
 
 	rawCubeInfo := parseRawCubeInfo(segments)
-	rawFlags := parseRawFlags(segments)
+	rawMarks := parseRawMoveMarks(segments)
 
 	graph := &MatchGraph{
 		Match: domain.Match{
@@ -65,7 +66,7 @@ func MapXG(path string) (*MatchGraph, error) {
 				PointsWon:    game.PointsWon,
 				MoveCount:    len(game.Moves),
 			},
-			Moves: mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawFlags),
+			Moves: mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawMarks),
 		}
 		graph.Games = append(graph.Games, gg)
 	}
@@ -124,9 +125,38 @@ type flagKey struct {
 	move int
 }
 
-// parseRawFlags replays the XG game-file segments to recover the "flagged"
-// marks the user set in eXtreme Gammon, which the lightweight xgparser.Match
-// drops on conversion (neither Move, CheckerMove nor CubeMove carries them).
+// rawMoveMarks holds the per-decision facts read straight from the XG
+// game-file segments because the lightweight xgparser.Match drops them on
+// conversion: the user's study flags, and the luck of each roll.
+//
+// Both are keyed the same way, and that is the point of collecting them in one
+// pass: the index rule below is what makes a mark land on the right decision,
+// and stating it twice is how the two copies drift apart.
+type rawMoveMarks struct {
+	flagged map[flagKey]bool
+	// luckMP holds the luck of each roll in signed millipoints, positive =
+	// lucky. Absent from the map means unknown; see luckAnalysed below for why
+	// a whole match can be absent while every individual roll reads zero.
+	luckMP map[flagKey]int32
+}
+
+// parseRawMoveMarks replays the XG game-file segments to recover the "flagged"
+// marks the user set in eXtreme Gammon and the per-roll luck, neither of which
+// survives into xgparser.Match (neither Move, CheckerMove nor CubeMove carries
+// them).
+//
+// Luck reaches us as MoveEntry.ErrLuck, in equity, with the same sign
+// convention as gnuBG's LU property (positive = lucky) — checked by importing
+// the same match from both an .xg and a gnuBG .sgf and comparing roll by roll.
+// Only a checker MoveEntry carries it: a cube decision has no dice of its own.
+//
+// XG writes 0 both for a genuinely neutral roll and for a match whose luck was
+// never computed, and nothing else in the record distinguishes them (AnalyzeL
+// is the evaluation level, and luck is computed at 0-ply, so it reads 0 on
+// perfectly analysed matches). A match where EVERY roll reads exactly zero is
+// therefore treated as carrying no luck data at all — rather than as a match
+// played entirely on neutral dice, which does not happen — and its rolls stay
+// unknown instead of being stored as a fabricated zero.
 //
 // The keys mirror ParseXG's own record→Move mapping so they line up with
 // Game.Moves index-for-index: it appends one Move per MoveEntry and one per
@@ -138,8 +168,11 @@ type flagKey struct {
 // FooterGameEntry, so an unfinished trailing game would shift the numbering. It
 // cannot: an interrupted game is the last one, so every key it would produce is
 // simply out of range and ignored by the caller.
-func parseRawFlags(segments []*xgparser.Segment) map[flagKey]bool {
-	flags := make(map[flagKey]bool)
+func parseRawMoveMarks(segments []*xgparser.Segment) rawMoveMarks {
+	marks := rawMoveMarks{
+		flagged: make(map[flagKey]bool),
+		luckMP:  make(map[flagKey]int32),
+	}
 	gameIdx := -1
 	moveIdx := 0
 	inGame := false
@@ -157,15 +190,16 @@ func parseRawFlags(segments []*xgparser.Segment) map[flagKey]bool {
 			case *xgparser.CubeEntry:
 				if inGame && r.Double != -2 {
 					if r.FlaggedDouble {
-						flags[flagKey{gameIdx, moveIdx}] = true
+						marks.flagged[flagKey{gameIdx, moveIdx}] = true
 					}
 					moveIdx++
 				}
 			case *xgparser.MoveEntry:
 				if inGame {
 					if r.Flagged {
-						flags[flagKey{gameIdx, moveIdx}] = true
+						marks.flagged[flagKey{gameIdx, moveIdx}] = true
 					}
+					marks.luckMP[flagKey{gameIdx, moveIdx}] = int32(math.Round(r.ErrLuck * 1000))
 					moveIdx++
 				}
 			case *xgparser.FooterGameEntry:
@@ -173,14 +207,38 @@ func parseRawFlags(segments []*xgparser.Segment) map[flagKey]bool {
 			}
 		}
 	}
-	return flags
+	marks.luckMP = luckOrNothing(marks.luckMP)
+	return marks
+}
+
+// luckOrNothing returns luck unchanged, or nil when every roll in it reads
+// exactly zero.
+//
+// XG writes 0 both for a genuinely neutral roll and for a match whose luck was
+// never computed, and nothing else in the record separates the two (AnalyzeL is
+// the evaluation level, and luck is evaluated at 0-ply, so it reads 0 on
+// perfectly analysed matches). Taken one roll at a time the two are
+// indistinguishable; taken together they are not, because a match played
+// entirely on neutral dice does not happen.
+//
+// So an all-zero match is read as carrying no luck data, and its rolls stay
+// unknown. The alternative — storing the zeroes — would hand a player a
+// perfectly average luck that nobody measured, which is exactly what the NULL
+// in this column exists to avoid (ADR-0010).
+func luckOrNothing(luck map[flagKey]int32) map[flagKey]int32 {
+	for _, mp := range luck {
+		if mp != 0 {
+			return luck
+		}
+	}
+	return nil
 }
 
 // mapGameMoves replicates database.importXGGamesAndMoves' per-move loop:
 // associating raw cube records with moves, carrying a skipped "No Double"
 // comment forward to the next checker move, and flattening each XG move into
 // the one or two MoveGraphs it produces.
-func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, rawFlags map[flagKey]bool) []MoveGraph {
+func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) []MoveGraph {
 	var out []MoveGraph
 
 	cubeIdx := 0
@@ -227,10 +285,19 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 		// that is one position; for a Double/Take it is two — the double and the
 		// take/pass — because XG records one decision where blunderDB stores two
 		// sides of it, and the user marked the moment, not one side of it.
-		if rawFlags[flagKey{gameIdx, moveIdx}] {
+		if marks.flagged[flagKey{gameIdx, moveIdx}] {
 			for i := range mgs {
 				if mgs[i].Position != nil {
 					mgs[i].Position.Flagged = true
+				}
+			}
+		}
+		// Luck belongs to the roll, so it goes on the checker move alone: a
+		// Double/Take yields two MoveGraphs but no dice of its own.
+		if luck, ok := marks.luckMP[flagKey{gameIdx, moveIdx}]; ok {
+			for i := range mgs {
+				if mgs[i].Move.MoveType == "checker" {
+					mgs[i].Move.LuckMP = &luck
 				}
 			}
 		}

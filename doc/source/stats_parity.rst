@@ -79,6 +79,44 @@ convertie en MWC via la table MET (Match Equity Table) au score courant :
 
 Référence : ``gnubg/analysis.c:1449–1464``.
 
+Chance (*luck*)
+~~~~~~~~~~~~~~~
+
+La **chance** d'un lancer est l'écart entre ce que les dés ont donné et ce qu'ils
+donnent en moyenne :
+
+.. math::
+
+   \mathrm{luck} = \mathrm{eq}(\text{meilleur coup avec les dés obtenus})
+                 - \frac{1}{36}\sum_{d} \mathrm{eq}(\text{meilleur coup avec } d)
+
+la somme portant sur les 36 issues du lancer (30 lancers non doubles pour le
+premier coup de la partie, qui ne peut pas être un double). Une valeur positive
+signifie un lancer favorable. Référence : ``gnubg/analysis.c:199–269``
+(``LuckNormal`` / ``LuckFirst``, évaluation cubeful à 0 ply).
+
+.. important::
+
+   **blunderDB ne calcule jamais la chance** : il ne dispose pas d'un moteur
+   d'évaluation. Il reprend telle quelle la valeur écrite par l'outil qui a
+   analysé le match — ``ErrLuck`` pour eXtreme Gammon, la propriété ``LU`` pour
+   gnuBG — après vérification que les deux partagent la même convention (même
+   unité, positif = chanceux).
+
+Conséquences pratiques :
+
+* Les formats qui ne transportent pas la chance (**BGF**, **Jellyfish .mat**) ne
+  produisent aucune valeur.
+* Les matchs **déjà importés** n'en ont pas non plus : la chance n'a jamais été
+  stockée avant la version 2.15.0 du schéma, et rien dans la base ne permet de
+  la reconstituer. Il faut **réimporter** les fichiers source pour l'obtenir.
+* Une valeur absente signifie *inconnue*, jamais *nulle* — zéro est un lancer
+  réellement neutre. Les moyennes de chance ne divisent donc que par le nombre
+  de lancers dont la chance est connue.
+* Un match dont *tous* les lancers auraient une chance exactement nulle est
+  considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 aussi
+  bien pour « neutre » que pour « non calculé ») : ses lancers restent inconnus.
+
 Erreurs et blunders
 ~~~~~~~~~~~~~~~~~~~
 

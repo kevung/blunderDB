@@ -612,8 +612,8 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 
 const moveInsertSQL = `INSERT INTO move (
 	tenant_id, game_id, move_number, move_type, position_id, player,
-	dice_1, dice_2, checker_move, cube_action
-) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`
+	dice_1, dice_2, checker_move, cube_action, luck_mp
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`
 
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
@@ -622,10 +622,14 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.PositionID != 0 {
 		positionID = mv.PositionID
 	}
+	var luckMP any
+	if mv.LuckMP != nil {
+		luckMP = *mv.LuckMP
+	}
 	var id int64
 	err := s.db.QueryRow(ctx, moveInsertSQL,
 		tenantID(scope), mv.GameID, mv.MoveNumber, mv.MoveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction).Scan(&id)
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction, luckMP).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}
@@ -640,7 +644,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			`SELECT id, game_id, COALESCE(move_number,0), COALESCE(move_type,''),
 			        position_id, COALESCE(player,0),
 			        COALESCE(dice_1,0), COALESCE(dice_2,0),
-			        COALESCE(checker_move,''), COALESCE(cube_action,'')
+			        COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp
 			 FROM move WHERE game_id = $1 AND tenant_id = $2
 			 ORDER BY move_number`,
 			gameID, tenantID(scope))
@@ -653,8 +657,9 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			var mv domain.Move
 			var d1, d2 int32
 			var positionID *int64
+			var luckMP *int32
 			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction); err != nil {
+				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
 				yield(nil, fmt.Errorf("postgres: list moves: %w", err))
 				return
 			}
@@ -662,6 +667,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			if positionID != nil {
 				mv.PositionID = *positionID
 			}
+			mv.LuckMP = luckMP
 			if !yield(&mv, nil) {
 				return
 			}
@@ -681,7 +687,7 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			`SELECT mv.id, mv.game_id, COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
 			        mv.position_id, COALESCE(mv.player,0),
 			        COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
+			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = $1 AND mv.tenant_id = $2
 			 ORDER BY g.game_number, mv.move_number`,
@@ -695,8 +701,9 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			var mv domain.Move
 			var d1, d2 int32
 			var positionID *int64
+			var luckMP *int32
 			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction); err != nil {
+				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
 				yield(nil, fmt.Errorf("postgres: list moves by match: %w", err))
 				return
 			}
@@ -704,6 +711,7 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			if positionID != nil {
 				mv.PositionID = *positionID
 			}
+			mv.LuckMP = luckMP
 			if !yield(&mv, nil) {
 				return
 			}

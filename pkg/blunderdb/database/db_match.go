@@ -233,7 +233,7 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 
 	rows, err := d.db.Query(`
 		SELECT id, game_id, move_number, move_type, position_id, player,
-		       dice_1, dice_2, checker_move, cube_action
+		       dice_1, dice_2, checker_move, cube_action, luck_mp
 		FROM move
 		WHERE game_id = ?
 		ORDER BY move_number ASC
@@ -248,8 +248,9 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		var m Move
 		var dice1, dice2 int32
 		var checkerMove, cubeAction sql.NullString
+		var luckMP sql.NullInt32
 		err := rows.Scan(&m.ID, &m.GameID, &m.MoveNumber, &m.MoveType, &m.PositionID,
-			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction)
+			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP)
 		if err != nil {
 			slog.Warn("scanning move", "err", err)
 			continue
@@ -260,6 +261,10 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		}
 		if cubeAction.Valid {
 			m.CubeAction = cubeAction.String
+		}
+		if luckMP.Valid {
+			v := luckMP.Int32
+			m.LuckMP = &v
 		}
 		moves = append(moves, m)
 	}

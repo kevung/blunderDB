@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.14.0"
+	DatabaseVersion = "2.15.0"
 )
 
 // Anki deck source types
@@ -608,6 +608,22 @@ type Move struct {
 	Dice        [2]int32 `json:"dice"`
 	CheckerMove string   `json:"checker_move,omitempty"`
 	CubeAction  string   `json:"cube_action,omitempty"`
+
+	// LuckMP is the luck of this roll, in signed millipoints of equity
+	// (positive = lucky): the equity of the best play with the dice actually
+	// rolled, minus its expectation over all 36 rolls. blunderDB never computes
+	// it — it has no evaluation engine — it carries the value the analysing
+	// tool wrote in the source file.
+	//
+	// nil means unknown, and is not the same as zero: zero is a genuinely
+	// neutral roll. Rolls imported before the column existed, formats that
+	// carry no luck (BGF, Jellyfish .mat) and unanalysed rolls are all nil,
+	// and every luck average must leave them out of its denominator.
+	//
+	// It belongs to the Move, not to the Position: Positions are deduplicated
+	// across matches, and the luck of a roll is a fact of one occurrence of it.
+	// See ADR-0010.
+	LuckMP *int32 `json:"luck_mp,omitempty"`
 }
 
 type MoveAnalysis struct {

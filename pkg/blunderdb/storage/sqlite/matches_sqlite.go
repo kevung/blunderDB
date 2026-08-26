@@ -585,8 +585,8 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 
 const moveInsertSQL = `INSERT INTO move (
 	game_id, move_number, move_type, position_id, player,
-	dice_1, dice_2, checker_move, cube_action
-) VALUES (?,?,?,?,?,?,?,?,?)`
+	dice_1, dice_2, checker_move, cube_action, luck_mp
+) VALUES (?,?,?,?,?,?,?,?,?,?)`
 
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
@@ -595,9 +595,13 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.PositionID != 0 {
 		positionID = mv.PositionID
 	}
+	var luckMP any
+	if mv.LuckMP != nil {
+		luckMP = *mv.LuckMP
+	}
 	res, err := s.db.ExecContext(ctx, moveInsertSQL,
 		mv.GameID, mv.MoveNumber, mv.MoveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction)
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction, luckMP)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
@@ -616,7 +620,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			`SELECT id, COALESCE(game_id,0), COALESCE(move_number,0), COALESCE(move_type,''),
 			        position_id, COALESCE(player,0),
 			        COALESCE(dice_1,0), COALESCE(dice_2,0),
-			        COALESCE(checker_move,''), COALESCE(cube_action,'')
+			        COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp
 			 FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
@@ -627,14 +631,19 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			var mv domain.Move
 			var d1, d2 int32
 			var positionID sql.NullInt64
+			var luckMP sql.NullInt32
 			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction); err != nil {
+				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 				return
 			}
 			mv.Dice = [2]int32{d1, d2}
 			if positionID.Valid {
 				mv.PositionID = positionID.Int64
+			}
+			if luckMP.Valid {
+				v := luckMP.Int32
+				mv.LuckMP = &v
 			}
 			if !yield(&mv, nil) {
 				return
@@ -655,7 +664,7 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			`SELECT mv.id, COALESCE(mv.game_id,0), COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
 			        mv.position_id, COALESCE(mv.player,0),
 			        COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
+			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = ?
 			 ORDER BY g.game_number, mv.move_number`, matchID)
@@ -668,14 +677,19 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			var mv domain.Move
 			var d1, d2 int32
 			var positionID sql.NullInt64
+			var luckMP sql.NullInt32
 			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction); err != nil {
+				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
 				return
 			}
 			mv.Dice = [2]int32{d1, d2}
 			if positionID.Valid {
 				mv.PositionID = positionID.Int64
+			}
+			if luckMP.Valid {
+				v := luckMP.Int32
+				mv.LuckMP = &v
 			}
 			if !yield(&mv, nil) {
 				return
