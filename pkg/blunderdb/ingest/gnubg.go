@@ -200,17 +200,14 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 // lucky) — the same convention and unit as XG's ErrLuck, verified by importing
 // one match from both formats and comparing the rolls one by one.
 //
-// A roll gnuBG did not analyse carries no LU property at all, so absence maps
+// A roll gnuBG did not analyse carries no usable LU property — either none at
+// all, or gnuBG's own ERR_VAL, which it writes as LU[-inf] — so absence maps
 // straight to "unknown" and no zero has to be second-guessed, unlike the XG
-// side.
+// side where 0 is ambiguous.
 //
-// NOTE: gnubgparser v1.3.0 never fills MoveRecord.Luck, so this returns nil on
-// every real file today. gnuBG writes the property as a single value —
-// LU[-0.00537] — while the parser splits the text and requires two fields (a
-// rating and a value), returning early on all of them. Until that is fixed
-// upstream, gnuBG imports simply carry no luck, which is indistinguishable
-// from an unanalysed match: nothing here or downstream changes when the fix
-// lands. See tasks/FOLLOWUPS.md.
+// Requires gnubgparser v1.4.0 or later: earlier versions required a rating
+// word in front of the value and so returned nothing for every real file,
+// which left gnuBG imports carrying no luck at all.
 func gnuBGLuckMP(moveRec *gnubgparser.MoveRecord) *int32 {
 	if moveRec == nil || moveRec.Luck == nil {
 		return nil
