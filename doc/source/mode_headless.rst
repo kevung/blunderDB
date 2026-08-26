@@ -156,6 +156,33 @@ colonnes distinctes. Le champ ``luck_known`` indique si la chance a été mesur�
 pour ce joueur ; ``luck_rate_mp`` ne doit pas être lu quand il vaut ``false``,
 une chance inconnue n'étant pas une chance nulle.
 
+Le filtre transmis aux méthodes ``stats`` accepte, à côté de ``PlayerName``, un
+champ ``PlayerAliases`` : les autres orthographes sous lesquelles la même
+personne a signé. Le nom d'un joueur étant saisi à la main dans chaque fichier,
+une même personne apparaît couramment sous plusieurs graphies, et un filtre qui
+n'en retient qu'une calcule sur une partie des matchs sans que rien n'ait l'air
+anormal. Le champ est purement additif : les décisions de n'importe lequel des
+noms sont retenues. Fusionner les noms en base (``MergePlayers``) est l'autre
+réponse, à réserver aux bases qu'on n'a pas reçues de quelqu'un d'autre —
+elle réécrit les matchs de tout le monde.
+
+Deux méthodes complètent la parité avec l'interface graphique :
+``stats.tournamentBadges`` renvoie, pour chaque tournoi de la base, l'indicateur
+affiché sur sa vignette (PR du joueur de référence), et ``matches.findByHash``
+indique si un match donné est déjà présent, à partir des deux empreintes de
+détection de doublon — de quoi éviter un import redondant avant de l'engager.
+
+``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse (dont
+``cube_error``) à partir de son analyse complète, et renvoie le nombre de
+lignes **réellement** corrigées. Ces colonnes ne sont qu'une projection : une
+erreur de projection se répare donc sans réimporter les fichiers source.
+L'opération est explicite et n'est jamais déclenchée toute seule — ni à
+l'ouverture d'une base, ni par une migration, le schéma n'étant pas en cause.
+Une analyse illisible est laissée telle quelle plutôt que remise à zéro. Le cas
+d'usage connu : les non-doubles étiquetés « Double No » par gnuBG, dont la
+lecture était fautive avant la version 0.33.0 et qui portaient l'erreur d'un
+double qui n'a jamais eu lieu.
+
 .. _headless_docker:
 
 Déploiement avec Docker

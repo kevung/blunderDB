@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -114,6 +114,24 @@ msgid "Exporte des données."
 msgstr ""
 
 #: ../../source/cli.rst:1
+msgid "identity"
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid ""
+"Affiche ou déplace l'identité d'émetteur (clé de signature des "
+"filigranes)."
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid "open"
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid "Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire."
+msgstr ""
+
+#: ../../source/cli.rst:1
 msgid "search"
 msgstr ""
 
@@ -135,6 +153,16 @@ msgstr ""
 
 #: ../../source/cli.rst:1
 msgid "Affiche les positions et analyses d'un match."
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid "epc"
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid ""
+"Calcule l'Effective Pip Count et le verdict de videau d'une position de "
+"sortie (XGID)."
 msgstr ""
 
 #: ../../source/cli.rst:1
@@ -162,6 +190,14 @@ msgid "Vérifie l'intégrité de la base."
 msgstr ""
 
 #: ../../source/cli.rst:1
+msgid "vacuum"
+msgstr ""
+
+#: ../../source/cli.rst:1
+msgid "Compacte le fichier de base de données, récupère l'espace libéré."
+msgstr ""
+
+#: ../../source/cli.rst:1
 msgid "delete"
 msgstr ""
 
@@ -185,243 +221,350 @@ msgstr ""
 msgid "Affiche la version."
 msgstr ""
 
-#: ../../source/cli.rst:64
+#: ../../source/cli.rst:68
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr ""
 
-#: ../../source/cli.rst:67
+#: ../../source/cli.rst:71
 msgid "create — Créer une base de données"
 msgstr ""
 
-#: ../../source/cli.rst:69
+#: ../../source/cli.rst:73
 msgid ""
 "Crée un nouveau fichier de base de données avec des métadonnées "
 "optionnelles."
 msgstr ""
 
-#: ../../source/cli.rst:75 ../../source/cli.rst:100 ../../source/cli.rst:153
-#: ../../source/cli.rst:324 ../../source/cli.rst:353 ../../source/cli.rst:377
-#: ../../source/cli.rst:407 ../../source/cli.rst:439
+#: ../../source/cli.rst:79 ../../source/cli.rst:104 ../../source/cli.rst:157
+#: ../../source/cli.rst:233 ../../source/cli.rst:257 ../../source/cli.rst:439
+#: ../../source/cli.rst:470 ../../source/cli.rst:504 ../../source/cli.rst:528
+#: ../../source/cli.rst:558 ../../source/cli.rst:594 ../../source/cli.rst:626
 msgid "**Options:**"
 msgstr ""
 
-#: ../../source/cli.rst:77
+#: ../../source/cli.rst:81
 msgid "``--db`` — Chemin du fichier de base de données à créer (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:78
+#: ../../source/cli.rst:82
 msgid "``--user`` — Nom du propriétaire de la base."
 msgstr ""
 
-#: ../../source/cli.rst:79
+#: ../../source/cli.rst:83
 msgid "``--description`` — Description de la base."
 msgstr ""
 
-#: ../../source/cli.rst:80
+#: ../../source/cli.rst:84
 msgid "``--force`` — Écraser le fichier s'il existe déjà."
 msgstr ""
 
-#: ../../source/cli.rst:82
+#: ../../source/cli.rst:86
 msgid ""
 "L'extension ``.db`` est ajoutée automatiquement si elle est absente. Les "
 "répertoires parents sont créés si nécessaire."
 msgstr ""
 
-#: ../../source/cli.rst:85
+#: ../../source/cli.rst:89 ../../source/cli.rst:606
 msgid "**Exemple:**"
 msgstr ""
 
-#: ../../source/cli.rst:92
+#: ../../source/cli.rst:96
 msgid "import — Importer des données"
 msgstr ""
 
-#: ../../source/cli.rst:94
+#: ../../source/cli.rst:98
 msgid "Importe des fichiers de matchs ou de positions dans la base de données."
 msgstr ""
 
-#: ../../source/cli.rst:102
+#: ../../source/cli.rst:106
 msgid "``--db`` — Chemin de la base de données (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:103
+#: ../../source/cli.rst:107
 msgid ""
 "``--type`` — Type d'import: ``match``, ``position`` ou ``batch`` "
 "(obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:104
+#: ../../source/cli.rst:108
 msgid "``--file`` — Fichier à importer (pour ``match`` et ``position``)."
 msgstr ""
 
-#: ../../source/cli.rst:105
+#: ../../source/cli.rst:109
 msgid "``--dir`` — Répertoire à importer (pour ``batch``)."
 msgstr ""
 
-#: ../../source/cli.rst:106
+#: ../../source/cli.rst:110
 msgid ""
 "``--recursive`` — Scanner récursivement les sous-répertoires (défaut: "
 "oui)."
 msgstr ""
 
-#: ../../source/cli.rst:109
+#: ../../source/cli.rst:113
 msgid "Import d'un match"
 msgstr ""
 
-#: ../../source/cli.rst:111
+#: ../../source/cli.rst:115
 msgid ""
 "Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
 "Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``)."
 msgstr ""
 
-#: ../../source/cli.rst:119
+#: ../../source/cli.rst:123
 msgid "Import de positions"
 msgstr ""
 
-#: ../../source/cli.rst:121
+#: ../../source/cli.rst:125
 msgid ""
 "Importe des positions depuis un fichier texte (une position JSON par "
 "ligne):"
 msgstr ""
 
-#: ../../source/cli.rst:128
+#: ../../source/cli.rst:132
 msgid "Import par lot"
 msgstr ""
 
-#: ../../source/cli.rst:130
+#: ../../source/cli.rst:134
 msgid ""
 "Importe tous les fichiers de matchs d'un répertoire en une seule "
 "opération. C'est la méthode la plus efficace pour importer un grand "
 "nombre de matchs."
 msgstr ""
 
-#: ../../source/cli.rst:141
+#: ../../source/cli.rst:145
 msgid ""
 "Un tableau récapitulatif indique pour chaque fichier si l'import a réussi"
 " (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘)."
 msgstr ""
 
-#: ../../source/cli.rst:145
+#: ../../source/cli.rst:149
 msgid "export — Exporter des données"
 msgstr ""
 
-#: ../../source/cli.rst:147
+#: ../../source/cli.rst:151
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr ""
 
-#: ../../source/cli.rst:155
+#: ../../source/cli.rst:159
 msgid "``--db`` — Base source (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:156
+#: ../../source/cli.rst:160
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
 "``.mat``) (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:159
+#: ../../source/cli.rst:163
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
 msgstr ""
 
-#: ../../source/cli.rst:161
+#: ../../source/cli.rst:165
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
 "matchs sont exportés)."
 msgstr ""
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:168
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr ""
 
-#: ../../source/cli.rst:165
+#: ../../source/cli.rst:169
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr ""
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:170
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr ""
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:171
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr ""
 
-#: ../../source/cli.rst:168
+#: ../../source/cli.rst:172
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr ""
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:173
 msgid "``--collections`` — Inclure les collections (défaut: non)."
 msgstr ""
 
-#: ../../source/cli.rst:170
+#: ../../source/cli.rst:174
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:171
+#: ../../source/cli.rst:175
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
 msgstr ""
 
-#: ../../source/cli.rst:172
+#: ../../source/cli.rst:176
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:174 ../../source/cli.rst:236 ../../source/cli.rst:293
-#: ../../source/cli.rst:331 ../../source/cli.rst:358 ../../source/cli.rst:387
-#: ../../source/cli.rst:417 ../../source/cli.rst:446
+#: ../../source/cli.rst:177
+msgid ""
+"``--password`` — Enveloppe le résultat dans un conteneur chiffré "
+"(``.dbx``)."
+msgstr ""
+
+#: ../../source/cli.rst:178
+msgid ""
+"``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
+"fichier exporté (voir :ref:`diffusion_controlee`)."
+msgstr ""
+
+#: ../../source/cli.rst:180
+msgid ""
+"``--watermark-note`` — Texte libre associé au filigrane (conditions "
+"d'usage, contact) ; utilisé avec ``--watermark``."
+msgstr ""
+
+#: ../../source/cli.rst:183 ../../source/cli.rst:321 ../../source/cli.rst:402
+#: ../../source/cli.rst:446 ../../source/cli.rst:485 ../../source/cli.rst:509
+#: ../../source/cli.rst:538 ../../source/cli.rst:568 ../../source/cli.rst:633
 msgid "**Exemples:**"
 msgstr ""
 
-#: ../../source/cli.rst:195
+#: ../../source/cli.rst:209
+msgid ""
+"Un filigrane est signé avec l'identité d'émetteur locale (voir la "
+"commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
+"inamovible — le fichier reste une base SQLite ordinaire. Il ne protège "
+"rien, il indique seulement d'où vient le fichier. Un mot de passe protège"
+" le *transport* du fichier (la copie égarée, la pièce jointe envoyée par "
+"erreur), pas la base elle-même : quiconque a reçu le mot de passe peut "
+"l'ouvrir. blunderDB n'enregistre jamais rien côté destinataire (aucun "
+"registre, aucun journal) — voir ``docs/adr/0007-watermarks-mark-origin-"
+"and-nothing-else.md``."
+msgstr ""
+
+#: ../../source/cli.rst:219
+msgid "identity — Identité d'émetteur"
+msgstr ""
+
+#: ../../source/cli.rst:221
+msgid ""
+"Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
+"signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
+"apposé ; il n'y a rien à configurer. Elle appartient à une personne, pas "
+"à une base de données : tout ce que vous marquez porte une seule "
+"empreinte publique."
+msgstr ""
+
+#: ../../source/cli.rst:235
+msgid "``--name`` — Change le nom affiché de l'identité."
+msgstr ""
+
+#: ../../source/cli.rst:236
+msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
+msgstr ""
+
+#: ../../source/cli.rst:237
+msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
+msgstr ""
+
+#: ../../source/cli.rst:238
+msgid ""
+"``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
+"exporté/importé (l'identité locale, elle, est volontairement non "
+"protégée)."
+msgstr ""
+
+#: ../../source/cli.rst:241
+msgid ""
+"Le fichier exporté permet à quiconque le détient de signer en votre nom —"
+" ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
+" marqués conservent le nom sous lequel ils ont été scellés, et continuent"
+" de se vérifier."
+msgstr ""
+
+#: ../../source/cli.rst:247
+msgid "open — Ouvrir un fichier protégé"
+msgstr ""
+
+#: ../../source/cli.rst:249
+msgid ""
+"Transforme un fichier protégé par mot de passe (``.dbx``) en base "
+"ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
+" fichier normal."
+msgstr ""
+
+#: ../../source/cli.rst:259
+msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
+msgstr ""
+
+#: ../../source/cli.rst:260
+msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
+msgstr ""
+
+#: ../../source/cli.rst:261
+msgid ""
+"``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
+"extension ``.db``)."
+msgstr ""
+
+#: ../../source/cli.rst:264
+msgid ""
+"Ce que le mot de passe protège : le *transport* du fichier — la copie "
+"égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
+"erreur. Pas la base : quiconque a reçu le mot de passe peut l'ouvrir. L"
+"'en-tête du conteneur est en clair, si bien que ``blunderdb info`` lit "
+"l'origine d'un fichier protégé sans son mot de passe."
+msgstr ""
+
+#: ../../source/cli.rst:271
 msgid "search — Rechercher des positions"
 msgstr ""
 
-#: ../../source/cli.rst:197
+#: ../../source/cli.rst:273
 msgid "Recherche des positions dans la base selon des critères combinables."
 msgstr ""
 
-#: ../../source/cli.rst:203
+#: ../../source/cli.rst:279
 msgid "**Options principales:**"
 msgstr ""
 
-#: ../../source/cli.rst:205 ../../source/cli.rst:326 ../../source/cli.rst:355
-#: ../../source/cli.rst:379 ../../source/cli.rst:409 ../../source/cli.rst:441
+#: ../../source/cli.rst:281 ../../source/cli.rst:441 ../../source/cli.rst:506
+#: ../../source/cli.rst:530 ../../source/cli.rst:560 ../../source/cli.rst:596
+#: ../../source/cli.rst:628
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:206
+#: ../../source/cli.rst:282
 msgid ""
 "``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut:"
 " ``table``)."
 msgstr ""
 
-#: ../../source/cli.rst:207
+#: ../../source/cli.rst:283
 msgid "``--limit`` — Nombre maximum de résultats (0 = illimité)."
 msgstr ""
 
-#: ../../source/cli.rst:208
+#: ../../source/cli.rst:284
 msgid "``--export`` — Exporter les résultats vers une nouvelle base."
 msgstr ""
 
-#: ../../source/cli.rst:210
+#: ../../source/cli.rst:286
 msgid "**Filtres disponibles:**"
 msgstr ""
 
-#: ../../source/cli.rst:212
+#: ../../source/cli.rst:288
 msgid "``--decision`` — Type de décision: ``checker`` ou ``cube``."
 msgstr ""
 
-#: ../../source/cli.rst:213
+#: ../../source/cli.rst:289
 msgid ""
 "``--dice`` — Lancer de dés. ``5,3`` cherche les positions où les deux dés"
 " correspondent (peu importe l'ordre). ``5`` cherche les positions où un 5"
@@ -430,95 +573,116 @@ msgid ""
 "donnée."
 msgstr ""
 
-#: ../../source/cli.rst:218
+#: ../../source/cli.rst:294
 msgid "``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count."
 msgstr ""
 
-#: ../../source/cli.rst:219
+#: ../../source/cli.rst:295
 msgid ""
 "``--winrate-min`` / ``--winrate-max`` — Intervalle de taux de victoire "
 "(%)."
 msgstr ""
 
-#: ../../source/cli.rst:220
+#: ../../source/cli.rst:296
 msgid "``--cube`` — Valeur du videau."
 msgstr ""
 
-#: ../../source/cli.rst:221
+#: ../../source/cli.rst:297
 msgid "``--score1`` / ``--score2`` — Scores des joueurs."
 msgstr ""
 
-#: ../../source/cli.rst:222
+#: ../../source/cli.rst:298
 msgid "``--match-length`` — Longueur du match."
 msgstr ""
 
-#: ../../source/cli.rst:223
+#: ../../source/cli.rst:299
 msgid "``--error-min`` — Erreur d'équité minimale."
 msgstr ""
 
-#: ../../source/cli.rst:224
+#: ../../source/cli.rst:300
 msgid ""
 "``--move-error-min`` / ``--move-error-max`` — Erreur du coup joué "
 "(millipoints)."
 msgstr ""
 
-#: ../../source/cli.rst:225
+#: ../../source/cli.rst:301
 msgid "``--has-analysis`` — Uniquement les positions avec analyse."
 msgstr ""
 
-#: ../../source/cli.rst:226
+#: ../../source/cli.rst:302
 msgid "``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2)."
 msgstr ""
 
-#: ../../source/cli.rst:227
+#: ../../source/cli.rst:303
 msgid "``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:228
+#: ../../source/cli.rst:304
 msgid ""
 "``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des "
 "virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:229
+#: ../../source/cli.rst:305
 msgid ""
 "``--position-ids`` — Filtrer par IDs de positions : intervalle ``2,7`` "
 "(positions 2 à 7) ou liste explicite séparée par des points-virgules "
 "``5;10;15``."
 msgstr ""
 
-#: ../../source/cli.rst:232
+#: ../../source/cli.rst:308
 msgid ""
 "``--individual`` — Uniquement les positions importées seules, "
 "c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
 "import de match a apportées."
 msgstr ""
 
-#: ../../source/cli.rst:262
+#: ../../source/cli.rst:311
+msgid ""
+"``--flagged`` — Uniquement les positions marquées (*flag*) pour étude "
+"dans le logiciel d'origine (marques eXtreme Gammon). Non rétroactif : les"
+" matchs déjà importés doivent l'être à nouveau pour livrer leurs marques."
+msgstr ""
+
+#: ../../source/cli.rst:314
+msgid ""
+"``--has-comment`` — Uniquement les positions portant un commentaire. "
+"L'origine n'est pas distinguée : une note tapée à la main et un "
+"commentaire apporté par l'import d'un match comptent tous les deux. Les "
+"commentaires de match ou de tournoi ne sont pas consultés."
+msgstr ""
+
+#: ../../source/cli.rst:318
+msgid ""
+"``--no-comment`` — Uniquement les positions sans commentaire. "
+"Mutuellement exclusif avec ``--has-comment``."
+msgstr ""
+
+#: ../../source/cli.rst:347
 msgid "list — Lister le contenu"
 msgstr ""
 
-#: ../../source/cli.rst:264
+#: ../../source/cli.rst:349
 msgid "Affiche le contenu de la base de données."
 msgstr ""
 
-#: ../../source/cli.rst:270
+#: ../../source/cli.rst:355
 msgid "**Types:**"
 msgstr ""
 
-#: ../../source/cli.rst:272
+#: ../../source/cli.rst:357
 msgid "``matches`` — Liste des matchs importés."
 msgstr ""
 
-#: ../../source/cli.rst:273
+#: ../../source/cli.rst:358
 msgid "``tournaments`` — Liste des tournois."
 msgstr ""
 
-#: ../../source/cli.rst:274
+#: ../../source/cli.rst:359
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 msgstr ""
 
-#: ../../source/cli.rst:275
+#: ../../source/cli.rst:360
 msgid ""
 "``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC"
 " (global, pions, videau), PR glissant sur les N dernières décisions, top "
@@ -526,180 +690,280 @@ msgid ""
 "d'erreur."
 msgstr ""
 
-#: ../../source/cli.rst:280
+#: ../../source/cli.rst:364
+msgid ""
+"``players`` — Tableau comparatif, **une ligne par joueur** de la base : "
+"matchs, victoires/défaites, décisions comptées, PR global / pions / "
+"videau, Snowie ER, erreurs, blunders et chance. C'est le pendant en ligne"
+" de commande de l'onglet Joueurs du panneau Stats."
+msgstr ""
+
+#: ../../source/cli.rst:369
 msgid "**Options (type ``stats`` uniquement):**"
 msgstr ""
 
-#: ../../source/cli.rst:282
+#: ../../source/cli.rst:371
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
 msgstr ""
 
-#: ../../source/cli.rst:283
+#: ../../source/cli.rst:372
 msgid "``--player`` — Restreindre au joueur indiqué."
 msgstr ""
 
-#: ../../source/cli.rst:284
+#: ../../source/cli.rst:373
 msgid ""
 "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
 " par des virgules)."
 msgstr ""
 
-#: ../../source/cli.rst:286
+#: ../../source/cli.rst:375
 msgid "``--from`` — Date de début (AAAA-MM-JJ)."
 msgstr ""
 
-#: ../../source/cli.rst:287
+#: ../../source/cli.rst:376
 msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
 msgstr ""
 
-#: ../../source/cli.rst:288
+#: ../../source/cli.rst:377
 msgid ""
 "``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
 "(défaut: ``all``)."
 msgstr ""
 
-#: ../../source/cli.rst:290
+#: ../../source/cli.rst:379
 msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr ""
 
-#: ../../source/cli.rst:291 ../../source/cli.rst:356
+#: ../../source/cli.rst:380 ../../source/cli.rst:472 ../../source/cli.rst:507
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 
-#: ../../source/cli.rst:316
+#: ../../source/cli.rst:382
+msgid "**Options (type ``players`` uniquement):**"
+msgstr ""
+
+#: ../../source/cli.rst:384
+msgid ""
+"``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
+"jours d'une compétition."
+msgstr ""
+
+#: ../../source/cli.rst:386
+msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
+msgstr ""
+
+#: ../../source/cli.rst:387
+msgid ""
+"``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
+"``text``)."
+msgstr ""
+
+#: ../../source/cli.rst:390
+msgid ""
+"``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
+"le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
+"colonnes distinctes."
+msgstr ""
+
+#: ../../source/cli.rst:395
+msgid ""
+"Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
+" à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
+"importé avant la version 2.15.0 du schéma, ainsi que pour les formats qui"
+" ne la transportent pas (BGF, Jellyfish ``.mat``) : réimportez les "
+"fichiers source pour l'obtenir. La colonne ``luck_rolls`` indique sur "
+"combien de lancers porte la moyenne."
+msgstr ""
+
+#: ../../source/cli.rst:431
 msgid "match — Afficher un match"
 msgstr ""
 
-#: ../../source/cli.rst:318
+#: ../../source/cli.rst:433
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr ""
 
-#: ../../source/cli.rst:327
+#: ../../source/cli.rst:442
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:328
+#: ../../source/cli.rst:443
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
 msgstr ""
 
-#: ../../source/cli.rst:329
+#: ../../source/cli.rst:444
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr ""
 
-#: ../../source/cli.rst:345
+#: ../../source/cli.rst:460
+msgid "epc — Calculatrice EPC"
+msgstr ""
+
+#: ../../source/cli.rst:462
+msgid ""
+"Calcule l'Effective Pip Count, la probabilité de gain et le verdict de "
+"videau money d'une position de sortie donnée par XGID. Calcul pur : aucun"
+" fichier de base de données n'est impliqué."
+msgstr ""
+
+#: ../../source/cli.rst:473
+msgid ""
+"``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) "
+"élargissant la base intégrée TS-06-06 (également lue depuis la variable "
+"d'environnement ``BLUNDERDB_TS_PATH``). La base valide la plus large "
+"l'emporte ; un fichier invalide est ignoré avec un avertissement."
+msgstr ""
+
+#: ../../source/cli.rst:478
+msgid ""
+"**Régimes.** Dans le domaine couvert par la base two-sided, la "
+"probabilité de gain et l'analyse money du videau (cubeless, ND, D/T, D/P,"
+" verdict) sont **exactes**. En dehors, la probabilité de gain est "
+"**estimée** (convolution des distributions de lancers one-sided plus une "
+"correction calibrée) et affichée avec sa marge d'erreur mesurée ; le "
+"verdict de videau n'est volontairement jamais estimé (voir ADR-0009)."
+msgstr ""
+
+#: ../../source/cli.rst:496
 msgid "info — Métadonnées de la base"
 msgstr ""
 
-#: ../../source/cli.rst:347
+#: ../../source/cli.rst:498
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr ""
 
-#: ../../source/cli.rst:369
+#: ../../source/cli.rst:520
 msgid "edit — Modifier les métadonnées"
 msgstr ""
 
-#: ../../source/cli.rst:371
+#: ../../source/cli.rst:522
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr ""
 
-#: ../../source/cli.rst:380
+#: ../../source/cli.rst:531
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr ""
 
-#: ../../source/cli.rst:381
+#: ../../source/cli.rst:532
 msgid "``--description`` — Nouvelle description."
 msgstr ""
 
-#: ../../source/cli.rst:382
+#: ../../source/cli.rst:533
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr ""
 
-#: ../../source/cli.rst:383
+#: ../../source/cli.rst:534
 msgid "``--clear-description`` — Effacer la description."
 msgstr ""
 
-#: ../../source/cli.rst:385
+#: ../../source/cli.rst:536
 msgid "Au moins une option de modification est requise."
 msgstr ""
 
-#: ../../source/cli.rst:398
+#: ../../source/cli.rst:549
 msgid "verify — Vérifier l'intégrité"
 msgstr ""
 
-#: ../../source/cli.rst:400
+#: ../../source/cli.rst:551
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
 msgstr ""
 
-#: ../../source/cli.rst:410
+#: ../../source/cli.rst:561
 msgid "``--match`` — ID du match à vérifier."
 msgstr ""
 
-#: ../../source/cli.rst:411
+#: ../../source/cli.rst:562
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr ""
 
-#: ../../source/cli.rst:413
+#: ../../source/cli.rst:564
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
 "les comparer avec le fichier source original."
 msgstr ""
 
-#: ../../source/cli.rst:431
+#: ../../source/cli.rst:582
+msgid "vacuum — Compacter la base de données"
+msgstr ""
+
+#: ../../source/cli.rst:584
+msgid ""
+"Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
+"purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
+"des données, il faut le lui demander explicitement. C'est la seule façon "
+"de déclencher un compactage — il ne se produit jamais automatiquement à "
+"l'ouverture d'une base, car son coût est imprévisible sur une grosse "
+"base."
+msgstr ""
+
+#: ../../source/cli.rst:598
+msgid ""
+"La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
+"taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
+" disque environ deux fois la taille actuelle du fichier (SQLite "
+"reconstruit entièrement la base avant de basculer dessus), effectue le "
+"``VACUUM`` puis un ``ANALYZE`` pour rafraîchir les statistiques utilisées"
+" par le planificateur de requêtes. Si l'espace disque manque, la commande"
+" refuse de démarrer avec un message explicite plutôt que de risquer un "
+"compactage interrompu."
+msgstr ""
+
+#: ../../source/cli.rst:618
 msgid "delete — Supprimer des données"
 msgstr ""
 
-#: ../../source/cli.rst:433
+#: ../../source/cli.rst:620
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr ""
 
-#: ../../source/cli.rst:442
+#: ../../source/cli.rst:629
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:443
+#: ../../source/cli.rst:630
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr ""
 
-#: ../../source/cli.rst:444
+#: ../../source/cli.rst:631
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr ""
 
-#: ../../source/cli.rst:457
+#: ../../source/cli.rst:644
 msgid "Exemples de flux de travail"
 msgstr ""
 
-#: ../../source/cli.rst:460
+#: ../../source/cli.rst:647
 msgid "Import d'un répertoire de tournoi"
 msgstr ""
 
-#: ../../source/cli.rst:474
+#: ../../source/cli.rst:661
 msgid "Sauvegarde régulière"
 msgstr ""
 
-#: ../../source/cli.rst:482
+#: ../../source/cli.rst:669
 msgid "Analyse des erreurs"
 msgstr ""
 
-#: ../../source/cli.rst:493
+#: ../../source/cli.rst:680
 msgid "Codes de retour"
 msgstr ""
 
-#: ../../source/cli.rst:495
+#: ../../source/cli.rst:682
 msgid "``0`` — Succès."
 msgstr ""
 
-#: ../../source/cli.rst:496
+#: ../../source/cli.rst:683
 msgid "``1`` — Erreur."
 msgstr ""
 
-#: ../../source/cli.rst:498
+#: ../../source/cli.rst:685
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 

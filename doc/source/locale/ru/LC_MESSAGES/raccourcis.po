@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -187,8 +187,8 @@ msgid "Del"
 msgstr "Del"
 
 #: ../../source/raccourcis.rst:1
-msgid "Supprimer la position courante."
-msgstr "Удалить текущую позицию."
+msgid "Supprimer la position courante (confirmation demandée)."
+msgstr "Удалить текущую позицию (требуется подтверждение)."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -458,7 +458,22 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:145
+msgid ""
+"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
+"(position suivante) et *k* recule (position précédente), alors que *MAJ-J* "
+"revient à la vue précédente et *MAJ-K* passe à la vue suivante. C'est voulu "
+"(pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-"
+"PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k."
+msgstr ""
+"Направление SHIFT-J / SHIFT-K обратно направлению j / k: *j* идёт вперёд "
+"(следующая позиция), а *k* назад (предыдущая позиция), тогда как *SHIFT-J* "
+"возвращает к предыдущему виду, а *SHIFT-K* переходит к следующему. Так "
+"задумано (это не сочетание, которое надо исправить) — SHIFT-J/SHIFT-K "
+"следуют соглашению CTRL-PageUp/CTRL-PageDown, с которым они связаны, а не "
+"соглашению j/k."
+
+#: ../../source/raccourcis.rst:155
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -478,11 +493,11 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Просмотр истории команд вниз."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:168
 msgid "Historique de recherche"
 msgstr "История поиска"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:170
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de recherche "
 "(*CTRL-F* ou *TAB*)."
@@ -506,11 +521,11 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:186
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -526,7 +541,7 @@ msgstr "Выбрать/отменить выбор фильтра (показа�
 msgid "Exécuter la recherche du filtre."
 msgstr "Выполнить поиск по фильтру."
 
-#: ../../source/raccourcis.rst:191
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -560,7 +575,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:207
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -596,7 +611,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:225
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -634,9 +649,87 @@ msgstr "Оценить: Легко."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
+"Afficher/cacher le compte de course (identique au raccourci général, "
+"disponible pendant la révision)."
+msgstr ""
+"Показать/скрыть счёт пипсов (то же, что и общее сочетание, доступно во время"
+" повторения)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
 "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr ""
 "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
+
+#: ../../source/raccourcis.rst:251
+msgid "Panneau des tournois"
+msgstr "Панель турниров"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic, Double-clic"
+msgstr "Клик, Двойной клик"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un tournoi (afficher son détail)."
+msgstr "Выбрать турнир (показать его подробности)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi précédent."
+msgstr "Выбрать предыдущий турнир."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi suivant."
+msgstr "Выбрать следующий турнир."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur un match du tournoi)"
+msgstr "Двойной клик (по матчу турнира)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, "
+"sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+msgstr ""
+"Отменить текущее редактирование, иначе очистить поиск добавления матча, "
+"иначе снять выбор турнира, иначе закрыть панель (по шагам)."
+
+#: ../../source/raccourcis.rst:267
+msgid "Panneau des collections"
+msgstr "Панель коллекций"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter/retirer la position courante de la collection survolée."
+msgstr ""
+"Добавить текущую позицию в коллекцию под курсором или убрать её оттуда."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la collection."
+msgstr "Открыть коллекцию."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Retirer la position courante (ou les positions cochées) de la collection "
+"ouverte."
+msgstr ""
+"Убрать текущую позицию (или отмеченные позиции) из открытой коллекции."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Revenir à la liste des collections, sinon désélectionner la collection, "
+"sinon fermer le panneau (par paliers)."
+msgstr ""
+"Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
+"панель (по шагам)."
+
+#: ../../source/raccourcis.rst:281
+msgid ""
+"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k,"
+" DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte "
+"exactement comme décrit dans :ref:`raccourcis_navigation`."
+msgstr ""
+"Эта панель не перехватывает сочетания навигации: PageUp/h, ВЛЕВО/k, "
+"ВПРАВО/j, PageDown/l перемещаются по позициям открытой коллекции ровно так, "
+"как описано в :ref:`raccourcis_navigation`."
 
 #~ msgid "Exécuter la recherche et fermer le panneau."
 #~ msgstr "Выполнить поиск и закрыть панель."

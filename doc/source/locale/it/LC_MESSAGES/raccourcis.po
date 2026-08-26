@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: it <LL@li.org>\n"
@@ -186,8 +186,8 @@ msgid "Del"
 msgstr "Canc"
 
 #: ../../source/raccourcis.rst:1
-msgid "Supprimer la position courante."
-msgstr "Elimina la posizione corrente."
+msgid "Supprimer la position courante (confirmation demandée)."
+msgstr "Elimina la posizione corrente (viene chiesta conferma)."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -457,7 +457,21 @@ msgstr "Doppio clic sulla scheda"
 msgid "Renommer la vue."
 msgstr "Rinomina la vista."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:145
+msgid ""
+"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
+"(position suivante) et *k* recule (position précédente), alors que *MAJ-J* "
+"revient à la vue précédente et *MAJ-K* passe à la vue suivante. C'est voulu "
+"(pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-"
+"PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k."
+msgstr ""
+"Il verso di MAIUSC-J / MAIUSC-K è invertito rispetto a j / k: *j* avanza "
+"(posizione successiva) e *k* indietreggia (posizione precedente), mentre "
+"*MAIUSC-J* torna alla vista precedente e *MAIUSC-K* passa alla successiva. È"
+" voluto (non è una scorciatoia da correggere) — MAIUSC-J/MAIUSC-K seguono la"
+" convenzione CTRL-PagSu/CTRL-PagGiù a cui sono associati, non quella di j/k."
+
+#: ../../source/raccourcis.rst:155
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -477,11 +491,11 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:168
 msgid "Historique de recherche"
 msgstr "Cronologia di ricerca"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:170
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de recherche "
 "(*CTRL-F* ou *TAB*)."
@@ -505,11 +519,11 @@ msgstr "Doppio clic"
 msgid "Exécuter la recherche."
 msgstr "Esegui la ricerca."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Libreria di filtri"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:186
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -525,7 +539,7 @@ msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Esegui la ricerca del filtro."
 
-#: ../../source/raccourcis.rst:191
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -560,7 +574,7 @@ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 msgstr ""
 "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:207
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -596,7 +610,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:225
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -634,9 +648,89 @@ msgstr "Valuta: Facile."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
+"Afficher/cacher le compte de course (identique au raccourci général, "
+"disponible pendant la révision)."
+msgstr ""
+"Mostra/nascondi il pip count (identico alla scorciatoia generale, "
+"disponibile durante il ripasso)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
 "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr ""
 "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
+
+#: ../../source/raccourcis.rst:251
+msgid "Panneau des tournois"
+msgstr "Pannello dei tornei"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic, Double-clic"
+msgstr "Clic, Doppio clic"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un tournoi (afficher son détail)."
+msgstr "Seleziona un torneo (mostrane il dettaglio)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi précédent."
+msgstr "Seleziona il torneo precedente."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi suivant."
+msgstr "Seleziona il torneo successivo."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur un match du tournoi)"
+msgstr "Doppio clic (su un match del torneo)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, "
+"sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+msgstr ""
+"Annulla la modifica in corso, altrimenti cancella la ricerca di aggiunta "
+"match, altrimenti deseleziona il torneo, altrimenti chiudi il pannello (a "
+"tappe)."
+
+#: ../../source/raccourcis.rst:267
+msgid "Panneau des collections"
+msgstr "Pannello delle collezioni"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter/retirer la position courante de la collection survolée."
+msgstr ""
+"Aggiungi/rimuovi la posizione corrente dalla collezione sotto il puntatore."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la collection."
+msgstr "Apri la collezione."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Retirer la position courante (ou les positions cochées) de la collection "
+"ouverte."
+msgstr ""
+"Rimuovi la posizione corrente (o le posizioni selezionate) dalla collezione "
+"aperta."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Revenir à la liste des collections, sinon désélectionner la collection, "
+"sinon fermer le panneau (par paliers)."
+msgstr ""
+"Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
+"altrimenti chiudi il pannello (a tappe)."
+
+#: ../../source/raccourcis.rst:281
+msgid ""
+"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k,"
+" DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte "
+"exactement comme décrit dans :ref:`raccourcis_navigation`."
+msgstr ""
+"Questo pannello non cattura le scorciatoie di navigazione: PagSu/h, "
+"SINISTRA/k, DESTRA/j, PagGiù/l scorrono le posizioni della collezione aperta"
+" esattamente come descritto in :ref:`raccourcis_navigation`."
 
 #~ msgid "Exécuter la recherche et fermer le panneau."
 #~ msgstr "Esegui la ricerca e chiudi il pannello."

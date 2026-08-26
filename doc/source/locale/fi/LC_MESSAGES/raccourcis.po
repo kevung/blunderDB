@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fi <LL@li.org>\n"
@@ -185,8 +185,8 @@ msgid "Del"
 msgstr "Del"
 
 #: ../../source/raccourcis.rst:1
-msgid "Supprimer la position courante."
-msgstr "Poista nykyinen asema."
+msgid "Supprimer la position courante (confirmation demandée)."
+msgstr "Poista nykyinen asema (vahvistus pyydetään)."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -456,7 +456,22 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:145
+msgid ""
+"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
+"(position suivante) et *k* recule (position précédente), alors que *MAJ-J* "
+"revient à la vue précédente et *MAJ-K* passe à la vue suivante. C'est voulu "
+"(pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-"
+"PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k."
+msgstr ""
+"VAIHTO-J:n / VAIHTO-K:n suunta on päinvastainen kuin j:n / k:n: *j* etenee "
+"(seuraava asema) ja *k* palaa (edellinen asema), kun taas *VAIHTO-J* palaa "
+"edelliseen näkymään ja *VAIHTO-K* siirtyy seuraavaan. Näin on tarkoitettu "
+"(kyse ei ole korjattavasta pikanäppäimestä) — VAIHTO-J/VAIHTO-K noudattavat "
+"CTRL-PageUp/CTRL-PageDown-käytäntöä, johon ne on liitetty, eivät j/k:n "
+"käytäntöä."
+
+#: ../../source/raccourcis.rst:155
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -476,11 +491,11 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:168
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:170
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de recherche "
 "(*CTRL-F* ou *TAB*)."
@@ -503,11 +518,11 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:186
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -523,7 +538,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:191
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -559,7 +574,7 @@ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 msgstr ""
 "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:207
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -595,7 +610,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:225
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -633,8 +648,85 @@ msgstr "Arvioi: Helppo."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
+"Afficher/cacher le compte de course (identique au raccourci général, "
+"disponible pendant la révision)."
+msgstr ""
+"Näytä/piilota pip-laskuri (sama kuin yleinen pikanäppäin, käytettävissä "
+"kertauksen aikana)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
 "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
+
+#: ../../source/raccourcis.rst:251
+msgid "Panneau des tournois"
+msgstr "Turnauspaneeli"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic, Double-clic"
+msgstr "Napsautus, Kaksoisnapsautus"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un tournoi (afficher son détail)."
+msgstr "Valitse turnaus (näytä sen tiedot)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi précédent."
+msgstr "Valitse edellinen turnaus."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi suivant."
+msgstr "Valitse seuraava turnaus."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur un match du tournoi)"
+msgstr "Kaksoisnapsautus (turnauksen ottelun kohdalla)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, "
+"sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+msgstr ""
+"Peruuta käynnissä oleva muokkaus, muuten tyhjennä ottelun lisäyshaku, muuten"
+" poista turnauksen valinta, muuten sulje paneeli (askel kerrallaan)."
+
+#: ../../source/raccourcis.rst:267
+msgid "Panneau des collections"
+msgstr "Kokoelmapaneeli"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter/retirer la position courante de la collection survolée."
+msgstr ""
+"Lisää nykyinen asema osoittimen alla olevaan kokoelmaan tai poista se siitä."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la collection."
+msgstr "Avaa kokoelma."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Retirer la position courante (ou les positions cochées) de la collection "
+"ouverte."
+msgstr "Poista nykyinen asema (tai valitut asemat) avoimesta kokoelmasta."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Revenir à la liste des collections, sinon désélectionner la collection, "
+"sinon fermer le panneau (par paliers)."
+msgstr ""
+"Palaa kokoelmalistaan, muuten poista kokoelman valinta, muuten sulje paneeli"
+" (askel kerrallaan)."
+
+#: ../../source/raccourcis.rst:281
+msgid ""
+"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k,"
+" DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte "
+"exactement comme décrit dans :ref:`raccourcis_navigation`."
+msgstr ""
+"Tämä paneeli ei kaappaa navigointipikanäppäimiä: PageUp/h, VASEN/k, OIKEA/j,"
+" PageDown/l liikkuvat avoimen kokoelman asemissa täsmälleen kuten kohdassa "
+":ref:`raccourcis_navigation` kuvataan."
 
 #~ msgid "Exécuter la recherche et fermer le panneau."
 #~ msgstr "Suorita haku ja sulje paneeli."

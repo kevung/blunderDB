@@ -762,7 +762,7 @@
         "title": "Tabella dati"
     },
     "met": {
-        "title": "Match equity table"
+        "title": "Tabella di equity del match"
     },
     "merge": {
         "ariaLabel": "Unisci giocatori",
@@ -926,7 +926,7 @@
         "tournaments": "tornei",
         "matches": "partite",
         "decisions": "decisioni",
-        "rolling": "Rolling ({metric})",
+        "rolling": "Mobile ({metric})",
         "topBlunders": "Top errori",
         "decisionTypeChecker": "Pedina",
         "decisionTypeCube": "Dado",

@@ -6,18 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-18 01:27+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ru\n"
 "Language-Team: ru <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
@@ -26,29 +25,27 @@ msgstr "Приложение: Расширенное использование 
 
 #: ../../source/annexe_filtres.rst:8
 msgid ""
-"Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
-"souhaitent exploiter pleinement les fonctionnalités de recherche de "
-"positions."
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
+" exploiter pleinement les fonctionnalités de recherche de positions."
 msgstr ""
 "Этот раздел предназначен для опытных пользователей blunderDB, желающих в "
 "полной мере использовать возможности поиска позиций."
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
-"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
-" utilisation permet de rechercher des positions spécifiques relativement "
-"précisément. Dans cette section, l'utilisation des filtres via la ligne "
-"de commande est détaillée. La ligne de commande est accessible en "
-"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
-"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
-"filtres."
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
+"utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
+"commande est détaillée. La ligne de commande est accessible en appuyant sur "
+"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
+"rapidement des filtres et d'utiliser la bibliothèque de filtres."
 msgstr ""
 "Фильтры лежат в основе анализа позиций в blunderDB. Их использование "
 "позволяет с достаточной точностью находить конкретные позиции. В этом "
-"разделе подробно описывается использование фильтров через командную "
-"строку. Командная строка доступна по нажатию клавиши ``ПРОБЕЛ``. С "
-"практикой она позволяет очень быстро комбинировать фильтры и использовать"
-" библиотеку фильтров."
+"разделе подробно описывается использование фильтров через командную строку. "
+"Командная строка доступна по нажатию клавиши ``ПРОБЕЛ``. С практикой она "
+"позволяет очень быстро комбинировать фильтры и использовать библиотеку "
+"фильтров."
 
 #: ../../source/annexe_filtres.rst:19
 msgid "Recherche de positions en ligne de commande"
@@ -80,9 +77,9 @@ msgstr "Запустите поиск клавишей ``ВВОД``."
 
 #: ../../source/annexe_filtres.rst:30
 msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
+"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
+"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
+" risque de filtrer abusivement des structures de pions."
 msgstr ""
 "Не забывайте очищать текущую позицию перед запуском поиска (клавиша "
 "``BACKSPACE``), если она не является нужной, иначе структуры шашек будут "
@@ -90,11 +87,10 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" :numref:`cmd_filter`."
-msgstr ""
-"Список доступных фильтров командной строки приведён в "
+"La liste des filtres disponibles en ligne de commande est fournie dans la "
 ":numref:`cmd_filter`."
+msgstr ""
+"Список доступных фильтров командной строки приведён в :numref:`cmd_filter`."
 
 #: ../../source/annexe_filtres.rst:39
 msgid "Recherche dans les résultats courants"
@@ -106,26 +102,25 @@ msgid ""
 "actuellement filtrées. Cela permet de restreindre progressivement les "
 "résultats."
 msgstr ""
-"Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций."
-" Это позволяет постепенно сужать результаты."
+"Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций. "
+"Это позволяет постепенно сужать результаты."
 
 #: ../../source/annexe_filtres.rst:44
 msgid ""
 "En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
+"préalable."
 msgstr ""
-"В командной строке используйте команду ``ss`` с фильтрами (напр.: ``ss "
-"nc``, ``ss E>40``). Команда ``ss`` работает после предварительного "
-"поиска."
+"В командной строке используйте команду ``ss`` с фильтрами (напр.: ``ss nc``,"
+" ``ss E>40``). Команда ``ss`` работает после предварительного поиска."
 
 #: ../../source/annexe_filtres.rst:47
 msgid ""
 "La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Search in current results\" pour la même fonctionnalité."
+"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
 msgstr ""
-"Окно поиска (``CTRL-F``) также предлагает флажок «Search in current "
-"results» для той же функции."
+"В окне поиска (``CTRL-F``) для того же есть флажок «Искать в текущих "
+"результатах»."
 
 #: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
@@ -136,8 +131,8 @@ msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
 msgstr ""
-"Библиотека фильтров позволяет пользователю сохранять поисковые команды "
-"для удобства тематических исследований."
+"Библиотека фильтров позволяет пользователю сохранять поисковые команды для "
+"удобства тематических исследований."
 
 #: ../../source/annexe_filtres.rst:56
 msgid "Pour ajouter un filtre à la bibliothèque,"
@@ -145,7 +140,9 @@ msgstr "Чтобы добавить фильтр в библиотеку,"
 
 #: ../../source/annexe_filtres.rst:58
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
-msgstr "Запустите поиск, который нужно сохранить (команда ``s`` с последующими фильтрами)."
+msgstr ""
+"Запустите поиск, который нужно сохранить (команда ``s`` с последующими "
+"фильтрами)."
 
 #: ../../source/annexe_filtres.rst:59
 msgid ""
@@ -188,7 +185,8 @@ msgid "Exemples"
 msgstr "Примеры"
 
 #: ../../source/annexe_filtres.rst:74
-msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgid ""
+"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ниже приведены примеры использования фильтров в командной строке:"
 
 #: ../../source/annexe_filtres.rst:1
@@ -264,6 +262,7 @@ msgid "s d e>1000"
 msgstr "s d e>1000"
 
 #: ../../source/annexe_filtres.rst:1
+#, python-format
 msgid "Blitz avec au moins 20% de gammon"
 msgstr "Блиц с долей гэммона не менее 20%"
 
@@ -428,12 +427,8 @@ msgstr "s"
 #~ msgstr "Сохраните поисковую команду с помощью кнопки «Add»."
 
 #~ msgid ""
-#~ "Lors de l'édition de la commande, "
-#~ "il est possible d'utiliser les touches"
-#~ " ``HAUT`` et ``BAS`` pour naviguer "
-#~ "dans l'historique des commandes."
+#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
+#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
 #~ msgstr ""
-#~ "При редактировании команды можно использовать"
-#~ " клавиши ``ВВЕРХ`` и ``ВНИЗ`` для "
-#~ "навигации по истории команд."
-
+#~ "При редактировании команды можно использовать клавиши ``ВВЕРХ`` и ``ВНИЗ`` "
+#~ "для навигации по истории команд."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:05+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -1155,15 +1155,121 @@ msgstr ""
 "die Annahmen hinter jedem angezeigten Wert erschöpfend dar. Siehe "
 ":ref:`panneau_epc` und :ref:`epc_methodologie`."
 
-#: ../../source/index.rst:158
+#: ../../source/index.rst:1
+msgid "0.33.0"
+msgstr "0.33.0"
+
+#: ../../source/index.rst:1
+msgid "26/08/2026"
+msgstr "26. August 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Le panneau Stats gagne un onglet **Joueurs** : les trois onglets précédents "
+"décrivent un joueur, celui-ci les compare tous, une ligne par joueur de la "
+"base — matchs, victoires/défaites, décisions comptées, PR global / pions / "
+"videau, Snowie Error Rate, blunders et chance. Le tableau se trie par "
+"n'importe quelle colonne, se restreint aux dates d'une compétition par les "
+"filtres habituels, et un clic sur une ligne bascule sur le détail du joueur."
+" Un tiret y signale une valeur jamais mesurée, jamais un zéro. Le tableau "
+"est également disponible en ligne de commande (``blunderdb list --type "
+"players``, en texte, JSON ou CSV) et en mode serveur."
+msgstr ""
+"Das Statistik-Panel erhält einen Reiter **Spieler**: Die drei bisherigen "
+"Reiter beschreiben einen Spieler, dieser vergleicht sie alle — eine Zeile je"
+" Spieler der Datenbank mit Partien, Siegen/Niederlagen, gezählten "
+"Entscheidungen, PR gesamt / Steine / Doppler, Snowie Error Rate, Blunders "
+"und Glück. Die Tabelle lässt sich nach jeder Spalte sortieren, über die "
+"üblichen Filter auf die Tage eines Turniers eingrenzen, und ein Klick auf "
+"eine Zeile wechselt zur Detailansicht des Spielers. Ein Gedankenstrich steht"
+" für einen nie gemessenen Wert, niemals für eine Null. Die Tabelle steht "
+"auch auf der Kommandozeile (``blunderdb list --type players``, als Text, "
+"JSON oder CSV) und im Servermodus zur Verfügung."
+
+#: ../../source/index.rst:3
+msgid ""
+"La **chance** de chaque lancer est désormais conservée en base et affichée :"
+" chance moyenne par lancer, en millièmes de point, signée. Elle est lue à "
+"l'import depuis les fichiers eXtreme Gammon comme depuis gnuBG. Elle n'est "
+"pas rétroactive — les matchs importés auparavant portent un tiret, et il "
+"faut réimporter les fichiers source pour la récupérer ; les formats qui ne "
+"la transportent pas (BGF, Jellyfish ``.mat``) n'en fourniront jamais."
+msgstr ""
+"Das **Glück** jedes Wurfs wird nun in der Datenbank gespeichert und "
+"angezeigt: durchschnittliches Glück pro Wurf, in Tausendstelpunkten, mit "
+"Vorzeichen. Es wird beim Import sowohl aus eXtreme-Gammon- als auch aus "
+"gnuBG-Dateien gelesen. Es wirkt nicht rückwirkend — früher importierte "
+"Partien zeigen einen Gedankenstrich, und die Quelldateien müssen neu "
+"importiert werden, um es zu gewinnen; Formate, die es nicht transportieren "
+"(BGF, Jellyfish ``.mat``), werden es nie liefern."
+
+#: ../../source/index.rst:5
+msgid ""
+"L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
+"décisions de videau, et non plus seulement combien elles coûtent : une ligne"
+" *Offrir* (doubles manqués, doubles prématurés) et une ligne *Répondre* "
+"(passes à tort, prises à tort), les deux séparées à dessein puisqu'un même "
+"joueur peut doubler tard et prendre large. Chaque case porte son nombre, "
+"l'infobulle l'équité perdue, et le clic charge les positions "
+"correspondantes."
+msgstr ""
+"Der Reiter **Fehler** zeigt nun, in welche *Richtung* Doppler-Entscheidungen"
+" falsch liegen, und nicht mehr nur, was sie kosten: eine Zeile *Anbieten* "
+"(verpasste Doppel, verfrühte Doppel) und eine Zeile *Antworten* (falsche "
+"Pässe, falsche Annahmen), bewusst getrennt gehalten, denn derselbe Spieler "
+"kann spät doppeln und großzügig annehmen. Jede Zelle nennt ihre Anzahl, der "
+"Tooltip die verlorene Equity, und ein Klick lädt die zugehörigen Positionen."
+
+#: ../../source/index.rst:7
+msgid ""
+"Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par "
+"les suppressions : bouton dans les paramètres et sous-commande ``blunderdb "
+"vacuum``. Elle ne se déclenche jamais toute seule."
+msgstr ""
+"Neuer Befehl **Datenbank komprimieren**, der den durch Löschungen "
+"freigewordenen Platz zurückgewinnt: eine Schaltfläche in den Einstellungen "
+"und der Unterbefehl ``blunderdb vacuum``. Er läuft niemals von selbst."
+
+#: ../../source/index.rst:9
+msgid ""
+"Ergonomie : les actions destructives demandent confirmation, une recherche "
+"en cours est signalée, une commande inconnue reçoit un message au lieu du "
+"silence, et les onglets, panneaux dockés et petites fenêtres se pilotent "
+"entièrement au clavier. La recherche est par ailleurs sensiblement plus "
+"rapide."
+msgstr ""
+"Bedienung: Zerstörende Aktionen fragen nach einer Bestätigung, eine laufende"
+" Suche wird angezeigt, ein unbekannter Befehl erhält eine Meldung statt "
+"Schweigen, und Reiter, angedockte Panels und kleine Dialoge lassen sich "
+"vollständig mit der Tastatur bedienen. Die Suche ist zudem spürbar "
+"schneller."
+
+#: ../../source/index.rst:11
+msgid ""
+"Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
+"étaient comptés comme des doubles, ce qui faussait le PR videau (une base "
+"déjà constituée se répare sans réimport, en mode serveur) ; le filtre joueur"
+" rétrécissait à tort le dénominateur du Snowie Error Rate ; les exports "
+"écrivaient un schéma périmé ; et ``blunderdb vacuum`` ouvrait l'interface "
+"graphique au lieu de compacter la base. Voir :ref:`stats` et :ref:`cli`."
+msgstr ""
+"Wichtige Korrekturen: Von gnuBG als „Double No“ bezeichnete Nicht-Doppel "
+"wurden als Doppel gezählt und verfälschten den Doppler-PR (eine bereits "
+"bestehende Datenbank lässt sich im Servermodus ohne Neuimport reparieren); "
+"der Spielerfilter verkleinerte fälschlich den Nenner der Snowie Error Rate; "
+"Exporte schrieben ein veraltetes Schema; und ``blunderdb vacuum`` öffnete "
+"die grafische Oberfläche, statt die Datenbank zu komprimieren. Siehe "
+":ref:`stats` und :ref:`cli`."
+
+#: ../../source/index.rst:169
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:202
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:204
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver sur "
 "Heroes sous le pseudo postmanpat."
@@ -1171,7 +1277,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes "
 "unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:207
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1187,33 +1293,33 @@ msgstr ""
 "nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:214
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:216
 msgid ""
 "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:207
+#: ../../source/index.rst:218
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:220
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:222
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:224
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:226
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer une "
 "pull request."
@@ -1221,11 +1327,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:230
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:232
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les développements "
 "passés et futurs, vous pouvez"
@@ -1233,20 +1339,20 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:234
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:236
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:239
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:230
+#: ../../source/index.rst:241
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre fille "
 "Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1254,7 +1360,7 @@ msgstr ""
 "Ich widme diese kleine Software meiner Partnerin Anne-Claire und unserer "
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden danken:"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:244
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux "
@@ -1266,7 +1372,7 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:238
+#: ../../source/index.rst:249
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu "

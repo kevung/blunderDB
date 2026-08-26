@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -242,8 +242,8 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante."
-msgstr "Удаляет текущую позицию."
+msgid "Supprime la position courante (confirmation demandée)."
+msgstr "Удаляет текущую позицию (требуется подтверждение)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"

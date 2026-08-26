@@ -762,7 +762,7 @@
         "title": "Таблица данных"
     },
     "met": {
-        "title": "Match equity table"
+        "title": "Таблица эквити матча"
     },
     "merge": {
         "ariaLabel": "Объединить игроков",
@@ -926,7 +926,7 @@
         "tournaments": "турниров",
         "matches": "партий",
         "decisions": "решений",
-        "rolling": "Rolling ({metric})",
+        "rolling": "Скользящий ({metric})",
         "topBlunders": "Топ ошибок",
         "decisionTypeChecker": "Шашка",
         "decisionTypeCube": "Куб",

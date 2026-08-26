@@ -926,7 +926,7 @@
         "tournaments": "turnausta",
         "matches": "ottelua",
         "decisions": "päätöstä",
-        "rolling": "Rolling ({metric})",
+        "rolling": "Liukuva ({metric})",
         "topBlunders": "Suurimmat virheet",
         "decisionTypeChecker": "Nappula",
         "decisionTypeCube": "Noppa",

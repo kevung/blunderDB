@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: el <LL@li.org>\n"
@@ -186,8 +186,8 @@ msgid "Del"
 msgstr "Del"
 
 #: ../../source/raccourcis.rst:1
-msgid "Supprimer la position courante."
-msgstr "Διαγραφή της τρέχουσας θέσης."
+msgid "Supprimer la position courante (confirmation demandée)."
+msgstr "Διαγραφή της τρέχουσας θέσης (ζητείται επιβεβαίωση)."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -459,7 +459,22 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:145
+msgid ""
+"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
+"(position suivante) et *k* recule (position précédente), alors que *MAJ-J* "
+"revient à la vue précédente et *MAJ-K* passe à la vue suivante. C'est voulu "
+"(pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-"
+"PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k."
+msgstr ""
+"Η φορά των SHIFT-J / SHIFT-K είναι αντίστροφη σε σχέση με τα j / k: το *j* "
+"προχωρά (επόμενη θέση) και το *k* γυρίζει πίσω (προηγούμενη θέση), ενώ το "
+"*SHIFT-J* επιστρέφει στην προηγούμενη προβολή και το *SHIFT-K* πηγαίνει στην"
+" επόμενη. Αυτό είναι σκόπιμο (δεν πρόκειται για συντόμευση προς διόρθωση) — "
+"τα SHIFT-J/SHIFT-K ακολουθούν τη σύμβαση CTRL-PageUp/CTRL-PageDown με την "
+"οποία συνδέονται, όχι εκείνη των j/k."
+
+#: ../../source/raccourcis.rst:155
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -479,11 +494,11 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:168
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:170
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de recherche "
 "(*CTRL-F* ou *TAB*)."
@@ -507,11 +522,11 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:186
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -527,7 +542,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:191
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -562,7 +577,7 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:207
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -598,7 +613,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:225
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -636,10 +651,90 @@ msgstr "Αξιολόγηση: Εύκολο."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
+"Afficher/cacher le compte de course (identique au raccourci général, "
+"disponible pendant la révision)."
+msgstr ""
+"Εμφάνιση/απόκρυψη του pip count (ίδιο με τη γενική συντόμευση, διαθέσιμο "
+"κατά την επανάληψη)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
 "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα συνέχισης"
 " αργότερα)."
+
+#: ../../source/raccourcis.rst:251
+msgid "Panneau des tournois"
+msgstr "Πίνακας τουρνουά"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic, Double-clic"
+msgstr "Κλικ, Διπλό κλικ"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un tournoi (afficher son détail)."
+msgstr "Επιλογή τουρνουά (εμφάνιση των λεπτομερειών του)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi précédent."
+msgstr "Επιλογή του προηγούμενου τουρνουά."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi suivant."
+msgstr "Επιλογή του επόμενου τουρνουά."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur un match du tournoi)"
+msgstr "Διπλό κλικ (σε αγώνα του τουρνουά)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, "
+"sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+msgstr ""
+"Ακύρωση της τρέχουσας επεξεργασίας, αλλιώς καθαρισμός της αναζήτησης "
+"προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του πίνακα "
+"(σταδιακά)."
+
+#: ../../source/raccourcis.rst:267
+msgid "Panneau des collections"
+msgstr "Πίνακας συλλογών"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter/retirer la position courante de la collection survolée."
+msgstr ""
+"Προσθήκη/αφαίρεση της τρέχουσας θέσης από τη συλλογή κάτω από τον δείκτη."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la collection."
+msgstr "Άνοιγμα της συλλογής."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Retirer la position courante (ou les positions cochées) de la collection "
+"ouverte."
+msgstr ""
+"Αφαίρεση της τρέχουσας θέσης (ή των επιλεγμένων θέσεων) από την ανοικτή "
+"συλλογή."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Revenir à la liste des collections, sinon désélectionner la collection, "
+"sinon fermer le panneau (par paliers)."
+msgstr ""
+"Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
+"κλείσιμο του πίνακα (σταδιακά)."
+
+#: ../../source/raccourcis.rst:281
+msgid ""
+"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k,"
+" DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte "
+"exactement comme décrit dans :ref:`raccourcis_navigation`."
+msgstr ""
+"Αυτός ο πίνακας δεν δεσμεύει τις συντομεύσεις πλοήγησης: PageUp/h, "
+"ΑΡΙΣΤΕΡΑ/k, ΔΕΞΙΑ/j, PageDown/l πλοηγούν στις θέσεις της ανοικτής συλλογής "
+"ακριβώς όπως περιγράφεται στο :ref:`raccourcis_navigation`."
 
 #~ msgid "Exécuter la recherche et fermer le panneau."
 #~ msgstr "Εκτέλεση της αναζήτησης και κλείσιμο του πίνακα."

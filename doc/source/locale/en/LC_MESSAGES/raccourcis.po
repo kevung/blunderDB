@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-09 20:02+0200\n"
+"POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -184,8 +184,8 @@ msgid "Del"
 msgstr "Del"
 
 #: ../../source/raccourcis.rst:1
-msgid "Supprimer la position courante."
-msgstr "Delete the current position."
+msgid "Supprimer la position courante (confirmation demandée)."
+msgstr "Delete the current position (confirmation required)."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -455,7 +455,21 @@ msgstr "Double-click the tab"
 msgid "Renommer la vue."
 msgstr "Rename the view."
 
-#: ../../source/raccourcis.rst:146
+#: ../../source/raccourcis.rst:145
+msgid ""
+"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
+"(position suivante) et *k* recule (position précédente), alors que *MAJ-J* "
+"revient à la vue précédente et *MAJ-K* passe à la vue suivante. C'est voulu "
+"(pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-"
+"PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k."
+msgstr ""
+"The direction of SHIFT-J / SHIFT-K is reversed with respect to j / k: *j* "
+"moves forward (next position) and *k* backward (previous position), whereas "
+"*SHIFT-J* goes back to the previous view and *SHIFT-K* to the next one. This"
+" is deliberate (not a shortcut to be fixed) — SHIFT-J/SHIFT-K follow the "
+"CTRL-PageUp/CTRL-PageDown convention they are paired with, not the j/k one."
+
+#: ../../source/raccourcis.rst:155
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -475,11 +489,11 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:168
 msgid "Historique de recherche"
 msgstr "Search History"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:170
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de recherche "
 "(*CTRL-F* ou *TAB*)."
@@ -503,11 +517,11 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:186
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -523,7 +537,7 @@ msgstr "Select/deselect a filter (show position)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Execute the filter search."
 
-#: ../../source/raccourcis.rst:191
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -556,7 +570,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:207
+#: ../../source/raccourcis.rst:216
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -592,7 +606,7 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:225
+#: ../../source/raccourcis.rst:234
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -630,8 +644,86 @@ msgstr "Rate: Easy."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
+"Afficher/cacher le compte de course (identique au raccourci général, "
+"disponible pendant la révision)."
+msgstr ""
+"Show/hide the pip count (same as the general shortcut, available during "
+"review)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
 "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
+
+#: ../../source/raccourcis.rst:251
+msgid "Panneau des tournois"
+msgstr "Tournament Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic, Double-clic"
+msgstr "Click, Double-click"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un tournoi (afficher son détail)."
+msgstr "Select a tournament (show its detail)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi précédent."
+msgstr "Select previous tournament."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le tournoi suivant."
+msgstr "Select next tournament."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic (sur un match du tournoi)"
+msgstr "Double-click (on a match of the tournament)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Annuler l'édition en cours, sinon effacer la recherche d'ajout de match, "
+"sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
+msgstr ""
+"Cancel the current edit, otherwise clear the add-match search, otherwise "
+"deselect the tournament, otherwise close the panel (one step at a time)."
+
+#: ../../source/raccourcis.rst:267
+msgid "Panneau des collections"
+msgstr "Collection Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ajouter/retirer la position courante de la collection survolée."
+msgstr "Add/remove the current position to/from the hovered collection."
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la collection."
+msgstr "Open the collection."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Retirer la position courante (ou les positions cochées) de la collection "
+"ouverte."
+msgstr ""
+"Remove the current position (or the checked positions) from the open "
+"collection."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Revenir à la liste des collections, sinon désélectionner la collection, "
+"sinon fermer le panneau (par paliers)."
+msgstr ""
+"Go back to the collection list, otherwise deselect the collection, otherwise"
+" close the panel (one step at a time)."
+
+#: ../../source/raccourcis.rst:281
+msgid ""
+"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k,"
+" DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte "
+"exactement comme décrit dans :ref:`raccourcis_navigation`."
+msgstr ""
+"This panel does not capture the navigation shortcuts: PageUp/h, LEFT/k, "
+"RIGHT/j, PageDown/l move through the positions of the open collection "
+"exactly as described in :ref:`raccourcis_navigation`."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

@@ -926,7 +926,7 @@
         "tournaments": "tournois",
         "matches": "matchs",
         "decisions": "décisions",
-        "rolling": "Rolling ({metric})",
+        "rolling": "Glissant ({metric})",
         "topBlunders": "Top blunders",
         "decisionTypeChecker": "Checker",
         "decisionTypeCube": "Cube",
