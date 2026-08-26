@@ -361,6 +361,10 @@ Affiche le contenu de la base de données.
   (global, pions, videau), PR glissant sur les N dernières décisions, top
   blunders, répartition par action de videau et histogramme des magnitudes
   d'erreur.
+* ``players`` — Tableau comparatif, **une ligne par joueur** de la base :
+  matchs, victoires/défaites, décisions comptées, PR global / pions / videau,
+  Snowie ER, erreurs, blunders et chance. C'est le pendant en ligne de commande
+  de l'onglet Joueurs du panneau Stats.
 
 **Options (type ``stats`` uniquement):**
 
@@ -374,6 +378,26 @@ Affiche le contenu de la base de données.
   (défaut: ``all``).
 * ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+
+**Options (type ``players`` uniquement):**
+
+* ``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les jours
+  d'une compétition.
+* ``--tournament`` — Restreindre à un ou plusieurs IDs de tournois.
+* ``--format`` — Format de sortie: ``text``, ``json`` ou ``csv``
+  (défaut: ``text``).
+
+``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : le
+tableau porte sur tous les joueurs et ventile déjà pions et videau en colonnes
+distinctes.
+
+.. note::
+   Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**, à
+   ne pas confondre avec zéro. C'est le cas de la chance pour tout match importé
+   avant la version 2.15.0 du schéma, ainsi que pour les formats qui ne la
+   transportent pas (BGF, Jellyfish ``.mat``) : réimportez les fichiers source
+   pour l'obtenir. La colonne ``luck_rolls`` indique sur combien de lancers
+   porte la moyenne.
 
 **Exemples:**
 
@@ -390,6 +414,12 @@ Affiche le contenu de la base de données.
 
    # Sortie JSON (pour un script)
    ./blunderdb list --db base.db --type stats --format json
+
+   # Un tableau par joueur, borné aux dates d'une compétition
+   ./blunderdb list --db base.db --type players --from 2026-03-01 --to 2026-03-08
+
+   # Le même tableau en CSV (tableur ou script)
+   ./blunderdb list --db base.db --type players --format csv
 
    # Liste des matchs
    ./blunderdb list --db base.db --type matches

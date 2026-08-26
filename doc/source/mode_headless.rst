@@ -145,6 +145,17 @@ révision temporairement ou définitivement) et ``anki.optimizeParams`` (ajuste
 le taux de rétention visé d'un paquet vers le taux de réussite observé sur ses
 révisions).
 
+La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne de
+statistiques par joueur (matchs, victoires/défaites, décisions comptées, PR
+global / pions / videau, Snowie Error Rate, erreurs, blunders et chance) sur
+les matchs retenus par le filtre transmis. Comme dans l'interface graphique, ce
+tableau n'honore du filtre que la période, les tournois et la longueur des
+matchs : la sélection d'un joueur et le type de décision sont ignorés, puisque
+le tableau porte sur tous les joueurs et ventile déjà pions et videau en
+colonnes distinctes. Le champ ``luck_known`` indique si la chance a été mesurée
+pour ce joueur ; ``luck_rate_mp`` ne doit pas être lu quand il vaut ``false``,
+une chance inconnue n'étant pas une chance nulle.
+
 .. _headless_docker:
 
 Déploiement avec Docker
