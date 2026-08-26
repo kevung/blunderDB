@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
-    import { statsFilterStore, statsMetricStore } from '../../stores/statsStore.js';
+    import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
     import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
@@ -143,19 +143,54 @@
               : $t('stats.nTournaments', { n: localFilter.tournamentIDs.length })
     );
 
+    /**
+     * Load the lists this bar offers — players, tournaments, date bounds — from
+     * the database. They describe what the database currently holds, so they
+     * are read again whenever it changes rather than once at mount: a merge, an
+     * import or a deleted match would otherwise leave the dropdowns showing
+     * names and dates that are no longer there.
+     */
+    async function loadLists() {
+        const dbLoaded = get(databaseLoadedStore);
+        const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
+
+        playerList = players ?? [];
+        tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
+        dbEmpty = playerList.length === 0;
+        dateRangeMin = dateRange?.DateFrom ?? '';
+        dateRangeMax = dateRange?.DateTo ?? '';
+    }
+
+    /**
+     * Drop a selected player who no longer exists — the usual way being a merge
+     * that folded the name into another one. Left in place, the filter would
+     * quietly match nothing and every tab would report empty statistics for a
+     * player the database no longer knows.
+     */
+    function dropMissingPlayerSelection() {
+        if (!localFilter.playerName) return;
+        if (playerList.some((p) => p.Name === localFilter.playerName)) return;
+        localFilter = { ...localFilter, playerName: '' };
+        applyFilter();
+    }
+
+    // Re-read the lists on every database mutation (import, delete, merge…).
+    // Reading the key here is what subscribes the effect to those changes.
+    $effect(() => {
+        void $statsInvalidationKeyStore;
+        if (!mounted) return; // onMount does the first load
+        loadLists()
+            .then(dropMissingPlayerSelection)
+            // eslint-disable-next-line no-console
+            .catch((err) => console.error('StatsFilterBar reload error:', err));
+    });
+
     onMount(async () => {
         try {
             // Skip the DB-backed lookups when no database is open (they would
             // otherwise error); the persisted filter still comes from Config.
-            const dbLoaded = get(databaseLoadedStore);
-            const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
+            await loadLists();
             const persisted = await GetStatsFilter();
-
-            playerList = players ?? [];
-            tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
-            dbEmpty = playerList.length === 0;
-            dateRangeMin = dateRange?.DateFrom ?? '';
-            dateRangeMax = dateRange?.DateTo ?? '';
 
             // Restore persisted filter
             // decision_type is now *int in Go: null means all (-1), 0 = checker, 1 = cube
@@ -172,6 +207,12 @@
                 if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc')) {
                     statsMetricStore.set(persisted.metric);
                 }
+            }
+
+            // A persisted filter can name a player who has since been merged
+            // away or whose matches were deleted.
+            if (localFilter.playerName && !playerList.some((p) => p.Name === localFilter.playerName)) {
+                localFilter = { ...localFilter, playerName: '' };
             }
 
             // Sync to store

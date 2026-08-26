@@ -170,11 +170,20 @@
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
+        /* Bound the tab to the panel so the table can scroll inside it rather
+           than pushing the panel down — which is what lets the header stay. */
+        height: 100%;
+        min-height: 0;
     }
 
-    /* Wide table scrolls inside its own box; the panel never scrolls sideways. */
+    /* The table scrolls inside its own box, both ways: the panel never scrolls
+       sideways, and the vertical scroll has to happen HERE for the sticky
+       header to have something to stick to. An ancestor scrolling instead
+       would carry the header off-screen along with the rows. */
     .table-scroll {
-        overflow-x: auto;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
     }
 
     .players-table {
@@ -195,7 +204,13 @@
         font-weight: 600;
         position: sticky;
         top: 0;
+        z-index: 1;
+        /* Opaque, or the rows show through the labels as they scroll past. */
         background: var(--panel-bg, #fff);
+        /* A sticky cell leaves its own border behind when it detaches, so the
+           rule under the header is drawn as an inset shadow instead. */
+        border-bottom: none;
+        box-shadow: inset 0 -1px 0 var(--border-color, #ddd);
     }
 
     .players-table th:first-child,
