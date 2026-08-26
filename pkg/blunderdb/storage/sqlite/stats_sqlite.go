@@ -1086,3 +1086,189 @@ func (s *statsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 	}
 	return out, nil
 }
+
+// playerTableFilter strips the parts of the filter the players table ignores by
+// design: the player selection (the table is about all of them) and the
+// decision type (the table splits checker from cube in its own columns, so a
+// global filter would only make them inconsistent with one another).
+func playerTableFilter(filter storage.StatsFilter) storage.StatsFilter {
+	f := filter
+	f.PlayerName = ""
+	f.PlayerAliases = nil
+	f.DecisionType = -1
+	return f
+}
+
+// moverNameExpr names the player who took the decision, whichever seat they sat
+// in. It is the players table's GROUP BY key.
+const moverNameExpr = "CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player2_name END"
+
+// buildMatchWhereClause renders the filter's match-level predicates (dates,
+// tournaments, match length) against the match table alone, for the queries
+// that count matches and games rather than decisions.
+func buildMatchWhereClause(filter storage.StatsFilter) (whereSQL string, args []any) {
+	var clauses []string
+
+	if len(filter.TournamentIDs) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.TournamentIDs)), ",")
+		clauses = append(clauses, "m.tournament_id IN ("+ph+")")
+		for _, id := range filter.TournamentIDs {
+			args = append(args, id)
+		}
+	}
+
+	if filter.DateFrom != "" && filter.DateTo != "" {
+		clauses = append(clauses, "m.match_date BETWEEN ? AND ?")
+		args = append(args, filter.DateFrom, filter.DateTo)
+	} else if filter.DateFrom != "" {
+		clauses = append(clauses, "m.match_date >= ?")
+		args = append(args, filter.DateFrom)
+	} else if filter.DateTo != "" {
+		clauses = append(clauses, "m.match_date <= ?")
+		args = append(args, filter.DateTo)
+	}
+
+	if len(filter.MatchLength) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.MatchLength)), ",")
+		clauses = append(clauses, "m.match_length IN ("+ph+")")
+		for _, ml := range filter.MatchLength {
+			args = append(args, ml)
+		}
+	}
+
+	if len(clauses) == 0 {
+		return "", nil
+	}
+	return " WHERE " + strings.Join(clauses, " AND "), args
+}
+
+// PlayerTable computes one row per player over the matches the filter retains.
+// See the StatsStore contract for what the filter honours and how rows are
+// ordered; the arithmetic that turns these queries into rows is shared with the
+// PostgreSQL backend in storage.BuildPlayerRows.
+func (s *statsStore) PlayerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
+	f := playerTableFilter(filter)
+	statsWhere, statsArgs := buildStatsWhereClause(f)
+	baseWhere, baseArgs := buildBaseWhereClause(f)
+	matchWhere, matchArgs := buildMatchWhereClause(f)
+
+	// ── Counted decisions, per player and decision type ───────────────────────
+	var decisions []storage.PlayerDecisionStat
+	rows, err := s.db.QueryContext(ctx,
+		`SELECT `+moverNameExpr+` AS pname, p.decision_type,`+
+			` COALESCE(SUM(`+statsErrExpr+`),0), COUNT(*),`+
+			` SUM(CASE WHEN (`+statsErrExpr+`) > 0 THEN 1 ELSE 0 END),`+
+			` SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END) `+
+			statsBaseJoin+statsWhere+
+			` GROUP BY pname, p.decision_type`,
+		append([]any{blunderThresholdMP}, statsArgs...)...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable decisions: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var d storage.PlayerDecisionStat
+			if err := rows.Scan(&d.Name, &d.DecisionType, &d.SumErrMP, &d.Count, &d.Errors, &d.Blunders); err != nil {
+				continue
+			}
+			decisions = append(decisions, d)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable decisions scan: %w", err)
+	}
+
+	// ── Snowie numerator: every error, counted or not ─────────────────────────
+	snowieErr := map[string]int64{}
+	rows, err = s.db.QueryContext(ctx,
+		`SELECT `+moverNameExpr+` AS pname, COALESCE(SUM(`+statsErrExpr+`),0) `+
+			statsBaseJoin+baseWhere+` GROUP BY pname`,
+		baseArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable snowie: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var sum int64
+			if err := rows.Scan(&name, &sum); err != nil {
+				continue
+			}
+			snowieErr[name] = sum
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable snowie scan: %w", err)
+	}
+
+	// ── Luck, over the rolls that carry it ────────────────────────────────────
+	// COUNT(mv.luck_mp) skips NULLs, so the denominator is the number of rolls
+	// actually measured — never the number played (ADR-0010).
+	luck := map[string]storage.PlayerLuckAcc{}
+	rows, err = s.db.QueryContext(ctx,
+		`SELECT `+moverNameExpr+` AS pname, COALESCE(SUM(mv.luck_mp),0), COUNT(mv.luck_mp)
+		 FROM move mv
+		 JOIN game g ON g.id = mv.game_id
+		 JOIN match m ON m.id = g.match_id`+matchWhere+
+			func() string {
+				if matchWhere == "" {
+					return " WHERE mv.luck_mp IS NOT NULL"
+				}
+				return " AND mv.luck_mp IS NOT NULL"
+			}()+
+			` GROUP BY pname`,
+		matchArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable luck: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var acc storage.PlayerLuckAcc
+			if err := rows.Scan(&name, &acc.SumMP, &acc.Rolls); err != nil {
+				continue
+			}
+			luck[name] = acc
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable luck scan: %w", err)
+	}
+
+	// ── Matches: participation, outcome, and the Snowie denominator ───────────
+	var matches []storage.MatchOutcomeRow
+	rows, err = s.db.QueryContext(ctx,
+		`SELECT COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length,0),
+		        COALESCE((SELECT SUM(g.points_won) FROM game g
+		                  WHERE g.match_id = m.id AND g.winner = 1), 0),
+		        COALESCE((SELECT SUM(g.points_won) FROM game g
+		                  WHERE g.match_id = m.id AND g.winner = -1), 0),
+		        COALESCE((SELECT COUNT(*) FROM move mv2
+		                  JOIN position p2 ON p2.id = mv2.position_id
+		                  JOIN game g2 ON g2.id = mv2.game_id
+		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)
+		 FROM match m`+matchWhere,
+		matchArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable matches: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var m storage.MatchOutcomeRow
+			if err := rows.Scan(&m.Player1, &m.Player2, &m.MatchLength,
+				&m.Points1, &m.Points2, &m.CheckerMoves); err != nil {
+				continue
+			}
+			matches = append(matches, m)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable matches scan: %w", err)
+	}
+
+	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil
+}

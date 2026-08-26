@@ -137,6 +137,60 @@ type PlayerFrequency struct {
 	Count int
 }
 
+// PlayerRow is one line of the players table: everything the panel shows about
+// a player, computed over the matches the filter retains.
+//
+// A row is keyed by a player NAME exactly as it appears in the matches, not by
+// a person: the same human signing two ways is two rows. Merging spellings is a
+// user gesture (merge players), never something this computes.
+type PlayerRow struct {
+	Name string `json:"name"`
+
+	// Matches counts the matches the player appears in; Wins and Losses count
+	// those with a decided outcome, so Wins+Losses can be less than Matches —
+	// an unfinished match counts for neither.
+	Matches int `json:"matches"`
+	Wins    int `json:"wins"`
+	Losses  int `json:"losses"`
+
+	// Decisions is the number of counted decisions (statsCountedExpr), the
+	// denominator behind PR. It is the reader's measure of how much the rates
+	// beside it are worth: a PR over twelve decisions is noise, and the panel
+	// shows the count rather than hiding the row.
+	Decisions        int `json:"decisions"`
+	CheckerDecisions int `json:"checker_decisions"`
+	CubeDecisions    int `json:"cube_decisions"`
+
+	PR        float64 `json:"pr"`
+	PRChecker float64 `json:"pr_checker"`
+	PRCube    float64 `json:"pr_cube"`
+
+	// SnowieER divides this player's errors by BOTH players' checker moves in
+	// their matches (gnuBG formatgs.c:415-424).
+	SnowieER float64 `json:"snowie_er"`
+
+	Errors   int `json:"errors"`
+	Blunders int `json:"blunders"`
+
+	// LuckMPSum is the total luck in signed millipoints and LuckRolls the
+	// number of rolls it was measured over — never the number of rolls played.
+	// Averaging over rolls whose luck is unknown would quietly pull every
+	// player towards zero, so the caller divides by LuckRolls and shows nothing
+	// at all when it is zero. See ADR-0010.
+	LuckMPSum int64 `json:"luck_mp_sum"`
+	LuckRolls int   `json:"luck_rolls"`
+}
+
+// LuckRateMP is the average luck per measured roll, in signed millipoints, and
+// false when this player has no luck data at all — which is not the same as an
+// average of zero, and must not be displayed as one.
+func (r PlayerRow) LuckRateMP() (float64, bool) {
+	if r.LuckRolls == 0 {
+		return 0, false
+	}
+	return float64(r.LuckMPSum) / float64(r.LuckRolls), true
+}
+
 // MatchPlayerDetailStats holds one player's detailed stats for a single match.
 type MatchPlayerDetailStats struct {
 	TotalDecisions   int     `json:"total_decisions"`
@@ -271,6 +325,21 @@ type StatsStore interface {
 
 	// PlayerNames returns every player name ranked by match frequency.
 	PlayerNames(ctx context.Context, scope string) ([]PlayerFrequency, error)
+
+	// PlayerTable computes one row per player over the matches the filter
+	// retains, for the players table of the Stats panel.
+	//
+	// It honours the filter's date range, tournaments and match lengths only.
+	// PlayerName/PlayerAliases and DecisionType are ignored by design: the
+	// table is about every player at once, and it splits checker from cube in
+	// its own columns rather than through a global filter that would leave them
+	// inconsistent with each other.
+	//
+	// Rows come back sorted by PR ascending — best player first — with players
+	// having no counted decision last. Nothing is hidden: a player with three
+	// decisions is listed, with the decision count that says what their PR is
+	// worth.
+	PlayerTable(ctx context.Context, scope string, filter StatsFilter) ([]PlayerRow, error)
 
 	// MatchDetail computes per-player statistics for a single match.
 	MatchDetail(ctx context.Context, scope string, matchID int64) (*MatchDetailStats, error)
