@@ -968,7 +968,6 @@
         "playersRowHint": "Näytä pelaajan {name} tilastot",
         "playersLuckUnknown": "Tuuri tuntematon: tuo ottelut uudelleen.",
         "playersLuckRolls": "Keskiarvo {n} mitatusta heitosta (millipistettä)",
-        "playersNote": "Napsauta riviä avataksesi pelaajan tilastot. ”—” tarkoittaa arvoa, jota ei ole mitattu.",
         "filterDisabledOnPlayersTab": "Ei vaikutusta Pelaajat-välilehdellä"
     }
 }

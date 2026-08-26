@@ -968,7 +968,6 @@
         "playersRowHint": "Show {name}'s statistics",
         "playersLuckUnknown": "Luck unknown: re-import the matches to get it.",
         "playersLuckRolls": "Average over {n} measured rolls (millipoints)",
-        "playersNote": "Click a row to open that player's statistics. “—” marks a figure that was never measured.",
         "filterDisabledOnPlayersTab": "No effect on the Players tab"
     }
 }

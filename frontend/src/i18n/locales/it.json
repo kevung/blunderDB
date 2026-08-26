@@ -968,7 +968,6 @@
         "playersRowHint": "Mostra le statistiche di {name}",
         "playersLuckUnknown": "Fortuna sconosciuta: reimporta le partite per ottenerla.",
         "playersLuckRolls": "Media su {n} lanci misurati (millipunti)",
-        "playersNote": "Fai clic su una riga per aprire le statistiche del giocatore. «—» indica un valore mai misurato.",
         "filterDisabledOnPlayersTab": "Nessun effetto nella scheda Giocatori"
     }
 }
