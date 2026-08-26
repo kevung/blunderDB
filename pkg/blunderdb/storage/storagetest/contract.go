@@ -72,6 +72,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/SnowieDenominatorCountsBothPlayers", testStatsSnowieDenominator},
+		{"Stats/PlayerTable", testStatsPlayerTable},
 		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
 		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
@@ -1908,6 +1909,118 @@ func testStatsSnowieDenominator(t *testing.T, s storage.Storage) {
 	if math.Abs(detail.Player1.SnowieER-alice) > 1e-9 {
 		t.Errorf("Snowie ER for Alice: global %v, match detail %v — the two screens disagree",
 			alice, detail.Player1.SnowieER)
+	}
+}
+
+// testStatsPlayerTable covers the table behind the Stats panel's Players tab on
+// both backends: one row per player NAME, the figures that row carries, and the
+// order they arrive in.
+func testStatsPlayerTable(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+
+	// Two matches sharing one player, so Alice's row has to aggregate across
+	// matches while Bob's and Carol's stay separate.
+	statsFixtureMatch(t, s, 0, "Alice", "Bob")
+	statsFixtureMatch(t, s, 2, "Alice", "Carol")
+
+	rows, err := s.Stats().PlayerTable(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("PlayerTable: %v", err)
+	}
+	byName := map[string]storage.PlayerRow{}
+	for _, r := range rows {
+		if _, dup := byName[r.Name]; dup {
+			t.Errorf("player %q appears on two rows; one row per name", r.Name)
+		}
+		byName[r.Name] = r
+	}
+	if len(byName) != 3 {
+		t.Fatalf("players in the table: got %d (%v), want 3", len(byName), byName)
+	}
+
+	if got := byName["Alice"].Matches; got != 2 {
+		t.Errorf("Alice's matches: got %d, want 2", got)
+	}
+	if got := byName["Bob"].Matches; got != 1 {
+		t.Errorf("Bob's matches: got %d, want 1", got)
+	}
+	// Each fixture match gives each player one counted checker decision, so
+	// Alice — playing twice — has twice as many as her opponents.
+	if got := byName["Alice"].Decisions; got != 2 {
+		t.Errorf("Alice's counted decisions: got %d, want 2", got)
+	}
+	if got := byName["Bob"].Decisions; got != 1 {
+		t.Errorf("Bob's counted decisions: got %d, want 1", got)
+	}
+	if a := byName["Alice"]; a.PR <= 0 || a.PRChecker <= 0 {
+		t.Errorf("Alice's PR: got %v (checker %v), want both > 0 — the fixture records real errors",
+			a.PR, a.PRChecker)
+	}
+	if a := byName["Alice"]; a.CheckerDecisions != a.Decisions {
+		t.Errorf("the fixture holds checker decisions only: got %d of %d",
+			a.CheckerDecisions, a.Decisions)
+	}
+
+	// The filter's player selection is ignored by design: this table is about
+	// everyone. Asking for one player must not shrink it to one row.
+	filtered, err := s.Stats().PlayerTable(ctx, "",
+		storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
+	if err != nil {
+		t.Fatalf("PlayerTable(PlayerName): %v", err)
+	}
+	if len(filtered) != len(rows) {
+		t.Errorf("PlayerTable with a player filter: got %d rows, want the same %d — "+
+			"the players table ignores the player selection", len(filtered), len(rows))
+	}
+
+	// Ordering: best PR first, so the table reads as a ranking.
+	for i := 1; i < len(rows); i++ {
+		prev, cur := rows[i-1], rows[i]
+		if prev.Decisions == 0 && cur.Decisions > 0 {
+			t.Errorf("row %d (%s) has no decisions but sits above %s, which has %d",
+				i-1, prev.Name, cur.Name, cur.Decisions)
+		}
+		if prev.Decisions > 0 && cur.Decisions > 0 && prev.PR > cur.PR {
+			t.Errorf("rows out of order: %s (PR %v) before %s (PR %v)",
+				prev.Name, prev.PR, cur.Name, cur.PR)
+		}
+	}
+
+	// A player with no analysed decision is still listed — the count beside the
+	// figure is what tells the reader it means nothing, and silently dropping
+	// people would make the table lie about who played.
+	if _, err := s.Matches().Save(ctx, "",
+		&domain.Match{Player1Name: "Dave", Player2Name: "Erin", MatchLength: 7}); err != nil {
+		t.Fatalf("Save empty match: %v", err)
+	}
+	withEmpty, err := s.Stats().PlayerTable(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("PlayerTable(after empty match): %v", err)
+	}
+	var dave *storage.PlayerRow
+	for i := range withEmpty {
+		if withEmpty[i].Name == "Dave" {
+			dave = &withEmpty[i]
+		}
+	}
+	if dave == nil {
+		t.Fatal("a player whose match has no analysed decision must still be listed")
+	}
+	if dave.Decisions != 0 || dave.Matches != 1 {
+		t.Errorf("Dave: got %d decisions over %d matches, want 0 over 1", dave.Decisions, dave.Matches)
+	}
+	if dave.LuckRolls != 0 {
+		t.Errorf("Dave has no luck data, got %d measured rolls", dave.LuckRolls)
+	}
+	if _, ok := dave.LuckRateMP(); ok {
+		t.Error("a player with no measured roll must report no luck rate, not an average of zero")
+	}
+	if last := withEmpty[len(withEmpty)-1]; last.Decisions != 0 {
+		t.Errorf("players with nothing measured belong at the end, found %q (%d decisions) last",
+			last.Name, last.Decisions)
 	}
 }
 
