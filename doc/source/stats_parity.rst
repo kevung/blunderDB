@@ -3,9 +3,10 @@
 Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB
 =====================================================================
 
-Cette page décrit comment blunderDB calcule le **PR** (Performance Rate),
-le **Snowie Error Rate** et la **perte MWC**, et comment ces métriques sont
-alignées sur eXtreme Gammon (XG) et gnuBG (référence ouverte).
+Cette page décrit comment blunderDB calcule les indicateurs qu'il affiche —
+**PR** (Performance Rate), **Snowie Error Rate**, **perte MWC**, **chance** et
+**victoires/défaites** — et comment ils s'alignent sur eXtreme Gammon (XG) et
+gnuBG (référence ouverte).
 
 .. contents::
    :local:
@@ -116,6 +117,23 @@ Conséquences pratiques :
 * Un match dont *tous* les lancers auraient une chance exactement nulle est
   considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 aussi
   bien pour « neutre » que pour « non calculé ») : ses lancers restent inconnus.
+
+Victoires et défaites
+~~~~~~~~~~~~~~~~~~~~~
+
+blunderDB **ne stocke pas de vainqueur au niveau du match** : seuls les points
+de chaque partie le sont. Le résultat est donc dérivé à l'affichage, en cumulant
+les points par siège :
+
+* **Match en N points** — vainqueur = le joueur qui atteint N. Si personne ne
+  l'atteint, le match est **inachevé** (journal tronqué, abandon) et ne compte
+  ni victoire ni défaite, pour personne.
+* **Partie d'argent** (sans cible) — vainqueur = celui qui a pris le plus de
+  points ; à égalité, ni victoire ni défaite. C'est la convention du résultat de
+  session de gnuBG (+1 / 0 / −1, ``gnubg/relational.c``).
+
+Conséquence à connaître en lisant l'onglet Joueurs : **victoires + défaites peut
+être inférieur au nombre de matchs**. L'écart, ce sont les matchs inachevés.
 
 Erreurs et blunders
 ~~~~~~~~~~~~~~~~~~~
