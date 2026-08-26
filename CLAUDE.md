@@ -19,7 +19,9 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|verify|delete|help|version|info|edit|search|epc` → **CLI**
+- `create|import|export|identity|open|list|match|verify|vacuum|delete|help|version|info|edit|search|epc` → **CLI**. The
+  names live in one place — `handlers()` in `internal/cli/cli.go`; `main.go`
+  asks `cli.IsCommand`. Never re-introduce a second list there.
 
 ## Build & Run
 

@@ -38,13 +38,12 @@ func main() {
 			runMigrate()
 			return
 		}
-		// Check if first argument is a CLI command
-		cliCommands := []string{"create", "import", "export", "identity", "open", "list", "match", "verify", "delete", "help", "version", "info", "edit", "search", "epc"}
-		for _, cmd := range cliCommands {
-			if strings.ToLower(os.Args[1]) == cmd {
-				runCLI()
-				return
-			}
+		// Check if first argument is a CLI command. The list of names lives in
+		// internal/cli next to the handlers, so a new subcommand cannot be
+		// wired there and forgotten here.
+		if cli.IsCommand(os.Args[1]) {
+			runCLI()
+			return
 		}
 	}
 

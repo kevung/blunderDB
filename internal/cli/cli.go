@@ -52,46 +52,49 @@ func (cli *CLI) Run(args []string) error {
 	command := args[0]
 	commandArgs := args[1:]
 
-	switch command {
-	case "create":
-		return cli.runCreate(commandArgs)
-	case "import":
-		return cli.runImport(commandArgs)
-	case "export":
-		return cli.runExport(commandArgs)
-	case "identity":
-		return cli.runIdentity(commandArgs)
-	case "open":
-		return cli.runOpen(commandArgs)
-	case "list":
-		return cli.runList(commandArgs)
-	case "delete":
-		return cli.runDelete(commandArgs)
-	case "match":
-		return cli.runMatch(commandArgs)
-	case "verify":
-		return cli.runVerify(commandArgs)
-	case "info":
-		return cli.runInfo(commandArgs)
-	case "edit":
-		return cli.runEdit(commandArgs)
-	case "epc":
-		return cli.runEpc(commandArgs)
-	case "search":
-		return cli.runSearch(commandArgs)
-	case "vacuum":
-		return cli.runVacuum(commandArgs)
-	case "help":
-		cli.printUsage()
-		return nil
-	case "version":
-		cli.printVersion()
-		return nil
-	default:
+	// Lower-cased to match main.go's mode dispatch, which already accepts any
+	// casing: `blunderdb VACUUM` must not be routed to the CLI only to be
+	// rejected here as unknown.
+	run, ok := cli.handlers()[strings.ToLower(command)]
+	if !ok {
 		fmt.Printf("Unknown command: %s\n\n", command)
 		cli.printUsage()
 		return fmt.Errorf("unknown command: %s", command)
 	}
+	return run(commandArgs)
+}
+
+// handlers returns the subcommand table. It is the single source of truth for
+// what counts as a CLI invocation: main.go dispatches through IsCommand rather
+// than keeping a second, hand-maintained list of names. `vacuum` shipped once
+// with its handler wired here and its name missing there, so `blunderdb vacuum`
+// silently opened the GUI instead.
+func (cli *CLI) handlers() map[string]func([]string) error {
+	return map[string]func([]string) error{
+		"create":   cli.runCreate,
+		"import":   cli.runImport,
+		"export":   cli.runExport,
+		"identity": cli.runIdentity,
+		"open":     cli.runOpen,
+		"list":     cli.runList,
+		"delete":   cli.runDelete,
+		"match":    cli.runMatch,
+		"verify":   cli.runVerify,
+		"info":     cli.runInfo,
+		"edit":     cli.runEdit,
+		"epc":      cli.runEpc,
+		"search":   cli.runSearch,
+		"vacuum":   cli.runVacuum,
+		"help":     func([]string) error { cli.printUsage(); return nil },
+		"version":  func([]string) error { cli.printVersion(); return nil },
+	}
+}
+
+// IsCommand reports whether name is a CLI subcommand, case-insensitively. The
+// mode dispatch in main.go asks this before falling through to the GUI.
+func IsCommand(name string) bool {
+	_, ok := (&CLI{}).handlers()[strings.ToLower(name)]
+	return ok
 }
 
 // printUsage prints the usage information
