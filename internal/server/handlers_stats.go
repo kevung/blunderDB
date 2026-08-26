@@ -62,6 +62,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.playerNames", rpc(func(ctx context.Context, scope string, _ struct{}) ([]storage.PlayerFrequency, error) {
 			return ss().PlayerNames(ctx, scope)
 		})},
+		{http.MethodPost, "/v1/stats.playerTable", rpc(func(ctx context.Context, scope string, req statsComputeReq) ([]storage.PlayerRow, error) {
+			return ss().PlayerTable(ctx, scope, req.Filter)
+		})},
 		{http.MethodPost, "/v1/stats.matchDetail", rpc(func(ctx context.Context, scope string, req matchIDReq) (*storage.MatchDetailStats, error) {
 			return ss().MatchDetail(ctx, scope, req.MatchID)
 		})},

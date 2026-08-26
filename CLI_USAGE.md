@@ -519,6 +519,37 @@ Displays comprehensive performance statistics: PR/MWC metrics, Snowie Error Rate
 | `error_histogram` | array | Bucket counts |
 | `top_blunders` | array | Top blunder entries |
 
+### Show One Row Per Player
+
+```bash
+./blunderDB list --db database.db --type players
+```
+
+Prints a comparison table with one row per player in the database — matches, wins/losses, counted decisions, global/checker/cube PR, Snowie Error Rate, errors, blunders and luck. This is the command-line half of the Stats panel's Players tab.
+
+A row is keyed by a player **name exactly as it appears in the matches**, so someone who signed under two spellings gets two rows.
+
+**Options (players-specific):**
+- `--from <YYYY-MM-DD>` / `--to <YYYY-MM-DD>` — Restrict to matches in a date range, e.g. the days of a tournament.
+- `--tournament <id[,id,…]>` — Restrict to one or more tournament IDs.
+- `--format text|json|csv` — Output format (default: `text`).
+
+`--player` and `--decision-type` are **not** applied here: the table covers every player, and it already splits checker from cube into separate columns.
+
+**Examples:**
+
+```bash
+# Ranking over a competition's dates
+./blunderDB list --db database.db --type players --from 2026-03-01 --to 2026-03-08
+
+# CSV, for a spreadsheet or a script
+./blunderDB list --db database.db --type players --format csv
+```
+
+**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`); re-import the source files to obtain it. The `luck_rolls` column says how many rolls the average covers.
+
+**CSV columns:** `player`, `matches`, `wins`, `losses`, `decisions`, `pr`, `pr_checker`, `pr_cube`, `snowie_er`, `errors`, `blunders`, `luck_rate_mp`, `luck_rolls`.
+
 
 ## Delete Command
 

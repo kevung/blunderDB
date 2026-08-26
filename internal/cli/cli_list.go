@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 )
@@ -15,7 +17,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, stats (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, stats, players (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -26,7 +28,7 @@ func (cli *CLI) runList(args []string) error {
 	statsTo := listCmd.String("to", "", "End date filter YYYY-MM-DD (stats only)")
 	statsDecisionType := listCmd.String("decision-type", "all", "Decision type: all, checker, or cube (stats only)")
 	statsTopBlunders := listCmd.Int("top-blunders", 10, "Number of top blunders to show (stats only)")
-	statsFormat := listCmd.String("format", "text", "Output format: text or json (stats only)")
+	statsFormat := listCmd.String("format", "text", "Output format: text, json or csv (stats and players only)")
 
 	listCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb list [options]")
@@ -54,6 +56,12 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Show stats in MWC with player filter")
 		fmt.Println("  blunderdb list --db database.db --type stats --metric mwc --player \"Alice\"")
+		fmt.Println()
+		fmt.Println("  # One statistics row per player, over a competition's dates")
+		fmt.Println("  blunderdb list --db database.db --type players --from 2026-03-01 --to 2026-03-08")
+		fmt.Println()
+		fmt.Println("  # The same table as CSV, for a spreadsheet or a script")
+		fmt.Println("  blunderdb list --db database.db --type players --format csv")
 	}
 
 	if err := listCmd.Parse(args); err != nil {
@@ -106,8 +114,25 @@ func (cli *CLI) runList(args []string) error {
 			filter.TournamentIDs = ids
 		}
 		return cli.showStats(filter, *statsMetric, *statsFormat, *statsTopBlunders)
+	case "players":
+		// Only the match-level filters matter here; the players table covers
+		// every player and splits checker from cube into its own columns, so
+		// --player and --decision-type are deliberately not applied.
+		filter := StatsFilter{
+			DateFrom:     *statsFrom,
+			DateTo:       *statsTo,
+			DecisionType: -1,
+		}
+		if *statsTournament != "" {
+			ids, err := parseIDList(*statsTournament)
+			if err != nil {
+				return fmt.Errorf("invalid --tournament: %w", err)
+			}
+			filter.TournamentIDs = ids
+		}
+		return cli.showPlayerTable(filter, *statsFormat)
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', or 'stats')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'stats', or 'players')", *listType)
 	}
 }
 
@@ -420,4 +445,109 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	}
 
 	return nil
+}
+
+// showPlayerTable prints one statistics row per player. CSV is the format that
+// matters here: the request behind this table came from someone collecting a
+// competition's match logs, and a spreadsheet is where such a ranking ends up.
+func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
+	rows, err := cli.db.GetPlayerTable(filter)
+	if err != nil {
+		return fmt.Errorf("failed to compute player table: %w", err)
+	}
+
+	switch strings.ToLower(format) {
+	case "json":
+		data, err := json.MarshalIndent(rows, "", "  ")
+		if err != nil {
+			return fmt.Errorf("marshal player table: %w", err)
+		}
+		fmt.Println(string(data))
+		return nil
+
+	case "csv":
+		w := csv.NewWriter(os.Stdout)
+		defer w.Flush()
+		if err := w.Write([]string{
+			"player", "matches", "wins", "losses", "decisions",
+			"pr", "pr_checker", "pr_cube", "snowie_er", "errors", "blunders",
+			"luck_rate_mp", "luck_rolls",
+		}); err != nil {
+			return fmt.Errorf("write csv header: %w", err)
+		}
+		for _, r := range rows {
+			// An unmeasured figure is written as an empty field rather than a
+			// zero: a spreadsheet averaging this column must not count a player
+			// nobody measured as perfectly average.
+			luck := ""
+			if r.LuckKnown {
+				luck = strconv.FormatFloat(r.LuckRateMP, 'f', 1, 64)
+			}
+			rate := func(v float64, known bool) string {
+				if !known {
+					return ""
+				}
+				return strconv.FormatFloat(v, 'f', 2, 64)
+			}
+			if err := w.Write([]string{
+				r.Name,
+				strconv.Itoa(r.Matches), strconv.Itoa(r.Wins), strconv.Itoa(r.Losses),
+				strconv.Itoa(r.Decisions),
+				rate(r.PR, r.Decisions > 0),
+				rate(r.PRChecker, r.CheckerDecisions > 0),
+				rate(r.PRCube, r.CubeDecisions > 0),
+				rate(r.SnowieER, r.Decisions > 0),
+				strconv.Itoa(r.Errors), strconv.Itoa(r.Blunders),
+				luck, strconv.Itoa(r.LuckRolls),
+			}); err != nil {
+				return fmt.Errorf("write csv row: %w", err)
+			}
+		}
+		return w.Error()
+	}
+
+	// ── Text format ──────────────────────────────────────────────────────────
+	if len(rows) == 0 {
+		fmt.Println("No player found for this filter.")
+		return nil
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "=== Players ===")
+	if filter.DateFrom != "" || filter.DateTo != "" {
+		fmt.Fprintf(w, "Period:\t%s → %s\n", orDash(filter.DateFrom), orDash(filter.DateTo))
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Player\tMatches\tW-L\tDec.\tPR\tChecker\tCube\tSnowie\tBlunders\tLuck")
+
+	fmtRate := func(v float64, known bool) string {
+		if !known {
+			return "—"
+		}
+		return fmt.Sprintf("%.2f", v)
+	}
+	for _, r := range rows {
+		luck := "—"
+		if r.LuckKnown {
+			luck = fmt.Sprintf("%+.1f", r.LuckRateMP)
+		}
+		fmt.Fprintf(w, "%s\t%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%d\t%s\n",
+			r.Name, r.Matches, r.Wins, r.Losses, r.Decisions,
+			fmtRate(r.PR, r.Decisions > 0),
+			fmtRate(r.PRChecker, r.CheckerDecisions > 0),
+			fmtRate(r.PRCube, r.CubeDecisions > 0),
+			fmtRate(r.SnowieER, r.Decisions > 0),
+			r.Blunders, luck)
+	}
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "\"—\" marks a figure that was never measured, which is not the same as zero.")
+	return w.Flush()
+}
+
+// orDash renders an empty filter bound as an open one.
+func orDash(s string) string {
+	if s == "" {
+		return "—"
+	}
+	return s
 }
