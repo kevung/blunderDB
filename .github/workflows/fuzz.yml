@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
 
       # The fuzzing corpus (newly discovered "interesting" inputs) lives under

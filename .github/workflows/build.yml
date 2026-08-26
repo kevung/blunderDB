@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
 
       - name: Create frontend dist stub
@@ -96,7 +96,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
 
       - name: Create frontend dist stub
@@ -240,7 +240,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
 
       - name: Create frontend dist stub
@@ -292,7 +292,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
 
       - name: Create frontend dist stub
@@ -320,7 +320,7 @@ jobs:
       - name: govulncheck
         uses: golang/govulncheck-action@v1
         with:
-          go-version-input: 1.25.12
+          go-version-input: 1.25.13
           check-latest: true
           repo-checkout: false
 
@@ -357,7 +357,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           check-latest: true
-          go-version: 1.25.12
+          go-version: 1.25.13
           cache: true
       - run: go version
         shell: bash
