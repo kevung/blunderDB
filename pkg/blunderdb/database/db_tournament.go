@@ -648,7 +648,7 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 
 		// Export moves for each game
 		for oldGameID, newGameID := range gameIDMapping {
-			moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action FROM move WHERE game_id = ?`, oldGameID)
+			moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp FROM move WHERE game_id = ?`, oldGameID)
 			if err != nil {
 				slog.Warn("querying moves for tournament export", "gameID", oldGameID, "err", err)
 				continue
@@ -659,7 +659,8 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				var moveNumber, player, dice1, dice2 int
 				var moveType, checkerMove, cubeAction string
 				var oldPosID sql.NullInt64
-				if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
+				var luckMP sql.NullInt32
+				if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP); err != nil {
 					slog.Warn("scanning move for tournament export", "gameID", oldGameID, "err", err)
 					continue
 				}
@@ -671,8 +672,15 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 					}
 				}
 
-				result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction)
+				// NULL travels as NULL: an unknown luck must not land in the
+				// exported database as a neutral roll.
+				var luckValue any
+				if luckMP.Valid {
+					luckValue = luckMP.Int32
+				}
+
+				result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction, luckValue)
 				if err != nil {
 					slog.Warn("inserting move for tournament export", "moveID", moveID, "err", err)
 					continue

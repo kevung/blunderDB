@@ -163,7 +163,8 @@ CREATE TABLE IF NOT EXISTS move (
     dice_1        BIGINT,
     dice_2        BIGINT,
     checker_move  TEXT,
-    cube_action   TEXT
+    cube_action   TEXT,
+    luck_mp       BIGINT
 );
 
 CREATE TABLE IF NOT EXISTS move_analysis (

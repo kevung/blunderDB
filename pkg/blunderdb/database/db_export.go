@@ -506,7 +506,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 
 			for oldGameID, newGameID := range gameIDMapping {
 				moveRows, err := d.db.Query(`
-					SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action
+					SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp
 					FROM move
 					WHERE game_id = ?
 				`, oldGameID)
@@ -521,8 +521,9 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 					var moveNumber, player, dice1, dice2 int32
 					var moveType string
 					var checkerMove, cubeAction sql.NullString
+					var luckMP sql.NullInt32
 
-					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction)
+					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP)
 					if err != nil {
 						slog.Warn("scanning move", "err", err)
 						skipped++
@@ -537,6 +538,13 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 						newPositionID = 0
 					}
 
+					// NULL travels as NULL: an unknown luck must not land in the
+					// exported database as a neutral roll.
+					var luckValue any
+					if luckMP.Valid {
+						luckValue = luckMP.Int32
+					}
+
 					var result sql.Result
 					if newPositionID > 0 {
 						// Preparing these two statements once was measured and made no
@@ -544,16 +552,16 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 						// already caches them. The transaction around this whole phase is
 						// what mattered.
 						result, err = exportDB.Exec(`
-							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action)
-							VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
+							VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 						`, newGameID, moveNumber, moveType, newPositionID, player, dice1, dice2,
-							checkerMove.String, cubeAction.String)
+							checkerMove.String, cubeAction.String, luckValue)
 					} else {
 						result, err = exportDB.Exec(`
-							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action)
-							VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?)
+							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
+							VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
 						`, newGameID, moveNumber, moveType, player, dice1, dice2,
-							checkerMove.String, cubeAction.String)
+							checkerMove.String, cubeAction.String, luckValue)
 					}
 					if err != nil {
 						slog.Warn("inserting move", "err", err)

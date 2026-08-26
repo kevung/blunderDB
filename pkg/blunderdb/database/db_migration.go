@@ -1486,6 +1486,30 @@ func (d *Database) migrate_2_13_0_to_2_14_0() error {
 	return nil
 }
 
+// migrate_2_14_0_to_2_15_0 adds move.luck_mp (docs/adr/0010): the luck of a
+// roll, in signed millipoints of equity, as the analysing tool computed it.
+//
+// The column is NULLable and there is deliberately NO backfill or default:
+// zero is a real value (a neutral roll), so an existing row must read "unknown"
+// rather than "neutral". blunderDB cannot recompute luck either — it has no
+// evaluation engine — and unlike the denormalised analysis columns repaired in
+// #115, nothing on disk holds it: the stored analysis JSON never carried luck.
+// Existing rolls therefore stay unknown until their match is imported again
+// from the source file.
+//
+// It lands on move rather than position because a Position is deduplicated
+// across matches while the luck of a roll belongs to one occurrence of it.
+func (d *Database) migrate_2_14_0_to_2_15_0() error {
+	_, _ = d.db.Exec(`ALTER TABLE move ADD COLUMN luck_mp INTEGER`) // may already exist
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.15.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.15.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.14.0", "to", "2.15.0")
+	return nil
+}
+
 // runMigrationChain reads the recorded schema version and applies the
 // sequential upgrade steps up to the current DatabaseVersion, then verifies
 // the expected tables and metadata keys exist. It is shared by the GUI/CLI
@@ -1986,6 +2010,16 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			return fmt.Errorf("migration 2.13.0→2.14.0 failed: %w", err)
 		}
 		dbVersion = "2.14.0"
+	}
+
+	// Auto-migrate from 2.14.0 to 2.15.0
+	// Adds move.luck_mp (per-roll luck). No backfill is possible: the value
+	// only exists in the source files.
+	if dbVersion == "2.14.0" {
+		if err := d.migrate_2_14_0_to_2_15_0(); err != nil {
+			return fmt.Errorf("migration 2.14.0→2.15.0 failed: %w", err)
+		}
+		dbVersion = "2.15.0"
 	}
 
 	// Ensure all required tables and columns exist.

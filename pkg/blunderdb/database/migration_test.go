@@ -1872,3 +1872,61 @@ func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
 		t.Errorf("migration must not invent marks: got flagged=%d, want 0", flagged)
 	}
 }
+
+func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test_v2140.db")
+	createOldDatabase(t, dbPath, "2.14.0")
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE position ADD COLUMN individually_imported INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE position ADD COLUMN flagged INTEGER NOT NULL DEFAULT 0`,
+	} {
+		if _, err := raw.Exec(stmt); err != nil {
+			t.Fatalf("prepare v2.14.0 position table: %v", err)
+		}
+	}
+	if _, err := raw.Exec(`INSERT INTO game (id, match_id, game_number) VALUES (1, 1, 1)`); err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	res, err := raw.Exec(
+		`INSERT INTO move (game_id, move_number, move_type, player, dice_1, dice_2) VALUES (1, 1, 'checker', 1, 3, 1)`)
+	if err != nil {
+		t.Fatalf("insert move: %v", err)
+	}
+	moveID, _ := res.LastInsertId()
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.14.0 database: %v", err)
+	}
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !columnExists(d.db, "move", "luck_mp") {
+		t.Fatal("move.luck_mp should exist after migration")
+	}
+
+	// The roll must read "unknown", not "neutral": zero is a real luck value,
+	// so a migration that defaulted the column to 0 would fabricate 189 neutral
+	// rolls per imported match. There is nothing to back-fill from either —
+	// luck was never stored in the analysis JSON.
+	var luck sql.NullInt64
+	if err := d.db.QueryRow(`SELECT luck_mp FROM move WHERE id = ?`, moveID).Scan(&luck); err != nil {
+		t.Fatalf("read luck_mp: %v", err)
+	}
+	if luck.Valid {
+		t.Errorf("migration must not invent luck: got luck_mp=%d, want NULL", luck.Int64)
+	}
+}

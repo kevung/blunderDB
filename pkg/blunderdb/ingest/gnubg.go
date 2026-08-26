@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"path/filepath"
 	"strings"
 
@@ -188,10 +189,34 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 			Player:      blunderDBPlayerToXG(player),
 			Dice:        [2]int32{int32(moveRec.Dice[0]), int32(moveRec.Dice[1])},
 			CheckerMove: checkerMoveStr,
+			LuckMP:      gnuBGLuckMP(moveRec),
 		},
 		Position: pos,
 		Analyses: analyses,
 	}
+}
+
+// gnuBGLuckMP converts the SGF LU property to signed millipoints (positive =
+// lucky) — the same convention and unit as XG's ErrLuck, verified by importing
+// one match from both formats and comparing the rolls one by one.
+//
+// A roll gnuBG did not analyse carries no LU property at all, so absence maps
+// straight to "unknown" and no zero has to be second-guessed, unlike the XG
+// side.
+//
+// NOTE: gnubgparser v1.3.0 never fills MoveRecord.Luck, so this returns nil on
+// every real file today. gnuBG writes the property as a single value —
+// LU[-0.00537] — while the parser splits the text and requires two fields (a
+// rating and a value), returning early on all of them. Until that is fixed
+// upstream, gnuBG imports simply carry no luck, which is indistinguishable
+// from an unanalysed match: nothing here or downstream changes when the fix
+// lands. See tasks/FOLLOWUPS.md.
+func gnuBGLuckMP(moveRec *gnubgparser.MoveRecord) *int32 {
+	if moveRec == nil || moveRec.Luck == nil {
+		return nil
+	}
+	mp := int32(math.Round(moveRec.Luck.Value * 1000))
+	return &mp
 }
 
 // mapGnuBGCubeMove builds the MoveGraph for a "double" decision. The played

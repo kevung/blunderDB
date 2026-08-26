@@ -133,7 +133,7 @@ the `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the ta
 triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
 the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 
-The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.14.0**) is
+The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.15.0**) is
 independent of the app version — bump it only when the SQLite schema changes.
 
 ## Architecture in one screen

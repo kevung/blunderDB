@@ -38,6 +38,10 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   index with a trailing `position_id` column so the query's `p.id IN (SELECT
   position_id FROM analysis WHERE …)` subquery is answered from the index
   alone (fiche-05 T3). Index-only, like `006`.
+- `009_luck_mp.sql` — `move.luck_mp` column, the luck of a roll in signed
+  millipoints (docs/adr/0010). NULLable with no default: NULL means unknown,
+  which is not the same as a neutral roll. No backfill is possible — luck
+  exists only in the source files, never in an already-imported database.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in
