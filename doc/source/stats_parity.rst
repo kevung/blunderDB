@@ -50,6 +50,16 @@ Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend p
 du filtre des décisions forcées/triviales. Il sert de métrique de recoupement
 XG ↔ gnuBG ↔ blunderDB.
 
+.. important::
+
+   **Le filtre « Joueur » ne s'applique qu'au numérateur.** Sélectionner un
+   joueur restreint les erreurs sommées à ses propres décisions, mais le
+   dénominateur reste le nombre de coups de pions des **deux** joueurs, sur les
+   matchs retenus par le filtre. C'est ce qui distingue le Snowie ER du PR, et
+   c'est la raison de la propriété suivante : sur une base ne contenant que des
+   matchs entre deux joueurs, la somme de leurs deux Snowie ER est exactement
+   le Snowie ER non filtré.
+
 .. note::
 
    Le Snowie ER d'un joueur est typiquement environ la moitié de son PR, car le
@@ -68,6 +78,19 @@ convertie en MWC via la table MET (Match Equity Table) au score courant :
    \mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)
 
 Référence : ``gnubg/analysis.c:1449–1464``.
+
+Erreurs et blunders
+~~~~~~~~~~~~~~~~~~~
+
+Une décision est comptée comme **erreur** dès que l'erreur d'équité associée est
+strictement positive, et comme **blunder** lorsqu'elle atteint **0,100 EMG**
+(100 millipoints). La comparaison est *inclusive* : une erreur d'exactement
+0,100 est un blunder, dans tous les écrans (répartition par action de videau,
+détail de match, tableau des joueurs).
+
+Ce seuil est propre à blunderDB : gnuBG classe les coups en trois crans
+(``0.03`` douteux, ``0.06`` mauvais, ``0.12`` très mauvais —
+``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique.
 
 
 Décisions comptées au dénominateur du PR
