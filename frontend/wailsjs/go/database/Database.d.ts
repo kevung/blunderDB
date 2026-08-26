@@ -88,8 +88,6 @@ export function GetAllMatches():Promise<Array<domain.Match>>;
 
 export function GetAllPlayerNames():Promise<Array<database.PlayerFrequency>>;
 
-export function GetPlayerTable(arg1:database.StatsFilter):Promise<Array<database.PlayerRow>>;
-
 export function GetAllTournaments():Promise<Array<domain.Tournament>>;
 
 export function GetAnkiDeckPositions(arg1:number):Promise<Array<domain.Position>>;
@@ -123,6 +121,8 @@ export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;
 export function GetMovesByGame(arg1:number):Promise<Array<domain.Move>>;
 
 export function GetNextAnkiCard(arg1:number):Promise<domain.AnkiReviewCard>;
+
+export function GetPlayerTable(arg1:database.StatsFilter):Promise<Array<database.PlayerRow>>;
 
 export function GetPositionCollections(arg1:number):Promise<Array<database.Collection>>;
 

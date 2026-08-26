@@ -72,6 +72,79 @@ export namespace database {
 	        this.BlunderCount = source["BlunderCount"];
 	    }
 	}
+	export class CubeAnswerCounts {
+	    Right: number;
+	    WrongPass: number;
+	    WrongPassMP: number;
+	    WrongTake: number;
+	    WrongTakeMP: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeAnswerCounts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Right = source["Right"];
+	        this.WrongPass = source["WrongPass"];
+	        this.WrongPassMP = source["WrongPassMP"];
+	        this.WrongTake = source["WrongTake"];
+	        this.WrongTakeMP = source["WrongTakeMP"];
+	    }
+	}
+	export class CubeOfferCounts {
+	    Right: number;
+	    Missed: number;
+	    MissedMP: number;
+	    Premature: number;
+	    PrematureMP: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeOfferCounts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Right = source["Right"];
+	        this.Missed = source["Missed"];
+	        this.MissedMP = source["MissedMP"];
+	        this.Premature = source["Premature"];
+	        this.PrematureMP = source["PrematureMP"];
+	    }
+	}
+	export class CubeDirections {
+	    Offer: CubeOfferCounts;
+	    Answer: CubeAnswerCounts;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeDirections(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Offer = this.convertValues(source["Offer"], CubeOfferCounts);
+	        this.Answer = this.convertValues(source["Answer"], CubeAnswerCounts);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class ErrorBucket {
 	    MinMP: number;
 	    MaxMP: number;
@@ -298,6 +371,7 @@ export namespace database {
 	export class SelectionSpec {
 	    Kind: string;
 	    CubeAction: string;
+	    CubeCell: string;
 	    BucketMinMP: number;
 	    BucketMaxMP: number;
 	    TournamentID: number;
@@ -314,6 +388,7 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Kind = source["Kind"];
 	        this.CubeAction = source["CubeAction"];
+	        this.CubeCell = source["CubeCell"];
 	        this.BucketMinMP = source["BucketMinMP"];
 	        this.BucketMaxMP = source["BucketMaxMP"];
 	        this.TournamentID = source["TournamentID"];
@@ -361,6 +436,7 @@ export namespace database {
 	}
 	export class StatsFilter {
 	    PlayerName: string;
+	    PlayerAliases: string[];
 	    TournamentIDs: number[];
 	    DateFrom: string;
 	    DateTo: string;
@@ -374,6 +450,7 @@ export namespace database {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PlayerName = source["PlayerName"];
+	        this.PlayerAliases = source["PlayerAliases"];
 	        this.TournamentIDs = source["TournamentIDs"];
 	        this.DateFrom = source["DateFrom"];
 	        this.DateTo = source["DateTo"];
@@ -436,6 +513,7 @@ export namespace database {
 	    PerTournament: TournamentStats[];
 	    PerMatch: MatchStats[];
 	    CubeActionBreakdown: CubeActionStats[];
+	    CubeDirections: CubeDirections;
 	    ErrorHistogram: ErrorBucket[];
 	    TopBlunders: BlunderEntry[];
 	
@@ -459,6 +537,7 @@ export namespace database {
 	        this.PerTournament = this.convertValues(source["PerTournament"], TournamentStats);
 	        this.PerMatch = this.convertValues(source["PerMatch"], MatchStats);
 	        this.CubeActionBreakdown = this.convertValues(source["CubeActionBreakdown"], CubeActionStats);
+	        this.CubeDirections = this.convertValues(source["CubeDirections"], CubeDirections);
 	        this.ErrorHistogram = this.convertValues(source["ErrorHistogram"], ErrorBucket);
 	        this.TopBlunders = this.convertValues(source["TopBlunders"], BlunderEntry);
 	    }
