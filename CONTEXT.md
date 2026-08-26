@@ -77,6 +77,17 @@ Match and Tournament each carry their own comment field. Those are annotations o
 or the Tournament, not of its Positions: a commented Match does not make its 300 Positions
 commented, and no Position-level rule in this glossary reads them.
 
+### Players
+
+**Player**:
+A name exactly as it appears in an imported Match (`player1_name`/`player2_name`).
+blunderDB has no notion of a person behind the name: the same human signing under
+two spellings is two Players, and every per-player statistic, list or table is keyed
+by this literal name. Merging spellings is a destructive user gesture (merge players),
+never an inference. Distinct from Tenant — the Tenant owns the data; a Player merely
+appears in it.
+_Avoid_: user, account, identity
+
 ### Who owns the data
 
 **Tenant**:
