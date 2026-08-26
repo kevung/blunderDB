@@ -896,6 +896,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Verlauf",
         "tabErrors": "Fehler",
+        "tabPlayers": "Spieler",
         "importMatchesHint": "Importieren Sie Matches, um Filter zu aktivieren.",
         "playerLabel": "Spieler",
         "allPerspectives": "Alle Perspektiven",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR pro Turnier ({metric})",
         "tournament": "Turnier",
         "prPerMatch": "PR pro Match ({metric})",
-        "pointSizeHint": "Die Punktgröße ist proportional zur Anzahl der Entscheidungen."
+        "pointSizeHint": "Die Punktgröße ist proportional zur Anzahl der Entscheidungen.",
+        "playersColPlayer": "Spieler",
+        "playersColMatches": "Matches",
+        "playersColRecord": "S–N",
+        "playersColDecisions": "Entscheidungen",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR Steine",
+        "playersColPRCube": "PR Dopplerwürfel",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Blunders",
+        "playersColLuck": "Glück",
+        "playersEmpty": "Kein Spieler im gewählten Zeitraum.",
+        "playersRowHint": "Statistiken von {name} anzeigen",
+        "playersLuckUnknown": "Glück unbekannt: Matches erneut importieren.",
+        "playersLuckRolls": "Durchschnitt über {n} gemessene Würfe (Millipunkte)",
+        "playersNote": "Auf eine Zeile klicken, um die Statistiken des Spielers zu öffnen. „—“ steht für einen nie gemessenen Wert.",
+        "filterDisabledOnPlayersTab": "Ohne Wirkung im Reiter Spieler"
     }
 }

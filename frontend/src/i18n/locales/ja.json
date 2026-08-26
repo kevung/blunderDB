@@ -896,6 +896,7 @@
         "tabDashboard": "ダッシュボード",
         "tabProgression": "推移",
         "tabErrors": "エラー",
+        "tabPlayers": "プレイヤー",
         "importMatchesHint": "フィルターを有効にするには対局をインポートしてください。",
         "playerLabel": "プレイヤー",
         "allPerspectives": "全視点",
@@ -952,6 +953,22 @@
         "prPerTournament": "トーナメント別PR ({metric})",
         "tournament": "トーナメント",
         "prPerMatch": "対局別PR ({metric})",
-        "pointSizeHint": "点のサイズは決定数に比例します。"
+        "pointSizeHint": "点のサイズは決定数に比例します。",
+        "playersColPlayer": "プレイヤー",
+        "playersColMatches": "マッチ数",
+        "playersColRecord": "勝–敗",
+        "playersColDecisions": "判断数",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR チェッカー",
+        "playersColPRCube": "PR キューブ",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "ブランダー",
+        "playersColLuck": "運",
+        "playersEmpty": "選択した期間にプレイヤーがいません。",
+        "playersRowHint": "{name} の統計を表示",
+        "playersLuckUnknown": "運は不明です。マッチを再インポートしてください。",
+        "playersLuckRolls": "測定された {n} ロールの平均（ミリポイント）",
+        "playersNote": "行をクリックするとそのプレイヤーの統計が開きます。「—」は測定されていない値です。",
+        "filterDisabledOnPlayersTab": "プレイヤータブでは無効です"
     }
 }

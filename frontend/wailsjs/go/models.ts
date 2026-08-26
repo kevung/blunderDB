@@ -233,6 +233,48 @@ export namespace database {
 	        this.Count = source["Count"];
 	    }
 	}
+	export class PlayerRow {
+	    name: string;
+	    matches: number;
+	    wins: number;
+	    losses: number;
+	    decisions: number;
+	    checker_decisions: number;
+	    cube_decisions: number;
+	    pr: number;
+	    pr_checker: number;
+	    pr_cube: number;
+	    snowie_er: number;
+	    errors: number;
+	    blunders: number;
+	    luck_rate_mp: number;
+	    luck_known: boolean;
+	    luck_rolls: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.matches = source["matches"];
+	        this.wins = source["wins"];
+	        this.losses = source["losses"];
+	        this.decisions = source["decisions"];
+	        this.checker_decisions = source["checker_decisions"];
+	        this.cube_decisions = source["cube_decisions"];
+	        this.pr = source["pr"];
+	        this.pr_checker = source["pr_checker"];
+	        this.pr_cube = source["pr_cube"];
+	        this.snowie_er = source["snowie_er"];
+	        this.errors = source["errors"];
+	        this.blunders = source["blunders"];
+	        this.luck_rate_mp = source["luck_rate_mp"];
+	        this.luck_known = source["luck_known"];
+	        this.luck_rolls = source["luck_rolls"];
+	    }
+	}
 	export class SearchHistory {
 	    id: number;
 	    command: string;

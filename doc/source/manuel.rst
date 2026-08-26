@@ -506,6 +506,9 @@ Le panneau Stats est particulièrement utile pour :
   entre coups joués et décisions de videau, et la distribution des magnitudes
   d'erreur ;
 
+* **comparer les joueurs de la base** entre eux, une ligne par joueur, grâce à
+  l'onglet Joueurs — utile pour suivre une compétition entière ;
+
 * **accéder directement aux positions concernées** en cliquant sur n'importe
   quel indicateur (drill-down).
 
@@ -724,6 +727,56 @@ Histogramme des magnitudes d'erreur
 Un histogramme distribue les erreurs selon leur magnitude en millièmes de
 point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
 une barre charge les positions de la tranche.
+
+Onglet Joueurs
+~~~~~~~~~~~~~~
+
+Les trois onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** les
+compare tous. Il affiche une ligne par joueur de la base, ce qui répond au
+besoin d'un organisateur suivant une compétition entière plutôt qu'un joueur en
+particulier.
+
+Colonnes, dans l'ordre :
+
+.. csv-table::
+   :header: "Colonne", "Signification"
+   :widths: 22, 78
+
+   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît donc sur deux lignes ; utilisez la fusion de joueurs pour les réunir."
+   "Matchs", "Nombre de matchs disputés dans la période retenue."
+   "V–D", "Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de matchs."
+   "Décisions", "Nombre de décisions comptées — le dénominateur du PR. C'est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien."
+   "PR", "Performance Rate global."
+   "PR pions, PR videau", "Le PR ventilé par type de décision."
+   "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
+   "Blunders", "Nombre d'erreurs graves (au moins 0,100 EMG)."
+   "Chance", "Chance moyenne par lancer, en millièmes de point, signée : positive si les dés ont été favorables."
+
+Utilisation :
+
+* **Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR
+  croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré
+  restent en bas quel que soit le sens du tri : un zéro faute de données n'est
+  pas une performance parfaite.
+* **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
+  sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
+  Dashboard.
+* **Restreindre la période** — les filtres de dates, de tournois et de longueur
+  de match s'appliquent normalement, ce qui permet de borner le tableau aux
+  dates d'une compétition.
+
+.. note::
+   Dans cet onglet, la liste **Joueur** et le choix du **type de décision** sont
+   désactivés : le tableau montre tous les joueurs, et il ventile déjà les
+   décisions de pions et de videau en colonnes distinctes.
+
+.. important::
+   Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
+   avec zéro. C'est notamment le cas de la colonne Chance pour tout match
+   importé avant la version 2.15.0 du schéma : la chance n'était alors pas
+   conservée, et rien ne permet de la reconstituer après coup — il faut
+   réimporter les fichiers source. Les formats qui ne la transportent pas (BGF,
+   Jellyfish ``.mat``) n'en fourniront jamais.
 
 Règle d'agrégation
 ~~~~~~~~~~~~~~~~~~

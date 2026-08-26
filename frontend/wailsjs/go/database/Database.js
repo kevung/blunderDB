@@ -166,6 +166,10 @@ export function GetAllPlayerNames() {
   return window['go']['database']['Database']['GetAllPlayerNames']();
 }
 
+export function GetPlayerTable(arg1) {
+  return window['go']['database']['Database']['GetPlayerTable'](arg1);
+}
+
 export function GetAllTournaments() {
   return window['go']['database']['Database']['GetAllTournaments']();
 }

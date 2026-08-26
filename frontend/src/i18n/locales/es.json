@@ -896,6 +896,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progresión",
         "tabErrors": "Errores",
+        "tabPlayers": "Jugadores",
         "importMatchesHint": "Importe partidas para activar los filtros.",
         "playerLabel": "Jugador",
         "allPerspectives": "Todas las perspectivas",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR por torneo ({metric})",
         "tournament": "Torneo",
         "prPerMatch": "PR por partida ({metric})",
-        "pointSizeHint": "El tamaño del punto es proporcional al número de decisiones."
+        "pointSizeHint": "El tamaño del punto es proporcional al número de decisiones.",
+        "playersColPlayer": "Jugador",
+        "playersColMatches": "Partidas",
+        "playersColRecord": "V–D",
+        "playersColDecisions": "Decisiones",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR fichas",
+        "playersColPRCube": "PR cubo",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Blunders",
+        "playersColLuck": "Suerte",
+        "playersEmpty": "Ningún jugador en el periodo seleccionado.",
+        "playersRowHint": "Ver las estadísticas de {name}",
+        "playersLuckUnknown": "Suerte desconocida: reimporte las partidas para obtenerla.",
+        "playersLuckRolls": "Media sobre {n} tiradas medidas (milipuntos)",
+        "playersNote": "Haga clic en una fila para abrir las estadísticas del jugador. «—» indica un valor nunca medido.",
+        "filterDisabledOnPlayersTab": "Sin efecto en la pestaña Jugadores"
     }
 }

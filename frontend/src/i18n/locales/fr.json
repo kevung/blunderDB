@@ -896,6 +896,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progression",
         "tabErrors": "Erreurs",
+        "tabPlayers": "Joueurs",
         "importMatchesHint": "Importez des matchs pour activer les filtres.",
         "playerLabel": "Joueur",
         "allPerspectives": "Toutes perspectives",
@@ -952,6 +953,22 @@
         "prPerTournament": "PR par tournoi ({metric})",
         "tournament": "Tournoi",
         "prPerMatch": "PR par match ({metric})",
-        "pointSizeHint": "La taille du point est proportionnelle au nombre de décisions."
+        "pointSizeHint": "La taille du point est proportionnelle au nombre de décisions.",
+        "playersColPlayer": "Joueur",
+        "playersColMatches": "Matchs",
+        "playersColRecord": "V–D",
+        "playersColDecisions": "Décisions",
+        "playersColPR": "PR",
+        "playersColPRChecker": "PR pions",
+        "playersColPRCube": "PR videau",
+        "playersColSnowie": "Snowie",
+        "playersColBlunders": "Blunders",
+        "playersColLuck": "Chance",
+        "playersEmpty": "Aucun joueur dans la période sélectionnée.",
+        "playersRowHint": "Voir les statistiques de {name}",
+        "playersLuckUnknown": "Chance inconnue : réimportez les matchs pour l'obtenir.",
+        "playersLuckRolls": "Moyenne sur {n} lancers mesurés (millipoints)",
+        "playersNote": "Cliquez sur une ligne pour ouvrir les statistiques du joueur. « — » signale une valeur non mesurée.",
+        "filterDisabledOnPlayersTab": "Sans effet sur l'onglet Joueurs"
     }
 }
