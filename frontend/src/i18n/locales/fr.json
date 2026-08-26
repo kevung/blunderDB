@@ -968,7 +968,6 @@
         "playersRowHint": "Voir les statistiques de {name}",
         "playersLuckUnknown": "Chance inconnue : réimportez les matchs pour l'obtenir.",
         "playersLuckRolls": "Moyenne sur {n} lancers mesurés (millipoints)",
-        "playersNote": "Cliquez sur une ligne pour ouvrir les statistiques du joueur. « — » signale une valeur non mesurée.",
         "filterDisabledOnPlayersTab": "Sans effet sur l'onglet Joueurs"
     }
 }

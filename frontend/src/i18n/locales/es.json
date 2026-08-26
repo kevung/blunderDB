@@ -968,7 +968,6 @@
         "playersRowHint": "Ver las estadísticas de {name}",
         "playersLuckUnknown": "Suerte desconocida: reimporte las partidas para obtenerla.",
         "playersLuckRolls": "Media sobre {n} tiradas medidas (milipuntos)",
-        "playersNote": "Haga clic en una fila para abrir las estadísticas del jugador. «—» indica un valor nunca medido.",
         "filterDisabledOnPlayersTab": "Sin efecto en la pestaña Jugadores"
     }
 }

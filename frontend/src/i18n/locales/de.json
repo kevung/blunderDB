@@ -968,7 +968,6 @@
         "playersRowHint": "Statistiken von {name} anzeigen",
         "playersLuckUnknown": "Glück unbekannt: Matches erneut importieren.",
         "playersLuckRolls": "Durchschnitt über {n} gemessene Würfe (Millipunkte)",
-        "playersNote": "Auf eine Zeile klicken, um die Statistiken des Spielers zu öffnen. „—“ steht für einen nie gemessenen Wert.",
         "filterDisabledOnPlayersTab": "Ohne Wirkung im Reiter Spieler"
     }
 }

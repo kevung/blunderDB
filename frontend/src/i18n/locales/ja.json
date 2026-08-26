@@ -968,7 +968,6 @@
         "playersRowHint": "{name} の統計を表示",
         "playersLuckUnknown": "運は不明です。マッチを再インポートしてください。",
         "playersLuckRolls": "測定された {n} ロールの平均（ミリポイント）",
-        "playersNote": "行をクリックするとそのプレイヤーの統計が開きます。「—」は測定されていない値です。",
         "filterDisabledOnPlayersTab": "プレイヤータブでは無効です"
     }
 }

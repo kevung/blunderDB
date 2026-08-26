@@ -161,7 +161,6 @@
                 </tbody>
             </table>
         </div>
-        <p class="table-note">{$t('stats.playersNote')}</p>
     {/if}
 </div>
 
@@ -253,8 +252,7 @@
         background: var(--hover-bg, rgba(127, 127, 127, 0.12));
     }
 
-    .empty-msg,
-    .table-note {
+    .empty-msg {
         font-size: var(--font-size-small);
         opacity: 0.75;
     }
