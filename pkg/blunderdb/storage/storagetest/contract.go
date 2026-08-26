@@ -21,6 +21,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 	"time"
 
@@ -69,6 +70,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/CubeDirections", testStatsCubeDirections},
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Stats/MatchDetail", testStatsMatchDetail},
+		{"Stats/SnowieDenominatorCountsBothPlayers", testStatsSnowieDenominator},
 		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
 		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
@@ -1777,6 +1779,56 @@ func testStatsMatchDetail(t *testing.T, s storage.Storage) {
 	}
 	if emptyDetail.Player1.TotalDecisions != 0 || emptyDetail.Player2.TotalDecisions != 0 {
 		t.Errorf("MatchDetail(empty): got %+v, want zero decisions", emptyDetail)
+	}
+}
+
+// testStatsSnowieDenominator pins what makes the Snowie rate the Snowie rate:
+// one player's errors divided by BOTH players' checker moves (gnuBG
+// formatgs.c:415-424). Filtering on a player must narrow the errors, never the
+// move count — the denominator only follows the matches retained.
+//
+// The additivity check is what catches the defect: in a database holding one
+// Alice-vs-Bob match, their two filtered rates must add up to the unfiltered
+// one, since they share a denominator. When the filter also narrowed the move
+// count, each player was divided by their own moves alone and every filtered
+// Snowie ER came out roughly twice too big.
+func testStatsSnowieDenominator(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+	matchID, _ := statsFixtureMatch(t, s, 0, "Alice", "Bob")
+
+	snowie := func(player string) float64 {
+		t.Helper()
+		res, err := s.Stats().Compute(ctx, "",
+			storage.StatsFilter{DecisionType: -1, PlayerName: player})
+		if err != nil {
+			t.Fatalf("Compute(%q): %v", player, err)
+		}
+		return res.SnowieGlobal
+	}
+
+	all, alice, bob := snowie(""), snowie("Alice"), snowie("Bob")
+	if all <= 0 {
+		t.Fatalf("unfiltered Snowie ER = %v, want > 0 (the fixture records real errors)", all)
+	}
+	if math.Abs((alice+bob)-all) > 1e-9 {
+		t.Errorf("Snowie ER per player: Alice=%v + Bob=%v = %v, want the unfiltered %v"+
+			" — a filtered rate must keep both players in the denominator",
+			alice, bob, alice+bob, all)
+	}
+
+	// Same figure, other screen: the per-match detail already divided by both
+	// players' moves. On a single-match database the global rate must agree
+	// with it, or the panel contradicts the match table.
+	detail, err := s.Stats().MatchDetail(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("MatchDetail: %v", err)
+	}
+	if math.Abs(detail.Player1.SnowieER-alice) > 1e-9 {
+		t.Errorf("Snowie ER for Alice: global %v, match detail %v — the two screens disagree",
+			alice, detail.Player1.SnowieER)
 	}
 }
 

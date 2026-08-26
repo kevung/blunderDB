@@ -24,8 +24,10 @@ var _ storage.StatsStore = (*statsStore)(nil)
 // statsErrExpr is defined in search_sqlite.go (shared) and reused here:
 //   CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END
 
-// blunderThresholdMP is the error threshold (in stored millipoints units) above
-// which a decision is counted as a blunder. 100 ≈ 0.1 EMG.
+// blunderThresholdMP is the error threshold (in stored millipoints units) at or
+// above which a decision is counted as a blunder. 100 ≈ 0.1 EMG. The comparison
+// is inclusive everywhere — an error of exactly 0.100 is a blunder in the cube
+// breakdown as it already was in MatchDetail.
 const blunderThresholdMP = 100
 
 // statsCountedExpr is the SQL predicate selecting the decisions that count
@@ -71,20 +73,43 @@ func snowieER(sumErrMP int64, nMovesBoth int) float64 {
 	return 500 * float64(sumErrMP) / 1000 / float64(nMovesBoth)
 }
 
+// playerFilterClause renders the player filter two ways. With seatAware, a row
+// is kept only when one of the named players IS the one who took the decision —
+// what every per-player figure needs. Without it, a row is kept as soon as one
+// of them played in the match, whichever side moved: the Snowie denominator
+// counts both players' moves (see Compute).
+//
+// Both forms bind the names twice, so the arguments do not depend on the form.
+func playerFilterClause(names []string, seatAware bool) (clause string, args []any) {
+	ph := strings.TrimSuffix(strings.Repeat("?,", len(names)), ",")
+	if seatAware {
+		clause = "((m.player1_name IN (" + ph + ") AND mv.player = 1) OR (m.player2_name IN (" + ph + ") AND mv.player = -1))"
+	} else {
+		clause = "(m.player1_name IN (" + ph + ") OR m.player2_name IN (" + ph + "))"
+	}
+	for range 2 {
+		for _, n := range names {
+			args = append(args, n)
+		}
+	}
+	return clause, args
+}
+
 // buildBaseWhereClause constructs the base WHERE clause for the given filter
 // without the statsCountedExpr predicate.
 func buildBaseWhereClause(filter storage.StatsFilter) (whereSQL string, args []any) {
+	return buildBaseWhereClauseSeat(filter, true)
+}
+
+// buildBaseWhereClauseSeat is buildBaseWhereClause with control over how the
+// player filter is rendered (see playerFilterClause).
+func buildBaseWhereClauseSeat(filter storage.StatsFilter, seatAware bool) (whereSQL string, args []any) {
 	var clauses []string
 
 	if names := storage.PlayerNameSet(filter); len(names) > 0 {
-		ph := strings.TrimSuffix(strings.Repeat("?,", len(names)), ",")
-		clauses = append(clauses,
-			"((m.player1_name IN ("+ph+") AND mv.player = 1) OR (m.player2_name IN ("+ph+") AND mv.player = -1))")
-		for range 2 {
-			for _, n := range names {
-				args = append(args, n)
-			}
-		}
+		clause, pArgs := playerFilterClause(names, seatAware)
+		clauses = append(clauses, clause)
+		args = append(args, pArgs...)
 	}
 
 	if len(filter.TournamentIDs) > 0 {
@@ -292,18 +317,31 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 	result.PRGlobal = pr(totalErrSum, totalErrCount)
 
 	// ── Snowie ER (global) ────────────────────────────────────────────────────
+	// The Snowie rate divides ONE player's errors by BOTH players' checker
+	// moves (gnuBG formatgs.c:415-424, anTotalMoves[0] + anTotalMoves[1]), so
+	// numerator and denominator cannot share a WHERE clause: the player filter
+	// must narrow the errors to the decisions that player took, and must NOT
+	// narrow the move count to that player's own seat — it only restricts the
+	// matches counted. Reusing one clause for both halved the denominator and
+	// doubled every filtered Snowie ER; MatchDetail already got this right.
 	{
 		snowieFilter := filter
 		snowieFilter.DecisionType = -1 // count all decision types
-		snowieWhere, snowieArgs := buildBaseWhereClause(snowieFilter)
+		numWhere, numArgs := buildBaseWhereClause(snowieFilter)
 		var snowieSumErr int64
+		_ = s.db.QueryRowContext(ctx,
+			`SELECT COALESCE(SUM(`+statsErrExpr+`),0) `+statsBaseJoin+numWhere,
+			numArgs...,
+		).Scan(&snowieSumErr)
+
+		denWhere, denArgs := buildBaseWhereClauseSeat(snowieFilter, false)
 		var snowieCheckerCnt int
 		_ = s.db.QueryRowContext(ctx,
-			`SELECT COALESCE(SUM(`+statsErrExpr+`),0), `+
-				`COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0) `+
-				statsBaseJoin+snowieWhere,
-			snowieArgs...,
-		).Scan(&snowieSumErr, &snowieCheckerCnt)
+			`SELECT COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0) `+
+				statsBaseJoin+denWhere,
+			denArgs...,
+		).Scan(&snowieCheckerCnt)
+
 		result.SnowieGlobal = snowieER(snowieSumErr, snowieCheckerCnt)
 	}
 
@@ -363,7 +401,7 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 		cubeWhere := whereSQL + " AND p.decision_type = 1"
 		rows, err = s.db.QueryContext(ctx,
 			`SELECT COALESCE(a.best_cube_action,''), SUM(a.cube_error), COUNT(*),`+
-				` SUM(CASE WHEN a.cube_error > ? THEN 1 ELSE 0 END) `+
+				` SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END) `+
 				statsBaseJoin+cubeWhere+
 				` GROUP BY a.best_cube_action`,
 			append([]any{blunderThresholdMP}, baseArgs...)...,
