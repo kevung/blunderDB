@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -154,9 +154,16 @@
         const dbLoaded = get(databaseLoadedStore);
         const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
 
-        playerList = players ?? [];
+        // Derive from the local value, never by reading playerList back. With
+        // no database open this function runs to the end synchronously (there
+        // is no await on that branch), so a read of a $state it just wrote
+        // would make the caller effect depend on what it writes — the effect
+        // then re-runs forever and Svelte tears the whole UI down with
+        // effect_update_depth_exceeded.
+        const loadedPlayers = players ?? [];
+        playerList = loadedPlayers;
         tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
-        dbEmpty = playerList.length === 0;
+        dbEmpty = loadedPlayers.length === 0;
         dateRangeMin = dateRange?.DateFrom ?? '';
         dateRangeMax = dateRange?.DateTo ?? '';
     }
@@ -175,14 +182,19 @@
     }
 
     // Re-read the lists on every database mutation (import, delete, merge…).
-    // Reading the key here is what subscribes the effect to those changes.
+    // Reading the key here is what subscribes the effect to those changes — and
+    // it is the only thing this effect may depend on. Everything else runs
+    // untracked: the work below writes the very $state the reload produces, so
+    // any incidental read of it would close the loop.
     $effect(() => {
         void $statsInvalidationKeyStore;
-        if (!mounted) return; // onMount does the first load
-        loadLists()
-            .then(dropMissingPlayerSelection)
-            // eslint-disable-next-line no-console
-            .catch((err) => console.error('StatsFilterBar reload error:', err));
+        untrack(() => {
+            if (!mounted) return; // onMount does the first load
+            loadLists()
+                .then(dropMissingPlayerSelection)
+                // eslint-disable-next-line no-console
+                .catch((err) => console.error('StatsFilterBar reload error:', err));
+        });
     });
 
     onMount(async () => {
