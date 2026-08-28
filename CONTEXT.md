@@ -49,6 +49,52 @@ source file's per-move notes as Comments), so neither is evidence the user did a
 the user wrote on a Match-sourced Position is therefore still lost when the Match is deleted —
 to keep such a Position, put it in a Collection or save it.
 
+### Knowing what a position is worth
+
+**Analysis**:
+A *record* of what an engine concluded about a Position, stored against it and read back
+later. It carries its provenance (`AnalysisEngine`, e.g. XG, GNUbg, BGBlitz, gammonNet) and
+its `AnalysisDepth`. A Position has at most one Analysis row; several engines coexist inside
+it, each entry tagged with the engine that produced it. An Analysis is *relit*, never
+recomputed: a Position with no identity — one the user has just composed on the board — cannot
+have one.
+_Avoid_: evaluation, eval, engine output
+
+**Evaluation**:
+The *result of a computation* the embedded engine performs on the position currently on the
+board, whatever it is, saved or not. It has no identity, is never loaded from the database,
+and is valid only for as long as the position does not move. An Evaluation may later be
+written down and so *become* an Analysis; until it is, it is not one.
+_Avoid_: analysis, live analysis, instant analysis
+
+The distinction is the reason two panels exist: one reads records, the other computes. They
+render similar tables and share the components that draw them, but they are not two views of
+one thing.
+
+**Network**:
+The weights, and only the weights — `strehl-prob5-512-512-256-128`. A network changes name
+only when its weights change: neither the search wrapped around it, nor a quantisation, nor a
+port to another language makes it a new one.
+
+**Configuration**:
+A network *plus* the search, the endgame tables and the match-equity table around it — the
+whole of what produces a number. `gammonNet 2-ply` names a Configuration, not a Network. Two
+Configurations sharing a Network are still two Configurations.
+
+**Canonical parameters**:
+The Configuration blunderDB writes down: 2-ply, pruning `k=12`, Kazaross-XG2. What the user
+adjusts for comfort while reading the board is a different setting, and it never reaches the
+database.
+
+**Regime**:
+Which kind of answer the panel is giving about a race, always stated on screen, never inferred
+by the reader:
+- *exact* — read from a two-sided bearoff database. A lookup. The answer.
+- *evaluated* — computed by the engine, which plays the trajectory out. Not a lookup, not a
+  guess either.
+- *estimated* — a snapshot summary of a trajectory. Legitimate for a win probability
+  (convolution plus a calibrated correction), and **never** used for a cube verdict.
+
 ### Sets of positions the user curates
 
 **Collection**:
