@@ -333,9 +333,12 @@ func stepUsesDie(s CheckerStep, mover, die int) bool {
 	}
 }
 
-// notation renders the play in a compact "src/dst" form (Bar / off / * hit),
-// collapsing identical steps as "(n)" and sorting tokens (matching the engine's
-// NormalizeMove convention for comparison against analysed candidate moves).
+// notation renders the play in the standard MOVER-RELATIVE form every
+// backgammon notation uses ("24/18", regardless of colour: 24 always names
+// the mover's own back checkers) — Bar / off / * hit, collapsing identical
+// steps as "(n)" and sorting tokens (matching the engine's NormalizeMove
+// convention for comparison against analysed candidate moves, which are
+// themselves mover-relative: gnubg and XG both render this way).
 func notation(steps []CheckerStep, mover int) string {
 	counts := map[string]int{}
 	var order []string
@@ -360,6 +363,13 @@ func notation(steps []CheckerStep, mover int) string {
 	return strings.Join(tokens, " ")
 }
 
+// pointLabel renders one point in MOVER-RELATIVE numbering. Board indices are
+// absolute (Black's home 1..6, White's home 19..24 — moves.go's own doc
+// comment above); the mover-relative convention every notation uses instead
+// numbers from the mover's own back checkers (24) down to their own deepest
+// home point (1), which for Black already IS the absolute index (Black moves
+// high→low, home already at the low end) but for White is its mirror,
+// 25-idx (White's home sits at the high end of the absolute frame).
 func pointLabel(mover, idx int) string {
 	switch idx {
 	case Off:
@@ -367,6 +377,9 @@ func pointLabel(mover, idx int) string {
 	case BlackBar, WhiteBar:
 		return "Bar"
 	default:
+		if mover == White {
+			idx = 25 - idx
+		}
 		return strconv.Itoa(idx)
 	}
 }
