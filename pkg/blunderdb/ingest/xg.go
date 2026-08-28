@@ -481,6 +481,8 @@ func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 	pos2.PlayerOnRoll = opponentPlayer
 	pos2.Cube.Owner = -1
 
+	takeAnalysis := buildCubeAnalysisFromText(cube.Analysis, "Take")
+	swapCubeChancesPerspective(takeAnalysis)
 	mg2 := MoveGraph{
 		Move: domain.Move{
 			MoveNumber: moveNumber,
@@ -490,7 +492,7 @@ func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 			CubeAction: "Take",
 		},
 		Position: &pos2,
-		Analyses: frag(buildCubeAnalysisFromText(cube.Analysis, "Take")),
+		Analyses: frag(takeAnalysis),
 	}
 	if move.Comment != "" {
 		mg2.Comments = []string{move.Comment}
@@ -543,6 +545,8 @@ func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 		pos2.PlayerOnRoll = opponentPlayer
 		pos2.Cube.Owner = -1
 
+		passAnalysis := buildCubeAnalysisFromText(cube.Analysis, "Pass")
+		swapCubeChancesPerspective(passAnalysis)
 		out = append(out, MoveGraph{
 			Move: domain.Move{
 				MoveNumber: moveNumber,
@@ -552,7 +556,7 @@ func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 				CubeAction: "Pass",
 			},
 			Position: &pos2,
-			Analyses: frag(buildCubeAnalysisFromText(cube.Analysis, "Pass")),
+			Analyses: frag(passAnalysis),
 		})
 	}
 
