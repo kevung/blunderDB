@@ -253,7 +253,22 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 }
 
 // translateGnuBGAnalysisDepth converts a gnuBG ply level to a label.
-func translateGnuBGAnalysisDepth(depth int) string {
+//
+// `known` must be the parser's AnalysisDepthKnown. It is not a formality:
+// gnuBG does not record a search depth for every analysis it writes — a
+// rollout carries none, and neither does a record whose format version the
+// parser refuses. Zero is a REAL gnuBG depth (0-ply), so a missing value
+// cannot be defaulted; labelling an unknown depth "0-ply" would relabel a
+// rollout as the shallowest search there is.
+//
+// An unknown depth therefore produces an empty label — the panel shows nothing
+// rather than something false. This is the same choice gnubgparser v1.5.0 made
+// upstream when it stopped inventing a depth out of the SGF format version
+// (kevung/gnubgparser#2): saying nothing beats saying something wrong.
+func translateGnuBGAnalysisDepth(depth int, known bool) string {
+	if !known {
+		return ""
+	}
 	if depth >= 0 {
 		return fmt.Sprintf("%d-ply", depth)
 	}
@@ -299,7 +314,7 @@ func buildGnuBGCheckerAnalysis(analysis *gnubgparser.MoveAnalysis, player int, p
 
 		checkerMoves = append(checkerMoves, domain.CheckerMove{
 			Index:                    i,
-			AnalysisDepth:            translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
+			AnalysisDepth:            translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth, moveOpt.AnalysisDepthKnown),
 			AnalysisEngine:           "GNUbg",
 			Move:                     moveStr,
 			Equity:                   moveOpt.Equity,
@@ -323,7 +338,7 @@ func buildGnuBGCheckerAnalysis(analysis *gnubgparser.MoveAnalysis, player int, p
 // gnuBGCubeParams maps a gnubgparser.CubeAnalysis to cubeAnalysisParams.
 func gnuBGCubeParams(analysis *gnubgparser.CubeAnalysis) cubeAnalysisParams {
 	return cubeAnalysisParams{
-		Depth:                     translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		Depth:                     translateGnuBGAnalysisDepth(analysis.AnalysisDepth, analysis.AnalysisDepthKnown),
 		Engine:                    "GNUbg",
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
 		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,

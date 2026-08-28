@@ -109,6 +109,23 @@ git branch -d feat/<feature>
 git worktree list
 ```
 
+**A fresh worktree does not build at the repo root.** `main.go` embeds the compiled
+frontend (`//go:embed all:frontend/dist`), and `frontend/dist/` is a build artefact that
+git ignores — so a worktree that has never had a frontend build fails immediately, and
+the error names the embed rather than the cause:
+
+```
+main.go:20:12: pattern all:frontend/dist: no matching files found
+```
+
+Either run a real build, or drop a placeholder in for backend work:
+
+```bash
+mkdir -p "$WT/frontend/dist" && touch "$WT/frontend/dist/index.html"
+```
+
+Nothing to clean up afterwards: the directory is gitignored.
+
 **A user-visible feature ships with its documentation.** Any new command, shortcut,
 panel, or filter must land in the same branch as its `doc/source/raccourcis.rst` /
 `doc/source/manuel.rst` / `doc/source/cmd_mode.rst` entries (French source only —
