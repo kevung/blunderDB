@@ -84,8 +84,16 @@ decisions moved — answers a constraint that does not exist here. The reference
 what gets written into users' databases.
 
 **The port is proven, not asserted, at two levels.** Network parity: on the published
-`verify/reference.bin`, the five probabilities must reproduce the C reference to gammonNet's
-own cross-platform bound of 4.77e-07. Search parity: on a versioned gold file, the **chosen
+`verify/reference.bin` — 2000 positions of pre-encoded features with their reference outputs —
+the five probabilities must reproduce the C reference to gammonNet's own published criterion,
+**1e-6**. (The often-quoted 4.77e-07 is the worst deviation gammonNet *measured* across seven
+platforms, not the threshold it set; a measurement used as a threshold fails on a machine that
+is merely different rather than wrong.) Measured on this port: **max|Δ| = 5.960e-08** — one ulp
+of float32 near 1, which is the signature of the hidden layers being bit-exact and the only
+divergence coming from the final sigmoid, where the reference calls `expf` and Go rounds a
+float64 `exp`. That exactness is not free: the accumulation must stay float32, ascending from
+the bias, and each product carries an explicit `float32(...)` conversion to forbid the compiler
+from contracting the multiply-add into an FMA on the architectures where Go fuses. Search parity: on a versioned gold file, the **chosen
 move** must match the C reference at each ply, with equities to 1e-6. The gold file is
 regenerated deliberately on an upstream bump, never silently, which means the C reference
 must be buildable outside CI and that procedure must be written down.
@@ -113,8 +121,15 @@ must be buildable outside CI and that procedure must be written down.
   version does not change a stored analysis; a weights bump does. It is the same string
   gammonGo already writes, so one concept keeps one key across both products.
 - Depth belongs in `AnalysisDepth`, as it does for every other engine — never in the name.
-- gammonNet ships no `LICENSE` file at its root; every source file carries an SPDX MIT
-  header, and the vendored network keeps Alexander Strehl's paternity. The port must carry
-  the notice and the attribution, in the source and in the Acknowledgements.
+- The release ships `LICENSE`, `NOTICE` and `THIRD-PARTY.md`; the source tree carries an SPDX
+  MIT header per file, and the vendored network keeps Alexander Strehl's paternity. The port
+  carries the notice and the attribution alongside the weights, and repeats them in the
+  Acknowledgements.
+- Network parity covers the forward pass only — `verify/reference.bin` supplies features, not
+  positions. The **encoding** and the domain→engine conversion need their own proof, and the
+  strongest one available is internal: the opening position is symmetric, so it must encode
+  identically from both players' point of view (which catches a reversed mirroring and a
+  swapped colour identifier at once), and the geometry is pinned against `domain.LegalMoves`
+  — if domain point 24 really is White's ace point, a checker there bears off on a 1.
 - A visible, discreet attribution — one word and a link to the repository — accompanies the
   panel.
