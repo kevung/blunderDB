@@ -156,3 +156,76 @@ func FromDomain(p *domain.Position) (Position, error) {
 	}
 	return out, nil
 }
+
+// isOver reports whether a player has borne off all fifteen checkers.
+func (p *Position) isOver() bool {
+	return p.Off[White] == NumCheckers || p.Off[Black] == NumCheckers
+}
+
+// winner returns White, Black, or -1 when the game is not over.
+func (p *Position) winner() int {
+	switch {
+	case p.Off[White] == NumCheckers:
+		return White
+	case p.Off[Black] == NumCheckers:
+		return Black
+	}
+	return -1
+}
+
+// swapTurn flips whose turn it is. Checkers are untouched.
+func (p *Position) swapTurn() {
+	if p.Turn == White {
+		p.Turn = Black
+	} else {
+		p.Turn = White
+	}
+}
+
+// gameValue is the stake of a finished game: 1 plain, 2 gammon, 3 backgammon.
+// It returns -1 when the game is not over.
+//
+// The order of the tests is the rule: a loser who has borne off ANY checker
+// loses a plain game, whatever else is true. Only then does a checker on the
+// bar, or one still sitting in the winner's home board, make it a backgammon.
+func gameValue(p *Position) int {
+	w := p.winner()
+	if w < 0 {
+		return -1
+	}
+	loser := Black
+	if w == Black {
+		loser = White
+	}
+	if p.Off[loser] > 0 {
+		return 1
+	}
+	if p.Bar[loser] > 0 {
+		return 3
+	}
+	low := homeLow(uint8(w))
+	for i := low; i < low+6; i++ {
+		n := p.Points[i]
+		if (loser == Black && n < 0) || (loser == White && n > 0) {
+			return 3
+		}
+	}
+	return 2
+}
+
+// terminalEquity is the money value of a finished position, from the point of
+// view of its own Turn.
+//
+// At a terminal position Turn names the LOSER — the play that ended the game
+// already switched it — so this is in practice always negative. It is written
+// symmetrically anyway rather than assuming the caller's convention.
+func terminalEquity(p *Position) float64 {
+	stake := gameValue(p)
+	if stake < 0 {
+		return 0
+	}
+	if int(p.Turn) == p.winner() {
+		return float64(stake)
+	}
+	return -float64(stake)
+}
