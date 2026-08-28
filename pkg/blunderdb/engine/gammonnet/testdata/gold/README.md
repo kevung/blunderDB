@@ -73,3 +73,80 @@ evaluations, each carrying up to one ulp of difference from the final sigmoid, s
 grows with the tree. **At 3 or 4 ply the tolerance may not hold**, and the corpus deliberately
 stops at 2, which is the canonical depth. Deepening the corpus means re-establishing the
 tolerance first, not assuming it.
+
+# Regenerating the cube gold file
+
+`../cube_gold.bin` is what gammonNet's C reference (`gn_cube_decide`) answers for every
+decision in `../cube_corpus.bin` — money and match-score, every owner, both Jacoby settings,
+and a spread of Crawford states. Read by `TestCubeDecideMatchesTheGoldFile`.
+
+## What you need
+
+Nothing but the pinned gammonNet checkout and a C compiler — `gn_cube.c` and `gn_met.c` have
+no network to load, so this harness does not need `vendor/backgammon-ai-engine` built or the
+weight files at all, only `gn_infer_reference.c`'s `gn_probs_exclusive` (which does not touch
+the network either) plus whatever it takes to satisfy the linker for the rest of that
+translation unit. Building against the project's own `build/*.o` (produced by its Makefile)
+is the simplest way to get that for free:
+
+```sh
+GN=<gammonNet checkout>
+M=<blunderDB>/pkg/blunderdb/engine/gammonnet
+
+cd $GN && make build   # once, to populate build/*.o
+
+cd $M/testdata/gold
+gcc -O2 -I$GN/src -c cube_gold.c -o cube_gold.o
+gcc -O2 -o cube_gold cube_gold.o $GN/build/*.o -lm
+```
+
+## The two files, and the order they are made in
+
+1. **The corpus first**, from Go:
+
+   ```sh
+   cd <blunderDB>
+   BLUNDERDB_WRITE_CORPUS=1 go test ./pkg/blunderdb/engine/gammonnet/ -run TestWriteCubeGoldCorpus
+   ```
+
+   `TestCubeGoldCorpusIsInSync` fails if the committed corpus stops matching
+   `buildCubeCorpus()`.
+
+2. **Then the gold**, from that exact corpus:
+
+   ```sh
+   ./cube_gold $M/testdata/cube_corpus.bin $M/testdata/cube_gold.bin
+   ```
+
+## What the gate asserts, and what it deliberately does not
+
+- **Refusal, the action, and the reported equities/take point agree to `1e-5`.** Looser than
+  the search gold's `1e-6`: blunderDB's own MET stores Kazaross-XG2 in **float32**
+  (`engine/met.go`) where gammonNet's table — and the Zadeh recursion that extends it — is
+  **double** (`gn_met_table.h`'s own header notes the two tables were cross-checked and the 625
+  pre-Crawford entries "agree exactly" at full precision; float32 storage still loses about
+  seven decimal digits of it). The redouble recursion (#122) combines several such lookups per
+  stake level, so the two ports' outputs sit a few `1e-6` apart rather than a few `1e-7`.
+  Measured on v1.0.1: **max|Δ| = 2.463e-06** over 2320 decisions.
+- **A decision tie zone, separate from the equity tolerance.** At an exact boundary — most
+  visibly a perfectly symmetric score with `p(win) = 0.5` — the float32-vs-double MET noise can
+  land a strict `equity_double > equity_no_double` on either side of zero, flipping
+  `NoDouble`/`DoubleTake` even though both engines agree on the equities to `1e-8`. Tolerated
+  only there (`cubeActionTieTolerance`), and counted; 4 such ties as of v1.0.1, all at cube
+  values whose stake chain reaches a dead level exactly at a symmetric away score.
+- **Match states beyond `cubeGoldMaxAway` (24) are out of scope for this file on purpose.**
+  gammonNet's `gn_match_state_is_valid` refuses any match past `GN_MET_MAX_AWAY` (25);
+  blunderDB's own MET extends Kazaross-XG2 with a Zadeh fallback to 64 (`engine.MaxScore`) and
+  answers there instead of refusing (see `matchMaxAway` in `cube.go`) — a deliberate, documented
+  divergence from the reference, not something a gold file comparison could express. It is
+  exercised by Go-only tests in `cube_test.go`. The corpus also stops one point short of 25
+  even within the reference's own range: `gn_met_table.h` documents that blunderDB's
+  post-Crawford transcription carries one fewer explicit entry (24) than gammonNet's XML
+  source (25), so post-Crawford trailer-at-25 is a second, narrower, already-known boundary
+  disagreement — avoided the same way, by not asking the question there.
+- **A crawford flag without either away score at match point is refused, not compared.**
+  `MatchState.IsValid` treats `Crawford: true` at an away score where nobody is 1-away as an
+  incoherent input (see `cube.go`): gammonNet's `gn_met_after` silently falls back to the
+  ordinary pre-Crawford table in that case, which blunderDB's own `engine.GnuBGGetME` does not
+  implement (it assumes, like every other caller in this codebase, that the flag only ever
+  accompanies a real 1-away score). The corpus never poses that question either.

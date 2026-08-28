@@ -63,6 +63,14 @@ const (
 	gnuBGMaxCubeLevel = 7
 )
 
+// MaxScore is the away-score horizon of this MET: GnuBGGetME clamps any away
+// score past this many points to the table's last row/column rather than
+// refusing it (see the comment inside GnuBGGetME). Exported so a caller
+// building its own multi-level cube model on top of this MET (gammonnet's
+// Janowski-at-score redouble recursion) shares this one boundary instead of
+// hardcoding a second copy of it.
+const MaxScore = gnuBGMaxScore
+
 // d3Array is a 3D array type used during Zadeh MET computation.
 // Heap-allocated to avoid ~900KB stack pressure.
 // Uses float32 to match GNUbg's native precision exactly.

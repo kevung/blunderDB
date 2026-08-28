@@ -1,11 +1,15 @@
-// Package gammonnet is a Go port of the gammonNet evaluator's network and
-// feature encoding (https://github.com/kevung/gammonNet, MIT).
+// Package gammonnet is a Go port of the gammonNet evaluator's network,
+// feature encoding, search and cube model (https://github.com/kevung/gammonNet,
+// MIT).
 //
-// It ports two of gammonNet's C modules and nothing else: gn_encoding (the
-// 196-feature perspective encoding) and gn_infer (the MLP forward pass and the
-// BGNN weight format). Legal-move generation, the match equity table and the
-// endgame databases already exist in this repository and are not duplicated
-// here — see ADR-0011.
+// It ports the four gammonNet C modules blunderDB does not already have, per
+// ADR-0011: gn_encoding (the 196-feature perspective encoding), gn_infer (the
+// MLP forward pass and the BGNN weight format), gn_search (the expectiminimax
+// over the 21 dice rolls, with pruning and caching) and gn_cube (the Janowski
+// cube model). The match equity table and the endgame databases already exist
+// in this repository and are not duplicated here — the cube model is instead
+// branched onto blunderDB's own table (engine.GnuBGGetME) rather than a
+// re-ported gn_met.c; see cube.go.
 //
 // # The boundary
 //
