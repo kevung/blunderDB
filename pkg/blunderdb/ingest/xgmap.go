@@ -797,6 +797,29 @@ func buildCubeAnalysisFromText(analysis *xgparser.CubeAnalysis, playedCubeAction
 	return posAnalysis
 }
 
+// swapCubeChancesPerspective flips the Player/Opponent win, gammon and
+// backgammon chances of a DoublingCubeAnalysis in place.
+//
+// buildCubeAnalysisFromText always attributes analysis.Player1WinRate (and
+// its gammon/backgammon siblings) to "Player" — correct for the doubler's
+// own decision node. mapDoubleTakeMove and mapSingleCubeMove reuse that same
+// analysis, unchanged, for the SYNTHESIZED companion position recording the
+// responder's take/pass, whose PlayerOnRoll they DO flip to the opponent —
+// so without this the chances stayed attributed to whichever side actually
+// held them, mislabelled as the other side's the moment PlayerOnRoll
+// changed. Same correction xg/text import already applies the other way
+// (parser.go's playerOnRoll == 1 swap). BestCubeAction and the cube's
+// equities are not player-attributed and need no change.
+func swapCubeChancesPerspective(pa *domain.PositionAnalysis) {
+	if pa == nil || pa.DoublingCubeAnalysis == nil {
+		return
+	}
+	d := pa.DoublingCubeAnalysis
+	d.PlayerWinChances, d.OpponentWinChances = d.OpponentWinChances, d.PlayerWinChances
+	d.PlayerGammonChances, d.OpponentGammonChances = d.OpponentGammonChances, d.PlayerGammonChances
+	d.PlayerBackgammonChances, d.OpponentBackgammonChances = d.OpponentBackgammonChances, d.PlayerBackgammonChances
+}
+
 // buildRawCubeForChecker builds a DoublingCube domain.PositionAnalysis from a
 // raw EngineStructDoubleAction, to attach the cube decision to a checker
 // position (the "press d on a checker move" case). It sets no played action.
