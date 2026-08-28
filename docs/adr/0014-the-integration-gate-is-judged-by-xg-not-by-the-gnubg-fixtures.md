@@ -25,25 +25,48 @@ published exactly that shape — over 139 decisions of a 7-point match, 86.3 % a
 gnubg, the 19 disagreements costing a median of +0.0048, a maximum of +0.0195, none above
 0.05.
 
-**Trap two: the gnubg fixtures are not deep enough to be an arbiter.** Measured on the
-fixtures themselves, not assumed:
+**Trap two: the gnubg fixtures are at the same depth as the engine under test.** This was
+first written on a misreading, and the misreading is recorded here because it is the same
+class of bug as the one below.
 
-| fixture | checker decisions | depth at the best candidate |
-|---|---|---|
-| `charlot1-charlot2_7p_2025-11-08-2305.sgf` | 180 | **0-ply: 166**, 1-ply: 2, 2-ply: 2, 3-ply: 9, 6-ply: 1 |
-| `test.sgf` | 311 | **0-ply: 204**, 1-ply: 57, 2-ply: 17, rest scattered |
+The leading value of an SGF move analysis, `A[0][...]`, is **not** a ply — it is `iMove`, the
+rank of the move the player actually chose among the candidates. It appears once per move
+node, and in `charlot1-charlot2_7p_2025-11-08-2305.sgf` its distribution is `0`x166, `1`x2,
+`2`x2, `6`x1: the player picked gnubg's best move 166 times and its seventh once. Read as a
+depth, it produced a plausible-looking spread of 0-, 1-, 2-, 3- and 6-ply, and a false
+conclusion — that these fixtures were shallow.
 
-A disagreement cannot be costed by an arbiter shallower than the engine under test; the sign
-would fall in our favour as often as against us. Worse, the depth those files report for
-*cube* decisions is not a depth at all: the SGF property `DA[E ver 3 ...]` carries no leading
-ply bracket the way `A[0][... ]` does, and `gnubgparser` v1.4.0 reads the `3` of `ver 3` — the
-format version — as the ply. It is `3` for 100 % of cube decisions in both files
-(`kevung/gnubgparser#2`).
+The real evaluation context sits *after* the outputs, not before:
 
-The XG export of the same match is a different matter, and was measured too: 189 checker
-decisions at genuine depths (best candidate `{3-ply: 50, 4-ply: 135, Book: 4}`), 185 cube
-decisions at `{2-ply: 147, 4-ply: 36}`. It is the only arbiter in `testdata/` deeper than the
-engine under test.
+```
+A[0][lpab E ver 3 0.496365 0.140890 0.006297 0.135264 0.005951 -0.004723 2C 0 1 0.000000 1]
+                                                                        ^^ nPlies=2, cubeful
+DA[E ver 3 2C 1 0.000000 1 0.503635 ...]
+            ^^ same field, same meaning
+```
+
+Counting that token gives the truth:
+
+| fixture | `0C` (0-ply) | `2C` (2-ply) | cube decisions |
+|---|---|---|---|
+| `charlot1-charlot2_7p_2025-11-08-2305.sgf` | 1886 | 1697 | 94, **all 2-ply cubeful** |
+| `test.sgf` | 3530 | 2180 | all 2-ply cubeful |
+
+gnubg analysed both matches at **2-ply cubeful**, with a 0-ply pre-filter over the full
+candidate list — its standard move filter. That is not a shallow analysis. It is, however,
+**the same depth as the engine under test**, and an arbiter at the depth of the engine it
+judges cannot cost a disagreement: what it measures is a difference of opinion between peers,
+the sign falling in our favour as often as against us. Costing requires an arbiter *deeper*
+than both.
+
+Separately, and confirming the family: `gnubgparser` v1.4.0 reads the `3` of `ver 3` — the SGF
+format version — as the cube analysis's ply, reporting `3-ply` for 100 % of cube decisions in
+both files, where the true value is 2 (`kevung/gnubgparser#2`).
+
+The XG export of the same match is the arbiter that qualifies, and was measured too: 189
+checker decisions at genuine depths (best candidate `{3-ply: 50, 4-ply: 135, Book: 4}`), 185
+cube decisions at `{2-ply: 147, 4-ply: 36}`. It is the only source in `testdata/` deeper than
+the engine under test.
 
 ## Decision
 
@@ -96,6 +119,11 @@ a CI test and a pre-merge recipe step.
   that was measured upstream, and its verdict is quoted as rendered: *equivalent to GNU
   Backgammon at 2-ply, confirmed*. "Superior" is not established, and eXtreme Gammon was
   never measured.
-- `kevung/gnubgparser#2` must be fixed and the dependency bumped; separately, databases
-  already built carry the false `3-ply` label on every gnubg-imported cube analysis, and what
-  to do about existing data is its own decision.
+- `kevung/gnubgparser#2` must be fixed and the dependency bumped. Separately, databases
+  already built carry the false `3-ply` label on every gnubg-imported cube analysis, and a
+  genuine 3-ply is indistinguishable from the bug in an existing row — what to do about that
+  data is its own decision.
+- The same misreading was live in two further places in that parser (the played-move rank
+  broadcast as every option's depth; a hard-coded selected-move index), which is why the fix
+  is verified against the fixtures rather than trusted: **a plausible-looking distribution of
+  plies is exactly what this class of bug produces.** This ADR's own first draft fell for it.
