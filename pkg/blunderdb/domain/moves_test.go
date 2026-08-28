@@ -1,6 +1,9 @@
 package domain
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 // mkPos builds a position from a signed checker map (positive = Black, negative =
 // White; index 0 = WhiteBar, 25 = BlackBar, 1..24 = points). Bearoff is derived
@@ -159,6 +162,23 @@ func TestNotationIsMoverRelative(t *testing.T) {
 		if !sameStringSet(blackSet, whiteSet) {
 			t.Fatalf("dice %v: black and white notations disagree from the symmetric opening\n  black: %v\n  white: %v",
 				d, blackSet, whiteSet)
+		}
+	}
+}
+
+// gnubg and XG both write bar entries as lowercase "bar/24", never "Bar/24"
+// — confirmed against real fixtures while building #123's integration gate.
+// NormalizeMove does not case-fold, so a capitalised "Bar" silently failed
+// every comparison against a stored candidate involving a bar entry.
+func TestNotationBarIsLowercase(t *testing.T) {
+	p := mkPos(Black, 6, 1, map[int]int{BlackBar: 1, 13: 4, 8: 3, 6: 5, 24: 2})
+	plays := LegalMoves(&p)
+	if len(plays) == 0 {
+		t.Fatal("expected at least one legal play entering from the bar")
+	}
+	for _, pl := range plays {
+		if strings.Contains(pl.Notation, "Bar") {
+			t.Errorf("notation %q uses capitalised Bar, want lowercase bar", pl.Notation)
 		}
 	}
 }
