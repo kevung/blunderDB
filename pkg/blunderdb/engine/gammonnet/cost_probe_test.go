@@ -2,6 +2,7 @@ package gammonnet
 
 import (
 	"fmt"
+	"os"
 	"testing"
 	"time"
 )
@@ -11,8 +12,12 @@ import (
 // #129 come from this build rather than from a citation. Run it on an idle
 // machine: under load it measures the machine.
 func TestProbeDecisionCost(t *testing.T) {
-	if testing.Short() {
-		t.Skip("measurement, not an assertion")
+	// A measurement that cannot fail has no business lengthening the recipe.
+	// testing.Short() is not enough: the full suite runs without it, and this
+	// probe costs minutes there while asserting nothing. Behind an environment
+	// variable, like the corpus regeneration, it runs when it is wanted.
+	if os.Getenv("BLUNDERDB_PROBE") == "" {
+		t.Skip("set BLUNDERDB_PROBE to measure; this test asserts nothing")
 	}
 	p := openingPosition(t)
 
