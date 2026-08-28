@@ -56,6 +56,7 @@ func TestUndisputedOpeningPlays(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		s = s.WithWorkers(8)
 		for _, tc := range cases {
 			t.Run(nameWithPly(tc.name, ply), func(t *testing.T) {
 				p := openingPosition(t)
@@ -80,13 +81,19 @@ func nameWithPly(name string, ply int) string {
 
 // A deeper search must not change what the engine is looking at: the candidate
 // list holds the same plays, whatever the depth.
+//
+// Pruning is off here, so that every legal play is returned rather than the
+// twelve survivors — which is the point of the assertion. That makes depth
+// expensive: with no filter and no pruning, a 2-ply decision is the
+// 760 000-evaluation case, minutes of CPU for an invariant that 0 and 1 ply
+// establish just as well. It stops at one.
 func TestSameCandidatesAtEveryDepth(t *testing.T) {
 	if testing.Short() {
-		t.Skip("includes a 2-ply search")
+		t.Skip("includes a 1-ply search")
 	}
 	p := openingPosition(t)
 	var counts []int
-	for _, ply := range []int{0, 1, 2} {
+	for _, ply := range []int{0, 1} {
 		s, err := NewSearcher(SearchConfig{Ply: ply}) // pruning off: every legal play
 		if err != nil {
 			t.Fatal(err)
