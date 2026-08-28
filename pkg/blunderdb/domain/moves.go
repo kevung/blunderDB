@@ -335,10 +335,11 @@ func stepUsesDie(s CheckerStep, mover, die int) bool {
 
 // notation renders the play in the standard MOVER-RELATIVE form every
 // backgammon notation uses ("24/18", regardless of colour: 24 always names
-// the mover's own back checkers) — Bar / off / * hit, collapsing identical
+// the mover's own back checkers) — bar / off / * hit, collapsing identical
 // steps as "(n)" and sorting tokens (matching the engine's NormalizeMove
 // convention for comparison against analysed candidate moves, which are
-// themselves mover-relative: gnubg and XG both render this way).
+// themselves mover-relative: gnubg and XG both render this way, lowercase
+// "bar" included).
 func notation(steps []CheckerStep, mover int) string {
 	counts := map[string]int{}
 	var order []string
@@ -375,7 +376,7 @@ func pointLabel(mover, idx int) string {
 	case Off:
 		return "off"
 	case BlackBar, WhiteBar:
-		return "Bar"
+		return "bar" // lowercase: gnubg and XG both write "bar/24", never "Bar/24"
 	default:
 		if mover == White {
 			idx = 25 - idx
