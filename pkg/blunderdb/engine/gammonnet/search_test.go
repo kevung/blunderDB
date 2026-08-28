@@ -251,7 +251,7 @@ func TestOnePlyValueLiesWithinItsReplies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, ok := s.positionEquity(&p, 1, 0)
+	v, ok := s.positionEquity(&p, 1, 0, false)
 	if !ok {
 		t.Fatal("search failed")
 	}
@@ -262,5 +262,50 @@ func TestOnePlyValueLiesWithinItsReplies(t *testing.T) {
 	// positive — having the roll is worth something, but not much.
 	if v < 0 || v > 0.3 {
 		t.Errorf("value of the opening roll = %.4f, expected a small positive equity", v)
+	}
+}
+
+// Parallelism must change how long a search takes and nothing else. The twenty
+// one roll values are computed by different goroutines but summed afterwards in
+// roll order, so the result is bit-identical to the serial one — not "equal to
+// within a tolerance", identical.
+func TestParallelSearchIsBitIdentical(t *testing.T) {
+	if testing.Short() {
+		t.Skip("two 2-ply searches")
+	}
+	p := openingPosition(t)
+
+	serial, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	par, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	par = par.WithWorkers(8)
+
+	a := make([]Candidate, MaxPlays)
+	b := make([]Candidate, MaxPlays)
+	pa, pb := p, p
+	na, err := serial.Plays(&pa, 3, 1, a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	nb, err := par.Plays(&pb, 3, 1, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if na != nb {
+		t.Fatalf("%d candidates serial, %d parallel", na, nb)
+	}
+	for i := 0; i < na; i++ {
+		if a[i].Play.Result != b[i].Play.Result {
+			t.Fatalf("candidate %d is a different play", i)
+		}
+		if a[i].Equity != b[i].Equity {
+			t.Fatalf("candidate %d: serial %.17g, parallel %.17g — not bit-identical",
+				i, a[i].Equity, b[i].Equity)
+		}
 	}
 }

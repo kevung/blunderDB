@@ -131,5 +131,30 @@ must be buildable outside CI and that procedure must be written down.
   identically from both players' point of view (which catches a reversed mirroring and a
   swapped colour identifier at once), and the geometry is pinned against `domain.LegalMoves`
   — if domain point 24 really is White's ace point, a checker there bears off on a 1.
+- **The port pays a measured ×7 on the path the search actually uses, and that was not
+  foreseen when this decision was taken.** A single evaluation costs 376 µs in Go against
+  342 µs in C (`gcc -O2`) — 1.10×, which is what this ADR assumed the whole cost would be. But
+  the reference has a *batched* kernel (feature-major transpose, fixed width 32) that gcc
+  vectorises, and on the same machine it evaluates at **52.6 µs per position, ×7.38 faster
+  than its own single path**. Go gets none of that: measured in both plausible loop shapes,
+  batch-index outer and batch-index inner, it returns ×0.97 and ×0.85 — nothing. Go does not
+  auto-vectorise, and the reduction is latency-bound at about two cycles per multiply-add in
+  both languages.
+
+  The arithmetic then closes: a 2-ply decision with the published `(0,1,3)` filter costs 13 400
+  big-network evaluations, which is **0.70 s** in batched C — reproducing gammonNet's own
+  measurement of a 7-point match analysed at 0.86 s per decision in WebAssembly — and **5.0 s**
+  in Go.
+
+  The decision stands, for three reasons. Goroutine parallelism is **linear** (measured ×23.3
+  on 24 cores, zero allocations), which puts an interactive 2-ply decision at ~0.63 s on eight
+  cores, behind an immediate 0-ply display. The alternatives have not become cheaper, and the
+  WebAssembly one carries upstream's own ×1.18–1.29 penalty on top. And the gap is closable
+  **without giving up bit-exactness**: the kernel vectorises across the BATCH dimension, not
+  across the reduction, so every position keeps its own lane and accumulates over j in
+  ascending order — a hand-written SIMD kernel in Go would reproduce the 5.960e-08 already
+  proved. That is a bounded follow-up with a measured target, not a rewrite.
+- Intra-search parallelism over the 21 root rolls is therefore a **requirement** of the search,
+  not an optimisation: without it the interactive promise does not hold.
 - A visible, discreet attribution — one word and a link to the repository — accompanies the
   panel.

@@ -129,6 +129,11 @@ type Searcher struct {
 	pruneEvals uint64 // small-network evaluations
 	cacheHits  uint64
 
+	// workers are independent searchers the root farms its roll loop out to.
+	// Each owns its scratch, its generator and its cache; nothing is shared but
+	// the read-only networks.
+	workers []*Searcher
+
 	gen   [MaxPly + 2]Generator
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
@@ -267,7 +272,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Cand
 		if out[i].Play.Result.isOver() {
 			continue // keeps the exact terminal value from the sweep
 		}
-		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1)
+		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0)
 		if !ok {
 			return -1
 		}
@@ -320,7 +325,7 @@ func (s *Searcher) valueSweep(cands []Candidate) {
 }
 
 // positionEquity is the value of a position to the player on turn, at depth.
-func (s *Searcher) positionEquity(pos *Position, depth, level int) (float64, bool) {
+func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool) (float64, bool) {
 	if pos.isOver() {
 		return terminalEquity(pos), true
 	}
@@ -332,31 +337,82 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int) (float64, boo
 	}
 	cands := s.cands[level]
 
-	// Accumulated in float64, over the rolls in ascending index order. A
-	// different order gives a different last bit.
-	var sum float64
-	for r := 0; r < NumRolls; r++ {
-		roll := s.rolls[r]
-		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, cands)
-		if n < 0 {
+	// The twenty-one rolls are independent, so the root farms them out. The
+	// weighted sum is still accumulated afterwards in ascending roll index
+	// order, in float64 — the parallelism changes who computes each term, never
+	// the order they are added in, so the answer is bit-identical to the serial
+	// one. A parallel reduction would not be.
+	var best [NumRolls]float64
+	if parallel && len(s.workers) > 0 {
+		if !s.rollsInParallel(pos, depth, &best) {
 			return 0, false
 		}
-		var best float64
-		if n > 0 {
-			best = cands[0].Equity
-		} else {
-			// No legal play: the turn passes. Not an error.
-			passed := *pos
-			passed.swapTurn()
-			v, ok := s.positionEquity(&passed, depth-1, level+1)
+	} else {
+		for r := 0; r < NumRolls; r++ {
+			v, ok := s.oneRoll(pos, depth, level, r, cands)
 			if !ok {
 				return 0, false
 			}
-			best = -v
+			best[r] = v
 		}
-		sum += roll.weight * best
+	}
+
+	var sum float64
+	for r := 0; r < NumRolls; r++ {
+		sum += s.rolls[r].weight * best[r]
 	}
 	return sum, true
+}
+
+// oneRoll is the value of the best reply to one roll.
+func (s *Searcher) oneRoll(pos *Position, depth, level, r int, cands []Candidate) (float64, bool) {
+	roll := s.rolls[r]
+	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, cands)
+	if n < 0 {
+		return 0, false
+	}
+	if n > 0 {
+		return cands[0].Equity, true
+	}
+	// No legal play: the turn passes. Not an error.
+	passed := *pos
+	passed.swapTurn()
+	v, ok := s.positionEquity(&passed, depth-1, level+1, false)
+	if !ok {
+		return 0, false
+	}
+	return -v, true
+}
+
+// rollsInParallel spreads the twenty-one rolls over the workers. Each worker
+// runs on its own scratch and its own cache, so nothing needs a lock.
+func (s *Searcher) rollsInParallel(pos *Position, depth int, best *[NumRolls]float64) bool {
+	nw := len(s.workers)
+	var wg sync.WaitGroup
+	ok := make([]bool, nw)
+	for w := 0; w < nw; w++ {
+		wg.Add(1)
+		go func(w int) {
+			defer wg.Done()
+			worker := s.workers[w]
+			ok[w] = true
+			for r := w; r < NumRolls; r += nw {
+				v, good := worker.oneRoll(pos, depth, 0, r, worker.cands[0])
+				if !good {
+					ok[w] = false
+					return
+				}
+				best[r] = v
+			}
+		}(w)
+	}
+	wg.Wait()
+	for _, good := range ok {
+		if !good {
+			return false
+		}
+	}
+	return true
 }
 
 // leafValue is the cubeless money equity of a position, from its own turn's
@@ -397,3 +453,25 @@ func (s *Searcher) Counters() (evals, pruneEvals, cacheHits uint64) {
 
 // ResetCounters zeroes them.
 func (s *Searcher) ResetCounters() { s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0 }
+
+// WithWorkers gives the searcher a pool to farm the root's roll loop out to.
+// Each worker is an independent Searcher over the same read-only networks: its
+// own scratch, its own generator, its own cache.
+//
+// The answer is unchanged, bit for bit. Parallelism decides who computes each
+// of the twenty-one terms, never the order they are summed in — a parallel
+// reduction would change the last bit, and this deliberately is not one.
+func (s *Searcher) WithWorkers(n int) *Searcher {
+	if n <= 1 {
+		s.workers = nil
+		return s
+	}
+	if n > NumRolls {
+		n = NumRolls
+	}
+	s.workers = make([]*Searcher, n)
+	for i := range s.workers {
+		s.workers[i] = NewSearcherWith(s.cfg, s.net, s.prune)
+	}
+	return s
+}
