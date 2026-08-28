@@ -127,6 +127,62 @@ func TestLegalMovesDoublesUseFour(t *testing.T) {
 	}
 }
 
+// notation is MOVER-RELATIVE ("24" always names the mover's own back
+// checkers, whatever colour they are) — the convention every backgammon
+// notation uses, and the one NormalizeMove-based matching against gnubg/XG
+// candidate lists depends on (#123's integration gate, which is how this was
+// found: caught rendering "12/18 17/18" for a White decision gnubg itself
+// called "13/7 8/7").
+//
+// The opening is symmetric, so it is a clean probe: White and Black, rolling
+// the same dice from the same (mirrored) starting position, must render into
+// the identical SET of notations — "24/21 13/14" is the classic 3-1 play
+// from either seat. Before the fix, White's rendering used the board's
+// absolute indices verbatim and diverged; Black's happened to coincide with
+// mover-relative numbering by construction (Black's home already sits at the
+// low end of the absolute frame), which is why the bug was invisible to
+// every existing test — none of them put White on roll.
+func TestNotationIsMoverRelative(t *testing.T) {
+	for _, d := range [][2]int{{3, 1}, {6, 5}, {5, 1}, {6, 1}, {4, 4}} {
+		black := InitializePosition()
+		black.PlayerOnRoll = Black
+		black.Dice = d
+		white := InitializePosition()
+		white.PlayerOnRoll = White
+		white.Dice = d
+
+		blackSet := notationSet(LegalMoves(&black))
+		whiteSet := notationSet(LegalMoves(&white))
+		if len(blackSet) == 0 || len(whiteSet) == 0 {
+			t.Fatalf("dice %v: expected legal plays for both colours", d)
+		}
+		if !sameStringSet(blackSet, whiteSet) {
+			t.Fatalf("dice %v: black and white notations disagree from the symmetric opening\n  black: %v\n  white: %v",
+				d, blackSet, whiteSet)
+		}
+	}
+}
+
+func notationSet(plays []LegalPlay) map[string]bool {
+	out := map[string]bool{}
+	for _, p := range plays {
+		out[p.Notation] = true
+	}
+	return out
+}
+
+func sameStringSet(a, b map[string]bool) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for k := range a {
+		if !b[k] {
+			return false
+		}
+	}
+	return true
+}
+
 // Every generated play conserves 15 checkers per side and uses the right number
 // of dice; results are distinct.
 func TestLegalMovesInvariants(t *testing.T) {
