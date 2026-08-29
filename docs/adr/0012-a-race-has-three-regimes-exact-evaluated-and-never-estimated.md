@@ -82,3 +82,37 @@ network*, since the search's leaves deliberately do not consult the table (ADR-0
 - The measurement is a prerequisite of shipping regime 2, and its numbers belong in
   `doc/source/manuel.rst` beside the methodology section.
 - The regime vocabulary enters `CONTEXT.md`.
+
+## Update — 2026-08-29, measured
+
+`TestEvalMeasure` (`pkg/blunderdb/engine/gammonnet`, `BLUNDERDB_EVAL_MEASURE=1`) compares
+gammonNet 2-ply `k=12` (canonical parameters) against the embedded TS-06-06 exact table, on a
+fixed-seed sample of 4000 money-game cube decisions drawn uniformly over home-board
+configurations of 1..6 checkers a side (the domain both answer; exhausting the ~852,000-pair
+domain was hours, not minutes — see the test's doc comment for the sampling method and for why
+this is money-only: the two-sided table carries no gammon-rate breakdown, so there is no exact
+oracle for a match-score verdict, and none for a ground-truth take point either — the distance
+bucketing below uses gammonNet's own estimated take point).
+
+| distance to gammonNet's own take point | verdict agreement |
+|---|---|
+| < 1 % | 61.1 % (33/54) |
+| 1-5 % | 88.3 % (174/197) |
+| 5-10 % | 91.5 % (215/235) |
+| 10-20 % | 94.0 % (754/802) |
+| ≥ 20 % | 94.4 % (2559/2712) |
+
+Overall money cube verdict agreement: **93.4 %** (3735/4000). |Δ win probability|: mean 0.85 %,
+median 0.44 %, p95 3.21 %, max 8.30 %. |Δ cubeful equity|: mean 0.039, median 0.018, p95 0.151,
+max 0.406.
+
+The shape is the one this ADR predicted rather than assumed: agreement is worst exactly at the
+take point (61 %, where a coin-flip decision is most sensitive to a small model disagreement)
+and climbs to 93-94 % away from it — the errors concentrate where two engines legitimately
+differ on a close call, not where the port would be wrong in a way that costs equity broadly
+(ADR-0014's reasoning about cost versus agreement rate, restated here for a different pair of
+methods). TS-06-11 (`BLUNDERDB_TS11_PATH`) was not run for this measurement; the extension
+exists in the test and executes whenever that variable is set.
+
+**These are the numbers #126 is required to publish next to the word "evaluated" in
+`doc/source/manuel.rst`.**
