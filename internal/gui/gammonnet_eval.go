@@ -10,6 +10,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
 // The Eval panel's live evaluation (#125, ADR-0013): two tiers, never a
@@ -38,10 +39,16 @@ const gammonNetEngineVersion = "gammonNet v1.0.1"
 // GammonNetEvalResult is what the Eval panel receives: candidate moves when
 // dice are set, a cube decision otherwise — never both, mirroring the
 // position itself (CONTEXT.md: dice set → checker decision, no dice → cube
-// decision).
+// decision). Race, independently, carries the race panel's "evaluated"
+// regime (#126, ADR-0012) whenever the position is a pure bearoff outside
+// the exact table's domain — set alongside either Moves or Cube, since the
+// race question ("what should the on-roll player do about the cube, pre-
+// roll") is asked regardless of whether dice happen to be sitting on the
+// board.
 type GammonNetEvalResult struct {
 	Moves []domain.CheckerMove         `json:"moves,omitempty"`
 	Cube  *domain.DoublingCubeAnalysis `json:"cube,omitempty"`
+	Race  *race.Eval                   `json:"race,omitempty"`
 }
 
 // EvaluatePositionImmediate is the 0-ply, synchronous tier: called on every
@@ -123,20 +130,143 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 
 	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply) // the depth that RAN, never the one requested (ticket #125's non-negotiable rule)
 
+	raceEval := evaluateRaceRegime(&pos, searcher, depthLabel)
+
 	hasDice := pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
 	if hasDice {
 		moves, err := evaluateMoves(&gnPos, &pos, searcher, cfg, depthLabel, candidates)
 		if err != nil {
 			return GammonNetEvalResult{}, err
 		}
-		return GammonNetEvalResult{Moves: moves}, nil
+		return GammonNetEvalResult{Moves: moves, Race: raceEval}, nil
 	}
 
 	cube, err := evaluateCube(&gnPos, &pos, searcher, depthLabel)
 	if err != nil {
 		return GammonNetEvalResult{}, err
 	}
-	return GammonNetEvalResult{Cube: cube}, nil
+	return GammonNetEvalResult{Cube: cube, Race: raceEval}, nil
+}
+
+// evaluateRaceRegime fills the race panel's "evaluated" regime (#126, ADR-0012)
+// when the position is a pure bearoff outside the exact table's domain —
+// cheap to check first: race.Evaluate is the fast convolution path already
+// driving the panel's synchronous refresh (positionService.js's updateEPC),
+// so it doubles as the domain predicate here for free, and exact-regime
+// positions short-circuit before the engine is ever asked. A nil return (not
+// a race, already exact, or the engine declined the position) just means the
+// panel keeps showing whatever "estimated"/"exact" it already had — never an
+// error, since this is a bonus on top of Moves/Cube, not the request itself.
+//
+// This logic lives here rather than in package race because race must not
+// import gammonnet: pkg/blunderdb/engine/gammonnet/eval_measure_test.go
+// (#127, internal test file, package gammonnet) already imports race for its
+// exact-table comparison, and Go refuses the resulting cycle for an internal
+// test augmentation (gammonnet-with-tests -> race -> gammonnet). gui already
+// imports both with no such constraint, so the Decision -> race.Eval mapping
+// is done here. cubeStateFor below is a 3-line duplicate of race/eval.go's
+// unexported helper of the same name, kept in sync by inspection — small
+// enough that a shared symbol is not worth reopening the import question.
+func evaluateRaceRegime(pos *domain.Position, searcher *gammonnet.Searcher, depthLabel string) *race.Eval {
+	fast := race.Evaluate(pos)
+	if fast.Race == nil || fast.Race.Regime == race.RegimeExact {
+		return nil
+	}
+
+	mover := pos.PlayerOnRoll
+
+	// Pre-roll, like race.Evaluate: dice on the position are ignored.
+	clone := *pos
+	clone.Dice = [2]int{0, 0}
+	gnPos, err := gammonnet.FromDomain(&clone)
+	if err != nil {
+		return nil
+	}
+	probs, ok := searcher.Probs(&gnPos)
+	if !ok {
+		return nil
+	}
+
+	var owner gammonnet.CubeOwner
+	switch pos.Cube.Owner {
+	case mover:
+		owner = gammonnet.CubeOwned
+	case domain.None:
+		owner = gammonnet.CubeCentred
+	default:
+		owner = gammonnet.CubeOpponent
+	}
+	efficiency := gammonnet.DefaultEfficiency(owner)
+	jacoby := pos.HasJacoby == 1
+
+	var state *gammonnet.MatchState
+	if pos.Score[0] != -1 || pos.Score[1] != -1 {
+		opponent := domain.White
+		if mover == domain.White {
+			opponent = domain.Black
+		}
+		crawford := pos.Score[0] == 1 || pos.Score[1] == 1
+		state = &gammonnet.MatchState{
+			AwayOnRoll:   pos.Score[mover],
+			AwayOpponent: pos.Score[opponent],
+			Cube:         1 << uint(pos.Cube.Value),
+			Crawford:     crawford,
+		}
+	}
+
+	dec, ok := gammonnet.Decide(&probs, owner, state, efficiency, jacoby)
+	if !ok {
+		return nil
+	}
+
+	money := race.Money{
+		// Uniform with evaluateCube above: ND/DT/DP are reported regardless
+		// of who owns the cube, exactly as the Eval panel's own cube table
+		// already does — no separate "cube against" special case invented
+		// here that does not exist there.
+		CubeState:  raceCubeStateFor(pos, mover),
+		Cubeless:   float64(gammonnet.MoneyEquity(&probs)),
+		NoDouble:   dec.EquityNoDouble,
+		DoubleTake: dec.EquityDoubleTake,
+		DoublePass: dec.EquityDoublePass,
+		Verdict:    raceVerdictFromCubeAction(dec.Action),
+	}
+
+	return &race.Eval{
+		Regime:  race.RegimeEvaluated,
+		OnRoll:  mover,
+		WinProb: float64(probs[gammonnet.PWin]),
+		Money:   &money,
+		Depth:   depthLabel,
+	}
+}
+
+// raceCubeStateFor mirrors race/eval.go's unexported cubeStateFor.
+func raceCubeStateFor(pos *domain.Position, onRoll int) race.CubeState {
+	switch pos.Cube.Owner {
+	case onRoll:
+		return race.CubeOwned
+	case domain.None:
+		return race.CubeCentered
+	default:
+		return race.CubeAgainst
+	}
+}
+
+// raceVerdictFromCubeAction maps gammonnet's four-way cube action onto
+// race.Verdict — a straight rename: all four gammonnet.CubeAction values
+// have a Verdict counterpart (race.VerdictTooGood, #126).
+func raceVerdictFromCubeAction(a gammonnet.CubeAction) race.Verdict {
+	switch a {
+	case gammonnet.DoubleTake:
+		return race.VerdictDoubleTake
+	case gammonnet.DoublePass:
+		return race.VerdictDoublePass
+	case gammonnet.TooGood:
+		return race.VerdictTooGood
+	default:
+		return race.VerdictNoDouble
+	}
 }
 
 // evaluateMoves ranks every legal play for the position's own dice and

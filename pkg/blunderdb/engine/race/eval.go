@@ -13,6 +13,12 @@ type Regime string
 const (
 	RegimeExact     Regime = "exact"
 	RegimeEstimated Regime = "estimated"
+	// RegimeEvaluated is gammonNet playing the cube decision out — available
+	// wherever the engine is, including at a match score, which
+	// RegimeEstimated's convolution never offered (ADR-0012 extends
+	// ADR-0009: what was refused was estimating a verdict from a snapshot,
+	// not an engine that plays the trajectory out). See EvaluateWithEngine.
+	RegimeEvaluated Regime = "evaluated"
 )
 
 // Eval is the race zone of the panel: win probability for the player on
@@ -33,6 +39,10 @@ type Eval struct {
 	P99   float64 `json:"p99,omitempty"`
 	// Exact regime only.
 	Money *Money `json:"money,omitempty"`
+	// Evaluated regime only: the search depth that actually produced this
+	// number — never the one requested, same discipline as
+	// domain.CheckerMove/DoublingCubeAnalysis.AnalysisDepth (#125).
+	Depth string `json:"depth,omitempty"`
 }
 
 // Result is the full EPC-panel payload: the per-player EPC blocks (always

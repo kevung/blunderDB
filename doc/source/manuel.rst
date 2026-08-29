@@ -901,15 +901,24 @@ leur jan), le tableau course affiche, pour le joueur au trait :
 * la probabilité de gain,
 
 * en régime *exact* : les équités money (cubeless, sans double, double/prend,
-  double/passe) et le **verdict de videau money** (pas de double, double/prend
-  ou double/passe),
+  double/passe) et le **verdict de videau money** (pas de double, double/prend,
+  double/passe ou trop bon pour doubler),
+
+* en régime *évalué* : les mêmes équités et le même verdict à quatre valeurs,
+  mais **joués par gammonNet** (recherche + modèle de videau Janowski) plutôt
+  que lus dans une table — disponibles **même au score de match**, ce que le
+  régime estimé n'a jamais pu offrir ;
 
 * en régime *estimé* : la probabilité de gain seule, accompagnée de sa marge
   d'erreur — le verdict de videau n'est alors volontairement pas affiché.
 
 Un badge indique le régime : **exact** (valeur lue dans une base de données
-two-sided) ou **estimé ± marge**. Voir :ref:`epc_methodologie` pour la
-définition précise des deux régimes et de leurs hypothèses.
+two-sided), **évalué · <profondeur>** (joué par gammonNet — la profondeur
+affichée est celle qui a effectivement produit le chiffre montré) ou
+**estimé ± marge**. Le régime exact l'emporte partout où il est disponible ;
+sinon le régime évalué s'affiche dès qu'il a fini de calculer, remplaçant en
+place le régime estimé montré pendant l'attente. Voir :ref:`epc_methodologie`
+pour la définition précise des trois régimes et de leurs hypothèses.
 
 **Élargir le domaine exact.** La base intégrée couvre 6 pions par joueur.
 Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
@@ -1000,15 +1009,39 @@ règle de GNUbg, validée trait pour trait contre son analyse.
    62 % de gain, D/T exact +0,006 contre +0,475 chez XG). La **décision**
    affichée, elle, coïncide avec celle des moteurs.
 
-**Pourquoi le verdict n'est-il jamais estimé ?** L'équité cubeful est un
-problème de *trajectoire* (quand doubler), qu'aucun résumé statistique de la
-position ne capture : le meilleur modèle statique mesuré laisse une erreur
-résiduelle (écart type 0,016 d'équité, maximum 0,20) qui suffit à inverser
-toutes les décisions serrées. De même, la conversion du verdict au score de
-match via une table d'équités de match a été mesurée insuffisante (12 % de
-désaccords avec l'analyse 2-ply de GNUbg, avec de vraies bourdes). Un
-verdict faux affiché avec aplomb étant pire que pas de verdict, blunderDB
-n'affiche le verdict que lorsqu'il est exact — et money.
+**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact, la
+probabilité de gain provient de la sortie brute de gammonNet (recherche 0- ou
+2-plis selon le geste, jamais lue dans une table), et le verdict d'un
+« Decide » Janowski appliqué à cette sortie — la recherche *joue* la
+trajectoire au lieu d'en résumer un instantané, ce qui est précisément ce que
+le régime estimé ne pouvait pas faire (voir plus bas) et permet, seul des
+trois régimes avec l'exact, un verdict **au score de match**.
+
+Ce régime a été mesuré, pas seulement supposé, contre la table two-sided
+intégrée (``TestEvalMeasure``, 4000 décisions money échantillonnées,
+paramètres canoniques 2-plis k=12) : accord de verdict money **93,4 %**
+(3735/4000), ventilé par distance au point de prise de gammonNet — 61,1 % à
+moins de 1 % du point de prise (la zone la plus sensible à un pile ou face),
+88,3 % entre 1 et 5 %, 91,5 % entre 5 et 10 %, 94,0 % entre 10 et 20 %,
+94,4 % au-delà. Écart de probabilité de gain : moyenne 0,85 %, médiane
+0,44 %, 95e centile 3,21 %, maximum 8,30 %. Écart d'équité cubeful : moyenne
+0,039, médiane 0,018, 95e centile 0,151, maximum 0,406. La forme est celle
+attendue : l'essentiel du désaccord se concentre exactement au point de
+prise, où deux méthodes légitimement différentes divergent le plus sur une
+décision serrée — pas une erreur diffuse qui coûterait de l'équité partout.
+
+**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise
+spécifiquement la méthode par *convolution* (régime estimé), pas le régime
+évalué ci-dessus : l'équité cubeful est un problème de *trajectoire* (quand
+doubler), qu'aucun résumé statistique de la position ne capture — le meilleur
+modèle statique mesuré laisse une erreur résiduelle (écart type 0,016
+d'équité, maximum 0,20) qui suffit à inverser toutes les décisions serrées.
+De même, la conversion du verdict au score de match via une table d'équités
+de match a été mesurée insuffisante (12 % de désaccords avec l'analyse
+2-ply de GNUbg, avec de vraies bourdes). Un verdict faux affiché avec aplomb
+étant pire que pas de verdict, la convolution n'a jamais eu le droit
+d'afficher de verdict — c'est une recherche qui joue la trajectoire, pas un
+résumé statistique, qui comble ce trou.
 
 .. note:: Les bases de bearoff sont des tables mathématiques immuables,
    régénérables avec l'outil ``makebearoff`` de GNUbg.

@@ -642,8 +642,10 @@
         "race": {
             "exact": "tarkka",
             "estimated": "arvioitu",
+            "evaluated": "simuloitu",
             "exactTooltip": "Luettu two-sided-tietokannasta: tarkka {n} nappulaan asti pelaajaa kohden.",
             "estimatedTooltip": "Arvioitu one-sided-jakaumien konvoluutiolla + kalibroidulla korjauksella; p99 = {p99} %.",
+            "evaluatedTooltip": "gammonNetin haku on pelannut tilanteen loppuun (Janowskin kuutiomalli) — ei taulukkohaku; päätöksen yhtäpitävyys tarkan taulukon kanssa: 93,4 %.",
             "cubeless": "Cubeless",
             "noDouble": "Ei tuplausta",
             "doubleTake": "Tuplaus/Ota",
@@ -656,7 +658,8 @@
             "verdicts": {
                 "no_double": "Ei tuplausta",
                 "double_take": "Tuplaus, ota",
-                "double_pass": "Tuplaus, ohita"
+                "double_pass": "Tuplaus, ohita",
+                "too_good": "Liian hyvä tuplaamiseen"
             },
             "noDecision": "Ei päätöstä",
             "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",

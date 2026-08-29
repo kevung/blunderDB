@@ -18,6 +18,15 @@ const (
 	VerdictNoDouble   Verdict = "no_double"
 	VerdictDoubleTake Verdict = "double_take"
 	VerdictDoublePass Verdict = "double_pass"
+	// VerdictTooGood is "too good to double": playing on is worth more than
+	// cashing. The exact-regime table (MoneyFromEntry) never produces this —
+	// its verdict rule is a 3-way ND/DT/DP comparison — but the evaluated
+	// regime's engine can (gammonnet.CubeAction.TooGood), and collapsing it
+	// into "no double" would lose real information rather than just fold a
+	// label: the app already has this concept (domain.TooGood,
+	// engine/analysiscodec.go's BestCubeVerdict), so it is named here rather
+	// than invented.
+	VerdictTooGood Verdict = "too_good"
 )
 
 // Money holds the exact money-game cube data for the player on roll, in

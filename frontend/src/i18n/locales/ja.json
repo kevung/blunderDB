@@ -642,8 +642,10 @@
         "race": {
             "exact": "正確",
             "estimated": "推定",
+            "evaluated": "評価",
             "exactTooltip": "two-sidedデータベースから読み取り:プレイヤーごとに{n}枚まで正確。",
             "estimatedTooltip": "one-sided分布の畳み込み+較正済み補正による推定。p99 = {p99} %。",
+            "evaluatedTooltip": "gammonNetの探索(Janowskiキューブモデル)による実戦計算であり、テーブル参照ではありません。正確なテーブルとの判定一致率:93.4%。",
             "cubeless": "キューブレス",
             "noDouble": "ノーダブル",
             "doubleTake": "ダブル/テイク",
@@ -656,7 +658,8 @@
             "verdicts": {
                 "no_double": "ノーダブル",
                 "double_take": "ダブル、テイク",
-                "double_pass": "ダブル、パス"
+                "double_pass": "ダブル、パス",
+                "too_good": "ダブルには強すぎる"
             },
             "noDecision": "判断なし",
             "downloadHint": "プレイヤーごとに11枚まで正確なキューブ判定には、ダウンロード可能なデータベース(1.2 GB)が必要です。",

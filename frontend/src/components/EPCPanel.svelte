@@ -24,6 +24,19 @@
     let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
+    // Race panel's "evaluated" regime (#126, ADR-0012): gammonNet's own
+    // async result (same 0-ply-then-2-ply escalation as evalMoves/
+    // evalCubeAnalysis above), carrying a verdict where the fast synchronous
+    // path (updateEPC / epcDataStore, "exact"/"estimated" only) has none.
+    // Null whenever the position is not a race outside the exact domain —
+    // the Go side gates it on the same predicate race.Evaluate itself uses,
+    // so this self-clears on the very next 0-ply call after any gesture.
+    let evalRaceOverride = $state(null);
+    // Exact never yields to it (ADR-0012: "it wins wherever it is
+    // available, and nothing displaces it"); otherwise prefer the evaluated
+    // regime once it has landed, falling back to the synchronous
+    // exact/estimated payload while it is still in flight.
+    let displayRace = $derived(data.race?.regime === 'exact' ? data.race : (evalRaceOverride ?? data.race));
 
     // Progressive escalation (#125): 0-ply synchronously at the gesture
     // (measured ~376µs, ADR-0011 — cheap enough for a plain round trip),
@@ -93,6 +106,7 @@
     function applyEvalResult(result) {
         evalMoves = result?.moves ?? [];
         evalCubeAnalysis = result?.cube ?? null;
+        evalRaceOverride = result?.race ?? null;
     }
 
     let unsubEval = [];
@@ -151,14 +165,14 @@
 
     // Decision-theoretic best equity: the roller picks double or not, the
     // opponent then picks the cheaper response.
-    let bestEq = $derived(data.race?.money ? Math.max(data.race.money.no_double, Math.min(data.race.money.double_take, data.race.money.double_pass)) : 0);
-    let bestVerdict = $derived(data.race?.money?.verdict ?? '');
+    let bestEq = $derived(displayRace?.money ? Math.max(displayRace.money.no_double, Math.min(displayRace.money.double_take, displayRace.money.double_pass)) : 0);
+    let bestVerdict = $derived(displayRace?.money?.verdict ?? '');
     // Gap to the best decision, shown under every non-best equity (XG style).
     const gap = (v) => '(' + sd(v - bestEq, 3) + ')';
 
     // Win probabilities per colour (the stored value is the on-roll player's).
-    let winBlack = $derived(data.race ? (data.race.on_roll === 0 ? data.race.win_prob : 1 - data.race.win_prob) : 0);
-    let winWhite = $derived(data.race ? 1 - winBlack : 0);
+    let winBlack = $derived(displayRace ? (displayRace.on_roll === 0 ? displayRace.win_prob : 1 - displayRace.win_prob) : 0);
+    let winWhite = $derived(displayRace ? 1 - winBlack : 0);
 </script>
 
 <div class="epc-panel">
@@ -264,7 +278,7 @@
                     <div class="race-wrap">
                         <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
                             <tbody>
-                                {#if data.race.money}
+                                {#if displayRace.money}
                                     <tr>
                                         <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
                                         <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
@@ -276,23 +290,23 @@
                                     <tr>
                                         <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
                                         <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
-                                        <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
+                                        <td>{show(maskedRace, eq(displayRace.money.cubeless))}</td>
                                         <td>
-                                            {show(maskedRace, eq(data.race.money.no_double))}
+                                            {show(maskedRace, eq(displayRace.money.no_double))}
                                             {#if !maskedRace && bestVerdict && bestVerdict !== 'no_double'}
-                                                <div class="eq-gap">{gap(data.race.money.no_double)}</div>
+                                                <div class="eq-gap">{gap(displayRace.money.no_double)}</div>
                                             {/if}
                                         </td>
                                         <td>
-                                            {show(maskedRace, eq(data.race.money.double_take))}
+                                            {show(maskedRace, eq(displayRace.money.double_take))}
                                             {#if !maskedRace && bestVerdict && bestVerdict !== 'double_take'}
-                                                <div class="eq-gap">{gap(data.race.money.double_take)}</div>
+                                                <div class="eq-gap">{gap(displayRace.money.double_take)}</div>
                                             {/if}
                                         </td>
                                         <td>
-                                            {show(maskedRace, eq(data.race.money.double_pass))}
+                                            {show(maskedRace, eq(displayRace.money.double_pass))}
                                             {#if !maskedRace && bestVerdict && bestVerdict !== 'double_pass'}
-                                                <div class="eq-gap">{gap(data.race.money.double_pass)}</div>
+                                                <div class="eq-gap">{gap(displayRace.money.double_pass)}</div>
                                             {/if}
                                         </td>
                                     </tr>
@@ -309,24 +323,28 @@
                             </tbody>
                         </table>
                         <div class="race-side">
-                            {#if data.race.money}
-                                <span class="decision-chip" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
+                            {#if displayRace.money}
+                                <span class="decision-chip" title={$t('epc.race.cubeStates.' + displayRace.money.cube_state)}>
                                     {#if maskedRace}
                                         {HIDDEN}
-                                    {:else if data.race.money.verdict}
-                                        {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                                    {:else if displayRace.money.verdict}
+                                        {$t('epc.race.verdicts.' + displayRace.money.verdict)}
                                     {:else}
                                         {$t('epc.race.noDecision')}
                                     {/if}
                                 </span>
                             {/if}
-                            {#if data.race.regime === 'exact'}
-                                <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                            {#if displayRace.regime === 'exact'}
+                                <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: displayRace.source_checkers })}>
                                     {$t('epc.race.exact')}
                                 </span>
+                            {:else if displayRace.regime === 'evaluated'}
+                                <span class="badge badge-evaluated" title={$t('epc.race.evaluatedTooltip')}>
+                                    {$t('epc.race.evaluated')} · {displayRace.depth}
+                                </span>
                             {:else}
-                                <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                    {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                                <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(displayRace.p99) })}>
+                                    {$t('epc.race.estimated')} ± {pct(displayRace.sigma)} %
                                 </span>
                                 <span class="download-hint">
                                     {$t('epc.race.downloadHint')}
@@ -561,6 +579,16 @@
         background: #fdf3e1;
         border: 1px solid #ecd7a8;
         color: #8a6413;
+    }
+
+    /* Third regime (#126, ADR-0012): a distinct blue-leaning tone — closer
+       to .decision-chip than to either the green "exact" or the amber
+       "estimated" (a played-out search, not a lookup and not a summary
+       estimate). */
+    .badge-evaluated {
+        background: #e8f0fe;
+        border: 1px solid #c4d8f5;
+        color: #1a56c4;
     }
 
     .race-side {
