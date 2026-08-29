@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Compacter",
         "vacuumDone": "Base compactée : {mb} Mo libérés",
         "vacuumNothing": "Base compactée : rien à libérer",
-        "vacuumError": "Échec du compactage : {error}"
+        "vacuumError": "Échec du compactage : {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Réglages de l'évaluateur gammonNet embarqué (ADR-0011) : la profondeur d'affichage et la profondeur d'analyse sont deux réglages distincts — abaisser l'affichage ne dégrade jamais ce que le lot d'analyse écrit en base.",
+        "gammonnetDisplayPly": "Profondeur d'affichage",
+        "gammonnetDisplayPlyNote": "Confort interactif pendant l'édition du plateau. N'est jamais écrite en base.",
+        "gammonnetAnalysisPly": "Profondeur d'analyse",
+        "gammonnetAnalysisPlyNote": "Ce que le lot d'analyse après import écrit dans l'Analyse d'une position.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Élagage (k)",
+        "gammonnetCandidates": "Coups candidats affichés",
+        "gammonnetAutoAnalyze": "Analyser automatiquement après import",
+        "gammonnetAutoAnalyzeNote": "Après l'import d'un match sans analyse, lance en tâche de fond une analyse bornée et annulable des positions dépourvues d'analyse gammonNet."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",

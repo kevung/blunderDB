@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Compatta",
         "vacuumDone": "Database compattato: {mb} MB recuperati",
         "vacuumNothing": "Database compattato: niente da recuperare",
-        "vacuumError": "Compattazione non riuscita: {error}"
+        "vacuumError": "Compattazione non riuscita: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Impostazioni del valutatore gammonNet integrato (ADR-0011): la profondità di visualizzazione e quella di analisi sono due impostazioni distinte — abbassare la visualizzazione non degrada mai ciò che il lotto di analisi scrive nel database.",
+        "gammonnetDisplayPly": "Profondità di visualizzazione",
+        "gammonnetDisplayPlyNote": "Comodità interattiva durante la modifica della plancia. Non viene mai scritta nel database.",
+        "gammonnetAnalysisPly": "Profondità di analisi",
+        "gammonnetAnalysisPlyNote": "Ciò che il lotto di analisi post-importazione scrive nell'Analisi di una posizione.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Potatura (k)",
+        "gammonnetCandidates": "Mosse candidate mostrate",
+        "gammonnetAutoAnalyze": "Analizza automaticamente dopo l'importazione",
+        "gammonnetAutoAnalyzeNote": "Dopo l'importazione di una partita senza analisi, avvia in background un'analisi limitata e annullabile delle posizioni ancora prive di analisi gammonNet."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

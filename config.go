@@ -106,6 +106,26 @@ const (
 	DefaultPanelPosition = PanelPositionBottom
 )
 
+// gammonNet settings (ADR-0011, ADR-0013). Two depths, named and clamped
+// separately on purpose: display depth is interactive comfort, analysis depth
+// is what the batch (#129) writes to a Position's Analysis row. Conflating
+// them would let a comfort adjustment silently degrade what gets persisted.
+// Both default to the canonical parameters — 2-ply, pruning k=12 — matching
+// gammonnet.DefaultConfig / gammonnet.DefaultPruneK.
+const (
+	MinGammonNetPly     = 0
+	MaxGammonNetPly     = 4 // gammonnet.MaxPly
+	DefaultGammonNetPly = 2
+
+	MinGammonNetPruneK     = 1
+	MaxGammonNetPruneK     = 64
+	DefaultGammonNetPruneK = 12 // gammonnet.DefaultPruneK
+
+	MinGammonNetCandidates     = 1
+	MaxGammonNetCandidates     = 50
+	DefaultGammonNetCandidates = 10
+)
+
 type Config struct {
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
@@ -122,6 +142,18 @@ type Config struct {
 	// EpcChallenge persists the EPC panel's training mode ("défi"): results
 	// are masked after each edit until the user clicks a zone to reveal it.
 	EpcChallenge bool `json:"epc_challenge,omitempty"`
+	// gammonNet settings (ADR-0011, ADR-0013). See the Min/Max/Default
+	// constants above for the meaning of each field. The two depths are
+	// pointers, like StatsFilterPersisted.DecisionType above: 0-ply is a
+	// legitimate, user-selectable value, so a plain int could not tell an
+	// explicit 0-ply apart from an old config file that predates this field —
+	// nil is "unset, use the canonical default", a non-nil zero is "0-ply,
+	// chosen".
+	GammonNetDisplayPly  *int `json:"gammonnet_display_ply,omitempty"`
+	GammonNetAnalysisPly *int `json:"gammonnet_analysis_ply,omitempty"`
+	GammonNetPruneK      int  `json:"gammonnet_prune_k,omitempty"`
+	GammonNetCandidates  int  `json:"gammonnet_candidates,omitempty"`
+	GammonNetAutoAnalyze bool `json:"gammonnet_auto_analyze,omitempty"`
 }
 
 // clampUIScale coerces a persisted/incoming scale into the supported range,
@@ -151,6 +183,49 @@ func sanitizePanelPosition(pos string) string {
 	}
 }
 
+// clampGammonNetPly coerces an explicit search depth into the supported
+// range. It does not special-case 0: 0-ply is a legitimate depth, not a
+// missing-setting sentinel — see the *int fields on Config.
+func clampGammonNetPly(ply int) int {
+	if ply < MinGammonNetPly {
+		return MinGammonNetPly
+	}
+	if ply > MaxGammonNetPly {
+		return MaxGammonNetPly
+	}
+	return ply
+}
+
+// clampGammonNetPruneK coerces a persisted/incoming pruning width into the
+// supported range, mapping the zero value to the canonical default (k=12).
+func clampGammonNetPruneK(k int) int {
+	if k == 0 {
+		return DefaultGammonNetPruneK
+	}
+	if k < MinGammonNetPruneK {
+		return MinGammonNetPruneK
+	}
+	if k > MaxGammonNetPruneK {
+		return MaxGammonNetPruneK
+	}
+	return k
+}
+
+// clampGammonNetCandidates coerces a persisted/incoming candidate-move count
+// into the supported range, mapping the zero value to the default (10).
+func clampGammonNetCandidates(n int) int {
+	if n == 0 {
+		return DefaultGammonNetCandidates
+	}
+	if n < MinGammonNetCandidates {
+		return MinGammonNetCandidates
+	}
+	if n > MaxGammonNetCandidates {
+		return MaxGammonNetCandidates
+	}
+	return n
+}
+
 func NewConfig() *Config {
 	initialWidth, initialHeight := calculateInitialDimensions()
 	return &Config{
@@ -160,6 +235,10 @@ func NewConfig() *Config {
 		BoardColors:   DefaultBoardColors(),
 		UIScale:       DefaultUIScale,
 		PanelPosition: DefaultPanelPosition,
+		// GammonNetDisplayPly/GammonNetAnalysisPly stay nil: the Get
+		// accessors report DefaultGammonNetPly for a nil pointer.
+		GammonNetPruneK:     DefaultGammonNetPruneK,
+		GammonNetCandidates: DefaultGammonNetCandidates,
 	}
 }
 
@@ -221,6 +300,13 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.TourSeen = config.TourSeen
 	c.BearoffTsPath = config.BearoffTsPath
 	c.EpcChallenge = config.EpcChallenge
+	c.GammonNetDisplayPly = config.GammonNetDisplayPly
+	c.GammonNetAnalysisPly = config.GammonNetAnalysisPly
+	c.GammonNetPruneK = clampGammonNetPruneK(config.GammonNetPruneK)
+	config.GammonNetPruneK = c.GammonNetPruneK
+	c.GammonNetCandidates = clampGammonNetCandidates(config.GammonNetCandidates)
+	config.GammonNetCandidates = c.GammonNetCandidates
+	c.GammonNetAutoAnalyze = config.GammonNetAutoAnalyze
 
 	return &config, nil
 }
@@ -337,6 +423,76 @@ func (c *Config) GetEpcChallenge() bool {
 // SaveEpcChallenge persists the EPC training-mode flag.
 func (c *Config) SaveEpcChallenge(on bool) error {
 	c.EpcChallenge = on
+	return c.SaveConfig(c)
+}
+
+// GetGammonNetDisplayPly returns the persisted interactive-display search
+// depth (clamped; defaults to 2-ply when unset). Comfort only — never written
+// to a Position's Analysis row.
+func (c *Config) GetGammonNetDisplayPly() int {
+	if c.GammonNetDisplayPly == nil {
+		return DefaultGammonNetPly
+	}
+	return clampGammonNetPly(*c.GammonNetDisplayPly)
+}
+
+// SaveGammonNetDisplayPly persists the interactive-display search depth.
+func (c *Config) SaveGammonNetDisplayPly(ply int) error {
+	v := clampGammonNetPly(ply)
+	c.GammonNetDisplayPly = &v
+	return c.SaveConfig(c)
+}
+
+// GetGammonNetAnalysisPly returns the persisted batch-analysis search depth
+// (clamped; defaults to 2-ply when unset) — what the batch (#129) writes to
+// Analysis.
+func (c *Config) GetGammonNetAnalysisPly() int {
+	if c.GammonNetAnalysisPly == nil {
+		return DefaultGammonNetPly
+	}
+	return clampGammonNetPly(*c.GammonNetAnalysisPly)
+}
+
+// SaveGammonNetAnalysisPly persists the batch-analysis search depth.
+func (c *Config) SaveGammonNetAnalysisPly(ply int) error {
+	v := clampGammonNetPly(ply)
+	c.GammonNetAnalysisPly = &v
+	return c.SaveConfig(c)
+}
+
+// GetGammonNetPruneK returns the persisted pruning width (clamped; defaults
+// to 12, the canonical value).
+func (c *Config) GetGammonNetPruneK() int {
+	return clampGammonNetPruneK(c.GammonNetPruneK)
+}
+
+// SaveGammonNetPruneK persists the pruning width.
+func (c *Config) SaveGammonNetPruneK(k int) error {
+	c.GammonNetPruneK = clampGammonNetPruneK(k)
+	return c.SaveConfig(c)
+}
+
+// GetGammonNetCandidates returns the persisted number of candidate moves
+// shown (clamped; defaults to 10).
+func (c *Config) GetGammonNetCandidates() int {
+	return clampGammonNetCandidates(c.GammonNetCandidates)
+}
+
+// SaveGammonNetCandidates persists the number of candidate moves shown.
+func (c *Config) SaveGammonNetCandidates(n int) error {
+	c.GammonNetCandidates = clampGammonNetCandidates(n)
+	return c.SaveConfig(c)
+}
+
+// GetGammonNetAutoAnalyze returns whether an import that brought no analysis
+// triggers the batch job automatically (#129).
+func (c *Config) GetGammonNetAutoAnalyze() bool {
+	return c.GammonNetAutoAnalyze
+}
+
+// SaveGammonNetAutoAnalyze persists the auto-analyze-after-import flag.
+func (c *Config) SaveGammonNetAutoAnalyze(on bool) error {
+	c.GammonNetAutoAnalyze = on
 	return c.SaveConfig(c)
 }
 

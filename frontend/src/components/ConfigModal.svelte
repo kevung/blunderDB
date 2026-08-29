@@ -22,6 +22,18 @@
     } from '../../wailsjs/go/gui/App.js';
     import { Vacuum } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTsPath, SaveBearoffTsPath } from '../../wailsjs/go/main/Config.js';
+    import {
+        GetGammonNetDisplayPly,
+        SaveGammonNetDisplayPly,
+        GetGammonNetAnalysisPly,
+        SaveGammonNetAnalysisPly,
+        GetGammonNetPruneK,
+        SaveGammonNetPruneK,
+        GetGammonNetCandidates,
+        SaveGammonNetCandidates,
+        GetGammonNetAutoAnalyze,
+        SaveGammonNetAutoAnalyze
+    } from '../../wailsjs/go/main/Config.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
@@ -55,6 +67,7 @@
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
+        { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -286,6 +299,67 @@
         }
     }
 
+    // gammonNet settings (ADR-0011, ADR-0013). Two depths, named separately:
+    // displayPly is interactive comfort (the live evaluation panel, #125);
+    // analysisPly is what the batch job (#129) writes into a Position's
+    // Analysis row. Loaded once when the tab becomes visible, like bearoff.
+    let gnDisplayPly = $state(2);
+    let gnAnalysisPly = $state(2);
+    let gnPruneK = $state(12);
+    let gnCandidates = $state(10);
+    let gnAutoAnalyze = $state(false);
+
+    const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
+
+    async function refreshGammonNet() {
+        try {
+            [gnDisplayPly, gnAnalysisPly, gnPruneK, gnCandidates, gnAutoAnalyze] = await Promise.all([
+                GetGammonNetDisplayPly(),
+                GetGammonNetAnalysisPly(),
+                GetGammonNetPruneK(),
+                GetGammonNetCandidates(),
+                GetGammonNetAutoAnalyze()
+            ]);
+        } catch (error) {
+            logger.error('Error loading gammonNet settings:', error);
+        }
+    }
+
+    $effect(() => {
+        if (visible) {
+            refreshGammonNet();
+        }
+    });
+
+    function onGnDisplayPlyChange(event) {
+        gnDisplayPly = Number(event.currentTarget.value);
+        SaveGammonNetDisplayPly(gnDisplayPly).catch((error) => logger.error('Error saving gammonNet display ply:', error));
+    }
+
+    function onGnAnalysisPlyChange(event) {
+        gnAnalysisPly = Number(event.currentTarget.value);
+        SaveGammonNetAnalysisPly(gnAnalysisPly).catch((error) => logger.error('Error saving gammonNet analysis ply:', error));
+    }
+
+    function onGnPruneKChange(event) {
+        const k = Number(event.currentTarget.value);
+        if (!Number.isFinite(k) || k < 1) return;
+        gnPruneK = k;
+        SaveGammonNetPruneK(gnPruneK).catch((error) => logger.error('Error saving gammonNet prune k:', error));
+    }
+
+    function onGnCandidatesChange(event) {
+        const n = Number(event.currentTarget.value);
+        if (!Number.isFinite(n) || n < 1) return;
+        gnCandidates = n;
+        SaveGammonNetCandidates(gnCandidates).catch((error) => logger.error('Error saving gammonNet candidate count:', error));
+    }
+
+    function onGnAutoAnalyzeChange(event) {
+        gnAutoAnalyze = event.currentTarget.checked;
+        SaveGammonNetAutoAnalyze(gnAutoAnalyze).catch((error) => logger.error('Error saving gammonNet auto-analyze:', error));
+    }
+
     const gb = (bytes) => (bytes / 1e9).toFixed(2);
 
     function handleKeyDown(event) {
@@ -407,6 +481,39 @@
 
                         {#if bearoffError}<p class="setting-note warn">{bearoffError}</p>{/if}
                     {/if}
+                {:else if activeTab === 'gammonnet'}
+                    <p class="setting-note">{$t('config.gammonnetIntro')}</p>
+                    <div class="setting-row">
+                        <label for="config-gn-display-ply">{$t('config.gammonnetDisplayPly')}</label>
+                        <select id="config-gn-display-ply" class="setting-select" value={gnDisplayPly} onchange={onGnDisplayPlyChange}>
+                            {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
+                                <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <p class="setting-note">{$t('config.gammonnetDisplayPlyNote')}</p>
+                    <div class="setting-row">
+                        <label for="config-gn-analysis-ply">{$t('config.gammonnetAnalysisPly')}</label>
+                        <select id="config-gn-analysis-ply" class="setting-select" value={gnAnalysisPly} onchange={onGnAnalysisPlyChange}>
+                            {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
+                                <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <p class="setting-note">{$t('config.gammonnetAnalysisPlyNote')}</p>
+                    <div class="setting-row">
+                        <label for="config-gn-prune-k">{$t('config.gammonnetPruneK')}</label>
+                        <input id="config-gn-prune-k" type="number" class="setting-input" min="1" max="64" value={gnPruneK} onchange={onGnPruneKChange} />
+                    </div>
+                    <div class="setting-row">
+                        <label for="config-gn-candidates">{$t('config.gammonnetCandidates')}</label>
+                        <input id="config-gn-candidates" type="number" class="setting-input" min="1" max="50" value={gnCandidates} onchange={onGnCandidatesChange} />
+                    </div>
+                    <div class="setting-row">
+                        <label for="config-gn-auto-analyze">{$t('config.gammonnetAutoAnalyze')}</label>
+                        <input id="config-gn-auto-analyze" type="checkbox" checked={gnAutoAnalyze} onchange={onGnAutoAnalyzeChange} />
+                    </div>
+                    <p class="setting-note">{$t('config.gammonnetAutoAnalyzeNote')}</p>
                 {:else if activeTab === 'identity'}
                     <p class="setting-note">{$t('config.identityIntro')}</p>
                     {#if identity?.present}

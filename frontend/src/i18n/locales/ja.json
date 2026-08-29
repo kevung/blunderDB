@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "コンパクト化",
         "vacuumDone": "データベースをコンパクト化しました:{mb} MB を回収",
         "vacuumNothing": "データベースをコンパクト化しました:回収するものはありません",
-        "vacuumError": "コンパクト化に失敗しました:{error}"
+        "vacuumError": "コンパクト化に失敗しました:{error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "内蔵の gammonNet 評価エンジンの設定（ADR-0011）。表示深度と解析深度は別々の設定であり、表示深度を下げてもバッチ解析がデータベースに書き込む内容が劣化することはありません。",
+        "gammonnetDisplayPly": "表示深度",
+        "gammonnetDisplayPlyNote": "盤面編集時の対話的な快適さのための設定で、データベースには書き込まれません。",
+        "gammonnetAnalysisPly": "解析深度",
+        "gammonnetAnalysisPlyNote": "インポート後のバッチ解析がポジションの解析として書き込む深度です。",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "枝刈り（k）",
+        "gammonnetCandidates": "表示する候補手の数",
+        "gammonnetAutoAnalyze": "インポート後に自動解析する",
+        "gammonnetAutoAnalyzeNote": "解析のないマッチをインポートした後、gammonNet 解析がまだないポジションについて、範囲が定まった中断可能なバックグラウンド解析を実行します。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

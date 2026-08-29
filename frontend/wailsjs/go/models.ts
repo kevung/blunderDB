@@ -1610,11 +1610,16 @@ export namespace main {
 	    tour_seen?: boolean;
 	    bearoff_ts_path?: string;
 	    epc_challenge?: boolean;
-	
+	    gammonnet_display_ply?: number;
+	    gammonnet_analysis_ply?: number;
+	    gammonnet_prune_k?: number;
+	    gammonnet_candidates?: number;
+	    gammonnet_auto_analyze?: boolean;
+
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-	
+
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.window_width = source["window_width"];
@@ -1628,6 +1633,11 @@ export namespace main {
 	        this.tour_seen = source["tour_seen"];
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.epc_challenge = source["epc_challenge"];
+	        this.gammonnet_display_ply = source["gammonnet_display_ply"];
+	        this.gammonnet_analysis_ply = source["gammonnet_analysis_ply"];
+	        this.gammonnet_prune_k = source["gammonnet_prune_k"];
+	        this.gammonnet_candidates = source["gammonnet_candidates"];
+	        this.gammonnet_auto_analyze = source["gammonnet_auto_analyze"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

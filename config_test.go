@@ -165,11 +165,16 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 			DiceDot:    "#808080",
 			Cube:       "#909090",
 		},
-		UIScale:       150,
-		PanelPosition: PanelPositionSide,
-		TourSeen:      true,
-		BearoffTsPath: "/home/user/gnubg_ts6x11.bd",
-		EpcChallenge:  true,
+		UIScale:              150,
+		PanelPosition:        PanelPositionSide,
+		TourSeen:             true,
+		BearoffTsPath:        "/home/user/gnubg_ts6x11.bd",
+		EpcChallenge:         true,
+		GammonNetDisplayPly:  intPtr(1),
+		GammonNetAnalysisPly: intPtr(3),
+		GammonNetPruneK:      20,
+		GammonNetCandidates:  15,
+		GammonNetAutoAnalyze: true,
 		StatsFilter: StatsFilterPersisted{
 			PlayerName:    "Kévin Unger",
 			TournamentIDs: []int64{3, 7, 11},
@@ -206,6 +211,11 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"TourSeen", loaded.GetTourSeen(), original.TourSeen},
 		{"BearoffTsPath", loaded.GetBearoffTsPath(), original.BearoffTsPath},
 		{"EpcChallenge", loaded.GetEpcChallenge(), original.EpcChallenge},
+		{"GammonNetDisplayPly", loaded.GetGammonNetDisplayPly(), *original.GammonNetDisplayPly},
+		{"GammonNetAnalysisPly", loaded.GetGammonNetAnalysisPly(), *original.GammonNetAnalysisPly},
+		{"GammonNetPruneK", loaded.GetGammonNetPruneK(), original.GammonNetPruneK},
+		{"GammonNetCandidates", loaded.GetGammonNetCandidates(), original.GammonNetCandidates},
+		{"GammonNetAutoAnalyze", loaded.GetGammonNetAutoAnalyze(), original.GammonNetAutoAnalyze},
 		{"StatsFilter", loaded.GetStatsFilter(), original.StatsFilter},
 	}
 	for _, c := range checks {
@@ -253,6 +263,115 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	}
 	if got := loaded.GetEpcChallenge(); got != false {
 		t.Errorf("GetEpcChallenge() = %v, want false", got)
+	}
+	if got := loaded.GetGammonNetDisplayPly(); got != DefaultGammonNetPly {
+		t.Errorf("GetGammonNetDisplayPly() = %d, want default %d", got, DefaultGammonNetPly)
+	}
+	if got := loaded.GetGammonNetAnalysisPly(); got != DefaultGammonNetPly {
+		t.Errorf("GetGammonNetAnalysisPly() = %d, want default %d", got, DefaultGammonNetPly)
+	}
+	if got := loaded.GetGammonNetPruneK(); got != DefaultGammonNetPruneK {
+		t.Errorf("GetGammonNetPruneK() = %d, want default %d", got, DefaultGammonNetPruneK)
+	}
+	if got := loaded.GetGammonNetCandidates(); got != DefaultGammonNetCandidates {
+		t.Errorf("GetGammonNetCandidates() = %d, want default %d", got, DefaultGammonNetCandidates)
+	}
+	if got := loaded.GetGammonNetAutoAnalyze(); got != false {
+		t.Errorf("GetGammonNetAutoAnalyze() = %v, want false", got)
+	}
+}
+
+func TestClampGammonNetPly(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, 0}, // 0-ply is a legitimate explicit depth, not a "missing" sentinel
+		{2, 2},
+		{4, MaxGammonNetPly},
+		{-1, MinGammonNetPly},
+		{9, MaxGammonNetPly},
+	}
+	for _, c := range cases {
+		if got := clampGammonNetPly(c.in); got != c.want {
+			t.Errorf("clampGammonNetPly(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+func TestClampGammonNetPruneK(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, DefaultGammonNetPruneK},
+		{12, 12},
+		{-3, MinGammonNetPruneK},
+		{1000, MaxGammonNetPruneK},
+	}
+	for _, c := range cases {
+		if got := clampGammonNetPruneK(c.in); got != c.want {
+			t.Errorf("clampGammonNetPruneK(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+func TestClampGammonNetCandidates(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, DefaultGammonNetCandidates},
+		{10, 10},
+		{-1, MinGammonNetCandidates},
+		{1000, MaxGammonNetCandidates},
+	}
+	for _, c := range cases {
+		if got := clampGammonNetCandidates(c.in); got != c.want {
+			t.Errorf("clampGammonNetCandidates(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+// TestGammonNetDisplayAndAnalysisPlyAreIndependent guards the point of the
+// ticket: lowering the display depth must never move the analysis depth, and
+// vice versa — ADR-0013's "conflating them is what turns a comfort knob into
+// silent damage to data".
+func TestGammonNetDisplayAndAnalysisPlyAreIndependent(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if err := c.SaveConfig(c); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+	if err := c.SaveGammonNetDisplayPly(1); err != nil {
+		t.Fatalf("SaveGammonNetDisplayPly: %v", err)
+	}
+	if got := c.GetGammonNetAnalysisPly(); got != DefaultGammonNetPly {
+		t.Errorf("changing display ply moved analysis ply: GetGammonNetAnalysisPly() = %d, want %d", got, DefaultGammonNetPly)
+	}
+}
+
+// TestGammonNetZeroPlyExplicitlySavedSurvivesReload is a regression test for
+// a bug caught while writing this ticket: an early version mapped a zero
+// value to DefaultGammonNetPly unconditionally, which silently promoted a
+// deliberately-chosen 0-ply back to 2-ply on every reload. The *int fields
+// (nil = unset, non-nil zero = explicit 0-ply) are what make this
+// distinguishable — this test is what a plain int field would fail.
+func TestGammonNetZeroPlyExplicitlySavedSurvivesReload(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if err := c.SaveConfig(c); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+	if err := c.SaveGammonNetDisplayPly(0); err != nil {
+		t.Fatalf("SaveGammonNetDisplayPly: %v", err)
+	}
+
+	loaded := &Config{}
+	if _, err := loaded.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got := loaded.GetGammonNetDisplayPly(); got != 0 {
+		t.Errorf("GetGammonNetDisplayPly() after explicit 0-ply save = %d, want 0", got)
 	}
 }
 
