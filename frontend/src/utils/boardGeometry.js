@@ -90,20 +90,6 @@ export function computePipCount(position) {
 }
 
 /**
- * EPC edit mode: which mouse "button" (colour) a click on `point` maps to.
- * Both home boards are editable — Black's (points 1-6, returns 0 = left
- * click semantics) and White's (points 19-24, returns 2 = right click
- * semantics). Any other point (bar included) returns null: not editable in
- * EPC mode. The physical button pressed is irrelevant; the point decides the
- * colour, so player 2's home board is editable with a plain left click.
- */
-export function epcEditButton(point) {
-    if (point >= 1 && point <= 6) return 0;
-    if (point >= 19 && point <= 24) return 2;
-    return null;
-}
-
-/**
  * Convert a mouse event position into board-drawing coordinates. The canvas
  * may be CSS-scaled (interface zoom, side-panel layout, responsive width), so
  * client pixels are normalised by the ratio between the drawing size

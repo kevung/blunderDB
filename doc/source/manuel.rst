@@ -874,10 +874,12 @@ bouton **?** discret, en bas à droite du volet, mène au dépôt du moteur
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de
 l'aide.
 
-Dans le volet course, l'utilisateur édite la position des pions dans les deux
-jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
-du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
-(le bouton de souris est indifférent).
+L'utilisateur édite la position des pions sur l'ensemble du plateau,
+exactement comme en mode édition : clic gauche place un pion du joueur du
+bas, clic droit un pion du joueur du haut. Le volet course n'apparaît que
+lorsque la position obtenue est un bearoff pur (tous les pions des deux
+joueurs dans leur jan) ; sur toute autre position, seul le volet évaluation
+répond.
 
 Les résultats du volet course sont présentés sous forme de deux tableaux
 empilés :

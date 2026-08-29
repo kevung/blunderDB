@@ -4,7 +4,7 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
-    import { parseMoveNotation, mirrorPosition, computePipCount, epcEditButton, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
+    import { parseMoveNotation, mirrorPosition, computePipCount, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -262,13 +262,12 @@
     }
 
     function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
-        // In EPC mode both home boards are editable; the point decides the
-        // colour (1-6 → Black, 19-24 → White), whatever button was pressed.
-        if (mode === 'EPC') {
-            const epcButton = epcEditButton(checkerPoint);
-            if (epcButton === null) return;
-            button = epcButton;
-        }
+        // The Eval panel (EPC mode) merges race analysis and gammonNet position
+        // evaluation (ADR-0012): it is not race-only, so the whole board is
+        // editable, exactly like EDIT mode — colour follows the mouse button
+        // (left → Black, right → White) on every point, not just the home
+        // boards. A position outside the race domain simply gets no race
+        // verdict; the Go side already handles that gracefully.
 
         // A single click on a blocked ("must be empty") Except point unblocks it
         // (back to empty) so checkers can be edited again.
