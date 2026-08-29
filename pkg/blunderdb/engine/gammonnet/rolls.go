@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // NumRolls is the number of distinct rolls: (1,1) and (2,1) are rolls, (1,2) is

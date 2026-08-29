@@ -1247,6 +1247,7 @@ export default {
                         <li><strong>Nicolas Harmand</strong>, un joyeux compagnon depuis plus d'une décennie dans de grandes aventures, et un fantastique partenaire de jeu depuis qu'il a attrapé le virus du backgammon.</li>
                     </ul>
                     <p>La table de match equity Kazaross-XG2 (MET) est attribuée à <strong>Neil Kazaross</strong>.</p>
+                    <p>Le réseau gammonNet <strong>strehl-prob5-512-512-256-128</strong> est attribué à <strong>Alexander Strehl</strong>, dérivé de <em>alexstrehl/backgammon-ai-engine</em> (MIT). La recherche, la table de match equity et le modèle de videau qui l'entourent forment la configuration propre de <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
                     <p>Les tables de take points et de valeurs de gammon sont tirées du livre <em>The Theory of Backgammon</em> de <strong>Dirk Schiemann</strong>.</p>
                     <p>
                         La base de données de sortie unilatérale à 6 points utilisée pour le calcul de l'EPC (Effective Pip Count) a été générée avec <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel de backgammon libre et open source

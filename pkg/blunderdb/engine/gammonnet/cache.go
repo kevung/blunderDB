@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // The evaluation cache: a direct-mapped table from a position to the raw leaf

@@ -1244,6 +1244,7 @@ export default {
                         <li><strong>Nicolas Harmand</strong>。10 年以上にわたり素晴らしい冒険を共にした陽気な相棒であり、バックギャモンにはまって以来の最高のゲームパートナーに。</li>
                     </ul>
                     <p>Kazaross-XG2 マッチエクイティテーブル（MET）は <strong>Neil Kazaross</strong> によるものです。</p>
+                    <p>gammonNet のネットワーク <strong>strehl-prob5-512-512-256-128</strong> は <strong>Alexander Strehl</strong> によるもので、<em>alexstrehl/backgammon-ai-engine</em>（MIT）に由来します。それを取り巻く探索、マッチエクイティテーブル、キューブモデルは <strong>gammonNet</strong> 独自の構成です（<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>）。</p>
                     <p>テイクポイントとギャモン値の表は <strong>Dirk Schiemann</strong> の著書 <em>The Theory of Backgammon</em> から引用しています。</p>
                     <p>
                         EPC（Effective Pip Count）の計算に使用される片側 6 ポイントベアオフデータベースは <strong>GNU Backgammon</strong>（GNUbg）で生成されました。GNUbg は GNU 一般公衆利用許諾契約書の下で提供される

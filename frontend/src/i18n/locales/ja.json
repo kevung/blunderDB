@@ -665,7 +665,8 @@
         }
     },
     "eval": {
-        "pending": "評価はここに表示されます。"
+        "pending": "評価はここに表示されます。",
+        "engineTooltip": "gammonNet"
     },
     "searchHistory": {
         "enterFilterName": "フィルター名を入力してください",

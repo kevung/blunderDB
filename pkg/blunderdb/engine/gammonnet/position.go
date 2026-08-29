@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 // Package gammonnet is a Go port of the gammonNet evaluator's network,
 // feature encoding, search and cube model (https://github.com/kevung/gammonNet,
 // MIT).

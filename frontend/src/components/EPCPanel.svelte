@@ -5,7 +5,7 @@
     import { positionStore } from '../stores/positionStore';
     import { GetEpcChallenge, SaveEpcChallenge, GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
     import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
-    import { EventsOn } from '../../wailsjs/runtime/runtime.js';
+    import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
@@ -130,6 +130,14 @@
         openModal(MODAL.CONFIG);
     }
 
+    // #131: a discreet, single-word attribution — the engine's name is the
+    // link itself, never a sentence. Full credit (Strehl for the network,
+    // gammonNet for the search/MET/cube configuration around it, ADR-0011)
+    // lives in the Acknowledgements section of the in-app help, not here.
+    function openGammonNetRepo() {
+        BrowserOpenURL('https://github.com/kevung/gammonNet');
+    }
+
     // The race analysis follows the position: the on-roll player is edited on
     // the board (click a player's bearoff/score rectangle, as in EDIT mode)
     // and the cube owner by clicking the cube on the board. The position
@@ -200,6 +208,7 @@
                 {:else}
                     <div class="eval-placeholder">{$t('eval.pending')}</div>
                 {/if}
+                <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
             </div>
 
             <!-- Race volet: reserves its place, but only a race position
@@ -427,11 +436,37 @@
 
     .eval-section {
         width: 100%;
+        position: relative;
     }
 
     .eval-placeholder {
         color: #888;
         font-size: var(--font-size-small);
+    }
+
+    /* #131: a discreet mention that gammonNet is the engine, one character
+       and a link — never a sentence in the panel itself (full attribution
+       lives in the in-app help's Acknowledgements). */
+    .eval-engine-badge {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        padding: 0;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        background: transparent;
+        color: #aaa;
+        font-size: var(--font-size-small);
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .eval-engine-badge:hover {
+        color: #1a56c4;
+        border-color: #1a56c4;
     }
 
     /* Reserves its place even on a non-race position, rather than the panel

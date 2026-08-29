@@ -665,7 +665,8 @@
         }
     },
     "eval": {
-        "pending": "Arviointi tulee tähän."
+        "pending": "Arviointi tulee tähän.",
+        "engineTooltip": "gammonNet"
     },
     "searchHistory": {
         "enterFilterName": "Anna suodattimelle nimi",

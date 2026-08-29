@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // The pre-roll distribution at depth — ported from gn_search.c's

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // The 196-feature perspective encoding, reproduced from gammonNet's
