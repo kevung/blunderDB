@@ -18,9 +18,10 @@
         DownloadBearoffDB,
         CancelBearoffDownload,
         DeleteBearoffDB,
-        OpenBearoffFileDialog
+        OpenBearoffFileDialog,
+        StartGammonNetBatch
     } from '../../wailsjs/go/gui/App.js';
-    import { Vacuum } from '../../wailsjs/go/database/Database.js';
+    import { Vacuum, CountPositionsWithoutAnalysis } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTsPath, SaveBearoffTsPath } from '../../wailsjs/go/main/Config.js';
     import {
         GetGammonNetDisplayPly,
@@ -308,6 +309,11 @@
     let gnPruneK = $state(12);
     let gnCandidates = $state(10);
     let gnAutoAnalyze = $state(false);
+    // Catch-up (#130, ADR-0015): the same batch #129 wires after import, run
+    // on demand for a library built before gammonNet existed. The count is
+    // informational only — StartGammonNetBatch re-derives its own list.
+    let gnMissingCount = $state(null);
+    let gnCatchUpStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
 
@@ -322,6 +328,26 @@
             ]);
         } catch (error) {
             logger.error('Error loading gammonNet settings:', error);
+        }
+        try {
+            gnMissingCount = await CountPositionsWithoutAnalysis();
+        } catch (error) {
+            logger.error('Error counting positions without analysis:', error);
+            gnMissingCount = null;
+        }
+    }
+
+    // StatusBar.svelte owns the live progress chip/cancel button for every
+    // gammonNet batch run, whichever of the three triggers started it
+    // (auto-after-import #129, this button, or a future CLI/serve run has no
+    // GUI to show). Starting it here is fire-and-forget: no local progress
+    // state to duplicate.
+    async function startGammonNetCatchUp() {
+        gnCatchUpStarting = true;
+        try {
+            StartGammonNetBatch(gnAnalysisPly, gnPruneK, gnCandidates);
+        } finally {
+            gnCatchUpStarting = false;
         }
     }
 
@@ -514,6 +540,15 @@
                         <input id="config-gn-auto-analyze" type="checkbox" checked={gnAutoAnalyze} onchange={onGnAutoAnalyzeChange} />
                     </div>
                     <p class="setting-note">{$t('config.gammonnetAutoAnalyzeNote')}</p>
+                    <div class="setting-row">
+                        <span class="setting-label">
+                            {gnMissingCount === null ? $t('config.gammonnetCatchUpUnknown') : $t('config.gammonnetCatchUpCount', { n: gnMissingCount })}
+                        </span>
+                        <button class="secondary-button" disabled={gnCatchUpStarting || gnMissingCount === 0} onclick={startGammonNetCatchUp}>
+                            {$t('config.gammonnetCatchUpStart')}
+                        </button>
+                    </div>
+                    <p class="setting-note">{$t('config.gammonnetCatchUpNote')}</p>
                 {:else if activeTab === 'identity'}
                     <p class="setting-note">{$t('config.identityIntro')}</p>
                     {#if identity?.present}

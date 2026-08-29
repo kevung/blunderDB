@@ -37,6 +37,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `list` - List database contents
 - `match` - Display match positions and analysis
 - `epc` - EPC, win probability and money cube verdict for a bearoff position
+- `analyze` - Write a gammonNet analysis for every position missing one
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
@@ -672,6 +673,42 @@ its measured error bound; the cube verdict is deliberately never estimated
 
 # With the downloaded TS-06-11 (exact up to 11 checkers per player)
 ./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
+```
+
+## Analyze Command
+
+Write a gammonNet analysis for every position that has none — the catch-up
+sweep for a library built before this feature existed (ADR-0013, ADR-0015).
+The same operation as the GUI's automatic post-import analysis and its
+explicit "analyze now" button, and as `serve`'s `/v1/gammonnet.analyzeMissing`
+for a tenant.
+
+```bash
+./blunderDB analyze --db database.db [options]
+```
+
+**Options:**
+- `--ply` - Search depth (default: 2, the canonical parameter)
+- `--prune-k` - Pruning width (default: 12, the canonical parameter)
+- `--candidates` - Candidate moves kept per checker decision (default: 10)
+
+**The gap rule (ADR-0013).** A position already carrying any analysis — from
+XG, GNUbg, BGBlitz, or a prior gammonNet run — is left untouched, regardless
+of which engine is missing. Only a position with no analysis at all is
+written. This makes the command safe to re-run at any time, and safe to
+interrupt: Ctrl-C cancels cleanly, nothing already written is lost, and the
+next run picks up exactly where the last one left off — no journal needed,
+because "positions with no analysis" is re-derived fresh every time.
+
+**Example:**
+```bash
+./blunderDB analyze --db database.db
+# Analyzing 1204 position(s) with gammonNet (2-ply, k=12)...
+#   1/1204 (0%)
+#   61/1204 (5%)
+#   ...
+#   1204/1204 (100%)
+# Done.
 ```
 
 ## Info Command

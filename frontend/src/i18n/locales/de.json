@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Beschneidung (k)",
         "gammonnetCandidates": "Angezeigte Kandidatenzüge",
         "gammonnetAutoAnalyze": "Nach Import automatisch analysieren",
-        "gammonnetAutoAnalyzeNote": "Startet nach dem Import eines Matches ohne Analyse eine begrenzte, abbrechbare Hintergrundanalyse der Positionen ohne gammonNet-Analyse."
+        "gammonnetAutoAnalyzeNote": "Startet nach dem Import eines Matches ohne Analyse eine begrenzte, abbrechbare Hintergrundanalyse der Positionen ohne gammonNet-Analyse.",
+        "gammonnetCatchUpUnknown": "Positionen ohne Analyse werden geprüft…",
+        "gammonnetCatchUpCount": "{n} Position(en) ohne Analyse.",
+        "gammonnetCatchUpStart": "Jetzt analysieren",
+        "gammonnetCatchUpNote": "Startet manuell dieselbe begrenzte, abbrechbare Analyse — nützlich, um eine vor dieser Funktion angelegte Bibliothek nachzuholen."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

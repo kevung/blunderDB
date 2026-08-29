@@ -90,7 +90,11 @@
         "gammonnetPruneK": "枝刈り（k）",
         "gammonnetCandidates": "表示する候補手の数",
         "gammonnetAutoAnalyze": "インポート後に自動解析する",
-        "gammonnetAutoAnalyzeNote": "解析のないマッチをインポートした後、gammonNet 解析がまだないポジションについて、範囲が定まった中断可能なバックグラウンド解析を実行します。"
+        "gammonnetAutoAnalyzeNote": "解析のないマッチをインポートした後、gammonNet 解析がまだないポジションについて、範囲が定まった中断可能なバックグラウンド解析を実行します。",
+        "gammonnetCatchUpUnknown": "解析のないポジションを確認しています…",
+        "gammonnetCatchUpCount": "解析のないポジションが {n} 件あります。",
+        "gammonnetCatchUpStart": "今すぐ解析",
+        "gammonnetCatchUpNote": "この機能の追加前に作られたライブラリを追いつかせるため、同じ範囲が定まった中断可能な解析を手動で実行します。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",

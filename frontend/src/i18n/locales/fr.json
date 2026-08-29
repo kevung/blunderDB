@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Élagage (k)",
         "gammonnetCandidates": "Coups candidats affichés",
         "gammonnetAutoAnalyze": "Analyser automatiquement après import",
-        "gammonnetAutoAnalyzeNote": "Après l'import d'un match sans analyse, lance en tâche de fond une analyse bornée et annulable des positions dépourvues d'analyse gammonNet."
+        "gammonnetAutoAnalyzeNote": "Après l'import d'un match sans analyse, lance en tâche de fond une analyse bornée et annulable des positions dépourvues d'analyse gammonNet.",
+        "gammonnetCatchUpUnknown": "Vérification des positions sans analyse…",
+        "gammonnetCatchUpCount": "{n} position(s) sans analyse.",
+        "gammonnetCatchUpStart": "Analyser maintenant",
+        "gammonnetCatchUpNote": "Lance manuellement la même analyse bornée et annulable — utile pour rattraper une bibliothèque constituée avant cette fonctionnalité."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",

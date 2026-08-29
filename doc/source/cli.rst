@@ -57,6 +57,7 @@ Commandes disponibles
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID)."
+   "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "info", "Affiche les métadonnées de la base."
    "edit", "Modifie les métadonnées de la base."
    "verify", "Vérifie l'intégrité de la base."
@@ -491,6 +492,51 @@ volontairement jamais estimé (voir ADR-0009).
 
    # Avec la base TS-06-11 téléchargée (exact jusqu'à 11 pions par joueur)
    ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
+
+analyze — Rattrapage gammonNet
+---------------------------------
+
+Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le
+rattrapage d'une bibliothèque constituée avant que cette fonctionnalité
+existe (ADR-0013, ADR-0015). C'est la même opération que le déclenchement
+automatique après import et le bouton « Analyser maintenant » de l'interface
+graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
+``serve`` pour un tenant — trois formes différentes de la même opération, pas
+trois logiques distinctes (voir :ref:`headless`).
+
+.. code-block:: bash
+
+   ./blunderdb analyze --db <chemin> [options]
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique).
+* ``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique).
+* ``--candidates`` — Nombre de coups candidats conservés par décision de
+  déplacement (défaut: 10).
+
+**La règle du trou (ADR-0013).** Une position portant déjà une analyse —
+XG, GNUbg, BGBlitz, ou un précédent passage de gammonNet — n'est jamais
+touchée, quel que soit le moteur manquant. Seule une position **sans aucune**
+analyse est écrite. La commande peut donc être relancée à tout moment sans
+risque, et interrompue proprement : Ctrl-C annule sans rien perdre de ce qui
+est déjà écrit, et la prochaine exécution reprend exactement là où la
+précédente s'est arrêtée — aucun journal n'est nécessaire, puisque « les
+positions sans analyse » est recalculé à chaque lancement.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb analyze --db base.db
+
+   # Analyzing 1204 position(s) with gammonNet (2-ply, k=12)...
+   #   1/1204 (0%)
+   #   61/1204 (5%)
+   #   ...
+   #   1204/1204 (100%)
+   # Done.
 
 info — Métadonnées de la base
 ------------------------------

@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Karsinta (k)",
         "gammonnetCandidates": "Näytettävät ehdokassiirrot",
         "gammonnetAutoAnalyze": "Analysoi automaattisesti tuonnin jälkeen",
-        "gammonnetAutoAnalyzeNote": "Kun ottelu tuodaan ilman analyysiä, käynnistää taustalla rajatun, peruutettavan analyysin positioista, joilta puuttuu vielä gammonNet-analyysi."
+        "gammonnetAutoAnalyzeNote": "Kun ottelu tuodaan ilman analyysiä, käynnistää taustalla rajatun, peruutettavan analyysin positioista, joilta puuttuu vielä gammonNet-analyysi.",
+        "gammonnetCatchUpUnknown": "Tarkistetaan positioita ilman analyysiä…",
+        "gammonnetCatchUpCount": "{n} positiota ilman analyysiä.",
+        "gammonnetCatchUpStart": "Analysoi nyt",
+        "gammonnetCatchUpNote": "Käynnistää saman rajatun, peruutettavan analyysin manuaalisesti — hyödyllinen ennen tätä ominaisuutta luodun kirjaston saattamiseksi ajan tasalle."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

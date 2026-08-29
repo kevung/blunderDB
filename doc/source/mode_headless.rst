@@ -183,6 +183,19 @@ d'usage connu : les non-doubles étiquetés « Double No » par gnuBG, dont la
 lecture était fautive avant la version 0.33.0 et qui portaient l'erreur d'un
 double qui n'a jamais eu lieu.
 
+``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant
+courant : écrire une analyse pour chaque position qui n'en a aucune (ADR-0013,
+ADR-0015). C'est une opération de **bibliothèque** — elle lit et écrit des
+positions et des analyses stockées — jamais un évaluateur nu :
+``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` évalue une
+position. La réponse est un flux NDJSON (``started``, ``progress``, puis
+``done`` ou ``error``/``cancelled``), sur le même modèle que les points
+d'accès d'import ; ``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` reçu
+dans l'évènement ``started``) annule un rattrapage en cours. C'est la même
+opération que le déclenchement automatique après import et le geste explicite
+de l'interface graphique, et que la sous-commande ``blunderdb analyze`` (voir
+:ref:`cli`) — trois formes, une seule logique.
+
 .. _headless_docker:
 
 Déploiement avec Docker

@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Poda (k)",
         "gammonnetCandidates": "Movimientos candidatos mostrados",
         "gammonnetAutoAnalyze": "Analizar automáticamente tras importar",
-        "gammonnetAutoAnalyzeNote": "Tras importar una partida sin análisis, ejecuta en segundo plano un análisis acotado y cancelable de las posiciones aún sin análisis gammonNet."
+        "gammonnetAutoAnalyzeNote": "Tras importar una partida sin análisis, ejecuta en segundo plano un análisis acotado y cancelable de las posiciones aún sin análisis gammonNet.",
+        "gammonnetCatchUpUnknown": "Comprobando posiciones sin análisis…",
+        "gammonnetCatchUpCount": "{n} posición(es) sin análisis.",
+        "gammonnetCatchUpStart": "Analizar ahora",
+        "gammonnetCatchUpNote": "Ejecuta manualmente el mismo análisis acotado y cancelable — útil para poner al día una biblioteca creada antes de esta función."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",

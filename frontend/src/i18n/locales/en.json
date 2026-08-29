@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Pruning (k)",
         "gammonnetCandidates": "Candidate moves shown",
         "gammonnetAutoAnalyze": "Auto-analyze after import",
-        "gammonnetAutoAnalyzeNote": "After importing a match with no analysis, runs a bounded, cancellable background analysis of positions still missing a gammonNet analysis."
+        "gammonnetAutoAnalyzeNote": "After importing a match with no analysis, runs a bounded, cancellable background analysis of positions still missing a gammonNet analysis.",
+        "gammonnetCatchUpUnknown": "Checking for positions without an analysis…",
+        "gammonnetCatchUpCount": "{n} position(s) without an analysis.",
+        "gammonnetCatchUpStart": "Analyze now",
+        "gammonnetCatchUpNote": "Runs the same bounded, cancellable analysis manually — useful to catch up a library built before this feature existed."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

@@ -90,7 +90,11 @@
         "gammonnetPruneK": "Potatura (k)",
         "gammonnetCandidates": "Mosse candidate mostrate",
         "gammonnetAutoAnalyze": "Analizza automaticamente dopo l'importazione",
-        "gammonnetAutoAnalyzeNote": "Dopo l'importazione di una partita senza analisi, avvia in background un'analisi limitata e annullabile delle posizioni ancora prive di analisi gammonNet."
+        "gammonnetAutoAnalyzeNote": "Dopo l'importazione di una partita senza analisi, avvia in background un'analisi limitata e annullabile delle posizioni ancora prive di analisi gammonNet.",
+        "gammonnetCatchUpUnknown": "Verifica delle posizioni senza analisi…",
+        "gammonnetCatchUpCount": "{n} posizione/i senza analisi.",
+        "gammonnetCatchUpStart": "Analizza ora",
+        "gammonnetCatchUpNote": "Avvia manualmente la stessa analisi limitata e annullabile — utile per recuperare una libreria creata prima di questa funzione."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

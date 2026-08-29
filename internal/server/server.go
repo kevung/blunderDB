@@ -29,7 +29,12 @@ type Server struct {
 	knownPaths map[string]bool
 
 	imports *importRegistry
-	rl      *middleware.RateLimiter // nil when rate limiting is disabled
+	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps (#130), kept
+	// separate from imports so cancelling one can never be confused with the
+	// other — reuses importRegistry's scope-keyed cancel bookkeeping under
+	// its own instance rather than a new type for the same three methods.
+	gammonnetJobs *importRegistry
+	rl            *middleware.RateLimiter // nil when rate limiting is disabled
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -46,7 +51,8 @@ func New(opts Options) (*Server, error) {
 			Metrics:         opts.Metrics,
 			ExpectedVersion: domain.DatabaseVersion,
 		},
-		imports: newImportRegistry(),
+		imports:       newImportRegistry(),
+		gammonnetJobs: newImportRegistry(),
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)

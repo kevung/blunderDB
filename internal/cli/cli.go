@@ -85,6 +85,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"epc":      cli.runEpc,
 		"search":   cli.runSearch,
 		"vacuum":   cli.runVacuum,
+		"analyze":  cli.runAnalyze,
 		"help":     func([]string) error { cli.printUsage(); return nil },
 		"version":  func([]string) error { cli.printVersion(); return nil },
 	}
@@ -114,6 +115,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
+	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")
