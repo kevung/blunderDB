@@ -9,6 +9,17 @@ import (
 	"testing"
 )
 
+// BLUNDERDB_GOLD gates TestSearchMatchesTheGoldFile out of the default `go
+// test ./...` run. `testing.Short()` alone does not do it: CI's test job
+// (.github/workflows/build.yml) never passes `-short`, and this test pays the
+// race detector's cost on a search that is already parallel — measured
+// 2026-08-29 on a 16-core machine: 10.3s plain, still running past 300s under
+// `-race` (the CI job's own flag), a >30x blow-up that alone exceeds the whole
+// suite's 1200s CI budget. Same treatment as TestIntegrationGate
+// (integration_gate_test.go, BLUNDERDB_GATE) and TestEvalMeasure
+// (eval_measure_test.go, BLUNDERDB_EVAL_MEASURE): a pre-merge recipe step, not
+// a CI test.
+
 // The gold file: what gammonNet's C reference answers for every decision in the
 // corpus, at the canonical configuration — prune k=12, filter (0,1,3).
 //
@@ -77,8 +88,8 @@ func loadGold(t *testing.T) []goldEntry {
 // The search parity gate of #121: the same chosen move as the C reference, with
 // equities agreeing to 1e-6.
 func TestSearchMatchesTheGoldFile(t *testing.T) {
-	if testing.Short() {
-		t.Skip("replays ten 2-ply decisions")
+	if os.Getenv("BLUNDERDB_GOLD") == "" {
+		t.Skip("set BLUNDERDB_GOLD to run the search-parity gold file (85 2-ply decisions; slow, and very slow under -race)")
 	}
 	raw, err := os.ReadFile(corpusPath)
 	if err != nil {
