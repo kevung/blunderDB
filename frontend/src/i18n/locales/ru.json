@@ -668,7 +668,8 @@
         }
     },
     "eval": {
-        "pending": "Оценка появится здесь."
+        "pending": "Оценка появится здесь.",
+        "engineTooltip": "gammonNet"
     },
     "searchHistory": {
         "enterFilterName": "Введите имя фильтра",

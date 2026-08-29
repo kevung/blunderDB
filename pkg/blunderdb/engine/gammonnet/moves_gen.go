@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // maxLevel bounds the number of DISTINCT positions reachable after k sub-moves.

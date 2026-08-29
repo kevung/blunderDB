@@ -860,7 +860,11 @@ l'onglet *gammonNet* de la configuration) la remplace en arrière-plan — tout
 nouveau geste annule ce calcul de fond. La profondeur affichée à côté de
 chaque coup ou de la décision de videau est toujours celle qui a
 effectivement produit le chiffre montré, jamais celle demandée. Ce volet ne
-modifie jamais la base : c'est un calcul, pas une analyse enregistrée.
+modifie jamais la base : c'est un calcul, pas une analyse enregistrée. Le
+bouton **?** discret, en bas à droite du volet, mène au dépôt du moteur
+`gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
+(réseau Strehl, configuration gammonNet) figure dans les Remerciements de
+l'aide.
 
 Dans le volet course, l'utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur

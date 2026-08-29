@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // The cube model, ported from gammonNet's gn_cube.c/gn_cube.h. See those

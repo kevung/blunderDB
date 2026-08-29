@@ -1244,6 +1244,7 @@ export default {
                         <li><strong>Nicolas Harmand</strong>, iloinen seuralainen yli vuosikymmenen ajan suurissa seikkailuissa ja loistava pelikumppani siitä lähtien, kun hän sai backgammon-kärpäsen.</li>
                     </ul>
                     <p>Kazaross-XG2-otteluekvivalenssitaulukon (MET) ansio kuuluu <strong>Neil Kazarossille</strong>.</p>
+                    <p>gammonNet-verkon <strong>strehl-prob5-512-512-256-128</strong> ansio kuuluu <strong>Alexander Strehlille</strong>, joka perustuu projektiin <em>alexstrehl/backgammon-ai-engine</em> (MIT). Haku, otteluekvivalenssitaulukko ja tuplausmalli sen ympärillä muodostavat <strong>gammonNet</strong>-projektin oman kokoonpanon (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
                     <p>Take point- ja gammon-arvotaulukot on otettu <strong>Dirk Schiemannin</strong> kirjasta <em>The Theory of Backgammon</em>.</p>
                     <p>
                         EPC-laskennassa (Effective Pip Count) käytetty yksipuolinen 6-pisteen bearoff-tietokanta on luotu <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on ilmainen ja avoimen lähdekoodin

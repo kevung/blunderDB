@@ -1245,6 +1245,7 @@ export default {
                         <li><strong>Nicolas Harmand</strong>, радостный спутник на протяжении более десятилетия в замечательных приключениях, и фантастический партнёр по игре с тех пор, как он заразился нардами.</li>
                     </ul>
                     <p>Таблица match equity Kazaross-XG2 (MET) принадлежит <strong>Neil Kazaross</strong>.</p>
+                    <p>Сеть gammonNet <strong>strehl-prob5-512-512-256-128</strong> принадлежит <strong>Alexander Strehl</strong>, основана на <em>alexstrehl/backgammon-ai-engine</em> (MIT). Поиск, таблица match equity и модель куба вокруг неё — собственная конфигурация <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
                     <p>Таблицы take point и значений gammon взяты из книги <strong>Dirk Schiemann</strong> <em>The Theory of Backgammon</em>.</p>
                     <p>
                         Односторонняя база данных вывода на 6 пунктов, используемая для вычисления EPC (Effective Pip Count), была сгенерирована с помощью <strong>GNU Backgammon</strong> (GNUbg). GNUbg — это свободная программа для нард с открытым исходным кодом,

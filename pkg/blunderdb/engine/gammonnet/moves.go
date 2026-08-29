@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 package gammonnet
 
 // Legal play generation over the evaluator's own representation.

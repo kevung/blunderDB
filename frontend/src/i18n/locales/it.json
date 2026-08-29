@@ -668,7 +668,8 @@
         }
     },
     "eval": {
-        "pending": "La valutazione apparirà qui."
+        "pending": "La valutazione apparirà qui.",
+        "engineTooltip": "gammonNet"
     },
     "searchHistory": {
         "enterFilterName": "Inserisci un nome per il filtro",

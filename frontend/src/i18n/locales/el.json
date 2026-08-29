@@ -668,7 +668,8 @@
         }
     },
     "eval": {
-        "pending": "Η αξιολόγηση θα εμφανιστεί εδώ."
+        "pending": "Η αξιολόγηση θα εμφανιστεί εδώ.",
+        "engineTooltip": "gammonNet"
     },
     "searchHistory": {
         "enterFilterName": "Εισαγάγετε ένα όνομα φίλτρου",
