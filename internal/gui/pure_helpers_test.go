@@ -10,7 +10,7 @@ import (
 // --- IsDirectory --------------------------------------------------------
 
 func TestIsDirectory(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "a.txt")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
@@ -39,7 +39,7 @@ func TestIsDirectory(t *testing.T) {
 // --- PathExists -----------------------------------------------------------
 
 func TestPathExists(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "a.txt")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
@@ -68,7 +68,7 @@ func TestPathExists(t *testing.T) {
 // --- CollectImportableFiles ------------------------------------------------
 
 func TestCollectImportableFiles(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 
 	files := []string{
@@ -118,7 +118,7 @@ func TestCollectImportableFiles(t *testing.T) {
 }
 
 func TestCollectImportableFilesIsCaseInsensitiveOnExtension(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(dir, "MATCH.XG"), []byte("x"), 0644); err != nil {
 		t.Fatalf("write file: %v", err)
@@ -133,7 +133,7 @@ func TestCollectImportableFilesIsCaseInsensitiveOnExtension(t *testing.T) {
 }
 
 func TestCollectImportableFilesOnMissingDirectory(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	// filepath.Walk reports the missing-root error to the walk callback (not
 	// to Walk's own return value); CollectImportableFiles's callback swallows
 	// every per-entry error unconditionally ("skip files/dirs we can't
@@ -153,7 +153,7 @@ func TestCollectImportableFilesOnMissingDirectory(t *testing.T) {
 // --- ReadFileContent --------------------------------------------------------
 
 func TestReadFileContent(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "position.txt")
 	content := "some position text\nwith multiple lines\n"
@@ -177,7 +177,7 @@ func TestReadFileContent(t *testing.T) {
 }
 
 func TestReadFileContentMissingFile(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	missing := filepath.Join(dir, "missing.txt")
 
@@ -196,7 +196,7 @@ func TestReadFileContentMissingFile(t *testing.T) {
 // --- DeleteFile ---------------------------------------------------------
 
 func TestDeleteFile(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "database.db")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
@@ -212,7 +212,7 @@ func TestDeleteFile(t *testing.T) {
 }
 
 func TestDeleteFileRejectsNonDbExtension(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "notes.txt")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
@@ -228,7 +228,7 @@ func TestDeleteFileRejectsNonDbExtension(t *testing.T) {
 }
 
 func TestDeleteFileIsCaseInsensitiveOnExtension(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	file := filepath.Join(dir, "database.DB")
 	if err := os.WriteFile(file, []byte("x"), 0644); err != nil {
@@ -240,7 +240,7 @@ func TestDeleteFileIsCaseInsensitiveOnExtension(t *testing.T) {
 }
 
 func TestDeleteFileMissingPathWithDbExtension(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 	dir := t.TempDir()
 	missing := filepath.Join(dir, "gone.db")
 	if err := a.DeleteFile(missing); err == nil {

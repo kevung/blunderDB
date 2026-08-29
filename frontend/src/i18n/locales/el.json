@@ -669,7 +669,9 @@
     },
     "eval": {
         "pending": "Η αξιολόγηση θα εμφανιστεί εδώ.",
-        "engineTooltip": "gammonNet"
+        "engineTooltip": "gammonNet",
+        "batchProgress": "gammonNet αναλύει: {done}/{total}",
+        "batchCancel": "Ακύρωση"
     },
     "searchHistory": {
         "enterFilterName": "Εισαγάγετε ένα όνομα φίλτρου",

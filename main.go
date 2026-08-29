@@ -110,7 +110,7 @@ func runGUI() {
 	}
 
 	// Bind the database and config alongside the GUI App struct.
-	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, []interface{}{db, cfg}); err != nil {
+	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, db, []interface{}{db, cfg}); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}

@@ -669,7 +669,9 @@
     },
     "eval": {
         "pending": "Arviointi tulee tähän.",
-        "engineTooltip": "gammonNet"
+        "engineTooltip": "gammonNet",
+        "batchProgress": "gammonNet analysoi: {done}/{total}",
+        "batchCancel": "Peruuta"
     },
     "searchHistory": {
         "enterFilterName": "Anna suodattimelle nimi",

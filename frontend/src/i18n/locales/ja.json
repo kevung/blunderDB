@@ -669,7 +669,9 @@
     },
     "eval": {
         "pending": "評価はここに表示されます。",
-        "engineTooltip": "gammonNet"
+        "engineTooltip": "gammonNet",
+        "batchProgress": "gammonNet 解析中: {done}/{total}",
+        "batchCancel": "キャンセル"
     },
     "searchHistory": {
         "enterFilterName": "フィルター名を入力してください",

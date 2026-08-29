@@ -10,13 +10,16 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 // Run starts the Wails GUI. The caller supplies the embedded frontend assets
-// and icon, the initial window dimensions, and any extra structs to bind for
-// the frontend (the App struct is created and bound here).
-func Run(assets embed.FS, icon []byte, width, height int, extraBinds []interface{}) error {
-	app := NewApp()
+// and icon, the initial window dimensions, the Database the gammonNet batch
+// job (#129) runs against, and any extra structs to bind for the frontend
+// (the App struct is created and bound here).
+func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}) error {
+	app := NewApp(db)
 	return wails.Run(&options.App{
 		Title:  "blunderDB",
 		Width:  width,

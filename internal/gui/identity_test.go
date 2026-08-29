@@ -21,7 +21,7 @@ func isolateIdentityConfig(t *testing.T) {
 
 func TestGetIssuerIdentityBeforeItExists(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	info, err := a.GetIssuerIdentity()
 	if err != nil {
@@ -40,7 +40,7 @@ func TestGetIssuerIdentityBeforeItExists(t *testing.T) {
 
 func TestSetIssuerNameCreatesAndNames(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	info, err := a.SetIssuerName("Jean Dupont")
 	if err != nil {
@@ -68,7 +68,7 @@ func TestSetIssuerNameCreatesAndNames(t *testing.T) {
 
 func TestSetIssuerNameRenameKeepsFingerprint(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	first, err := a.SetIssuerName("Jean Dupont")
 	if err != nil {
@@ -88,7 +88,7 @@ func TestSetIssuerNameRenameKeepsFingerprint(t *testing.T) {
 
 func TestSetIssuerNameRejectsBlank(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	if _, err := a.SetIssuerName("   "); err == nil {
 		t.Error("expected an error naming the issuer with a blank/whitespace-only name")
@@ -97,7 +97,7 @@ func TestSetIssuerNameRejectsBlank(t *testing.T) {
 
 func TestRegenerateIssuerIdentity(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	original, err := a.SetIssuerName("Jean Dupont")
 	if err != nil {
@@ -127,7 +127,7 @@ func TestRegenerateIssuerIdentity(t *testing.T) {
 
 func TestRegenerateIssuerIdentityDefaultsBlankName(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	info, err := a.RegenerateIssuerIdentity("")
 	if err != nil {
@@ -157,7 +157,7 @@ func TestImportIssuerIdentityRoundTrip(t *testing.T) {
 		t.Fatalf("ExportIdentity: %v", err)
 	}
 
-	a := NewApp()
+	a := NewApp(nil)
 	info, err := a.ImportIssuerIdentity(exportPath, "")
 	if err != nil {
 		t.Fatalf("ImportIssuerIdentity: %v", err)
@@ -183,7 +183,7 @@ func TestImportIssuerIdentityRoundTripWithPassphrase(t *testing.T) {
 		t.Fatalf("ExportIdentity: %v", err)
 	}
 
-	a := NewApp()
+	a := NewApp(nil)
 
 	if _, err := a.ImportIssuerIdentity(exportPath, "wrong passphrase"); err == nil {
 		t.Error("expected ImportIssuerIdentity to reject the wrong passphrase")
@@ -203,7 +203,7 @@ func TestImportIssuerIdentityRoundTripWithPassphrase(t *testing.T) {
 
 func TestImportIssuerIdentityReplacesExisting(t *testing.T) {
 	isolateIdentityConfig(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	before, err := a.SetIssuerName("Local Identity")
 	if err != nil {

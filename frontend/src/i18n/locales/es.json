@@ -669,7 +669,9 @@
     },
     "eval": {
         "pending": "La evaluación aparecerá aquí.",
-        "engineTooltip": "gammonNet"
+        "engineTooltip": "gammonNet",
+        "batchProgress": "gammonNet analizando: {done}/{total}",
+        "batchCancel": "Cancelar"
     },
     "searchHistory": {
         "enterFilterName": "Introduce un nombre para el filtro",

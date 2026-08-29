@@ -21,7 +21,7 @@ func isolateBearoffDataDir(t *testing.T) string {
 
 func TestBearoffStatusNothingDownloaded(t *testing.T) {
 	isolateBearoffDataDir(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	st := a.BearoffStatus()
 
@@ -52,7 +52,7 @@ func TestBearoffStatusNothingDownloaded(t *testing.T) {
 
 func TestBearoffStatusDownloadedFilePresent(t *testing.T) {
 	dir := isolateBearoffDataDir(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	target := filepath.Join(dir, race.DownloadedFileName)
 	content := []byte("not a real bearoff database, just sized content")
@@ -75,7 +75,7 @@ func TestBearoffStatusDownloadedFilePresent(t *testing.T) {
 
 func TestBearoffStatusPartialDownload(t *testing.T) {
 	dir := isolateBearoffDataDir(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	partial := filepath.Join(dir, race.DownloadedFileName+".part")
 	content := []byte("partial content, download was interrupted")
@@ -95,7 +95,7 @@ func TestBearoffStatusPartialDownload(t *testing.T) {
 
 func TestBearoffStatusExternalPath(t *testing.T) {
 	isolateBearoffDataDir(t)
-	a := NewApp()
+	a := NewApp(nil)
 
 	race.SetExternalPath("/some/external/gnubg_ts0.bd")
 	t.Cleanup(func() { race.SetExternalPath("") })

@@ -26,8 +26,11 @@ import {
     ImportBGFPositionFromText,
     ImportXGPPosition,
     ParsePositionText,
-    RefreshSearchStatistics
+    RefreshSearchStatistics,
+    CountPositionsWithoutAnalysis
 } from '../../wailsjs/go/database/Database.js';
+import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
 import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -52,6 +55,27 @@ import { logger } from '../utils/logger.js';
 // Pending import path (module-level)
 let pendingImportPath = null;
 let fileImportCancelled = false;
+
+// gammonNet auto-analyze after import (#129, ADR-0013): a config toggle, not
+// a per-import-type special case — any import completion checks whether
+// there is a backlog of positions with no analysis at all, and if the
+// setting is on, hands the batch off to the goroutine+cancel+events shell in
+// gui.App (gammonnet_batch.go). Uniform across import shapes (.mat/.txt with
+// no analysis, .xg/.sgf/.bgf that already carry one, a whole-database merge)
+// on purpose: the batch itself is a no-op when the count is zero, so there is
+// nothing to special-case by import type.
+async function maybeAutoAnalyzeAfterImport() {
+    try {
+        const auto = await GetGammonNetAutoAnalyze();
+        if (!auto) return;
+        const remaining = await CountPositionsWithoutAnalysis();
+        if (!remaining) return;
+        const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
+        await StartGammonNetBatch(ply, pruneK, 0);
+    } catch (error) {
+        logger.error('gammonNet auto-analyze check failed:', error);
+    }
+}
 
 export async function importDatabase() {
     logger.log('importDatabase');
@@ -99,6 +123,14 @@ export async function importDatabase() {
 }
 
 export async function handleImportCommit() {
+    try {
+        await handleImportCommitCore();
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+}
+
+async function handleImportCommitCore() {
     if (!pendingImportPath) {
         logger.error('No pending import path');
         return;
@@ -385,6 +417,14 @@ export async function importFolder() {
 
 // Returns { type: 'position' | 'match', id } on success, null on failure.
 export async function importSingleFile(filePath) {
+    try {
+        return await importSingleFileCore(filePath);
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+}
+
+async function importSingleFileCore(filePath) {
     const lowerPath = filePath.toLowerCase();
     const isXGFile = lowerPath.endsWith('.xg');
     const isXGPFile = lowerPath.endsWith('.xgp');
@@ -634,6 +674,14 @@ async function importTxtFileBatch(filePath) {
 // Returns { type: 'position', id } when only positions were imported (so the
 // caller can show the last one), null when the batch contained any match.
 export async function importMultipleFiles(files) {
+    try {
+        return await importMultipleFilesCore(files);
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+}
+
+async function importMultipleFilesCore(files) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);
@@ -714,6 +762,14 @@ export function handleFileImportClose() {
 }
 
 export async function pastePosition() {
+    try {
+        await pastePositionCore();
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+}
+
+async function pastePositionCore() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;

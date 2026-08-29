@@ -74,6 +74,10 @@ export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
 
+export function CountPositionsWithoutAnalysis() {
+  return window['go']['database']['Database']['CountPositionsWithoutAnalysis']();
+}
+
 export function CreateAnkiDeck(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['database']['Database']['CreateAnkiDeck'](arg1, arg2, arg3, arg4, arg5);
 }

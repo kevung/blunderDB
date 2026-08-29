@@ -9,7 +9,7 @@ import (
 // TestPrepareDemoDatabase verifies the embedded sample database decompresses to
 // a real, non-empty SQLite file that the normal open flow can then load.
 func TestPrepareDemoDatabase(t *testing.T) {
-	a := NewApp()
+	a := NewApp(nil)
 
 	path, err := a.PrepareDemoDatabase()
 	if err != nil {

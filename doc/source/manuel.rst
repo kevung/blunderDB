@@ -216,9 +216,17 @@ séparément — abaisser l'une ne modifie jamais l'autre :
 Les deux valent par défaut **2-ply**, la configuration canonique. L'onglet
 propose aussi l'**élagage** (par défaut ``k=12``) et le **nombre de coups
 candidats affichés** (par défaut 10), ainsi qu'une case **analyser
-automatiquement après import** qui, une fois activée, lance en tâche de fond
-une analyse bornée et annulable des positions dépourvues d'analyse gammonNet
-après l'import d'un match qui n'en apportait aucune.
+automatiquement après import** qui, une fois activée, vérifie après chaque
+import s'il reste des positions **sans aucune analyse** (ni gammonNet, ni XG,
+ni GNUbg, ni BGBlitz — la règle est « une évaluation ne comble qu'un trou »,
+jamais un remplacement) et, le cas échéant, lance en tâche de fond une analyse
+gammonNet à la profondeur d'analyse configurée. Le travail est **borné,
+visible et annulable, jamais un démon silencieux** : sa progression
+(``positions analysées / total``) et un bouton d'annulation apparaissent dans
+la barre de statut pendant toute sa durée, et disparaissent une fois terminé.
+Fermer l'application pendant l'analyse ne perd rien : chaque position
+analysée est écrite au fil de l'eau, et un prochain import concerné reprend
+exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de

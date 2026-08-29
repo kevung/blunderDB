@@ -15,6 +15,8 @@ import (
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 // demoDBGz is a small, self-contained sample database (a couple of imported
@@ -30,11 +32,18 @@ var demoDBGz []byte
 // App struct
 type App struct {
 	ctx context.Context
+	// db is used by the gammonNet batch job (#129) only — every other Wails
+	// method on App stays database-free by design (the frontend orchestrates
+	// calls across App/Database/Config, each bound independently). The batch
+	// is the first operation that genuinely needs both database access and
+	// Wails event emission in the same place, so it earns the exception
+	// rather than inventing a fourth bound object.
+	db *database.Database
 }
 
-// NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+// NewApp creates a new App application struct.
+func NewApp(db *database.Database) *App {
+	return &App{db: db}
 }
 
 // PrepareDemoDatabase decompresses the embedded sample database to a fresh

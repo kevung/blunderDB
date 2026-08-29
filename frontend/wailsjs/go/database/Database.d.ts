@@ -42,6 +42,8 @@ export function Conn():Promise<sql.DB>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
+export function CountPositionsWithoutAnalysis():Promise<number>;
+
 export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,arg5:string):Promise<number>;
 
 export function CreateCollection(arg1:string,arg2:string):Promise<number>;

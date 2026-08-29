@@ -14,6 +14,10 @@ export function CancelEvaluationAtRest() {
   return window['go']['gui']['App']['CancelEvaluationAtRest']();
 }
 
+export function CancelGammonNetBatch() {
+  return window['go']['gui']['App']['CancelGammonNetBatch']();
+}
+
 export function CollectImportableFiles(arg1) {
   return window['go']['gui']['App']['CollectImportableFiles'](arg1);
 }
@@ -128,4 +132,8 @@ export function ShowQuestionDialog(arg1, arg2, arg3, arg4) {
 
 export function StartEvaluationAtRest(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4);
+}
+
+export function StartGammonNetBatch(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartGammonNetBatch'](arg1, arg2, arg3);
 }
