@@ -664,6 +664,9 @@
             "winPct": "Gain (%)"
         }
     },
+    "eval": {
+        "pending": "L'évaluation apparaîtra ici."
+    },
     "searchHistory": {
         "enterFilterName": "Veuillez saisir un nom de filtre",
         "filterSaved": "Filtre enregistré dans la bibliothèque",
@@ -803,7 +806,7 @@
         "matches": "Matchs",
         "tournaments": "Tournois",
         "stats": "Stats",
-        "epc": "Bearoff",
+        "epc": "Eval",
         "anki": "Anki",
         "metadata": "Métadonnées"
     },

@@ -2,13 +2,27 @@
     import { onMount } from 'svelte';
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
+    import { positionStore } from '../stores/positionStore';
     import { GetEpcChallenge, SaveEpcChallenge } from '../../wailsjs/go/main/Config.js';
     import { t } from '../i18n';
+    import CandidateMovesTable from './CandidateMovesTable.svelte';
+    import CubeVerdictTable from './CubeVerdictTable.svelte';
 
     let isActive = $derived($statusBarModeStore === 'EPC');
     let data = $derived($epcDataStore);
     let challenge = $derived($epcChallengeStore);
     let revealed = $derived($epcRevealedStore);
+
+    // The evaluation volet always renders — the position on the board decides
+    // what there is to compute (dice set → candidate moves, no dice → a cube
+    // verdict), the same [0, 0]-means-no-dice convention AnalysisPanel uses
+    // for its own cube position. No engine call is wired here yet: both
+    // branches stay empty placeholders until the live evaluation is plugged
+    // into evalMoves/evalCubeAnalysis.
+    let dice = $derived($positionStore?.dice ?? [0, 0]);
+    let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
+    let evalMoves = $state([]);
+    let evalCubeAnalysis = $state(null);
 
     onMount(() => {
         GetEpcChallenge()
@@ -81,148 +95,164 @@
         <div class="epc-error">
             <span class="error-text">{data.error}</span>
         </div>
-    {:else if !data.bottomEPC && !data.topEPC && !data.race}
-        <div class="epc-inactive">
-            <div class="epc-inactive-message">
-                <span>{$t('epc.placeCheckers')}</span>
-            </div>
-        </div>
     {:else}
         <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
             <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
             <span>{$t('epc.challenge')}</span>
         </label>
         <div class="tables-container">
-            <!-- Players × quantities, Analysis-panel table style. Black is
-                 always the bottom player, so a colour dot suffices as the row
-                 label; the Δ row is signed (bottom − top: negative when Black
-                 leads) and absorbs the old comparison section. -->
-            {#if data.bottomEPC || data.topEPC}
-                <table class="players-table">
-                    <tbody>
-                        <tr>
-                            <th></th>
-                            <th>{$t('epc.epc')}</th>
-                            <th>{$t('epc.pipCount')}</th>
-                            <th>{$t('epc.wastage')}</th>
-                            <th>{$t('epc.avgRolls')}</th>
-                            <th>{$t('epc.stdDev')}</th>
-                        </tr>
-                        {#if data.bottomEPC}
-                            <tr class:masked={maskedBottom} onclick={() => maskedBottom && reveal('bottom')} title={maskedBottom ? $t('epc.clickToReveal') : $t('epc.bottomBlack')}>
-                                <td class="row-label"><span class="player-indicator bottom"></span></td>
-                                <td class="main-value">{show(maskedBottom, data.bottomEPC.epc.toFixed(2))}</td>
-                                <td>{show(maskedBottom, data.bottomEPC.pipCount)}</td>
-                                <td>{show(maskedBottom, data.bottomEPC.wastage.toFixed(2))}</td>
-                                <td>{show(maskedBottom, data.bottomEPC.meanRolls.toFixed(3))}</td>
-                                <td>{show(maskedBottom, data.bottomEPC.stdDev.toFixed(3))}</td>
-                            </tr>
-                        {/if}
-                        {#if data.topEPC}
-                            <tr class:masked={maskedTop} onclick={() => maskedTop && reveal('top')} title={maskedTop ? $t('epc.clickToReveal') : $t('epc.topWhite')}>
-                                <td class="row-label"><span class="player-indicator top"></span></td>
-                                <td class="main-value">{show(maskedTop, data.topEPC.epc.toFixed(2))}</td>
-                                <td>{show(maskedTop, data.topEPC.pipCount)}</td>
-                                <td>{show(maskedTop, data.topEPC.wastage.toFixed(2))}</td>
-                                <td>{show(maskedTop, data.topEPC.meanRolls.toFixed(3))}</td>
-                                <td>{show(maskedTop, data.topEPC.stdDev.toFixed(3))}</td>
-                            </tr>
-                        {/if}
-                        {#if data.bottomEPC && data.topEPC}
-                            {@const bothShown = !maskedBottom && !maskedTop}
-                            <tr class="delta-row" title={$t('epc.comparison')}>
-                                <td class="row-label">Δ</td>
-                                <td class="main-value">{show(!bothShown, sd(data.bottomEPC.epc - data.topEPC.epc, 2))}</td>
-                                <td>{show(!bothShown, sd(data.bottomEPC.pipCount - data.topEPC.pipCount, 0))}</td>
-                                <td>{show(!bothShown, sd(data.bottomEPC.wastage - data.topEPC.wastage, 2))}</td>
-                                <td>—</td>
-                                <td>—</td>
-                            </tr>
-                        {/if}
-                    </tbody>
-                </table>
-            {/if}
+            <!-- Evaluation volet: always present, whatever the position — a
+                 race or not, home-board bearoff or not. Structurally decided
+                 by whether dice are set; both branches are placeholders until
+                 the live gammonNet evaluation is wired in. -->
+            <div class="eval-section">
+                {#if hasDiceSet}
+                    <CandidateMovesTable moves={evalMoves} />
+                    {#if evalMoves.length === 0}
+                        <div class="eval-placeholder">{$t('eval.pending')}</div>
+                    {/if}
+                {:else if evalCubeAnalysis}
+                    <CubeVerdictTable cubeAnalysis={evalCubeAnalysis} cubeValue={$positionStore?.cube?.value ?? 0} />
+                {:else}
+                    <div class="eval-placeholder">{$t('eval.pending')}</div>
+                {/if}
+            </div>
 
-            <!-- Race / cube table, transposed like the players table. Win
-                 chances are given per colour (dots in the headers, no % sign
-                 in the values); equities and the verdict are the on-roll
-                 player's, as in the Analysis panel. -->
-            {#if data.race}
-                <div class="race-wrap">
-                    <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
+            <!-- Race volet: reserves its place, but only a race position
+                 fills it — a colour dot suffices as the row label; the Δ row
+                 is signed (bottom − top: negative when Black leads) and
+                 absorbs the old comparison section. -->
+            <div class="race-section">
+                {#if !data.bottomEPC && !data.topEPC && !data.race}
+                    <div class="epc-race-hint">{$t('epc.placeCheckers')}</div>
+                {/if}
+                {#if data.bottomEPC || data.topEPC}
+                    <table class="players-table">
                         <tbody>
-                            {#if data.race.money}
-                                <tr>
-                                    <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
-                                    <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
-                                    <th>{$t('epc.race.cubeless')}</th>
-                                    <th>{$t('epc.race.noDouble')}</th>
-                                    <th>{$t('epc.race.doubleTake')}</th>
-                                    <th>{$t('epc.race.doublePass')}</th>
+                            <tr>
+                                <th></th>
+                                <th>{$t('epc.epc')}</th>
+                                <th>{$t('epc.pipCount')}</th>
+                                <th>{$t('epc.wastage')}</th>
+                                <th>{$t('epc.avgRolls')}</th>
+                                <th>{$t('epc.stdDev')}</th>
+                            </tr>
+                            {#if data.bottomEPC}
+                                <tr class:masked={maskedBottom} onclick={() => maskedBottom && reveal('bottom')} title={maskedBottom ? $t('epc.clickToReveal') : $t('epc.bottomBlack')}>
+                                    <td class="row-label"><span class="player-indicator bottom"></span></td>
+                                    <td class="main-value">{show(maskedBottom, data.bottomEPC.epc.toFixed(2))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.pipCount)}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.wastage.toFixed(2))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.meanRolls.toFixed(3))}</td>
+                                    <td>{show(maskedBottom, data.bottomEPC.stdDev.toFixed(3))}</td>
                                 </tr>
-                                <tr>
-                                    <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
-                                    <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
-                                    <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
-                                    <td>
-                                        {show(maskedRace, eq(data.race.money.no_double))}
-                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'no_double'}
-                                            <div class="eq-gap">{gap(data.race.money.no_double)}</div>
-                                        {/if}
-                                    </td>
-                                    <td>
-                                        {show(maskedRace, eq(data.race.money.double_take))}
-                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'double_take'}
-                                            <div class="eq-gap">{gap(data.race.money.double_take)}</div>
-                                        {/if}
-                                    </td>
-                                    <td>
-                                        {show(maskedRace, eq(data.race.money.double_pass))}
-                                        {#if !maskedRace && bestVerdict && bestVerdict !== 'double_pass'}
-                                            <div class="eq-gap">{gap(data.race.money.double_pass)}</div>
-                                        {/if}
-                                    </td>
+                            {/if}
+                            {#if data.topEPC}
+                                <tr class:masked={maskedTop} onclick={() => maskedTop && reveal('top')} title={maskedTop ? $t('epc.clickToReveal') : $t('epc.topWhite')}>
+                                    <td class="row-label"><span class="player-indicator top"></span></td>
+                                    <td class="main-value">{show(maskedTop, data.topEPC.epc.toFixed(2))}</td>
+                                    <td>{show(maskedTop, data.topEPC.pipCount)}</td>
+                                    <td>{show(maskedTop, data.topEPC.wastage.toFixed(2))}</td>
+                                    <td>{show(maskedTop, data.topEPC.meanRolls.toFixed(3))}</td>
+                                    <td>{show(maskedTop, data.topEPC.stdDev.toFixed(3))}</td>
                                 </tr>
-                            {:else}
-                                <tr>
-                                    <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
-                                    <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
-                                </tr>
-                                <tr>
-                                    <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
-                                    <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
+                            {/if}
+                            {#if data.bottomEPC && data.topEPC}
+                                {@const bothShown = !maskedBottom && !maskedTop}
+                                <tr class="delta-row" title={$t('epc.comparison')}>
+                                    <td class="row-label">Δ</td>
+                                    <td class="main-value">{show(!bothShown, sd(data.bottomEPC.epc - data.topEPC.epc, 2))}</td>
+                                    <td>{show(!bothShown, sd(data.bottomEPC.pipCount - data.topEPC.pipCount, 0))}</td>
+                                    <td>{show(!bothShown, sd(data.bottomEPC.wastage - data.topEPC.wastage, 2))}</td>
+                                    <td>—</td>
+                                    <td>—</td>
                                 </tr>
                             {/if}
                         </tbody>
                     </table>
-                    <div class="race-side">
-                        {#if data.race.money}
-                            <span class="decision-chip" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
-                                {#if maskedRace}
-                                    {HIDDEN}
-                                {:else if data.race.money.verdict}
-                                    {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                {/if}
+
+                <!-- Race / cube table, transposed like the players table. Win
+                 chances are given per colour (dots in the headers, no % sign
+                 in the values); equities and the verdict are the on-roll
+                 player's, as in the Analysis panel. -->
+                {#if data.race}
+                    <div class="race-wrap">
+                        <table class="race-table" class:masked={maskedRace} onclick={() => maskedRace && reveal('race')} title={maskedRace ? $t('epc.clickToReveal') : undefined}>
+                            <tbody>
+                                {#if data.race.money}
+                                    <tr>
+                                        <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                        <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
+                                        <th>{$t('epc.race.cubeless')}</th>
+                                        <th>{$t('epc.race.noDouble')}</th>
+                                        <th>{$t('epc.race.doubleTake')}</th>
+                                        <th>{$t('epc.race.doublePass')}</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                        <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
+                                        <td>{show(maskedRace, eq(data.race.money.cubeless))}</td>
+                                        <td>
+                                            {show(maskedRace, eq(data.race.money.no_double))}
+                                            {#if !maskedRace && bestVerdict && bestVerdict !== 'no_double'}
+                                                <div class="eq-gap">{gap(data.race.money.no_double)}</div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {show(maskedRace, eq(data.race.money.double_take))}
+                                            {#if !maskedRace && bestVerdict && bestVerdict !== 'double_take'}
+                                                <div class="eq-gap">{gap(data.race.money.double_take)}</div>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {show(maskedRace, eq(data.race.money.double_pass))}
+                                            {#if !maskedRace && bestVerdict && bestVerdict !== 'double_pass'}
+                                                <div class="eq-gap">{gap(data.race.money.double_pass)}</div>
+                                            {/if}
+                                        </td>
+                                    </tr>
                                 {:else}
-                                    {$t('epc.race.noDecision')}
+                                    <tr>
+                                        <th><span class="player-indicator bottom"></span> {$t('epc.race.winPct')}</th>
+                                        <th><span class="player-indicator top"></span> {$t('epc.race.winPct')}</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="main-value">{show(maskedRace, pct(winBlack))}</td>
+                                        <td class="main-value">{show(maskedRace, pct(winWhite))}</td>
+                                    </tr>
                                 {/if}
-                            </span>
-                        {/if}
-                        {#if data.race.regime === 'exact'}
-                            <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
-                                {$t('epc.race.exact')}
-                            </span>
-                        {:else}
-                            <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
-                                {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
-                            </span>
-                            <span class="download-hint">
-                                {$t('epc.race.downloadHint')}
-                                <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
-                            </span>
-                        {/if}
+                            </tbody>
+                        </table>
+                        <div class="race-side">
+                            {#if data.race.money}
+                                <span class="decision-chip" title={$t('epc.race.cubeStates.' + data.race.money.cube_state)}>
+                                    {#if maskedRace}
+                                        {HIDDEN}
+                                    {:else if data.race.money.verdict}
+                                        {$t('epc.race.verdicts.' + data.race.money.verdict)}
+                                    {:else}
+                                        {$t('epc.race.noDecision')}
+                                    {/if}
+                                </span>
+                            {/if}
+                            {#if data.race.regime === 'exact'}
+                                <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: data.race.source_checkers })}>
+                                    {$t('epc.race.exact')}
+                                </span>
+                            {:else}
+                                <span class="badge badge-estimated" title={$t('epc.race.estimatedTooltip', { p99: pct(data.race.p99) })}>
+                                    {$t('epc.race.estimated')} ± {pct(data.race.sigma)} %
+                                </span>
+                                <span class="download-hint">
+                                    {$t('epc.race.downloadHint')}
+                                    <button class="link-button" onclick={openBearoffSettings}>{$t('epc.race.openConfig')}</button>
+                                </span>
+                            {/if}
+                        </div>
                     </div>
-                </div>
-            {/if}
+                {/if}
+            </div>
         </div>
     {/if}
 </div>
@@ -239,6 +269,10 @@
         padding: 3px 14px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
         font-size: var(--font-size-base);
+        /* Lets CandidateMovesTable/CubeVerdictTable's own @container rules
+           (mounted in .eval-section below) stack on a narrow panel, exactly
+           as they already do inside AnalysisPanel. */
+        container-type: inline-size;
     }
 
     .epc-inactive {
@@ -294,7 +328,7 @@
         margin: 0;
     }
 
-    /* Players table on top, race table right below it — a single airy
+    /* Evaluation volet on top, race volet right below it — a single airy
        column, all sizes on the app's normal type tokens. Right padding
        leaves room for the pinned défi toggle. */
     .tables-container {
@@ -302,7 +336,30 @@
         flex-direction: column;
         gap: 8px;
         align-items: flex-start;
+        width: 100%;
         padding-right: 80px;
+        box-sizing: border-box;
+    }
+
+    .eval-section {
+        width: 100%;
+    }
+
+    .eval-placeholder {
+        color: #888;
+        font-size: var(--font-size-small);
+    }
+
+    /* Reserves its place even on a non-race position, rather than the panel
+       height jumping when the race volet has nothing to show. */
+    .race-section {
+        width: 100%;
+        min-height: 1.6em;
+    }
+
+    .epc-race-hint {
+        color: #888;
+        font-size: var(--font-size-small);
     }
 
     /* Clear visual separation between the two tables; the regime badge sits

@@ -664,6 +664,9 @@
             "winPct": "勝率 (%)"
         }
     },
+    "eval": {
+        "pending": "評価はここに表示されます。"
+    },
     "searchHistory": {
         "enterFilterName": "フィルター名を入力してください",
         "filterSaved": "フィルターをライブラリに保存しました",
@@ -803,7 +806,7 @@
         "matches": "マッチ",
         "tournaments": "トーナメント",
         "stats": "統計",
-        "epc": "ベアオフ",
+        "epc": "評価",
         "anki": "Anki",
         "metadata": "メタデータ"
     },

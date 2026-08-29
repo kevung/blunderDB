@@ -664,6 +664,9 @@
             "winPct": "Победа (%)"
         }
     },
+    "eval": {
+        "pending": "Оценка появится здесь."
+    },
     "searchHistory": {
         "enterFilterName": "Введите имя фильтра",
         "filterSaved": "Фильтр сохранён в библиотеку",
@@ -803,7 +806,7 @@
         "matches": "Матчи",
         "tournaments": "Турниры",
         "stats": "Статистика",
-        "epc": "Бэароф",
+        "epc": "Расчёт",
         "anki": "Anki",
         "metadata": "Метаданные"
     },

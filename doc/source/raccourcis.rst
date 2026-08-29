@@ -120,7 +120,7 @@ Outils
    "CTRL-B", "Afficher/cacher le panneau des collections."
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
    "CTRL-D", "Afficher le panneau Stats."
-   "CTRL-E", "Afficher/cacher le panneau Bearoff."
+   "CTRL-E", "Afficher/cacher le panneau Eval."
    "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_vues:

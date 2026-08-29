@@ -664,6 +664,9 @@
             "winPct": "Νίκη (%)"
         }
     },
+    "eval": {
+        "pending": "Η αξιολόγηση θα εμφανιστεί εδώ."
+    },
     "searchHistory": {
         "enterFilterName": "Εισαγάγετε ένα όνομα φίλτρου",
         "filterSaved": "Το φίλτρο αποθηκεύτηκε στη βιβλιοθήκη",
@@ -803,7 +806,7 @@
         "matches": "Αγώνες",
         "tournaments": "Τουρνουά",
         "stats": "Στατιστικά",
-        "epc": "Bearoff",
+        "epc": "Eval",
         "anki": "Anki",
         "metadata": "Μεταδεδομένα"
     },

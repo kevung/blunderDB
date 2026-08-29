@@ -664,6 +664,9 @@
             "winPct": "Vittoria (%)"
         }
     },
+    "eval": {
+        "pending": "La valutazione apparirà qui."
+    },
     "searchHistory": {
         "enterFilterName": "Inserisci un nome per il filtro",
         "filterSaved": "Filtro salvato nella libreria",
@@ -803,7 +806,7 @@
         "matches": "Partite",
         "tournaments": "Tornei",
         "stats": "Statistiche",
-        "epc": "Bearoff",
+        "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metadati"
     },

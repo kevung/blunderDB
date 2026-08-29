@@ -664,6 +664,9 @@
             "winPct": "Voitto (%)"
         }
     },
+    "eval": {
+        "pending": "Arviointi tulee tähän."
+    },
     "searchHistory": {
         "enterFilterName": "Anna suodattimelle nimi",
         "filterSaved": "Suodatin tallennettu kirjastoon",
@@ -803,7 +806,7 @@
         "matches": "Ottelut",
         "tournaments": "Turnaukset",
         "stats": "Tilastot",
-        "epc": "Bearoff",
+        "epc": "Eval",
         "anki": "Anki",
         "metadata": "Metatiedot"
     },
