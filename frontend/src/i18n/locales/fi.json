@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Tiivistä",
         "vacuumDone": "Tietokanta tiivistetty: {mb} Mt vapautettu",
         "vacuumNothing": "Tietokanta tiivistetty: ei vapautettavaa",
-        "vacuumError": "Tiivistäminen epäonnistui: {error}"
+        "vacuumError": "Tiivistäminen epäonnistui: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Sisäänrakennetun gammonNet-arvioijan asetukset (ADR-0011): näyttösyvyys ja analyysisyvyys ovat kaksi erillistä asetusta — näyttösyvyyden alentaminen ei koskaan heikennä sitä, mitä analyysierä kirjoittaa tietokantaan.",
+        "gammonnetDisplayPly": "Näyttösyvyys",
+        "gammonnetDisplayPlyNote": "Interaktiivinen mukavuus laudan muokkauksen aikana. Ei koskaan kirjoiteta tietokantaan.",
+        "gammonnetAnalysisPly": "Analyysisyvyys",
+        "gammonnetAnalysisPlyNote": "Se, mitä tuonnin jälkeinen analyysierä kirjoittaa position Analyysiin.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Karsinta (k)",
+        "gammonnetCandidates": "Näytettävät ehdokassiirrot",
+        "gammonnetAutoAnalyze": "Analysoi automaattisesti tuonnin jälkeen",
+        "gammonnetAutoAnalyzeNote": "Kun ottelu tuodaan ilman analyysiä, käynnistää taustalla rajatun, peruutettavan analyysin positioista, joilta puuttuu vielä gammonNet-analyysi."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",

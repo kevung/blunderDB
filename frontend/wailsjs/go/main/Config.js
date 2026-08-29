@@ -14,6 +14,26 @@ export function GetEpcChallenge() {
   return window['go']['main']['Config']['GetEpcChallenge']();
 }
 
+export function GetGammonNetAnalysisPly() {
+  return window['go']['main']['Config']['GetGammonNetAnalysisPly']();
+}
+
+export function GetGammonNetAutoAnalyze() {
+  return window['go']['main']['Config']['GetGammonNetAutoAnalyze']();
+}
+
+export function GetGammonNetCandidates() {
+  return window['go']['main']['Config']['GetGammonNetCandidates']();
+}
+
+export function GetGammonNetDisplayPly() {
+  return window['go']['main']['Config']['GetGammonNetDisplayPly']();
+}
+
+export function GetGammonNetPruneK() {
+  return window['go']['main']['Config']['GetGammonNetPruneK']();
+}
+
 export function GetLanguage() {
   return window['go']['main']['Config']['GetLanguage']();
 }
@@ -56,6 +76,26 @@ export function SaveConfig(arg1) {
 
 export function SaveEpcChallenge(arg1) {
   return window['go']['main']['Config']['SaveEpcChallenge'](arg1);
+}
+
+export function SaveGammonNetAnalysisPly(arg1) {
+  return window['go']['main']['Config']['SaveGammonNetAnalysisPly'](arg1);
+}
+
+export function SaveGammonNetAutoAnalyze(arg1) {
+  return window['go']['main']['Config']['SaveGammonNetAutoAnalyze'](arg1);
+}
+
+export function SaveGammonNetCandidates(arg1) {
+  return window['go']['main']['Config']['SaveGammonNetCandidates'](arg1);
+}
+
+export function SaveGammonNetDisplayPly(arg1) {
+  return window['go']['main']['Config']['SaveGammonNetDisplayPly'](arg1);
+}
+
+export function SaveGammonNetPruneK(arg1) {
+  return window['go']['main']['Config']['SaveGammonNetPruneK'](arg1);
 }
 
 export function SaveLanguage(arg1) {

@@ -158,12 +158,13 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en quatre onglets :
+blunderDB. Elle est organisée en cinq onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bearoff** — la base de sortie two-sided étendue utilisée par le panneau
   Bearoff ;
+* **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
@@ -202,6 +203,22 @@ base peut être supprimée — une confirmation est demandée avant toute
 suppression, la taille du fichier étant rappelée dans le message. L'onglet
 permet aussi de pointer vers un fichier ``.bd`` two-sided externe (par exemple
 une base générée soi-même) plutôt que d'utiliser le téléchargement intégré.
+
+L'onglet **gammonNet** règle l'évaluateur embarqué (voir ADR-0011). Deux
+profondeurs de recherche y sont réglables, nommées et conservées
+séparément — abaisser l'une ne modifie jamais l'autre :
+
+* **Profondeur d'affichage** — le confort interactif pendant l'édition du
+  plateau ; jamais écrite en base.
+* **Profondeur d'analyse** — ce que le lot d'analyse après import écrit dans
+  l'Analyse d'une position.
+
+Les deux valent par défaut **2-ply**, la configuration canonique. L'onglet
+propose aussi l'**élagage** (par défaut ``k=12``) et le **nombre de coups
+candidats affichés** (par défaut 10), ainsi qu'une case **analyser
+automatiquement après import** qui, une fois activée, lance en tâche de fond
+une analyse bornée et annulable des positions dépourvues d'analyse gammonNet
+après l'import d'un match qui n'en apportait aucune.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de

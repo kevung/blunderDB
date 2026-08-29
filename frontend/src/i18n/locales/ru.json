@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Сжать",
         "vacuumDone": "База сжата: освобождено {mb} МБ",
         "vacuumNothing": "База сжата: нечего освобождать",
-        "vacuumError": "Не удалось сжать: {error}"
+        "vacuumError": "Не удалось сжать: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Настройки встроенного анализатора gammonNet (ADR-0011): глубина отображения и глубина анализа — две отдельные настройки. Понижение глубины отображения никогда не ухудшает то, что пакетный анализ записывает в базу данных.",
+        "gammonnetDisplayPly": "Глубина отображения",
+        "gammonnetDisplayPlyNote": "Комфорт при интерактивном редактировании доски. Никогда не записывается в базу данных.",
+        "gammonnetAnalysisPly": "Глубина анализа",
+        "gammonnetAnalysisPlyNote": "То, что пакетный анализ после импорта записывает в анализ позиции.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Отсечение (k)",
+        "gammonnetCandidates": "Отображаемые кандидатные ходы",
+        "gammonnetAutoAnalyze": "Автоматически анализировать после импорта",
+        "gammonnetAutoAnalyzeNote": "После импорта матча без анализа запускает в фоне ограниченный, отменяемый анализ позиций, у которых ещё нет анализа gammonNet."
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",

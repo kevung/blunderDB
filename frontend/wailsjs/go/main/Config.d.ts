@@ -8,6 +8,16 @@ export function GetBoardColors():Promise<main.BoardColors>;
 
 export function GetEpcChallenge():Promise<boolean>;
 
+export function GetGammonNetAnalysisPly():Promise<number>;
+
+export function GetGammonNetAutoAnalyze():Promise<boolean>;
+
+export function GetGammonNetCandidates():Promise<number>;
+
+export function GetGammonNetDisplayPly():Promise<number>;
+
+export function GetGammonNetPruneK():Promise<number>;
+
 export function GetLanguage():Promise<string>;
 
 export function GetLastDatabasePath():Promise<string>;
@@ -29,6 +39,16 @@ export function SaveBoardColors(arg1:main.BoardColors):Promise<void>;
 export function SaveConfig(arg1:main.Config):Promise<void>;
 
 export function SaveEpcChallenge(arg1:boolean):Promise<void>;
+
+export function SaveGammonNetAnalysisPly(arg1:number):Promise<void>;
+
+export function SaveGammonNetAutoAnalyze(arg1:boolean):Promise<void>;
+
+export function SaveGammonNetCandidates(arg1:number):Promise<void>;
+
+export function SaveGammonNetDisplayPly(arg1:number):Promise<void>;
+
+export function SaveGammonNetPruneK(arg1:number):Promise<void>;
 
 export function SaveLanguage(arg1:string):Promise<void>;
 

@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Compact",
         "vacuumDone": "Database compacted: {mb} MB reclaimed",
         "vacuumNothing": "Database compacted: nothing to reclaim",
-        "vacuumError": "Compacting failed: {error}"
+        "vacuumError": "Compacting failed: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Settings for the embedded gammonNet evaluator (ADR-0011): display depth and analysis depth are two separate settings — lowering the display never degrades what the analysis batch writes to the database.",
+        "gammonnetDisplayPly": "Display depth",
+        "gammonnetDisplayPlyNote": "Interactive comfort while editing the board. Never written to the database.",
+        "gammonnetAnalysisPly": "Analysis depth",
+        "gammonnetAnalysisPlyNote": "What the post-import analysis batch writes into a position's Analysis.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Pruning (k)",
+        "gammonnetCandidates": "Candidate moves shown",
+        "gammonnetAutoAnalyze": "Auto-analyze after import",
+        "gammonnetAutoAnalyzeNote": "After importing a match with no analysis, runs a bounded, cancellable background analysis of positions still missing a gammonNet analysis."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

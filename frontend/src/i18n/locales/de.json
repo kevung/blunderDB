@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Komprimieren",
         "vacuumDone": "Datenbank komprimiert: {mb} MB zurückgewonnen",
         "vacuumNothing": "Datenbank komprimiert: nichts zurückzugewinnen",
-        "vacuumError": "Komprimierung fehlgeschlagen: {error}"
+        "vacuumError": "Komprimierung fehlgeschlagen: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Einstellungen für den eingebetteten gammonNet-Auswerter (ADR-0011): Anzeigetiefe und Analysetiefe sind zwei getrennte Einstellungen — eine niedrigere Anzeigetiefe beeinträchtigt nie, was der Analyselauf in die Datenbank schreibt.",
+        "gammonnetDisplayPly": "Anzeigetiefe",
+        "gammonnetDisplayPlyNote": "Interaktiver Komfort beim Bearbeiten des Bretts. Wird nie in die Datenbank geschrieben.",
+        "gammonnetAnalysisPly": "Analysetiefe",
+        "gammonnetAnalysisPlyNote": "Was der Analyselauf nach dem Import in die Analyse einer Position schreibt.",
+        "gammonnetPly": "{n}-Ply",
+        "gammonnetPruneK": "Beschneidung (k)",
+        "gammonnetCandidates": "Angezeigte Kandidatenzüge",
+        "gammonnetAutoAnalyze": "Nach Import automatisch analysieren",
+        "gammonnetAutoAnalyzeNote": "Startet nach dem Import eines Matches ohne Analyse eine begrenzte, abbrechbare Hintergrundanalyse der Positionen ohne gammonNet-Analyse."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

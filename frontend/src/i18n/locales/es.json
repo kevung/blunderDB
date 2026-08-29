@@ -79,7 +79,18 @@
         "vacuumConfirmButton": "Compactar",
         "vacuumDone": "Base compactada: {mb} MB recuperados",
         "vacuumNothing": "Base compactada: nada que recuperar",
-        "vacuumError": "Error al compactar: {error}"
+        "vacuumError": "Error al compactar: {error}",
+        "gammonnetTitle": "gammonNet",
+        "gammonnetIntro": "Ajustes del evaluador gammonNet integrado (ADR-0011): la profundidad de visualización y la de análisis son dos ajustes separados — reducir la visualización nunca degrada lo que el lote de análisis escribe en la base de datos.",
+        "gammonnetDisplayPly": "Profundidad de visualización",
+        "gammonnetDisplayPlyNote": "Comodidad interactiva al editar el tablero. Nunca se escribe en la base de datos.",
+        "gammonnetAnalysisPly": "Profundidad de análisis",
+        "gammonnetAnalysisPlyNote": "Lo que el lote de análisis tras la importación escribe en el Análisis de una posición.",
+        "gammonnetPly": "{n}-ply",
+        "gammonnetPruneK": "Poda (k)",
+        "gammonnetCandidates": "Movimientos candidatos mostrados",
+        "gammonnetAutoAnalyze": "Analizar automáticamente tras importar",
+        "gammonnetAutoAnalyzeNote": "Tras importar una partida sin análisis, ejecuta en segundo plano un análisis acotado y cancelable de las posiciones aún sin análisis gammonNet."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
