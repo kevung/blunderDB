@@ -127,3 +127,47 @@ a CI test and a pre-merge recipe step.
   broadcast as every option's depth; a hard-coded selected-move index), which is why the fix
   is verified against the fixtures rather than trusted: **a plausible-looking distribution of
   plies is exactly what this class of bug produces.** This ADR's own first draft fell for it.
+
+## Update — 2026-08-29, measured
+
+The missing number: **458.8 s for 669 decisions** (426 from the gnubg fixtures, 243 from XG)
+at 2-ply `k=12` on a 16-core machine. **The gate is a pre-merge recipe step, not a CI test** —
+~8 minutes here, on hardware CI does not have a fraction of. `BLUNDERDB_GATE` runs it
+(`TestIntegrationGate`, `pkg/blunderdb/engine/gammonnet`); `BLUNDERDB_GATE_LIMIT` truncates
+both corpora for a smoke pass.
+
+**Result: PASS**, once one exclusion the original criterion did not anticipate was made
+explicit. Criterion 1 (cost) is judged by XG's *match-equity* checker equities; the search
+that chooses our move is still `search.go`'s documented cubeless-money recursion — the two
+scales coincide almost everywhere, but diverge sharply once either side is 1-away from match
+point (a leader who wins the match outright on any win gets zero marginal value from a gammon
+money equity happily chases). Both of the run's two above-threshold costs (0.055, 0.074) were
+at exactly such a score; excluding decisions where either side is 1-away leaves criterion 1 at
+**87 checked, max 0.0311** against the 0.05 line. This is a scope boundary, not a bug: match-
+aware checker-move valuation is a later tranche's job (`gn_search_use_match`, `use_cube`), not
+this one's. Criterion 3 (candidacy) is likewise not a bare zero-tolerance count — an isolated
+miss against gnubg's own non-exhaustive list is exactly the "signal, not severity" this ADR
+already named, so the gate blocks on a **5 % aggregate rate**, not on any single miss, while
+still logging every one for inspection. Measured: **420/426, 1.4 % missing**. Criterion 2
+(cube verdict): **91 checked, 0 ND↔DP flips**, 2 adjacent disagreements.
+
+**Three real bugs were found and fixed on the way to that PASS, none of them in gammonNet
+itself** — exactly the failure mode this gate exists to catch, caught before the engine tranche
+that triggered building it was even judged:
+
+- `domain.notation()` rendered a White player's move in the board's absolute indices instead
+  of the mover-relative numbering every notation uses, so a White move gnubg calls `13/7 8/7`
+  came out `12/18 17/18` — invisible to every prior test because none put White on roll
+  (`b6b363fd`).
+- The same function capitalised bar entries as `Bar/24`; gnubg and XG both write `bar/24`,
+  lowercase, and `NormalizeMove` does not fold case (`b18b28be`).
+- `ingest/xg.go`'s `mapDoubleTakeMove`/`mapSingleCubeMove` synthesize the responder's
+  Take/Pass position, correctly flipping `PlayerOnRoll` to the opponent — but reattached the
+  doubler's own `DoublingCubeAnalysis` unflipped, so `PlayerWinChances` stayed the doubler's,
+  now mislabelled as the responder's. Caught because a bearoff race judged 41 % for the
+  recorded on-roll player against blunderDB's own exact two-sided table, next to a stored
+  `PlayerWinChances` of 91.67 % and a `BestCubeAction` of `Double, Pass` that only make sense
+  for the other side (`ee01bb08`).
+
+`kevung/gnubgparser#2` (the `ver 3` ply misreading this ADR's own first draft fell for) is
+already fixed as of the pinned `v1.5.0` — no action needed here.
