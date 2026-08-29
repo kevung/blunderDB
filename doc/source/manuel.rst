@@ -73,7 +73,7 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les statistiques de performance (panneau Stats),
 
-* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Bearoff),
+* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Eval),
 
 * étudier les positions par répétition espacée (panneau Anki),
 
@@ -192,7 +192,7 @@ l'ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
 conservées d'une session à l'autre.
 
 L'onglet *Bearoff* gère la base two-sided qui étend le domaine exact du
-panneau Bearoff (voir :ref:`panneau_epc`) au-delà de la base TS-06-06
+panneau Eval (voir :ref:`panneau_epc`) au-delà de la base TS-06-06
 embarquée dans l'exécutable. Il affiche le domaine actuellement actif
 (``TS-06-06`` ou ``TS-06-11`` une fois téléchargée) et son origine, propose de
 lancer le téléchargement de la base étendue TS-06-11 avec une barre de
@@ -821,20 +821,27 @@ MWC : limitations
 
 .. _panneau_epc:
 
-Panneau Bearoff
----------------
+Panneau Eval
+------------
 
-Le panneau **Bearoff** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une
-position de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur
-l'onglet Bearoff dans le panneau inférieur, ou en exécutant la commande
-``epc``.
+Le panneau **Eval** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une
+position de bearoff et l'évaluation en direct de la position sur le plateau.
+Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet Eval dans le
+panneau inférieur, ou en exécutant la commande ``epc``.
 
-Dans ce panneau, l'utilisateur édite la position des pions dans les deux
+Il comporte deux volets. Le **volet évaluation**, en haut, est toujours
+présent : la position sur le plateau décide de ce qu'il y a à évaluer — des
+dés posés font apparaître les coups candidats, leur absence la décision de
+videau. Le **volet course**, en dessous, ne s'affiche que sur une position de
+bearoff pur ; sinon il ne réserve que sa place, sans contenu.
+
+Dans le volet course, l'utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
 du bas, un clic sur les points 19 à 24 place des pions du joueur du haut
 (le bouton de souris est indifférent).
 
-Les résultats sont présentés sous forme de deux tableaux empilés :
+Les résultats du volet course sont présentés sous forme de deux tableaux
+empilés :
 
 * en haut, un **tableau des joueurs** — une ligne par joueur (repérée par
   sa pastille de couleur, le joueur noir étant toujours en bas), une
@@ -897,11 +904,11 @@ seulement. La ligne Δ n'apparaît qu'une fois les deux lignes joueurs
 révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
 se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
 
-Pour fermer le panneau Bearoff, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
+Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
 .. _epc_methodologie:
 
-Méthodologie et hypothèses du panneau Bearoff
+Méthodologie et hypothèses du panneau Eval
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Chaque valeur affichée par le panneau repose sur des hypothèses précises,

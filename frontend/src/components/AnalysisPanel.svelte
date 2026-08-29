@@ -6,6 +6,8 @@
     import { openPanels, PANEL } from '../stores/uiStore';
     import { normalizeCubeAction } from '../utils/cubeAction.js';
     import { t } from '../i18n';
+    import CandidateMovesTable from './CandidateMovesTable.svelte';
+    import CubeVerdictTable from './CubeVerdictTable.svelte';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -170,11 +172,6 @@
         });
     });
 
-    function getSortIndicator(column) {
-        if (sortColumn !== column) return '';
-        return sortDirection === 'asc' ? ' ▲' : ' ▼';
-    }
-
     function handleMoveRowClick(move) {
         // Toggle selection: if clicking the same move, deselect it
         if ($selectedMoveStore === move.move) {
@@ -182,10 +179,6 @@
         } else {
             selectedMoveStore.set(move.move);
         }
-    }
-
-    function formatEquity(value) {
-        return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
     }
 
     // Normalize a move string for comparison by sorting individual moves
@@ -421,196 +414,13 @@
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
                 <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
-                    <table class="left-table">
-                        <tbody>
-                            <tr>
-                                <th></th>
-                                <th>{$t('analysis.player')}</th>
-                                <th>{$t('analysis.opponent')}</th>
-                            </tr>
-                            <tr>
-                                <td>{$t('analysis.win')}</td>
-                                <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
-                                <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>{$t('analysis.gammon')}</td>
-                                <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
-                                <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>{$t('analysis.backgammon')}</td>
-                                <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
-                                <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>{$t('analysis.noDoubleEquity')}</td>
-                                <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
-                            </tr>
-                            <tr>
-                                <td>{$t('analysis.doubleEquity')}</td>
-                                <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="right-table">
-                        <tbody>
-                            <tr>
-                                <th>{$t('analysis.decision')}</th>
-                                <th>{$t('analysis.equity')}</th>
-                                <th>{$t('analysis.error')}</th>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('No Double')}>
-                                <td>{$t(cubeValue >= 1 ? 'analysis.noRedouble' : 'analysis.noDouble')}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulNoDoubleError || 0)}</td>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
-                                <td>{$t(cubeValue >= 1 ? 'analysis.redoubleTake' : 'analysis.doubleTake')}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeError || 0)}</td>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
-                                <td>{$t(cubeValue >= 1 ? 'analysis.redoublePass' : 'analysis.doublePass')}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulDoublePassEquity || 0)}</td>
-                                <td>{formatEquity(cubeAnalysis.cubefulDoublePassError || 0)}</td>
-                            </tr>
-                            <tr class="best-action-row {cubeAnalysis.bestCubeAction && cubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
-                                <td>{$t('analysis.bestAction')}</td>
-                                <td colspan="2">{cubeAnalysis.bestCubeAction || ''}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="info-table">
-                        <tbody>
-                            <tr>
-                                <th>{$t('analysis.analysisDepth')}</th>
-                                <td>{cubeAnalysis.analysisDepth}</td>
-                            </tr>
-                            <tr>
-                                <th>{$t('analysis.engine')}</th>
-                                <td>{cubeAnalysis.analysisEngine || analysisData.analysisEngineVersion}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <CubeVerdictTable {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysisData.analysisEngineVersion} />
                 </div>
             {/each}
         {/if}
 
         {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
-            <div class="checker-scroll">
-                <table class="checker-table">
-                    <thead>
-                        <tr>
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'move'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('move'))();
-                                }}>{$t('analysis.move')}{getSortIndicator('move')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'equity'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('equity'))();
-                                }}>{$t('analysis.equity')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'error'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('error'))();
-                                }}>{$t('analysis.error')}{getSortIndicator('error')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'pw'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('pw'))();
-                                }}>{$t('analysis.playerWin')}{getSortIndicator('pw')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'pg'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('pg'))();
-                                }}>{$t('analysis.playerGammon')}{getSortIndicator('pg')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'pb'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('pb'))();
-                                }}>{$t('analysis.playerBackgammon')}{getSortIndicator('pb')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'ow'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('ow'))();
-                                }}>{$t('analysis.opponentWin')}{getSortIndicator('ow')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'og'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('og'))();
-                                }}>{$t('analysis.opponentGammon')}{getSortIndicator('og')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'ob'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('ob'))();
-                                }}>{$t('analysis.opponentBackgammon')}{getSortIndicator('ob')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'depth'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('depth'))();
-                                }}>{$t('analysis.depth')}{getSortIndicator('depth')}</th
-                            >
-                            <th
-                                class="sortable"
-                                class:active-sort={sortColumn === 'engine'}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    (() => handleSort('engine'))();
-                                }}>{$t('analysis.engine')}{getSortIndicator('engine')}</th
-                            >
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each sortedMoves as move (move.index ?? move.move)}
-                            <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
-                                <td>{move.move}</td>
-                                <td>{formatEquity(move.equity || 0)}</td>
-                                <td>{formatEquity(move.equityError || 0)}</td>
-                                <td>{(move.playerWinChance || 0).toFixed(2)}</td>
-                                <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
-                                <td>{move.analysisDepth}</td>
-                                <td>{move.analysisEngine || ''}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            </div>
+            <CandidateMovesTable moves={sortedMoves} {sortColumn} {sortDirection} selectedMove={$selectedMoveStore} {isPlayedMove} onSort={handleSort} onRowClick={handleMoveRowClick} />
         {/if}
     </div>
 </section>
@@ -631,181 +441,28 @@
         container-type: inline-size;
     }
 
-    .checker-scroll {
-        width: 100%;
-    }
-
     .analysis-content {
         font-size: var(--font-size-base); /* Reduce font size */
         color: black; /* Set text color */
+        cursor: default; /* Make analysis content interactive in MATCH mode (toggle on click) */
     }
 
+    /* Wraps CubeVerdictTable — the three tables it renders (left/right/info)
+       stay laid out side by side here, and the query container from
+       .analysis-panel lets them stack on a narrow panel. */
     .tables-container {
         display: flex;
         justify-content: space-between;
-    }
-
-    .cube-engine-header {
-        font-weight: bold;
-        font-size: var(--font-size-base);
-        color: #444;
-        padding: 2px 4px;
-        margin-top: 4px;
-        border-bottom: 1px solid #ccc;
     }
 
     .multi-engine-cube {
         margin-bottom: 6px;
     }
 
-    .left-table,
-    .right-table,
-    .info-table {
-        width: 28%; /* Reduce width for the first and third tables */
-        border-collapse: collapse;
-        font-size: var(--font-size-base); /* Ensure same font size */
-    }
-
-    .left-table th:nth-child(1) {
-        width: 20px; /* Reduce width for the first column */
-    }
-
-    .right-table th:nth-child(1) {
-        width: 60px; /* Reduce width for the decision column */
-    }
-
-    .info-table th,
-    .info-table td {
-        border: 1px solid #ddd;
-        padding: 2px; /* Reduce padding */
-        text-align: center;
-    }
-
-    .checker-table {
-        margin: 0 auto; /* Center the table */
-        width: 100%;
-        font-size: var(--font-size-base); /* Ensure same font size */
-        border-spacing: 0; /* Remove space between cells */
-    }
-
-    th,
-    td {
-        border: 1px solid #ddd;
-        padding: 2px; /* Reduce padding */
-        text-align: center;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    /* Narrow panel (e.g. side column): the three cube tables, normally laid out
-       side by side, stack vertically and take the full width; the wide
-       multi-column checker table scrolls horizontally instead of crushing its
-       columns. */
     @container (max-width: 600px) {
         .tables-container {
             flex-direction: column;
             gap: 6px;
         }
-
-        .left-table,
-        .right-table,
-        .info-table {
-            width: 100%;
-        }
-
-        .checker-scroll {
-            overflow-x: auto;
-        }
-
-        .checker-table {
-            min-width: 560px;
-        }
-    }
-
-    th:nth-child(1) {
-        width: 150px; /* Sufficiently large for move column */
-    }
-
-    th:nth-child(n + 2) {
-        width: 60px; /* Fixed width for equity and percentage columns */
-    }
-
-    .checker-table th:nth-child(1),
-    .checker-table td:nth-child(1) {
-        border-right: 2px solid #ccc; /* More discreet border between move and equity columns */
-    }
-
-    .checker-table th:nth-child(3),
-    .checker-table td:nth-child(3) {
-        border-right: 2px solid #ccc; /* More discreet border between error and PW columns */
-    }
-
-    .checker-table th:nth-child(6),
-    .checker-table td:nth-child(6) {
-        border-right: 2px solid #ccc; /* More discreet border between PB and OW columns */
-    }
-
-    .checker-table th:nth-child(9),
-    .checker-table td:nth-child(9) {
-        border-right: 2px solid #ccc; /* More discreet border between OB and depth columns */
-    }
-
-    .checker-table tr:nth-child(even) {
-        background-color: #fdfdfd; /* More discreet alternating row color */
-    }
-
-    .checker-table tr:nth-child(odd) {
-        background-color: #ffffff; /* More discreet alternating row color */
-    }
-
-    .checker-table tr.selected {
-        background-color: #b3d9ff !important; /* Highlight selected row with light blue */
-        font-weight: bold;
-    }
-
-    .checker-table tr.played {
-        background-color: #fff3cd !important; /* Light yellow background for played move */
-    }
-
-    .checker-table tr.played.selected {
-        background-color: #a3c9ef !important; /* Mixed color when both played and selected */
-    }
-
-    .right-table tr.played {
-        background-color: #fff3cd !important; /* Light yellow background for played cube action */
-    }
-
-    .checker-table tbody tr:hover {
-        background-color: #e6f2ff; /* Light hover effect for move rows */
-    }
-
-    .sortable {
-        cursor: pointer;
-        user-select: none;
-        position: relative;
-    }
-
-    .sortable:hover {
-        background-color: #e0e0e0;
-    }
-
-    .active-sort {
-        background-color: #dde8f0;
-    }
-
-    .best-action-row {
-        font-weight: bold;
-        color: #000000; /* Subtle color change for emphasis */
-    }
-
-    .japanese-text {
-        font-family: 'Noto Sans JP', sans-serif;
-    }
-
-    /* Make analysis content interactive in MATCH mode (toggle on click) */
-    .analysis-content {
-        cursor: default;
     }
 </style>
