@@ -562,6 +562,12 @@ type Decision struct {
 	// decision.
 	EquityNoDouble float64
 	EquityDouble   float64
+	// EquityDoubleTake and EquityDoublePass are the two branches EquityDouble
+	// is the minimum of — kept apart because a caller reporting a ND/DT/DP
+	// table (the same shape XG and gnubg import) needs all three, not just
+	// the one Verdict acted on.
+	EquityDoubleTake float64
+	EquityDoublePass float64
 	// TakePoint is the opponent's take point at this state, for reporting.
 	TakePoint float64
 }
@@ -610,10 +616,12 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 		}
 
 		return Decision{
-			Action:         action,
-			EquityNoDouble: eND,
-			EquityDouble:   math.Min(eDT, eDP),
-			TakePoint:      tp,
+			Action:           action,
+			EquityNoDouble:   eND,
+			EquityDouble:     math.Min(eDT, eDP),
+			EquityDoubleTake: eDT,
+			EquityDoublePass: eDP,
+			TakePoint:        tp,
 		}, true
 	}
 
@@ -650,9 +658,11 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 	}
 
 	return Decision{
-		Action:         action,
-		EquityNoDouble: eND,
-		EquityDouble:   math.Min(eDT, eDP),
-		TakePoint:      tp,
+		Action:           action,
+		EquityNoDouble:   eND,
+		EquityDouble:     math.Min(eDT, eDP),
+		EquityDoubleTake: eDT,
+		EquityDoublePass: eDP,
+		TakePoint:        tp,
 	}, true
 }

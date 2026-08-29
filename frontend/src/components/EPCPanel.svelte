@@ -1,9 +1,12 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetEpcChallenge, SaveEpcChallenge } from '../../wailsjs/go/main/Config.js';
+    import { GetEpcChallenge, SaveEpcChallenge, GetGammonNetDisplayPly, GetGammonNetPruneK, GetGammonNetCandidates } from '../../wailsjs/go/main/Config.js';
+    import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
+    import { EventsOn } from '../../wailsjs/runtime/runtime.js';
+    import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
@@ -16,18 +19,99 @@
     // The evaluation volet always renders — the position on the board decides
     // what there is to compute (dice set → candidate moves, no dice → a cube
     // verdict), the same [0, 0]-means-no-dice convention AnalysisPanel uses
-    // for its own cube position. No engine call is wired here yet: both
-    // branches stay empty placeholders until the live evaluation is plugged
-    // into evalMoves/evalCubeAnalysis.
+    // for its own cube position (#124/#125, ADR-0013).
     let dice = $derived($positionStore?.dice ?? [0, 0]);
     let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
 
+    // Progressive escalation (#125): 0-ply synchronously at the gesture
+    // (measured ~376µs, ADR-0011 — cheap enough for a plain round trip),
+    // then the configured display depth (canonically 2-ply k=12) in the
+    // background after 500ms of rest, cancelled by any newer gesture. No
+    // 1-ply step: a state the user would never see pass.
+    const EVAL_REST_DELAY_MS = 500;
+    let evalRestTimer = null;
+    let evalGeneration = 0; // guards a late "done" against a position the user already left
+
+    // A stable signature is the effect's ONLY tracked dependency — never
+    // evalMoves/evalCubeAnalysis, which this same effect writes. Reading a
+    // $state an effect just wrote is exactly the fcde0243 regression
+    // (effect_update_depth_exceeded, StatsFilterBar.svelte): the fix there,
+    // reused here, is deriving from a local value and wrapping everything
+    // else in untrack() so Svelte sees one dependency.
+    let positionSignature = $derived(JSON.stringify($positionStore ?? null));
+
+    $effect(() => {
+        const signature = positionSignature; // tracked: the position
+        const active = isActive; // tracked: is the Eval tab even shown
+        if (!signature || !active) return;
+        untrack(() => {
+            runEvaluationEscalation();
+        });
+    });
+
+    function runEvaluationEscalation() {
+        const pos = $positionStore;
+        if (!isActive || !pos) return;
+
+        evalGeneration += 1;
+        const generation = evalGeneration;
+
+        if (evalRestTimer) {
+            clearTimeout(evalRestTimer);
+            evalRestTimer = null;
+        }
+        CancelEvaluationAtRest().catch(() => {});
+
+        GetGammonNetPruneK()
+            .then((pruneK) =>
+                GetGammonNetCandidates().then((candidates) =>
+                    EvaluatePositionImmediate(pos, pruneK, candidates).then((result) => {
+                        if (generation !== evalGeneration) return; // superseded while awaiting
+                        applyEvalResult(result);
+                    })
+                )
+            )
+            .catch((error) => logger.error('gammonNet 0-ply evaluation failed:', error));
+
+        evalRestTimer = setTimeout(() => {
+            if (generation !== evalGeneration) return;
+            Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
+                .then(([ply, pruneK, candidates]) => {
+                    if (generation !== evalGeneration) return;
+                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => logger.error('gammonNet evaluation-at-rest failed to start:', error));
+                })
+                .catch((error) => logger.error('gammonNet evaluation-at-rest settings failed:', error));
+        }, EVAL_REST_DELAY_MS);
+    }
+
+    // The depth label on the applied result always says what actually
+    // produced it (0-ply or the display depth) — never a depth that was
+    // requested but superseded before it ran. A "cancelled" event simply
+    // leaves whatever 0-ply result is already showing untouched.
+    function applyEvalResult(result) {
+        evalMoves = result?.moves ?? [];
+        evalCubeAnalysis = result?.cube ?? null;
+    }
+
+    let unsubEval = [];
     onMount(() => {
         GetEpcChallenge()
             .then((v) => epcChallengeStore.set(!!v))
             .catch(() => {});
+
+        unsubEval = [
+            EventsOn('gammonnet-eval:done', (result) => applyEvalResult(result)),
+            EventsOn('gammonnet-eval:cancelled', () => {}),
+            EventsOn('gammonnet-eval:error', (e) => logger.error('gammonNet evaluation-at-rest error:', e))
+        ];
+    });
+
+    onDestroy(() => {
+        if (evalRestTimer) clearTimeout(evalRestTimer);
+        CancelEvaluationAtRest().catch(() => {});
+        unsubEval.forEach((off) => off && off());
     });
 
     function toggleChallenge(e) {

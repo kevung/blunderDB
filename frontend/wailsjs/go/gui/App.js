@@ -10,6 +10,10 @@ export function CancelBearoffDownload() {
   return window['go']['gui']['App']['CancelBearoffDownload']();
 }
 
+export function CancelEvaluationAtRest() {
+  return window['go']['gui']['App']['CancelEvaluationAtRest']();
+}
+
 export function CollectImportableFiles(arg1) {
   return window['go']['gui']['App']['CollectImportableFiles'](arg1);
 }
@@ -28,6 +32,10 @@ export function DeleteFile(arg1) {
 
 export function DownloadBearoffDB() {
   return window['go']['gui']['App']['DownloadBearoffDB']();
+}
+
+export function EvaluatePositionImmediate(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['EvaluatePositionImmediate'](arg1, arg2, arg3);
 }
 
 export function ExportIssuerIdentity(arg1) {
@@ -116,4 +124,8 @@ export function ShowAlert(arg1) {
 
 export function ShowQuestionDialog(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['ShowQuestionDialog'](arg1, arg2, arg3, arg4);
+}
+
+export function StartEvaluationAtRest(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4);
 }

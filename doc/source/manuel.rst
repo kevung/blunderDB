@@ -852,6 +852,16 @@ dés posés font apparaître les coups candidats, leur absence la décision de
 videau. Le **volet course**, en dessous, ne s'affiche que sur une position de
 bearoff pur ; sinon il ne réserve que sa place, sans contenu.
 
+Le volet évaluation est calculé par gammonNet, embarqué, sans XG ni gnubg.
+Le calcul suit la position sans jamais figer l'interface : une profondeur
+0-ply s'affiche immédiatement à chaque geste, puis, après une demi-seconde
+d'immobilité, une évaluation plus profonde (2 plis par défaut, réglable dans
+l'onglet *gammonNet* de la configuration) la remplace en arrière-plan — tout
+nouveau geste annule ce calcul de fond. La profondeur affichée à côté de
+chaque coup ou de la décision de videau est toujours celle qui a
+effectivement produit le chiffre montré, jamais celle demandée. Ce volet ne
+modifie jamais la base : c'est un calcul, pas une analyse enregistrée.
+
 Dans le volet course, l'utilisateur édite la position des pions dans les deux
 jans intérieurs : un clic sur les points 1 à 6 place des pions du joueur
 du bas, un clic sur les points 19 à 24 place des pions du joueur du haut

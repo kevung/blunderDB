@@ -7,6 +7,8 @@ export function BearoffStatus():Promise<gui.BearoffStatus>;
 
 export function CancelBearoffDownload():Promise<void>;
 
+export function CancelEvaluationAtRest():Promise<void>;
+
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
@@ -16,6 +18,8 @@ export function DeleteBearoffDB():Promise<void>;
 export function DeleteFile(arg1:string):Promise<void>;
 
 export function DownloadBearoffDB():Promise<void>;
+
+export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:number):Promise<gui.GammonNetEvalResult>;
 
 export function ExportIssuerIdentity(arg1:string):Promise<string>;
 
@@ -60,3 +64,5 @@ export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;
 export function ShowAlert(arg1:string):Promise<void>;
 
 export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,arg4:string):Promise<string>;
+
+export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
