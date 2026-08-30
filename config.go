@@ -106,6 +106,22 @@ const (
 	DefaultPanelPosition = PanelPositionBottom
 )
 
+// Panel size, in pixels — the tabbed panel's height in bottom mode, its width
+// in side mode (the other dimension stretches to fill the window). The
+// defaults are generous enough that the Eval tab's stacked evaluation and
+// race tables fit without scrolling in the common case; once the user drags
+// the resize handle, their own size is persisted instead (frontend saves on
+// mouseup) and these defaults never apply again.
+const (
+	MinPanelHeight     = 80
+	MaxPanelHeight     = 4000
+	DefaultPanelHeight = 380
+
+	MinPanelWidth     = 150
+	MaxPanelWidth     = 4000
+	DefaultPanelWidth = 520
+)
+
 // gammonNet settings (ADR-0011, ADR-0013). Two depths, named and clamped
 // separately on purpose: display depth is interactive comfort, analysis depth
 // is what the batch (#129) writes to a Position's Analysis row. Conflating
@@ -135,6 +151,8 @@ type Config struct {
 	BoardColors      BoardColors          `json:"board_colors,omitempty"`
 	UIScale          int                  `json:"ui_scale,omitempty"`
 	PanelPosition    string               `json:"panel_position,omitempty"`
+	PanelHeight      int                  `json:"panel_height,omitempty"`
+	PanelWidth       int                  `json:"panel_width,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
 	// BearoffTsPath is an optional user-supplied two-sided bearoff database
 	// (.bd) widening the embedded TS-06-06 (ADR-0009). Empty = none.
@@ -181,6 +199,37 @@ func sanitizePanelPosition(pos string) string {
 	default:
 		return DefaultPanelPosition
 	}
+}
+
+// clampPanelHeight coerces a persisted/incoming bottom-mode panel height into
+// the supported range, mapping the zero value (missing in older config files,
+// or never resized by the user) to the default.
+func clampPanelHeight(height int) int {
+	if height == 0 {
+		return DefaultPanelHeight
+	}
+	if height < MinPanelHeight {
+		return MinPanelHeight
+	}
+	if height > MaxPanelHeight {
+		return MaxPanelHeight
+	}
+	return height
+}
+
+// clampPanelWidth coerces a persisted/incoming side-mode panel width the same
+// way clampPanelHeight does for the height.
+func clampPanelWidth(width int) int {
+	if width == 0 {
+		return DefaultPanelWidth
+	}
+	if width < MinPanelWidth {
+		return MinPanelWidth
+	}
+	if width > MaxPanelWidth {
+		return MaxPanelWidth
+	}
+	return width
 }
 
 // clampGammonNetPly coerces an explicit search depth into the supported
@@ -235,6 +284,8 @@ func NewConfig() *Config {
 		BoardColors:   DefaultBoardColors(),
 		UIScale:       DefaultUIScale,
 		PanelPosition: DefaultPanelPosition,
+		PanelHeight:   DefaultPanelHeight,
+		PanelWidth:    DefaultPanelWidth,
 		// GammonNetDisplayPly/GammonNetAnalysisPly stay nil: the Get
 		// accessors report DefaultGammonNetPly for a nil pointer.
 		GammonNetPruneK:     DefaultGammonNetPruneK,
@@ -297,6 +348,10 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.UIScale = c.UIScale
 	c.PanelPosition = sanitizePanelPosition(config.PanelPosition)
 	config.PanelPosition = c.PanelPosition
+	c.PanelHeight = clampPanelHeight(config.PanelHeight)
+	config.PanelHeight = c.PanelHeight
+	c.PanelWidth = clampPanelWidth(config.PanelWidth)
+	config.PanelWidth = c.PanelWidth
 	c.TourSeen = config.TourSeen
 	c.BearoffTsPath = config.BearoffTsPath
 	c.EpcChallenge = config.EpcChallenge
@@ -388,6 +443,32 @@ func (c *Config) GetPanelPosition() string {
 // a known value.
 func (c *Config) SavePanelPosition(pos string) error {
 	c.PanelPosition = sanitizePanelPosition(pos)
+	return c.SaveConfig(c)
+}
+
+// GetPanelHeight returns the persisted bottom-mode panel height in pixels
+// (clamped; defaults to 380).
+func (c *Config) GetPanelHeight() int {
+	return clampPanelHeight(c.PanelHeight)
+}
+
+// SavePanelHeight persists the bottom-mode panel height, clamped to the
+// supported range.
+func (c *Config) SavePanelHeight(height int) error {
+	c.PanelHeight = clampPanelHeight(height)
+	return c.SaveConfig(c)
+}
+
+// GetPanelWidth returns the persisted side-mode panel width in pixels
+// (clamped; defaults to 520).
+func (c *Config) GetPanelWidth() int {
+	return clampPanelWidth(c.PanelWidth)
+}
+
+// SavePanelWidth persists the side-mode panel width, clamped to the
+// supported range.
+func (c *Config) SavePanelWidth(width int) error {
+	c.PanelWidth = clampPanelWidth(width)
 	return c.SaveConfig(c)
 }
 

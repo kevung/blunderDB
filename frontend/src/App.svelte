@@ -11,7 +11,18 @@
     import { initLanguage, t } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
-    import { initPanelPosition, effectivePositionStore, PANEL_SIDE } from './stores/panelLayoutStore';
+    import {
+        initPanelPosition,
+        effectivePositionStore,
+        PANEL_SIDE,
+        initPanelSize,
+        panelHeightStore,
+        panelWidthStore,
+        savePanelHeight,
+        savePanelWidth,
+        DEFAULT_PANEL_HEIGHT,
+        DEFAULT_PANEL_WIDTH
+    } from './stores/panelLayoutStore';
 
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
@@ -128,8 +139,8 @@
 
     // Component state
     let mainArea;
-    let panelHeight = $state(250);
-    let panelWidth = $state(420);
+    let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
+    let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
     let dragCounter = 0;
@@ -284,7 +295,9 @@
         document.body.style.userSelect = 'none';
         const start = side ? e.clientX : e.clientY;
         const startSize = side ? panelWidth : panelHeight;
+        let moved = false;
         function onMouseMove(e) {
+            moved = true;
             if (side) {
                 panelWidth = Math.min(Math.max(150, startSize + (start - e.clientX)), window.innerWidth - 200);
             } else {
@@ -297,6 +310,12 @@
             document.body.style.userSelect = '';
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
+            // Persist only the dimension the drag actually applies to, and only
+            // when the drag moved the handle at all (a plain click is a no-op).
+            if (moved) {
+                if (side) savePanelWidth(panelWidth);
+                else savePanelHeight(panelHeight);
+            }
         }
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
@@ -393,6 +412,14 @@
 
         // Apply the persisted panel position (falls back to bottom internally).
         initPanelPosition();
+
+        // Apply the persisted panel size (falls back to the defaults internally).
+        // A one-shot seed of the local $state, not a reactive binding: the
+        // resize-handle drag below owns panelWidth/panelHeight afterwards.
+        initPanelSize().then(() => {
+            panelHeight = get(panelHeightStore);
+            panelWidth = get(panelWidthStore);
+        });
 
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();

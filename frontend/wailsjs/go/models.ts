@@ -1641,6 +1641,8 @@ export namespace main {
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
 	    panel_position?: string;
+	    panel_height?: number;
+	    panel_width?: number;
 	    tour_seen?: boolean;
 	    bearoff_ts_path?: string;
 	    epc_challenge?: boolean;
@@ -1664,6 +1666,8 @@ export namespace main {
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
 	        this.panel_position = source["panel_position"];
+	        this.panel_height = source["panel_height"];
+	        this.panel_width = source["panel_width"];
 	        this.tour_seen = source["tour_seen"];
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.epc_challenge = source["epc_challenge"];

@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store';
-import { GetPanelPosition, SavePanelPosition } from '../../wailsjs/go/main/Config.js';
+import { GetPanelPosition, SavePanelPosition, GetPanelHeight, SavePanelHeight, GetPanelWidth, SavePanelWidth } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
 
 // Where the tabbed panel lives relative to the board. `bottom` is the historical
@@ -73,4 +73,43 @@ export function setPanelPosition(pos) {
     const next = sanitize(pos);
     panelPositionStore.set(next);
     SavePanelPosition(next).catch((err) => logger.error('Failed to save panel position:', err));
+}
+
+// Panel size, in pixels: the height App.svelte applies in bottom mode, the
+// width it applies in side mode (the other dimension stretches to fill the
+// window — see App.svelte's .panel-wrapper.side rule). Generous enough by
+// default that the Eval tab's stacked evaluation and race tables fit without
+// scrolling in the common case (mirrors config.go's DefaultPanelHeight/Width).
+export const DEFAULT_PANEL_HEIGHT = 380;
+export const DEFAULT_PANEL_WIDTH = 520;
+
+export const panelHeightStore = writable(DEFAULT_PANEL_HEIGHT);
+export const panelWidthStore = writable(DEFAULT_PANEL_WIDTH);
+
+// Load the persisted panel size at startup. App.svelte owns the size as local
+// $state during an active drag (continuous mousemove updates would be wasted
+// churn on a store); this only seeds that local state once, at launch.
+export async function initPanelSize() {
+    try {
+        panelHeightStore.set(await GetPanelHeight());
+    } catch (err) {
+        logger.error('Failed to load panel height, using default:', err);
+    }
+    try {
+        panelWidthStore.set(await GetPanelWidth());
+    } catch (err) {
+        logger.error('Failed to load panel width, using default:', err);
+    }
+}
+
+// Persist the panel size reached at the end of a resize-handle drag (called
+// on mouseup, not on every intermediate pixel — see App.svelte).
+export function savePanelHeight(height) {
+    panelHeightStore.set(height);
+    SavePanelHeight(height).catch((err) => logger.error('Failed to save panel height:', err));
+}
+
+export function savePanelWidth(width) {
+    panelWidthStore.set(width);
+    SavePanelWidth(width).catch((err) => logger.error('Failed to save panel width:', err));
 }

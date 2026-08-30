@@ -141,6 +141,38 @@ func TestSanitizePanelPosition(t *testing.T) {
 	}
 }
 
+func TestClampPanelHeight(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, DefaultPanelHeight}, // missing in old config files, or never resized → default
+		{380, 380},
+		{MinPanelHeight - 10, MinPanelHeight},
+		{MaxPanelHeight + 10, MaxPanelHeight},
+	}
+	for _, c := range cases {
+		if got := clampPanelHeight(c.in); got != c.want {
+			t.Errorf("clampPanelHeight(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
+func TestClampPanelWidth(t *testing.T) {
+	cases := []struct {
+		in, want int
+	}{
+		{0, DefaultPanelWidth}, // missing in old config files, or never resized → default
+		{520, 520},
+		{MinPanelWidth - 10, MinPanelWidth},
+		{MaxPanelWidth + 10, MaxPanelWidth},
+	}
+	for _, c := range cases {
+		if got := clampPanelWidth(c.in); got != c.want {
+			t.Errorf("clampPanelWidth(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
+
 // TestConfigRoundTripLoadSave writes a fully populated Config to a temporary
 // XDG_CONFIG_HOME, reloads it from scratch on a fresh receiver, and checks
 // every persisted field survives — including the two (BearoffTsPath,
@@ -167,6 +199,8 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		},
 		UIScale:              150,
 		PanelPosition:        PanelPositionSide,
+		PanelHeight:          520,
+		PanelWidth:           640,
 		TourSeen:             true,
 		BearoffTsPath:        "/home/user/gnubg_ts6x11.bd",
 		EpcChallenge:         true,
@@ -208,6 +242,8 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"BoardColors", loaded.GetBoardColors(), original.BoardColors},
 		{"UIScale", loaded.GetUIScale(), original.UIScale},
 		{"PanelPosition", loaded.GetPanelPosition(), original.PanelPosition},
+		{"PanelHeight", loaded.GetPanelHeight(), original.PanelHeight},
+		{"PanelWidth", loaded.GetPanelWidth(), original.PanelWidth},
 		{"TourSeen", loaded.GetTourSeen(), original.TourSeen},
 		{"BearoffTsPath", loaded.GetBearoffTsPath(), original.BearoffTsPath},
 		{"EpcChallenge", loaded.GetEpcChallenge(), original.EpcChallenge},
@@ -254,6 +290,12 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	}
 	if got := loaded.GetPanelPosition(); got != DefaultPanelPosition {
 		t.Errorf("GetPanelPosition() = %q, want default %q", got, DefaultPanelPosition)
+	}
+	if got := loaded.GetPanelHeight(); got != DefaultPanelHeight {
+		t.Errorf("GetPanelHeight() = %d, want default %d", got, DefaultPanelHeight)
+	}
+	if got := loaded.GetPanelWidth(); got != DefaultPanelWidth {
+		t.Errorf("GetPanelWidth() = %d, want default %d", got, DefaultPanelWidth)
 	}
 	if got := loaded.GetTourSeen(); got != false {
 		t.Errorf("GetTourSeen() = %v, want false", got)

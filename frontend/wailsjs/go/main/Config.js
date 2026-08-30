@@ -42,8 +42,16 @@ export function GetLastDatabasePath() {
   return window['go']['main']['Config']['GetLastDatabasePath']();
 }
 
+export function GetPanelHeight() {
+  return window['go']['main']['Config']['GetPanelHeight']();
+}
+
 export function GetPanelPosition() {
   return window['go']['main']['Config']['GetPanelPosition']();
+}
+
+export function GetPanelWidth() {
+  return window['go']['main']['Config']['GetPanelWidth']();
 }
 
 export function GetStatsFilter() {
@@ -106,8 +114,16 @@ export function SaveLastDatabasePath(arg1) {
   return window['go']['main']['Config']['SaveLastDatabasePath'](arg1);
 }
 
+export function SavePanelHeight(arg1) {
+  return window['go']['main']['Config']['SavePanelHeight'](arg1);
+}
+
 export function SavePanelPosition(arg1) {
   return window['go']['main']['Config']['SavePanelPosition'](arg1);
+}
+
+export function SavePanelWidth(arg1) {
+  return window['go']['main']['Config']['SavePanelWidth'](arg1);
 }
 
 export function SaveStatsFilter(arg1) {
