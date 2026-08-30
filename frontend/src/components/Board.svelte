@@ -69,6 +69,16 @@
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
 
+    // enterEPCMode() (positionService.js) always starts the Eval panel's
+    // position with dice = [0, 0]; without this, the first die click of an
+    // Eval session would restore whatever previousDice was left over from an
+    // unrelated position seen earlier, instead of starting from a clean roll.
+    $effect(() => {
+        if (mode === 'EPC') {
+            previousDice = [0, 0];
+        }
+    });
+
     // selectedMove is read inside drawBoard() via this derived; the actual
     // redraw is triggered (coalesced) by scheduleRedraw() — see
     // subscribeBoardRedrawTriggers() below.
@@ -727,20 +737,12 @@
             logger.log('Die clicked'); // Debug log
         }
 
-        // EPC mode: a player's rectangle only sets who is on roll (the race
-        // analysis follows); dice and decision type stay untouched.
-        if (mode === 'EPC') {
-            positionStore.update((pos) => {
-                if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                    pos.player_on_roll = 0;
-                } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                    pos.player_on_roll = 1;
-                }
-                return pos;
-            });
-            return;
-        }
-
+        // EPC mode shares this whole handler with EDIT mode: the Eval panel's
+        // evaluation volet needs real dice to show candidate moves (no dice
+        // means a cube verdict instead, EPCPanel.svelte) — a player's
+        // rectangle clearing the dice to show the cube decision, then a die
+        // click restoring/bumping them for a move decision, is exactly EDIT
+        // mode's own toggle.
         positionStore.update((pos) => {
             if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
                 logger.log("Top player's rectangle clicked"); // Debug log
