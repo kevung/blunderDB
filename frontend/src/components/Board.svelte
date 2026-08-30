@@ -581,8 +581,28 @@
         });
     }
 
+    // EPC's own "clear" target: a blank board the user can build up from
+    // scratch, but with the defaults enterEPCMode() itself uses — money
+    // score (not a 7-away match), no dice in progress — rather than EDIT's
+    // search-flavoured 7-7/3-1. See the grilling session that settled this:
+    // reusing resetBoard() verbatim would inject an arbitrary match score
+    // into a panel whose race table otherwise reads as money by default.
+    function resetEPCBoard() {
+        positionStore.update((pos) => {
+            pos.board.points.forEach((point) => (point.checkers = 0));
+            pos.board.bearoff = [15, 15];
+            pos.cube.value = 0;
+            pos.cube.owner = -1;
+            pos.score = [-1, -1]; // money
+            pos.dice = [0, 0]; // no move in progress
+            pos.decision_type = 0;
+            pos.player_on_roll = 0;
+            return pos;
+        });
+    }
+
     function handleDoubleClick(event) {
-        if (mode !== 'EDIT') return;
+        if (mode !== 'EDIT' && mode !== 'EPC') return;
 
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -599,7 +619,8 @@
 
         // Check if the click is outside of the board
         if (mouseX < boardOrigXpos - boardWidth / 2 || mouseX > boardOrigXpos + boardWidth / 2 || mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
-            resetBoard();
+            if (mode === 'EPC') resetEPCBoard();
+            else resetBoard();
         }
     }
 
@@ -784,7 +805,7 @@
     }
 
     function handleScoreClick(event) {
-        if (mode !== 'EDIT') return;
+        if (mode !== 'EDIT' && mode !== 'EPC') return;
 
         // Same normalisation as checker clicks: the canvas may be CSS-scaled.
         const rect = canvas.getBoundingClientRect();
@@ -814,6 +835,12 @@
                 }
                 if (pos.score[0] === -1) {
                     pos.score[1] = -1; // Set other player's score to unlimited
+                } else if (pos.score[1] === -1) {
+                    // Leaving money by editing this side alone must not strand the
+                    // position at [N, -1] — an away score with no opponent away
+                    // score is not a valid match state (EPC's own money default is
+                    // [-1, -1], the only state where a lone -1 is meaningful).
+                    pos.score[1] = pos.score[0];
                 }
                 return pos;
             });
@@ -829,6 +856,8 @@
                 }
                 if (pos.score[1] === -1) {
                     pos.score[0] = -1; // Set other player's score to unlimited
+                } else if (pos.score[0] === -1) {
+                    pos.score[0] = pos.score[1]; // Leaving money: see the mirrored comment above
                 }
                 return pos;
             });
@@ -858,11 +887,12 @@
     }
 
     function handleKeyDown(event) {
-        if (mode !== 'EDIT' || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
+        if ((mode !== 'EDIT' && mode !== 'EPC') || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
 
         if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();
-            resetBoard();
+            if (mode === 'EPC') resetEPCBoard();
+            else resetBoard();
         }
     }
 

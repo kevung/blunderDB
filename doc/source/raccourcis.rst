@@ -56,6 +56,13 @@ Position
    "RETOUR ARRIERE", "Réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
 
+.. note::
+
+   Dans le panneau Eval (voir :ref:`panneau_epc`), RETOUR ARRIERE réinitialise
+   vers les valeurs propres à ce panneau (score money, pas de dés posés) plutôt
+   que vers celles du mode édition (score 7 partout, dés 3-1). Un double-clic
+   en dehors du plateau produit la même réinitialisation.
+
 .. _raccourcis_navigation:
 
 Navigation

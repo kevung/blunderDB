@@ -907,6 +907,21 @@ empilés :
   estimé, le lien « Voir les paramètres de configuration » ouvre
   directement l'onglet *Bearoff* de la configuration.
 
+Le **score** s'édite lui aussi directement sur le plateau, comme en mode
+édition : clic gauche sur le rectangle score d'un joueur décrémente son
+nombre de points à faire, clic droit l'incrémente. Sortir du score *money*
+(-1, -1) en éditant un seul camp aligne automatiquement l'autre camp sur la
+même valeur plutôt que de laisser un score incohérent. Passer d'un score
+money à un score de match bascule l'équité et le verdict de videau affichés
+vers la table d'équité de match correspondante (disponible dès le régime
+*évalué*, voir ci-dessus) au lieu d'une équité money.
+
+*RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la
+position : plateau vide, score money (-1, -1), pas de dés posés — des
+valeurs propres au panneau Eval, différentes de celles utilisées en mode
+édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau
+affiche par défaut.
+
 La case *Défi* reste épinglée en haut à droite du panneau.
 
 Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
