@@ -87,9 +87,22 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 		opponent = domain.Black
 	}
 
+	// out comes back best-first (Searcher.Plays), so out[0].Equity is the
+	// reference every other candidate's loss is measured against — same
+	// convention as ingest/merge.go's sortCheckerMovesByEquity and
+	// database/db_analysis.go's two save-time copies: nil for the best move,
+	// a non-negative bestEquity-equity for the rest.
+	bestEquity := out[0].Equity
+
 	moves := make([]domain.CheckerMove, 0, len(out))
 	for i, c := range out {
 		notation := notationForCandidate(&c, legal, opponent)
+
+		var equityError *float64
+		if i > 0 {
+			diff := bestEquity - c.Equity
+			equityError = &diff
+		}
 
 		mine := InvertProbs(&c.Probs) // Candidate.Probs is the RESULTING position's distribution, opponent's POV
 		moves = append(moves, domain.CheckerMove{
@@ -98,6 +111,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 			AnalysisEngine:           EngineVersion,
 			Move:                     notation,
 			Equity:                   c.Equity,
+			EquityError:              equityError,
 			PlayerWinChance:          float64(mine[PWin]),
 			PlayerGammonChance:       float64(mine[PWinGammon]),
 			PlayerBackgammonChance:   float64(mine[PWinBackgammon]),
