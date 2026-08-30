@@ -1544,17 +1544,19 @@ export namespace gui {
 	export class GammonNetEvalResult {
 	    moves?: domain.CheckerMove[];
 	    cube?: domain.DoublingCubeAnalysis;
-
+	    race?: race.Eval;
+	
 	    static createFrom(source: any = {}) {
 	        return new GammonNetEvalResult(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.moves = this.convertValues(source["moves"], domain.CheckerMove);
 	        this.cube = this.convertValues(source["cube"], domain.DoublingCubeAnalysis);
+	        this.race = this.convertValues(source["race"], race.Eval);
 	    }
-
+	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
 		    if (!a) {
 		        return a;
@@ -1647,11 +1649,11 @@ export namespace main {
 	    gammonnet_prune_k?: number;
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.window_width = source["window_width"];
@@ -1764,6 +1766,7 @@ export namespace race {
 	    sigma?: number;
 	    p99?: number;
 	    money?: Money;
+	    depth?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Eval(source);
@@ -1778,6 +1781,7 @@ export namespace race {
 	        this.sigma = source["sigma"];
 	        this.p99 = source["p99"];
 	        this.money = this.convertValues(source["money"], Money);
+	        this.depth = source["depth"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
