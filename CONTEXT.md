@@ -130,10 +130,26 @@ win probability and yields the verdict to *evaluated*.
 **Position fact**:
 A quantity that belongs to the board itself and to no choice a player might make: pip count,
 EPC, wastage, mean rolls and their dispersion, the pre-roll probability vector (win, gammon and
-backgammon for each side), and the cubeless equity in the position's Referential. A fact is
-read **per player**, so two players' facts can be set side by side and subtracted. Facts do not
-depend on the dice; they are true before the roll.
+backgammon), and the cubeless equity in the position's Referential. Facts do not depend on the
+dice; they are true before the roll. They come in two kinds, and the difference is what decides
+how they are read (ADR-0018):
+
+- **Per-side facts** — the race block: EPC, pip count, wastage, mean rolls, dispersion. Each
+  belongs to one player's home board, so two players' can be set side by side and subtracted.
+  They are always read in `bottom` / `top` / `Δ` rows.
+- **The pre-roll vector** — win, gammon and backgammon chances and the cubeless equity. The
+  engine computes it at the trait (`InvertProbs`, `CubelessValue`), and it reads equally well
+  per side; it therefore takes the axis of whatever it is compared against. See Baseline.
+
 _Avoid_: stats, position evaluation, summary
+
+**Baseline**:
+The pre-roll vector rendered in the axis of the Decision it heads, so each option can be read
+against it. With dice on the board the Decision is a list of checker plays at the trait, and the
+Baseline is a band in that same list's columns, pinned above the rows. It is never part of the
+ranking: the gap between the Baseline and any play holds the value of the roll — the luck of the
+position (ADR-0010) — not the merit of the play, which is why it carries no error figure.
+_Avoid_: reference row, row zero, first line
 
 **Decision**:
 The answer to the question the board is asking — the ranked checker plays when dice are on the
@@ -143,9 +159,9 @@ exactly one Decision to show; a race with dice on it is asking about checkers, a
 cube verdict answers a question nobody asked.
 _Avoid_: analysis, verdict (the verdict is one part of a cube Decision, not the whole)
 
-The pair is the panel's whole layout rule: facts in one table whose rows are the players and
-whose race columns appear when the position is a race, the one Decision beside it. See
-ADR-0017.
+The pair is the panel's whole layout rule: the per-side facts in a table whose rows are the
+players, the one Decision the board is asking for, and — when that Decision is a list at the
+trait — the Baseline at its head. See ADR-0017 for the partition, ADR-0018 for the axis.
 
 ### Sets of positions the user curates
 
