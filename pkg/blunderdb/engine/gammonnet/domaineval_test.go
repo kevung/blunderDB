@@ -5,9 +5,11 @@ package gammonnet
 import (
 	"math"
 	"math/rand"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // TestEvaluateMovesSetsEquityError guards the Eval panel bug (#132) where a
@@ -182,5 +184,123 @@ func TestEvaluatePositionDecodesPostCrawfordSentinel(t *testing.T) {
 	}
 	if res.Cube == nil {
 		t.Fatal("expected a cube decision for a no-dice position")
+	}
+}
+
+// tooGoodXGID: the on-roll player has a closed board and the opponent has
+// two checkers on the bar. Cashing wins one point; playing on wins a gammon
+// nearly every time — the textbook "too good to double".
+const tooGoodXGID = "XGID=bBBBBBB-C----e-----e--c---:0:0:1:00:0:0:0:0:10"
+
+// TestCubeEquitiesAreNormalisedAtEveryScore guards ADR-0019's bug: at a match
+// score the panel showed Decide's raw match winning chances as equities
+// (the opening position read "No double +0.767" at 3-away/7-away), while the
+// cubeless fact beside them was on the search's 2×MWC−1 and money was in
+// points — three scales, two of them wrong against the imported XG analyses
+// sharing the same column.
+//
+// The invariant that pins it down needs no reference engine: conceding the
+// cube's own value is worth exactly −1 and cashing it exactly +1, at every
+// score, which is what "normalised" means.
+func TestCubeEquitiesAreNormalisedAtEveryScore(t *testing.T) {
+	base, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	base.Dice = [2]int{0, 0} // no dice: a cube decision
+
+	scores := map[string][2]int{
+		"money":         {-1, -1},
+		"5-away/5-away": {5, 5},
+		"3-away/7-away": {3, 7},
+		"2-away/4-away": {2, 4},
+		"DMP":           {1, 1},
+	}
+
+	var moneyCubeless float64
+	cubeless := make(map[string]float64, len(scores))
+	for label, score := range scores {
+		pos := base
+		pos.Score = score
+		res, err := EvaluatePosition(pos, 0, 0, 0)
+		if err != nil {
+			t.Fatalf("%s: %v", label, err)
+		}
+		if res.Cube == nil {
+			t.Fatalf("%s: no cube decision", label)
+		}
+		if res.PreRoll == nil {
+			t.Fatalf("%s: no pre-roll facts", label)
+		}
+		cubeless[label] = res.PreRoll.CubelessEquity
+		if label == "money" {
+			moneyCubeless = res.PreRoll.CubelessEquity
+		}
+
+		// Dropping is worth exactly one point of the current cube, on every
+		// scale worth printing.
+		if got := res.Cube.CubefulDoublePassEquity; math.Abs(got-1) > 1e-6 {
+			t.Errorf("%s: double/pass = %+.4f, want +1.000 — the equity is not normalised", label, got)
+		}
+	}
+
+	// The cubeless fact carries no cube, so the score moves it only through
+	// the gammon prices — a few hundredths on the opening position. It is
+	// the sharpest available check that the scale itself is right: the bug
+	// put it on 2×MWC−1, five times too small at an even score, while the
+	// three cube equities beside it were on a third scale again.
+	for label, eq := range cubeless {
+		if math.Abs(eq-moneyCubeless) > 0.15 {
+			t.Errorf("%s: cubeless %+.4f is far from money's %+.4f — a scale, not a score effect",
+				label, eq, moneyCubeless)
+		}
+	}
+}
+
+// TestTooGoodIsReported guards the second half of ADR-0019: the engine had
+// been computing the TooGood verdict all along and cubeActionLabel threw it
+// away, so a position that is too good to double reported "No Double" —
+// indistinguishable from a position that is not good enough to double.
+func TestTooGoodIsReported(t *testing.T) {
+	base, err := domain.DecodeXGID(tooGoodXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+
+	for _, score := range [][2]int{{-1, -1}, {5, 5}, {3, 7}} {
+		pos := base
+		pos.Score = score
+		res, err := EvaluatePosition(pos, 0, 0, 0)
+		if err != nil {
+			t.Fatalf("score %v: %v", score, err)
+		}
+		cube := res.Cube
+		if !strings.HasPrefix(cube.BestCubeAction, "Too good to double") {
+			t.Errorf("score %v: best action %q, want a too-good verdict (ND %+.4f, DP %+.4f)",
+				score, cube.BestCubeAction, cube.CubefulNoDoubleEquity, cube.CubefulDoublePassEquity)
+		}
+		// Too good means exactly this: playing on beats cashing.
+		if cube.CubefulNoDoubleEquity <= cube.CubefulDoublePassEquity {
+			t.Errorf("score %v: no-double %+.4f does not beat cashing %+.4f, yet the verdict is %q",
+				score, cube.CubefulNoDoubleEquity, cube.CubefulDoublePassEquity, cube.BestCubeAction)
+		}
+		// …and the label the whole application already reads must decode it.
+		verdict, ok := engine.BestCubeVerdict(cube.BestCubeAction)
+		if !ok || verdict.ShouldDouble {
+			t.Errorf("score %v: %q decodes to %+v, ok=%v — a too-good label must rule against doubling",
+				score, cube.BestCubeAction, verdict, ok)
+		}
+	}
+
+	// Under Jacoby there is no such thing as too good: gammons do not count
+	// until the cube has been turned, so the same position is a plain cash.
+	jacoby := base
+	jacoby.HasJacoby = 1
+	res, err := EvaluatePosition(jacoby, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("jacoby: %v", err)
+	}
+	if res.Cube.BestCubeAction != "Double, Pass" {
+		t.Errorf("with Jacoby the too-good position should cash: got %q", res.Cube.BestCubeAction)
 	}
 }

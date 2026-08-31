@@ -891,8 +891,9 @@ ligne, puisqu'une évaluation en direct partage la même profondeur pour tous
 les coups.
 L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
-match en pourcentage d'équité de match (2×MWC−1) — la même grandeur,
-jamais mélangées dans un même tableau. Ce panneau ne modifie jamais la
+match en **équité normalisée** — la même échelle que XG et GNU Backgammon,
+où gagner la valeur du videau courant vaut +1 et la perdre −1 — jamais
+mélangées dans un même tableau. Ce panneau ne modifie jamais la
 base : c'est un calcul, pas une analyse enregistrée. Cliquer un coup
 candidat l'affiche sur le plateau sous forme de flèches, exactement comme
 dans le panneau Analyse. Le bouton **?** discret, dans la colonne des
@@ -923,10 +924,15 @@ tableau de faits lui-même : les quatre colonnes qu'il portait viennent de
 changer d'axe, au trait, en tête de la liste des coups.
 
 La décision de videau, quand elle s'affiche, donne l'équité cubeless et les
-équités money (sans double, double/prend, double/passe) — sous chaque
-décision autre que la meilleure, l'écart d'équité à la meilleure décision
-est indiqué entre parenthèses — accompagnée du verdict et du badge de
-régime. Le **joueur au trait** et la **position du videau** s'éditent
+trois équités de videau (sans double, double/prend, double/passe), dans le
+référentiel de la position — sous chaque décision autre que la meilleure,
+l'écart d'équité à la meilleure décision est indiqué entre parenthèses —
+accompagnée du verdict et du badge de régime. Le verdict prend quatre
+valeurs : *pas de double*, *double, prend*, *double, passe* et *trop bon
+pour doubler*, cette dernière lorsque jouer la position rapporte davantage
+que d'encaisser le point : doubler serait alors une erreur pour la raison
+inverse de celle du simple *pas de double*.
+Le **joueur au trait** et la **position du videau** s'éditent
 directement sur le plateau, comme en mode édition : cliquer le rectangle
 bearoff/score d'un joueur lui donne le trait ; cliquer le videau fait
 tourner centré → possédé bas → possédé haut (clic droit en sens inverse).

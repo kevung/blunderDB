@@ -20,6 +20,11 @@ judge exactly where the cube matters most, i.e. the use_cube gap this ADR's poin
 named as deferred, not a new defect. `TestIntegrationGate` is left failing on those 2 rather
 than the threshold loosened to hide them; re-measure once use_cube lands.
 
+**Amended by ADR-0019 (2026-08-31).** The referential decided here is right; the scale it was
+implemented on was not. "Normalised equity" below means gnubg's `mwc2eq`, anchored on the current
+cube — not the `2×MWC−1` the search and the cube model actually emitted, which is anchored on the
+whole match and coincides with it only at double match point.
+
 ## Context
 
 blunderDB's gammonNet search values every node as **cubeless money equity**, at every score.

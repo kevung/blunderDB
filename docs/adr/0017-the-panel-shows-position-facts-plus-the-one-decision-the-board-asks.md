@@ -17,7 +17,8 @@ one of its columns did, and ADR-0016 landed the same day too (`cd7eea98`). Two p
   ADR-0016, the search stayed money-only at every score, so those two would have sat in different
   Referentials at a match score — what ADR-0016 calls a table that cannot be read. With ADR-0016
   landed, `CubelessValue(&probs, state)` already returns the figure in the position's own
-  Referential (money at money play, 2×MWC−1 at a match score, matching Cubeful*Equity beside it),
+  Referential (money at money play, normalised equity at a match score — ADR-0019; this ADR said
+  2×MWC−1 — matching Cubeful*Equity beside it),
   so the column ships filled in both cases, with no gating needed on this side.
 - The **Equity column of the candidate-moves table** is ADR-0016's subject, not this one's. Two
   different columns share the word: here, *cubeless equity* always names the position fact, and
@@ -158,7 +159,8 @@ data; the same restraint applies on screen.
 - **The cubeless-equity column shipped filled at every score, not gated.** By the time this
   landed, ADR-0016 had too (`cd7eea98`, same day): `evaluateCube` now threads the search's own
   `MatchState` into `CubelessValue(&probs, state)`, so the figure is already in the position's
-  Referential — money at money play, 2×MWC−1 at a match score, matching `Cubeful*Equity` beside
+  Referential — money at money play, normalised equity at a match score (ADR-0019 amends the
+  2×MWC−1 written here), matching `Cubeful*Equity` beside
   it in the same table. No frontend gating was needed; an earlier draft of this decision had one
   (strip the column to empty whenever a score was present) and it was removed once the dependency
   resolved, rather than shipped as a harmless-looking leftover that would have quietly hidden a
