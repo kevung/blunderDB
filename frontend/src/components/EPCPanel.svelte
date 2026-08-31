@@ -144,9 +144,17 @@
     // produced it (0-ply or the display depth) — never a depth that was
     // requested but superseded before it ran. A "cancelled" event simply
     // leaves whatever 0-ply result is already showing untouched.
+    //
+    // Moves and Cube are never both present (gammonnet_eval.go's
+    // GammonNetEvalResult: one or the other, `omitempty` elides the unused
+    // one). Only touch the field the result actually carries — overwriting
+    // the other with its own "nothing yet" value (`[]`/`null`) would flash
+    // the pending placeholder every time a checker-play gesture follows a
+    // cube gesture on the same position, even though that side's last real
+    // evaluation is still perfectly valid.
     function applyEvalResult(result) {
-        evalMoves = result?.moves ?? [];
-        evalCubeAnalysis = result?.cube ?? null;
+        if (result?.moves !== undefined) evalMoves = result.moves;
+        if (result?.cube !== undefined) evalCubeAnalysis = result.cube ?? null;
         evalRaceOverride = result?.race ?? null;
         evalPreRoll = result?.preRoll ?? null;
     }
