@@ -629,7 +629,6 @@
         "epc": "EPC",
         "inactive": "EPC 計算機は無効です。EPC 値を計算するには盤面を編集してください。",
         "pipCount": "pip カウント",
-        "placeCheckers": "EPC を計算するにはインナーボードにチェッカーを配置してください。",
         "stdDev": "標準偏差",
         "topWhite": "上側（白）",
         "wastage": "Wastage",

@@ -629,7 +629,6 @@
         "epc": "EPC",
         "inactive": "EPC-laskuri ei ole käytössä. Muokkaa lautaa laskeaksesi EPC-arvot.",
         "pipCount": "Pip-luku",
-        "placeCheckers": "Aseta nappulat kotialueelle laskeaksesi EPC:n.",
         "stdDev": "Keskihajonta",
         "topWhite": "Ylhäällä (valkoinen)",
         "wastage": "Hukka",

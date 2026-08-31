@@ -629,7 +629,6 @@
         "epc": "EPC",
         "inactive": "Le calculateur EPC est inactif. Modifiez le plateau pour calculer les valeurs EPC.",
         "pipCount": "Pipcount",
-        "placeCheckers": "Placez des pions dans le jan intérieur pour calculer l'EPC.",
         "stdDev": "Écart-type",
         "topWhite": "Haut (Blanc)",
         "wastage": "Gaspillage",

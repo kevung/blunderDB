@@ -629,7 +629,6 @@
         "epc": "EPC",
         "inactive": "EPC calculator is inactive. Edit the board to compute EPC values.",
         "pipCount": "Pip Count",
-        "placeCheckers": "Place checkers on the home board to compute EPC.",
         "stdDev": "Std Dev",
         "topWhite": "Top (White)",
         "wastage": "Wastage",

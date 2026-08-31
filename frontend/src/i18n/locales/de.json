@@ -629,7 +629,6 @@
         "epc": "EPC",
         "inactive": "Der EPC-Rechner ist inaktiv. Bearbeiten Sie das Brett, um EPC-Werte zu berechnen.",
         "pipCount": "Pip-Count",
-        "placeCheckers": "Platzieren Sie Steine im Heimfeld, um den EPC zu berechnen.",
         "stdDev": "Std.-Abw.",
         "topWhite": "Oben (Weiß)",
         "wastage": "Verschwendung",

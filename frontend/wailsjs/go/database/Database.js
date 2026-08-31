@@ -26,6 +26,10 @@ export function AnalyzeMissingWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6) 
   return window['go']['database']['Database']['AnalyzeMissingWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
+export function AnalyzeStaleGammonNet(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['AnalyzeStaleGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
 export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }

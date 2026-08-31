@@ -19,6 +19,8 @@ export function AnalyzeImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function AnalyzeMissingWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:any,arg6:any):Promise<void>;
 
+export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:any,arg6:any):Promise<void>;
+
 export function CancelImport():Promise<void>;
 
 export function CheckDatabaseVersion():Promise<string>;

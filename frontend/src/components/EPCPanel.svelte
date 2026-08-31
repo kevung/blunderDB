@@ -400,10 +400,6 @@
                 </div>
             </div>
 
-            {#if !data.bottomEPC && !data.topEPC}
-                <div class="epc-race-hint">{$t('epc.placeCheckers')}</div>
-            {/if}
-
             <!-- The moves list is the only region that ever scrolls
                  (ADR-0017): its header stays sticky, and everything above
                  (facts, badges, and a race/cube decision when there is no
@@ -488,14 +484,9 @@
     }
 
     .decision-pending,
-    .eval-placeholder,
-    .epc-race-hint {
+    .eval-placeholder {
         color: #888;
         font-size: var(--font-size-small);
-    }
-
-    .epc-race-hint {
-        flex: 0 0 auto;
     }
 
     .decision-race,
