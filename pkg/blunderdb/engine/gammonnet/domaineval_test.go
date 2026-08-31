@@ -59,3 +59,128 @@ func TestEvaluateMovesSetsEquityError(t *testing.T) {
 		t.Fatal("no random position produced two or more candidate moves to compare — randomBoard/dice generation is broken")
 	}
 }
+
+// TestEvaluatePositionHonoursTheScore is ADR-0016's own regression: before
+// use_match, the opening 6-4's candidates were bit-identical whatever the
+// score (measured 2026-08-31 across money, 7-away/7-away, gammon-go 4a/2a,
+// gammon-save 2a/4a, 2a/2a and DMP 1a/1a) because pos.Score never reached the
+// checker-move search. It must not go back to that: the gammonish play
+// (fewer priming points, more gammon chances — 6/2 8/2 on this roll) must be
+// valued differently at DMP, where a gammon is worth nothing extra, than at
+// gammon-go, where it is worth most of the game.
+func TestEvaluatePositionHonoursTheScore(t *testing.T) {
+	base, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	base.PlayerOnRoll = domain.White
+	base.Dice = [2]int{6, 4}
+
+	atScore := func(score [2]int) domain.Position {
+		p := base
+		p.Score = score
+		return p
+	}
+
+	money := atScore([2]int{-1, -1})
+	dmp := atScore([2]int{1, 1})        // both 1-away: a gammon is worth nothing extra
+	gammonGo := atScore([2]int{4, 2})   // White 2-away: a gammon White wins is worth a lot
+	gammonSave := atScore([2]int{2, 4}) // White 4-away, Black 2-away: mirror of gammonGo
+
+	moneyRes, err := EvaluatePosition(money, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("money: %v", err)
+	}
+	dmpRes, err := EvaluatePosition(dmp, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("DMP: %v", err)
+	}
+	goRes, err := EvaluatePosition(gammonGo, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("gammon-go: %v", err)
+	}
+	saveRes, err := EvaluatePosition(gammonSave, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("gammon-save: %v", err)
+	}
+	for label, res := range map[string][]domain.CheckerMove{
+		"money": moneyRes.Moves, "DMP": dmpRes.Moves,
+		"gammon-go": goRes.Moves, "gammon-save": saveRes.Moves,
+	} {
+		if len(res) < 2 {
+			t.Fatalf("%s: expected several candidates for the opening 6-4, got %d", label, len(res))
+		}
+	}
+
+	// The candidate with the highest gammon chance — the play a score-blind
+	// search chases identically everywhere.
+	mostGammonish := func(moves []domain.CheckerMove) domain.CheckerMove {
+		best := moves[0]
+		for _, m := range moves[1:] {
+			if m.PlayerGammonChance > best.PlayerGammonChance {
+				best = m
+			}
+		}
+		return best
+	}
+	lossOf := func(m domain.CheckerMove) float64 {
+		if m.EquityError == nil {
+			return 0
+		}
+		return *m.EquityError
+	}
+
+	moneyLoss := lossOf(mostGammonish(moneyRes.Moves))
+	dmpLoss := lossOf(mostGammonish(dmpRes.Moves))
+	goLoss := lossOf(mostGammonish(goRes.Moves))
+	saveLoss := lossOf(mostGammonish(saveRes.Moves))
+
+	// The bug this guards: all four were bit-identical. At minimum, DMP and
+	// gammon-go must disagree — a gammon is worth the least at the first,
+	// the most at the second, of any two scores this test tries.
+	if dmpLoss == goLoss {
+		t.Errorf("the gammonish play's loss is identical at DMP (%v) and gammon-go (%v) — the score is not reaching the checker-move search", dmpLoss, goLoss)
+	}
+	// At gammon-go the gammon-chasing play should cost LESS relative to the
+	// field than at DMP, where its extra gammon chances buy nothing.
+	if goLoss > dmpLoss {
+		t.Errorf("gammon-go loss (%v) > DMP loss (%v) for the gammonish play — a gammon should be cheaper to chase at gammon-go, never more expensive", goLoss, dmpLoss)
+	}
+	// Mirroring the score should mirror the effect: gammon-save (the
+	// opponent is the one 2-away) should value the gammonish play like DMP
+	// does at best, never like gammon-go does.
+	if math.Abs(saveLoss-goLoss) < 1e-9 && math.Abs(goLoss-dmpLoss) > 1e-9 {
+		t.Errorf("gammon-save loss (%v) matches gammon-go's (%v) rather than DMP's (%v) — the score's SIDE is not being read correctly", saveLoss, goLoss, dmpLoss)
+	}
+	if moneyLoss == goLoss && moneyLoss != 0 {
+		t.Errorf("money loss (%v) equals gammon-go's (%v) — money play looks like it is silently reusing a match state", moneyLoss, goLoss)
+	}
+
+	t.Logf("gammonish-play loss: money=%.4f DMP=%.4f gammon-go=%.4f gammon-save=%.4f", moneyLoss, dmpLoss, goLoss, saveLoss)
+}
+
+// TestEvaluatePositionDecodesPostCrawfordSentinel guards the bug the score
+// sentinel decode fixes (ADR-0016, CONTEXT.md's Away score entry): a
+// domain.Position at away=0 ("1-away, post-Crawford") must evaluate, not be
+// silently refused because 0 fails MatchState.IsValid()'s "away >= 1". Before
+// MatchStateFromPosition this position's cube decision failed with "not
+// evaluable at this score" on every post-Crawford 1-away position.
+func TestEvaluatePositionDecodesPostCrawfordSentinel(t *testing.T) {
+	base, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	base.PlayerOnRoll = domain.White
+	base.Dice = [2]int{0, 0} // no dice: a cube decision
+
+	postCrawford := base
+	postCrawford.Score = [2]int{0, 7} // Black 1-away, post-Crawford; White 7-away
+
+	res, err := EvaluatePosition(postCrawford, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("post-Crawford (score [0,7]) refused: %v — the away=0 sentinel is not being decoded", err)
+	}
+	if res.Cube == nil {
+		t.Fatal("expected a cube decision for a no-dice position")
+	}
+}

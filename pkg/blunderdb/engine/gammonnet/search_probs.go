@@ -113,7 +113,7 @@ func (s *Searcher) probsAt(pos *Position, depth, level int) ([NumOutputs]float32
 	var total [NumOutputs]float64
 	for r := 0; r < NumRolls; r++ {
 		roll := s.rolls[r]
-		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, cands)
+		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, s.matchState(), cands)
 		if n < 0 {
 			return [NumOutputs]float32{}, false
 		}

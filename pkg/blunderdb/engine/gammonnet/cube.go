@@ -321,6 +321,67 @@ func metAfter(state MatchState, points int, onRollWins bool) (float64, bool) {
 	return engine.GnuBGGetME(score0, score1, matchTo, 0, points, fWhoWins, state.Crawford), true
 }
 
+// matchWinningChance is the on-roll player's match winning chance if the
+// cube never moves again this game, at its current value — gn_match_winning_
+// chance, ported by reusing branchMwc's win/lose branch averages (each
+// already the outcome-weighted MWC of its own branch at a stake) rather than
+// re-deriving the six-outcome sum gn_met.c computes term by term: the C's
+// `sum_i outcomes[i] * metAfter(STAKE[i]*cube, WE_WIN[i])` is exactly
+// `winMass*branchMwc(...,true) + loseMass*branchMwc(...,false)`.
+func matchWinningChance(state MatchState, probs *[NumOutputs]float32) (float64, bool) {
+	outcomes := probsExclusive(probs)
+	winMass := outcomes[outWinSingle] + outcomes[outWinGammon] + outcomes[outWinBackgammon]
+	loseMass := outcomes[outLoseSingle] + outcomes[outLoseGammon] + outcomes[outLoseBackgammon]
+
+	winMWC, ok1 := branchMwc(state, outcomes, state.Cube, true)
+	loseMWC, ok2 := branchMwc(state, outcomes, state.Cube, false)
+	if !ok1 || !ok2 {
+		return 0, false
+	}
+	return winMass*winMWC + loseMass*loseMWC, true
+}
+
+// matchEquity is 2×MWC−1 — gn_match_equity, the match-referential counterpart
+// of MoneyEquity (ADR-0016). ok is false only when state is not IsValid();
+// with a valid state, GnuBGGetME's own clamping means matchWinningChance
+// never itself fails.
+func matchEquity(state MatchState, probs *[NumOutputs]float32) (float64, bool) {
+	if !state.IsValid() {
+		return 0, false
+	}
+	mwc, ok := matchWinningChance(state, probs)
+	if !ok {
+		return 0, false
+	}
+	return 2*mwc - 1, true
+}
+
+// valueFromProbs is the value of a distribution from its own side's point of
+// view: cubeless money equity with no match state, 2×MWC−1 otherwise —
+// gn_search.c's value_from_probs, without the cube branch (use_cube is a
+// follow-up tranche, ADR-0016). A failure (only reachable with an invalid
+// state, which NewSearcher already refuses at construction) values the
+// distribution as 0 rather than propagating a search-wide failure over one
+// node — the same choice value_from_probs makes.
+func valueFromProbs(probs *[NumOutputs]float32, state *MatchState) float64 {
+	if state == nil {
+		return float64(MoneyEquity(probs))
+	}
+	eq, ok := matchEquity(*state, probs)
+	if !ok {
+		return 0
+	}
+	return eq
+}
+
+// CubelessValue is valueFromProbs, exported for a cold-path caller outside
+// this package that needs a plain (non-cube) value in a position's own
+// referential — internal/gui's race-regime bonus (evaluateRaceRegime) —
+// same precedent as InvertProbs.
+func CubelessValue(probs *[NumOutputs]float32, state *MatchState) float64 {
+	return valueFromProbs(probs, state)
+}
+
 // matchLevel is one stake level of the §9 chain.
 type matchLevel struct {
 	dead    bool    // this stake covers both away scores: the base case

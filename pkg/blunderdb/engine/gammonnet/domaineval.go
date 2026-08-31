@@ -11,7 +11,12 @@ import (
 // analysis carries — the same one gammonGo already writes (ADR-0011): a
 // weights bump changes it, a depth change never does (depth belongs in
 // AnalysisDepth).
-const EngineVersion = "gammonNet v1.0.1"
+//
+// v1.1.0 is ADR-0016: the search became match-aware (use_match), so a
+// checker-move analysis stored under v1.0.1 at a match score is money-only
+// and, on the same scale, sits next to an imported XG/gnubg analysis that is
+// not — see the batch job's staleness check, db_gammonnet_batch.go.
+const EngineVersion = "gammonNet v1.1.0"
 
 // EvalResult is what evaluating a domain.Position through gammonNet
 // produces: candidate moves when dice are set, a cube decision otherwise —
@@ -27,8 +32,15 @@ type EvalResult struct {
 
 // EvaluatePosition runs a gammonNet search at the given ply (canonical
 // parameters when pruneK/candidates are 0) and returns the moves-or-cube
-// verdict for pos. The depth label on the result always reports the depth
-// that actually ran, never the one requested (DefaultConfig clamps).
+// verdict for pos, in pos's own referential (ADR-0016): cubeless money at
+// money play, 2×MWC−1 at a match score. The depth label on the result always
+// reports the depth that actually ran, never the one requested (DefaultConfig
+// clamps).
+//
+// A match score this build cannot evaluate (MatchStateFromPosition refuses)
+// is an error here, never a silent fall to money — the same refusal
+// NewSearcher itself would make, raised earlier so the message names the
+// score rather than an opaque internal state.
 func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalResult, error) {
 	gnPos, err := FromDomain(&pos)
 	if err != nil {
@@ -39,6 +51,19 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 	if pruneK > 0 {
 		cfg.PruneK = pruneK
 	}
+
+	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
+	var state *MatchState
+	if !isMoney {
+		m, ok := MatchStateFromPosition(&pos)
+		if !ok {
+			return EvalResult{}, fmt.Errorf("gammonnet: match state not evaluable at score %v", pos.Score)
+		}
+		cfg.UseMatch = true
+		cfg.Match = m
+		state = &m
+	}
+
 	searcher, err := NewSearcher(cfg)
 	if err != nil {
 		return EvalResult{}, err
@@ -55,11 +80,65 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, err := evaluateCube(&gnPos, &pos, searcher, depthLabel)
+	cube, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state)
 	if err != nil {
 		return EvalResult{}, err
 	}
 	return EvalResult{Cube: cube}, nil
+}
+
+// MatchStateFromScores builds a MatchState from raw away scores as the
+// on-roll player sees them, the cube (blunderDB's log2 exponent convention,
+// not a literal value — see the XGID contract), and an explicit Crawford
+// flag — decoding the away=0 sentinel (CONTEXT.md's Away score entry:
+// "1-away, post-Crawford") into the away=1 the MET expects. ok is false when
+// the resulting state cannot be evaluated at all (MatchState.IsValid):
+// refused, never silently degraded to money (ADR-0016).
+//
+// Split from MatchStateFromPosition because not every caller has the same
+// source for Crawford: a domain.Position on its own only has the score
+// sentinel (MatchStateFromPosition reads it), but a decision extracted from
+// a parsed match graph knows better — gnubgmap.go/xgmap.go never write the
+// sentinel (every 1-away position reads raw away=1, Crawford or not), so
+// integration_gate_test.go derives Crawford from the match's own game
+// history (isCrawfordGame) and calls this directly.
+func MatchStateFromScores(awayOnRoll, awayOpponent, cubeExponent int, crawford bool) (MatchState, bool) {
+	decode := func(raw int) int {
+		if raw == 0 {
+			return 1
+		}
+		return raw
+	}
+	state := MatchState{
+		AwayOnRoll:   decode(awayOnRoll),
+		AwayOpponent: decode(awayOpponent),
+		Cube:         1 << uint(cubeExponent),
+		Crawford:     crawford,
+	}
+	if !state.IsValid() {
+		return MatchState{}, false
+	}
+	return state, true
+}
+
+// MatchStateFromPosition is MatchStateFromScores for a domain.Position taken
+// on its own, with no broader match context available: Crawford comes from
+// the score sentinel itself (either away score, raw, equal to 1) — the
+// reading positionService.js already relies on when it copies an XGID to the
+// clipboard, and every GUI-edited or XG-clipboard-imported Position supports
+// it. ok is false for money play (Score == [-1,-1]) or a state
+// MatchStateFromScores refuses.
+func MatchStateFromPosition(pos *domain.Position) (MatchState, bool) {
+	if pos.Score[0] < 0 || pos.Score[1] < 0 {
+		return MatchState{}, false
+	}
+	mover := pos.PlayerOnRoll
+	opponent := domain.White
+	if mover == domain.White {
+		opponent = domain.Black
+	}
+	crawford := pos.Score[0] == 1 || pos.Score[1] == 1
+	return MatchStateFromScores(pos.Score[mover], pos.Score[opponent], pos.Cube.Value, crawford)
 }
 
 // evaluateMoves ranks every legal play for the position's own dice and
@@ -146,11 +225,10 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 }
 
 // evaluateCube runs the pre-roll distribution (Searcher.Probs) through the
-// Janowski cube decision. Score/cube/Jacoby come straight off the position;
-// Crawford is inferred the same way positionService.js infers it for the
-// XGID it copies to the clipboard (either away score == 1) — there is no
-// dedicated Crawford field on domain.Position to read instead.
-func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string) (*domain.DoublingCubeAnalysis, error) {
+// Janowski cube decision. state is the same MatchState the search itself was
+// built with (nil at money play) — EvaluatePosition's one MatchStateFromPosition
+// call, not a second copy of it.
+func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState) (*domain.DoublingCubeAnalysis, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
 		return nil, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
@@ -171,17 +249,6 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 	}
 	efficiency := DefaultEfficiency(owner)
 	jacoby := pos.HasJacoby == 1
-
-	var state *MatchState
-	if pos.Score[0] != -1 || pos.Score[1] != -1 {
-		crawford := pos.Score[0] == 1 || pos.Score[1] == 1
-		state = &MatchState{
-			AwayOnRoll:   pos.Score[mover],
-			AwayOpponent: pos.Score[opponent],
-			Cube:         1 << uint(pos.Cube.Value),
-			Crawford:     crawford,
-		}
-	}
 
 	dec, ok := Decide(&probs, owner, state, efficiency, jacoby)
 	if !ok {

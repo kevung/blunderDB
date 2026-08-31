@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
@@ -93,6 +94,123 @@ func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK,
 			// the same "written as produced" contract, just skip it — it
 			// stays without analysis and is picked up again, unchanged, the
 			// next time this runs.
+			continue
+		}
+
+		if onProgress != nil {
+			onProgress(i+1, total)
+		}
+	}
+	return nil
+}
+
+// gammonNetEngineVersionPrefix identifies an analysis entry as gammonNet's
+// own, whatever its exact version — "gammonNet v1.0.1", "gammonNet v1.1.0",
+// … — the prefix that separates "our own past opinion, safe to recompute"
+// from "someone else's, permanently hands-off" below.
+const gammonNetEngineVersionPrefix = "gammonNet "
+
+// isStaleGammonNetOnly reports whether a's every entry is gammonNet's own
+// and at least one is older than the running build's EngineVersion —
+// ADR-0016's narrow exception to ADR-0013: a position that also carries an
+// XG, GNUbg or BGBlitz entry is never reported stale here, whatever its
+// gammonNet entries say, because ADR-0013 protects an imported analysis
+// unconditionally and this batch only ever touches its own past output.
+func isStaleGammonNetOnly(a *PositionAnalysis) bool {
+	allOurs, anyStale, sawAny := true, false, false
+	check := func(engine string) {
+		sawAny = true
+		if !strings.HasPrefix(engine, gammonNetEngineVersionPrefix) {
+			allOurs = false
+			return
+		}
+		if engine != gammonnet.EngineVersion {
+			anyStale = true
+		}
+	}
+	if a.CheckerAnalysis != nil {
+		for _, m := range a.CheckerAnalysis.Moves {
+			check(m.AnalysisEngine)
+		}
+	}
+	if a.DoublingCubeAnalysis != nil {
+		check(a.DoublingCubeAnalysis.AnalysisEngine)
+	}
+	return sawAny && allOurs && anyStale
+}
+
+// positionIDsWithStaleGammonNet snapshots the ids isStaleGammonNetOnly
+// accepts. Unlike positionIDsWithoutAnalysis this cannot be a single SQL
+// WHERE clause — AnalysisEngine lives inside the compressed JSON blob, not a
+// column — so every analysed position is loaded and decoded once. Run
+// deliberately (a version bump, not automatically), the same posture as the
+// existing gap-fill batch.
+func (d *Database) positionIDsWithStaleGammonNet() ([]int64, error) {
+	d.mu.RLock()
+	rows, err := d.db.Query(`SELECT position_id FROM analysis ORDER BY position_id`)
+	if err != nil {
+		d.mu.RUnlock()
+		return nil, err
+	}
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			d.mu.RUnlock()
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	closeErr := rows.Close()
+	d.mu.RUnlock()
+	if closeErr != nil {
+		return nil, closeErr
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	var stale []int64
+	for _, id := range ids {
+		a, err := d.LoadAnalysis(id)
+		if err != nil || a == nil {
+			continue
+		}
+		if isStaleGammonNetOnly(a) {
+			stale = append(stale, id)
+		}
+	}
+	return stale, nil
+}
+
+// AnalyzeStaleGammonNet re-runs gammonNet on every position whose stored
+// analysis is entirely its own, at an EngineVersion older than the running
+// build's — ADR-0016's use_match changed what a money-only number MEANS at a
+// match score, so a v1.0.1 row is not merely outdated, it can be silently
+// wrong. Same shape and cancellation contract as AnalyzeMissingWithGammonNet;
+// kept as a separate pass because the two query different things (no
+// analysis at all, vs. an entirely-ours but stale one) and ADR-0013 must
+// never be read as licensing a general re-analysis switch.
+func (d *Database) AnalyzeStaleGammonNet(ctx context.Context, ply, pruneK, candidates int, yield func(), onProgress func(done, total int)) error {
+	ids, err := d.positionIDsWithStaleGammonNet()
+	if err != nil {
+		return err
+	}
+	total := len(ids)
+
+	for i, id := range ids {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if yield != nil {
+			yield()
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		if err := d.analyzeOnePositionWithGammonNet(id, ply, pruneK, candidates); err != nil {
 			continue
 		}
 

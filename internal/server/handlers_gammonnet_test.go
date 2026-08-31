@@ -131,8 +131,8 @@ func TestGammonNetAnalyzeMissingFillsOnlyTheGap(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected an analysis to be written for the missing position: %v", err)
 	}
-	if filled.AnalysisEngineVersion != "gammonNet v1.0.1" {
-		t.Fatalf("engine = %q, want gammonNet v1.0.1", filled.AnalysisEngineVersion)
+	if filled.AnalysisEngineVersion != "gammonNet v1.1.0" {
+		t.Fatalf("engine = %q, want gammonNet v1.1.0", filled.AnalysisEngineVersion)
 	}
 
 	untouched, err := s.Analyses().Load(ctx, "t", idAnalyzed)

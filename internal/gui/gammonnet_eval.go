@@ -197,19 +197,11 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	efficiency := gammonnet.DefaultEfficiency(owner)
 	jacoby := pos.HasJacoby == 1
 
+	// One translation (ADR-0016): the same MatchStateFromPosition
+	// EvaluatePosition itself uses, not a second inline copy of it.
 	var state *gammonnet.MatchState
-	if pos.Score[0] != -1 || pos.Score[1] != -1 {
-		opponent := domain.White
-		if mover == domain.White {
-			opponent = domain.Black
-		}
-		crawford := pos.Score[0] == 1 || pos.Score[1] == 1
-		state = &gammonnet.MatchState{
-			AwayOnRoll:   pos.Score[mover],
-			AwayOpponent: pos.Score[opponent],
-			Cube:         1 << uint(pos.Cube.Value),
-			Crawford:     crawford,
-		}
+	if m, ok := gammonnet.MatchStateFromPosition(pos); ok {
+		state = &m
 	}
 
 	dec, ok := gammonnet.Decide(&probs, owner, state, efficiency, jacoby)
@@ -222,8 +214,13 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 		// of who owns the cube, exactly as the Eval panel's own cube table
 		// already does — no separate "cube against" special case invented
 		// here that does not exist there.
+		//
+		// Cubeless follows pos's own referential (ADR-0016), same as the
+		// other three fields: money at money play, 2×MWC−1 at a match
+		// score — it would otherwise sit in a different scale from its own
+		// row's NoDouble/DoubleTake/DoublePass whenever a score is present.
 		CubeState:  raceCubeStateFor(pos, mover),
-		Cubeless:   float64(gammonnet.MoneyEquity(&probs)),
+		Cubeless:   gammonnet.CubelessValue(&probs, state),
 		NoDouble:   dec.EquityNoDouble,
 		DoubleTake: dec.EquityDoubleTake,
 		DoublePass: dec.EquityDoublePass,

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
 // racePosition mirrors internal/gui/gammonnet_eval_test.go's helper: enough
@@ -94,8 +95,8 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	if got2.DoublingCubeAnalysis == nil {
 		t.Fatal("expected a cube decision written for the previously-unanalysed position")
 	}
-	if got2.DoublingCubeAnalysis.AnalysisEngine != "gammonNet v1.0.1" {
-		t.Errorf("AnalysisEngine = %q, want gammonNet v1.0.1", got2.DoublingCubeAnalysis.AnalysisEngine)
+	if got2.DoublingCubeAnalysis.AnalysisEngine != gammonnet.EngineVersion {
+		t.Errorf("AnalysisEngine = %q, want %q", got2.DoublingCubeAnalysis.AnalysisEngine, gammonnet.EngineVersion)
 	}
 	if got2.DoublingCubeAnalysis.AnalysisDepth != "0-ply" {
 		t.Errorf("AnalysisDepth = %q, want 0-ply", got2.DoublingCubeAnalysis.AnalysisDepth)

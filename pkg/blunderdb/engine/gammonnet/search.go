@@ -80,6 +80,20 @@ type SearchConfig struct {
 	// larger — pruning below the filter would silently search fewer candidates
 	// than asked, and no test would see it.
 	PruneK int
+
+	// UseMatch and Match select the referential every node is valued in
+	// (ADR-0016, gn_search.c's use_match/match): cubeless money equity when
+	// UseMatch is false, 2×MWC−1 through Match otherwise. Match is the state
+	// AS THE SEARCHER'S OWN CALLER SEES IT — Plays/BestPlay/Probs swap it at
+	// every ply themselves, exactly as gn_search.c's swap_sides does; a
+	// caller building SearchConfig never has to.
+	//
+	// A Searcher is already bound to one Ply for its whole life (NewSearcher
+	// takes SearchConfig once); binding it to one Match is the same contract,
+	// not a new one — a caller evaluating many different scores builds one
+	// Searcher per score, exactly as it already builds one per Ply.
+	UseMatch bool
+	Match    MatchState
 }
 
 // DefaultConfig returns the canonical configuration for a given depth: pruning
@@ -142,8 +156,14 @@ type Searcher struct {
 	feat  [NumFeatures]float32
 }
 
-// NewSearcher builds a searcher over the embedded networks.
+// NewSearcher builds a searcher over the embedded networks. Refused, never
+// degraded (ADR-0016): an UseMatch config with a Match that IsValid() rejects
+// is an error here, not a silent fall-back to money — gn_search_config_match's
+// own comment names exactly this trap.
 func NewSearcher(cfg SearchConfig) (*Searcher, error) {
+	if cfg.UseMatch && !cfg.Match.IsValid() {
+		return nil, fmt.Errorf("gammonnet: match state not evaluable: %+v", cfg.Match)
+	}
 	net, err := Embedded()
 	if err != nil {
 		return nil, err
@@ -196,6 +216,17 @@ func (s *Searcher) pruneKeep(depth int) int {
 	return keep
 }
 
+// matchState is s.cfg.Match as a pointer, or nil under money valuation — the
+// form every recursive entry point below threads instead of re-reading
+// s.cfg.UseMatch at each node.
+func (s *Searcher) matchState() *MatchState {
+	if !s.cfg.UseMatch {
+		return nil
+	}
+	m := s.cfg.Match
+	return &m
+}
+
 // Plays scores every legal play for the given dice and writes them into out,
 // best first. It returns how many there are; 0 means a dance.
 func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error) {
@@ -205,7 +236,7 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	if d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
 		return 0, fmt.Errorf("gammonnet: dice %d-%d out of range", d1, d2)
 	}
-	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, out)
+	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, s.matchState(), out)
 	if n < 0 {
 		return 0, fmt.Errorf("gammonnet: play generation refused or overflowed")
 	}
@@ -225,8 +256,14 @@ func (s *Searcher) BestPlay(pos *Position, d1, d2 int) (Candidate, bool, error) 
 // rankPlays generates, scores and orders the plays at one node.
 //
 // level indexes the scratch buffers; it is the recursion's nesting, not the
-// search depth.
-func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Candidate) int {
+// search depth. state is the match state AS pos's OWN mover sees it, or nil
+// under money valuation — the same on every call here, since every play
+// generated shares pos's mover. theirs (state, swapped once) is what values
+// the results and what the deep pass hands to the position on the other side
+// of each play — gn_search.c's rank_plays_finish/rank_plays_deepen both
+// derive it exactly this way, from the SAME unswapped state, never from one
+// another's swap.
+func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *MatchState, out []Candidate) int {
 	if level >= len(s.plays) {
 		return -1
 	}
@@ -247,10 +284,12 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Cand
 		out[i].Play = plays[i]
 	}
 
+	theirs := swapMatchState(state)
+
 	// Phase one: the small network sorts, and only the survivors go on.
 	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
 		s.shallowFill(s.pruneEv, out[:written], false)
-		s.valueSweep(out[:written])
+		s.valueSweep(out[:written], theirs)
 		sortByEquity(out[:written])
 		written = keep
 	}
@@ -259,7 +298,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Cand
 	// network's probabilities — five plausible numbers from the wrong network
 	// must never reach a caller.
 	s.shallowFill(s.ev, out[:written], true)
-	s.valueSweep(out[:written])
+	s.valueSweep(out[:written], theirs)
 	sortByEquity(out[:written])
 
 	// Phase three: search the best few deeper.
@@ -274,7 +313,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Cand
 		if out[i].Play.Result.isOver() {
 			continue // keeps the exact terminal value from the sweep
 		}
-		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0)
+		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0, theirs)
 		if !ok {
 			return -1
 		}
@@ -282,6 +321,18 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, out []Cand
 	}
 	sortByEquity(out[:searched])
 	return written
+}
+
+// swapMatchState is state seen from the other side of the table, or nil when
+// state is nil — the one place rankPlays computes gn_search.c's swap_sides,
+// reused for both the value sweep and the deep pass so the two can never
+// drift apart on which state a result is valued in.
+func swapMatchState(state *MatchState) *MatchState {
+	if state == nil {
+		return nil
+	}
+	swapped := state.Swap()
+	return &swapped
 }
 
 // shallowFill writes each candidate's resulting distribution. useCache is false
@@ -314,25 +365,29 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 }
 
 // valueSweep turns each candidate's distribution into its value to the player
-// who made the play — hence the negation.
-func (s *Searcher) valueSweep(cands []Candidate) {
+// who made the play — hence the negation. state is theirs: the match state as
+// the RESULTING position's own mover sees it (rankPlays already swapped it),
+// or nil under money valuation.
+func (s *Searcher) valueSweep(cands []Candidate, state *MatchState) {
 	for i := range cands {
 		res := &cands[i].Play.Result
 		if res.isOver() {
-			cands[i].Equity = -terminalEquity(res)
+			cands[i].Equity = -terminalValue(res, state)
 			continue
 		}
-		cands[i].Equity = -float64(MoneyEquity(&cands[i].Probs))
+		cands[i].Equity = -valueFromProbs(&cands[i].Probs, state)
 	}
 }
 
 // positionEquity is the value of a position to the player on turn, at depth.
-func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool) (float64, bool) {
+// state is the match state as pos's OWN mover sees it, or nil under money
+// valuation.
+func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool, state *MatchState) (float64, bool) {
 	if pos.isOver() {
-		return terminalEquity(pos), true
+		return terminalValue(pos, state), true
 	}
 	if depth <= 0 {
-		return s.leafValue(pos), true
+		return s.leafValue(pos, state), true
 	}
 	if level >= len(s.cands) {
 		return 0, false
@@ -346,12 +401,12 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	// one. A parallel reduction would not be.
 	var best [NumRolls]float64
 	if parallel && len(s.workers) > 0 {
-		if !s.rollsInParallel(pos, depth, &best) {
+		if !s.rollsInParallel(pos, depth, state, &best) {
 			return 0, false
 		}
 	} else {
 		for r := 0; r < NumRolls; r++ {
-			v, ok := s.oneRoll(pos, depth, level, r, cands)
+			v, ok := s.oneRoll(pos, depth, level, r, state, cands)
 			if !ok {
 				return 0, false
 			}
@@ -366,20 +421,22 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	return sum, true
 }
 
-// oneRoll is the value of the best reply to one roll.
-func (s *Searcher) oneRoll(pos *Position, depth, level, r int, cands []Candidate) (float64, bool) {
+// oneRoll is the value of the best reply to one roll. state is pos's own —
+// unswapped, since pos and its mover are unchanged by which dice came up.
+func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, cands []Candidate) (float64, bool) {
 	roll := s.rolls[r]
-	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, cands)
+	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, cands)
 	if n < 0 {
 		return 0, false
 	}
 	if n > 0 {
 		return cands[0].Equity, true
 	}
-	// No legal play: the turn passes. Not an error.
+	// No legal play: the turn passes. Not an error. The passed position's own
+	// mover is the opponent, so its state is state, swapped.
 	passed := *pos
 	passed.swapTurn()
-	v, ok := s.positionEquity(&passed, depth-1, level+1, false)
+	v, ok := s.positionEquity(&passed, depth-1, level+1, false, swapMatchState(state))
 	if !ok {
 		return 0, false
 	}
@@ -387,8 +444,10 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, cands []Candidate
 }
 
 // rollsInParallel spreads the twenty-one rolls over the workers. Each worker
-// runs on its own scratch and its own cache, so nothing needs a lock.
-func (s *Searcher) rollsInParallel(pos *Position, depth int, best *[NumRolls]float64) bool {
+// runs on its own scratch and its own cache, so nothing needs a lock. state
+// is read-only here (MatchState is a plain value; Swap never mutates it in
+// place), so sharing one pointer across goroutines is safe.
+func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, best *[NumRolls]float64) bool {
 	nw := len(s.workers)
 	var wg sync.WaitGroup
 	ok := make([]bool, nw)
@@ -399,7 +458,7 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, best *[NumRolls]flo
 			worker := s.workers[w]
 			ok[w] = true
 			for r := w; r < NumRolls; r += nw {
-				v, good := worker.oneRoll(pos, depth, 0, r, worker.cands[0])
+				v, good := worker.oneRoll(pos, depth, 0, r, state, worker.cands[0])
 				if !good {
 					ok[w] = false
 					return
@@ -417,9 +476,9 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, best *[NumRolls]flo
 	return true
 }
 
-// leafValue is the cubeless money equity of a position, from its own turn's
-// point of view.
-func (s *Searcher) leafValue(pos *Position) float64 {
+// leafValue is the value of a position from its own turn's point of view:
+// cubeless money equity with no match state, 2×MWC−1 otherwise.
+func (s *Searcher) leafValue(pos *Position, state *MatchState) float64 {
 	var probs [NumOutputs]float32
 	if !s.cache.lookup(pos, &probs) {
 		if !Encode(pos, &s.feat) {
@@ -431,7 +490,7 @@ func (s *Searcher) leafValue(pos *Position) float64 {
 	} else {
 		s.cacheHits++
 	}
-	return float64(MoneyEquity(&probs))
+	return valueFromProbs(&probs, state)
 }
 
 // sortByEquity orders candidates best first.

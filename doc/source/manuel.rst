@@ -867,8 +867,12 @@ d'immobilité, une évaluation plus profonde (2 plis par défaut, réglable dans
 l'onglet *gammonNet* de la configuration) la remplace en arrière-plan — tout
 nouveau geste annule ce calcul de fond. La profondeur affichée à côté de
 chaque coup ou de la décision de videau est toujours celle qui a
-effectivement produit le chiffre montré, jamais celle demandée. Ce volet ne
-modifie jamais la base : c'est un calcul, pas une analyse enregistrée. Le
+effectivement produit le chiffre montré, jamais celle demandée. Comme pour
+le volet course ci-dessous, l'équité des coups candidats et de la décision
+de videau suit le score : en money game elle est exprimée en points, à un
+score de match en pourcentage d'équité de match (2×MWC−1) — la même
+grandeur, jamais mélangées dans un même tableau. Ce volet ne modifie jamais
+la base : c'est un calcul, pas une analyse enregistrée. Le
 bouton **?** discret, en bas à droite du volet, mène au dépôt du moteur
 `gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de

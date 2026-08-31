@@ -235,3 +235,26 @@ func terminalEquity(p *Position) float64 {
 	}
 	return -float64(stake)
 }
+
+// terminalValue is terminalEquity's match-referential counterpart: 2×MWC−1
+// of the game just finished, from p.Turn's point of view, with state nil
+// falling back to terminalEquity exactly as gn_search.c's terminal_value
+// does. A state whose metAfter fails (only possible when state is not
+// IsValid(), which NewSearcher already refused at construction) values the
+// position as 0 rather than propagating a search-wide failure over one
+// terminal node — the same choice the C makes.
+func terminalValue(p *Position, state *MatchState) float64 {
+	if state == nil {
+		return terminalEquity(p)
+	}
+	stake := gameValue(p)
+	if stake < 0 {
+		return 0
+	}
+	onRollWins := int(p.Turn) == p.winner()
+	mwc, ok := metAfter(*state, stake*state.Cube, onRollWins)
+	if !ok || mwc < 0 {
+		return 0
+	}
+	return 2*mwc - 1
+}

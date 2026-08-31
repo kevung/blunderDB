@@ -29,15 +29,35 @@ import (
 // run deliberately, not part of `go test ./...`. Set BLUNDERDB_GATE to run
 // it; BLUNDERDB_GATE_LIMIT truncates both corpora for a quick smoke pass.
 //
-// Result at that measurement: PASS. Criterion 3 (candidacy) 420/426
-// (1.4% missing, under the 5% line); criterion 1 (cost vs XG) 87 checked,
-// max 0.0311 against the 0.05 block (32 decisions at a 1-away score
-// excluded — see the cost loop below); criterion 2 (cube verdict vs XG) 91
-// checked, 0 ND<->DP flips, 2 adjacent disagreements. See ADR-0014's
-// "Update" section for the full account, including three real bugs this run
-// found and fixed along the way (two in domain/moves.go's notation, one in
-// ingest/xg.go's cube-response perspective) — none of them in gammonNet
-// itself.
+// Result at the 2026-08-29 measurement (before ADR-0016's use_match): PASS.
+// Criterion 3 (candidacy) 420/426 (1.4% missing, under the 5% line);
+// criterion 1 (cost vs XG) 87 checked, max 0.0311 against the 0.05 block,
+// with 32 decisions at a 1-away score excluded — the search was still
+// money-only there while XG's stored equities are match equity, so the two
+// were not comparable; criterion 2 (cube verdict vs XG) 91 checked, 0
+// ND<->DP flips, 2 adjacent disagreements. See ADR-0014's "Update" section
+// for the full account, including three real bugs this run found and fixed
+// along the way (two in domain/moves.go's notation, one in ingest/xg.go's
+// cube-response perspective) — none of them in gammonNet itself.
+//
+// Result at the 2026-08-31 measurement (ADR-0016's use_match, that exclusion
+// deleted): FAIL, by exactly two decisions. Criterion 3 (candidacy) 421/426
+// (1.2% missing, still under the line); criterion 1 (cost vs XG) 105
+// checked — the 32 decisions that were entirely excluded before are now
+// checked like any other, and 30 of them clear the 0.05 block cleanly — with
+// two failing: score [1,5] dice [4,3] costs 0.0552, score [1,5] dice [1,1]
+// costs 0.0738. Both are the SAME game, Black 1-away/White 5-away — a score
+// where the cube's presence changes checker-play priorities the most, and
+// this port's search is money-aware and MATCH-aware (ADR-0016) but still
+// CUBELESS (search.go: "The search is CUBELESS... valuing nodes through the
+// cube model at the LEAVES... is a documented future tranche" — use_cube,
+// ADR-0016 point 7, deliberately deferred). XG analyses cubeful. A cubeless
+// search disagreeing with a cubeful judge exactly at the score where the
+// cube matters most, on 2 of 32 decisions once the other 30 already agree,
+// is the SHAPE of the use_cube gap, not a new one — evidence for the next
+// tranche's motivation, not a sign this one is wrong. Left failing rather
+// than loosened: re-measure once use_cube lands, and only silence this if
+// that tranche does not close it either.
 func TestIntegrationGate(t *testing.T) {
 	if os.Getenv("BLUNDERDB_GATE") == "" {
 		t.Skip("set BLUNDERDB_GATE to run the integration gate (~8 min at 2-ply k=12, measured 2026-08-29)")
@@ -47,11 +67,14 @@ func TestIntegrationGate(t *testing.T) {
 	xgFile := "../../../../testdata/charlot1-charlot2_7p_2025-11-08-2305.xg"
 
 	cfg := DefaultConfig(2)
-	searcher, err := NewSearcher(cfg)
+	net, err := Embedded()
 	if err != nil {
 		t.Fatal(err)
 	}
-	searcher.WithWorkers(16)
+	prune, err := EmbeddedPruneNetwork()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	var gnubgDecisions []gateDecision
 	for _, path := range gnubgFiles {
@@ -100,7 +123,7 @@ func TestIntegrationGate(t *testing.T) {
 		if d.kind != "checker" {
 			continue
 		}
-		ours, ok := ourChoice(t, searcher, d)
+		ours, ok := ourChoice(t, net, prune, cfg, d)
 		if !ok {
 			candidacyUnresolved++
 			continue
@@ -122,29 +145,20 @@ func TestIntegrationGate(t *testing.T) {
 		candidacyChecked-candidacyMissing, candidacyChecked, candidacyMissing, candidacyUnresolved)
 
 	// Criterion 1 — no checker disagreement costs more than 0.05 equity,
-	// judged by XG's own stored equities.
-	var costChecked, costOutOfNet, costUnresolved, costAtMatchPoint int
+	// judged by XG's own stored equities. Both are on the SAME scale now
+	// (ADR-0016): the search values a match-score decision through the MET
+	// (2×MWC−1), same as XG's own stored equities — there is no longer a
+	// 1-away score excluded here. 30 of the 32 decisions this used to skip
+	// entirely now clear the block; the other 2 do not, and the reason is
+	// documented above this function (the use_cube gap, not a new bug).
+	var costChecked, costOutOfNet, costUnresolved int
 	var costs []float64
 	const costBlock = 0.05
 	for _, d := range xgDecisions {
 		if d.kind != "checker" {
 			continue
 		}
-		// The chosen move itself is scored by MONEY equity (search.go: "The
-		// search is CUBELESS and MONEY-only" — match-aware checker-move
-		// valuation is a documented future tranche, not yet built), while
-		// XG's stored equities are match equity. The two scales coincide
-		// away from match point but diverge sharply once either side is
-		// 1-away: a leader who wins the match outright on any win gets zero
-		// marginal value from a gammon that money equity happily chases.
-		// Excluded here rather than silently compared — both measured
-		// violations at 2026-08-29 were at exactly this score (someone
-		// 1-away), and this is the known reason, not a search bug.
-		if d.pos.Score[0] == 1 || d.pos.Score[1] == 1 {
-			costAtMatchPoint++
-			continue
-		}
-		ours, ok := ourChoice(t, searcher, d)
+		ours, ok := ourChoice(t, net, prune, cfg, d)
 		if !ok {
 			costUnresolved++
 			continue
@@ -165,8 +179,8 @@ func TestIntegrationGate(t *testing.T) {
 		}
 	}
 	sort.Float64s(costs)
-	t.Logf("criterion 1 (cost vs xg): %d checked (%d outside xg's candidate net, %d unresolved, %d excluded at match point), max=%.4f median=%.4f",
-		costChecked, costOutOfNet, costUnresolved, costAtMatchPoint, percentile(costs, 1.0), percentile(costs, 0.5))
+	t.Logf("criterion 1 (cost vs xg): %d checked (%d outside xg's candidate net, %d unresolved), max=%.4f median=%.4f",
+		costChecked, costOutOfNet, costUnresolved, percentile(costs, 1.0), percentile(costs, 0.5))
 
 	// Criterion 2 — no ND<->DP cube verdict flip, in either direction,
 	// against XG. Adjacent flips (ND<->DT, DT<->DP) are reported, not blocking.
@@ -175,7 +189,7 @@ func TestIntegrationGate(t *testing.T) {
 		if d.kind != "cube" {
 			continue
 		}
-		ours, ok := ourCubeAction(t, searcher, d)
+		ours, ok := ourCubeAction(t, net, prune, cfg, d)
 		if !ok {
 			cubeUnresolved++
 			continue
@@ -287,9 +301,15 @@ func isCrawfordGame(mg *ingest.MatchGraph, g ingest.GameGraph) bool {
 
 // matchStateFor builds the MatchState and CubeOwner a decision needs, from
 // pos.Score (away, [Black, White] — domain's xgid.go convention) and
-// pos.Cube, relative to pos.PlayerOnRoll. ok is false for a money position
-// (Score sentinel [-1,-1]): every decision in these fixtures is match play,
-// so that would signal a mapping bug, not a legitimate input.
+// pos.Cube, relative to pos.PlayerOnRoll. Built on MatchStateFromScores
+// (ADR-0016's one translation) rather than a second copy of the away-score
+// and cube-exponent decode — this file's own past copy had the cube bug
+// MatchStateFromScores fixes: pos.Cube.Value is blunderDB's log2 exponent
+// convention (0,1,2,… for cube 1,2,4,…), not a literal cube value, and the
+// old inline version here fed it through as if it already were one. ok is
+// false for a money position (Score sentinel [-1,-1]) or a state
+// MatchStateFromScores refuses: every decision in these fixtures is match
+// play, so either would signal a mapping bug, not a legitimate input.
 func matchStateFor(pos *domain.Position, crawford bool) (MatchState, CubeOwner, bool) {
 	if pos.Score[0] < 0 || pos.Score[1] < 0 {
 		return MatchState{}, CubeCentred, false
@@ -309,24 +329,60 @@ func matchStateFor(pos *domain.Position, crawford bool) (MatchState, CubeOwner, 
 	default:
 		owner = CubeOpponent
 	}
-	cube := pos.Cube.Value
-	if cube < 1 {
-		cube = 1
-	}
-	return MatchState{AwayOnRoll: awayOnRoll, AwayOpponent: awayOpponent, Cube: cube, Crawford: crawford}, owner, true
+	state, ok := MatchStateFromScores(awayOnRoll, awayOpponent, pos.Cube.Value, crawford)
+	return state, owner, ok
 }
 
-// ourChoice runs our own 2-ply search on d and returns the resulting
-// domain.LegalPlay it chose — Notation in the SAME dialect as the stored
-// candidate lists (domain/moves.go's notation() was built for exactly this
-// comparison) and Result for identifying it. ok is false when the position
-// or dice are unusable, or there is nothing to choose between.
-func ourChoice(t *testing.T, s *Searcher, d gateDecision) (domain.LegalPlay, bool) {
+// searcherFor builds a Searcher over the shared networks, configured for
+// state (nil for money) — one per decision, since a Searcher is bound to one
+// Match for its whole life exactly as it is bound to one Ply (SearchConfig's
+// UseMatch/Match doc comment). Cheap: net/prune are the same singletons every
+// call, so this allocates scratch buffers, nothing more. WithWorkers(16)
+// matches what the single shared searcher this file used to build once —
+// the two gnubg fixtures plus the xg fixture cross many different scores, so
+// there is no single Searcher left to share.
+func searcherFor(t *testing.T, net, prune *Network, cfg SearchConfig, state *MatchState) (*Searcher, bool) {
+	t.Helper()
+	if state != nil {
+		if !state.IsValid() {
+			return nil, false
+		}
+		cfg.UseMatch = true
+		cfg.Match = *state
+	} else {
+		cfg.UseMatch = false
+	}
+	s := NewSearcherWith(cfg, net, prune)
+	s.WithWorkers(16)
+	return s, true
+}
+
+// ourChoice runs our own 2-ply search on d, at d's own score (ADR-0016 — a
+// fresh searcherFor per decision, since the fixtures cross many scores), and
+// returns the resulting domain.LegalPlay it chose — Notation in the SAME
+// dialect as the stored candidate lists (domain/moves.go's notation() was
+// built for exactly this comparison) and Result for identifying it. ok is
+// false when the position or dice are unusable, the score is not evaluable,
+// or there is nothing to choose between.
+func ourChoice(t *testing.T, net, prune *Network, cfg SearchConfig, d gateDecision) (domain.LegalPlay, bool) {
 	t.Helper()
 	pos := *d.pos
 	pos.Dice = [2]int{d.dice[0], d.dice[1]}
 	legal := domain.LegalMoves(&pos)
 	if len(legal) < 2 {
+		return domain.LegalPlay{}, false
+	}
+
+	var state *MatchState
+	if pos.Score[0] >= 0 && pos.Score[1] >= 0 {
+		m, _, ok := matchStateFor(&pos, d.crawford)
+		if !ok {
+			return domain.LegalPlay{}, false
+		}
+		state = &m
+	}
+	s, ok := searcherFor(t, net, prune, cfg, state)
+	if !ok {
 		return domain.LegalPlay{}, false
 	}
 
@@ -431,12 +487,18 @@ func bestEquity(moves []domain.CheckerMove) float64 {
 }
 
 // ourCubeAction runs our own 2-ply cube decision (Probs at depth, then
-// Decide) and buckets it the same coarse way xgCubeBucket does: TooGood
-// folds into NoDouble, matching the "don't offer the cube" reading ADR-0014
-// treats them as sharing for this gate's purposes.
-func ourCubeAction(t *testing.T, s *Searcher, d gateDecision) (CubeAction, bool) {
+// Decide), at d's own score (ADR-0016 — Probs is match-aware too, so this
+// needs its own searcherFor exactly as ourChoice does) and buckets it the
+// same coarse way xgCubeBucket does: TooGood folds into NoDouble, matching
+// the "don't offer the cube" reading ADR-0014 treats them as sharing for
+// this gate's purposes.
+func ourCubeAction(t *testing.T, net, prune *Network, cfg SearchConfig, d gateDecision) (CubeAction, bool) {
 	t.Helper()
 	state, owner, ok := matchStateFor(d.pos, d.crawford)
+	if !ok {
+		return 0, false
+	}
+	s, ok := searcherFor(t, net, prune, cfg, &state)
 	if !ok {
 		return 0, false
 	}

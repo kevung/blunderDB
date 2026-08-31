@@ -49,11 +49,6 @@ const (
 //go:embed strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin
 var embeddedWeights []byte
 
-// Version identifies the gammonNet release this port reproduces. It is the
-// string written into a stored analysis's engine field, and it is the same
-// string gammonGo writes for the same configuration.
-const Version = "gammonNet v1.0.1"
-
 type layer struct {
 	weight []float32 // row-major, out × in
 	bias   []float32 // out

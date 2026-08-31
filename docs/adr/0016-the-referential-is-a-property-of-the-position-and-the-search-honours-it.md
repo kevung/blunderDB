@@ -2,7 +2,23 @@
 
 ## Status
 
-proposed — 2026-08-31
+accepted — 2026-08-31. Points 1–4 and 7 implemented (`search.go`'s use_match port,
+`MatchStateFromPosition`/`MatchStateFromScores`, `EngineVersion` → v1.1.0, the batch job's
+narrow staleness exception, `use_cube` left for a follow-up ticket) and the integration gate's
+1-away exclusion removed. Points 5 and 6 are partial: `Searcher.Probs` is match-aware and
+`race.Money.Cubeless` follows the referential, but the `race.Money` → `race.CubeVerdict`
+rename was not done, and the equity column's UI label was not added — both deferred to avoid
+colliding with the concurrent Eval-panel redesign (ADR-0017) touching the same files. The
+batch job's `AnalyzeStaleGammonNet` exists at the `Database` layer only; no GUI button or CLI
+subcommand triggers it yet.
+
+**Measured 2026-08-31** (`integration_gate_test.go`, full run, see its own header for the
+exact numbers): the 32 checker decisions the gate used to exclude wholesale at a 1-away score
+are now checked, and 30 of them clear the 0.05 cost block. The remaining 2 (one game, Black
+1-away/White 5-away) do not — the shape of a cubeless search disagreeing with XG's cubeful
+judge exactly where the cube matters most, i.e. the use_cube gap this ADR's point 7 already
+named as deferred, not a new defect. `TestIntegrationGate` is left failing on those 2 rather
+than the threshold loosened to hide them; re-measure once use_cube lands.
 
 ## Context
 
