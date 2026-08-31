@@ -16,7 +16,15 @@ import (
 // checker-move analysis stored under v1.0.1 at a match score is money-only
 // and, on the same scale, sits next to an imported XG/gnubg analysis that is
 // not — see the batch job's staleness check, db_gammonnet_batch.go.
-const EngineVersion = "gammonNet v1.1.0"
+//
+// v1.2.0 is ADR-0019: every equity leaving this package at a match score is
+// now normalised equity (the scale XG and gnubg print), where v1.1.0 wrote
+// the search's own 2×MWC−1 for moves and Decide's raw MWC for the cube —
+// three scales in one panel, all but money's wrong against the imported
+// analyses in the same column. Stored v1.1.0 analyses at a match score are
+// therefore stale and re-run; money ones are unchanged but re-run too, the
+// version being per-analysis and not per-referential.
+const EngineVersion = "gammonNet v1.2.0"
 
 // EvalResult is what evaluating a domain.Position through gammonNet
 // produces: candidate moves when dice are set, a cube decision otherwise —
@@ -97,16 +105,26 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 
 	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply)
 
+	// The one referential conversion (ADR-0019): the search and the cube
+	// model keep gammonNet's own scales inside, everything that leaves this
+	// function is normalised equity. Refused rather than emitted unconverted
+	// — an unscaled match number is plausible-looking and wrong by a factor
+	// of five.
+	scale, ok := NewEquityScale(state)
+	if !ok {
+		return EvalResult{}, fmt.Errorf("gammonnet: no equity referential at score %v", pos.Score)
+	}
+
 	hasDice := pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
 	if hasDice {
-		moves, err := evaluateMoves(&gnPos, &pos, searcher, depthLabel, candidates)
+		moves, err := evaluateMoves(&gnPos, &pos, searcher, depthLabel, candidates, scale)
 		if err != nil {
 			return EvalResult{}, err
 		}
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, preRoll, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state)
+	cube, preRoll, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, scale)
 	if err != nil {
 		return EvalResult{}, err
 	}
@@ -172,7 +190,7 @@ func MatchStateFromPosition(pos *domain.Position) (MatchState, bool) {
 // board against domain.LegalMoves — the canonical generator, used here at
 // the engine's edge (a cold path), never inside the search's own loop
 // (ADR-0011's boundary rule).
-func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, maxCandidates int) ([]domain.CheckerMove, error) {
+func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, maxCandidates int, scale EquityScale) ([]domain.CheckerMove, error) {
 	out := make([]Candidate, MaxPlays)
 	n, err := searcher.Plays(gnPos, pos.Dice[0], pos.Dice[1], out)
 	if err != nil {
@@ -197,15 +215,22 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 	// convention as ingest/merge.go's sortCheckerMovesByEquity and
 	// database/db_analysis.go's two save-time copies: nil for the best move,
 	// a non-negative bestEquity-equity for the rest.
-	bestEquity := out[0].Equity
+	//
+	// Both sides of that subtraction are converted first (ADR-0019): the map
+	// is increasing and affine, so the ranking is untouched and the error is
+	// the difference of the converted equities — the unit an imported XG
+	// analysis, and therefore every blunder threshold and PR computed over
+	// this column, is already stated in.
+	bestEquity := scale.FromSearch(out[0].Equity)
 
 	moves := make([]domain.CheckerMove, 0, len(out))
 	for i, c := range out {
 		notation := notationForCandidate(&c, legal, opponent)
+		equity := scale.FromSearch(c.Equity)
 
 		var equityError *float64
 		if i > 0 {
-			diff := bestEquity - c.Equity
+			diff := bestEquity - equity
 			equityError = &diff
 		}
 
@@ -215,7 +240,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 			AnalysisDepth:            depthLabel,
 			AnalysisEngine:           EngineVersion,
 			Move:                     notation,
-			Equity:                   c.Equity,
+			Equity:                   equity,
 			EquityError:              equityError,
 			PlayerWinChance:          float64(mine[PWin]),
 			PlayerGammonChance:       float64(mine[PWinGammon]),
@@ -258,7 +283,7 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 // Also returns the same probs as a PreRollFacts — this is the position's
 // fact vector (EvalResult.PreRoll's doc comment), and building it here is
 // free: probs already exists for the cube decision itself.
-func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState) (*domain.DoublingCubeAnalysis, *PreRollFacts, error) {
+func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
 		return nil, nil, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
@@ -271,8 +296,9 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		OpponentGammonChance:     float64(probs[PLoseGammon]),
 		OpponentBackgammonChance: float64(probs[PLoseBackgammon]),
 		// Follows pos's own referential (ADR-0016), same as Cubeful*Equity
-		// below: money at money play, 2×MWC−1 at a match score.
-		CubelessEquity: CubelessValue(&probs, state),
+		// below: money points at money play, normalised equity at a match
+		// score (ADR-0019).
+		CubelessEquity: scale.FromSearch(CubelessValue(&probs, state)),
 	}
 
 	mover := pos.PlayerOnRoll
@@ -296,12 +322,20 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		return nil, nil, fmt.Errorf("gammonnet: cube decision not evaluable at this score")
 	}
 
+	// Out of Decide's own scale and into blunderDB's (ADR-0019) before
+	// anything is compared or subtracted: money points here, normalised
+	// equity at a score, the units the three columns of an imported XG
+	// analysis are already in.
+	noDouble := scale.FromDecision(dec.EquityNoDouble)
+	doubleTake := scale.FromDecision(dec.EquityDoubleTake)
+	doublePass := scale.FromDecision(dec.EquityDoublePass)
+
 	// Same convention as ingest/xgmap.go's computeBestCubeAction: the double
 	// branch is worth the CHEAPER of take/pass (the opponent picks), and the
 	// reported best is whichever of that and no-double is higher — errors
 	// below are each option's equity minus this.
-	best := dec.EquityNoDouble
-	if effectiveDouble := math.Min(dec.EquityDoubleTake, dec.EquityDoublePass); effectiveDouble > best {
+	best := noDouble
+	if effectiveDouble := math.Min(doubleTake, doublePass); effectiveDouble > best {
 		best = effectiveDouble
 	}
 
@@ -314,32 +348,41 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		OpponentWinChances:        1 - float64(probs[PWin]),
 		OpponentGammonChances:     float64(probs[PLoseGammon]),
 		OpponentBackgammonChances: float64(probs[PLoseBackgammon]),
-		CubefulNoDoubleEquity:     dec.EquityNoDouble,
-		CubefulNoDoubleError:      dec.EquityNoDouble - best,
-		CubefulDoubleTakeEquity:   dec.EquityDoubleTake,
-		CubefulDoubleTakeError:    dec.EquityDoubleTake - best,
-		CubefulDoublePassEquity:   dec.EquityDoublePass,
-		CubefulDoublePassError:    dec.EquityDoublePass - best,
-		BestCubeAction:            cubeActionLabel(dec.Action),
+		CubefulNoDoubleEquity:     noDouble,
+		CubefulNoDoubleError:      noDouble - best,
+		CubefulDoubleTakeEquity:   doubleTake,
+		CubefulDoubleTakeError:    doubleTake - best,
+		CubefulDoublePassEquity:   doublePass,
+		CubefulDoublePassError:    doublePass - best,
+		BestCubeAction:            cubeActionLabel(dec),
 	}, preRoll, nil
 }
 
-// cubeActionLabel renders CubeAction in the same three-way vocabulary
-// XG/gnubg imports already write into BestCubeAction (see
-// ingest/xgmap.go's computeBestCubeAction) — the only one the frontend
-// understands (CubeVerdictTable, utils/cubeAction.js's normalizeCubeAction).
-// TooGood has no such precedent to render as: it still means "don't double",
-// so it folds into "No Double" rather than inventing a fourth label nothing
-// downstream parses. The distinction is not lost — dec.Action is available
-// to a caller that wants it (race.VerdictTooGood, #126); only this string
-// label collapses it.
-func cubeActionLabel(a CubeAction) string {
-	switch a {
+// cubeActionLabel renders the decision in the vocabulary BestCubeAction
+// already carries across the application — the three XG/gnubg imports write
+// (see ingest/xgmap.go's computeBestCubeAction) plus the "too good" spelling
+// engine.BestCubeVerdict already decodes and the frontend already
+// translates (epc.race.verdicts.too_good, nine languages).
+//
+// Until ADR-0019 this collapsed TooGood onto "No Double" for want of a
+// fourth label. It is not the same ruling — "no double" says the offer would
+// be wrong, "too good" says the player is too strong to cash and plays on
+// for the gammon — and the engine had been computing the distinction all
+// along; only this string threw it away. The take/pass suffix names what the
+// opponent WOULD do if the cube came anyway, which is what makes the label
+// XG's own and what BestCubeVerdict reads out of it.
+func cubeActionLabel(dec Decision) string {
+	switch dec.Action {
 	case DoubleTake:
 		return "Double, Take"
 	case DoublePass:
 		return "Double, Pass"
-	default: // NoDouble, TooGood
+	case TooGood:
+		if dec.EquityDoubleTake <= dec.EquityDoublePass {
+			return "Too good to double, take"
+		}
+		return "Too good to double, pass"
+	default: // NoDouble
 		return "No Double"
 	}
 }

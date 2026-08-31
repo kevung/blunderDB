@@ -116,6 +116,14 @@
         color: #1a56c4;
     }
 
+    /* The verdict is the one cell whose text can be a sentence rather than a
+       label — "Too good to double, take" (ADR-0019) is twice the width of
+       "Double, Take". Let it wrap instead of widening the whole table, which
+       the Eval panel has no room to absorb (ADR-0018: no scroll). */
+    .best-action-row td {
+        white-space: normal;
+    }
+
     .japanese-text {
         font-family: 'Noto Sans JP', sans-serif;
     }

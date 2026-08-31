@@ -196,6 +196,10 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 		cfg.Match = m
 		state = &m
 	}
+	scale, ok := gammonnet.NewEquityScale(state)
+	if !ok {
+		return nil // no referential to state the equity in (ADR-0019)
+	}
 
 	searcher, err := gammonnet.NewSearcher(cfg)
 	if err != nil {
@@ -219,9 +223,10 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 		OpponentWinChance:        1 - float64(probs[gammonnet.PWin]),
 		OpponentGammonChance:     float64(probs[gammonnet.PLoseGammon]),
 		OpponentBackgammonChance: float64(probs[gammonnet.PLoseBackgammon]),
-		// Follows pos's own referential (ADR-0016), same as evaluateCube's
-		// own PreRollFacts on the no-dice branch.
-		CubelessEquity: gammonnet.CubelessValue(&probs, state),
+		// Follows pos's own referential (ADR-0016/ADR-0019), same as
+		// evaluateCube's own PreRollFacts on the no-dice branch: money
+		// points at money play, normalised equity at a match score.
+		CubelessEquity: scale.FromSearch(gammonnet.CubelessValue(&probs, state)),
 	}
 }
 
@@ -311,6 +316,10 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	if m, ok := gammonnet.MatchStateFromPosition(pos); ok {
 		state = &m
 	}
+	scale, ok := gammonnet.NewEquityScale(state)
+	if !ok {
+		return nil // no referential to state the equity in (ADR-0019)
+	}
 
 	dec, ok := gammonnet.Decide(&probs, owner, state, efficiency, jacoby)
 	if !ok {
@@ -323,15 +332,18 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 		// already does — no separate "cube against" special case invented
 		// here that does not exist there.
 		//
-		// Cubeless follows pos's own referential (ADR-0016), same as the
-		// other three fields: money at money play, 2×MWC−1 at a match
-		// score — it would otherwise sit in a different scale from its own
-		// row's NoDouble/DoubleTake/DoublePass whenever a score is present.
+		// All four fields go through the same EquityScale (ADR-0019): money
+		// points at money play, normalised equity at a match score. They
+		// come out of gammonNet on two DIFFERENT internal scales — the
+		// cubeless one from the search (2×MWC−1), the three cube branches
+		// from Decide (raw MWC) — so converting each from its own source is
+		// what keeps this row internally consistent, and consistent with
+		// the exact table's money equities the panel merges it with.
 		CubeState:  raceCubeStateFor(pos, mover),
-		Cubeless:   gammonnet.CubelessValue(&probs, state),
-		NoDouble:   dec.EquityNoDouble,
-		DoubleTake: dec.EquityDoubleTake,
-		DoublePass: dec.EquityDoublePass,
+		Cubeless:   scale.FromSearch(gammonnet.CubelessValue(&probs, state)),
+		NoDouble:   scale.FromDecision(dec.EquityNoDouble),
+		DoubleTake: scale.FromDecision(dec.EquityDoubleTake),
+		DoublePass: scale.FromDecision(dec.EquityDoublePass),
 		Verdict:    raceVerdictFromCubeAction(dec.Action),
 	}
 

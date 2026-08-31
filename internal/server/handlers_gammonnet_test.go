@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -131,8 +132,10 @@ func TestGammonNetAnalyzeMissingFillsOnlyTheGap(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected an analysis to be written for the missing position: %v", err)
 	}
-	if filled.AnalysisEngineVersion != "gammonNet v1.1.0" {
-		t.Fatalf("engine = %q, want gammonNet v1.1.0", filled.AnalysisEngineVersion)
+	// The running build's own version, not a literal: a weights or
+	// referential bump (ADR-0019) changes the string, never this assertion.
+	if filled.AnalysisEngineVersion != gammonnet.EngineVersion {
+		t.Fatalf("engine = %q, want %q", filled.AnalysisEngineVersion, gammonnet.EngineVersion)
 	}
 
 	untouched, err := s.Analyses().Load(ctx, "t", idAnalyzed)

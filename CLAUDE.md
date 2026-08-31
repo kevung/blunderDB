@@ -234,6 +234,15 @@ Violating one of these is a bug even if all tests pass:
 - **Exports carry an allow-list**: `ExportDatabase` copies metadata through
   `issuance.Carried`, never by exclusion — a document added to `metadata` next
   year must not travel to someone else's machine by default.
+- **One equity scale leaves the engine**: money points at money play,
+  **normalised equity** (gnubg's `mwc2eq`, ±1 = winning/losing the current
+  cube) at a match score — the scale imported XG/GNUbg analyses already sit
+  in, in the same columns, and the one the statistics read as EMG. gammonNet's
+  own internals are two OTHER scales (`Decide` returns MWC, `Value` returns
+  2×MWC−1); they stay inside the package, and `EquityScale`
+  (`gammonnet/referential.go`) converts once at the domain edge. Never print
+  or store either internal scale — at 5-away/5-away they are six times too
+  small and look perfectly plausible. See ADR-0019.
 - **One type scale**: components use the tokens in `frontend/src/style.css`
   (`--font-size-base/-small/-title`), never an absolute `font-size`, and form
   controls carry `font: inherit` — an input inherits neither size nor family, so
