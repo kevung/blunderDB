@@ -667,15 +667,16 @@
             "gain": "Win (%)",
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "before the roll"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "Evaluation will appear here.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyzing: {done}/{total}",
-        "batchCancel": "Cancel"
+        "batchCancel": "Cancel",
+        "baseline": "Before the roll",
+        "baselineTooltip": "Pre-roll figures, in the axis of the list — a reference, not a candidate move. The gap to this row is the luck of the roll, not the merit of a play."
     },
     "searchHistory": {
         "enterFilterName": "Please enter a filter name",

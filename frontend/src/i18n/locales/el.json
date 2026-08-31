@@ -667,15 +667,16 @@
             "gain": "Νίκη (%)",
             "gammon": "Γκαμόν (%)",
             "backgammon": "Μπακγκαμόν (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "πριν τη ζαριά"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "Η αξιολόγηση θα εμφανιστεί εδώ.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet αναλύει: {done}/{total}",
-        "batchCancel": "Ακύρωση"
+        "batchCancel": "Ακύρωση",
+        "baseline": "Πριν τη ζαριά",
+        "baselineTooltip": "Τιμές πριν τη ζαριά, στον άξονα της λίστας — σημείο αναφοράς, όχι υποψήφια κίνηση. Η απόσταση από αυτή τη γραμμή είναι η τύχη της ζαριάς, όχι η αξία μιας κίνησης."
     },
     "searchHistory": {
         "enterFilterName": "Εισαγάγετε ένα όνομα φίλτρου",

@@ -854,27 +854,29 @@ position de bearoff et l'évaluation en direct de la position sur le plateau.
 Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet Eval dans le
 panneau inférieur, ou en exécutant la commande ``epc``.
 
-Le panneau montre toujours la même chose : un **tableau de faits**, position
-par position, puis la **seule décision** que la position posée sur le
-plateau appelle — jamais les deux à la fois. Le tableau de faits porte, pour
-chaque joueur, sa probabilité de gain, de gammon et de backgammon, et son
-équité cubeless ; il s'agit toujours de valeurs *avant le jet* — quand des
-dés sont posés, c'est indiqué sous le tableau, pour ne pas les confondre
-avec les valeurs *après le coup* de la liste ci-dessous. Sur une position de
-bearoff pur, ce même tableau s'élargit de cinq colonnes propres à la course
-(EPC, pip count, wastage, nombre moyen de lancers, écart type) — c'est là
-toute la transition entre l'ancien panneau Bearoff et le panneau Eval : le
-tableau ne change pas de forme, des colonnes y apparaissent. À droite du
-tableau de faits, la décision elle-même : les coups candidats classés si des
-dés sont posés, sinon le verdict de videau (de course ou générique selon la
-position) — jamais un verdict de videau *avant le jet* à côté d'une décision
-de pions, puisque le plateau n'a alors posé aucune question de videau. Le
-badge de régime, l'attribution du moteur et la case *Défi* forment une
-dernière colonne de badges, à droite.
+Le panneau montre toujours la **seule décision** que la position posée sur
+le plateau appelle — jamais deux à la fois — et les faits qui vont avec.
+Chaque quantité se lit dans l'axe qui lui convient plutôt que dans un axe
+unique imposé : la probabilité de gain, de gammon, de backgammon et
+l'équité cubeless de chaque joueur, calculées *avant le jet*, se lisent
+**par joueur** (bas, haut, puis Δ), à gauche de la décision de videau,
+quand aucun dé n'est posé. Dès que des dés sont posés, ces mêmes valeurs
+*avant le jet* changent d'axe : elles se lisent **au trait**, en tête de la
+liste des coups candidats, sous forme d'une ligne italique *avant le jet* —
+pas un coup candidat de plus, un repère contre lequel lire chaque coup.
+L'écart entre cette ligne et un coup contient la chance du jet, jamais le
+mérite du coup, et elle ne porte donc aucune colonne d'erreur. Sur une
+position de bearoff pur, un second tableau, toujours **par joueur** et
+toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
+le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
+jamais. Le badge de régime, l'attribution du moteur (la profondeur de la
+dernière évaluation y figure aussi) et la case *Défi* forment une dernière
+colonne de badges, à droite.
 
-Seule la liste des coups candidats défile ; le reste du panneau (faits,
-badge, décision de videau) reste toujours visible, sans réglage particulier
-de la taille du panneau.
+Seule la liste des coups candidats défile — la ligne *avant le jet*, elle
+aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, badge,
+décision de videau) reste toujours visible, sans réglage particulier de la
+taille du panneau.
 
 Le tableau de faits et la décision sont calculés par gammonNet, embarqué,
 sans XG ni gnubg. Le calcul suit la position sans jamais figer l'interface :
@@ -882,8 +884,11 @@ une profondeur 0-ply s'affiche immédiatement à chaque geste, puis, après une
 demi-seconde d'immobilité, une évaluation plus profonde (2 plis par défaut,
 réglable dans l'onglet *gammonNet* de la configuration) la remplace en
 arrière-plan — tout nouveau geste annule ce calcul de fond. La profondeur
-affichée à côté de chaque coup ou de la décision de videau est toujours
-celle qui a effectivement produit le chiffre montré, jamais celle demandée.
+affichée dans la colonne des badges, ou au sein du badge de régime sur une
+position de course, est toujours celle qui a effectivement produit le
+chiffre montré, jamais celle demandée ; elle ne se répète pas sur chaque
+ligne, puisqu'une évaluation en direct partage la même profondeur pour tous
+les coups.
 L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en pourcentage d'équité de match (2×MWC−1) — la même grandeur,
@@ -906,13 +911,16 @@ backgammon, cubeless) répondent, et la décision porte sur les pions ou sur
 un videau générique selon que des dés sont posés.
 
 Dans le tableau de faits, chaque ligne — repérée par sa pastille de couleur,
-le joueur noir étant toujours en bas — porte le gain, le gammon, le
-backgammon (probabilités, sans le signe %) et l'équité cubeless du joueur ;
-sur une position de bearoff, elle porte en plus l'EPC, le pip count, le
-wastage (différence entre l'EPC et le pip count), le nombre moyen de
-lancers et l'écart type. Lorsque les deux joueurs ont des valeurs à
-comparer, une ligne **Δ** donne les différences *signées* (bas − haut :
-négatif quand le joueur noir est en avance).
+le joueur noir étant toujours en bas — porte, tant qu'aucun dé n'est posé,
+le gain, le gammon, le backgammon (probabilités, sans le signe %) et
+l'équité cubeless du joueur ; sur une position de bearoff, elle porte en
+plus, dés posés ou non, l'EPC, le pip count, le wastage (différence entre
+l'EPC et le pip count), le nombre moyen de lancers et l'écart type.
+Lorsque les deux joueurs ont des valeurs à comparer, une ligne **Δ** donne
+les différences *signées* (bas − haut : négatif quand le joueur noir est en
+avance). Hors position de course, poser des dés fait donc disparaître le
+tableau de faits lui-même : les quatre colonnes qu'il portait viennent de
+changer d'axe, au trait, en tête de la liste des coups.
 
 La décision de videau, quand elle s'affiche, donne l'équité cubeless et les
 équités money (sans double, double/prend, double/passe) — sous chaque
@@ -968,8 +976,10 @@ joueur au trait :
 
 Dès que des dés sont posés sur une position de course, cette décision de
 videau *avant le jet* disparaît — le plateau demande alors une décision de
-pions, pas de videau — mais la probabilité de gain, elle, reste affichée
-dans le tableau de faits : c'est un fait de la position, pas une décision.
+pions, pas de videau — mais la probabilité de gain, elle, reste un fait de
+la position, pas une décision : elle rejoint la ligne *avant le jet* en
+tête de la liste des coups, à côté de l'EPC qui, lui, reste affiché juste à
+gauche.
 
 Un badge indique le régime : **exact** (valeur lue dans une base de données
 two-sided), **évalué · <profondeur>** (joué par gammonNet — la profondeur
@@ -994,13 +1004,19 @@ Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
   domaine le plus large l'emporte automatiquement.
 
 **Mode défi.** La case *Défi*, dans la colonne des badges, active un mode
-entraînement : à chaque modification de la position, les valeurs des trois
-zones — la ligne du joueur du bas, la ligne du joueur du haut et la décision
-(verdict de videau, quel qu'il soit) — sont masquées (remplacées par
-« ··· ») ; un clic sur une zone révèle cette zone seulement. La ligne Δ
-n'apparaît qu'une fois les deux lignes joueurs
-révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
-se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
+entraînement : à chaque modification de la position, les valeurs de trois
+zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle
+cette zone seulement. Sans dés, ce sont la ligne du joueur du bas, la ligne
+du joueur du haut et la décision (verdict de videau, quel qu'il soit) — la
+ligne Δ n'apparaît qu'une fois les deux lignes joueurs révélées. Dés posés
+sur une position de course, la ligne EPC de chaque joueur se masque comme
+avant, mais la troisième zone couvre alors la ligne *avant le jet* et la
+liste des coups **ensemble** : la liste étant classée du meilleur coup au
+pire, la révéler partiellement en donnerait déjà la réponse. Dés posés hors
+position de course, cette même zone unique couvre à elle seule tout ce que
+le panneau affiche. On peut ainsi s'entraîner à estimer l'EPC de chaque
+camp, puis à se prononcer sur le videau ou sur le coup à jouer, avant de
+vérifier. Le réglage est mémorisé.
 
 Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 

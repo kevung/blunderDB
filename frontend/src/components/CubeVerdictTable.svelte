@@ -15,7 +15,12 @@
     // panels mount right next to this one. This component owns only the
     // decision itself — ND/DT/DP, their equities and error, the best
     // action — plus the depth/engine footer.
-    let { cubeAnalysis, cubeValue = 0, isPlayedCubeAction = () => false, engineVersionFallback = '' } = $props();
+    //
+    // showInfo (ADR-0018 rule 4): EPCPanel hides the depth/engine footer —
+    // both are already named once in its own badge strip — while
+    // AnalysisPanel keeps it, since a stored record's depth/engine is not
+    // shown anywhere else.
+    let { cubeAnalysis, cubeValue = 0, isPlayedCubeAction = () => false, engineVersionFallback = '', showInfo = true } = $props();
 
     function formatEquity(value) {
         return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
@@ -50,18 +55,20 @@
         </tr>
     </tbody>
 </table>
-<table class="info-table">
-    <tbody>
-        <tr>
-            <th>{$t('analysis.analysisDepth')}</th>
-            <td>{cubeAnalysis.analysisDepth}</td>
-        </tr>
-        <tr>
-            <th>{$t('analysis.engine')}</th>
-            <td>{cubeAnalysis.analysisEngine || engineVersionFallback}</td>
-        </tr>
-    </tbody>
-</table>
+{#if showInfo}
+    <table class="info-table">
+        <tbody>
+            <tr>
+                <th>{$t('analysis.analysisDepth')}</th>
+                <td>{cubeAnalysis.analysisDepth}</td>
+            </tr>
+            <tr>
+                <th>{$t('analysis.engine')}</th>
+                <td>{cubeAnalysis.analysisEngine || engineVersionFallback}</td>
+            </tr>
+        </tbody>
+    </table>
+{/if}
 
 <style>
     .right-table,
@@ -75,22 +82,29 @@
         width: 60px;
     }
 
-    .info-table th,
-    .info-table td {
-        border: 1px solid #ddd;
-        padding: 2px;
-        text-align: center;
-    }
-
     th,
     td {
-        border: 1px solid #ddd;
-        padding: 2px;
+        padding: 2px 10px;
         text-align: center;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
     }
 
     th {
-        background-color: #f2f2f2;
+        font-size: var(--font-size-small);
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+    }
+
+    .info-table td {
+        color: #222;
+    }
+
+    tbody tr + tr td,
+    tbody tr + tr th {
+        border-top: 1px solid #eee;
     }
 
     .right-table tr.played {
@@ -99,7 +113,7 @@
 
     .best-action-row {
         font-weight: bold;
-        color: #000000;
+        color: #1a56c4;
     }
 
     .japanese-text {

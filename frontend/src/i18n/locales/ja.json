@@ -667,15 +667,16 @@
             "gain": "勝率 (%)",
             "gammon": "ギャモン (%)",
             "backgammon": "バックギャモン (%)",
-            "cubelessEquity": "キューブレス",
-            "preRoll": "ロール前"
+            "cubelessEquity": "キューブレス"
         }
     },
     "eval": {
         "pending": "評価はここに表示されます。",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet 解析中: {done}/{total}",
-        "batchCancel": "キャンセル"
+        "batchCancel": "キャンセル",
+        "baseline": "ロール前",
+        "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"
     },
     "searchHistory": {
         "enterFilterName": "フィルター名を入力してください",

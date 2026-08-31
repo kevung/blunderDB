@@ -667,15 +667,16 @@
             "gain": "Победа (%)",
             "gammon": "Гаммон (%)",
             "backgammon": "Бэкгаммон (%)",
-            "cubelessEquity": "Без куба",
-            "preRoll": "до броска"
+            "cubelessEquity": "Без куба"
         }
     },
     "eval": {
         "pending": "Оценка появится здесь.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",
-        "batchCancel": "Отмена"
+        "batchCancel": "Отмена",
+        "baseline": "До броска",
+        "baselineTooltip": "Значения до броска, в той же оси, что и список — ориентир, а не кандидат хода. Разница с этой строкой — удача броска, а не заслуга хода."
     },
     "searchHistory": {
         "enterFilterName": "Введите имя фильтра",

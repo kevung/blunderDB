@@ -261,12 +261,48 @@
     // this column is resolved.
     let facts = $derived(data.race ? raceFacts : genericFacts);
 
+    // The pre-roll vector in the axis of the list it heads (ADR-0018 rule
+    // 2): mover-relative — the SAME frame as a move row's own fields
+    // (domain.CheckerMove), never converted to bottom/top. Only ever handed
+    // to CandidateMovesTable, and only while dice are set; PositionFactsTable
+    // keeps the per-side reading (facts above) the rest of the time.
+    let baselineFacts = $derived.by(() => {
+        if (data.race) {
+            if (!displayRace) return null;
+            return {
+                cubelessEquity: displayRace.money?.cubeless ?? null,
+                playerWinChance: displayRace.win_prob,
+                playerGammonChance: displayRace.win_gammon ?? 0,
+                playerBackgammonChance: displayRace.win_backgammon ?? 0,
+                opponentWinChance: displayRace.win_prob != null ? 1 - displayRace.win_prob : null,
+                opponentGammonChance: displayRace.lose_gammon ?? 0,
+                opponentBackgammonChance: displayRace.lose_backgammon ?? 0
+            };
+        }
+        return evalPreRoll;
+    });
+
     // Whether a race decision (money ND/DT/DP + verdict) is on screen at
     // all — absent in the estimated regime (ADR-0009/0012: never
     // estimated), and always absent once dice are set (ADR-0017 rule 2: a
     // race with dice on it is asking about checkers, not the cube).
     let showRaceDecision = $derived(!hasDiceSet && !!data.race && !!displayRace?.money);
     let showGenericCube = $derived(!hasDiceSet && !data.race && !!evalCubeAnalysis);
+
+    // PositionFactsTable now carries only per-side facts (ADR-0018 rule 1):
+    // the race block always, the probability vector only when there is no
+    // list to read it against. With dice on a non-race position neither
+    // applies, and the table would be empty — so it is not mounted at all,
+    // which is also what stops the badge column from ever being pushed away
+    // from a lone sibling that has nothing left to sit beside.
+    let showFactsTable = $derived(!!data.race || !hasDiceSet);
+
+    // Depth is already named by the race regime badge below when the
+    // position is a race (ADR-0012). Off a race, CubeVerdictTable's own
+    // depth/engine footer is hidden in this panel (ADR-0018 rule 4) since
+    // every row of a live evaluation shares one depth/engine — so it is
+    // named once here instead.
+    let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
 </script>
 
 <div class="epc-panel">
@@ -295,17 +331,19 @@
                  flex-wrap so a narrow panel stacks it instead of squeezing
                  (ADR-0017's container-query layout). -->
             <div class="top-row">
-                <PositionFactsTable
-                    bottom={facts.bottom}
-                    top={facts.top}
-                    bottomEPC={data.bottomEPC}
-                    topEPC={data.topEPC}
-                    {maskedBottom}
-                    {maskedTop}
-                    onRevealBottom={() => reveal('bottom')}
-                    onRevealTop={() => reveal('top')}
-                    preRoll={hasDiceSet}
-                />
+                {#if showFactsTable}
+                    <PositionFactsTable
+                        bottom={facts.bottom}
+                        top={facts.top}
+                        bottomEPC={data.bottomEPC}
+                        topEPC={data.topEPC}
+                        {maskedBottom}
+                        {maskedTop}
+                        onRevealBottom={() => reveal('bottom')}
+                        onRevealTop={() => reveal('top')}
+                        showProbabilities={!hasDiceSet}
+                    />
+                {/if}
 
                 {#if showRaceDecision}
                     <table class="decision-race" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
@@ -360,7 +398,7 @@
                         <div class="decision-cube-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
                     {:else}
                         <div class="decision-cube">
-                            <CubeVerdictTable cubeAnalysis={evalCubeAnalysis} cubeValue={$positionStore?.cube?.value ?? 0} />
+                            <CubeVerdictTable cubeAnalysis={evalCubeAnalysis} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} />
                         </div>
                     {/if}
                 {:else if !hasDiceSet}
@@ -392,6 +430,9 @@
                             </button>
                         {/if}
                     {/if}
+                    {#if genericDepthLabel}
+                        <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
+                    {/if}
                     <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
                     <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
                         <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
@@ -403,14 +444,22 @@
             <!-- The moves list is the only region that ever scrolls
                  (ADR-0017): its header stays sticky, and everything above
                  (facts, badges, and a race/cube decision when there is no
-                 dice) stays on screen regardless of candidate count. -->
+                 dice) stays on screen regardless of candidate count. With
+                 dice set the Baseline row lives inside this same table
+                 (ADR-0018 rule 2), so Défi masks the band and the ranking
+                 together — the order IS the answer, there is no partial
+                 reveal (ADR-0018 rule 6). -->
             {#if hasDiceSet}
-                <div class="moves-scroll">
-                    <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} />
-                    {#if evalMoves.length === 0}
-                        <div class="eval-placeholder">{$t('eval.pending')}</div>
-                    {/if}
-                </div>
+                {#if maskedDecision}
+                    <div class="decision-cube-masked moves-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
+                {:else}
+                    <div class="moves-scroll">
+                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} />
+                        {#if evalMoves.length === 0}
+                            <div class="eval-placeholder">{$t('eval.pending')}</div>
+                        {/if}
+                    </div>
+                {/if}
             {/if}
         </div>
     {/if}
@@ -515,6 +564,16 @@
         background: #f5f5f5;
     }
 
+    /* The masked stand-in for the Baseline+list block (ADR-0018 rule 6):
+       same look as the cube's mask, but filling the flexible region the
+       real .moves-scroll would otherwise take, so masking never collapses
+       the panel's height. */
+    .moves-masked {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+    }
+
     .decision-race th,
     .decision-race td {
         padding: 2px 10px;
@@ -573,7 +632,11 @@
 
     /* The badge column always sits last in the row: regime badge, engine
        attribution, and the défi toggle — no more absolute positioning or
-       reserved padding (ADR-0017 removes both). */
+       reserved padding (ADR-0017 removes both). margin-left:auto rather
+       than a `justify-content: space-between` on .top-row: with dice on a
+       non-race position PositionFactsTable is not mounted at all
+       (ADR-0018's showFactsTable), and space-between would left-align a
+       single remaining flex item instead of keeping it in the corner. */
     .badges-col {
         display: flex;
         align-items: center;

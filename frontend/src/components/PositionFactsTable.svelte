@@ -2,12 +2,19 @@
     import { t } from '../i18n';
 
     // The "position fact" half of ADR-0017's layout rule: quantities that
-    // belong to the board itself, never to a choice a player might make —
-    // win/gammon/backgammon chances and the cubeless equity for each side,
-    // plus the race-only EPC block when the position is a pure bearoff.
+    // belong to the board itself, never to a choice a player might make.
     // Shared by EPCPanel (live evaluation) and AnalysisPanel (a stored
     // record) — one rendering, two callers, so the two never drift on what
     // a "position fact" looks like on screen (CONTEXT.md).
+    //
+    // Two kinds of fact live here, and ADR-0018 gives them different axes:
+    // - the race block (bottomEPC/topEPC) is per side by nature and always
+    //   read in bottom/top/Δ rows;
+    // - the pre-roll vector (bottom/top) is per side ONLY when there is no
+    //   list to read it against — showProbabilities is false whenever the
+    //   caller instead renders it as a Baseline row inside a candidate list
+    //   (CandidateMovesTable's own `baseline` prop). The two never show at
+    //   once for the same position.
     //
     // bottom/top: {win, gammon, backgammon, cubeless} | null — probabilities
     // as fractions [0,1], cubeless as an equity. null renders a blank row
@@ -15,10 +22,8 @@
     // ADR-0017 rule 3), not a hidden one.
     // bottomEPC/topEPC: race.EPCResult-shaped {epc, pipCount, wastage,
     // meanRolls, stdDev} | null — the race columns appear only when at
-    // least one is present, which is itself the transition between the two
-    // panels ADR-0017 replaces (rule 1: "the table does not move, five
-    // columns arrive").
-    let { bottom = null, top = null, bottomEPC = null, topEPC = null, maskedBottom = false, maskedTop = false, onRevealBottom = () => {}, onRevealTop = () => {}, preRoll = false } = $props();
+    // least one is present.
+    let { bottom = null, top = null, bottomEPC = null, topEPC = null, maskedBottom = false, maskedTop = false, onRevealBottom = () => {}, onRevealTop = () => {}, showProbabilities = true } = $props();
 
     let showRace = $derived(!!(bottomEPC || topEPC));
     let bothShown = $derived(!maskedBottom && !maskedTop);
@@ -40,10 +45,12 @@
     <thead>
         <tr>
             <th></th>
-            <th>{$t('epc.facts.gain')}</th>
-            <th>{$t('epc.facts.gammon')}</th>
-            <th>{$t('epc.facts.backgammon')}</th>
-            <th>{$t('epc.facts.cubelessEquity')}</th>
+            {#if showProbabilities}
+                <th>{$t('epc.facts.gain')}</th>
+                <th>{$t('epc.facts.gammon')}</th>
+                <th>{$t('epc.facts.backgammon')}</th>
+                <th>{$t('epc.facts.cubelessEquity')}</th>
+            {/if}
             {#if showRace}
                 <th class="race-col-start">{$t('epc.epc')}</th>
                 <th>{$t('epc.pipCount')}</th>
@@ -56,10 +63,12 @@
     <tbody>
         <tr class:masked={maskedBottom} onclick={() => maskedBottom && onRevealBottom()} title={maskedBottom ? $t('epc.clickToReveal') : $t('epc.bottomBlack')}>
             <td class="row-label"><span class="player-indicator bottom"></span></td>
-            <td class="main-value">{show(maskedBottom, pct(bottom?.win))}</td>
-            <td>{show(maskedBottom, pct(bottom?.gammon))}</td>
-            <td>{show(maskedBottom, pct(bottom?.backgammon))}</td>
-            <td>{show(maskedBottom, eq(bottom?.cubeless))}</td>
+            {#if showProbabilities}
+                <td class="main-value">{show(maskedBottom, pct(bottom?.win))}</td>
+                <td>{show(maskedBottom, pct(bottom?.gammon))}</td>
+                <td>{show(maskedBottom, pct(bottom?.backgammon))}</td>
+                <td>{show(maskedBottom, eq(bottom?.cubeless))}</td>
+            {/if}
             {#if showRace}
                 <td class="race-col-start">{show(maskedBottom, bottomEPC?.epc?.toFixed(2))}</td>
                 <td>{show(maskedBottom, bottomEPC?.pipCount)}</td>
@@ -70,10 +79,12 @@
         </tr>
         <tr class:masked={maskedTop} onclick={() => maskedTop && onRevealTop()} title={maskedTop ? $t('epc.clickToReveal') : $t('epc.topWhite')}>
             <td class="row-label"><span class="player-indicator top"></span></td>
-            <td class="main-value">{show(maskedTop, pct(top?.win))}</td>
-            <td>{show(maskedTop, pct(top?.gammon))}</td>
-            <td>{show(maskedTop, pct(top?.backgammon))}</td>
-            <td>{show(maskedTop, eq(top?.cubeless))}</td>
+            {#if showProbabilities}
+                <td class="main-value">{show(maskedTop, pct(top?.win))}</td>
+                <td>{show(maskedTop, pct(top?.gammon))}</td>
+                <td>{show(maskedTop, pct(top?.backgammon))}</td>
+                <td>{show(maskedTop, eq(top?.cubeless))}</td>
+            {/if}
             {#if showRace}
                 <td class="race-col-start">{show(maskedTop, topEPC?.epc?.toFixed(2))}</td>
                 <td>{show(maskedTop, topEPC?.pipCount)}</td>
@@ -85,30 +96,32 @@
         {#if bottom || top || bottomEPC || topEPC}
             <tr class="delta-row" title={$t('epc.comparison')}>
                 <td class="row-label">Δ</td>
-                <td class="main-value"
-                    >{show(
-                        !bothShown,
-                        delta(bottom?.win, top?.win, (v) => sd(100 * v, 2))
-                    )}</td
-                >
-                <td
-                    >{show(
-                        !bothShown,
-                        delta(bottom?.gammon, top?.gammon, (v) => sd(100 * v, 2))
-                    )}</td
-                >
-                <td
-                    >{show(
-                        !bothShown,
-                        delta(bottom?.backgammon, top?.backgammon, (v) => sd(100 * v, 2))
-                    )}</td
-                >
-                <td
-                    >{show(
-                        !bothShown,
-                        delta(bottom?.cubeless, top?.cubeless, (v) => sd(v, 3))
-                    )}</td
-                >
+                {#if showProbabilities}
+                    <td class="main-value"
+                        >{show(
+                            !bothShown,
+                            delta(bottom?.win, top?.win, (v) => sd(100 * v, 2))
+                        )}</td
+                    >
+                    <td
+                        >{show(
+                            !bothShown,
+                            delta(bottom?.gammon, top?.gammon, (v) => sd(100 * v, 2))
+                        )}</td
+                    >
+                    <td
+                        >{show(
+                            !bothShown,
+                            delta(bottom?.backgammon, top?.backgammon, (v) => sd(100 * v, 2))
+                        )}</td
+                    >
+                    <td
+                        >{show(
+                            !bothShown,
+                            delta(bottom?.cubeless, top?.cubeless, (v) => sd(v, 3))
+                        )}</td
+                    >
+                {/if}
                 {#if showRace}
                     <td class="race-col-start"
                         >{show(
@@ -135,9 +148,6 @@
         {/if}
     </tbody>
 </table>
-{#if preRoll}
-    <div class="pre-roll-label">{$t('epc.facts.preRoll')}</div>
-{/if}
 
 <style>
     .facts-table {
@@ -223,12 +233,5 @@
     .player-indicator.top {
         background: #fff;
         border: 1px solid #999;
-    }
-
-    .pre-roll-label {
-        font-size: var(--font-size-small);
-        color: #999;
-        font-style: italic;
-        margin-top: 1px;
     }
 </style>

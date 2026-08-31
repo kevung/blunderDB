@@ -667,15 +667,16 @@
             "gain": "Voitto (%)",
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "ennen heittoa"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "Arviointi tulee tähän.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysoi: {done}/{total}",
-        "batchCancel": "Peruuta"
+        "batchCancel": "Peruuta",
+        "baseline": "Ennen heittoa",
+        "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."
     },
     "searchHistory": {
         "enterFilterName": "Anna suodattimelle nimi",

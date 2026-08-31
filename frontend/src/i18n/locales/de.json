@@ -667,15 +667,16 @@
             "gain": "Gewinn (%)",
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "vor dem Wurf"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "Die Auswertung erscheint hier.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysiert: {done}/{total}",
-        "batchCancel": "Abbrechen"
+        "batchCancel": "Abbrechen",
+        "baseline": "Vor dem Wurf",
+        "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
     },
     "searchHistory": {
         "enterFilterName": "Bitte geben Sie einen Filternamen ein",

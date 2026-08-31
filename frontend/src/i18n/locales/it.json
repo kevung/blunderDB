@@ -667,15 +667,16 @@
             "gain": "Vittoria (%)",
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "prima del tiro"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "La valutazione apparirà qui.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet sta analizzando: {done}/{total}",
-        "batchCancel": "Annulla"
+        "batchCancel": "Annulla",
+        "baseline": "Prima del tiro",
+        "baselineTooltip": "Valori prima del tiro, nello stesso asse della lista — un riferimento, non una mossa candidata. Lo scarto rispetto a questa riga è la fortuna del tiro, non il merito di una mossa."
     },
     "searchHistory": {
         "enterFilterName": "Inserisci un nome per il filtro",

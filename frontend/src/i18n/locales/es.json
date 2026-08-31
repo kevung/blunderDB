@@ -667,15 +667,16 @@
             "gain": "Victoria (%)",
             "gammon": "Gamón (%)",
             "backgammon": "Backgamón (%)",
-            "cubelessEquity": "Cubeless",
-            "preRoll": "antes de la tirada"
+            "cubelessEquity": "Cubeless"
         }
     },
     "eval": {
         "pending": "La evaluación aparecerá aquí.",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analizando: {done}/{total}",
-        "batchCancel": "Cancelar"
+        "batchCancel": "Cancelar",
+        "baseline": "Antes de la tirada",
+        "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
     },
     "searchHistory": {
         "enterFilterName": "Introduce un nombre para el filtro",
