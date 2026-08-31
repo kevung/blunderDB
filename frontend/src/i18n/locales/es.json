@@ -569,6 +569,18 @@
         "playerGammon": "P G",
         "playerWin": "P W"
     },
+    "cube": {
+        "verdicts": {
+            "no_double": "No doblar",
+            "double_take": "Doblar, tomar",
+            "double_pass": "Doblar, pasar",
+            "too_good": "Demasiado bueno para doblar"
+        },
+        "noDecision": "Sin decisión",
+        "refused": "No evaluable con este marcador",
+        "cubeOpponent": "El oponente tiene el cubo",
+        "crawford": "Cubo muerto (Crawford)"
+    },
     "comment": {
         "editedSuffix": "(editado)",
         "hoursAgo": "hace {n} h",
@@ -642,22 +654,6 @@
             "exactTooltip": "Leído de la base two-sided: exacto hasta {n} fichas por jugador.",
             "estimatedTooltip": "Estimado por convolución de las distribuciones one-sided + corrección calibrada; p99 = {p99} %.",
             "evaluatedTooltip": "Jugado por la búsqueda de gammonNet (modelo de cubo Janowski) — no una consulta; concordancia de veredicto con la tabla exacta: 93,4 %.",
-            "cubeless": "Cubeless",
-            "noDouble": "Sin doblar",
-            "doubleTake": "Doblar/Tomar",
-            "doublePass": "Doblar/Pasar",
-            "cubeStates": {
-                "centered": "cubo centrado",
-                "owned": "cubo en posesión",
-                "against": "cubo del rival"
-            },
-            "verdicts": {
-                "no_double": "No doblar",
-                "double_take": "Doblar, tomar",
-                "double_pass": "Doblar, pasar",
-                "too_good": "Demasiado bueno para doblar"
-            },
-            "noDecision": "Sin decisión",
             "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
             "openConfig": "Ver los parámetros de configuración",
             "exactAndEvaluated": "exacto (victoria) · evaluado (cubo)",

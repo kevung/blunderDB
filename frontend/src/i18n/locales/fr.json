@@ -569,6 +569,18 @@
         "playerGammon": "P G",
         "playerWin": "P W"
     },
+    "cube": {
+        "verdicts": {
+            "no_double": "Pas de double",
+            "double_take": "Double, prend",
+            "double_pass": "Double, passe",
+            "too_good": "Trop bon pour doubler"
+        },
+        "noDecision": "Pas de décision",
+        "refused": "Non évaluable à ce score",
+        "cubeOpponent": "Videau adverse",
+        "crawford": "Videau mort (Crawford)"
+    },
     "comment": {
         "editedSuffix": "(modifié)",
         "hoursAgo": "il y a {n} h",
@@ -642,22 +654,6 @@
             "exactTooltip": "Lu dans la base two-sided : exact jusqu'à {n} pions par joueur.",
             "estimatedTooltip": "Estimé par convolution des distributions one-sided + correctif calibré ; p99 = {p99} %.",
             "evaluatedTooltip": "Joué par la recherche de gammonNet (modèle de videau Janowski), pas une lecture ; accord de verdict avec la table exacte : 93,4 %.",
-            "cubeless": "Cubeless",
-            "noDouble": "Sans double",
-            "doubleTake": "Double/Prend",
-            "doublePass": "Double/Passe",
-            "cubeStates": {
-                "centered": "videau centré",
-                "owned": "videau possédé",
-                "against": "videau adverse"
-            },
-            "verdicts": {
-                "no_double": "Pas de double",
-                "double_take": "Double, prend",
-                "double_pass": "Double, passe",
-                "too_good": "Trop bon pour doubler"
-            },
-            "noDecision": "Pas de décision",
             "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
             "openConfig": "Voir les paramètres de configuration",
             "exactAndEvaluated": "exact (gain) · évalué (videau)",

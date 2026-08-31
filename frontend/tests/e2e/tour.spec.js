@@ -17,7 +17,7 @@ async function waitForApp(page) {
 
 test.beforeEach(async ({ page }) => {
     await installWailsMock(page);
-    await page.goto('http://localhost:5173/');
+    await page.goto('/');
     await waitForApp(page);
     // Dismiss the first-run catalog if it auto-opened, so each test starts clean.
     await page.keyboard.press('Escape');

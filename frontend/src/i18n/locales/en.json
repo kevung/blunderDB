@@ -569,6 +569,18 @@
         "playerGammon": "P G",
         "playerWin": "P W"
     },
+    "cube": {
+        "verdicts": {
+            "no_double": "No double",
+            "double_take": "Double, take",
+            "double_pass": "Double, pass",
+            "too_good": "Too good to double"
+        },
+        "noDecision": "No decision",
+        "refused": "Not evaluable at this score",
+        "cubeOpponent": "Opponent owns the cube",
+        "crawford": "Cube dead (Crawford)"
+    },
     "comment": {
         "editedSuffix": "(edited)",
         "hoursAgo": "{n}h ago",
@@ -642,22 +654,6 @@
             "exactTooltip": "Read from the two-sided database: exact up to {n} checkers per player.",
             "estimatedTooltip": "Estimated by convolving the one-sided distributions + calibrated correction; p99 = {p99} %.",
             "evaluatedTooltip": "Played out by gammonNet's search (Janowski cube model) — not a lookup; verdict agreement with the exact table: 93.4%.",
-            "cubeless": "Cubeless",
-            "noDouble": "No double",
-            "doubleTake": "Double/Take",
-            "doublePass": "Double/Pass",
-            "cubeStates": {
-                "centered": "centered cube",
-                "owned": "cube owned",
-                "against": "cube against"
-            },
-            "verdicts": {
-                "no_double": "No double",
-                "double_take": "Double, take",
-                "double_pass": "Double, pass",
-                "too_good": "Too good to double"
-            },
-            "noDecision": "No decision",
             "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
             "openConfig": "See configuration settings",
             "exactAndEvaluated": "exact (win) · evaluated (cube)",

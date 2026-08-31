@@ -12,7 +12,12 @@ npm run test:e2e           # headless, reporter « list »
 npm run test:e2e:ui        # mode interactif (Playwright UI) — debug local
 ```
 
-Un serveur Vite est démarré automatiquement sur `http://localhost:5173/`.
+Un serveur Vite est démarré automatiquement sur `http://localhost:5173/`, qui
+est aussi le `baseURL` de la configuration : les specs naviguent avec
+`page.goto('/')`, jamais vers une URL absolue. C'est ce qui permet de pointer
+toute la suite ailleurs quand le port 5173 est déjà pris — sinon Playwright
+`reuseExistingServer` s'y attache et teste silencieusement une autre
+application.
 Si un serveur tourne déjà, Playwright le réutilise (`reuseExistingServer: true`
 hors CI).
 
@@ -43,7 +48,7 @@ import { installWailsMock } from './helpers/wailsMock.js';
 
 test.beforeEach(async ({ page }) => {
     await installWailsMock(page);
-    await page.goto('http://localhost:5173/');
+    await page.goto('/');
 });
 ```
 

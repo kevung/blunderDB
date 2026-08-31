@@ -10,6 +10,7 @@
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
+    import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
@@ -30,6 +31,22 @@
 
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
+    // The cube verdict as a VALUE (ADR-0020 rule 3), beside the analysis's own
+    // BestCubeAction string: the string is what an importer stored, in its
+    // engine's words; this is ours, so it is translated and it keeps "too
+    // good", which cubeActionLabel has to flatten.
+    let evalCubeVerdict = $state('');
+    // The engine declined this position outright — a match score beyond the
+    // MET's horizon. Data, not a rejected promise (ADR-0020 rule 4): a refusal
+    // is a state the panel names, and it used to arrive as an error the
+    // frontend logged and swallowed, leaving the previous position's numbers
+    // on screen under a placeholder promising an evaluation was coming.
+    let evalRefused = $state(false);
+    // Whether gammonNet has answered for the position currently on the board.
+    // Distinguishes "estimated, and the evaluated regime has not spoken yet"
+    // (pending) from "estimated, and it declined" (no decision) — see
+    // cubeDecision's `settled`.
+    let evalSettled = $state(false);
     // Race panel's "evaluated" regime (#126, ADR-0012): gammonNet's own
     // async result (same 0-ply-then-2-ply escalation as evalMoves/
     // evalCubeAnalysis above), carrying a verdict where the fast synchronous
@@ -108,6 +125,7 @@
         // rule 3's "a stale value is never shown dimmed" — the gesture that
         // invalidates it is the gesture that triggers the recomputation).
         selectedMoveStore.set(null);
+        evalSettled = false;
 
         evalGeneration += 1;
         const generation = evalGeneration;
@@ -153,8 +171,24 @@
     // cube gesture on the same position, even though that side's last real
     // evaluation is still perfectly valid.
     function applyEvalResult(result) {
+        evalSettled = true;
+        evalRefused = !!result?.refused;
+        if (evalRefused) {
+            // Nothing this build can say about this position: drop both sides
+            // rather than leave the previous position's answer standing under
+            // a state that says there is none.
+            evalMoves = [];
+            evalCubeAnalysis = null;
+            evalCubeVerdict = '';
+            evalRaceOverride = null;
+            evalPreRoll = null;
+            return;
+        }
         if (result?.moves !== undefined) evalMoves = result.moves;
-        if (result?.cube !== undefined) evalCubeAnalysis = result.cube ?? null;
+        if (result?.cube !== undefined) {
+            evalCubeAnalysis = result.cube ?? null;
+            evalCubeVerdict = result?.cubeVerdict ?? '';
+        }
         evalRaceOverride = result?.race ?? null;
         evalPreRoll = result?.preRoll ?? null;
     }
@@ -226,17 +260,7 @@
     let maskedDecision = $derived(challenge && !revealed.decision);
 
     const HIDDEN = '···';
-    const show = (masked, v) => (masked ? HIDDEN : v);
     const pct = (x) => (100 * x).toFixed(2);
-    const eq = (x) => (x >= 0 ? '+' : '') + x.toFixed(3);
-    const sd = (x, digits) => (x >= 0 ? '+' : '') + x.toFixed(digits);
-
-    // Decision-theoretic best equity: the roller picks double or not, the
-    // opponent then picks the cheaper response.
-    let bestEq = $derived(displayRace?.money ? Math.max(displayRace.money.no_double, Math.min(displayRace.money.double_take, displayRace.money.double_pass)) : 0);
-    let bestVerdict = $derived(displayRace?.money?.verdict ?? '');
-    // Gap to the best decision, shown under every non-best equity (XG style).
-    const gap = (v) => '(' + sd(v - bestEq, 3) + ')';
 
     // ADR-0017 rule 1/CONTEXT.md "Position fact": win/gammon/backgammon and
     // the cubeless equity, per board side — always pre-roll, whatever the
@@ -290,22 +314,35 @@
         return evalPreRoll;
     });
 
-    // Whether a race decision (money ND/DT/DP + verdict) is on screen at
-    // all — absent in the estimated regime (ADR-0009/0012: never
-    // estimated), and always absent once dice are set (ADR-0017 rule 2: a
-    // race with dice on it is asking about checkers, not the cube).
-    let showRaceDecision = $derived(!hasDiceSet && !!data.race && !!displayRace?.money);
-    let showGenericCube = $derived(!hasDiceSet && !data.race && !!evalCubeAnalysis);
+    // One cube Decision, one shape, whatever regime produced it (ADR-0020).
+    // The two source shapes — race.Money on a bearoff, DoublingCubeAnalysis
+    // everywhere else — become one object here, in the single place this panel
+    // already composes the exact/evaluated merge above. The block is shown
+    // whenever the board is asking a cube question at all, i.e. no dice
+    // (ADR-0017 rule 2), and its own state cell says whether there is an
+    // answer, none to be had, or a refusal.
+    let decision = $derived(
+        cubeDecision({
+            race: displayRace,
+            isRace: !!data.race,
+            cubeAnalysis: evalCubeAnalysis,
+            verdictKey: evalCubeVerdict,
+            refused: evalRefused,
+            turnability: cubeTurnability($positionStore),
+            settled: evalSettled
+        })
+    );
+    let showDecision = $derived(!hasDiceSet);
 
     // PositionFactsTable now carries only per-side facts (ADR-0018 rule 1):
     // the race block always, the probability vector only when there is no
     // list to read it against. With dice on a non-race position neither
     // applies, and the table would be empty — so it is not mounted at all,
-    // which is also what stops the badge column from ever being pushed away
-    // from a lone sibling that has nothing left to sit beside.
+    // leaving the content row genuinely empty rather than holding a table with
+    // nothing in it.
     let showFactsTable = $derived(!!data.race || !hasDiceSet);
 
-    // Depth is already named by the race regime badge below when the
+    // Depth is already named by the race regime badge in the strip when the
     // position is a race (ADR-0012). Off a race, CubeVerdictTable's own
     // depth/engine footer is hidden in this panel (ADR-0018 rule 4) since
     // every row of a live evaluation shares one depth/engine — so it is
@@ -333,11 +370,54 @@
         </div>
     {:else}
         <div class="epc-content">
-            <!-- Top row: the always-present facts table, the one decision
-                 block the board asks for (never both a race verdict and a
-                 checker decision — ADR-0017 rule 2), and the badge column.
-                 flex-wrap so a narrow panel stacks it instead of squeezing
-                 (ADR-0017's container-query layout). -->
+            <!-- The strip: regime badge, depth, engine link and the Défi
+                 toggle, on their own full-width line (ADR-0018 rule 4, applied
+                 as written by ADR-0020 rule 8). It was a third member of the
+                 content row until then, held in the corner by a
+                 `margin-left: auto` that manufactured a band of white across
+                 the middle whenever the row had something in it. It stays at
+                 the top: a badge qualifies the numbers below it. -->
+            <div class="badges-strip">
+                {#if data.race}
+                    {#if displayRace?.exactWin}
+                        <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
+                            {$t('epc.race.exactAndEvaluated')}
+                        </span>
+                    {:else if displayRace?.regime === 'exact'}
+                        <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: displayRace.source_checkers })}>
+                            {$t('epc.race.exact')}
+                        </span>
+                    {:else if displayRace?.regime === 'evaluated'}
+                        <span class="badge badge-evaluated" title={$t('epc.race.evaluatedTooltip')}>
+                            {$t('epc.race.evaluated')} · {displayRace.depth}
+                        </span>
+                    {:else if displayRace}
+                        <button
+                            class="badge badge-estimated badge-link"
+                            onclick={openBearoffSettings}
+                            title={$t('epc.race.estimatedTooltip', { p99: pct(displayRace.p99) }) + ' ' + $t('epc.race.downloadHint')}
+                            aria-label={$t('epc.race.openConfig')}
+                        >
+                            {$t('epc.race.estimated')} ± {pct(displayRace.sigma)} %
+                        </button>
+                    {/if}
+                {/if}
+                {#if genericDepthLabel}
+                    <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
+                {/if}
+                <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
+                <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
+                    <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
+                    <span>{$t('epc.challenge')}</span>
+                </label>
+            </div>
+
+            <!-- Content row: the always-present facts table and the one
+                 decision block the board asks for (never both a cube verdict
+                 and a checker decision — ADR-0017 rule 2). flex-wrap so a
+                 narrow panel stacks it instead of squeezing (ADR-0017's
+                 container-query layout); nothing pushes anything to a far
+                 edge, so no width can produce a void. -->
             <div class="top-row">
                 {#if showFactsTable}
                     <PositionFactsTable
@@ -353,100 +433,20 @@
                     />
                 {/if}
 
-                {#if showRaceDecision}
-                    <table class="decision-race" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
-                        <tbody>
-                            <tr>
-                                <th>{$t('epc.race.cubeless')}</th>
-                                <th>{$t('epc.race.noDouble')}</th>
-                                <th>{$t('epc.race.doubleTake')}</th>
-                                <th>{$t('epc.race.doublePass')}</th>
-                            </tr>
-                            <tr>
-                                <td>{show(maskedDecision, eq(displayRace.money.cubeless))}</td>
-                                <td>
-                                    {show(maskedDecision, eq(displayRace.money.no_double))}
-                                    {#if !maskedDecision && bestVerdict && bestVerdict !== 'no_double'}
-                                        <div class="eq-gap">{gap(displayRace.money.no_double)}</div>
-                                    {/if}
-                                </td>
-                                <td>
-                                    {show(maskedDecision, eq(displayRace.money.double_take))}
-                                    {#if !maskedDecision && bestVerdict && bestVerdict !== 'double_take'}
-                                        <div class="eq-gap">{gap(displayRace.money.double_take)}</div>
-                                    {/if}
-                                </td>
-                                <td>
-                                    {show(maskedDecision, eq(displayRace.money.double_pass))}
-                                    {#if !maskedDecision && bestVerdict && bestVerdict !== 'double_pass'}
-                                        <div class="eq-gap">{gap(displayRace.money.double_pass)}</div>
-                                    {/if}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="decision-chip-wrap">
-                        <span class="decision-chip" title={$t('epc.race.cubeStates.' + displayRace.money.cube_state)}>
-                            {#if maskedDecision}
-                                {HIDDEN}
-                            {:else if displayRace.money.verdict}
-                                {$t('epc.race.verdicts.' + displayRace.money.verdict)}
-                            {:else}
-                                {$t('epc.race.noDecision')}
-                            {/if}
-                        </span>
+                {#if showDecision}
+                    <!-- Défi masks in place: the three rows stay, their values
+                         and the verdict become `···`, and the best-row
+                         emphasis goes with them (ADR-0020 rule 7). The opaque
+                         stand-in this used to need is gone — its excuse was
+                         that CubeVerdictTable was "a foreign component with
+                         its own scoped CSS", which stopped being true when the
+                         mask moved inside it. -->
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
+                    <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
+                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} />
                     </div>
-                {:else if showGenericCube}
-                    {#if maskedDecision}
-                        <!-- CubeVerdictTable is a foreign component with its own
-                             scoped CSS: a wrapper `.masked` class cannot grey
-                             out values it never sees. Défi hides the whole
-                             thing by not handing it real data until revealed —
-                             the only way to guarantee nothing leaks. -->
-                        <div class="decision-cube-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
-                    {:else}
-                        <div class="decision-cube">
-                            <CubeVerdictTable cubeAnalysis={evalCubeAnalysis} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} />
-                        </div>
-                    {/if}
-                {:else if !hasDiceSet}
-                    <div class="decision-pending">{$t('eval.pending')}</div>
                 {/if}
-
-                <div class="badges-col">
-                    {#if data.race}
-                        {#if displayRace?.exactWin}
-                            <span class="badge badge-composite" title={$t('epc.race.exactAndEvaluatedTooltip')}>
-                                {$t('epc.race.exactAndEvaluated')}
-                            </span>
-                        {:else if displayRace?.regime === 'exact'}
-                            <span class="badge badge-exact" title={$t('epc.race.exactTooltip', { n: displayRace.source_checkers })}>
-                                {$t('epc.race.exact')}
-                            </span>
-                        {:else if displayRace?.regime === 'evaluated'}
-                            <span class="badge badge-evaluated" title={$t('epc.race.evaluatedTooltip')}>
-                                {$t('epc.race.evaluated')} · {displayRace.depth}
-                            </span>
-                        {:else if displayRace}
-                            <button
-                                class="badge badge-estimated badge-link"
-                                onclick={openBearoffSettings}
-                                title={$t('epc.race.estimatedTooltip', { p99: pct(displayRace.p99) }) + ' ' + $t('epc.race.downloadHint')}
-                                aria-label={$t('epc.race.openConfig')}
-                            >
-                                {$t('epc.race.estimated')} ± {pct(displayRace.sigma)} %
-                            </button>
-                        {/if}
-                    {/if}
-                    {#if genericDepthLabel}
-                        <span class="badge badge-evaluated" title={$t('analysis.analysisDepth')}>{genericDepthLabel}</span>
-                    {/if}
-                    <button class="eval-engine-badge" onclick={openGammonNetRepo} title={$t('eval.engineTooltip')} aria-label={$t('eval.engineTooltip')}>?</button>
-                    <label class="challenge-toggle" title={$t('epc.challengeTooltip')}>
-                        <input type="checkbox" checked={challenge} onchange={toggleChallenge} />
-                        <span>{$t('epc.challenge')}</span>
-                    </label>
-                </div>
             </div>
 
             <!-- The moves list is the only region that ever scrolls
@@ -464,7 +464,7 @@
                     <div class="moves-scroll">
                         <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} />
                         {#if evalMoves.length === 0}
-                            <div class="eval-placeholder">{$t('eval.pending')}</div>
+                            <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
                         {/if}
                     </div>
                 {/if}
@@ -528,10 +528,22 @@
         gap: 6px;
     }
 
-    /* Facts + the one decision block + badges, on one row when the panel is
-       wide enough (~1000px, ADR-0017's budget), wrapping to two lines and
-       then a stacked column as it narrows — one flow, driven by the panel's
-       own width, not by whether it is docked at the bottom or the side. */
+    /* The strip (ADR-0020 rule 8): its own full-width line above the content,
+       right-aligned, so nothing in the content row has to be pushed to a far
+       edge to keep it in the corner — the rule that used to make the void. */
+    .badges-strip {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Facts + the one decision block, on one row when the panel is wide enough
+       (~1000px, ADR-0017's budget), wrapping to two lines and then a stacked
+       column as it narrows — one flow, driven by the panel's own width, not by
+       whether it is docked at the bottom or the side. */
     .top-row {
         flex: 0 0 auto;
         display: flex;
@@ -540,20 +552,22 @@
         gap: 8px 20px;
     }
 
-    .decision-pending,
     .eval-placeholder {
         color: #888;
         font-size: var(--font-size-small);
     }
 
-    .decision-race,
     .decision-cube {
-        border-collapse: collapse;
+        display: flex;
         font-size: var(--font-size-base);
     }
 
-    .decision-cube {
-        display: flex;
+    .decision-cube.masked {
+        cursor: pointer;
+    }
+
+    .decision-cube.masked:hover {
+        background: #f5f5f5;
     }
 
     .decision-cube-masked {
@@ -580,77 +594,6 @@
         flex: 1 1 auto;
         min-height: 0;
         width: 100%;
-    }
-
-    .decision-race th,
-    .decision-race td {
-        padding: 2px 10px;
-        text-align: center;
-        white-space: nowrap;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .decision-race th {
-        font-size: var(--font-size-small);
-        color: #777;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        font-weight: 600;
-    }
-
-    .decision-race td {
-        font-weight: 600;
-        color: #1a56c4;
-    }
-
-    .decision-race.masked {
-        cursor: pointer;
-    }
-
-    .decision-race.masked td {
-        color: #aaa;
-        letter-spacing: 2px;
-    }
-
-    .decision-race.masked:hover td {
-        background: #f5f5f5;
-    }
-
-    .decision-chip-wrap {
-        display: flex;
-        align-items: center;
-    }
-
-    .decision-chip {
-        padding: 1px 10px;
-        border-radius: 9px;
-        background: #e8f0fe;
-        border: 1px solid #c4d8f5;
-        color: #1a56c4;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .eq-gap {
-        font-size: var(--font-size-small);
-        color: #999;
-        font-weight: 400;
-        letter-spacing: 0;
-    }
-
-    /* The badge column always sits last in the row: regime badge, engine
-       attribution, and the défi toggle — no more absolute positioning or
-       reserved padding (ADR-0017 removes both). margin-left:auto rather
-       than a `justify-content: space-between` on .top-row: with dice on a
-       non-race position PositionFactsTable is not mounted at all
-       (ADR-0018's showFactsTable), and space-between would left-align a
-       single remaining flex item instead of keeping it in the corner. */
-    .badges-col {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-left: auto;
-        flex-wrap: wrap;
     }
 
     .badge {
@@ -681,7 +624,7 @@
     }
 
     /* Third regime (#126, ADR-0012): a distinct blue-leaning tone — closer
-       to .decision-chip than to either the green "exact" or the amber
+       to the neutral chips than to either the green "exact" or the amber
        "estimated" (a played-out search, not a lookup and not a summary
        estimate). */
     .badge-evaluated {
@@ -741,11 +684,5 @@
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
-    }
-
-    @container (max-width: 700px) {
-        .badges-col {
-            margin-left: 0;
-        }
     }
 </style>

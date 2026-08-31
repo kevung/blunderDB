@@ -1570,6 +1570,8 @@ export namespace gui {
 	    cube?: domain.DoublingCubeAnalysis;
 	    race?: race.Eval;
 	    preRoll?: PositionFacts;
+	    cubeVerdict?: string;
+	    refused?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new GammonNetEvalResult(source);
@@ -1581,6 +1583,8 @@ export namespace gui {
 	        this.cube = this.convertValues(source["cube"], domain.DoublingCubeAnalysis);
 	        this.race = this.convertValues(source["race"], race.Eval);
 	        this.preRoll = this.convertValues(source["preRoll"], PositionFacts);
+	        this.cubeVerdict = source["cubeVerdict"];
+	        this.refused = source["refused"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

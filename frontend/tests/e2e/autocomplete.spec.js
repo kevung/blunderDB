@@ -16,7 +16,7 @@ async function openCommandLine(page) {
 
 test.beforeEach(async ({ page }) => {
     await installWailsMock(page);
-    await page.goto('http://localhost:5173/');
+    await page.goto('/');
     await openCommandLine(page);
 });
 

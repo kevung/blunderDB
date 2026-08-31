@@ -569,6 +569,18 @@
         "playerGammon": "G G",
         "playerWin": "G V"
     },
+    "cube": {
+        "verdicts": {
+            "no_double": "Nessun raddoppio",
+            "double_take": "Raddoppio, prende",
+            "double_pass": "Raddoppio, passa",
+            "too_good": "Troppo forte per raddoppiare"
+        },
+        "noDecision": "Nessuna decisione",
+        "refused": "Non valutabile a questo punteggio",
+        "cubeOpponent": "Cubo dell'avversario",
+        "crawford": "Cubo morto (Crawford)"
+    },
     "comment": {
         "editedSuffix": "(modificato)",
         "hoursAgo": "{n} h fa",
@@ -642,22 +654,6 @@
             "exactTooltip": "Letto dal database two-sided: esatto fino a {n} pedine per giocatore.",
             "estimatedTooltip": "Stimato per convoluzione delle distribuzioni one-sided + correzione calibrata; p99 = {p99} %.",
             "evaluatedTooltip": "Giocato fino in fondo dalla ricerca di gammonNet (modello del cubo di Janowski) — non una lettura; accordo del verdetto con la tabella esatta: 93,4%.",
-            "cubeless": "Cubeless",
-            "noDouble": "Senza raddoppio",
-            "doubleTake": "Raddoppio/Prende",
-            "doublePass": "Raddoppio/Passa",
-            "cubeStates": {
-                "centered": "cubo centrato",
-                "owned": "cubo posseduto",
-                "against": "cubo avversario"
-            },
-            "verdicts": {
-                "no_double": "Nessun raddoppio",
-                "double_take": "Raddoppio, prende",
-                "double_pass": "Raddoppio, passa",
-                "too_good": "Troppo forte per raddoppiare"
-            },
-            "noDecision": "Nessuna decisione",
             "downloadHint": "Un verdetto del cubo esatto fino a 11 pedine per giocatore richiede il database scaricabile (1,2 GB).",
             "openConfig": "Vedi le impostazioni di configurazione",
             "exactAndEvaluated": "esatto (vittoria) · valutato (cubo)",
