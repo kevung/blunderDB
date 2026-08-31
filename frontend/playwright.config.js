@@ -10,7 +10,11 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 0,
     use: {
         browserName: 'chromium',
-        viewport: { width: 1280, height: 800 }
+        viewport: { width: 1280, height: 800 },
+        // Specs navigate with page.goto('/') so a local run can point the whole
+        // suite at another port — 5173 is a busy default and a squatted one
+        // silently tests somebody else's app.
+        baseURL: 'http://localhost:5173'
     },
     webServer: {
         command: 'npm run dev',

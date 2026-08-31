@@ -7,6 +7,7 @@
     import { normalizeCubeAction } from '../utils/cubeAction.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
+    import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
@@ -16,6 +17,13 @@
     let analysisData = $derived($analysisStore);
     let cubeValue = $derived($positionStore.cube.value);
     let onRoll = $derived($positionStore.player_on_roll ?? 0);
+    // Whether the cube can be turned at all is a rule of the game read off the
+    // board, not something a stored record knows: with the cube on the
+    // opponent's side, or during the Crawford game, no option is available so
+    // no option carries an error (ADR-0020 rule 5). Applies to imported
+    // records exactly as it does to a live evaluation — the equities still
+    // inform, nothing advises.
+    let turnability = $derived(cubeTurnability($positionStore));
     let matchCtx = $derived($matchContextStore);
 
     // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
@@ -430,9 +438,10 @@
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
                 {@const facts = cubeFacts(cubeAnalysis)}
+                {@const decision = cubeDecision({ cubeAnalysis, turnability, stored: true })}
                 <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
                     <PositionFactsTable bottom={facts.bottom} top={facts.top} />
-                    <CubeVerdictTable {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysisData.analysisEngineVersion} />
+                    <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysisData.analysisEngineVersion} />
                 </div>
             {/each}
         {/if}

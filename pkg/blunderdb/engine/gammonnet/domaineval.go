@@ -1,6 +1,7 @@
 package gammonnet
 
 import (
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,6 +26,15 @@ import (
 // therefore stale and re-run; money ones are unchanged but re-run too, the
 // version being per-analysis and not per-referential.
 const EngineVersion = "gammonNet v1.2.0"
+
+// ErrNotEvaluable marks a position this build declines to answer for — a
+// match score beyond the MET's horizon, or a cube decision the model refuses
+// — as opposed to a malformed position or an engine failure. ADR-0019 rule 4
+// makes a refusal a state the panel NAMES, so a caller has to be able to tell
+// one from a breakage; before this, both arrived as an opaque error and the
+// Eval panel swallowed them alike (ADR-0017 left exactly this as a
+// follow-up).
+var ErrNotEvaluable = errors.New("gammonnet: not evaluable")
 
 // EvalResult is what evaluating a domain.Position through gammonNet
 // produces: candidate moves when dice are set, a cube decision otherwise —
@@ -51,6 +61,16 @@ type EvalResult struct {
 	// only caller that ever needs it there, and pays for it itself
 	// (internal/gui/gammonnet_eval.go's preRollFacts).
 	PreRoll *PreRollFacts
+	// CubeAction is the cube verdict as a VALUE, alongside the string
+	// Cube.BestCubeAction (ADR-0019 rule 3). The string is a storage field:
+	// importers write their analysing engine's own words into it, sometimes
+	// already localised, and cubeActionLabel below has to flatten TooGood
+	// into "No Double" to stay inside the three labels the rest of the app
+	// parses. This field loses neither the fourth value nor the reader's
+	// language, and it never reaches a domain type — so no schema, no
+	// migration, and the batch analysis job keeps storing exactly what it
+	// stores today. Meaningful only when Cube is non-nil.
+	CubeAction CubeAction
 }
 
 // PreRollFacts is EvalResult's pre-roll fact vector — see its doc comment.
@@ -91,7 +111,7 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 	if !isMoney {
 		m, ok := MatchStateFromPosition(&pos)
 		if !ok {
-			return EvalResult{}, fmt.Errorf("gammonnet: match state not evaluable at score %v", pos.Score)
+			return EvalResult{}, fmt.Errorf("%w: match state at score %v", ErrNotEvaluable, pos.Score)
 		}
 		cfg.UseMatch = true
 		cfg.Match = m
@@ -124,11 +144,11 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, preRoll, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, scale)
+	cube, preRoll, action, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, scale)
 	if err != nil {
 		return EvalResult{}, err
 	}
-	return EvalResult{Cube: cube, PreRoll: preRoll}, nil
+	return EvalResult{Cube: cube, PreRoll: preRoll, CubeAction: action}, nil
 }
 
 // MatchStateFromScores builds a MatchState from raw away scores as the
@@ -282,11 +302,13 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 //
 // Also returns the same probs as a PreRollFacts — this is the position's
 // fact vector (EvalResult.PreRoll's doc comment), and building it here is
-// free: probs already exists for the cube decision itself.
-func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, error) {
+// free: probs already exists for the cube decision itself — and the verdict
+// as a value (EvalResult.CubeAction), which the string label below cannot
+// carry into a reader's own language.
+func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, CubeAction, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
-		return nil, nil, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
+		return nil, nil, NoDouble, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
 	}
 	preRoll := &PreRollFacts{
 		PlayerWinChance:          float64(probs[PWin]),
@@ -319,7 +341,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 
 	dec, ok := Decide(&probs, owner, state, efficiency, jacoby)
 	if !ok {
-		return nil, nil, fmt.Errorf("gammonnet: cube decision not evaluable at this score")
+		return nil, nil, NoDouble, fmt.Errorf("%w: cube decision at this score", ErrNotEvaluable)
 	}
 
 	// Out of Decide's own scale and into blunderDB's (ADR-0019) before
@@ -355,7 +377,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		CubefulDoublePassEquity:   doublePass,
 		CubefulDoublePassError:    doublePass - best,
 		BestCubeAction:            cubeActionLabel(dec),
-	}, preRoll, nil
+	}, preRoll, dec.Action, nil
 }
 
 // cubeActionLabel renders the decision in the vocabulary BestCubeAction

@@ -19,7 +19,7 @@
  * that happens to appear in a comment) in exchange for not drowning in false positives.
  *
  * DYNAMIC_PREFIXES covers the remaining case: keys assembled by concatenation at runtime
- * (`$t('epc.race.verdicts.' + verdict)`), where even the leaf key itself never appears as a
+ * (`$t('cube.verdicts.' + verdict)`), where even the leaf key itself never appears as a
  * literal anywhere — only the prefix does. Discover new ones by grepping the sources for
  * `$t('` (or tr/tMsg/translate/get(t)) followed by a dotted prefix and a `' +`.
  */
@@ -35,7 +35,7 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // Prefixes of keys built at runtime by string concatenation, so no literal scan can ever see
 // the full leaf key used. Every subkey under one of these is assumed live.
-const DYNAMIC_PREFIXES = ['search.filters.', 'search.filterGroups.', 'epc.race.cubeStates.', 'epc.race.verdicts.'];
+const DYNAMIC_PREFIXES = ['search.filters.', 'search.filterGroups.', 'cube.verdicts.'];
 
 function sourceFiles(dir) {
     return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {

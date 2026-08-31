@@ -157,11 +157,31 @@ board, the cube actions and their verdict when there are none. A Decision is rea
 option**, never per player. The board asks exactly one question at a time, so a Position has
 exactly one Decision to show; a race with dice on it is asking about checkers, and its pre-roll
 cube verdict answers a question nobody asked.
+
+A cube Decision always has the same three named options — no double, double-take, double-pass — in
+that order, whatever Regime produced their equities. Their order carries no information, unlike a
+ranked play list where the order *is* the answer (ADR-0020).
 _Avoid_: analysis, verdict (the verdict is one part of a cube Decision, not the whole)
+
+**Verdict**:
+Which of a cube Decision's options is the right one: *no double*, *double-take*, *double-pass* or
+*too good*. It is a value, not a sentence — the panel's own evaluation names it as one of those
+four, while an imported analysis carries whatever string its engine wrote and is reported as-is.
+
+Two things are named in the Verdict's place rather than left blank, because a blank means "still
+computing" and nothing else:
+- **no decision** — the Regime is not entitled to one (*estimated* never yields a cube verdict).
+- **refused** — the engine declined the position, typically a match score beyond the MET's horizon.
+
+A fifth case is not a Verdict at all: where the cube cannot be turned — the opponent owns it, or
+the game is the Crawford game — no option is available, so no option carries an error. The
+equities still inform; nothing advises.
+_Avoid_: best action, recommendation, conclusion
 
 The pair is the panel's whole layout rule: the per-side facts in a table whose rows are the
 players, the one Decision the board is asking for, and — when that Decision is a list at the
-trait — the Baseline at its head. See ADR-0017 for the partition, ADR-0018 for the axis.
+trait — the Baseline at its head. See ADR-0017 for the partition, ADR-0018 for the axis of a
+fact, ADR-0020 for the shape of a cube Decision.
 
 ### Sets of positions the user curates
 

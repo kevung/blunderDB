@@ -2,6 +2,7 @@ package gui
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -59,6 +60,22 @@ type GammonNetEvalResult struct {
 	// extra search paid only here (ADR-0017's measured +36% at display
 	// depth), on Cube it is free (gammonnet.EvalResult.PreRoll).
 	PreRoll *PositionFacts `json:"preRoll,omitempty"`
+	// CubeVerdict is the cube verdict as a KEY the panel translates —
+	// "no_double", "double_take", "double_pass" or "too_good", the same four
+	// race.Money.Verdict already carries (ADR-0019 rule 3). Cube's own
+	// BestCubeAction string stays what it has always been: a stored field
+	// carrying an analysing engine's own words, which is right for an
+	// imported record and wrong for our own live evaluation (it arrived in
+	// English, and had lost too_good on the way).
+	CubeVerdict race.Verdict `json:"cubeVerdict,omitempty"`
+	// Refused is true when this build declines the position outright — a
+	// match score beyond the MET's horizon, typically. It is DATA, not an
+	// error: an error becomes a rejected promise the panel logs and swallows,
+	// leaving the previous position's numbers on screen forever under a
+	// placeholder that promises an evaluation is coming (ADR-0017 noted this
+	// and left it; ADR-0019 rule 4 closes it). A refusal is a state the panel
+	// names, so it has to arrive as a value.
+	Refused bool `json:"refused,omitempty"`
 }
 
 // PositionFacts is GammonNetEvalResult.PreRoll's JSON shape — the wire
@@ -142,13 +159,23 @@ func (a *App) CancelEvaluationAtRest() {
 func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (GammonNetEvalResult, error) {
 	result, err := gammonnet.EvaluatePosition(pos, ply, pruneK, candidates)
 	if err != nil {
+		// A refusal is an answer ("this build cannot judge that score"), a
+		// breakage is not. Only the first travels as data.
+		if errors.Is(err, gammonnet.ErrNotEvaluable) {
+			return GammonNetEvalResult{Refused: true}, nil
+		}
 		return GammonNetEvalResult{}, err
 	}
 
 	raceEval := evaluateRaceRegime(&pos, ply, pruneK)
 	preRoll := preRollFacts(&pos, ply, pruneK, result.PreRoll)
 
-	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval, PreRoll: preRoll}, nil
+	verdict := race.Verdict("")
+	if result.Cube != nil {
+		verdict = raceVerdictFromCubeAction(result.CubeAction)
+	}
+
+	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval, PreRoll: preRoll, CubeVerdict: verdict}, nil
 }
 
 // preRollFacts is the position's fact vector (ADR-0017), whatever question

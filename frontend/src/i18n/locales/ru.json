@@ -569,6 +569,18 @@
         "playerGammon": "И G",
         "playerWin": "И W"
     },
+    "cube": {
+        "verdicts": {
+            "no_double": "Не даблить",
+            "double_take": "Дабл, тейк",
+            "double_pass": "Дабл, пас",
+            "too_good": "Слишком хорошо для дабла"
+        },
+        "noDecision": "Нет решения",
+        "refused": "Не оценивается при этом счёте",
+        "cubeOpponent": "Куб у соперника",
+        "crawford": "Куб не в игре (Кроуфорд)"
+    },
     "comment": {
         "editedSuffix": "(изменено)",
         "hoursAgo": "{n} ч назад",
@@ -642,22 +654,6 @@
             "exactTooltip": "Из базы two-sided: точно до {n} шашек на игрока.",
             "estimatedTooltip": "Оценка свёрткой one-sided-распределений + калиброванная поправка; p99 = {p99} %.",
             "evaluatedTooltip": "Просчитано поиском gammonNet (модель куба Яновского) — не выборка из таблицы; совпадение вердикта с точной таблицей: 93,4 %.",
-            "cubeless": "Без куба",
-            "noDouble": "Без дабла",
-            "doubleTake": "Дабл/Тейк",
-            "doublePass": "Дабл/Пас",
-            "cubeStates": {
-                "centered": "куб в центре",
-                "owned": "куб у игрока",
-                "against": "куб у соперника"
-            },
-            "verdicts": {
-                "no_double": "Не даблить",
-                "double_take": "Дабл, тейк",
-                "double_pass": "Дабл, пас",
-                "too_good": "Слишком хорошо для дабла"
-            },
-            "noDecision": "Нет решения",
             "downloadHint": "Точный вердикт по кубу до 11 шашек на игрока требует загружаемой базы (1,2 ГБ).",
             "openConfig": "Открыть параметры настройки",
             "exactAndEvaluated": "точно (победа) · рассчитано (куб)",

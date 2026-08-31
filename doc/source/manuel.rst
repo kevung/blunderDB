@@ -870,8 +870,8 @@ position de bearoff pur, un second tableau, toujours **par joueur** et
 toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
 le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
 jamais. Le badge de régime, l'attribution du moteur (la profondeur de la
-dernière évaluation y figure aussi) et la case *Défi* forment une dernière
-colonne de badges, à droite.
+dernière évaluation y figure aussi) et la case *Défi* forment une bande à
+part, alignée à droite au-dessus des tableaux.
 
 Seule la liste des coups candidats défile — la ligne *avant le jet*, elle
 aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, badge,
@@ -884,7 +884,7 @@ une profondeur 0-ply s'affiche immédiatement à chaque geste, puis, après une
 demi-seconde d'immobilité, une évaluation plus profonde (2 plis par défaut,
 réglable dans l'onglet *gammonNet* de la configuration) la remplace en
 arrière-plan — tout nouveau geste annule ce calcul de fond. La profondeur
-affichée dans la colonne des badges, ou au sein du badge de régime sur une
+affichée dans la bande de badges, ou au sein du badge de régime sur une
 position de course, est toujours celle qui a effectivement produit le
 chiffre montré, jamais celle demandée ; elle ne se répète pas sur chaque
 ligne, puisqu'une évaluation en direct partage la même profondeur pour tous
@@ -896,7 +896,7 @@ où gagner la valeur du videau courant vaut +1 et la perdre −1 — jamais
 mélangées dans un même tableau. Ce panneau ne modifie jamais la
 base : c'est un calcul, pas une analyse enregistrée. Cliquer un coup
 candidat l'affiche sur le plateau sous forme de flèches, exactement comme
-dans le panneau Analyse. Le bouton **?** discret, dans la colonne des
+dans le panneau Analyse. Le bouton **?** discret, dans la bande de
 badges, mène au dépôt du moteur
 `gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de
@@ -923,15 +923,36 @@ avance). Hors position de course, poser des dés fait donc disparaître le
 tableau de faits lui-même : les quatre colonnes qu'il portait viennent de
 changer d'axe, au trait, en tête de la liste des coups.
 
-La décision de videau, quand elle s'affiche, donne l'équité cubeless et les
-trois équités de videau (sans double, double/prend, double/passe), dans le
-référentiel de la position — sous chaque décision autre que la meilleure,
-l'écart d'équité à la meilleure décision est indiqué entre parenthèses —
-accompagnée du verdict et du badge de régime. Le verdict prend quatre
-valeurs : *pas de double*, *double, prend*, *double, passe* et *trop bon
-pour doubler*, cette dernière lorsque jouer la position rapporte davantage
-que d'encaisser le point : doubler serait alors une erreur pour la raison
-inverse de celle du simple *pas de double*.
+La décision de videau a toujours la même forme, quelle que soit l'origine des
+chiffres — table exacte, régime évalué ou évaluation gammonNet ordinaire :
+**une ligne par option**, dans l'ordre *pas de double*, *double/prend*,
+*double/passe*, avec son équité dans le référentiel de la position et son
+écart à la meilleure option. L'ordre ne change jamais, contrairement à la
+liste des coups : les trois options portent un nom, c'est donc le nom qu'on
+lit, pas le rang. La meilleure se reconnaît à sa mise en valeur et à sa
+cellule d'écart laissée vide. Lorsque le videau a déjà été retourné, les
+options se lisent *pas de redouble*, *redouble/prend*, *redouble/passe*.
+
+Une dernière ligne donne le **verdict**. Il prend quatre valeurs : *pas de
+double*, *double, prend*, *double, passe* et *trop bon pour doubler*, cette
+dernière lorsque jouer la position rapporte davantage que d'encaisser le
+point : doubler serait alors une erreur pour la raison inverse de celle du
+simple *pas de double*. C'est aussi le seul endroit où le panneau dit qu'il
+n'y a **pas** de verdict, plutôt que de laisser croire à un calcul en cours :
+
+* *pas de décision* — le régime n'y a pas droit ; le verdict de videau n'est
+  jamais estimé (voir le badge *estimé*) ;
+* *non évaluable à ce score* — le moteur refuse la position, typiquement un
+  score hors de l'horizon de la table d'équité de match ;
+* *videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être
+  retourné. Les équités restent affichées, à titre indicatif, mais aucune
+  option ne porte d'écart : une erreur, c'est ce que coûte un choix, et il
+  n'y a pas de choix.
+
+Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
+case *Défi* forment une bande à part, alignée à droite au-dessus des
+tableaux.
+
 Le **joueur au trait** et la **position du videau** s'éditent
 directement sur le plateau, comme en mode édition : cliquer le rectangle
 bearoff/score d'un joueur lui donne le trait ; cliquer le videau fait
@@ -1009,12 +1030,15 @@ Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
 
-**Mode défi.** La case *Défi*, dans la colonne des badges, active un mode
+**Mode défi.** La case *Défi*, dans la bande de badges, active un mode
 entraînement : à chaque modification de la position, les valeurs de trois
 zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle
 cette zone seulement. Sans dés, ce sont la ligne du joueur du bas, la ligne
-du joueur du haut et la décision (verdict de videau, quel qu'il soit) — la
-ligne Δ n'apparaît qu'une fois les deux lignes joueurs révélées. Dés posés
+du joueur du haut et la décision de videau — la
+ligne Δ n'apparaît qu'une fois les deux lignes joueurs révélées. Le bloc de
+décision garde alors ses trois lignes : ce sont ses valeurs, son verdict et
+la mise en valeur de la meilleure option qui disparaissent, faute de quoi
+l'exercice se résoudrait en cherchant la ligne en gras. Dés posés
 sur une position de course, la ligne EPC de chaque joueur se masque comme
 avant, mais la troisième zone couvre alors la ligne *avant le jet* et la
 liste des coups **ensemble** : la liste étant classée du meilleur coup au

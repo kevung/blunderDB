@@ -162,7 +162,7 @@ type Searcher struct {
 // own comment names exactly this trap.
 func NewSearcher(cfg SearchConfig) (*Searcher, error) {
 	if cfg.UseMatch && !cfg.Match.IsValid() {
-		return nil, fmt.Errorf("gammonnet: match state not evaluable: %+v", cfg.Match)
+		return nil, fmt.Errorf("%w: match state %+v", ErrNotEvaluable, cfg.Match)
 	}
 	net, err := Embedded()
 	if err != nil {
