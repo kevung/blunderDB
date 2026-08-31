@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Profundidad de análisis",
-        "backgammon": "B",
         "bestAction": "Mejor acción",
         "noDouble": "No doblar",
         "doubleTake": "Doblar/Aceptar",
@@ -558,23 +557,17 @@
         "redoublePass": "Redoblar/Pasar",
         "decision": "Decisión",
         "depth": "Profundidad",
-        "doubleEquity": "Eq D",
         "engine": "Motor",
         "equity": "Equity",
         "error": "Error",
-        "gammon": "G",
         "move": "Jugada",
-        "noDoubleEquity": "Eq ND",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "Análisis de la posición",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "(editado)",
@@ -668,7 +661,15 @@
             "noDecision": "Sin decisión",
             "downloadHint": "Un veredicto de cubo exacto hasta 11 fichas por jugador requiere la base descargable (1,2 GB).",
             "openConfig": "Ver los parámetros de configuración",
-            "winPct": "Victoria (%)"
+            "exactAndEvaluated": "exacto (victoria) · evaluado (cubo)",
+            "exactAndEvaluatedTooltip": "Probabilidad de victoria leída de la base two-sided (exacto); equidades y veredicto calculados por gammonNet en el marcador de la partida (evaluado)."
+        },
+        "facts": {
+            "gain": "Victoria (%)",
+            "gammon": "Gamón (%)",
+            "backgammon": "Backgamón (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "antes de la tirada"
         }
     },
     "eval": {

@@ -52,6 +52,26 @@ type GammonNetEvalResult struct {
 	Moves []domain.CheckerMove         `json:"moves,omitempty"`
 	Cube  *domain.DoublingCubeAnalysis `json:"cube,omitempty"`
 	Race  *race.Eval                   `json:"race,omitempty"`
+	// PreRoll is the position's fact vector (ADR-0017): win/gammon/
+	// backgammon chances and the cubeless equity, before any roll, in
+	// gammonNet's own referential (money at every score, ADR-0016). Always
+	// present when a search could produce one — on Moves it comes from an
+	// extra search paid only here (ADR-0017's measured +36% at display
+	// depth), on Cube it is free (gammonnet.EvalResult.PreRoll).
+	PreRoll *PositionFacts `json:"preRoll,omitempty"`
+}
+
+// PositionFacts is GammonNetEvalResult.PreRoll's JSON shape — the wire
+// mirror of gammonnet.PreRollFacts (an internal Go struct with no json
+// tags of its own).
+type PositionFacts struct {
+	PlayerWinChance          float64 `json:"playerWinChance"`
+	PlayerGammonChance       float64 `json:"playerGammonChance"`
+	PlayerBackgammonChance   float64 `json:"playerBackgammonChance"`
+	OpponentWinChance        float64 `json:"opponentWinChance"`
+	OpponentGammonChance     float64 `json:"opponentGammonChance"`
+	OpponentBackgammonChance float64 `json:"opponentBackgammonChance"`
+	CubelessEquity           float64 `json:"cubelessEquity"`
 }
 
 // EvaluatePositionImmediate is the 0-ply, synchronous tier: called on every
@@ -126,8 +146,83 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 	}
 
 	raceEval := evaluateRaceRegime(&pos, ply, pruneK)
+	preRoll := preRollFacts(&pos, ply, pruneK, result.PreRoll)
 
-	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval}, nil
+	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval, PreRoll: preRoll}, nil
+}
+
+// preRollFacts is the position's fact vector (ADR-0017), whatever question
+// the board is asking. When gammonnet.EvaluatePosition already produced one
+// (the no-dice/Cube branch — free, see EvalResult.PreRoll's doc comment)
+// this just relabels it for the wire. With dice set, EvaluatePosition never
+// computes one (evaluateMoves has no reason to), so this pays for a second,
+// dice-independent search — the only case that does, measured at +36% over
+// the moves search itself at display depth (ADR-0017's cost table).
+func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRollFacts) *PositionFacts {
+	if free != nil {
+		return &PositionFacts{
+			PlayerWinChance:          free.PlayerWinChance,
+			PlayerGammonChance:       free.PlayerGammonChance,
+			PlayerBackgammonChance:   free.PlayerBackgammonChance,
+			OpponentWinChance:        free.OpponentWinChance,
+			OpponentGammonChance:     free.OpponentGammonChance,
+			OpponentBackgammonChance: free.OpponentBackgammonChance,
+			CubelessEquity:           free.CubelessEquity,
+		}
+	}
+
+	hasDice := pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
+	if !hasDice {
+		return nil // EvaluatePosition declined the cube decision too; nothing to build facts from
+	}
+
+	cfg := gammonnet.DefaultConfig(ply)
+	if pruneK > 0 {
+		cfg.PruneK = pruneK
+	}
+
+	// Same referential as EvaluatePosition itself (ADR-0016): a match state
+	// this build cannot evaluate is nil here too, and the fact vector simply
+	// is not built — never a silent fall to money for a position the search
+	// otherwise refuses.
+	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
+	var state *gammonnet.MatchState
+	if !isMoney {
+		m, ok := gammonnet.MatchStateFromPosition(pos)
+		if !ok {
+			return nil
+		}
+		cfg.UseMatch = true
+		cfg.Match = m
+		state = &m
+	}
+
+	searcher, err := gammonnet.NewSearcher(cfg)
+	if err != nil {
+		return nil
+	}
+	// pos's own dice-free representation — Searcher.Plays takes the dice
+	// separately (see evaluateMoves), so gnPos here is already the pre-roll
+	// position, no clone/clear needed.
+	gnPos, err := gammonnet.FromDomain(pos)
+	if err != nil {
+		return nil
+	}
+	probs, ok := searcher.Probs(&gnPos)
+	if !ok {
+		return nil
+	}
+	return &PositionFacts{
+		PlayerWinChance:          float64(probs[gammonnet.PWin]),
+		PlayerGammonChance:       float64(probs[gammonnet.PWinGammon]),
+		PlayerBackgammonChance:   float64(probs[gammonnet.PWinBackgammon]),
+		OpponentWinChance:        1 - float64(probs[gammonnet.PWin]),
+		OpponentGammonChance:     float64(probs[gammonnet.PLoseGammon]),
+		OpponentBackgammonChance: float64(probs[gammonnet.PLoseBackgammon]),
+		// Follows pos's own referential (ADR-0016), same as evaluateCube's
+		// own PreRollFacts on the no-dice branch.
+		CubelessEquity: gammonnet.CubelessValue(&probs, state),
+	}
 }
 
 // evaluateRaceRegime fills the race panel's "evaluated" regime (#126, ADR-0012)
@@ -135,10 +230,19 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 // cheap to check first: race.Evaluate is the fast convolution path already
 // driving the panel's synchronous refresh (positionService.js's updateEPC),
 // so it doubles as the domain predicate here for free, and exact-regime
-// positions short-circuit before the engine is ever asked. A nil return (not
-// a race, already exact, or the engine declined the position) just means the
-// panel keeps showing whatever "estimated"/"exact" it already had — never an
-// error, since this is a bonus on top of Moves/Cube, not the request itself.
+// positions short-circuit before the engine is ever asked — UNLESS the
+// position carries a score. The exact table is money-referential
+// (MoneyFromEntry never reads pos.Score); at a match score its equities and
+// verdict are in the wrong scale for what the board is asking, so the
+// evaluated regime — already match-aware via Decide's MatchState — is
+// computed anyway. The caller keeps exact's WinProb (a real lookup,
+// referential-independent) and takes equities/verdict from this result
+// (ADR-0017 decision 4); this function itself does not know how the two are
+// combined, that merge lives in the frontend's displayRace. A nil return
+// (not a race, exact-and-money, or the engine declined the position) just
+// means the panel keeps showing whatever "estimated"/"exact" it already
+// had — never an error, since this is a bonus on top of Moves/Cube, not the
+// request itself.
 //
 // This logic lives here rather than in package race because race must not
 // import gammonnet: pkg/blunderdb/engine/gammonnet/eval_measure_test.go
@@ -157,8 +261,12 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 // ignores dice), so there is no result to share even when they do coincide.
 func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	fast := race.Evaluate(pos)
-	if fast.Race == nil || fast.Race.Regime == race.RegimeExact {
+	if fast.Race == nil {
 		return nil
+	}
+	hasScore := pos.Score[0] != -1 || pos.Score[1] != -1
+	if fast.Race.Regime == race.RegimeExact && !hasScore {
+		return nil // exact and money: nothing this regime can add
 	}
 
 	cfg := gammonnet.DefaultConfig(ply)
@@ -228,11 +336,15 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	}
 
 	return &race.Eval{
-		Regime:  race.RegimeEvaluated,
-		OnRoll:  mover,
-		WinProb: float64(probs[gammonnet.PWin]),
-		Money:   &money,
-		Depth:   depthLabel,
+		Regime:         race.RegimeEvaluated,
+		OnRoll:         mover,
+		WinProb:        float64(probs[gammonnet.PWin]),
+		WinGammon:      float64(probs[gammonnet.PWinGammon]),
+		WinBackgammon:  float64(probs[gammonnet.PWinBackgammon]),
+		LoseGammon:     float64(probs[gammonnet.PLoseGammon]),
+		LoseBackgammon: float64(probs[gammonnet.PLoseBackgammon]),
+		Money:          &money,
+		Depth:          depthLabel,
 	}
 }
 

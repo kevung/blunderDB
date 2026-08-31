@@ -28,6 +28,32 @@ const EngineVersion = "gammonNet v1.1.0"
 type EvalResult struct {
 	Moves []domain.CheckerMove
 	Cube  *domain.DoublingCubeAnalysis
+	// PreRoll is the position's fact vector before any dice are rolled —
+	// win/gammon/backgammon chances and the cubeless equity, in the
+	// referential the search currently uses (money at every score, see
+	// ADR-0016). It is the "position fact" ADR-0017 always shows, whatever
+	// question the board is asking.
+	//
+	// Populated only on the no-dice (Cube) branch, where it costs nothing:
+	// Searcher.Probs has already run to produce Cube, and this just reads
+	// the same probs. On the with-dice (Moves) branch it stays nil — the
+	// equivalent search would be a second one (measured +36% at display
+	// depth, ADR-0017), which this shared function must not spend on every
+	// batch-analysed checker decision (#129). The live Eval panel is the
+	// only caller that ever needs it there, and pays for it itself
+	// (internal/gui/gammonnet_eval.go's preRollFacts).
+	PreRoll *PreRollFacts
+}
+
+// PreRollFacts is EvalResult's pre-roll fact vector — see its doc comment.
+type PreRollFacts struct {
+	PlayerWinChance          float64
+	PlayerGammonChance       float64
+	PlayerBackgammonChance   float64
+	OpponentWinChance        float64
+	OpponentGammonChance     float64
+	OpponentBackgammonChance float64
+	CubelessEquity           float64
 }
 
 // EvaluatePosition runs a gammonNet search at the given ply (canonical
@@ -80,11 +106,11 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state)
+	cube, preRoll, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state)
 	if err != nil {
 		return EvalResult{}, err
 	}
-	return EvalResult{Cube: cube}, nil
+	return EvalResult{Cube: cube, PreRoll: preRoll}, nil
 }
 
 // MatchStateFromScores builds a MatchState from raw away scores as the
@@ -228,10 +254,25 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 // Janowski cube decision. state is the same MatchState the search itself was
 // built with (nil at money play) — EvaluatePosition's one MatchStateFromPosition
 // call, not a second copy of it.
-func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState) (*domain.DoublingCubeAnalysis, error) {
+//
+// Also returns the same probs as a PreRollFacts — this is the position's
+// fact vector (EvalResult.PreRoll's doc comment), and building it here is
+// free: probs already exists for the cube decision itself.
+func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState) (*domain.DoublingCubeAnalysis, *PreRollFacts, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
-		return nil, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
+		return nil, nil, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
+	}
+	preRoll := &PreRollFacts{
+		PlayerWinChance:          float64(probs[PWin]),
+		PlayerGammonChance:       float64(probs[PWinGammon]),
+		PlayerBackgammonChance:   float64(probs[PWinBackgammon]),
+		OpponentWinChance:        1 - float64(probs[PWin]),
+		OpponentGammonChance:     float64(probs[PLoseGammon]),
+		OpponentBackgammonChance: float64(probs[PLoseBackgammon]),
+		// Follows pos's own referential (ADR-0016), same as Cubeful*Equity
+		// below: money at money play, 2×MWC−1 at a match score.
+		CubelessEquity: CubelessValue(&probs, state),
 	}
 
 	mover := pos.PlayerOnRoll
@@ -252,7 +293,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 
 	dec, ok := Decide(&probs, owner, state, efficiency, jacoby)
 	if !ok {
-		return nil, fmt.Errorf("gammonnet: cube decision not evaluable at this score")
+		return nil, nil, fmt.Errorf("gammonnet: cube decision not evaluable at this score")
 	}
 
 	// Same convention as ingest/xgmap.go's computeBestCubeAction: the double
@@ -280,7 +321,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		CubefulDoublePassEquity:   dec.EquityDoublePass,
 		CubefulDoublePassError:    dec.EquityDoublePass - best,
 		BestCubeAction:            cubeActionLabel(dec.Action),
-	}, nil
+	}, preRoll, nil
 }
 
 // cubeActionLabel renders CubeAction in the same three-way vocabulary

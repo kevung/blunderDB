@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",
-        "backgammon": "B",
         "bestAction": "Best Action",
         "noDouble": "No Double",
         "doubleTake": "Double/Take",
@@ -558,23 +557,17 @@
         "redoublePass": "Redouble/Pass",
         "decision": "Decision",
         "depth": "Depth",
-        "doubleEquity": "D Eq",
         "engine": "Engine",
         "equity": "Equity",
         "error": "Error",
-        "gammon": "G",
         "move": "Move",
-        "noDoubleEquity": "ND Eq",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "Position analysis",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "(edited)",
@@ -668,7 +661,15 @@
             "noDecision": "No decision",
             "downloadHint": "An exact cube verdict up to 11 checkers per player requires the downloadable database (1.2 GB).",
             "openConfig": "See configuration settings",
-            "winPct": "Win (%)"
+            "exactAndEvaluated": "exact (win) · evaluated (cube)",
+            "exactAndEvaluatedTooltip": "Win probability read from the two-sided database (exact); equities and verdict played out by gammonNet at the game's score (evaluated)."
+        },
+        "facts": {
+            "gain": "Win (%)",
+            "gammon": "Gammon (%)",
+            "backgammon": "Backgammon (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "before the roll"
         }
     },
     "eval": {

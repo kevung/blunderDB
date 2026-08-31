@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "解析の深さ",
-        "backgammon": "B",
         "bestAction": "ベストアクション",
         "noDouble": "ノーダブル",
         "doubleTake": "ダブル/テイク",
@@ -558,23 +557,17 @@
         "redoublePass": "リダブル/パス",
         "decision": "判断",
         "depth": "深さ",
-        "doubleEquity": "D Eq",
         "engine": "エンジン",
         "equity": "equity",
         "error": "エラー",
-        "gammon": "G",
         "move": "ムーブ",
-        "noDoubleEquity": "ND Eq",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "ポジション解析",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "（編集済み）",
@@ -668,7 +661,15 @@
             "noDecision": "判断なし",
             "downloadHint": "プレイヤーごとに11枚まで正確なキューブ判定には、ダウンロード可能なデータベース(1.2 GB)が必要です。",
             "openConfig": "設定を表示",
-            "winPct": "勝率 (%)"
+            "exactAndEvaluated": "正確(勝率)・評価(キューブ)",
+            "exactAndEvaluatedTooltip": "勝率はtwo-sidedデータベースから読み取り(正確)、エクイティと判定はそのスコアでgammonNetが計算(評価)。"
+        },
+        "facts": {
+            "gain": "勝率 (%)",
+            "gammon": "ギャモン (%)",
+            "backgammon": "バックギャモン (%)",
+            "cubelessEquity": "キューブレス",
+            "preRoll": "ロール前"
         }
     },
     "eval": {

@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
-        "backgammon": "B",
         "bestAction": "Paras toiminto",
         "noDouble": "Ei tuplausta",
         "doubleTake": "Tuplaus/Otto",
@@ -558,23 +557,17 @@
         "redoublePass": "Uudelleentuplaus/Luovutus",
         "decision": "Päätös",
         "depth": "Syvyys",
-        "doubleEquity": "D Eq",
         "engine": "Moottori",
         "equity": "Equity",
         "error": "Virhe",
-        "gammon": "G",
         "move": "Siirto",
-        "noDoubleEquity": "ND Eq",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "Aseman analyysi",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "(muokattu)",
@@ -668,7 +661,15 @@
             "noDecision": "Ei päätöstä",
             "downloadHint": "Tarkka kuutiopäätös 11 nappulaan asti pelaajaa kohden vaatii ladattavan tietokannan (1,2 Gt).",
             "openConfig": "Näytä asetukset",
-            "winPct": "Voitto (%)"
+            "exactAndEvaluated": "tarkka (voitto) · simuloitu (kuutio)",
+            "exactAndEvaluatedTooltip": "Voittotodennäköisyys luettu two-sided-tietokannasta (tarkka); arvot ja päätös gammonNetin laskemia pelin tuloksella (simuloitu)."
+        },
+        "facts": {
+            "gain": "Voitto (%)",
+            "gammon": "Gammon (%)",
+            "backgammon": "Backgammon (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "ennen heittoa"
         }
     },
     "eval": {

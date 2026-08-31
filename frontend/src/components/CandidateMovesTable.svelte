@@ -153,6 +153,11 @@
 
     th {
         background-color: #f2f2f2;
+        /* EPCPanel's own scroll region is this table's list — the header
+           stays readable while the rows scroll under it (ADR-0017). */
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
 
     th:nth-child(1) {

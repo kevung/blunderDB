@@ -32,6 +32,19 @@ type Eval struct {
 	// (exact regime), 0 when estimated.
 	SourceCheckers int     `json:"source_checkers,omitempty"`
 	WinProb        float64 `json:"win_prob"`
+	// Evaluated regime only: gammon and backgammon chances, from the same
+	// probability vector WinProb comes from — OnRoll's own (Win*) and the
+	// opponent's (Lose*: OnRoll loses a gammon/backgammon), mirroring
+	// domain.DoublingCubeAnalysis's Player*/Opponent* split. All four are
+	// zero in the exact and estimated regimes — not a missing value, a fact
+	// about the position: a two-sided database's domain (≤ 6 checkers a
+	// side) already has the opponent bearing off 9+ checkers, where a
+	// gammon is structurally impossible (ADR-0017), and the estimator
+	// never models gammons at all.
+	WinGammon      float64 `json:"win_gammon,omitempty"`
+	WinBackgammon  float64 `json:"win_backgammon,omitempty"`
+	LoseGammon     float64 `json:"lose_gammon,omitempty"`
+	LoseBackgammon float64 `json:"lose_backgammon,omitempty"`
 	// Estimated regime only: measured error bounds of the estimator on the
 	// calibration oracle (win-probability units). Extrapolated beyond 11
 	// checkers per side.

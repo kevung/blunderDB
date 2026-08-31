@@ -107,19 +107,20 @@ const (
 )
 
 // Panel size, in pixels — the tabbed panel's height in bottom mode, its width
-// in side mode (the other dimension stretches to fill the window). The
-// defaults are generous enough that the Eval tab's stacked evaluation and
-// race tables fit without scrolling in the common case; once the user drags
-// the resize handle, their own size is persisted instead (frontend saves on
-// mouseup) and these defaults never apply again.
+// in side mode (the other dimension stretches to fill the window). ADR-0017
+// unified the Eval tab's stacked tables into a single flex-wrap row, so a
+// cube position fits in ~140px and only its moves list ever scrolls; these
+// defaults are the pre-existing ones, not sized around that panel. Once the
+// user drags the resize handle, their own size is persisted instead
+// (frontend saves on mouseup) and these defaults never apply again.
 const (
 	MinPanelHeight     = 80
 	MaxPanelHeight     = 4000
-	DefaultPanelHeight = 380
+	DefaultPanelHeight = 250
 
 	MinPanelWidth     = 150
 	MaxPanelWidth     = 4000
-	DefaultPanelWidth = 520
+	DefaultPanelWidth = 420
 )
 
 // gammonNet settings (ADR-0011, ADR-0013). Two depths, named and clamped

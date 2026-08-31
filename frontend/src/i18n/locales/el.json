@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Βάθος ανάλυσης",
-        "backgammon": "B",
         "bestAction": "Καλύτερη ενέργεια",
         "noDouble": "Χωρίς διπλό",
         "doubleTake": "Διπλό/Αποδοχή",
@@ -558,23 +557,17 @@
         "redoublePass": "Αναδιπλό/Πάσο",
         "decision": "Απόφαση",
         "depth": "Βάθος",
-        "doubleEquity": "D Eq",
         "engine": "Μηχανή",
         "equity": "Equity",
         "error": "Σφάλμα",
-        "gammon": "G",
         "move": "Κίνηση",
-        "noDoubleEquity": "ND Eq",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "Ανάλυση θέσης",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "(επεξεργασμένο)",
@@ -668,7 +661,15 @@
             "noDecision": "Καμία απόφαση",
             "downloadHint": "Ακριβής ετυμηγορία κύβου έως 11 πούλια ανά παίκτη απαιτεί τη μεταφορτώσιμη βάση (1,2 GB).",
             "openConfig": "Δείτε τις ρυθμίσεις διαμόρφωσης",
-            "winPct": "Νίκη (%)"
+            "exactAndEvaluated": "ακριβές (νίκη) · αξιολόγηση (κύβος)",
+            "exactAndEvaluatedTooltip": "Πιθανότητα νίκης από τη βάση two-sided (ακριβές)· αξίες και ετυμηγορία υπολογισμένες από το gammonNet στο τρέχον σκορ (αξιολόγηση)."
+        },
+        "facts": {
+            "gain": "Νίκη (%)",
+            "gammon": "Γκαμόν (%)",
+            "backgammon": "Μπακγκαμόν (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "πριν τη ζαριά"
         }
     },
     "eval": {

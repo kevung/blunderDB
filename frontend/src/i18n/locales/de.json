@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Analysetiefe",
-        "backgammon": "B",
         "bestAction": "Beste Aktion",
         "noDouble": "Kein Doppel",
         "doubleTake": "Doppeln/Annehmen",
@@ -558,23 +557,17 @@
         "redoublePass": "Redoppeln/Aufgeben",
         "decision": "Entscheidung",
         "depth": "Tiefe",
-        "doubleEquity": "D Eq",
         "engine": "Engine",
         "equity": "Equity",
         "error": "Fehler",
-        "gammon": "G",
         "move": "Zug",
-        "noDoubleEquity": "ND Eq",
-        "opponent": "G",
         "opponentBackgammon": "G B",
         "opponentGammon": "G G",
         "opponentWin": "G W",
         "panelLabel": "Positionsanalyse",
-        "player": "S",
         "playerBackgammon": "S B",
         "playerGammon": "S G",
-        "playerWin": "S W",
-        "win": "W"
+        "playerWin": "S W"
     },
     "comment": {
         "editedSuffix": "(bearbeitet)",
@@ -668,7 +661,15 @@
             "noDecision": "Keine Entscheidung",
             "downloadHint": "Ein exaktes Würfel-Urteil bis 11 Steine pro Spieler erfordert die herunterladbare Datenbank (1,2 GB).",
             "openConfig": "Konfigurationseinstellungen anzeigen",
-            "winPct": "Gewinn (%)"
+            "exactAndEvaluated": "exakt (Gewinn) · bewertet (Würfel)",
+            "exactAndEvaluatedTooltip": "Gewinnwahrscheinlichkeit aus der Two-Sided-Datenbank (exakt); Werte und Urteil von gammonNet beim aktuellen Spielstand berechnet (bewertet)."
+        },
+        "facts": {
+            "gain": "Gewinn (%)",
+            "gammon": "Gammon (%)",
+            "backgammon": "Backgammon (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "vor dem Wurf"
         }
     },
     "eval": {

@@ -854,71 +854,93 @@ position de bearoff et l'évaluation en direct de la position sur le plateau.
 Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet Eval dans le
 panneau inférieur, ou en exécutant la commande ``epc``.
 
-Il comporte deux volets. Le **volet évaluation**, en haut, est toujours
-présent : la position sur le plateau décide de ce qu'il y a à évaluer — des
-dés posés font apparaître les coups candidats, leur absence la décision de
-videau. Le **volet course**, en dessous, ne s'affiche que sur une position de
-bearoff pur ; sinon il ne réserve que sa place, sans contenu.
+Le panneau montre toujours la même chose : un **tableau de faits**, position
+par position, puis la **seule décision** que la position posée sur le
+plateau appelle — jamais les deux à la fois. Le tableau de faits porte, pour
+chaque joueur, sa probabilité de gain, de gammon et de backgammon, et son
+équité cubeless ; il s'agit toujours de valeurs *avant le jet* — quand des
+dés sont posés, c'est indiqué sous le tableau, pour ne pas les confondre
+avec les valeurs *après le coup* de la liste ci-dessous. Sur une position de
+bearoff pur, ce même tableau s'élargit de cinq colonnes propres à la course
+(EPC, pip count, wastage, nombre moyen de lancers, écart type) — c'est là
+toute la transition entre l'ancien panneau Bearoff et le panneau Eval : le
+tableau ne change pas de forme, des colonnes y apparaissent. À droite du
+tableau de faits, la décision elle-même : les coups candidats classés si des
+dés sont posés, sinon le verdict de videau (de course ou générique selon la
+position) — jamais un verdict de videau *avant le jet* à côté d'une décision
+de pions, puisque le plateau n'a alors posé aucune question de videau. Le
+badge de régime, l'attribution du moteur et la case *Défi* forment une
+dernière colonne de badges, à droite.
 
-Le volet évaluation est calculé par gammonNet, embarqué, sans XG ni gnubg.
-Le calcul suit la position sans jamais figer l'interface : une profondeur
-0-ply s'affiche immédiatement à chaque geste, puis, après une demi-seconde
-d'immobilité, une évaluation plus profonde (2 plis par défaut, réglable dans
-l'onglet *gammonNet* de la configuration) la remplace en arrière-plan — tout
-nouveau geste annule ce calcul de fond. La profondeur affichée à côté de
-chaque coup ou de la décision de videau est toujours celle qui a
-effectivement produit le chiffre montré, jamais celle demandée. Comme pour
-le volet course ci-dessous, l'équité des coups candidats et de la décision
-de videau suit le score : en money game elle est exprimée en points, à un
-score de match en pourcentage d'équité de match (2×MWC−1) — la même
-grandeur, jamais mélangées dans un même tableau. Ce volet ne modifie jamais
-la base : c'est un calcul, pas une analyse enregistrée. Le
-bouton **?** discret, en bas à droite du volet, mène au dépôt du moteur
+Seule la liste des coups candidats défile ; le reste du panneau (faits,
+badge, décision de videau) reste toujours visible, sans réglage particulier
+de la taille du panneau.
+
+Le tableau de faits et la décision sont calculés par gammonNet, embarqué,
+sans XG ni gnubg. Le calcul suit la position sans jamais figer l'interface :
+une profondeur 0-ply s'affiche immédiatement à chaque geste, puis, après une
+demi-seconde d'immobilité, une évaluation plus profonde (2 plis par défaut,
+réglable dans l'onglet *gammonNet* de la configuration) la remplace en
+arrière-plan — tout nouveau geste annule ce calcul de fond. La profondeur
+affichée à côté de chaque coup ou de la décision de videau est toujours
+celle qui a effectivement produit le chiffre montré, jamais celle demandée.
+L'équité des coups candidats et de la décision de videau suit le score de
+la position : en money game elle est exprimée en points, à un score de
+match en pourcentage d'équité de match (2×MWC−1) — la même grandeur,
+jamais mélangées dans un même tableau. Ce panneau ne modifie jamais la
+base : c'est un calcul, pas une analyse enregistrée. Cliquer un coup
+candidat l'affiche sur le plateau sous forme de flèches, exactement comme
+dans le panneau Analyse. Le bouton **?** discret, dans la colonne des
+badges, mène au dépôt du moteur
 `gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de
 l'aide.
 
 L'utilisateur édite la position des pions sur l'ensemble du plateau,
 exactement comme en mode édition : clic gauche place un pion du joueur du
-bas, clic droit un pion du joueur du haut. Le volet course n'apparaît que
-lorsque la position obtenue est un bearoff pur (tous les pions des deux
-joueurs dans leur jan) ; sur toute autre position, seul le volet évaluation
-répond.
+bas, clic droit un pion du joueur du haut. Les cinq colonnes de course
+n'apparaissent dans le tableau de faits que lorsque la position obtenue est
+un bearoff pur (tous les pions des deux joueurs dans leur jan) ; sur toute
+autre position, seules les quatre colonnes communes (gain, gammon,
+backgammon, cubeless) répondent, et la décision porte sur les pions ou sur
+un videau générique selon que des dés sont posés.
 
-Les résultats du volet course sont présentés sous forme de deux tableaux
-empilés :
+Dans le tableau de faits, chaque ligne — repérée par sa pastille de couleur,
+le joueur noir étant toujours en bas — porte le gain, le gammon, le
+backgammon (probabilités, sans le signe %) et l'équité cubeless du joueur ;
+sur une position de bearoff, elle porte en plus l'EPC, le pip count, le
+wastage (différence entre l'EPC et le pip count), le nombre moyen de
+lancers et l'écart type. Lorsque les deux joueurs ont des valeurs à
+comparer, une ligne **Δ** donne les différences *signées* (bas − haut :
+négatif quand le joueur noir est en avance).
 
-* en haut, un **tableau des joueurs** — une ligne par joueur (repérée par
-  sa pastille de couleur, le joueur noir étant toujours en bas), une
-  colonne par grandeur : EPC, pip count, wastage (différence entre l'EPC
-  et le pip count), nombre moyen de lancers et écart type. Lorsque les
-  deux joueurs ont des pions dans leur jan, une ligne **Δ** donne les
-  différences *signées* (bas − haut : négatif quand le joueur noir est en
-  avance) d'EPC, de pips et de wastage ;
-
-* en dessous, séparé par un filet, un **tableau course/videau** : deux
-  colonnes de probabilité de gain (une par pastille de joueur, valeurs
-  sans le signe %) et les équités money — sous chaque décision autre que
-  la meilleure, l'écart d'équité à la meilleure décision est indiqué
-  entre parenthèses. La **décision** s'affiche à droite du tableau, avec
-  le badge exact/estimé. Le **joueur au trait** et la **position du videau**
-  s'éditent directement sur le plateau, comme en mode édition : cliquer
-  le rectangle bearoff/score d'un joueur lui donne le trait ; cliquer le
-  videau fait tourner centré → possédé bas → possédé haut (clic droit en
-  sens inverse). La valeur du videau reste épinglée — en money game les
-  équités sont exprimées en unités du videau courant, seul son
-  propriétaire compte. L'analyse est recalculée aussitôt. En régime
-  estimé, le lien « Voir les paramètres de configuration » ouvre
-  directement l'onglet *Bearoff* de la configuration.
+La décision de videau, quand elle s'affiche, donne l'équité cubeless et les
+équités money (sans double, double/prend, double/passe) — sous chaque
+décision autre que la meilleure, l'écart d'équité à la meilleure décision
+est indiqué entre parenthèses — accompagnée du verdict et du badge de
+régime. Le **joueur au trait** et la **position du videau** s'éditent
+directement sur le plateau, comme en mode édition : cliquer le rectangle
+bearoff/score d'un joueur lui donne le trait ; cliquer le videau fait
+tourner centré → possédé bas → possédé haut (clic droit en sens inverse).
+La valeur du videau reste épinglée — en money game les équités sont
+exprimées en unités du videau courant, seul son propriétaire compte.
+L'analyse est recalculée aussitôt. En régime estimé, le badge lui-même est
+cliquable et ouvre directement l'onglet *Bearoff* de la configuration ; son
+infobulle explique pourquoi (verdict de videau non estimable, ADR-0009) et
+comment étendre le domaine exact.
 
 Le **score** s'édite lui aussi directement sur le plateau, comme en mode
 édition : clic gauche sur le rectangle score d'un joueur décrémente son
 nombre de points à faire, clic droit l'incrémente. Sortir du score *money*
 (-1, -1) en éditant un seul camp aligne automatiquement l'autre camp sur la
-même valeur plutôt que de laisser un score incohérent. Passer d'un score
-money à un score de match bascule l'équité et le verdict de videau affichés
-vers la table d'équité de match correspondante (disponible dès le régime
-*évalué*, voir ci-dessus) au lieu d'une équité money.
+même valeur plutôt que de laisser un score incohérent. Sur une position de
+bearoff en régime *exact*, passer d'un score money à un score de match
+laisse la probabilité de gain telle quelle (une lecture en base, valable
+quel que soit le référentiel) mais bascule l'équité et le verdict de videau
+affichés vers ceux du régime *évalué* — la table exacte étant money par
+construction, elle ne sait pas répondre à la question posée au score. Le
+badge devient alors composite (« exact (gain) · évalué (videau) ») pour le
+dire explicitement.
 
 *RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la
 position : plateau vide, score money (-1, -1), pas de dés posés — des
@@ -926,32 +948,38 @@ valeurs propres au panneau Eval, différentes de celles utilisées en mode
 édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau
 affiche par défaut.
 
-La case *Défi* reste épinglée en haut à droite du panneau.
-
 Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
-leur jan), le tableau course affiche, pour le joueur au trait :
-
-* la probabilité de gain,
+leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, pour le
+joueur au trait :
 
 * en régime *exact* : les équités money (cubeless, sans double, double/prend,
   double/passe) et le **verdict de videau money** (pas de double, double/prend,
-  double/passe ou trop bon pour doubler),
+  double/passe ou trop bon pour doubler) — hors score de match, voir plus
+  haut pour le cas du score,
 
 * en régime *évalué* : les mêmes équités et le même verdict à quatre valeurs,
   mais **joués par gammonNet** (recherche + modèle de videau Janowski) plutôt
   que lus dans une table — disponibles **même au score de match**, ce que le
   régime estimé n'a jamais pu offrir ;
 
-* en régime *estimé* : la probabilité de gain seule, accompagnée de sa marge
-  d'erreur — le verdict de videau n'est alors volontairement pas affiché.
+* en régime *estimé* : le verdict de videau n'est alors volontairement pas
+  affiché — seule la probabilité de gain, dans le tableau de faits,
+  accompagnée de sa marge d'erreur, reste disponible.
+
+Dès que des dés sont posés sur une position de course, cette décision de
+videau *avant le jet* disparaît — le plateau demande alors une décision de
+pions, pas de videau — mais la probabilité de gain, elle, reste affichée
+dans le tableau de faits : c'est un fait de la position, pas une décision.
 
 Un badge indique le régime : **exact** (valeur lue dans une base de données
 two-sided), **évalué · <profondeur>** (joué par gammonNet — la profondeur
-affichée est celle qui a effectivement produit le chiffre montré) ou
-**estimé ± marge**. Le régime exact l'emporte partout où il est disponible ;
-sinon le régime évalué s'affiche dès qu'il a fini de calculer, remplaçant en
-place le régime estimé montré pendant l'attente. Voir :ref:`epc_methodologie`
-pour la définition précise des trois régimes et de leurs hypothèses.
+affichée est celle qui a effectivement produit le chiffre montré),
+**estimé ± marge**, ou, au score de match dans le domaine exact,
+**exact (gain) · évalué (videau)** — voir plus haut. Le régime exact l'emporte
+partout où il est disponible ; sinon le régime évalué s'affiche dès qu'il a
+fini de calculer, remplaçant en place le régime estimé montré pendant
+l'attente. Voir :ref:`epc_methodologie` pour la définition précise des trois
+régimes et de leurs hypothèses.
 
 **Élargir le domaine exact.** La base intégrée couvre 6 pions par joueur.
 Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
@@ -965,11 +993,12 @@ Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
 
-**Mode défi.** La case *Défi* du panneau active un mode entraînement : à
-chaque modification de la position, les valeurs des trois zones — la ligne
-du joueur du bas, la ligne du joueur du haut et le tableau course — sont
-masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone
-seulement. La ligne Δ n'apparaît qu'une fois les deux lignes joueurs
+**Mode défi.** La case *Défi*, dans la colonne des badges, active un mode
+entraînement : à chaque modification de la position, les valeurs des trois
+zones — la ligne du joueur du bas, la ligne du joueur du haut et la décision
+(verdict de videau, quel qu'il soit) — sont masquées (remplacées par
+« ··· ») ; un clic sur une zone révèle cette zone seulement. La ligne Δ
+n'apparaît qu'une fois les deux lignes joueurs
 révélées. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à
 se prononcer sur le videau, avant de vérifier. Le réglage est mémorisé.
 

@@ -23,10 +23,13 @@ export const epcDataStore = writable({
 // Config.SaveEpcChallenge; initialised from Config at startup.
 export const epcChallengeStore = writable(false);
 
-// Which zones the user has revealed since the last edit. Reset by updateEPC
-// (the same code path that recomputes the data, so keyboard edits re-mask too).
-export const epcRevealedStore = writable({ bottom: false, top: false, race: false });
+// Which zones the user has revealed since the last edit — the bottom row,
+// the top row, and the one decision block the board is asking for
+// (ADR-0017: whichever it is, race verdict or generic cube verdict, there is
+// only ever one, so one zone covers it). Reset by updateEPC (the same code
+// path that recomputes the data, so keyboard edits re-mask too).
+export const epcRevealedStore = writable({ bottom: false, top: false, decision: false });
 
 export function resetEpcReveal() {
-    epcRevealedStore.set({ bottom: false, top: false, race: false });
+    epcRevealedStore.set({ bottom: false, top: false, decision: false });
 }

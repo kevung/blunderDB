@@ -8,6 +8,13 @@
     // caller concern (MATCH mode vs. browsing several played actions across
     // positions) so it stays a callback, exactly like CandidateMovesTable's
     // isPlayedMove.
+    //
+    // Win/gammon/backgammon chances and the cubeless equity moved out to
+    // PositionFactsTable (ADR-0017): they are a position fact, not part of
+    // this decision, and showing them here duplicated a table the same
+    // panels mount right next to this one. This component owns only the
+    // decision itself — ND/DT/DP, their equities and error, the best
+    // action — plus the depth/engine footer.
     let { cubeAnalysis, cubeValue = 0, isPlayedCubeAction = () => false, engineVersionFallback = '' } = $props();
 
     function formatEquity(value) {
@@ -15,38 +22,6 @@
     }
 </script>
 
-<table class="left-table">
-    <tbody>
-        <tr>
-            <th></th>
-            <th>{$t('analysis.player')}</th>
-            <th>{$t('analysis.opponent')}</th>
-        </tr>
-        <tr>
-            <td>{$t('analysis.win')}</td>
-            <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
-            <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td>{$t('analysis.gammon')}</td>
-            <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
-            <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td>{$t('analysis.backgammon')}</td>
-            <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
-            <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td>{$t('analysis.noDoubleEquity')}</td>
-            <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
-        </tr>
-        <tr>
-            <td>{$t('analysis.doubleEquity')}</td>
-            <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
-        </tr>
-    </tbody>
-</table>
 <table class="right-table">
     <tbody>
         <tr>
@@ -89,16 +64,11 @@
 </table>
 
 <style>
-    .left-table,
     .right-table,
     .info-table {
         width: 28%;
         border-collapse: collapse;
         font-size: var(--font-size-base);
-    }
-
-    .left-table th:nth-child(1) {
-        width: 20px;
     }
 
     .right-table th:nth-child(1) {
@@ -137,7 +107,6 @@
     }
 
     @container (max-width: 600px) {
-        .left-table,
         .right-table,
         .info-table {
             width: 100%;

@@ -6,14 +6,30 @@
     import { openPanels, PANEL } from '../stores/uiStore';
     import { normalizeCubeAction } from '../utils/cubeAction.js';
     import { t } from '../i18n';
+    import { moverFactsToSides } from '../utils/positionFacts.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
+    import PositionFactsTable from './PositionFactsTable.svelte';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
     let analysisData = $derived($analysisStore);
     let cubeValue = $derived($positionStore.cube.value);
+    let onRoll = $derived($positionStore.player_on_roll ?? 0);
     let matchCtx = $derived($matchContextStore);
+
+    // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
+    // the stored record instead of a live evaluation. cubelessNoDoubleEquity
+    // is the single cubeless figure this table shows (see
+    // CubeVerdictTable's own doc comment on why the pair it used to render
+    // collapsed to one column).
+    function cubeFacts(cubeAnalysis) {
+        return moverFactsToSides(
+            { win: cubeAnalysis.playerWinChances, gammon: cubeAnalysis.playerGammonChances, backgammon: cubeAnalysis.playerBackgammonChances, cubeless: cubeAnalysis.cubelessNoDoubleEquity },
+            { win: cubeAnalysis.opponentWinChances, gammon: cubeAnalysis.opponentGammonChances, backgammon: cubeAnalysis.opponentBackgammonChances },
+            onRoll
+        );
+    }
 
     let activeTab = $state('checker'); // 'checker' or 'cube'
 
@@ -413,7 +429,9 @@
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
+                {@const facts = cubeFacts(cubeAnalysis)}
                 <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
+                    <PositionFactsTable bottom={facts.bottom} top={facts.top} />
                     <CubeVerdictTable {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysisData.analysisEngineVersion} />
                 </div>
             {/each}
@@ -452,7 +470,9 @@
        .analysis-panel lets them stack on a narrow panel. */
     .tables-container {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
+        gap: 8px 12px;
     }
 
     .multi-engine-cube {

@@ -1541,10 +1541,35 @@ export namespace gui {
 	        this.error = source["error"];
 	    }
 	}
+	export class PositionFacts {
+	    playerWinChance: number;
+	    playerGammonChance: number;
+	    playerBackgammonChance: number;
+	    opponentWinChance: number;
+	    opponentGammonChance: number;
+	    opponentBackgammonChance: number;
+	    cubelessEquity: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionFacts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.playerWinChance = source["playerWinChance"];
+	        this.playerGammonChance = source["playerGammonChance"];
+	        this.playerBackgammonChance = source["playerBackgammonChance"];
+	        this.opponentWinChance = source["opponentWinChance"];
+	        this.opponentGammonChance = source["opponentGammonChance"];
+	        this.opponentBackgammonChance = source["opponentBackgammonChance"];
+	        this.cubelessEquity = source["cubelessEquity"];
+	    }
+	}
 	export class GammonNetEvalResult {
 	    moves?: domain.CheckerMove[];
 	    cube?: domain.DoublingCubeAnalysis;
 	    race?: race.Eval;
+	    preRoll?: PositionFacts;
 	
 	    static createFrom(source: any = {}) {
 	        return new GammonNetEvalResult(source);
@@ -1555,6 +1580,7 @@ export namespace gui {
 	        this.moves = this.convertValues(source["moves"], domain.CheckerMove);
 	        this.cube = this.convertValues(source["cube"], domain.DoublingCubeAnalysis);
 	        this.race = this.convertValues(source["race"], race.Eval);
+	        this.preRoll = this.convertValues(source["preRoll"], PositionFacts);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1767,6 +1793,10 @@ export namespace race {
 	    on_roll: number;
 	    source_checkers?: number;
 	    win_prob: number;
+	    win_gammon?: number;
+	    win_backgammon?: number;
+	    lose_gammon?: number;
+	    lose_backgammon?: number;
 	    sigma?: number;
 	    p99?: number;
 	    money?: Money;
@@ -1782,6 +1812,10 @@ export namespace race {
 	        this.on_roll = source["on_roll"];
 	        this.source_checkers = source["source_checkers"];
 	        this.win_prob = source["win_prob"];
+	        this.win_gammon = source["win_gammon"];
+	        this.win_backgammon = source["win_backgammon"];
+	        this.lose_gammon = source["lose_gammon"];
+	        this.lose_backgammon = source["lose_backgammon"];
 	        this.sigma = source["sigma"];
 	        this.p99 = source["p99"];
 	        this.money = this.convertValues(source["money"], Money);

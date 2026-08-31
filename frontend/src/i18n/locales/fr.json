@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
-        "backgammon": "B",
         "bestAction": "Meilleure action",
         "noDouble": "Pas de double",
         "doubleTake": "Double/Prend",
@@ -558,23 +557,17 @@
         "redoublePass": "Redouble/Passe",
         "decision": "Décision",
         "depth": "Profondeur",
-        "doubleEquity": "Éq. D",
         "engine": "Moteur",
         "equity": "Équité",
         "error": "Erreur",
-        "gammon": "G",
         "move": "Coup",
-        "noDoubleEquity": "Éq. ND",
-        "opponent": "O",
         "opponentBackgammon": "O B",
         "opponentGammon": "O G",
         "opponentWin": "O W",
         "panelLabel": "Analyse de position",
-        "player": "P",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W",
-        "win": "W"
+        "playerWin": "P W"
     },
     "comment": {
         "editedSuffix": "(modifié)",
@@ -668,7 +661,15 @@
             "noDecision": "Pas de décision",
             "downloadHint": "Le verdict de videau exact jusqu'à 11 pions par joueur nécessite la base téléchargeable (1,2 Go).",
             "openConfig": "Voir les paramètres de configuration",
-            "winPct": "Gain (%)"
+            "exactAndEvaluated": "exact (gain) · évalué (videau)",
+            "exactAndEvaluatedTooltip": "Gain lu dans la base two-sided (exact) ; équités et verdict joués par gammonNet au score de la partie (évalué)."
+        },
+        "facts": {
+            "gain": "Gain (%)",
+            "gammon": "Gammon (%)",
+            "backgammon": "BG (%)",
+            "cubelessEquity": "Cubeless",
+            "preRoll": "avant le jet"
         }
     },
     "eval": {

@@ -548,7 +548,6 @@
     },
     "analysis": {
         "analysisDepth": "Глубина анализа",
-        "backgammon": "B",
         "bestAction": "Лучшее действие",
         "noDouble": "Без удвоения",
         "doubleTake": "Удвоить/Принять",
@@ -558,23 +557,17 @@
         "redoublePass": "Переудвоить/Пас",
         "decision": "Решение",
         "depth": "Глубина",
-        "doubleEquity": "Eq удв.",
         "engine": "Движок",
         "equity": "Equity",
         "error": "Ошибка",
-        "gammon": "G",
         "move": "Ход",
-        "noDoubleEquity": "Eq без удв.",
-        "opponent": "С",
         "opponentBackgammon": "С B",
         "opponentGammon": "С G",
         "opponentWin": "С W",
         "panelLabel": "Анализ позиции",
-        "player": "И",
         "playerBackgammon": "И B",
         "playerGammon": "И G",
-        "playerWin": "И W",
-        "win": "W"
+        "playerWin": "И W"
     },
     "comment": {
         "editedSuffix": "(изменено)",
@@ -668,7 +661,15 @@
             "noDecision": "Нет решения",
             "downloadHint": "Точный вердикт по кубу до 11 шашек на игрока требует загружаемой базы (1,2 ГБ).",
             "openConfig": "Открыть параметры настройки",
-            "winPct": "Победа (%)"
+            "exactAndEvaluated": "точно (победа) · рассчитано (куб)",
+            "exactAndEvaluatedTooltip": "Вероятность победы взята из two-sided базы (точно); значения и вердикт рассчитаны gammonNet при текущем счёте (рассчитано)."
+        },
+        "facts": {
+            "gain": "Победа (%)",
+            "gammon": "Гаммон (%)",
+            "backgammon": "Бэкгаммон (%)",
+            "cubelessEquity": "Без куба",
+            "preRoll": "до броска"
         }
     },
     "eval": {
