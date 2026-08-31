@@ -86,6 +86,33 @@ The Configuration blunderDB writes down: 2-ply, pruning `k=12`, Kazaross-XG2. Wh
 adjusts for comfort while reading the board is a different setting, and it never reaches the
 database.
 
+**Referential**:
+The scale a number about a Position is expressed in, and which of two questions it answers.
+*Money* answers "how many points is this worth", on the points scale, and gammons are worth
+exactly two points to anybody. *Match* answers "how much of the match is this worth", on the
+normalised scale `2 × MWC − 1`, where a gammon is worth whatever the score makes it worth —
+almost everything at 2-away/4-away, nothing at all to a leader who is 1-away.
+
+A Referential is a **property of the Position, never a preference**: the Away score selects it,
+and every number blunderDB shows or stores about that Position is in it. The two scales are
+not convertible without the distribution that produced them, so a table mixing them is not a
+table with two units — it is a table that cannot be read.
+_Avoid_: unit, equity mode, money mode
+
+**Away score**:
+How many points a player still needs to win the match, from that player's side. blunderDB
+carries the Crawford rule *inside* this number rather than beside it, and the two smallest
+values are sentinels rather than counts:
+- `-1` — money play. There is no match; the Referential is money.
+- `0` — the player needs one point, and the Crawford game is behind us.
+- `1` — the player needs one point, and this *is* the Crawford game.
+- `n ≥ 2` — the player needs n points.
+
+So `0` and `1` describe the same distance to victory and different rules. Any code turning an
+Away score into something an engine can use must decode both sentinels; reading `0` as a
+distance is reading "has already won".
+_Avoid_: score, points away, match score
+
 **Regime**:
 Which kind of answer the panel is giving about a race, always stated on screen, never inferred
 by the reader:
@@ -94,6 +121,31 @@ by the reader:
   guess either.
 - *estimated* — a snapshot summary of a trajectory. Legitimate for a win probability
   (convolution plus a calibrated correction), and **never** used for a cube verdict.
+
+A Regime qualifies a *fact* about a race — a win probability — and, where it is entitled to
+one, the *decision* built on it. Only *exact* is barred from answering outside the money
+Referential: its equities are money whatever the Away score, so at a match score it keeps the
+win probability and yields the verdict to *evaluated*.
+
+**Position fact**:
+A quantity that belongs to the board itself and to no choice a player might make: pip count,
+EPC, wastage, mean rolls and their dispersion, the pre-roll probability vector (win, gammon and
+backgammon for each side), and the cubeless equity in the position's Referential. A fact is
+read **per player**, so two players' facts can be set side by side and subtracted. Facts do not
+depend on the dice; they are true before the roll.
+_Avoid_: stats, position evaluation, summary
+
+**Decision**:
+The answer to the question the board is asking — the ranked checker plays when dice are on the
+board, the cube actions and their verdict when there are none. A Decision is read **per
+option**, never per player. The board asks exactly one question at a time, so a Position has
+exactly one Decision to show; a race with dice on it is asking about checkers, and its pre-roll
+cube verdict answers a question nobody asked.
+_Avoid_: analysis, verdict (the verdict is one part of a cube Decision, not the whole)
+
+The pair is the panel's whole layout rule: facts in one table whose rows are the players and
+whose race columns appear when the position is a race, the one Decision beside it. See
+ADR-0017.
 
 ### Sets of positions the user curates
 
