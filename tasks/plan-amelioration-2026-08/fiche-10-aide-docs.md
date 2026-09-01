@@ -86,8 +86,11 @@ mergées dans ce worktree) :
   nouvelles entrées de `help/fr.js`, plutôt que d'être modifié lui-même.
 - `printUsage` (main.go) listait déjà `serve`/`call`/`migrate` — rien à
   compléter.
-- La sous-commande `vacuum` n'existe pas (fiche 06 non faite) — non
-  documentée, conformément à la consigne.
+- La sous-commande `vacuum` n'existait pas encore au moment de cette fiche
+  (fiche 06 pas encore fusionnée) — non documentée ici, conformément à la
+  consigne. *Périmé depuis :* la fiche 06 a livré `blunderdb vacuum`
+  (`internal/cli/cli_vacuum.go`, dans `handlers()` de `internal/cli/cli.go`)
+  le même jour, publiée en 0.33.0 et documentée dans `cli.rst`/`CLI_USAGE.md`.
 
 Aide intégrée : suppression de la ligne fantôme `filter, fl` (table
 Commandes) dans les 9 langues ; ajout des lignes `tutorial, tour`, `demo`,
