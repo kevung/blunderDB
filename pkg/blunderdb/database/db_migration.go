@@ -2069,6 +2069,13 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		return err
 	}
 
+	// Repair position rows the native .db importer once stored without their
+	// Zobrist hash and scalar search columns (see repairPositionsWithoutScalars).
+	// No version bump: the schema is unchanged, only the values are restored.
+	if err := d.repairPositionsWithoutScalars(ctx); err != nil {
+		return fmt.Errorf("repairing positions without scalar columns: %w", err)
+	}
+
 	// Build required tables list based on the FINAL dbVersion (after all migrations)
 	requiredTables := []string{"position", "analysis", "comment", "metadata"}
 	if dbVersion >= "1.1.0" {

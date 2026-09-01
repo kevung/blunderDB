@@ -164,3 +164,117 @@ func TestImport_OldFormatExportFixture(t *testing.T) {
 		}
 	})
 }
+
+// countPositionsMissingScalars counts position rows the SQL search cannot see:
+// rows whose Zobrist hash or scalar filter columns were never populated.
+func countPositionsMissingScalars(t *testing.T, d *Database) int {
+	t.Helper()
+	var n int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position
+		WHERE zobrist_hash IS NULL OR dice_1 IS NULL OR pip_1 IS NULL
+		   OR back_checkers_1 IS NULL OR no_contact IS NULL`).Scan(&n); err != nil {
+		t.Fatalf("count positions missing scalars: %v", err)
+	}
+	return n
+}
+
+// TestImport_CommitFillsScalarColumns guards the "Import database" merge path
+// (AnalyzeImportDatabase + CommitImportDatabase) against the bug BACKLOG.md
+// recorded after fiche-04: a position the target did not hold yet was inserted
+// with its state alone — no Zobrist hash, no scalar columns — so the row was
+// invisible to every SQL filter and, because ReconstructPosition trusts the
+// columns over the state, it no longer matched itself on the next import.
+func TestImport_CommitFillsScalarColumns(t *testing.T) {
+	dir := t.TempDir()
+
+	// Source A: two positions saved the ordinary way.
+	srcPath := filepath.Join(dir, "a.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(srcPath); err != nil {
+		t.Fatalf("SetupDatabase(A): %v", err)
+	}
+	p1 := InitializePosition()
+	if _, err := src.SavePosition(&p1); err != nil {
+		t.Fatalf("SavePosition 1: %v", err)
+	}
+	p2 := InitializePosition()
+	p2.Dice = [2]int{6, 5}
+	if _, err := src.SavePosition(&p2); err != nil {
+		t.Fatalf("SavePosition 2: %v", err)
+	}
+	src.Close()
+
+	// Target B: empty, receives A twice.
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "b.db")); err != nil {
+		t.Fatalf("SetupDatabase(B): %v", err)
+	}
+	defer dst.Close()
+
+	analysis, err := dst.AnalyzeImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("AnalyzeImportDatabase #1: %v", err)
+	}
+	if toAdd, _ := analysis["toAdd"].(int); toAdd != 2 {
+		t.Errorf("first analyze: toAdd=%v, want 2", analysis["toAdd"])
+	}
+	result, err := dst.CommitImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("CommitImportDatabase #1: %v", err)
+	}
+	if added, _ := result["added"].(int); added != 2 {
+		t.Errorf("first commit: added=%v, want 2", result["added"])
+	}
+
+	// 1. The scalar search columns are populated, like any saved position.
+	if n := countPositionsMissingScalars(t, dst); n != 0 {
+		t.Errorf("%d imported position(s) have NULL scalar columns", n)
+	}
+
+	// 2. An SQL filter on those columns finds the imported position.
+	found, err := dst.LoadPositionsByFilters(SearchFilters{
+		Filter:         Position{Dice: [2]int{6, 5}, PlayerOnRoll: p2.PlayerOnRoll, DecisionType: p2.DecisionType},
+		DiceRollFilter: true,
+	})
+	if err != nil {
+		t.Fatalf("LoadPositionsByFilters: %v", err)
+	}
+	if len(found) != 1 {
+		t.Errorf("dice filter 6-5 found %d position(s), want 1", len(found))
+	}
+
+	// 3. Importing the same database again is a no-op: the positions recognise
+	// themselves both through the identity map and through the Zobrist index.
+	analysis, err = dst.AnalyzeImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("AnalyzeImportDatabase #2: %v", err)
+	}
+	if toAdd, _ := analysis["toAdd"].(int); toAdd != 0 {
+		t.Errorf("second analyze: toAdd=%v, want 0", analysis["toAdd"])
+	}
+	result, err = dst.CommitImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("CommitImportDatabase #2: %v", err)
+	}
+	if added, _ := result["added"].(int); added != 0 {
+		t.Errorf("second commit: added=%v, want 0", result["added"])
+	}
+	positions, err := dst.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions: %v", err)
+	}
+	if len(positions) != 2 {
+		t.Errorf("second import duplicated positions: got %d, want 2", len(positions))
+	}
+
+	// 4. SavePosition (the canonical write path) deduplicates against them too.
+	again := InitializePosition()
+	again.Dice = [2]int{6, 5}
+	res, err := dst.SaveIndividualPosition(&again)
+	if err != nil {
+		t.Fatalf("SaveIndividualPosition: %v", err)
+	}
+	if !res.Existed {
+		t.Errorf("SaveIndividualPosition did not recognise the imported position by hash")
+	}
+}
