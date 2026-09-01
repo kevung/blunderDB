@@ -93,6 +93,9 @@ func (d *Database) GetAllAnkiDecks() ([]AnkiDeck, error) {
 		dk.EnableFuzz = enableFuzz != 0
 		decks = append(decks, dk)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	if decks == nil {
 		decks = []AnkiDeck{}
@@ -184,6 +187,9 @@ func (d *Database) SyncAnkiDeck(deckID int64) error {
 				return err
 			}
 			positionIDs = append(positionIDs, pid)
+		}
+		if err := rows.Err(); err != nil {
+			return err
 		}
 	} else if sourceType == AnkiSourceSearch {
 		if sourceCommand != "" {

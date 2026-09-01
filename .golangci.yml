@@ -4,9 +4,12 @@ version: "2"
 
 linters:
   # Default linters in v2 already include: errcheck, govet, staticcheck,
-  # unused, ineffassign, gosimple.  We add nolintlint to enforce hygiene.
+  # unused, ineffassign, gosimple.  We add nolintlint to enforce hygiene and
+  # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
+  # an iteration error otherwise truncates the result silently.
   enable:
     - nolintlint
+    - rowserrcheck
 
   settings:
     errcheck:
@@ -19,6 +22,12 @@ linters:
     nolintlint:
       require-explanation: true
       require-specific: true
+
+    rowserrcheck:
+      # database/sql is covered by default; the PostgreSQL backend iterates
+      # pgx.Rows, whose Err() carries the same contract.
+      packages:
+        - github.com/jackc/pgx/v5
 
     staticcheck:
       checks:
@@ -41,7 +50,7 @@ linters:
     rules:
       # Test files commonly skip error checks; suppress until task 12
       # (test utilities) introduces proper helpers.
-      - linters: [errcheck]
+      - linters: [errcheck, rowserrcheck]
         path: "_test\\.go$"
       # internal/cli and cmd/ print user-facing output straight to stdout/stderr
       # via fmt.Print*; checking those errors buys nothing (the process is about

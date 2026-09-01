@@ -143,6 +143,9 @@ func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("migrate position rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -236,6 +239,9 @@ func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("migrate analysis rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -318,6 +324,9 @@ func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
 		dups = append(dups, dedupGroup{hash, keepID, allIDs})
 	}
 	dupRows.Close()
+	if err := dupRows.Err(); err != nil {
+		return fmt.Errorf("migrate dedup rows: %w", err)
+	}
 
 	mergedTotal := 0
 	for _, g := range dups {
@@ -436,6 +445,9 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 		batch = append(batch, r)
 	}
 	rows.Close()
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("migrate analysis rows: %w", err)
+	}
 
 	anaTotal := len(batch)
 	d.emitMigrationProgress("analysis", 0, anaTotal)
@@ -565,6 +577,9 @@ func (d *Database) migrate_2_1_0_to_2_2_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("migrate 2.2.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -658,6 +673,9 @@ func (d *Database) migrate_2_2_0_to_2_3_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("migrate 2.3.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -766,6 +784,9 @@ func (d *Database) migrate_2_3_0_to_2_4_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				return fmt.Errorf("migrate 2.4.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -895,6 +916,10 @@ func (d *Database) migrate_2_4_0_to_2_5_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.5.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -1015,6 +1040,10 @@ func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.6.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -1141,6 +1170,10 @@ func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 				}
 			}
 			rows.Close()
+			if err := rows.Err(); err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.10.0 rows: %w", err)
+			}
 
 			if len(batch) == 0 {
 				break
@@ -1161,6 +1194,10 @@ func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 						}
 					}
 					actRows.Close()
+					if err := actRows.Err(); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.10.0 actions rows: %w", err)
+					}
 				}
 
 				if isResp {
@@ -1239,6 +1276,9 @@ func (d *Database) migrate_2_6_0_to_2_7_0(ctx context.Context) error {
 		fixes = append(fixes, fix{id: id, newHash: int64(newHash)})
 	}
 	rows.Close()
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("migrate 2.7.0 rows positions: %w", err)
+	}
 
 	if len(fixes) == 0 {
 		if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
