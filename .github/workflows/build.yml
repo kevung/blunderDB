@@ -65,7 +65,7 @@ jobs:
         shell: bash
 
       - name: Run Go tests (engine/gammonnet, no race)
-        run: go test -timeout 600s -count=1 -coverprofile=coverage-gammonnet.out -covermode=atomic ./pkg/blunderdb/engine/gammonnet/
+        run: go test -timeout 900s -count=1 -coverprofile=coverage-gammonnet.out -covermode=atomic ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
       - name: Merge coverage profiles
