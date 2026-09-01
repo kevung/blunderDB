@@ -82,6 +82,9 @@ func (s *Server) matchRoutes() []route {
 	ms := func() storage.MatchStore { return s.opts.Storage.Matches() }
 	return []route{
 		{http.MethodPost, "/v1/matches.save", rpc(func(ctx context.Context, scope string, req matchSaveReq) (idResp, error) {
+			if req.Match == nil {
+				return idResp{}, errMissing("match")
+			}
 			id, err := ms().Save(ctx, scope, req.Match)
 			return idResp{ID: id}, err
 		})},
@@ -126,6 +129,9 @@ func (s *Server) matchRoutes() []route {
 			return ms().LastVisited(ctx, scope)
 		})},
 		{http.MethodPost, "/v1/matches.createGame", rpc(func(ctx context.Context, scope string, req gameReq) (idResp, error) {
+			if req.Game == nil {
+				return idResp{}, errMissing("game")
+			}
 			id, err := ms().CreateGame(ctx, scope, req.Game)
 			return idResp{ID: id}, err
 		})},
@@ -133,6 +139,9 @@ func (s *Server) matchRoutes() []route {
 			return ms().Games(ctx, scope, req.MatchID)
 		})},
 		{http.MethodPost, "/v1/matches.createMove", rpc(func(ctx context.Context, scope string, req moveReq) (idResp, error) {
+			if req.Move == nil {
+				return idResp{}, errMissing("move")
+			}
 			id, err := ms().CreateMove(ctx, scope, req.Move)
 			return idResp{ID: id}, err
 		})},

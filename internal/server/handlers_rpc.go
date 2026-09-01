@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"iter"
 	"net/http"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // This file holds the generic RPC plumbing shared by every /v1 domain handler.
@@ -34,6 +36,14 @@ type idResp struct {
 // idReq is the common "operate on this id" request.
 type idReq struct {
 	ID int64 `json:"id"`
+}
+
+// errMissing is the ErrInvalid a handler returns when a request omits the
+// object it exists to store — {"position": null}, or just {}. The storage
+// layer takes the pointer without looking at it (its contract is a value),
+// so the check belongs at the edge, before the nil reaches SQL.
+func errMissing(field string) error {
+	return fmt.Errorf("%w: missing %s", storage.ErrInvalid, field)
 }
 
 // scopeOf returns the tenant scope for the request (empty if none, e.g. in a

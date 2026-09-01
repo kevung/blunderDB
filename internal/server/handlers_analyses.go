@@ -21,6 +21,9 @@ func (s *Server) analysisRoutes() []route {
 	as := func() storage.AnalysisStore { return s.opts.Storage.Analyses() }
 	return []route{
 		{http.MethodPost, "/v1/analyses.save", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
+			if req.Analysis == nil {
+				return errMissing("analysis")
+			}
 			return as().Save(ctx, scope, req.PositionID, req.Analysis)
 		})},
 		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req positionIDReq) (*domain.PositionAnalysis, error) {

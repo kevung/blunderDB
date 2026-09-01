@@ -75,6 +75,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/PlayerTable", testStatsPlayerTable},
 		{"Stats/PositionIDsByMatch", testStatsPositionIDsByMatch},
 		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
+		{"Errors/DanglingReferenceIsNotFound", testDanglingReferenceIsNotFound},
+		{"Errors/MergePlayersRejectsEmptyAsInvalid", testMergePlayersRejectsEmptyAsInvalid},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

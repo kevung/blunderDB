@@ -31,7 +31,7 @@ func (s *commentStore) Add(ctx context.Context, scope string, positionID int64, 
 	res, err := s.db.ExecContext(ctx,
 		`INSERT INTO comment (position_id, text) VALUES (?,?)`, positionID, text)
 	if err != nil {
-		return 0, fmt.Errorf("sqlite: add comment: %w", err)
+		return 0, fmt.Errorf("sqlite: add comment: %w", referenced(err))
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
