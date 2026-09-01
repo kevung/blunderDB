@@ -632,7 +632,10 @@
         "description": "Tablero de backgammon. Conteo de pips del jugador 1: {pip1}, conteo de pips del jugador 2: {pip2}. Le toca mover a {roller}.",
         "label": "Tablero de backgammon",
         "player1": "Jugador 1",
-        "player2": "Jugador 2"
+        "player2": "Jugador 2",
+        "menu": {
+            "evaluate": "Evaluar esta posición"
+        }
     },
     "epc": {
         "avgRolls": "Tiradas medias",

@@ -776,7 +776,12 @@ async function pastePositionCore() {
     }
     logger.log('pastePosition');
 
-    if (get(statusBarModeStore) === 'EDIT') {
+    // EDIT (the search board) and EPC (the Eval panel) are the two modes whose
+    // board is an editable scratch pad rather than a database record: there,
+    // Ctrl-V drops the position ONTO the board instead of importing it into
+    // the database — the paste side of the Ctrl-C that copied it.
+    const mode = get(statusBarModeStore);
+    if (mode === 'EDIT' || mode === 'EPC') {
         await pastePositionToBoard();
         return;
     }

@@ -632,7 +632,10 @@
         "description": "Backgammon-lauta. Pelaajan 1 pip-luku {pip1}, pelaajan 2 pip-luku {pip2}. {roller} siirtää.",
         "label": "Backgammon-lauta",
         "player1": "Pelaaja 1",
-        "player2": "Pelaaja 2"
+        "player2": "Pelaaja 2",
+        "menu": {
+            "evaluate": "Arvioi tämä asema"
+        }
     },
     "epc": {
         "avgRolls": "Keskim. heitot",

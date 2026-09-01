@@ -988,6 +988,41 @@ valeurs propres au panneau Eval, différentes de celles utilisées en mode
 édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau
 affiche par défaut.
 
+.. _eval_amener_position:
+
+Amener une position dans le panneau Eval
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part
+le plus souvent d'une position déjà en main. Deux gestes l'y amènent :
+
+* **Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la
+  navigation d'un match, puis *Évaluer cette position* : le panneau Eval
+  s'ouvre directement sur cette position, telle qu'elle est affichée. Le
+  menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau
+  Recherche, où le bouton droit sert déjà à poser les pions de l'autre
+  couleur.
+
+* **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
+  puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
+  XGID venu d'ailleurs (eXtreme Gammon, GNU Backgammon, une autre instance de
+  blunderDB) : il suffit qu'il soit dans le presse-papier.
+
+Le plateau du panneau Eval est un brouillon : la position y arrive sans son
+identifiant de base, de sorte qu'aucune modification faite ici ne peut
+réécrire l'enregistrement dont elle provient. Toutes les éditions habituelles
+du plateau y restent disponibles (pions, videau, dés, score), et l'évaluation
+suit chaque modification.
+
+Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le
+presse-papier, avec un XGID recalculé à partir des pions posés — donc collable
+directement dans eXtreme Gammon ou dans une autre instance de blunderDB. Seule
+la position voyage : l'évaluation affichée par le panneau n'est pas un
+enregistrement de la base et n'accompagne pas la copie.
+
+En quittant le panneau Eval, la position consultée auparavant est restaurée :
+le brouillon n'est jamais enregistré tout seul.
+
 Lorsque la position est un bearoff pur (tous les pions des deux joueurs dans
 leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, pour le
 joueur au trait :

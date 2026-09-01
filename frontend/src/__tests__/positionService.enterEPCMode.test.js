@@ -43,14 +43,14 @@ vi.mock('../services/databaseService.js', () => ({
 }));
 
 // ── Stores réels (partagés avec positionService via le cache de modules) ──────
-import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 
 // ── Module testé ──────────────────────────────────────────────────────────────
-import { enterEPCMode, exitEPCMode } from '../services/positionService.js';
+import { enterEPCMode, exitEPCMode, sendPositionToEval } from '../services/positionService.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -226,5 +226,67 @@ describe('exitEPCMode — ordre des set', () => {
 
         // positionStore ne doit pas avoir été touché
         expect(spies.positionStore).not.toHaveBeenCalled();
+    });
+});
+
+// ── Tests sendPositionToEval ──────────────────────────────────────────────────
+
+describe('sendPositionToEval — ouvrir le panneau Eval sur une position existante', () => {
+    beforeEach(() => {
+        resetStores();
+        activeTabStore.set('analysis');
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        resetStores();
+    });
+
+    test('T7 — bascule sur l’onglet Eval et y charge la position transmise', () => {
+        const studied = makeRealPosition(42);
+        positionStore.set(studied);
+        positionsStore.set([studied]);
+
+        sendPositionToEval(studied);
+        // App.svelte relaie le changement d’onglet vers enterEPCMode() ; le test
+        // joue ce relais lui-même.
+        expect(get(activeTabStore)).toBe('epc');
+        enterEPCMode();
+
+        const board = get(positionStore);
+        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(board.board.bearoff, 'la position transmise, pas le bearoff par défaut').toEqual([3, 3]);
+        expect(board.dice).toEqual([3, 1]);
+        expect(board.id, 'le damier Eval est un brouillon : pas d’id de base').toBe(0);
+    });
+
+    test('T8 — la copie est détachée : éditer le damier Eval ne touche pas l’originale', () => {
+        const studied = makeRealPosition(42);
+        sendPositionToEval(studied);
+        enterEPCMode();
+
+        get(positionStore).board.bearoff[0] = 12;
+        expect(studied.board.bearoff[0], 'la position d’origine reste intacte').toBe(3);
+        expect(studied.id).toBe(42);
+    });
+
+    test('T9 — déjà dans Eval : le damier est remplacé sur place', () => {
+        enterEPCMode();
+        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(positionStore).board.bearoff, 'bearoff par défaut du panneau').toEqual([0, 15]);
+
+        sendPositionToEval(makeRealPosition(7));
+
+        expect(get(statusBarModeStore)).toBe('EPC');
+        expect(get(positionStore).board.bearoff).toEqual([3, 3]);
+        expect(get(positionStore).id).toBe(0);
+    });
+
+    test('T10 — sans position transmise, le panneau garde son bearoff par défaut', () => {
+        sendPositionToEval(null);
+        expect(get(activeTabStore), 'aucune bascule sur une position absente').toBe('analysis');
+
+        enterEPCMode();
+        expect(get(positionStore).board.bearoff).toEqual([0, 15]);
     });
 });

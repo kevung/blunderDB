@@ -632,7 +632,10 @@
         "description": "Backgammon board. Player 1 pip count {pip1}, Player 2 pip count {pip2}. {roller} to move.",
         "label": "Backgammon board",
         "player1": "Player 1",
-        "player2": "Player 2"
+        "player2": "Player 2",
+        "menu": {
+            "evaluate": "Evaluate this position"
+        }
     },
     "epc": {
         "avgRolls": "Avg Rolls",

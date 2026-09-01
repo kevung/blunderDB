@@ -3,7 +3,7 @@
     import { t, translate } from '../../i18n/index.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
-    import ContextMenu from './ContextMenu.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
     import { GRADE_BANDS, gradeForPR, makeGradeBandPlugin } from './gradeBands.js';
     import { PRIMARY, PRIMARY_ALPHA } from './charts/palette.js';
 

@@ -6,7 +6,7 @@ import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
-import { commentTextStore } from '../stores/uiStore.js';
+import { commentTextStore, statusBarModeStore } from '../stores/uiStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
@@ -50,6 +50,7 @@ export function copyPosition() {
     const position = get(positionStore);
     const analysis = get(analysisStore);
     const comment = get(commentTextStore);
+    const mode = get(statusBarModeStore);
 
     clipboardPositionStore.set(
         JSON.parse(
@@ -66,7 +67,15 @@ export function copyPosition() {
         )
     );
 
-    const xgid = analysis.xgid || generateXGID(position);
+    // A scratch board — the Eval panel (EPC) and the search board (EDIT) —
+    // shows a position no stored record describes, but analysisStore still
+    // holds the record last opened: its xgid, its analysis and its comment all
+    // belong to a DIFFERENT position. Copying the board there must therefore
+    // regenerate the XGID from the board itself and carry nothing else, which
+    // is exactly what this clipboard is for in the Eval panel: pasting the
+    // position into XG, or into another blunderDB.
+    const scratchBoard = mode === 'EPC' || mode === 'EDIT';
+    const xgid = !scratchBoard && analysis.xgid ? analysis.xgid : generateXGID(position);
 
     let clipboardContent = `XGID=${xgid}\n\n`;
 
@@ -77,6 +86,19 @@ export function copyPosition() {
     clipboardContent += `Score: ${position.score.join(', ')}\n`;
     clipboardContent += `Player on roll: ${position.player_on_roll}\n`;
     clipboardContent += `Decision type: ${position.decision_type}\n\n`;
+
+    if (scratchBoard) {
+        writeTextToClipboard(clipboardContent)
+            .then(() => {
+                logger.log('Scratch-board position copied to clipboard');
+                setStatusBarMessage(tMsg('status.positionCopied'));
+            })
+            .catch((err) => {
+                logger.error('Error copying to clipboard:', err);
+                setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
+            });
+        return;
+    }
 
     clipboardContent += `Analysis:\n`;
     if (analysis.analysisType === 'DoublingCube') {

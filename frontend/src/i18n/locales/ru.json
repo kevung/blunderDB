@@ -632,7 +632,10 @@
         "description": "Доска для backgammon. Pip игрока 1: {pip1}, pip игрока 2: {pip2}. Ход {roller}.",
         "label": "Доска для backgammon",
         "player1": "Игрок 1",
-        "player2": "Игрок 2"
+        "player2": "Игрок 2",
+        "menu": {
+            "evaluate": "Оценить эту позицию"
+        }
     },
     "epc": {
         "avgRolls": "Сред. бросков",
