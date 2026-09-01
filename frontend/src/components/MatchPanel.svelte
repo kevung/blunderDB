@@ -2,6 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { nextSort } from '../utils/tableSort.js';
+    import { isBareLetter } from '../utils/keys.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -605,7 +606,7 @@
         }
 
         if (sortedMatches.length > 0) {
-            if ((event.key === 'j' || event.key === 'ArrowDown') && !selectedMatch) {
+            if ((isBareLetter(event, 'j') || event.key === 'ArrowDown') && !selectedMatch) {
                 event.preventDefault();
                 selectMatch(sortedMatches[0]);
                 setTimeout(() => {
@@ -619,7 +620,7 @@
         if (selectedMatch && sortedMatches.length > 0) {
             const currentIndex = sortedMatches.findIndex((m) => m.id === selectedMatch.id);
 
-            if (event.key === 'j' || event.key === 'ArrowDown') {
+            if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
                 event.preventDefault();
                 if (currentIndex >= 0 && currentIndex < sortedMatches.length - 1) {
                     selectMatch(sortedMatches[currentIndex + 1]);
@@ -628,7 +629,7 @@
                         if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }, 0);
                 }
-            } else if (event.key === 'k' || event.key === 'ArrowUp') {
+            } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
                     selectMatch(sortedMatches[currentIndex - 1]);

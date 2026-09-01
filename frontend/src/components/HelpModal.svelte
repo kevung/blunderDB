@@ -2,6 +2,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { trapFocus } from '../utils/focusTrap.js';
+    import { isBareLetter } from '../utils/keys.js';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
@@ -63,17 +64,17 @@
                 navigateTabs(1); // Move to the next tab
             } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
                 navigateTabs(-1); // Move to the previous tab
-            } else if (!event.ctrlKey && event.key === 'l') {
+            } else if (isBareLetter(event, 'l')) {
                 navigateTabs(1); // Move to the next tab
-            } else if (!event.ctrlKey && event.key === 'h') {
+            } else if (isBareLetter(event, 'h')) {
                 navigateTabs(-1); // Move to the previous tab
             } else if (!event.ctrlKey && event.key === 'ArrowDown') {
                 scrollContent(1); // Scroll down
             } else if (!event.ctrlKey && event.key === 'ArrowUp') {
                 scrollContent(-1); // Scroll up
-            } else if (!event.ctrlKey && event.key === 'j') {
+            } else if (isBareLetter(event, 'j')) {
                 scrollContent(1); // Scroll down
-            } else if (!event.ctrlKey && event.key === 'k') {
+            } else if (isBareLetter(event, 'k')) {
                 scrollContent(-1); // Scroll up
             } else if (!event.ctrlKey && event.key === 'PageDown') {
                 scrollContent('bottom'); // Go to the bottom of the page
