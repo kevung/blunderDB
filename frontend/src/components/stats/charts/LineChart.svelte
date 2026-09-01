@@ -1,8 +1,6 @@
 <script>
-    import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler } from 'chart.js';
+    import { loadChart } from './chartjs.js';
     import { GRIDLINE } from './palette.js';
-
-    Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler);
 
     /**
      * @typedef {Object} LineChartProps
@@ -17,8 +15,24 @@
 
     /** @type {HTMLCanvasElement} */
     let canvas;
-    /** @type {Chart | null} */
+    /** @type {import('chart.js').Chart | null} */
     let chart = null;
+    /**
+     * The chart.js class once its chunk has arrived; the canvas stays blank
+     * until then and the drawing effect below waits for it.
+     * @type {typeof import('chart.js').Chart | null}
+     */
+    let Chart = $state.raw(null);
+
+    $effect(() => {
+        let cancelled = false;
+        loadChart().then((C) => {
+            if (!cancelled && C) Chart = C;
+        });
+        return () => {
+            cancelled = true;
+        };
+    });
 
     const baseOptions = {
         responsive: true,
@@ -34,7 +48,7 @@
     };
 
     $effect(() => {
-        if (!canvas) return;
+        if (!canvas || !Chart) return;
 
         // Destroy previous instance when reactive inputs change
         if (chart) {
