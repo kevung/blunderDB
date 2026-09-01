@@ -80,6 +80,13 @@ tolerance first, not assuming it.
 decision in `../cube_corpus.bin` — money and match-score, every owner, both Jacoby settings,
 and a spread of Crawford states. Read by `TestCubeDecideMatchesTheGoldFile`.
 
+**Regenerated on 2026-09-01 (ADR-0022).** The weights are still v1.0.1 — this harness never
+loads them — but `gn_cube.c` is no longer v1.0.1's: the live cube curve's tails were flat there,
+and the fix landed upstream and here together. The gold file therefore tracks gammonNet **after**
+that fix, not the released tag; regenerate against a checkout that contains it, or the gate will
+red-line the correction rather than the port. The measured margin did not move (see below), which
+is the port's own statement that it changed in step with the reference and not otherwise.
+
 ## What you need
 
 Nothing but the pinned gammonNet checkout and a C compiler — `gn_cube.c` and `gn_met.c` have
@@ -127,12 +134,13 @@ gcc -O2 -o cube_gold cube_gold.o $GN/build/*.o -lm
   pre-Crawford entries "agree exactly" at full precision; float32 storage still loses about
   seven decimal digits of it). The redouble recursion (#122) combines several such lookups per
   stake level, so the two ports' outputs sit a few `1e-6` apart rather than a few `1e-7`.
-  Measured on v1.0.1: **max|Δ| = 2.463e-06** over 2320 decisions.
+  Measured on v1.0.1: **max|Δ| = 2.463e-06** over 2320 decisions — and unchanged after
+  ADR-0022's tail correction, which moves both sides identically.
 - **A decision tie zone, separate from the equity tolerance.** At an exact boundary — most
   visibly a perfectly symmetric score with `p(win) = 0.5` — the float32-vs-double MET noise can
   land a strict `equity_double > equity_no_double` on either side of zero, flipping
   `NoDouble`/`DoubleTake` even though both engines agree on the equities to `1e-8`. Tolerated
-  only there (`cubeActionTieTolerance`), and counted; 4 such ties as of v1.0.1, all at cube
+  only there (`cubeActionTieTolerance`), and counted; 4 such ties, before and after ADR-0022, all at cube
   values whose stake chain reaches a dead level exactly at a symmetric away score.
 - **Match states beyond `cubeGoldMaxAway` (24) are out of scope for this file on purpose.**
   gammonNet's `gn_match_state_is_valid` refuses any match past `GN_MET_MAX_AWAY` (25);
