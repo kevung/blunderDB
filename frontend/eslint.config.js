@@ -49,8 +49,7 @@ export default [
             ],
             // Adding keys to all each blocks is a large refactor — warn only
             'svelte/require-each-key': 'warn',
-            // SvelteSet migration is non-trivial — warn only
-            'svelte/prefer-svelte-reactivity': 'warn',
+            'svelte/prefer-svelte-reactivity': 'error',
             // Reactive loops are possible but mostly false positives — warn only
             'svelte/infinite-reactive-loop': 'warn',
             // Svelte reactive assignments can look "useless" to the JS analyser
