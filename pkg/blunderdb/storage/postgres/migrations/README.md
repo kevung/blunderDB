@@ -42,6 +42,12 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   millipoints (docs/adr/0010). NULLable with no default: NULL means unknown,
   which is not the same as a neutral roll. No backfill is possible — luck
   exists only in the source files, never in an already-imported database.
+- `010_search_range_indexes.sql` — the eight single-column search-range
+  indexes SQLite gained in fiche-05 (`back_checkers_1/2`, `pip_1`,
+  `no_contact`, `player1_backgammon_rate`, `player2_win/gammon/backgammon_rate`),
+  tenant_id leading. Index-only, like `006` and `008`.
+  `index_parity_test.go` (no Docker) keeps the two backends' `idx_*` name sets
+  aligned from here on.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

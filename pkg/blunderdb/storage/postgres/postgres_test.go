@@ -67,19 +67,23 @@ var wantTables = []string{
 // not listed: both were strict column prefixes of an index still here
 // (idx_analysis_win_gammon_covering, idx_position_score_cube respectively).
 var wantIndexes = []string{
-	"idx_analysis_cube_error", "idx_analysis_is_close_cube",
+	"idx_analysis_backgammon1", "idx_analysis_backgammon2",
+	"idx_analysis_cube_error", "idx_analysis_gammon2",
+	"idx_analysis_is_close_cube",
 	"idx_analysis_is_forced", "idx_analysis_move_error",
-	"idx_analysis_position", "idx_analysis_win_gammon_covering",
+	"idx_analysis_position", "idx_analysis_win2",
+	"idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck",
 	"idx_collection_position_collection", "idx_comment_position",
 	"idx_game_match", "idx_match_canonical",
 	"idx_match_hash", "idx_move_game", "idx_move_position",
+	"idx_position_back_checkers_1", "idx_position_back_checkers_2",
 	"idx_position_cube_response",
 	"idx_position_decision_dice", "idx_position_decision_pip",
 	"idx_position_dice", "idx_position_flagged", "idx_position_individual",
-	"idx_position_off",
-	"idx_position_pip_diff",
+	"idx_position_no_contact", "idx_position_off",
+	"idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
 }
 
