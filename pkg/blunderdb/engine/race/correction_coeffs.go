@@ -2,7 +2,13 @@
 //
 // Calibrated against gnubg_ts6x11.bd (TS-06-11), 300000 samples in the estimated regime
 // (max(checkers) ≥ 7), 70/30 train/holdout split, seed 20260809.
-// Regenerate: BLUNDERDB_TS11_PATH=… go run ./cmd/calibrace -out pkg/blunderdb/engine/race/correction_coeffs.go
+// Regenerate (the oracle is the bearoff-data-1 release asset, never in git):
+//
+//	BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go generate ./pkg/blunderdb/engine/race
+//
+// which runs the directive below; go generate passes the environment through.
+
+//go:generate go run github.com/kevung/blunderdb/cmd/calibrace -out correction_coeffs.go
 
 package race
 

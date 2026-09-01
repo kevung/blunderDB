@@ -1,5 +1,5 @@
-sphinx
-sphinx-autobuild
-sphinx-rtd-theme
-sphinx-intl
-sphinxcontrib-youtube
+sphinx==9.1.0
+sphinx-autobuild==2025.8.25
+sphinx-rtd-theme==3.1.0
+sphinx-intl==2.3.2
+sphinxcontrib-youtube==1.4.1

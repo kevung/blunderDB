@@ -26,13 +26,51 @@ without embedding more than 6.8 MB.
 | gnubg's own default | ships TS-06-06 only (`gnubg_ts0.bd`, 6 830 248 B); >6 checkers → BEAROFF_OS |
 | GitHub release asset limit | 2 GiB/file, unlimited total & bandwidth |
 
+## Status (audited 2026-09-02)
+
+Shipped in **0.32.0** (2026-08-09) across three PRs, as ADR-0009 records. Every
+box below was ticked against the code on `main` — file named beside each
+group — not from memory:
+
+- Step 0: `gh release view bearoff-data-1` lists the single asset
+  `gnubg_ts6x11.bd`; its digest is pinned in `race.DownloadedSHA256` and
+  checked by `internal/gui/bearoff.go`. `BLUNDERDB_TS11_PATH` gates
+  `convolve_test.go` and `gammonnet/eval_measure_test.go`.
+- PR 1: `pkg/blunderdb/engine/race/epc.go`; `database/db_epc.go` is 12 lines
+  (`ComputeEPCFromPosition` returns `race.Result`); `computeEPCSide` no longer
+  exists in `internal/server`; `epc_parity_test.go`.
+- PR 2: `twosided.go` (`OpenTwoSided`, `Lookup`, `Checkers`, `Origin`),
+  `gnubg_ts0.bd` beside it, `source.go` (`Resolve`, `SetExternalPath`,
+  `DataDir`), `convolve.go` + `correction_coeffs.go` (now `//go:generate`,
+  see below), `cmd/calibrace`, `money.go` (`MoneyFromEntry`),
+  `internal/server/handlers_positions.go` (p, equities, verdict, regime,
+  bounds; `--bearoff-ts`, never downloads), `internal/cli/cli_epc.go`
+  (`--format json` rather than `--json`), `testdata/money_fixtures.json`,
+  env-gated oracle test and σ/p99/max regression in `convolve_test.go`.
+- PR 3: `EPCPanel.svelte` / `epcStore.js` (`bottomEPC`, `topEPC`, race
+  zone, `epc.race.downloadHint` / `epc.race.openConfig`), `ConfigModal.svelte`
+  *Bearoff* tab (`DownloadBearoffDB`, `CancelBearoffDownload`,
+  `DeleteBearoffDB`, `OpenBearoffFileDialog`; SHA-256 + HTTP Range resume in
+  `internal/gui/bearoff.go`; `$XDG_DATA_HOME/blunderdb`),
+  `epcChallengeStore` persisted by `Config.SaveEpcChallenge` and re-masked
+  from `updateEPC` (`positionService.js`), `epc.*` keys in the 9 locale
+  files, `manuel.rst` (`panneau_epc`, `epc_methodologie`), `cmd_mode.rst`,
+  `raccourcis.rst`, `CLI_USAGE.md`, `mode_headless.rst` (`--bearoff-ts`).
+
+Since then the panel has been renamed **Eval** and reshaped three times
+(ADR-0017, 0018, 0021: facts as two stacked blocks plus the one decision the
+board asks) and the race gained an *evaluated* regime (ADR-0012). The PR 3
+layout described below is therefore the 0.32.0 layout, superseded on screen
+but not in substance: the exact/estimated split, the never-estimated verdict,
+the download and the défi mode all survive.
+
 ## Step 0 — data asset (no code)
 
-- [ ] Publish `gnubg_ts6x11.bd` as the single asset of a release under the
+- [x] Publish `gnubg_ts6x11.bd` as the single asset of a release under the
       dedicated tag `bearoff-data-1`; put its SHA-256 in the release body.
       Never re-versioned (immutable mathematical table). The file stays out
       of git (1.23 GB ≫ 100 MiB limit).
-- [ ] Keep the local copy; export `BLUNDERDB_TS11_PATH` for calibration/CI.
+- [x] Keep the local copy; export `BLUNDERDB_TS11_PATH` for calibration/CI.
 
 ## PR 1 — EPC unification (zero behaviour change)
 
@@ -41,60 +79,77 @@ The extraction of home-board checkers exists twice with two contracts:
 GUI) and `internal/server/handlers_positions.go: computeEPCSide` (typed,
 daemon). This violates the parity invariant before we even start.
 
-- [ ] Create `pkg/blunderdb/engine/race/`; move home-board extraction + EPC
+- [x] Create `pkg/blunderdb/engine/race/`; move home-board extraction + EPC
       there with one typed result contract (server's `epcSide` shape wins).
-- [ ] `db_epc.go` becomes a thin delegate; delete `computeEPCSide`.
-- [ ] Align `epcStore.js` / `EPCPanel.svelte` with the typed JSON contract
+- [x] `db_epc.go` becomes a thin delegate; delete `computeEPCSide`.
+- [x] Align `epcStore.js` / `EPCPanel.svelte` with the typed JSON contract
       (`bottom.epc` etc.); restart `wails dev` for bindings.
-- [ ] Parity test: old-path vs new-path outputs identical on a corpus of
+- [x] Parity test: old-path vs new-path outputs identical on a corpus of
       positions (all-home, partial, bar, empty).
 
 ## PR 2 — engine
 
-- [ ] Two-sided `.bd` reader in `engine/race`: parse `gnubg-TS-06-NN`
+- [x] Two-sided `.bd` reader in `engine/race`: parse `gnubg-TS-06-NN`
       header, `Lookup(usIdx, themIdx)` via 8-byte `ReadAt` at
       `40 + (iu*nPos + it)*8`; no mmap, no full load.
-- [ ] Embed `gnubg_ts0.bd` (copy from gnubg distribution, 6.8 MB) beside
+- [x] Embed `gnubg_ts0.bd` (copy from gnubg distribution, 6.8 MB) beside
       `gnubg_os6.bd`.
-- [ ] Source resolution: embedded / config path / downloaded file; widest
+- [x] Source resolution: embedded / config path / downloaded file; widest
       valid domain wins; invalid → log warning, never fatal; re-resolve on
       panel entry, config change, download completion.
-- [ ] Convolution of the two OS roll distributions → p; frozen 32-coefficient
+- [x] Convolution of the two OS roll distributions → p; frozen 32-coefficient
       correction in Go source with the regeneration command in a comment.
-- [ ] Calibration tool (`cmd/` or `go run`-able) reading
+- [x] Calibration tool (`cmd/` or `go run`-able) reading
       `BLUNDERDB_TS11_PATH`, emitting the coefficient table + error report.
-- [ ] Money cube verdict from the 3 cubeful planes, porting gnubg's
+- [x] Money cube verdict from the 3 cubeful planes, porting gnubg's
       BEAROFF_TS money logic (reimplement the algorithm; do not copy GPL code
       — blunderDB is MIT).
-- [ ] Server: extend the existing EPC handler response (p, equities, verdict,
+- [x] Server: extend the existing EPC handler response (p, equities, verdict,
       regime, error bound); daemon reads socle + configured path only, never
       downloads.
-- [ ] CLI: `blunderdb epc <XGID>` (table + `--json`), same resolution minus
+- [x] CLI: `blunderdb epc <XGID>` (table + `--json`), same resolution minus
       download.
-- [ ] Tests: committed small JSON fixtures generated with gnubg (positions +
+- [x] Tests: committed small JSON fixtures generated with gnubg (positions +
       expected p/equities/verdicts); env-gated oracle test against TS-06-11
       (skip when `BLUNDERDB_TS11_PATH` unset); correction-error regression
       test asserting σ/p99/max bounds.
 
 ## PR 3 — panel + documentation (same branch, per repo rule)
 
-- [ ] Three zones: bottom player (exact EPC block, as today), top player
+- [x] Three zones: bottom player (exact EPC block, as today), top player
       (idem), race zone (p, ND / DT / DP money equities, verdict).
-- [ ] Regime badges on the race zone only: « exact » or « estimé ± borne » ;
+- [x] Regime badges on the race zone only: « exact » or « estimé ± borne » ;
       when the verdict is absent, a discreet line offering the download
       (« videau exact jusqu'à 11 dames — télécharger la base (1,2 Go) »).
-- [ ] Download UX in ConfigModal: progress, SHA-256 verification, delete
+- [x] Download UX in ConfigModal: progress, SHA-256 verification, delete
       button, target `$XDG_DATA_HOME/blunderdb/`.
-- [ ] Défi mode: checkbox in panel header, persisted in config; per-zone
+- [x] Défi mode: checkbox in panel header, persisted in config; per-zone
       overlays (« cliquer pour révéler »); any board edit re-masks all —
       hook the re-mask on the same `$effect` that drives `updateEPC`
       (`App.svelte`), not on DOM events; badges masked too.
-- [ ] i18n: new strings in the 9 frontend locale JSONs.
-- [ ] Docs (French source only): `manuel.rst` (panel section rewritten, incl.
+- [x] i18n: new strings in the 9 frontend locale JSONs.
+- [x] Docs (French source only): `manuel.rst` (panel section rewritten, incl.
       défi), a dedicated methodology subsection transcribing
       `hypotheses.md` in user-facing French, `cmd_mode.rst`,
       `raccourcis.rst`, `CLI_USAGE.md`, `mode_headless.rst` (daemon config
       var). Translations at release time as usual.
+
+## Regenerating the correction coefficients
+
+`pkg/blunderdb/engine/race/correction_coeffs.go` is written by `cmd/calibrace`
+and carries a `//go:generate` directive. The oracle is the TS-06-11 table
+published as the `bearoff-data-1` release asset (1.2 GB, never in git); the
+tool is deterministic (fixed seed), so the same oracle yields the same file.
+From the repo root:
+
+```bash
+BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go generate ./pkg/blunderdb/engine/race
+go test -count=1 ./pkg/blunderdb/engine/race   # the oracle test runs when the variable is set
+```
+
+Regenerate only when the feature set (`RawWinProbFeatures`) or the sampling
+changes; the σ / p99 / max bounds in the file are asserted by
+`convolve_test.go` and quoted in the user documentation.
 
 ## Follow-ups (out of scope, do not silently drop)
 

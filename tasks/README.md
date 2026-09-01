@@ -1,5 +1,10 @@
 # blunderDB v2.0.0 Optimization — Task Sheets
 
+> `tasks/` also holds the later plans (`plan-amelioration-2026-08/`,
+> `plan-amelioration-2026-09/`), the per-feature sheets (`ts-bearoff/`,
+> `stats-panel/`, …) and the single open-items list, [`BACKLOG.md`](BACKLOG.md).
+> The rest of this file is the v2.0.0 sheet index, kept as execution history.
+
 Hierarchical breakdown of `doc/archive/DATABASE_OPTIMIZATION_PLAN.md` (archived since completion). Each sheet is an independent execution unit, sized ≤500 lines, with checkboxes keyed to concrete `file:line` anchors.
 
 ## Execution order
