@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 21:51+0200\n"
+"POT-Creation-Date: 2026-09-02 01:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: el <LL@li.org>\n"
 "Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -25,19 +25,19 @@ msgstr "Λίστα εντολών"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
-"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
+"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
-" *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
+"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
-"Η γραμμή εντολών, που βρίσκεται στη γραμμή κατάστασης, ανοίγει πατώντας το "
-"πλήκτρο *ΔΙΑΣΤΗΜΑ*. Κατά την πληκτρολόγηση μιας εντολής, εμφανίζεται "
-"αυτόματα μια λίστα προτάσεων: το πλήκτρο *TAB* (ή *SHIFT-TAB*) διατρέχει τις"
-" προτάσεις και συμπληρώνει την εντολή, ενώ το *ESC* κλείνει τη λίστα (ένα "
-"δεύτερο *ESC* κλείνει τη γραμμή εντολών). Τα πλήκτρα *ΠΑΝΩ* και *ΚΑΤΩ* "
-"παραμένουν δεσμευμένα για το ιστορικό εντολών."
+"Η γραμμή εντολών, που βρίσκεται στη γραμμή κατάστασης, ανοίγει πατώντας "
+"το πλήκτρο *ΔΙΑΣΤΗΜΑ*. Κατά την πληκτρολόγηση μιας εντολής, εμφανίζεται "
+"αυτόματα μια λίστα προτάσεων: το πλήκτρο *TAB* (ή *SHIFT-TAB*) διατρέχει "
+"τις προτάσεις και συμπληρώνει την εντολή, ενώ το *ESC* κλείνει τη λίστα "
+"(ένα δεύτερο *ESC* κλείνει τη γραμμή εντολών). Τα πλήκτρα *ΠΑΝΩ* και "
+"*ΚΑΤΩ* παραμένουν δεσμευμένα για το ιστορικό εντολών."
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -116,8 +116,8 @@ msgid ""
 "Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
 "l'outil."
 msgstr ""
-"Φορτώνει μια βάση δείγματος (αγώνες, τουρνουά, αναλύσεις) για την εξερεύνηση"
-" του εργαλείου."
+"Φορτώνει μια βάση δείγματος (αγώνες, τουρνουά, αναλύσεις) για την "
+"εξερεύνηση του εργαλείου."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -133,10 +133,10 @@ msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Bearoff (Effective Pip Count, probabilité de gain et "
+"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
 "verdict de videau en bearoff)."
 msgstr ""
-"Ανοίγει τον πίνακα Bearoff (Effective Pip Count, πιθανότητα νίκης και "
+"Ανοίγει τον πίνακα Eval (Effective Pip Count, πιθανότητα νίκης και "
 "ετυμηγορία κύβου στο bearoff)."
 
 #: ../../source/cmd_mode.rst:1
@@ -160,8 +160,7 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
 msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις μακράς κούρσας."
 
 #: ../../source/cmd_mode.rst:1
@@ -170,8 +169,7 @@ msgstr "tp2_last"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ouvre la table des takepoints avec videau à 2 mort."
-msgstr ""
-"Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις τελευταίας ζαριάς."
+msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις τελευταίας ζαριάς."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4"
@@ -186,8 +184,7 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
 msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις μακράς κούρσας."
 
 #: ../../source/cmd_mode.rst:1
@@ -196,8 +193,7 @@ msgstr "tp4_last"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ouvre la table des takepoints avec videau à 4 mort."
-msgstr ""
-"Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις τελευταίας ζαριάς."
+msgstr "Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις τελευταίας ζαριάς."
 
 #: ../../source/cmd_mode.rst:1
 msgid "gv1"
@@ -233,11 +229,11 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
+" txt, bgf)."
 msgstr ""
-"Εισάγει μία ή περισσότερες θέσεις/αγώνες από αρχείο (xg, xgp, sgf, mat, txt,"
-" bgf)."
+"Εισάγει μία ή περισσότερες θέσεις/αγώνες από αρχείο (xg, xgp, sgf, mat, "
+"txt, bgf)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -277,11 +273,11 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
-" onglet *Historique*)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
 msgstr ""
-"Ανοίγει τον πίνακα αναζήτησης (το ιστορικό αναζήτησης βρίσκεται στην καρτέλα"
-" του *Historique*)."
+"Ανοίγει τον πίνακα αναζήτησης (το ιστορικό αναζήτησης βρίσκεται στην "
+"καρτέλα του *Historique*)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "stats, st"
@@ -333,10 +329,11 @@ msgid ""
 "filtre courant des statistiques. Un nombre optionnel choisit combien en "
 "charger (``bl 50``) ; par défaut 10."
 msgstr ""
-"Φορτώνει τα χειρότερα λάθη (equity/MWC) στην προβολή ανάλυσης, σύμφωνα με το"
-" τρέχον φίλτρο στατιστικών. Ένας προαιρετικός αριθμός επιλέγει πόσα θα "
-"φορτωθούν (``bl 50``)· προεπιλογή 10.Φορτώνει τα χειρότερα λάθη (equity/MWC)"
-" στην προβολή ανάλυσης, σύμφωνα με το τρέχον φίλτρο στατιστικών."
+"Φορτώνει τα χειρότερα λάθη (equity/MWC) στην προβολή ανάλυσης, σύμφωνα με"
+" το τρέχον φίλτρο στατιστικών. Ένας προαιρετικός αριθμός επιλέγει πόσα θα"
+" φορτωθούν (``bl 50``)· προεπιλογή 10.Φορτώνει τα χειρότερα λάθη "
+"(equity/MWC) στην προβολή ανάλυσης, σύμφωνα με το τρέχον φίλτρο "
+"στατιστικών."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -388,56 +385,57 @@ msgstr "Φίλτρα αναζήτησης"
 
 #: ../../source/cmd_mode.rst:91
 msgid ""
-"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-"
-"à-dire après le début de commande ``s``."
+"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
+"c'est-à-dire après le début de commande ``s``."
 msgstr ""
-"Τα παρακάτω φίλτρα πρέπει να τοποθετούνται διαδοχικά κατά τη διάρκεια μιας "
-"αναζήτησης, δηλαδή μετά την αρχή της εντολής ``s``."
+"Τα παρακάτω φίλτρα πρέπει να τοποθετούνται διαδοχικά κατά τη διάρκεια "
+"μιας αναζήτησης, δηλαδή μετά την αρχή της εντολής ``s``."
 
 #: ../../source/cmd_mode.rst:96
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
-"structure de pions courante, ignore la position du videau, du score et des "
-"dés. Pour prendre en compte la position du videau, du score, des dés, il "
-"faut le mentionner explicitement dans la recherche."
+"structure de pions courante, ignore la position du videau, du score et "
+"des dés. Pour prendre en compte la position du videau, du score, des dés,"
+" il faut le mentionner explicitement dans la recherche."
 msgstr ""
 "Στην αναζήτηση θέσεων, από προεπιλογή, το blunderDB λαμβάνει υπόψη την "
 "τρέχουσα δομή των πουλιών, αγνοώντας τη θέση του κύβου, το σκορ και τα "
-"ζάρια. Για να ληφθούν υπόψη η θέση του κύβου, το σκορ και τα ζάρια, πρέπει "
-"να αναφερθούν ρητά στην αναζήτηση."
+"ζάρια. Για να ληφθούν υπόψη η θέση του κύβου, το σκορ και τα ζάρια, "
+"πρέπει να αναφερθούν ρητά στην αναζήτηση."
 
 #: ../../source/cmd_mode.rst:102
 msgid ""
-"La commande de recherche ``s`` est disponible dans le panneau de recherche "
-"(touche ``TAB``). La commande ``ss`` permet de chercher parmi les résultats "
-"actuellement filtrés."
+"La commande de recherche ``s`` est disponible dans le panneau de "
+"recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
+"les résultats actuellement filtrés."
 msgstr ""
 "Η εντολή αναζήτησης ``s`` είναι διαθέσιμη στο πάνελ αναζήτησης (πλήκτρο "
-"``TAB``). Η εντολή ``ss`` επιτρέπει την αναζήτηση μεταξύ των αποτελεσμάτων "
-"που είναι ήδη φιλτραρισμένα."
+"``TAB``). Η εντολή ``ss`` επιτρέπει την αναζήτηση μεταξύ των "
+"αποτελεσμάτων που είναι ήδη φιλτραρισμένα."
 
 #: ../../source/cmd_mode.rst:107
 msgid ""
-"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre"
-" le point 24 et le point 19."
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
+"entre le point 24 et le point 19."
 msgstr ""
-"Το blunderDB θεωρεί ότι ένα οπίσθιο πούλι (backchecker) είναι ένα πούλι που "
-"βρίσκεται μεταξύ του σημείου 24 και του σημείου 19."
+"Το blunderDB θεωρεί ότι ένα οπίσθιο πούλι (backchecker) είναι ένα πούλι "
+"που βρίσκεται μεταξύ του σημείου 24 και του σημείου 19."
 
 #: ../../source/cmd_mode.rst:111
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
-"Το blunderDB θεωρεί ότι ο αριθμός των πουλιών στη ζώνη είναι ο αριθμός των "
-"πουλιών που βρίσκονται μεταξύ του σημείου 12 και του σημείου 1."
+"Το blunderDB θεωρεί ότι ο αριθμός των πουλιών στη ζώνη είναι ο αριθμός "
+"των πουλιών που βρίσκονται μεταξύ του σημείου 12 και του σημείου 1."
 
 #: ../../source/cmd_mode.rst:115
 msgid ""
-"blunderDB considère que l'outfield s'étend entre le point 18 et le point 7."
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point "
+"7."
 msgstr ""
-"Το blunderDB θεωρεί ότι το outfield εκτείνεται μεταξύ του σημείου 18 και του"
-" σημείου 7."
+"Το blunderDB θεωρεί ότι το outfield εκτείνεται μεταξύ του σημείου 18 και "
+"του σημείου 7."
 
 #: ../../source/cmd_mode.rst:118
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
@@ -486,8 +484,7 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "Η θέση επαληθεύει τη ζαριά (και τα δύο ζάρια, ανεξαρτήτως σειράς)."
 
 #: ../../source/cmd_mode.rst:1
@@ -496,11 +493,11 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
-" du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la "
+"valeur du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
-"Η θέση επαληθεύει τη ζαριά μόνο για το πρώτο ζάρι (η τιμή του πρώτου ζαριού "
-"εμφανίζεται σε ένα από τα δύο ζάρια της θέσης)."
+"Η θέση επαληθεύει τη ζαριά μόνο για το πρώτο ζάρι (η τιμή του πρώτου "
+"ζαριού εμφανίζεται σε ένα από τα δύο ζάρια της θέσης)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -508,9 +505,9 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
-"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
-"lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
 msgstr ""
 "Η θέση **δεν** παίχτηκε με τη ζαριά 6-5 (ανεξαρτήτως σειράς). Η τιμή "
 "αναγράφεται στο διακριτικό· επαναλήψιμο για τον αποκλεισμό πολλών ζαριών "
@@ -537,8 +534,7 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"La position a été importée seule, et non apportée par l'import d'un match."
+msgid "La position a été importée seule, et non apportée par l'import d'un match."
 msgstr "Η θέση εισήχθη μεμονωμένα και δεν προήλθε από εισαγωγή αγώνα."
 
 #: ../../source/cmd_mode.rst:1
@@ -550,8 +546,8 @@ msgid ""
 "La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
 "l'import d'un match eXtreme Gammon."
 msgstr ""
-"Η θέση επισημάνθηκε στο λογισμικό προέλευσης, κατά την εισαγωγή ενός αγώνα "
-"eXtreme Gammon."
+"Η θέση επισημάνθηκε στο λογισμικό προέλευσης, κατά την εισαγωγή ενός "
+"αγώνα eXtreme Gammon."
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -562,8 +558,8 @@ msgid ""
 "La position ne contient aucun pion de la structure d'exclusion (onglet « "
 "Except » du panneau de recherche)."
 msgstr ""
-"Η θέση δεν περιέχει κανένα πούλι της δομής εξαίρεσης (καρτέλα « Except » του"
-" πάνελ αναζήτησης)."
+"Η θέση δεν περιέχει κανένα πούλι της δομής εξαίρεσης (καρτέλα « Except » "
+"του πάνελ αναζήτησης)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -642,8 +638,7 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr ""
 "Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) είναι "
 "μεγαλύτερο από x."
@@ -653,8 +648,7 @@ msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr ""
 "Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) είναι "
 "μικρότερο από x."
@@ -665,8 +659,8 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
-"et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
+" x et y."
 msgstr ""
 "Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) βρίσκεται "
 "μεταξύ x και y."
@@ -1091,8 +1085,7 @@ msgstr "m'pattern1,pattern2,...\\'"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les meilleurs coups de pions contenant au moins un des motifs."
-msgstr ""
-"Οι καλύτερες κινήσεις πουλιών που περιέχουν τουλάχιστον ένα από τα μοτίβα."
+msgstr "Οι καλύτερες κινήσεις πουλιών που περιέχουν τουλάχιστον ένα από τα μοτίβα."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m'ND,DT,DP,...\\'"
@@ -1102,8 +1095,7 @@ msgstr "m'ND,DT,DP,...\\'"
 msgid ""
 "Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
 "Pass."
-msgstr ""
-"Οι καλύτερες αποφάσεις κύβου No Double/Take, Double Take, Double Pass."
+msgstr "Οι καλύτερες αποφάσεις κύβου No Double/Take, Double Take, Double Pass."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T>x"
@@ -1183,75 +1175,77 @@ msgstr "pl'όνομα'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
-" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
+"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
-"Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, σε "
-"οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
+"Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
+"σε οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
 
 #: ../../source/cmd_mode.rst:217
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique *a"
-" fortiori* de filtrer les positions en fonction du type de décision (`d`). "
-"Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur du premier "
-"dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés"
-" du lancer)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
+" *a fortiori* de filtrer les positions en fonction du type de décision "
+"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
+"du premier dé est utilisée pour matcher les positions (sur l'un ou "
+"l'autre des deux dés du lancer)."
 msgstr ""
 "Το φιλτράρισμα των θέσεων βάσει της ζαριάς (`D` ή `D1`) συνεπάγεται *a "
 "fortiori* το φιλτράρισμα των θέσεων βάσει του τύπου απόφασης (`d`). Το "
 "φίλτρο `D1` αγνοεί την τιμή του δεύτερου ζαριού: μόνο η τιμή του πρώτου "
-"ζαριού χρησιμοποιείται για την αντιστοίχιση των θέσεων (σε οποιοδήποτε από "
-"τα δύο ζάρια της ζαριάς)."
+"ζαριού χρησιμοποιείται για την αντιστοίχιση των θέσεων (σε οποιοδήποτε "
+"από τα δύο ζάρια της ζαριάς)."
 
 #: ../../source/cmd_mode.rst:223
 msgid ""
-"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`), le"
-" joueur est en retard à la course par rapport à l'adversaire si `x>0` et en "
-"avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips d'avance à "
-"la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à la course."
+"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
+" le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
+"et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips "
+"d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de "
+"retard à la course."
 msgstr ""
 "Για το φίλτρο σχετικής διαφοράς στην κούρσα (`p>x`, `p<x`, `px,y`), ο "
-"παίκτης είναι πίσω στην κούρσα σε σχέση με τον αντίπαλο αν `x>0` και μπροστά"
-" αν `x<0`. Παράδειγμα: `p<-10` : ο παίκτης είναι τουλάχιστον 10 pips μπροστά"
-" στην κούρσα. `p50,70` : ο παίκτης είναι μεταξύ 50 και 70 pips πίσω στην "
-"κούρσα."
+"παίκτης είναι πίσω στην κούρσα σε σχέση με τον αντίπαλο αν `x>0` και "
+"μπροστά αν `x<0`. Παράδειγμα: `p<-10` : ο παίκτης είναι τουλάχιστον 10 "
+"pips μπροστά στην κούρσα. `p50,70` : ο παίκτης είναι μεταξύ 50 και 70 "
+"pips πίσω στην κούρσα."
 
 #: ../../source/cmd_mode.rst:229
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
-"même principe s'applique pour les tournois avec ``tn`` et pour les positions"
-" avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
+"même principe s'applique pour les tournois avec ``tn`` et pour les "
+"positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10)."
 msgstr ""
 "Για αναζήτηση σε πολλούς μη συνεχόμενους αγώνες, επαναλάβετε το φίλτρο "
-"``ma`` πολλές φορές (π.χ. ``s ma23 ma43`` για τους αγώνες 23 και 43). Η ίδια"
-" αρχή ισχύει για τα τουρνουά με ``tn`` και για τις θέσεις με ``id`` (π.χ. "
-"``s id5 id10`` για τις θέσεις 5 και 10)."
+"``ma`` πολλές φορές (π.χ. ``s ma23 ma43`` για τους αγώνες 23 και 43). Η "
+"ίδια αρχή ισχύει για τα τουρνουά με ``tn`` και για τις θέσεις με ``id`` "
+"(π.χ. ``s id5 id10`` για τις θέσεις 5 και 10)."
 
 #: ../../source/cmd_mode.rst:234
 msgid ""
-"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble des"
-" matchs du tournoi concerné. Les identifiants des matchs et des tournois "
-"sont visibles dans les colonnes ID des panneaux correspondants."
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
+"des matchs du tournoi concerné. Les identifiants des matchs et des "
+"tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
-"Η αναζήτηση σε ένα τουρνουά (``tn``) ισοδυναμεί με αναζήτηση σε όλους τους "
-"αγώνες του εν λόγω τουρνουά. Τα αναγνωριστικά των αγώνων και των τουρνουά "
-"είναι ορατά στις στήλες ID των αντίστοιχων πάνελ."
+"Η αναζήτηση σε ένα τουρνουά (``tn``) ισοδυναμεί με αναζήτηση σε όλους "
+"τους αγώνες του εν λόγω τουρνουά. Τα αναγνωριστικά των αγώνων και των "
+"τουρνουά είναι ορατά στις στήλες ID των αντίστοιχων πάνελ."
 
 #: ../../source/cmd_mode.rst:238
 #, python-format
 msgid ""
-"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les "
-"positions en prenant en compte la structure des pions, le score et le cube "
-"de la position éditée où le joueur a entre 20 et 5 pips d'avance à la "
-"course, avec au moins 60% de chances de gain, au moins 10 pions dans la "
-"zone, et l'adversaire a entre 2 et 3 pions arriérés."
+"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
+"les positions en prenant en compte la structure des pions, le score et le"
+" cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
+"la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
+"la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
-"Για παράδειγμα, η εντολή ``s s c p-20,-5 w>60 z>10 K2,3`` φιλτράρει όλες τις"
-" θέσεις λαμβάνοντας υπόψη τη δομή των πουλιών, το σκορ και τον κύβο της "
-"επεξεργασμένης θέσης όπου ο παίκτης είναι μεταξύ 20 και 5 pips μπροστά στην "
-"κούρσα, με πιθανότητες νίκης τουλάχιστον 60%d, με τουλάχιστον 10 πούλια στη "
-"ζώνη, και ο αντίπαλος έχει μεταξύ 2 και 3 οπίσθια πούλια."
+"Για παράδειγμα, η εντολή ``s s c p-20,-5 w>60 z>10 K2,3`` φιλτράρει όλες "
+"τις θέσεις λαμβάνοντας υπόψη τη δομή των πουλιών, το σκορ και τον κύβο "
+"της επεξεργασμένης θέσης όπου ο παίκτης είναι μεταξύ 20 και 5 pips "
+"μπροστά στην κούρσα, με πιθανότητες νίκης τουλάχιστον 60%d, με "
+"τουλάχιστον 10 πούλια στη ζώνη, και ο αντίπαλος έχει μεταξύ 2 και 3 "
+"οπίσθια πούλια."
 
 #: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
@@ -1267,11 +1261,11 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 
 #: ../../source/cmd_mode.rst:257
 msgid ""
-"Les migrations de base de données sont désormais effectuées automatiquement "
-"lors de l'ouverture d'une base de données."
+"Les migrations de base de données sont désormais effectuées "
+"automatiquement lors de l'ouverture d'une base de données."
 msgstr ""
-"Οι μεταβάσεις της βάσης δεδομένων πραγματοποιούνται πλέον αυτόματα κατά το "
-"άνοιγμα μιας βάσης δεδομένων."
+"Οι μεταβάσεις της βάσης δεδομένων πραγματοποιούνται πλέον αυτόματα κατά "
+"το άνοιγμα μιας βάσης δεδομένων."
 
 #~ msgid "blunders, bl"
 #~ msgstr "blunders, bl"
@@ -1287,3 +1281,4 @@ msgstr ""
 
 #~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
 #~ msgstr "Ανοίγει το πάνελ EPC (Effective Pip Count)."
+

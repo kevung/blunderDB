@@ -371,8 +371,8 @@ version from the tag automatically in CI.
 
 ## Phase 3 — Cut the version with release.sh
 
-`scripts/release.sh` updates the version string in three places
-(`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, and — if
+`scripts/release.sh` updates the version string in four places
+(`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, `wails.json`, and — if
 `--changelog` is given — `doc/source/index.rst`), then commits `Release <version>`
 and creates the `<version>` tag.
 
