@@ -316,6 +316,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			}
 		}
 	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR by decision_type rows: %w", err)
+	}
 	result.PRGlobal = pr(totalErrSum, totalErrCount)
 
 	// ── Snowie ER (global) ────────────────────────────────────────────────────
@@ -371,6 +374,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			result.PerTournament = append(result.PerTournament, ts)
 		}
 	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR per tournament rows: %w", err)
+	}
 
 	// ── 4. PR per match ───────────────────────────────────────────────────────
 	rows, err = s.db.Query(ctx, rebind(
@@ -396,6 +402,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			result.PerMatch = append(result.PerMatch, ms)
 		}
 	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR per match rows: %w", err)
+	}
 
 	// ── 5. Cube-action breakdown ──────────────────────────────────────────────
 	{
@@ -422,6 +431,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 				result.CubeActionBreakdown = append(result.CubeActionBreakdown, cs)
 			}
 		}()
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("cube action breakdown rows: %w", err)
+		}
 	}
 
 	// ── 5b. Cube direction matrix ─────────────────────────────────────────────
@@ -452,6 +464,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 				cells = append(cells, c)
 			}
 		}()
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("cube direction rows: %w", err)
+		}
 		result.CubeDirections = storage.TallyCubeDirections(cells)
 	}
 
@@ -488,6 +503,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			})
 		}
 	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error histogram rows: %w", err)
+	}
 
 	// ── 7. Top blunders ───────────────────────────────────────────────────────
 	rows, err = s.db.Query(ctx, rebind(
@@ -513,6 +531,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			result.TopBlunders = append(result.TopBlunders, be)
 		}
 	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("top blunders rows: %w", err)
+	}
 
 	// ── 8. Rolling PR ─────────────────────────────────────────────────────────
 	rollingNs := []int{5, 10, 50, 100, 250, 500, 1000}
@@ -538,6 +559,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 			recentErrors = append(recentErrors, e)
 		}
 	}()
+	if err := recentRows.Err(); err != nil {
+		return nil, fmt.Errorf("rolling PR rows: %w", err)
+	}
 
 	var cumSum int64
 	for i, e := range recentErrors {
@@ -628,6 +652,9 @@ func (s *statsStore) Compute(ctx context.Context, scope string, filter storage.S
 				}
 			}
 		}()
+		if err := mwcRows.Err(); err != nil {
+			return nil, fmt.Errorf("MWC pass rows: %w", err)
+		}
 
 		result.MWCGlobal = mwcGlobal
 		result.MWCChecker = mwcChecker
@@ -900,6 +927,9 @@ func (s *statsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 				}
 			}
 		}()
+		if err := snowieRows.Err(); err != nil {
+			return nil, fmt.Errorf("MatchDetail snowie rows: %w", err)
+		}
 	}
 	snowieDenom := snowieP1Checker + snowieP2Checker
 
