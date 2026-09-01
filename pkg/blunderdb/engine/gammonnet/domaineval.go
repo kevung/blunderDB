@@ -13,27 +13,33 @@ import (
 // weights bump changes it, a depth change never does (depth belongs in
 // AnalysisDepth).
 //
+// IT NAMES A REAL UPSTREAM TAG, and that is the whole rule. ADR-0011 put it
+// that way — "the label gammonNet v1.0.1 is honest" — because the string's
+// job is to say which engine produced a stored row, and a number blunderDB
+// minted for itself says nothing a reader can go and check.
+//
 // v1.1.0 is ADR-0016: the search became match-aware (use_match), so a
 // checker-move analysis stored under v1.0.1 at a match score is money-only
 // and, on the same scale, sits next to an imported XG/gnubg analysis that is
 // not — see the batch job's staleness check, db_gammonnet_batch.go.
 //
-// v1.2.0 is ADR-0019: every equity leaving this package at a match score is
-// now normalised equity (the scale XG and gnubg print), where v1.1.0 wrote
-// the search's own 2×MWC−1 for moves and Decide's raw MWC for the cube —
-// three scales in one panel, all but money's wrong against the imported
-// analyses in the same column. Stored v1.1.0 analyses at a match score are
-// therefore stale and re-run; money ones are unchanged but re-run too, the
-// version being per-analysis and not per-referential.
+// v1.2.0 is gammonNet's cube fix (ADR-0022): the live cube curve got its
+// tails back, so every cube equity past the cash point moves up — on that
+// ADR's reference position, no-double goes from +0.995 to +1.14 — and with
+// it the verdict, which can now be TooGood where v1.1.0 could only ever say
+// Double/Pass. It also carries ADR-0019, which is blunderDB-side (every
+// equity leaving this package at a match score is now normalised equity, the
+// scale XG and gnubg print, where v1.1.0 wrote the search's own 2×MWC−1 for
+// moves and Decide's raw MWC for the cube). ADR-0019 briefly stamped rows
+// "gammonNet v1.2.0" on main before that tag existed; no released build ever
+// did (0.33.1 predates it), so the label means the upstream release and
+// nothing else.
 //
-// v1.3.0 is ADR-0022: the live cube curve got its tails back. Every cube
-// equity this package reports for a position past the cash point moves up —
-// on the reference position of that ADR, no-double goes from +0.995 to
-// +1.14 — and with it the verdict, which can now be TooGood where v1.2.0
-// could only ever say Double/Pass. Checker-move equities are untouched (the
-// search values plays, not cube states), but the version is per-analysis,
-// so a stored v1.2.0 position is stale as a whole and re-run as a whole.
-const EngineVersion = "gammonNet v1.3.0"
+// Checker-move equities are untouched by the cube fix — the search values
+// plays, not cube states, and leafValue is cubeless — but the version is
+// per-analysis, so a stored position is stale as a whole and re-run as a
+// whole.
+const EngineVersion = "gammonNet v1.2.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for — a
 // match score beyond the MET's horizon, or a cube decision the model refuses
