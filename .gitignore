@@ -40,6 +40,12 @@ messages.mo
 gnubg_ts6x11.bd
 *.bd.part
 
+# Python virtualenvs for the Sphinx toolchain (doc/requirements.txt), at the
+# root or under doc/ — sphinx-build is not on the system PATH, so each machine
+# creates its own.
+.venv/
+doc/.venv/
+
 # Compiled test binaries (`go test -c -o <name>.test`). Nothing builds or reads
 # them; they are throwaway profiling tools. One (tmp_perf.test, 13.4 MB) reached
 # 0.32.0 and shipped in every clone of the module before being removed.
