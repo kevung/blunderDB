@@ -12,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
 
 type searchStore struct{ db execer }
@@ -62,7 +63,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	//
 	// DateFilter has no SQL pushdown at all (unlike MoveErrorFilter) and used
 	// to decode independently, once per candidate row, inside
-	// matchesDateFilter (a second query plus a second decompression on top of
+	// searchfilter.MatchesDateFilter (a second query plus a second decompression on top of
 	// this one whenever both ran). Folding it into needAnalysis makes this the
 	// only decode.
 	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
@@ -112,12 +113,12 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
 		var allMatchIDs []int64
 		if f.MatchIDsFilter != "" {
-			if ids, err := parseFilterIDList(f.MatchIDsFilter); err == nil {
+			if ids, err := searchfilter.ParseFilterIDList(f.MatchIDsFilter); err == nil {
 				allMatchIDs = append(allMatchIDs, ids...)
 			}
 		}
 		if f.TournamentIDsFilter != "" {
-			if tIDs, err := parseFilterIDList(f.TournamentIDsFilter); err == nil {
+			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
 				for _, tID := range tIDs {
 					if matchIDs, err := getMatchIDsForTournament(ctx, s.db, tID); err == nil {
 						allMatchIDs = append(allMatchIDs, matchIDs...)
@@ -174,7 +175,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	// list/range semantics as the match/tournament filters (e.g. "2,7" is the
 	// range 2..7; ";"-joined values are an explicit list).
 	if f.PositionIDsFilter != "" {
-		ids, err := parseFilterIDList(f.PositionIDsFilter)
+		ids, err := searchfilter.ParseFilterIDList(f.PositionIDsFilter)
 		if err == nil && len(ids) > 0 {
 			placeholders := strings.Repeat("?,", len(ids))
 			placeholders = placeholders[:len(placeholders)-1]
@@ -245,18 +246,18 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			where.WriteString(" AND p.no_contact = 1")
 		}
 
-		pMin, pMax, pHasMin, pHasMax := parseIntFilterExpr(f.PipCountFilter, "p")
-		appendIntRangeSQL("p.pip_diff", pMin, pMax, pHasMin, pHasMax, &where, &args)
-		PMin, PMax, PHasMin, PHasMax := parseIntFilterExpr(f.Player1AbsolutePipCountFilter, "P")
-		appendIntRangeSQL("p.pip_1", PMin, PMax, PHasMin, PHasMax, &where, &args)
-		oMin, oMax, oHasMin, oHasMax := parseIntFilterExpr(f.Player1CheckerOffFilter, "o")
-		appendIntRangeSQL("p.off_1", oMin, oMax, oHasMin, oHasMax, &where, &args)
-		OMin, OMax, OHasMin, OHasMax := parseIntFilterExpr(f.Player2CheckerOffFilter, "O")
-		appendIntRangeSQL("p.off_2", OMin, OMax, OHasMin, OHasMax, &where, &args)
-		kMin, kMax, kHasMin, kHasMax := parseIntFilterExpr(f.Player1BackCheckerFilter, "k")
-		appendIntRangeSQL("p.back_checkers_1", kMin, kMax, kHasMin, kHasMax, &where, &args)
-		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(f.Player2BackCheckerFilter, "K")
-		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
+		pMin, pMax, pHasMin, pHasMax := searchfilter.ParseIntFilterExpr(f.PipCountFilter, "p")
+		searchfilter.AppendIntRangeSQL("p.pip_diff", pMin, pMax, pHasMin, pHasMax, &where, &args)
+		PMin, PMax, PHasMin, PHasMax := searchfilter.ParseIntFilterExpr(f.Player1AbsolutePipCountFilter, "P")
+		searchfilter.AppendIntRangeSQL("p.pip_1", PMin, PMax, PHasMin, PHasMax, &where, &args)
+		oMin, oMax, oHasMin, oHasMax := searchfilter.ParseIntFilterExpr(f.Player1CheckerOffFilter, "o")
+		searchfilter.AppendIntRangeSQL("p.off_1", oMin, oMax, oHasMin, oHasMax, &where, &args)
+		OMin, OMax, OHasMin, OHasMax := searchfilter.ParseIntFilterExpr(f.Player2CheckerOffFilter, "O")
+		searchfilter.AppendIntRangeSQL("p.off_2", OMin, OMax, OHasMin, OHasMax, &where, &args)
+		kMin, kMax, kHasMin, kHasMax := searchfilter.ParseIntFilterExpr(f.Player1BackCheckerFilter, "k")
+		searchfilter.AppendIntRangeSQL("p.back_checkers_1", kMin, kMax, kHasMin, kHasMax, &where, &args)
+		KMin, KMax, KHasMin, KHasMax := searchfilter.ParseIntFilterExpr(f.Player2BackCheckerFilter, "K")
+		searchfilter.AppendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
 		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
 		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
@@ -272,25 +273,25 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		// See FOLLOWUPS.md #4 and fiche-05 T3 for the verified EXPLAIN QUERY PLAN.
 		var winGammonWhere strings.Builder
 		var winGammonArgs []any
-		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(f.WinRateFilter, "w")
-		appendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
-		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(f.GammonRateFilter, "g")
-		appendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
+		wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
+		searchfilter.AppendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
+		gMin, gMax, gHasMin, gHasMax := searchfilter.ParseFloatFilterExpr(f.GammonRateFilter, "g")
+		searchfilter.AppendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
 		if winGammonWhere.Len() > 0 {
 			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE 1=1" + winGammonWhere.String() + ")")
 			args = append(args, winGammonArgs...)
 		}
-		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(f.BackgammonRateFilter, "b")
-		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
-		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(f.Player2WinRateFilter, "W")
-		appendIntRangeSQL("a.player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &where, &args)
-		GMin, GMax, GHasMin, GHasMax := parseFloatFilterExpr(f.Player2GammonRateFilter, "G")
-		appendIntRangeSQL("a.player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &where, &args)
-		BMin, BMax, BHasMin, BHasMax := parseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
-		appendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
+		bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
+		searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
+		WMin, WMax, WHasMin, WHasMax := searchfilter.ParseFloatFilterExpr(f.Player2WinRateFilter, "W")
+		searchfilter.AppendIntRangeSQL("a.player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &where, &args)
+		GMin, GMax, GHasMin, GHasMax := searchfilter.ParseFloatFilterExpr(f.Player2GammonRateFilter, "G")
+		searchfilter.AppendIntRangeSQL("a.player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &where, &args)
+		BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
+		searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 
 		if f.MoveErrorFilter != "" {
-			eMin, eMax, eHasMin, eHasMax := parseFloatFilterExpr(f.MoveErrorFilter, "E")
+			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 			eqMin := int(math.Round(eMin))
 			eqMax := int(math.Round(eMax))
 			errExpr := statsErrExpr
@@ -306,7 +307,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			}
 		}
 
-		if hasBoardFilter(effInclude.Board) {
+		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight = tight
 			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
@@ -321,7 +322,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		// none of its points match an excluded element. Template points with >2
 		// checkers are not representable as bitmasks and are left to the Go-side
 		// check (Position.ContainsAnyCheckerOf) below.
-		if hasBoardFilter(f.ExcludeFilter.Board) {
+		if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 			eSingle1, eMade1, eSingle2, eMade2 := engine.ExclusionMasks(f.ExcludeFilter)
 			where.WriteString(" AND (p.occupancy_1 & ?) = 0 AND (p.point_mask_1 & ?) = 0")
 			where.WriteString(" AND (p.occupancy_2 & ?) = 0 AND (p.point_mask_2 & ?) = 0")
@@ -450,7 +451,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		position, ana := row.pos, row.ana
 
 		matchesGoFilters := func(pos domain.Position) bool {
-			if hasBoardFilter(effInclude.Board) {
+			if searchfilter.HasBoardFilter(effInclude.Board) {
 				if !useSQLFilters || bitboardTight {
 					if !pos.MatchesCheckerPosition(effInclude) {
 						return false
@@ -460,7 +461,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 
 			// Exclusion structure: reject positions that contain ANY excluded element
 			// (authoritative; also covers template counts >2 the SQL mask skips).
-			if hasBoardFilter(f.ExcludeFilter.Board) {
+			if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 				if pos.ContainsAnyCheckerOf(f.ExcludeFilter) {
 					return false
 				}
@@ -529,7 +530,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.WinRateFilter, "w", wr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.WinRateFilter, "w", wr) {
 						return false
 					}
 				}
@@ -545,7 +546,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.GammonRateFilter, "g", gr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.GammonRateFilter, "g", gr) {
 						return false
 					}
 				}
@@ -561,7 +562,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.BackgammonRateFilter, "b", bgr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.BackgammonRateFilter, "b", bgr) {
 						return false
 					}
 				}
@@ -577,7 +578,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.Player2WinRateFilter, "W", wr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2WinRateFilter, "W", wr) {
 						return false
 					}
 				}
@@ -593,7 +594,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.Player2GammonRateFilter, "G", gr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2GammonRateFilter, "G", gr) {
 						return false
 					}
 				}
@@ -609,7 +610,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 					} else {
 						return false
 					}
-					if !analysisMatchesFloatFilter(f.Player2BackgammonRateFilter, "B", bgr) {
+					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2BackgammonRateFilter, "B", bgr) {
 						return false
 					}
 				}
@@ -639,10 +640,10 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
 				return false
 			}
-			if f.DateFilter != "" && !matchesDateFilter(ana, f.DateFilter) {
+			if f.DateFilter != "" && !searchfilter.MatchesDateFilter(ana, f.DateFilter) {
 				return false
 			}
-			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {
+			if f.EquityFilter != "" && !searchfilter.AnalysisMatchesEquityFilter(f.EquityFilter, ana) {
 				return false
 			}
 			return true
@@ -656,13 +657,13 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 
 		if matchesGoFilters(position) {
-			if analysisMatchesMovePattern(f.MovePatternFilter, ana) {
+			if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
 				addPosition(position)
 			}
 		} else if f.MirrorFilter {
 			mirrored := position.Mirror()
 			if matchesGoFilters(mirrored) {
-				if analysisMatchesMovePattern(f.MovePatternFilter, ana) {
+				if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
 					addPosition(mirrored)
 				}
 			}

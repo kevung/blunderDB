@@ -1,44 +1,32 @@
 package postgres
 
 import (
+	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
 
-func TestParseFilterIDList(t *testing.T) {
-	cases := []struct {
-		name    string
-		input   string
-		want    []int64
-		wantErr bool
-	}{
-		{"empty", "", nil, false},
-		{"single", "5", []int64{5}, false},
-		{"range", "2,7", []int64{2, 3, 4, 5, 6, 7}, false},
-		{"three-item comma list", "1,3,5", []int64{1, 3, 5}, false},
-		{"semicolon list", "2;5;9", []int64{2, 5, 9}, false},
-		{"mixed comma and semicolon", "1,3;4,5", []int64{1, 3, 4, 5}, false},
-		{"invalid token", "1,abc,3", nil, true},
+// TestRebindIntRange guards the placeholder contract between the shared
+// searchfilter builders and this backend: searchfilter.AppendIntRangeSQL emits
+// '?' and rebind must turn every one of them into a numbered '$N', in order.
+func TestRebindIntRange(t *testing.T) {
+	var where strings.Builder
+	var args []any
+	where.WriteString("SELECT id FROM position WHERE tenant_id = ?")
+	searchfilter.AppendIntRangeSQL("pip_diff", 3, 9, true, true, &where, &args)
+	searchfilter.AppendIntRangeSQL("off_1", 2, 0, true, false, &where, &args)
+	searchfilter.AppendIntRangeSQL("off_2", 4, 4, true, true, &where, &args)
+
+	got := rebind(where.String())
+	want := "SELECT id FROM position WHERE tenant_id = $1 AND pip_diff BETWEEN $2 AND $3 AND off_1 >= $4 AND off_2 = $5"
+	if got != want {
+		t.Fatalf("rebind:\n got %q\nwant %q", got, want)
 	}
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			got, err := parseFilterIDList(tc.input)
-			if tc.wantErr {
-				if err == nil {
-					t.Fatalf("parseFilterIDList(%q): expected error, got %v", tc.input, got)
-				}
-				return
-			}
-			if err != nil {
-				t.Fatalf("parseFilterIDList(%q): unexpected error: %v", tc.input, err)
-			}
-			if len(got) != len(tc.want) {
-				t.Fatalf("parseFilterIDList(%q) = %v, want %v", tc.input, got, tc.want)
-			}
-			for i := range got {
-				if got[i] != tc.want[i] {
-					t.Fatalf("parseFilterIDList(%q) = %v, want %v", tc.input, got, tc.want)
-				}
-			}
-		})
+	if strings.Contains(got, "?") {
+		t.Fatalf("rebind left a '?' placeholder in %q", got)
+	}
+	if len(args) != 4 {
+		t.Fatalf("args = %v, want 4 bound values", args)
 	}
 }

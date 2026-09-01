@@ -5,16 +5,17 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
 
-// This file holds the search-filter helpers, ported from the SQLite backend.
-// The pure parsers are identical across backends; the predicates that need
-// database access are re-expressed against the pgx execer. The query builders
-// emit '?' placeholders and the assembled query is rebound to '$N' by rebind.
+// This file holds the search-filter predicates that need database access,
+// ported from the SQLite backend and re-expressed against the pgx execer. The
+// pure parsers and in-memory predicates live in storage/searchfilter, shared
+// with the SQLite backend. The query builders emit '?' placeholders and the
+// assembled query is rebound to '$N' by rebind.
 
 // rebind rewrites a query built with positional '?' placeholders into the
 // PostgreSQL '$1, $2, …' form. The search query contains no string literals,
@@ -32,246 +33,6 @@ func rebind(query string) string {
 		b.WriteByte(query[i])
 	}
 	return b.String()
-}
-
-// parseIntFilterExpr parses prefixed integer filter strings (e.g. "p>5").
-func parseIntFilterExpr(filter, prefix string) (min, max int, hasMin, hasMax bool) {
-	if !strings.HasPrefix(filter, prefix) {
-		return
-	}
-	rest := filter[len(prefix):]
-	if strings.HasPrefix(rest, ">") {
-		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
-		if err != nil {
-			return
-		}
-		return v, 0, true, false
-	}
-	if strings.HasPrefix(rest, "<") {
-		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
-		if err != nil {
-			return
-		}
-		return 0, v, false, true
-	}
-	parts := strings.SplitN(rest, ",", 2)
-	if len(parts) == 1 {
-		v, err := strconv.Atoi(strings.TrimSpace(rest))
-		if err != nil {
-			return
-		}
-		return v, v, true, true
-	}
-	v1, e1 := strconv.Atoi(strings.TrimSpace(parts[0]))
-	v2, e2 := strconv.Atoi(strings.TrimSpace(parts[1]))
-	if e1 != nil || e2 != nil {
-		return
-	}
-	if v1 > v2 {
-		v1, v2 = v2, v1
-	}
-	return v1, v2, true, true
-}
-
-// parseFloatFilterExpr is the float64 variant of parseIntFilterExpr.
-func parseFloatFilterExpr(filter, prefix string) (min, max float64, hasMin, hasMax bool) {
-	if !strings.HasPrefix(filter, prefix) {
-		return
-	}
-	rest := filter[len(prefix):]
-	if strings.HasPrefix(rest, ">") {
-		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
-		if err != nil {
-			return
-		}
-		return v, 0, true, false
-	}
-	if strings.HasPrefix(rest, "<") {
-		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
-		if err != nil {
-			return
-		}
-		return 0, v, false, true
-	}
-	parts := strings.SplitN(rest, ",", 2)
-	if len(parts) == 1 {
-		v, err := strconv.ParseFloat(strings.TrimSpace(rest), 64)
-		if err != nil {
-			return
-		}
-		return v, v, true, true
-	}
-	v1, e1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
-	v2, e2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
-	if e1 != nil || e2 != nil {
-		return
-	}
-	if v1 > v2 {
-		v1, v2 = v2, v1
-	}
-	return v1, v2, true, true
-}
-
-// appendIntRangeSQL appends "AND column op ?" to where and the bound(s) to
-// args. The '?' placeholders are rebound to '$N' once the query is assembled.
-func appendIntRangeSQL(column string, min, max int, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
-	if !hasMin && !hasMax {
-		return
-	}
-	if hasMin && hasMax {
-		if min == max {
-			where.WriteString(" AND " + column + " = ?")
-			*args = append(*args, min)
-		} else {
-			where.WriteString(" AND " + column + " BETWEEN ? AND ?")
-			*args = append(*args, min, max)
-		}
-	} else if hasMin {
-		where.WriteString(" AND " + column + " >= ?")
-		*args = append(*args, min)
-	} else {
-		where.WriteString(" AND " + column + " <= ?")
-		*args = append(*args, max)
-	}
-}
-
-// hasBoardFilter returns true if at least one point in b has non-empty checkers.
-func hasBoardFilter(b domain.Board) bool {
-	for _, p := range b.Points {
-		if p.Checkers > 0 && p.Color >= 0 {
-			return true
-		}
-	}
-	return false
-}
-
-// analysisMatchesFloatFilter checks value against a prefixed float filter string.
-func analysisMatchesFloatFilter(filter, prefix string, value float64) bool {
-	if filter == "" {
-		return true
-	}
-	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, prefix)
-	if !hasMin && !hasMax {
-		return true
-	}
-	value = engine.RoundToHundredthPercent(value)
-	if hasMin && value < mn {
-		return false
-	}
-	if hasMax && value > mx {
-		return false
-	}
-	return true
-}
-
-// analysisMatchesEquityFilter checks the best-move equity of ana against the
-// "e"-prefixed filter.
-func analysisMatchesEquityFilter(filter string, ana *domain.PositionAnalysis) bool {
-	if filter == "" {
-		return true
-	}
-	if ana == nil {
-		return false
-	}
-	var equity float64
-	if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
-		equity = ana.DoublingCubeAnalysis.CubefulNoDoubleEquity
-	} else if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-		equity = ana.CheckerAnalysis.Moves[0].Equity
-	} else {
-		return false
-	}
-	equity = engine.RoundToMillipoint(equity)
-	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, "e")
-	if !hasMin && !hasMax {
-		return true
-	}
-	if hasMin && equity < mn/1000.0 {
-		return false
-	}
-	if hasMax && equity > mx/1000.0 {
-		return false
-	}
-	return true
-}
-
-// analysisMatchesMovePattern checks a move-pattern filter against pre-fetched
-// analysis.
-func analysisMatchesMovePattern(filter string, ana *domain.PositionAnalysis) bool {
-	if filter == "" {
-		return true
-	}
-	if ana == nil {
-		return false
-	}
-	movePatternMatch := strings.Trim(filter, `m"'`)
-	movePatterns := strings.Split(strings.ToLower(movePatternMatch), ";")
-	if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-		move := strings.ToLower(ana.CheckerAnalysis.Moves[0].Move)
-		for _, pattern := range movePatterns {
-			if strings.Contains(move, pattern) {
-				return true
-			}
-		}
-	} else if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
-		for _, pattern := range movePatterns {
-			switch pattern {
-			case "nd":
-				if ana.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
-					return true
-				}
-			case "dt":
-				if ana.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
-					return true
-				}
-			case "dp":
-				if ana.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
-					return true
-				}
-			}
-		}
-	}
-	return false
-}
-
-// parseFilterIDList parses a match/tournament ID filter string. It accepts a
-// two-value comma range ("2,7" -> 2..7 inclusive), a semicolon-separated
-// explicit list ("2;5;9"), a comma-separated explicit list ("2,5,9"), or any
-// mix of comma and semicolon separators.
-func parseFilterIDList(s string) ([]int64, error) {
-	s = strings.TrimSpace(s)
-	if s == "" {
-		return nil, nil
-	}
-	commaParts := strings.Split(s, ",")
-	if len(commaParts) == 2 {
-		start, err1 := strconv.ParseInt(strings.TrimSpace(commaParts[0]), 10, 64)
-		end, err2 := strconv.ParseInt(strings.TrimSpace(commaParts[1]), 10, 64)
-		if err1 == nil && err2 == nil && end > start {
-			var ids []int64
-			for i := start; i <= end; i++ {
-				ids = append(ids, i)
-			}
-			return ids, nil
-		}
-	}
-	// Not a two-value range: treat every comma-separated part as its own
-	// semicolon-list parse, so "1,3,5", "1;3;5", and mixes of both work.
-	var ids []int64
-	for _, commaPart := range commaParts {
-		for _, p := range strings.Split(commaPart, ";") {
-			p = strings.TrimSpace(p)
-			if p == "" {
-				continue
-			}
-			id, err := strconv.ParseInt(p, 10, 64)
-			if err != nil {
-				return nil, err
-			}
-			ids = append(ids, id)
-		}
-	}
-	return ids, nil
 }
 
 // getMatchIDsForTournament returns all match IDs belonging to a tournament.
@@ -355,7 +116,7 @@ func getPlayer1MovesForPosition(ctx context.Context, db execer, positionID int64
 
 // matchesSearchText reports whether a position's comment matches a "t"-filter.
 func matchesSearchText(ctx context.Context, db execer, p *domain.Position, searchText string) bool {
-	keywords := parseSearchTextKeywords(searchText)
+	keywords := searchfilter.ParseSearchTextKeywords(searchText)
 	if len(keywords) == 0 {
 		return false
 	}
@@ -370,28 +131,6 @@ func matchesSearchText(ctx context.Context, db execer, p *domain.Position, searc
 		}
 	}
 	return false
-}
-
-// parseSearchTextKeywords extracts the lowercased, trimmed, non-empty keywords
-// from a t"tag1;tag2;..." search filter. It strips the frontend's t"..."
-// wrapper, splits on ';', trims whitespace around each tag, and drops empty
-// tags (so a stray trailing ';' or surrounding spaces no longer match every
-// comment or fail to match a valid tag).
-func parseSearchTextKeywords(searchText string) []string {
-	s := strings.TrimSpace(searchText)
-	// Strip the t"..." wrapper: a leading 't' immediately followed by a
-	// quote, then the surrounding quotes.
-	if len(s) >= 2 && s[0] == 't' && (s[1] == '"' || s[1] == '\'') {
-		s = s[1:]
-	}
-	s = strings.ToLower(strings.Trim(s, `"'`))
-	var keywords []string
-	for _, kw := range strings.Split(s, ";") {
-		if kw = strings.TrimSpace(kw); kw != "" {
-			keywords = append(keywords, kw)
-		}
-	}
-	return keywords
 }
 
 // isPlayer1TakePassCubeAction reports whether player-1's recorded cube action
@@ -459,81 +198,5 @@ func matchesMoveErrorFilter(ctx context.Context, db execer, p *domain.Position, 
 		return false
 	}
 
-	moveErrorMillipoints := math.Round(moveError * 1000)
-
-	if strings.HasPrefix(filter, "E>") {
-		value, err := strconv.ParseFloat(filter[2:], 64)
-		if err != nil {
-			return false
-		}
-		return moveErrorMillipoints >= value
-	} else if strings.HasPrefix(filter, "E<") {
-		value, err := strconv.ParseFloat(filter[2:], 64)
-		if err != nil {
-			return false
-		}
-		return moveErrorMillipoints <= value
-	} else if strings.HasPrefix(filter, "E") {
-		values := strings.Split(filter[1:], ",")
-		if len(values) != 2 {
-			return false
-		}
-		value1, err1 := strconv.ParseFloat(values[0], 64)
-		value2, err2 := strconv.ParseFloat(values[1], 64)
-		if err1 != nil || err2 != nil {
-			return false
-		}
-		minValue := value1
-		maxValue := value2
-		if value1 > value2 {
-			minValue = value2
-			maxValue = value1
-		}
-		return moveErrorMillipoints >= minValue && moveErrorMillipoints <= maxValue
-	}
-	return false
-}
-
-// matchesDateFilter filters positions by the analysis creation date:
-// T>d, T<d, Td1,d2. analysis is the position's already-decoded analysis
-// (DateFilter is in needAnalysis — see search_postgres.go), so this predicate
-// needs no query or decompression of its own; it previously ran one of each
-// per candidate row.
-func matchesDateFilter(analysis *domain.PositionAnalysis, filter string) bool {
-	if analysis == nil {
-		return false
-	}
-	creationDate := analysis.CreationDate
-
-	if strings.HasPrefix(filter, "T>") {
-		date, err := time.ParseInLocation("2006/01/02", filter[2:], creationDate.Location())
-		if err != nil {
-			return false
-		}
-		return creationDate.After(date) || creationDate.Equal(date)
-	} else if strings.HasPrefix(filter, "T<") {
-		date, err := time.ParseInLocation("2006/01/02", filter[2:], creationDate.Location())
-		if err != nil {
-			return false
-		}
-		date = date.Add(24 * time.Hour).Add(-1 * time.Second)
-		return creationDate.Before(date)
-	} else if strings.HasPrefix(filter, "T") {
-		dateRange := strings.Split(filter[1:], ",")
-		if len(dateRange) != 2 {
-			return false
-		}
-		startDate, err1 := time.ParseInLocation("2006/01/02", dateRange[0], creationDate.Location())
-		endDate, err2 := time.ParseInLocation("2006/01/02", dateRange[1], creationDate.Location())
-		if err1 != nil || err2 != nil {
-			return false
-		}
-		if startDate.After(endDate) {
-			startDate, endDate = endDate, startDate
-		}
-		endDate = endDate.Add(24 * time.Hour).Add(-1 * time.Second)
-		return (creationDate.After(startDate) || creationDate.Equal(startDate)) &&
-			(creationDate.Before(endDate) || creationDate.Equal(endDate))
-	}
-	return false
+	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter)
 }
