@@ -237,6 +237,57 @@ func TestDecideMatchCrawfordForcesNoDouble(t *testing.T) {
 	}
 }
 
+// During the Crawford game the VALUE, not just the verdict, is the dead
+// cube's: the cubeless match equity, whoever "owns" a cube nobody can turn
+// and whatever the efficiency. Found on 2026-09-02 by probing the opening
+// rolls against gnubg — Decide already forced NoDouble, but Value and the
+// no-double equity next to it still walked the redouble chain and valued the
+// 4-away/1-away Crawford opening at +0.68 (normalised) against gnubg's
+// +0.16, which is the same number cubeless and cubeful in that game.
+func TestValueCrawfordIsTheDeadValue(t *testing.T) {
+	distributions := []*[NumOutputs]float32{
+		probs(0.3, 0.05, 0.0, 0.2, 0.01),
+		probs(0.55, 0.2, 0.02, 0.1, 0.0),
+		probs(0.9, 0.5, 0.05, 0.01, 0.0),
+	}
+	for _, away := range [][2]int{{4, 1}, {1, 4}, {2, 1}, {1, 1}} {
+		state := MatchState{AwayOnRoll: away[0], AwayOpponent: away[1], Cube: 1, Crawford: true}
+		for _, p := range distributions {
+			dead, ok := matchEquity(state, p)
+			if !ok {
+				t.Fatalf("matchEquity refused %v", state)
+			}
+			for _, owner := range []CubeOwner{CubeCentred, CubeOwned, CubeOpponent} {
+				for _, eff := range []float64{0.0, 0.3, 0.688, 1.0} {
+					v, ok := Value(p, owner, &state, eff)
+					if !ok {
+						t.Fatalf("Value refused %v", state)
+					}
+					closeEnough(t, "Crawford Value", v, dead, 1e-9)
+				}
+			}
+			dec, ok := Decide(p, CubeCentred, &state, DefaultEfficiency(CubeCentred), false)
+			if !ok {
+				t.Fatalf("Decide refused %v", state)
+			}
+			mwc, _ := matchWinningChance(state, p)
+			closeEnough(t, "Crawford EquityNoDouble", dec.EquityNoDouble, mwc, 1e-9)
+			closeEnough(t, "Crawford EquityDouble", dec.EquityDouble, dec.EquityNoDouble, 1e-12)
+			closeEnough(t, "Crawford EquityDoubleTake", dec.EquityDoubleTake, dec.EquityNoDouble, 1e-12)
+		}
+	}
+
+	// The inverse control: post-Crawford (flag off, one side at 1-away) the
+	// cube is live and the cubeful value must differ from the dead one.
+	post := MatchState{AwayOnRoll: 2, AwayOpponent: 1, Cube: 1, Crawford: false}
+	p := probs(0.5, 0.15, 0.01, 0.15, 0.01)
+	live, _ := Value(p, CubeCentred, &post, 0.688)
+	dead, _ := matchEquity(post, p)
+	if math.Abs(live-dead) < 0.05 {
+		t.Errorf("post-Crawford Value %v too close to the dead value %v: the Crawford branch may be leaking", live, dead)
+	}
+}
+
 // The opponent can never be doubled in match play either.
 func TestDecideMatchOpponentOwnedNeverDoubles(t *testing.T) {
 	p := probs(0.95, 0.4, 0.05, 0, 0)
