@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { SvelteSet } from 'svelte/reactivity';
     import { get } from 'svelte/store';
     import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/database/Database.js';
@@ -11,8 +12,10 @@
 
     // All player names with their match counts
     let allPlayers = $state([]);
-    // Selected names to be merged
-    let selectedNames = new SvelteSet();
+    // Selected names to be merged. A SvelteSet is mutated in place: the
+    // template tracks *this* instance, a re-assigned copy would leave it
+    // watching the old one.
+    const selectedNames = new SvelteSet();
     // Canonical name the user wants to keep
     let canonicalName = $state('');
     // Filter text for the player list
@@ -47,16 +50,14 @@
     loadPlayers();
 
     function toggleSelect(name) {
-        const next = new SvelteSet(selectedNames);
-        if (next.has(name)) {
-            next.delete(name);
+        if (selectedNames.has(name)) {
+            selectedNames.delete(name);
         } else {
-            next.add(name);
+            selectedNames.add(name);
         }
-        selectedNames = next;
         // Auto-populate the canonical name with the first selected name if it is empty
-        if (canonicalName === '' && next.size > 0) {
-            canonicalName = [...next][0] ?? '';
+        if (canonicalName === '' && selectedNames.size > 0) {
+            canonicalName = [...selectedNames][0] ?? '';
         }
     }
 
@@ -99,7 +100,7 @@
     }
 </script>
 
-<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={$t('merge.ariaLabel')} onkeydown={handleKeyDown}>
+<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={$t('merge.ariaLabel')} onkeydown={handleKeyDown} use:trapFocus>
     <div class="modal-box">
         <div class="modal-header">
             <span class="modal-title">{$t('merge.title')}</span>

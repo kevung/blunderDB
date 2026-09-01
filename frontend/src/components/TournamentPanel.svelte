@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { nextSort } from '../utils/tableSort.js';
+    import { isBareLetter } from '../utils/keys.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import {
@@ -525,7 +526,7 @@
         if (tournaments.length > 0) {
             const currentIndex = selectedTournament ? tournaments.findIndex((t) => t.id === selectedTournament.id) : -1;
 
-            if (event.key === 'j' || event.key === 'ArrowDown') {
+            if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
                 event.preventDefault();
                 const nextIndex = currentIndex < tournaments.length - 1 ? currentIndex + 1 : currentIndex;
                 if (nextIndex >= 0 && nextIndex !== currentIndex) {
@@ -535,7 +536,7 @@
                     selectTournament(tournaments[0]);
                     scrollToTournament(0);
                 }
-            } else if (event.key === 'k' || event.key === 'ArrowUp') {
+            } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
                     selectTournament(tournaments[currentIndex - 1]);

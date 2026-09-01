@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
+    import { SvelteSet } from 'svelte/reactivity';
     import { dragReorder } from '../utils/dragReorder.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
@@ -48,8 +49,10 @@
     let editingDescription = $state('');
     let inlineNewName = $state('');
 
-    // Multi-select for positions
-    let selectedPositionIndices = $state(new Set());
+    // Multi-select for positions: indices into collectionPositions. A SvelteSet
+    // mutated in place — the template tracks this one instance, so there is
+    // no clone-and-reassign to keep it reactive.
+    const selectedPositionIndices = new SvelteSet();
 
     // Position index map (position_id -> 1-based index in DB)
     let positionIndexMap = $state({});
@@ -94,8 +97,8 @@
     $effect(() => {
         const value = $currentPositionIndexStore;
         if (mode === 'COLLECTION' && activeCollection && value >= 0) {
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- clone-reassign pattern
-            selectedPositionIndices = new Set([value]);
+            selectedPositionIndices.clear();
+            selectedPositionIndices.add(value);
         }
     });
 
@@ -202,7 +205,7 @@
             selectedCollectionStore.set(collection);
             collectionPositionsStore.set(positions);
             activeCollectionStore.set(collection);
-            selectedPositionIndices = new Set();
+            selectedPositionIndices.clear();
             view = 'detail';
             await loadPositionIndexMap();
             if (onOpenCollection) {
@@ -318,31 +321,25 @@
     // Select a position and display it
     async function selectAndDisplayPosition(index, event) {
         event.stopPropagation();
-        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
-        const newSet = new Set(selectedPositionIndices);
         if (event.shiftKey && selectedPositionIndices.size > 0) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
             const last = sorted[sorted.length - 1];
             const start = Math.min(last, index);
             const end = Math.max(last, index);
             for (let i = start; i <= end; i++) {
-                newSet.add(i);
+                selectedPositionIndices.add(i);
             }
         } else if (event.ctrlKey || event.metaKey) {
-            if (newSet.has(index)) {
-                newSet.delete(index);
+            if (selectedPositionIndices.has(index)) {
+                selectedPositionIndices.delete(index);
             } else {
-                newSet.add(index);
+                selectedPositionIndices.add(index);
             }
         } else {
-            if (newSet.size === 1 && newSet.has(index)) {
-                newSet.clear();
-            } else {
-                newSet.clear();
-                newSet.add(index);
-            }
+            const wasOnlySelection = selectedPositionIndices.size === 1 && selectedPositionIndices.has(index);
+            selectedPositionIndices.clear();
+            if (!wasOnlySelection) selectedPositionIndices.add(index);
         }
-        selectedPositionIndices = newSet;
 
         const position = collectionPositions[index];
         if (position) {
@@ -358,7 +355,7 @@
             for (const idx of sorted) {
                 await RemovePositionFromCollection(activeCollection.id, collectionPositions[idx].id);
             }
-            selectedPositionIndices = new Set();
+            selectedPositionIndices.clear();
             const positions = await GetCollectionPositions(activeCollection.id);
             collectionPositionsStore.set(positions || []);
             await loadCollections();
@@ -377,11 +374,8 @@
         [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
-            const newSet = new Set(selectedPositionIndices);
-            newSet.delete(index);
-            newSet.add(index - 1);
-            selectedPositionIndices = newSet;
+            selectedPositionIndices.delete(index);
+            selectedPositionIndices.add(index - 1);
         }
         try {
             await ReorderCollectionPositions(
@@ -400,11 +394,8 @@
         [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
-            const newSet = new Set(selectedPositionIndices);
-            newSet.delete(index);
-            newSet.add(index + 1);
-            selectedPositionIndices = newSet;
+            selectedPositionIndices.delete(index);
+            selectedPositionIndices.add(index + 1);
         }
         try {
             await ReorderCollectionPositions(
@@ -422,8 +413,10 @@
         const positionId = collectionPositions[index].id;
         try {
             await RemovePositionFromCollection(activeCollection.id, positionId);
-            selectedPositionIndices.delete(index);
-            selectedPositionIndices = new Set([...selectedPositionIndices].map((i) => (i > index ? i - 1 : i)));
+            // The rows after the removed one shift up by one.
+            const shifted = [...selectedPositionIndices].filter((i) => i !== index).map((i) => (i > index ? i - 1 : i));
+            selectedPositionIndices.clear();
+            for (const i of shifted) selectedPositionIndices.add(i);
             const positions = await GetCollectionPositions(activeCollection.id);
             collectionPositionsStore.set(positions || []);
             await loadCollections();
@@ -475,12 +468,10 @@
             if (insertAt < 0) insertAt = 0;
             newOrder.splice(insertAt, 0, ...items);
             collectionPositionsStore.set(newOrder);
-            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
-            const newSelected = new Set();
+            selectedPositionIndices.clear();
             for (let i = 0; i < items.length; i++) {
-                newSelected.add(insertAt + i);
+                selectedPositionIndices.add(insertAt + i);
             }
-            selectedPositionIndices = newSelected;
             try {
                 await ReorderCollectionPositions(
                     activeCollection.id,
@@ -495,7 +486,8 @@
             newOrder.splice(toIndex, 0, moved);
             collectionPositionsStore.set(newOrder);
             if (selectedPositionIndices.has(fromIndex)) {
-                selectedPositionIndices = new Set([toIndex]);
+                selectedPositionIndices.clear();
+                selectedPositionIndices.add(toIndex);
             }
             try {
                 await ReorderCollectionPositions(

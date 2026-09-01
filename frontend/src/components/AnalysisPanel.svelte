@@ -2,6 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
     import { nextSort } from '../utils/tableSort.js';
+    import { isLetter, isBareLetter } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { normalizeCubeAction } from '../utils/cubeAction.js';
@@ -136,7 +137,7 @@
 
         // Handle tab switching with 'd' (doubling/cube) key to toggle
         // Only allow if showTabs is true (not first position of game)
-        if (showTabs && (event.key === 'd' || event.key === 'D')) {
+        if (showTabs && isLetter(event, 'd')) {
             event.preventDefault();
             const newTab = activeTab === 'checker' ? 'cube' : 'checker';
             handleTabSwitch(newTab);
@@ -152,13 +153,13 @@
 
             const currentIndex = sortedMoves.findIndex((m) => m.move === $selectedMoveStore);
 
-            if (event.key === 'j' || event.key === 'ArrowDown') {
+            if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
                 event.preventDefault();
                 if (currentIndex >= 0 && currentIndex < sortedMoves.length - 1) {
                     selectedMoveStore.set(sortedMoves[currentIndex + 1].move);
                 }
                 return;
-            } else if (event.key === 'k' || event.key === 'ArrowUp') {
+            } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
                     selectedMoveStore.set(sortedMoves[currentIndex - 1].move);

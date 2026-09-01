@@ -5,6 +5,7 @@ import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { viewStore } from '../stores/viewStore.js';
+import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 
 import { newDatabase, openDatabase, exitApp, setStatusBarMessage } from './databaseService.js';
 import {
@@ -53,6 +54,22 @@ const EDITABLE_FIELD_SELECTOR = 'input, textarea, [contenteditable]';
 // Position-browsing keys some panels forward to the board instead of using
 // for their own list navigation (see the allowNavKeys option below).
 const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown']);
+
+// The keys that browse positions on the board: bare h/j/k/l (Shift-J/K switch
+// views instead — see the dispatch below), arrows and PageUp/PageDown. Docked
+// panels that hold a selection keep these for their own list.
+function isBoardNavigationKey(event) {
+    return (
+        isBareLetter(event, 'j') ||
+        isBareLetter(event, 'k') ||
+        isBareLetter(event, 'h') ||
+        isBareLetter(event, 'l') ||
+        event.key === 'ArrowLeft' ||
+        event.key === 'ArrowRight' ||
+        event.key === 'PageUp' ||
+        event.key === 'PageDown'
+    );
+}
 
 /**
  * Docked panels (MatchPanel, TournamentPanel, CollectionPanel, …) install
@@ -114,8 +131,9 @@ export function handleKeyDown(event) {
     // physical key position (event.code). This keeps letter shortcuts on the
     // labeled key across keyboard layouts (AZERTY, QWERTZ, Dvorak, …) instead of
     // mapping to the US-QWERTY physical position. Non-letter keys (Space, Tab,
-    // Delete, arrows, digits) stay positional below.
-    const letter = (ch) => event.key.length === 1 && event.key.toLowerCase() === ch;
+    // Delete, arrows, digits) stay positional below. `letter` is the shared
+    // helper from utils/keys.js, bound to this event for the Ctrl-combos.
+    const letter = (ch) => isLetter(event, ch);
 
     if (get(isAnyModalOpen)) return;
 
@@ -174,16 +192,7 @@ export function handleKeyDown(event) {
         if (event.ctrlKey || event.metaKey || event.key === 'Escape' || event.key === 'Tab' || event.code === 'Space' || event.key === '?') {
             // Let shortcut through
         } else {
-            const isNavigationKey =
-                event.key === 'j' ||
-                event.key === 'k' ||
-                event.key === 'ArrowLeft' ||
-                event.key === 'ArrowRight' ||
-                event.key === 'h' ||
-                event.key === 'l' ||
-                event.key === 'PageUp' ||
-                event.key === 'PageDown';
-            if (isNavigationKey && !get(selectedMoveStore)) {
+            if (isBoardNavigationKey(event) && !get(selectedMoveStore)) {
                 // No move selected - allow position navigation
             } else {
                 return;
@@ -207,16 +216,7 @@ export function handleKeyDown(event) {
         } else if (event.key === '?') {
             // Allow help modal to open
         } else {
-            const isNavigationKey =
-                event.key === 'j' ||
-                event.key === 'k' ||
-                event.key === 'ArrowLeft' ||
-                event.key === 'ArrowRight' ||
-                event.key === 'h' ||
-                event.key === 'l' ||
-                event.key === 'PageUp' ||
-                event.key === 'PageDown';
-            if (isNavigationKey) {
+            if (isBoardNavigationKey(event)) {
                 const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');
                 if (matchPanelHasSelection) return;
             } else {
@@ -271,28 +271,28 @@ export function handleKeyDown(event) {
             event.preventDefault();
             firstPosition();
         }
-    } else if (!event.ctrlKey && event.key === 'h') {
+    } else if (isBareLetter(event, 'h')) {
         if (!showComment) firstPosition();
     } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
         if (!showComment && !get(selectedMoveStore)) {
             event.preventDefault();
             previousPosition();
         }
-    } else if (!event.ctrlKey && event.key === 'k') {
+    } else if (isBareLetter(event, 'k')) {
         if (!showComment && !get(selectedMoveStore)) previousPosition();
     } else if (!event.ctrlKey && event.key === 'ArrowRight') {
         if (!showComment && !get(selectedMoveStore)) {
             event.preventDefault();
             nextPosition();
         }
-    } else if (!event.ctrlKey && event.key === 'j') {
+    } else if (isBareLetter(event, 'j')) {
         if (!showComment && !get(selectedMoveStore)) nextPosition();
     } else if (!event.ctrlKey && event.key === 'PageDown') {
         if (!showComment) {
             event.preventDefault();
             lastPosition();
         }
-    } else if (!event.ctrlKey && event.key === 'l') {
+    } else if (isBareLetter(event, 'l')) {
         if (!showComment) lastPosition();
     } else if (event.ctrlKey && letter('b')) {
         event.preventDefault();
@@ -341,10 +341,10 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('g')) {
         event.preventDefault();
         showDatesAndMetadata();
-    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && event.key === 'J')) {
+    } else if ((event.ctrlKey && event.key === 'PageUp') || (!event.ctrlKey && isShiftLetter(event, 'j'))) {
         event.preventDefault();
         viewStore.selectPreviousView();
-    } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && event.key === 'K')) {
+    } else if ((event.ctrlKey && event.key === 'PageDown') || (!event.ctrlKey && isShiftLetter(event, 'k'))) {
         event.preventDefault();
         viewStore.selectNextView();
     } else if (!event.ctrlKey && letter('p')) {
