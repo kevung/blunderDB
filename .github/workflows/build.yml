@@ -331,10 +331,12 @@ jobs:
         with:
           version: v2.11.4
 
+  # Blocking, as CLAUDE.md states: a known vulnerability in a dependency
+  # fails the run. Bumping the offending module (or documenting a
+  # verified non-reachability) is the way out, not a green-through-red job.
   govulncheck:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
