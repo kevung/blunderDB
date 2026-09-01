@@ -1,0 +1,44 @@
+# Weekly dependency bumps, one grouped PR per ecosystem so a routine week is
+# three PRs at most rather than one per module. Minor and patch updates are
+# grouped together; a major bump keeps its own PR because it usually needs a
+# human to read the changelog (Svelte, Wails, golangci-lint...).
+#
+# github-actions bumps rewrite the SHA-pinned `uses:` lines in the workflows
+# and keep the `# vX.Y.Z` comment in step — that is how the pins stay current.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      go-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch
