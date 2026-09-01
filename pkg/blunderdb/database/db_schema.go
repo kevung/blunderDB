@@ -360,16 +360,21 @@ func (d *Database) ensureAllTablesExist() error {
 		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
 	}
 
+	// Declared INTEGER to match the fresh schema (schema_sqlite.go). The
+	// 1.9.0→2.0.0 migration declared these REAL and databases it upgraded keep
+	// that; the difference is affinity-only (a fractional value is stored REAL
+	// under either) and cannot be changed in place. This list only fires on a
+	// database that somehow lacks the columns, so it follows the fresh DDL.
 	newAnalysisCols := []string{
 		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
-		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
-		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+		`ALTER TABLE analysis ADD COLUMN cube_error              INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player1_win_rate        INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player2_win_rate        INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     INTEGER`,
+		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate INTEGER`,
 	}
 	for _, stmt := range newAnalysisCols {
 		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
@@ -386,9 +391,8 @@ func (d *Database) ensureAllTablesExist() error {
 		// idx_position_score (E3, index redundancy pass): dropped from this list
 		// — a strict column prefix of idx_position_score_cube below, so any seek
 		// it could serve, the wider index serves identically (verified by
-		// EXPLAIN QUERY PLAN). This list runs on every open of an existing
-		// database, so from here on an existing DB simply stops getting this
-		// index re-asserted; it is not dropped from DBs that already have it.
+		// EXPLAIN QUERY PLAN). Existing databases that still carry it lose it
+		// in legacyIndexes below.
 		`CREATE INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
 		// Covering index for the win/gammon combo search (fiche-05 T3) — see the
@@ -398,9 +402,8 @@ func (d *Database) ensureAllTablesExist() error {
 		// name here is what actually gets already-created databases the index —
 		// no separate migration or VACUUM needed. idx_analysis_win_gammon
 		// (2-column) and idx_analysis_win1 (E3: a strict prefix of the covering
-		// index, same reasoning as idx_position_score above) are simply no
-		// longer (re)created; existing databases keep them until a future
-		// migration drops them outright.
+		// index, same reasoning as idx_position_score above) are dropped from
+		// existing databases in legacyIndexes below.
 		`CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
@@ -421,12 +424,41 @@ func (d *Database) ensureAllTablesExist() error {
 		`CREATE INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
+		// v2.9.0 per-scope history/filter indexes. The 2.8.0→2.9.0 migration
+		// creates them, but a database created fresh by an older SetupDatabase
+		// (which never listed them) went without; the headless daemon serving
+		// such a file paid a full scan per tenant lookup.
+		`CREATE INDEX IF NOT EXISTS idx_command_history_scope   ON command_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_search_history_scope    ON search_history(scope, timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
 	}
 	for _, idx := range v2indexesSafe {
 		_, _ = d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
 	}
-	// idx_position_zobrist (UNIQUE) and idx_match_canonical (UNIQUE) are only safe on fresh DBs
-	// or after a dedup migration; they're handled in phase 03 for existing DBs.
+
+	// Indexes the fresh schema no longer declares (E3 redundancy pass and the
+	// fiche-05 covering index): each is a strict column prefix of an index in
+	// the list above, so nothing plans differently without it. Dropping is
+	// perf-only — no query names an index — hence no DatabaseVersion bump.
+	legacyIndexes := []string{
+		`DROP INDEX IF EXISTS idx_position_score`,
+		`DROP INDEX IF EXISTS idx_analysis_win_gammon`,
+		`DROP INDEX IF EXISTS idx_analysis_win1`,
+	}
+	for _, stmt := range legacyIndexes {
+		_, _ = d.db.Exec(stmt)
+	}
+
+	// idx_position_zobrist (UNIQUE) is only safe after the 2.0.0→2.1.0 dedup
+	// migration, which creates it. idx_match_canonical (UNIQUE) was never
+	// created for migrated databases, so cross-format duplicate detection ran
+	// unindexed there. Import writes an empty canonical hash as NULL
+	// (matches_sqlite.go nullableString); older imports stored '' and two of
+	// those would collide, so normalise first. Best-effort: a database that
+	// genuinely holds two matches with the same canonical hash keeps working
+	// without the index (FindByHash is a plain SELECT), it just stays unindexed.
+	_, _ = d.db.Exec(`UPDATE match SET canonical_hash = NULL WHERE canonical_hash = ''`)
+	_, _ = d.db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical ON match(canonical_hash)`)
 
 	return nil
 }
