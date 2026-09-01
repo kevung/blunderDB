@@ -16,17 +16,42 @@
     //   (CandidateMovesTable's own `baseline` prop). The two never show at
     //   once for the same position.
     //
+    // ADR-0021: those two kinds are two BLOCKS stacked in one table — two
+    // `<tbody>`s, each with its own header row — not ten columns on one line.
+    // Welded into one line, the facts plus the cube block needed 963 px (fr) to
+    // 1125 px (el) against the 996 px the panel has at blunderDB's default
+    // window, so in seven languages out of nine the cube block, last in the
+    // flex row, was pushed under the numbers it answers, and in the other two a
+    // turned cube's longer labels were enough to do it. Stacked, the facts plus
+    // the cube block need 674 px (en) to 824 px (el), and the height is free:
+    // a cube decision is only ever shown when there are no dice, hence no
+    // candidate list.
+    //
+    // One table rather than two stacked tables, because two tables size their
+    // columns independently: the blocks came out different widths with nothing
+    // lining up under anything. Sharing one column grid makes the two blocks
+    // read as one object — same left edge, same right edge, same column stops,
+    // the side markers in a single column.
+    //
     // bottom/top: {win, gammon, backgammon, cubeless} | null — probabilities
     // as fractions [0,1], cubeless as an equity. null renders a blank row
     // (structure is never conditioned on whether a value has landed yet —
     // ADR-0017 rule 3), not a hidden one.
     // bottomEPC/topEPC: race.EPCResult-shaped {epc, pipCount, wastage,
-    // meanRolls, stdDev} | null — the race columns appear only when at
-    // least one is present.
+    // meanRolls, stdDev} | null — the race block appears only when at least
+    // one is present.
     let { bottom = null, top = null, bottomEPC = null, topEPC = null, maskedBottom = false, maskedTop = false, onRevealBottom = () => {}, onRevealTop = () => {}, showProbabilities = true } = $props();
 
     let showRace = $derived(!!(bottomEPC || topEPC));
     let bothShown = $derived(!maskedBottom && !maskedTop);
+
+    // The shared grid is as wide as the widest block: five value columns when
+    // the race block is there, four otherwise. The probability block then ends
+    // in one empty cell rather than in a column of its own width — that empty
+    // cell IS the alignment.
+    let dataCols = $derived(showRace ? 5 : 4);
+    let probHeaders = $derived([$t('epc.facts.gain'), $t('epc.facts.gammon'), $t('epc.facts.backgammon'), $t('epc.facts.cubelessEquity')]);
+    let raceHeaders = $derived([$t('epc.epc'), $t('epc.pipCount'), $t('epc.wastage'), $t('epc.avgRolls'), $t('epc.stdDev')]);
 
     const HIDDEN = '···';
     const DASH = '—';
@@ -39,117 +64,85 @@
         if (a == null || b == null) return null;
         return fmt(a - b);
     }
+
+    // Each block is three rows of the same shape — a side, the other side,
+    // their difference — so the cells are computed here and the markup is
+    // written once, in the snippet below. The Δ row of the race block ends in
+    // two dashes: averaging rolls or differencing standard deviations across
+    // sides means nothing.
+    let probCells = $derived({
+        bottom: [pct(bottom?.win), pct(bottom?.gammon), pct(bottom?.backgammon), eq(bottom?.cubeless)],
+        top: [pct(top?.win), pct(top?.gammon), pct(top?.backgammon), eq(top?.cubeless)],
+        delta: [
+            delta(bottom?.win, top?.win, (v) => sd(100 * v, 2)),
+            delta(bottom?.gammon, top?.gammon, (v) => sd(100 * v, 2)),
+            delta(bottom?.backgammon, top?.backgammon, (v) => sd(100 * v, 2)),
+            delta(bottom?.cubeless, top?.cubeless, (v) => sd(v, 3))
+        ]
+    });
+
+    let raceCells = $derived({
+        bottom: [bottomEPC?.epc?.toFixed(2), bottomEPC?.pipCount, bottomEPC?.wastage?.toFixed(2), bottomEPC?.meanRolls?.toFixed(3), bottomEPC?.stdDev?.toFixed(3)],
+        top: [topEPC?.epc?.toFixed(2), topEPC?.pipCount, topEPC?.wastage?.toFixed(2), topEPC?.meanRolls?.toFixed(3), topEPC?.stdDev?.toFixed(3)],
+        delta: [
+            delta(bottomEPC?.epc, topEPC?.epc, (v) => sd(v, 2)),
+            delta(bottomEPC?.pipCount, topEPC?.pipCount, (v) => sd(v, 0)),
+            delta(bottomEPC?.wastage, topEPC?.wastage, (v) => sd(v, 2)),
+            DASH,
+            DASH
+        ]
+    });
 </script>
 
-<table class="facts-table">
-    <thead>
-        <tr>
+{#snippet cells(row, masked)}
+    {#each Array(dataCols) as _, i (i)}
+        {#if i < row.length}
+            <td class:main-value={i === 0}>{show(masked, row[i])}</td>
+        {:else}
+            <td class="filler"></td>
+        {/if}
+    {/each}
+{/snippet}
+
+{#snippet block(headers, rows)}
+    <tbody class="facts-block">
+        <tr class="head-row">
             <th></th>
-            {#if showProbabilities}
-                <th>{$t('epc.facts.gain')}</th>
-                <th>{$t('epc.facts.gammon')}</th>
-                <th>{$t('epc.facts.backgammon')}</th>
-                <th>{$t('epc.facts.cubelessEquity')}</th>
-            {/if}
-            {#if showRace}
-                <th class="race-col-start">{$t('epc.epc')}</th>
-                <th>{$t('epc.pipCount')}</th>
-                <th>{$t('epc.wastage')}</th>
-                <th>{$t('epc.avgRolls')}</th>
-                <th>{$t('epc.stdDev')}</th>
-            {/if}
+            {#each Array(dataCols) as _, i (i)}
+                <th>{headers[i] ?? ''}</th>
+            {/each}
         </tr>
-    </thead>
-    <tbody>
         <tr class:masked={maskedBottom} onclick={() => maskedBottom && onRevealBottom()} title={maskedBottom ? $t('epc.clickToReveal') : $t('epc.bottomBlack')}>
             <td class="row-label"><span class="player-indicator bottom"></span></td>
-            {#if showProbabilities}
-                <td class="main-value">{show(maskedBottom, pct(bottom?.win))}</td>
-                <td>{show(maskedBottom, pct(bottom?.gammon))}</td>
-                <td>{show(maskedBottom, pct(bottom?.backgammon))}</td>
-                <td>{show(maskedBottom, eq(bottom?.cubeless))}</td>
-            {/if}
-            {#if showRace}
-                <td class="race-col-start">{show(maskedBottom, bottomEPC?.epc?.toFixed(2))}</td>
-                <td>{show(maskedBottom, bottomEPC?.pipCount)}</td>
-                <td>{show(maskedBottom, bottomEPC?.wastage?.toFixed(2))}</td>
-                <td>{show(maskedBottom, bottomEPC?.meanRolls?.toFixed(3))}</td>
-                <td>{show(maskedBottom, bottomEPC?.stdDev?.toFixed(3))}</td>
-            {/if}
+            {@render cells(rows.bottom, maskedBottom)}
         </tr>
         <tr class:masked={maskedTop} onclick={() => maskedTop && onRevealTop()} title={maskedTop ? $t('epc.clickToReveal') : $t('epc.topWhite')}>
             <td class="row-label"><span class="player-indicator top"></span></td>
-            {#if showProbabilities}
-                <td class="main-value">{show(maskedTop, pct(top?.win))}</td>
-                <td>{show(maskedTop, pct(top?.gammon))}</td>
-                <td>{show(maskedTop, pct(top?.backgammon))}</td>
-                <td>{show(maskedTop, eq(top?.cubeless))}</td>
-            {/if}
-            {#if showRace}
-                <td class="race-col-start">{show(maskedTop, topEPC?.epc?.toFixed(2))}</td>
-                <td>{show(maskedTop, topEPC?.pipCount)}</td>
-                <td>{show(maskedTop, topEPC?.wastage?.toFixed(2))}</td>
-                <td>{show(maskedTop, topEPC?.meanRolls?.toFixed(3))}</td>
-                <td>{show(maskedTop, topEPC?.stdDev?.toFixed(3))}</td>
-            {/if}
+            {@render cells(rows.top, maskedTop)}
         </tr>
-        {#if bottom || top || bottomEPC || topEPC}
-            <tr class="delta-row" title={$t('epc.comparison')}>
-                <td class="row-label">Δ</td>
-                {#if showProbabilities}
-                    <td class="main-value"
-                        >{show(
-                            !bothShown,
-                            delta(bottom?.win, top?.win, (v) => sd(100 * v, 2))
-                        )}</td
-                    >
-                    <td
-                        >{show(
-                            !bothShown,
-                            delta(bottom?.gammon, top?.gammon, (v) => sd(100 * v, 2))
-                        )}</td
-                    >
-                    <td
-                        >{show(
-                            !bothShown,
-                            delta(bottom?.backgammon, top?.backgammon, (v) => sd(100 * v, 2))
-                        )}</td
-                    >
-                    <td
-                        >{show(
-                            !bothShown,
-                            delta(bottom?.cubeless, top?.cubeless, (v) => sd(v, 3))
-                        )}</td
-                    >
-                {/if}
-                {#if showRace}
-                    <td class="race-col-start"
-                        >{show(
-                            !bothShown,
-                            delta(bottomEPC?.epc, topEPC?.epc, (v) => sd(v, 2))
-                        )}</td
-                    >
-                    <td
-                        >{show(
-                            !bothShown,
-                            delta(bottomEPC?.pipCount, topEPC?.pipCount, (v) => sd(v, 0))
-                        )}</td
-                    >
-                    <td
-                        >{show(
-                            !bothShown,
-                            delta(bottomEPC?.wastage, topEPC?.wastage, (v) => sd(v, 2))
-                        )}</td
-                    >
-                    <td>—</td>
-                    <td>—</td>
-                {/if}
-            </tr>
-        {/if}
+        <tr class="delta-row" title={$t('epc.comparison')}>
+            <td class="row-label">Δ</td>
+            {@render cells(rows.delta, !bothShown)}
+        </tr>
     </tbody>
+{/snippet}
+
+<!-- One table, one column grid, two blocks: the probability vector and the
+     race numbers share their column stops and their side-marker column, so the
+     pair reads as a single object rather than as two tables that happen to sit
+     one above the other (ADR-0021). -->
+<table class="facts-table">
+    {#if showProbabilities}
+        {@render block(probHeaders, probCells)}
+    {/if}
+    {#if showRace}
+        {@render block(raceHeaders, raceCells)}
+    {/if}
 </table>
 
 <style>
+    /* One grid for both blocks (ADR-0021): same left edge, same column stops,
+       one column of side markers. */
     .facts-table {
         border-collapse: collapse;
         font-size: var(--font-size-base);
@@ -170,15 +163,24 @@
         font-weight: 600;
     }
 
+    /* Hairlines separate values from values, never a header from the block it
+       heads — and the second block opens on a little air instead of a rule. */
     tbody tr + tr td {
         border-top: 1px solid #eee;
     }
 
-    .race-col-start {
-        border-left: 2px solid #e0e0e0;
+    .head-row + tr td {
+        border-top: none;
+    }
+
+    .facts-block + .facts-block th {
+        padding-top: 10px;
     }
 
     .row-label {
+        width: 22px;
+        padding-left: 0;
+        padding-right: 6px;
         font-size: var(--font-size-small);
         font-weight: 600;
         color: #444;

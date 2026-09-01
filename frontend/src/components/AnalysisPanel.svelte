@@ -486,14 +486,20 @@
         cursor: default; /* Make analysis content interactive in MATCH mode (toggle on click) */
     }
 
-    /* Wraps CubeVerdictTable — the three tables it renders (left/right/info)
-       stay laid out side by side here, and the query container from
-       .analysis-panel lets them stack on a narrow panel. */
+    /* Facts, decision and the depth/engine footer, side by side, each next to
+       the last. `justify-content: space-between` used to live here and pushed
+       the facts against the left edge and the decision against the right one,
+       manufacturing a band of white down the middle of the panel — the same
+       defect ADR-0020 rule 8 removed from the Eval panel's badge strip, and
+       what ADR-0021 states as a rule: blocks are laid out at a constant gap
+       and the leftover width is left over, never spread between them. The
+       query container from .analysis-panel still lets them stack on a narrow
+       panel. */
     .tables-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 8px 12px;
+        align-items: flex-start;
+        gap: 8px 20px;
     }
 
     .multi-engine-cube {

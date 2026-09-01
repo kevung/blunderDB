@@ -860,7 +860,9 @@ Chaque quantité se lit dans l'axe qui lui convient plutôt que dans un axe
 unique imposé : la probabilité de gain, de gammon, de backgammon et
 l'équité cubeless de chaque joueur, calculées *avant le jet*, se lisent
 **par joueur** (bas, haut, puis Δ), à gauche de la décision de videau,
-quand aucun dé n'est posé. Dès que des dés sont posés, ces mêmes valeurs
+quand aucun dé n'est posé. Les faits et la décision restent côte à côte :
+la décision de videau ne passe jamais sous les chiffres qui la justifient,
+quelles que soient la langue de l'interface et la position sur le plateau. Dès que des dés sont posés, ces mêmes valeurs
 *avant le jet* changent d'axe : elles se lisent **au trait**, en tête de la
 liste des coups candidats, sous forme d'une ligne italique *avant le jet* —
 pas un coup candidat de plus, un repère contre lequel lire chaque coup.
@@ -869,7 +871,9 @@ mérite du coup, et elle ne porte donc aucune colonne d'erreur. Sur une
 position de bearoff pur, un second tableau, toujours **par joueur** et
 toujours présent, dés posés ou non, porte l'EPC, le pip count, le wastage,
 le nombre moyen de lancers et l'écart type ; ces cinq colonnes ne migrent
-jamais. Le badge de régime, l'attribution du moteur (la profondeur de la
+jamais. Les deux tableaux sont empilés et partagent la même grille de
+colonnes : mêmes bords, mêmes repères de colonne, une seule colonne de
+pastilles — ils se lisent comme un seul objet à deux étages. Le badge de régime, l'attribution du moteur (la profondeur de la
 dernière évaluation y figure aussi) et la case *Défi* forment une bande à
 part, alignée à droite au-dessus des tableaux.
 
@@ -904,24 +908,25 @@ l'aide.
 
 L'utilisateur édite la position des pions sur l'ensemble du plateau,
 exactement comme en mode édition : clic gauche place un pion du joueur du
-bas, clic droit un pion du joueur du haut. Les cinq colonnes de course
-n'apparaissent dans le tableau de faits que lorsque la position obtenue est
-un bearoff pur (tous les pions des deux joueurs dans leur jan) ; sur toute
-autre position, seules les quatre colonnes communes (gain, gammon,
-backgammon, cubeless) répondent, et la décision porte sur les pions ou sur
+bas, clic droit un pion du joueur du haut. Le second tableau, celui de la
+course, n'apparaît que lorsque la position obtenue est un bearoff pur (tous
+les pions des deux joueurs dans leur jan) ; sur toute autre position, seul
+le tableau des quatre colonnes communes (gain, gammon, backgammon,
+cubeless) répond, et la décision porte sur les pions ou sur
 un videau générique selon que des dés sont posés.
 
-Dans le tableau de faits, chaque ligne — repérée par sa pastille de couleur,
-le joueur noir étant toujours en bas — porte, tant qu'aucun dé n'est posé,
-le gain, le gammon, le backgammon (probabilités, sans le signe %) et
-l'équité cubeless du joueur ; sur une position de bearoff, elle porte en
-plus, dés posés ou non, l'EPC, le pip count, le wastage (différence entre
-l'EPC et le pip count), le nombre moyen de lancers et l'écart type.
+Dans chaque tableau de faits, une ligne par joueur — repérée par sa pastille
+de couleur, le joueur noir étant toujours en bas. Le premier porte, tant
+qu'aucun dé n'est posé, le gain, le gammon, le backgammon (probabilités,
+sans le signe %) et l'équité cubeless du joueur ; le second, sur une
+position de bearoff et dés posés ou non, l'EPC, le pip count, le wastage
+(différence entre l'EPC et le pip count), le nombre moyen de lancers et
+l'écart type.
 Lorsque les deux joueurs ont des valeurs à comparer, une ligne **Δ** donne
 les différences *signées* (bas − haut : négatif quand le joueur noir est en
-avance). Hors position de course, poser des dés fait donc disparaître le
-tableau de faits lui-même : les quatre colonnes qu'il portait viennent de
-changer d'axe, au trait, en tête de la liste des coups.
+avance). Hors position de course, poser des dés fait donc disparaître les
+tableaux de faits eux-mêmes : les quatre colonnes qu'ils portaient viennent
+de changer d'axe, au trait, en tête de la liste des coups.
 
 La décision de videau a toujours la même forme, quelle que soit l'origine des
 chiffres — table exacte, régime évalué ou évaluation gammonNet ordinaire :
