@@ -24,7 +24,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onkeydown={handleKeyDown} role="dialog" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
+    <div class="modal-overlay" onkeydown={handleKeyDown} role="dialog" tabindex="-1" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
         <div class="modal-content">
             {#if mode === 'importing'}
                 <h2>{$t('import.importingFiles')} <span class="spinner"></span></h2>
