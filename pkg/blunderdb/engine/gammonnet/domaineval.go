@@ -25,7 +25,15 @@ import (
 // analyses in the same column. Stored v1.1.0 analyses at a match score are
 // therefore stale and re-run; money ones are unchanged but re-run too, the
 // version being per-analysis and not per-referential.
-const EngineVersion = "gammonNet v1.2.0"
+//
+// v1.3.0 is ADR-0022: the live cube curve got its tails back. Every cube
+// equity this package reports for a position past the cash point moves up —
+// on the reference position of that ADR, no-double goes from +0.995 to
+// +1.14 — and with it the verdict, which can now be TooGood where v1.2.0
+// could only ever say Double/Pass. Checker-move equities are untouched (the
+// search values plays, not cube states), but the version is per-analysis,
+// so a stored v1.2.0 position is stale as a whole and re-run as a whole.
+const EngineVersion = "gammonNet v1.3.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for — a
 // match score beyond the MET's horizon, or a cube decision the model refuses

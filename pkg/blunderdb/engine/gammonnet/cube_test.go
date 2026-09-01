@@ -232,7 +232,7 @@ func TestDecideMatchCrawfordForcesNoDouble(t *testing.T) {
 		t.Fatal("Decide refused")
 	}
 	if postDec.Action == NoDouble {
-		t.Errorf("post-Crawford decision unexpectedly NoDouble for the trailer at 70%% "+
+		t.Errorf("post-Crawford decision unexpectedly NoDouble for the trailer at 70%% " +
 			"vs. a leader at match point; Crawford flag may be leaking")
 	}
 }
@@ -290,5 +290,76 @@ func TestValueMatchWithinEquityBand(t *testing.T) {
 		if v < -1.0001 || v > 1.0001 {
 			t.Errorf("Value(%v) = %v, outside [-1, 1]", owner, v)
 		}
+	}
+}
+
+// ── ADR-0022: the live curve's tails ────────────────────────────────────────
+
+// The live curve starts at (0, -L) and ends at (1, +W), in all three cube
+// states. This is the anchor the pre-ADR-0022 shape violated: it capped the
+// top tail at max(1, e(p)), so the cube a player keeps while playing the game
+// on for the gammon was priced at zero.
+func TestLiveCurveReachesTheExtremeAnchors(t *testing.T) {
+	for _, wl := range [][2]float64{{1, 1}, {1.8, 1.2}, {2.5, 1}, {1, 2.5}} {
+		w, l := wl[0], wl[1]
+		for _, owner := range []CubeOwner{CubeOwned, CubeCentred, CubeOpponent} {
+			if got := janowskiEquity(1.0, w, l, owner, 1.0); math.Abs(got-w) > 1e-9 {
+				t.Errorf("owner=%v W=%v: e(1) = %v, want W", owner, w, got)
+			}
+			if got := janowskiEquity(0.0, w, l, owner, 1.0); math.Abs(got+l) > 1e-9 {
+				t.Errorf("owner=%v L=%v: e(0) = %v, want -L", owner, l, got)
+			}
+		}
+	}
+}
+
+// Gammonless, the tails are flat at ±1 — the exact values of the plateau
+// ADR-0022 removed. W = L = 1 is the domain of the two-sided bearoff oracle
+// the cube efficiencies were fitted against, so this test is what says the
+// correction invalidates no measured DefaultEfficiency. Breaking it means a
+// re-fit, not a re-baseline.
+func TestGammonlessTailsStayFlat(t *testing.T) {
+	for _, p := range []float64{0.85, 0.90, 0.95, 0.99, 1.0} {
+		if got := janowskiEquity(p, 1, 1, CubeCentred, 1.0); math.Abs(got-1.0) > 1e-9 {
+			t.Errorf("p=%v: centred live = %v, want 1", p, got)
+		}
+	}
+	for _, p := range []float64{0.0, 0.01, 0.05, 0.10, 0.15} {
+		if got := janowskiEquity(p, 1, 1, CubeOpponent, 1.0); math.Abs(got+1.0) > 1e-9 {
+			t.Errorf("p=%v: opponent live = %v, want -1", p, got)
+		}
+	}
+}
+
+// The reference position of ADR-0022: money, centred cube, a heavy gammon
+// threat past the cash point. Probabilities are the ones the network returns
+// at 2-ply for
+//
+//	XGID=bB-B--C-A---eE---c-caa--B-:0:0:1:00:0:0:0:0:0
+//
+// and the two reference engines both say too good to double, pass:
+//
+//	gnubg 0-ply   ND +1.160   DT +1.773   (20.7 %)
+//	gnubg 2-ply   ND +1.099   DT +1.707   (14.0 %)
+//	XG Roller++   ND +1.082   DT +1.678   (12.1 %)
+//
+// Before ADR-0022 this returned ND = +0.995 and therefore DoublePass. The
+// bracket is deliberately wide: what is pinned is the side of +1 and the
+// order of magnitude, not a fourth decimal the next weights would move.
+func TestDecideMoneyTooGoodOnAGammonishPosition(t *testing.T) {
+	p := probs(0.7292, 0.5347, 0.0475, 0.0545, 0.0030)
+	dec, ok := Decide(p, CubeCentred, nil, DefaultEfficiency(CubeCentred), false)
+	if !ok {
+		t.Fatal("Decide refused")
+	}
+	if dec.Action != TooGood {
+		t.Fatalf("action = %v, want TooGood (eND=%.4f eDT=%.4f eDP=%.4f)",
+			dec.Action, dec.EquityNoDouble, dec.EquityDoubleTake, dec.EquityDoublePass)
+	}
+	if dec.EquityNoDouble <= 1.05 || dec.EquityNoDouble >= 1.25 {
+		t.Errorf("eND = %.4f, want in (1.05, 1.25) — gnubg 2-ply says 1.099, XG 1.082", dec.EquityNoDouble)
+	}
+	if dec.EquityNoDouble <= dec.EquityDouble {
+		t.Errorf("too good but eND (%.4f) <= eDouble (%.4f)", dec.EquityNoDouble, dec.EquityDouble)
 	}
 }

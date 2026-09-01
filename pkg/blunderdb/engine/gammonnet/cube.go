@@ -165,14 +165,34 @@ func livePoints(w, l float64) (tpLive, cpLive float64) {
 	return (l - 0.5) / denom, (l + 1.0) / denom
 }
 
+// segment is the value at p of the straight line through (x0, y0) and
+// (x1, y1). Every piece of every live curve in this file is one of these, so
+// the pieces are named by their endpoints — the spec's own notation — rather
+// than by an expanded slope a sign slip could hide in. A degenerate segment
+// (x1 <= x0, which a bisected breakpoint can produce at the extremes)
+// returns its own endpoint rather than dividing by zero.
+func segment(p, x0, y0, x1, y1 float64) float64 {
+	if x1-x0 <= 0.0 {
+		return y1
+	}
+	return y0 + (y1-y0)*((p-x0)/(x1-x0))
+}
+
 // janowskiEquity is the Janowski equity of one cube state, per unit of cube,
 // at the given efficiency.
 //
-// dead is e(p), used unclamped for the dead branch and as the "too good"
-// continuation for the live one: beyond the point where a live cube's value
-// saturates at the cash equivalent, playing on is scored by the plain
-// cubeless equity, because that IS what happens once nobody has anything
-// left to gain by turning the cube.
+// dead is e(p), the dead branch verbatim. The live branch is piecewise
+// linear across the WHOLE of [0, 1], tails included: it runs from (0, -L) to
+// (1, +W), bending at the breakpoints the cube state puts in its way.
+//
+// THE TAILS ARE NOT PLATEAUX, and this is the whole of the TooGood verdict.
+// Above CP_live a cube holder does not stop at the cash equivalent of +1: he
+// plays the game on for the gammon, still holding the cube, and the curve
+// rises to the average win W at p = 1. Below TP_live its mirror falls to -L.
+// Flattening either tail — this file did, capping the top at max(1, e(p)),
+// until ADR-0022 — prices the retained cube at zero and makes eND > +1
+// impossible unless the CUBELESS equity already exceeds a point, which is to
+// say it makes TooGood unreachable on every real position.
 func janowskiEquity(p, w, l float64, owner CubeOwner, efficiency float64) float64 {
 	tpLive, cpLive := livePoints(w, l)
 	dead := janowskiE(p, w, l)
@@ -180,28 +200,29 @@ func janowskiEquity(p, w, l float64, owner CubeOwner, efficiency float64) float6
 	var live float64
 	switch owner {
 	case CubeOwned:
-		// (0, -L) to (CP_live, +1); beyond, max(1, e(p)).
+		// (0, -L) to (CP_live, +1) to (1, +W).
 		if p <= cpLive {
-			live = -l + (1.0+l)*(p/cpLive)
+			live = segment(p, 0.0, -l, cpLive, 1.0)
 		} else {
-			live = math.Max(dead, 1.0)
+			live = segment(p, cpLive, 1.0, 1.0, w)
 		}
 	case CubeOpponent:
-		// Below TP_live, min(-1, e(p)); above, (TP_live, -1) to (1, W).
+		// (0, -L) to (TP_live, -1) to (1, +W).
 		if p <= tpLive {
-			live = math.Min(dead, -1.0)
+			live = segment(p, 0.0, -l, tpLive, -1.0)
 		} else {
-			live = -1.0 + (w+1.0)*((p-tpLive)/(1.0-tpLive))
+			live = segment(p, tpLive, -1.0, 1.0, w)
 		}
 	default: // CubeCentred
-		// min(-1, e(p)) below TP_live; (TP_live,-1) to (CP_live,1); above,
-		// max(1, e(p)). The centred curve is the other two glued together.
-		if p <= tpLive {
-			live = math.Min(dead, -1.0)
-		} else if p <= cpLive {
-			live = -1.0 + 2.0*((p-tpLive)/(cpLive-tpLive))
-		} else {
-			live = math.Max(dead, 1.0)
+		// The other two glued together: (0, -L) to (TP_live, -1) to
+		// (CP_live, +1) to (1, +W).
+		switch {
+		case p <= tpLive:
+			live = segment(p, 0.0, -l, tpLive, -1.0)
+		case p <= cpLive:
+			live = segment(p, tpLive, -1.0, cpLive, 1.0)
+		default:
+			live = segment(p, cpLive, 1.0, 1.0, w)
 		}
 	}
 
@@ -436,31 +457,42 @@ func levelDead(lv *matchLevel, p float64) float64 {
 // levelLive is the fully-live curve of one stake level — janowskiEquity's
 // piecewise shape with this level's anchors and breakpoints. On a dead level
 // the shape collapses to the dead line for every cube state.
+//
+// Money's endpoints (0, -L) and (1, +W) become this level's own MWC anchors,
+// loseAvg and winAvg, and its cash equivalents ±1 become cash and pass. The
+// tails run to the anchors here for the same reason they do in money
+// (ADR-0022): past the cash point the game is played on, not conceded, and
+// the level is worth its winning anchor at p = 1.
+//
+// Monotone non-decreasing in p for each state — loseAvg <= pass <= cash <=
+// winAvg holds by construction (conceding k dry points beats losing an
+// average of k, 2k, 3k; collecting k is worse than winning that average), so
+// every piece rises. That is the property levelSolve's bisection stands on.
 func levelLive(lv *matchLevel, p float64, owner CubeOwner) float64 {
-	dead := levelDead(lv, p)
 	if lv.dead {
-		return dead
+		return levelDead(lv, p)
 	}
 
 	switch owner {
 	case CubeOwned:
 		if p <= lv.cp {
-			return lv.loseAvg + (lv.cash-lv.loseAvg)*(p/lv.cp)
+			return segment(p, 0.0, lv.loseAvg, lv.cp, lv.cash)
 		}
-		return math.Max(dead, lv.cash)
+		return segment(p, lv.cp, lv.cash, 1.0, lv.winAvg)
 	case CubeOpponent:
 		if p <= lv.tp {
-			return math.Min(dead, lv.pass)
+			return segment(p, 0.0, lv.loseAvg, lv.tp, lv.pass)
 		}
-		return lv.pass + (lv.winAvg-lv.pass)*((p-lv.tp)/(1.0-lv.tp))
+		return segment(p, lv.tp, lv.pass, 1.0, lv.winAvg)
 	default: // CubeCentred
-		if p <= lv.tp {
-			return math.Min(dead, lv.pass)
+		switch {
+		case p <= lv.tp:
+			return segment(p, 0.0, lv.loseAvg, lv.tp, lv.pass)
+		case p <= lv.cp:
+			return segment(p, lv.tp, lv.pass, lv.cp, lv.cash)
+		default:
+			return segment(p, lv.cp, lv.cash, 1.0, lv.winAvg)
 		}
-		if p <= lv.cp {
-			return lv.pass + (lv.cash-lv.pass)*((p-lv.tp)/(lv.cp-lv.tp))
-		}
-		return math.Max(dead, lv.cash)
 	}
 }
 

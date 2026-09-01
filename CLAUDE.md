@@ -243,6 +243,16 @@ Violating one of these is a bug even if all tests pass:
   (`gammonnet/referential.go`) converts once at the domain edge. Never print
   or store either internal scale — at 5-away/5-away they are six times too
   small and look perfectly plausible. See ADR-0019.
+- **The live cube curve has no plateau**: `janowskiEquity`/`levelLive` in
+  `engine/gammonnet/cube.go` run from `(0, −L)` to `(1, +W)`, bending only at
+  the breakpoints the cube state imposes. Clamping either tail to the cash
+  equivalent (`max(dead, 1)`, `min(dead, −1)`) prices the retained cube at
+  zero and makes `TooGood` unreachable unless the *cubeless* equity already
+  exceeds a point — the panel then says "double, passe" on every real
+  too-good position. That is a Jacoby rule, and Jacoby is already applied
+  where it belongs, in `Decide`'s no-double payoffs. See ADR-0022; and the
+  file is a port, so any change here lands in gammonNet's `gn_cube.c` and its
+  spec §2 first, then in `testdata/cube_gold.bin`.
 - **One type scale**: components use the tokens in `frontend/src/style.css`
   (`--font-size-base/-small/-title`), never an absolute `font-size`, and form
   controls carry `font: inherit` — an input inherits neither size nor family, so

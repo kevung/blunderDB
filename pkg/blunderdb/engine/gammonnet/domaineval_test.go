@@ -192,6 +192,21 @@ func TestEvaluatePositionDecodesPostCrawfordSentinel(t *testing.T) {
 // nearly every time — the textbook "too good to double".
 const tooGoodXGID = "XGID=bBBBBBB-C----e-----e--c---:0:0:1:00:0:0:0:0:10"
 
+// tooGoodContactXGID is the ordinary version of the same verdict: a live
+// contact position, ~73 % wins with about half of them gammons, centred
+// cube, money. No closed board, no checkers on the bar — the kind of
+// position a player actually meets, and the kind ADR-0022's plateau made
+// unreportable. tooGoodXGID above cleared the plateau only because its
+// CUBELESS equity already exceeded a point, which is why it kept passing
+// while the model was wrong everywhere else.
+//
+// Both reference engines, on this position:
+//
+//	gnubg 0-ply   ND +1.160   DT +1.773   too good / pass (20.7 %)
+//	gnubg 2-ply   ND +1.099   DT +1.707   too good / pass (14.0 %)
+//	XG Roller++   ND +1.082   DT +1.678   too good / pass (12.1 %)
+const tooGoodContactXGID = "XGID=bB-B--C-A---eE---c-caa--B-:0:0:1:00:0:0:0:0:0"
+
 // TestCubeEquitiesAreNormalisedAtEveryScore guards ADR-0019's bug: at a match
 // score the panel showed Decide's raw match winning chances as equities
 // (the opening position read "No double +0.767" at 3-away/7-away), while the
@@ -254,6 +269,59 @@ func TestCubeEquitiesAreNormalisedAtEveryScore(t *testing.T) {
 			t.Errorf("%s: cubeless %+.4f is far from money's %+.4f — a scale, not a score effect",
 				label, eq, moneyCubeless)
 		}
+	}
+}
+
+// TestTooGoodOnAContactPosition is ADR-0022's regression: the verdict must
+// be reachable on a position whose cubeless equity is BELOW a point, which is
+// where the flattened live curve made it impossible. Before the fix this
+// position reported "Double, Pass" with a no-double equity of +0.995.
+//
+// Money only: the plateau's signature is that eND stops at the cash
+// equivalent, and money is where that equivalent is exactly +1 and the
+// comparison is legible.
+func TestTooGoodOnAContactPosition(t *testing.T) {
+	pos, err := domain.DecodeXGID(tooGoodContactXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+
+	res, err := EvaluatePosition(pos, 2, 0, 0)
+	if err != nil {
+		t.Fatalf("evaluate: %v", err)
+	}
+	cube := res.Cube
+	if cube == nil {
+		t.Fatal("expected a cube decision for a no-dice position")
+	}
+
+	if res.CubeAction != TooGood {
+		t.Errorf("action = %v, want TooGood (ND %+.4f, DT %+.4f, DP %+.4f) — "+
+			"gnubg 2-ply and XG both say too good here",
+			res.CubeAction, cube.CubefulNoDoubleEquity,
+			cube.CubefulDoubleTakeEquity, cube.CubefulDoublePassEquity)
+	}
+	if !strings.HasPrefix(cube.BestCubeAction, "Too good to double") {
+		t.Errorf("best action %q, want a too-good verdict", cube.BestCubeAction)
+	}
+
+	// The plateau's fingerprint: cubeless below a point, cubeful above it.
+	// The flattened curve could only ever produce the second by way of the
+	// first, so a position where they straddle +1 is exactly the one it got
+	// wrong. If they ever land on the same side again, this position has
+	// stopped exercising the tail and the guard is worth nothing —
+	// hence the check, on the pre-roll vector, which is where the cubeless
+	// figure actually lives (DoublingCubeAnalysis.CubelessNoDoubleEquity is
+	// an importer's field; evaluateCube leaves it zero).
+	if res.PreRoll == nil {
+		t.Fatal("no pre-roll facts on a cube decision")
+	}
+	if res.PreRoll.CubelessEquity >= 1.0 {
+		t.Errorf("cubeless %+.4f >= 1 — this position no longer exercises the tail",
+			res.PreRoll.CubelessEquity)
+	}
+	if cube.CubefulNoDoubleEquity <= 1.0 {
+		t.Errorf("cubeful no-double %+.4f does not beat cashing", cube.CubefulNoDoubleEquity)
 	}
 }
 
