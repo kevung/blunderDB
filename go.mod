@@ -2,6 +2,11 @@ module github.com/kevung/blunderdb
 
 go 1.25.13
 
+// frontend/node_modules ships a stray Go package (flatted/golang) that
+// `go test ./...` and `go vet ./...` would otherwise pick up as part of this
+// module.
+ignore ./frontend/node_modules
+
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/jackc/pgx/v5 v5.9.2
@@ -100,6 +105,8 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 )
 
+// Pins go-webview2 (Windows only) below the v1.0.23 the module graph would
+// otherwise resolve. The pin predates the current Wails version and its reason
+// was never recorded; lift it only after a Windows build and a smoke test of
+// the packaged .exe, since it cannot be exercised on Linux.
 replace github.com/wailsapp/go-webview2 => github.com/wailsapp/go-webview2 v1.0.16
-
-// replace github.com/wailsapp/wails/v2 v2.9.2 => /home/unger/go/pkg/mod
