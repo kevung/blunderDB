@@ -266,6 +266,16 @@ CREATE        INDEX IF NOT EXISTS idx_position_off            ON position (tenan
 -- idx_position_score dropped (E3, index redundancy pass, mirrors the SQLite
 -- backend): a strict column prefix of idx_position_score_cube below.
 CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position (tenant_id, match_length, score_1, score_2, cube_value);
+-- Range filters that previously had no supporting index (full scans); see
+-- 010_search_range_indexes.sql for the forward migration that retrofits
+-- already-bootstrapped tenants. idx_position_no_contact's predicate is spelled
+-- `IS TRUE` because the search filter is written `p.no_contact IS TRUE`
+-- (nullable column) — PostgreSQL never matches a bare `WHERE no_contact`
+-- index against it.
+CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position (tenant_id, back_checkers_1);
+CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position (tenant_id, back_checkers_2);
+CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position (tenant_id, pip_1);
+CREATE        INDEX IF NOT EXISTS idx_position_no_contact     ON position (tenant_id) WHERE no_contact IS TRUE;
 CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis (position_id);
 -- Covering index for the win/gammon combo search (fiche-05 T3): position_id
 -- as a trailing column lets `p.id IN (SELECT position_id FROM analysis WHERE
@@ -279,6 +289,11 @@ CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis (tenan
 CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis (tenant_id, best_move_equity_error);
 CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis (tenant_id) WHERE is_forced;
 CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis (tenant_id) WHERE is_close_cube;
+-- Range filters on the remaining rate columns (010_search_range_indexes.sql).
+CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon1    ON analysis (tenant_id, player1_backgammon_rate);
+CREATE        INDEX IF NOT EXISTS idx_analysis_win2           ON analysis (tenant_id, player2_win_rate);
+CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis (tenant_id, player2_gammon_rate);
+CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis (tenant_id, player2_backgammon_rate);
 CREATE        INDEX IF NOT EXISTS idx_match_hash              ON match (tenant_id, match_hash);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match (tenant_id, canonical_hash);
 CREATE        INDEX IF NOT EXISTS idx_move_position           ON move (position_id);
