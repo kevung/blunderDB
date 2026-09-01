@@ -119,10 +119,20 @@ validated "by comparison with GNU Backgammon", which is the comparison that fina
    is Janowski 1993, gammonNet stays MIT — but the *diagnosis* came from reading `MoneyLive()`,
    and a provenance note that hides where a fix came from is worth nothing.
 
-6. **`EngineVersion` becomes `gammonNet v1.3.0`.** Every stored cube analysis past the cash
-   point changes value, so stored v1.2.0 rows are stale and `AnalyzeStaleGammonNet` re-runs
-   them. Checker-move equities do not move — the search values plays, not cube states — but the
-   version is per-analysis, so a position is stale as a whole and re-run as a whole.
+6. **`EngineVersion` becomes `gammonNet v1.2.0`, and that tag is cut upstream.** The label
+   names a real gammonNet release — ADR-0011's rule, "the label `gammonNet v1.0.1` is honest" —
+   so the fix is released before it is claimed. Every stored cube analysis past the cash point
+   changes value, so v1.1.0 rows are stale and `AnalyzeStaleGammonNet` re-runs them.
+   Checker-move equities do not move — the search values plays, not cube states, and
+   `leafValue` is cubeless — but the version is per-analysis, so a position is stale as a whole
+   and re-run as a whole.
+
+   This decision was first written stamping `v1.3.0`, on the reasoning that ADR-0019 had
+   already spent `v1.2.0`. It had not, in the only sense that counts: ADR-0019's sole upstream
+   commit is a doc change in `gn_met.h`, there was no gammonNet v1.2.0 to name, and minting one
+   downstream is precisely the drift ADR-0011 wrote the rule against. Nothing shipped with the
+   wrong label — blunderDB's last release, 0.33.1, predates it — so the number was returned
+   rather than worked around.
 
 ## Considered options
 
@@ -157,5 +167,9 @@ where the player made the first mis-teaches the exact skill it exists to train.
 - The cube gold gate still measures `max|Δ| = 2.463e-06` over 2320 decisions with 4 tolerated
   ties — the same figures as before the fix, which is the port's own statement that it changed
   in step with the reference and not otherwise.
-- Databases analysed with gammonNet v1.2.0 or earlier need a re-run for their cube decisions to
-  be right. That is what the version bump is for.
+- Databases analysed with gammonNet v1.1.0 or earlier need a re-run for their cube decisions to
+  be right. That is what the version bump is for. A database analysed from `main` during the
+  window when ADR-0019 stamped `v1.2.0` without an upstream tag will NOT be re-run — the label
+  matches — and has to be re-analysed by hand; no released build produced one.
+- The gammonNet release that carries this fix also re-establishes the rule the label had
+  quietly stopped obeying: `EngineVersion` names an upstream tag, and there is now one to name.
