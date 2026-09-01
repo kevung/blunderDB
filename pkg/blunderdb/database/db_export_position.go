@@ -32,7 +32,7 @@ import (
 func newExportDB(exportPath string) (*sql.DB, error) {
 	if _, err := os.Stat(exportPath); err == nil {
 		if err := os.Remove(exportPath); err != nil {
-			return nil, fmt.Errorf("cannot remove existing export file: %v", err)
+			return nil, fmt.Errorf("cannot remove existing export file: %w", err)
 		}
 	}
 	exportDB, err := sql.Open("sqlite", exportPath)
@@ -47,7 +47,7 @@ func newExportDB(exportPath string) (*sql.DB, error) {
 	} {
 		if _, err := exportDB.Exec(pragma); err != nil {
 			exportDB.Close()
-			return nil, fmt.Errorf("cannot configure export database: %v", err)
+			return nil, fmt.Errorf("cannot configure export database: %w", err)
 		}
 	}
 	if err := sqlite.Bootstrap(context.Background(), exportDB); err != nil {

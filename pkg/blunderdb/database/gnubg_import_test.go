@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -295,7 +296,7 @@ func TestImportGnuBGDuplicate(t *testing.T) {
 	if err == nil {
 		t.Fatal("Second import should have failed with duplicate error")
 	}
-	if err != ErrDuplicateMatch {
+	if !errors.Is(err, ErrDuplicateMatch) {
 		t.Errorf("Expected ErrDuplicateMatch, got: %v", err)
 	}
 	t.Logf("Duplicate correctly rejected: %v", err)
@@ -441,7 +442,7 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 			ORDER BY g.game_number, m.move_number LIMIT 1`, matchID).
 			Scan(&analysisID, &analysisData)
 		if err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				t.Skip("No analysis data found (may be expected for some games)")
 			}
 			t.Fatalf("Failed to query analysis: %v", err)

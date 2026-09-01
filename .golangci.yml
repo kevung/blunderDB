@@ -8,6 +8,7 @@ linters:
   # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
   # an iteration error otherwise truncates the result silently.
   enable:
+    - errorlint
     - nolintlint
     - rowserrcheck
 
@@ -48,6 +49,11 @@ linters:
       - builtin$
       - examples$
     rules:
+      # db_migration.go is being rewritten on feat/migrations-registry; that
+      # branch removes this rule once the new file lands. Until then, do not
+      # touch the old one — every edit here is a merge conflict there.
+      - linters: [errorlint]
+        path: "db_migration\\.go$"
       # Test files commonly skip error checks; suppress until task 12
       # (test utilities) introduces proper helpers.
       - linters: [errcheck, rowserrcheck]

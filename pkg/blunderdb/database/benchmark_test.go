@@ -56,7 +56,7 @@ func setupBenchDB(tb testing.TB) *Database {
 			os.Remove(dbPath)
 		}
 		if err := db.SetupDatabase(dbPath); err != nil {
-			benchSetupErr = fmt.Errorf("SetupDatabase: %v", err)
+			benchSetupErr = fmt.Errorf("SetupDatabase: %w", err)
 			return
 		}
 
@@ -98,7 +98,7 @@ func setupBenchDB(tb testing.TB) *Database {
 			return nil
 		})
 		if err != nil {
-			benchSetupErr = fmt.Errorf("walking tournois: %v", err)
+			benchSetupErr = fmt.Errorf("walking tournois: %w", err)
 			return
 		}
 

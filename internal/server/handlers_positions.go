@@ -85,7 +85,7 @@ func (s *Server) positionRoutes() []route {
 		{http.MethodPost, "/v1/positions.fromXGID", rpc(func(ctx context.Context, scope string, req xgidReq) (*domain.Position, error) {
 			pos, err := domain.DecodeXGID(req.XGID)
 			if err != nil {
-				return nil, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
+				return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}
 			return &pos, nil
 		})},
@@ -110,7 +110,7 @@ func (s *Server) positionRoutes() []route {
 
 			graphs, err := ingest.MapXGPPosition(f.Name())
 			if err != nil {
-				return xgpResp{}, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
+				return xgpResp{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}
 			if len(graphs) == 0 || graphs[0].Position == nil {
 				return xgpResp{}, fmt.Errorf("%w: no position in file", storage.ErrInvalid)
@@ -128,7 +128,7 @@ func (s *Server) positionRoutes() []route {
 		{http.MethodPost, "/v1/positions.parseText", rpc(func(ctx context.Context, scope string, req parseTextReq) (parser.Result, error) {
 			res, err := parser.ParsePosition(req.Text)
 			if err != nil {
-				return parser.Result{}, fmt.Errorf("%w: %v", storage.ErrInvalid, err)
+				return parser.Result{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}
 			return res, nil
 		})},

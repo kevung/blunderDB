@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -275,7 +276,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load last search command
 	var lastSearchCommand sql.NullString
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_command'`).Scan(&lastSearchCommand)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if lastSearchCommand.Valid {
@@ -285,7 +286,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load last search position
 	var lastSearchPosition sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_position'`).Scan(&lastSearchPosition)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if lastSearchPosition.Valid {
@@ -295,7 +296,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load last position index
 	var lastPositionIndex sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_index'`).Scan(&lastPositionIndex)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if lastPositionIndex.Valid {
@@ -308,7 +309,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load last position IDs
 	var lastPositionIDs sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_ids'`).Scan(&lastPositionIDs)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if lastPositionIDs.Valid && lastPositionIDs.String != "" {
@@ -321,7 +322,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load has active search flag
 	var hasActiveSearch sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_has_active_search'`).Scan(&hasActiveSearch)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if hasActiveSearch.Valid {
@@ -331,7 +332,7 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	// Load views JSON
 	var viewsJSON sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_views'`).Scan(&viewsJSON)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, err
 	}
 	if viewsJSON.Valid {
@@ -393,7 +394,7 @@ func (d *Database) SaveFilter(name, command string) error {
 	// Check if a filter with the same name already exists
 	var existingID int64
 	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, name).Scan(&existingID)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
 	if existingID > 0 {
@@ -523,7 +524,7 @@ func (d *Database) SaveEditPosition(filterName, editPosition string) error {
 	// Check if a filter with the same name already exists
 	var existingID int64
 	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
 	if existingID > 0 {
@@ -556,7 +557,7 @@ func (d *Database) LoadEditPosition(filterName string) (string, error) {
 	var editPosition string
 	err = d.db.QueryRow(`SELECT edit_position FROM filter_library WHERE name = ?`, filterName).Scan(&editPosition)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil // No edit position found
 		}
 		return "", err
@@ -572,7 +573,7 @@ func (d *Database) SaveExcludePosition(filterName, excludePosition string) error
 
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
 	if existingID > 0 {
@@ -594,7 +595,7 @@ func (d *Database) LoadExcludePosition(filterName string) (string, error) {
 	var excludePosition sql.NullString
 	err := d.db.QueryRow(`SELECT exclude_position FROM filter_library WHERE name = ?`, filterName).Scan(&excludePosition)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil
 		}
 		return "", err
