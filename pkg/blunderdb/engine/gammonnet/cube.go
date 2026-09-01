@@ -612,6 +612,16 @@ func Value(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effic
 	if count < 2 {
 		return 0, false
 	}
+	// The Crawford game has no cube in play at all — the same flat fact
+	// Decide applies to its verdict, and it applies to the VALUE too: the
+	// chain above prices doublings the rules forbid, and walking it here
+	// valued the opening at 4-away/1-away Crawford at +0.68 against +0.16
+	// for the dead cube (gnubg cubeful == gnubg cubeless in that game,
+	// probe of 2026-09-02). Dead value at the current stake, whoever "owns"
+	// a cube nobody can turn. Mirrors gn_cube.c.
+	if state.Crawford {
+		return 2.0*levelDead(&levels[0], in.Win) - 1.0, true
+	}
 	return 2.0*levelBlend(&levels[0], in.Win, owner, efficiency) - 1.0, true
 }
 
@@ -736,6 +746,17 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 	eND := levelBlend(&levels[0], in.Win, owner, efficiency)
 	eDT := levelBlend(&levels[1], in.Win, CubeOpponent, efficiency)
 	eDP := levels[0].cash
+	eDouble := math.Min(eDT, eDP)
+	if state.Crawford {
+		// No cube in play: the position is worth its dead value (see
+		// Value), and there is no double branch to price — it is reported
+		// worth exactly what not doubling is, so the panel's "best of the
+		// two" subtraction reads a zero-cost non-option, never a "missed
+		// double" in a game where doubling is illegal. Mirrors gn_cube.c.
+		eND = levelDead(&levels[0], in.Win)
+		eDT = eND
+		eDouble = eND
+	}
 
 	// The opponent's take point at the doubled stake, on the curve the
 	// decision actually used — blended at this efficiency, bisected because
@@ -755,7 +776,7 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 	return Decision{
 		Action:           action,
 		EquityNoDouble:   eND,
-		EquityDouble:     math.Min(eDT, eDP),
+		EquityDouble:     eDouble,
 		EquityDoubleTake: eDT,
 		EquityDoublePass: eDP,
 		TakePoint:        tp,

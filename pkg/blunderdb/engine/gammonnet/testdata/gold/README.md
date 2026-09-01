@@ -80,6 +80,12 @@ tolerance first, not assuming it.
 decision in `../cube_corpus.bin` — money and match-score, every owner, both Jacoby settings,
 and a spread of Crawford states. Read by `TestCubeDecideMatchesTheGoldFile`.
 
+**Regenerated on 2026-09-02 (Crawford dead value).** `gn_cube.c` now values the Crawford game
+at the dead cube — `gn_cube_value` and the no-double/double equities of `gn_cube_decide` return
+the cubeless match equity there instead of walking the redouble chain — and the port changed in
+step (`Value`, `Decide`). Only the corpus's Crawford cases moved; the measured margin below is
+unchanged. Regenerate against a checkout that contains that fix (gammonNet `348e81e` or later).
+
 **Regenerated on 2026-09-01 (ADR-0022).** The weights are still v1.0.1 — this harness never
 loads them — but `gn_cube.c` is no longer v1.0.1's: the live cube curve's tails were flat there,
 and the fix landed upstream and here together. The gold file therefore tracks gammonNet **after**
