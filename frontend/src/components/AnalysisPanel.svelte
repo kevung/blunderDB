@@ -1,9 +1,9 @@
 <script>
+    import { onMount, onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
     import { nextSort } from '../utils/tableSort.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { openPanels, PANEL } from '../stores/uiStore';
     import { normalizeCubeAction } from '../utils/cubeAction.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
@@ -77,44 +77,50 @@
         }
     });
 
-    // Side effects when analysis panel opens or closes
-    let _prevAnalysisVisible = false;
-    $effect(() => {
-        const v = $openPanels.has(PANEL.ANALYSIS);
-        if (v !== _prevAnalysisVisible) {
-            if (v) {
-                const ctx = matchCtx;
-                if (ctx.isMatchMode) {
-                    const currentMovePos = ctx.movePositions[ctx.currentIndex];
-                    if (currentMovePos && currentMovePos.move_type === 'checker') {
-                        if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
+    // Side effects when the analysis panel opens or closes. TabbedPanel mounts
+    // and destroys this component on every tab switch (its {#if} pattern, see
+    // that file's header comment) — onMount/onDestroy are the events that
+    // actually fire "opens"/"closes" here, unlike openPanels/PANEL.ANALYSIS,
+    // which the 'analysis' tab has never driven since the tabHandler.js
+    // refactor (applyTabPanels only wires matches/stats/tournaments/
+    // collections to a PANEL) and so is always empty for this panel.
+    onMount(() => {
+        const ctx = matchCtx;
+        if (ctx.isMatchMode) {
+            const currentMovePos = ctx.movePositions[ctx.currentIndex];
+            if (currentMovePos && currentMovePos.move_type === 'checker') {
+                if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
+                    analysisStore.update((current) => ({
+                        ...current,
+                        doublingCubeAnalysis: null,
+                        playedCubeAction: ''
+                    }));
+                } else {
+                    loadCubeAnalysisForCurrentPosition().then((hasCubeInGame) => {
+                        if (!hasCubeInGame) {
                             analysisStore.update((current) => ({
                                 ...current,
                                 doublingCubeAnalysis: null,
                                 playedCubeAction: ''
                             }));
-                        } else {
-                            loadCubeAnalysisForCurrentPosition().then((hasCubeInGame) => {
-                                if (!hasCubeInGame) {
-                                    analysisStore.update((current) => ({
-                                        ...current,
-                                        doublingCubeAnalysis: null,
-                                        playedCubeAction: ''
-                                    }));
-                                }
-                            });
                         }
-                    }
+                    });
                 }
-                setTimeout(() => {
-                    const analysisEl = document.getElementById('analysisPanel');
-                    if (analysisEl) analysisEl.focus();
-                }, 0);
-            } else {
-                selectedMoveStore.set(null);
             }
-            _prevAnalysisVisible = v;
         }
+        setTimeout(() => {
+            const analysisEl = document.getElementById('analysisPanel');
+            if (analysisEl) analysisEl.focus();
+        }, 0);
+    });
+
+    // A move selected here must not survive past this panel: keyboardService's
+    // global dispatch withholds j/k/ArrowLeft/ArrowRight (position browsing)
+    // everywhere in the app while selectedMoveStore is set, so a value left
+    // behind by a dead cleanup path silently froze navigation app-wide — the
+    // very bug this onDestroy replaces (dead code above never ran it).
+    onDestroy(() => {
+        selectedMoveStore.set(null);
     });
 
     function handleKeyDown(event) {

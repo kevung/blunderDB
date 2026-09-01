@@ -54,7 +54,7 @@ vi.mock('../services/positionService.js', () => ({
 }));
 
 const { handleKeyDown } = await import('../services/keyboardService.js');
-const { openPanels, PANEL } = await import('../stores/uiStore.js');
+const { activeTabStore } = await import('../stores/uiStore.js');
 
 /** Dispatch a Ctrl-combo and report whether the WebView default survived. */
 function ctrl(key, extra = {}) {
@@ -70,14 +70,14 @@ describe('keyboard shortcuts while editing text', () => {
         vi.clearAllMocks();
         // The comment panel is open, which is what used to arm the blanket
         // preventDefault() on every Ctrl combo.
-        openPanels.set(new Set([PANEL.COMMENT]));
+        activeTabStore.set('comments');
         document.body.innerHTML = '<div class="comment-panel"><textarea id="commentTextArea"></textarea></div>';
         textarea = document.getElementById('commentTextArea');
         textarea.focus();
     });
 
     afterEach(() => {
-        openPanels.set(new Set());
+        activeTabStore.set('matches');
         document.body.innerHTML = '';
     });
 
@@ -124,7 +124,7 @@ describe('keyboard shortcuts while editing text', () => {
 describe('keyboard shortcuts with the board focused', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        openPanels.set(new Set());
+        activeTabStore.set('matches');
         document.body.innerHTML = '<div id="board" tabindex="-1"></div>';
         document.getElementById('board').focus();
     });

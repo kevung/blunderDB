@@ -1,6 +1,6 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
-import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, openPanels, PANEL, activeTabStore } from '../stores/uiStore.js';
+import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -89,7 +89,7 @@ export function toggleHelpModal() {
             if (get(activeModal) === MODAL.COMMAND) {
                 const el = document.querySelector('.command-input');
                 if (el) /** @type {HTMLElement} */ (el).focus();
-            } else if (get(openPanels).has(PANEL.COMMENT)) {
+            } else if (get(activeTabStore) === 'comments') {
                 const el = document.getElementById('commentsTextArea');
                 if (el) el.focus();
             }
@@ -166,9 +166,12 @@ export function handleKeyDown(event) {
         return;
     }
 
-    // Analysis panel focus handling
+    // Analysis panel focus handling. The panel focuses itself when it opens, so
+    // this branch is what the user hits first: it must let through the same
+    // app-wide escape hatches every other panel guarantees via panelKeyGuard()
+    // — Ctrl/Meta combos, Space (opens the command line) and '?' (opens help).
     if (document.activeElement.closest('.analysis-panel')) {
-        if (event.ctrlKey || event.key === 'Escape' || event.key === 'Tab') {
+        if (event.ctrlKey || event.metaKey || event.key === 'Escape' || event.key === 'Tab' || event.code === 'Space' || event.key === '?') {
             // Let shortcut through
         } else {
             const isNavigationKey =
@@ -188,8 +191,12 @@ export function handleKeyDown(event) {
         }
     }
 
-    // Panel focus handling
-    const showComment = get(openPanels).has(PANEL.COMMENT);
+    // Panel focus handling. openPanels/PANEL.COMMENT is never set — the
+    // 'comments' tab has driven no PANEL since the tabHandler.js refactor
+    // (applyTabPanels only wires matches/stats/tournaments/collections there)
+    // — so the tab itself is the only live signal that the comment panel is
+    // the one TabbedPanel currently has mounted.
+    const showComment = get(activeTabStore) === 'comments';
     if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();

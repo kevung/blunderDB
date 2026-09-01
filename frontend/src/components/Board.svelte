@@ -8,7 +8,7 @@
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, showPipcountStore, activeTabStore } from '../stores/uiStore';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -21,7 +21,13 @@
     let mode = $derived($statusBarModeStore);
     let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
     let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
-    let showComment = $derived($openPanels.has(PANEL.COMMENT));
+    // openPanels/PANEL.COMMENT is never set: the 'comments' tab has driven no
+    // PANEL since the tabHandler.js refactor (applyTabPanels only wires
+    // matches/stats/tournaments/collections there), so that flag reads as
+    // permanently closed. The comment panel is the CommentPanel instance
+    // TabbedPanel mounts, one-to-one with the active tab (see that file's
+    // {#if} — same fix as AnalysisPanel's stuck selectedMoveStore).
+    let showComment = $derived($activeTabStore === 'comments');
     let showPipcount = $derived($showPipcountStore);
 
     let canvasCfg = {
