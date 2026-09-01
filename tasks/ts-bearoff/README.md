@@ -96,6 +96,23 @@ daemon). This violates the parity invariant before we even start.
       `raccourcis.rst`, `CLI_USAGE.md`, `mode_headless.rst` (daemon config
       var). Translations at release time as usual.
 
+## Regenerating the correction coefficients
+
+`pkg/blunderdb/engine/race/correction_coeffs.go` is written by `cmd/calibrace`
+and carries a `//go:generate` directive. The oracle is the TS-06-11 table
+published as the `bearoff-data-1` release asset (1.2 GB, never in git); the
+tool is deterministic (fixed seed), so the same oracle yields the same file.
+From the repo root:
+
+```bash
+BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go generate ./pkg/blunderdb/engine/race
+go test -count=1 ./pkg/blunderdb/engine/race   # the oracle test runs when the variable is set
+```
+
+Regenerate only when the feature set (`RawWinProbFeatures`) or the sampling
+changes; the σ / p99 / max bounds in the file are asserted by
+`convolve_test.go` and quoted in the user documentation.
+
 ## Follow-ups (out of scope, do not silently drop)
 
 - Validate the correction beyond 11 checkers: generate TS-06-12 locally with

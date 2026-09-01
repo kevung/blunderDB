@@ -2,7 +2,12 @@
 // pkg/blunderdb/engine/race against a TS-06-11 two-sided bearoff oracle
 // (the bearoff-data-1 release asset; never committed to git).
 //
-// Usage:
+// Usage — the generated file carries a //go:generate directive, so from the
+// repo root:
+//
+//	BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go generate ./pkg/blunderdb/engine/race
+//
+// or directly:
 //
 //	BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go run ./cmd/calibrace \
 //	    -out pkg/blunderdb/engine/race/correction_coeffs.go
@@ -20,6 +25,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"sort"
 	"time"
 
@@ -141,7 +147,13 @@ func main() {
 //
 // Calibrated against %s (TS-06-%02d), %d samples in the estimated regime
 // (max(checkers) ≥ 7), 70/30 train/holdout split, seed 20260809.
-// Regenerate: BLUNDERDB_TS11_PATH=… go run ./cmd/calibrace -out %s
+// Regenerate (the oracle is the bearoff-data-1 release asset, never in git):
+//
+//	BLUNDERDB_TS11_PATH=/path/to/gnubg_ts6x11.bd go generate ./pkg/blunderdb/engine/race
+//
+// which runs the directive below; go generate passes the environment through.
+
+//go:generate go run github.com/kevung/blunderdb/cmd/calibrace -out %s
 
 package race
 
@@ -157,7 +169,7 @@ const (
 )
 
 var correctionCoeffs = [nCorrectionCoeffs]float64{
-`, race.DownloadedFileName, maxC, *samples, *out, nCoeffs, maxC, sigma, p99, maxAbs)
+`, race.DownloadedFileName, maxC, *samples, filepath.Base(*out), nCoeffs, maxC, sigma, p99, maxAbs)
 	for _, c := range coeffs {
 		fmt.Fprintf(f, "\t%v,\n", c)
 	}
