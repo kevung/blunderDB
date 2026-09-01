@@ -558,7 +558,40 @@ jobs:
           files: |
             */bin/*
 
-  # Builds the docs in all 9 languages and attaches the PDFs to the release.
+  # Cheap gate for the `docs` job below: did this push/PR touch anything the
+  # documentation build reads? Only doc/** and this workflow can change the
+  # output, yet the job used to run on every PR (~10 min, ~1 GB of LaTeX from
+  # apt) regardless. Tag pushes and manual runs bypass the gate — see the `if`
+  # on `docs` — so the filter is not even evaluated there.
+  docs-changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ !startsWith(github.ref, 'refs/tags/') && github.event_name != 'workflow_dispatch' }}
+    # paths-filter lists a pull request's files through the API (pull-requests:
+    # read); on a push it diffs against the commit before the push from the
+    # checkout, fetching what it needs itself.
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect documentation changes
+        id: filter
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3.0.4
+        with:
+          filters: |
+            docs:
+              - 'doc/**'
+              - '.github/workflows/build.yml'
+
+  # Builds the docs in all 9 languages; on a version tag it also builds the
+  # PDFs and attaches them to the release. Runs when the gate above saw a
+  # documentation change, and unconditionally on tags and manual dispatch
+  # (the release must never ship without its docs because a filter was wrong).
   # Deliberately carries NO concurrency group: it used to share the Pages queue,
   # and a merge landing right after a tag push evicted the tag's job (a group
   # holds one pending run at most), so the release silently shipped without its
@@ -566,10 +599,25 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: docs-changes
+    # `!cancelled()` replaces the implicit success() so a *skipped* gate (tag,
+    # dispatch) does not skip this job too; the rest of the expression is the
+    # actual decision.
+    if: >-
+      !cancelled() && (
+        startsWith(github.ref, 'refs/tags/') ||
+        github.event_name == 'workflow_dispatch' ||
+        needs.docs-changes.outputs.docs == 'true'
+      )
     # softprops/action-gh-release below (tag pushes only) needs contents:write
     # to attach the PDFs to the release.
     permissions:
       contents: write
+    env:
+      # PDFs (LaTeX, nine languages, ~1 GB of apt packages) only on a release
+      # tag; a PR or a merge gets the HTML build alone, which is what catches
+      # broken RST/translations. build.py honours this variable.
+      BUILD_PDF: ${{ startsWith(github.ref, 'refs/tags/') && '1' || '0' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -578,6 +626,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: doc/requirements.txt
 
       - name: Set outputs
         id: vars
@@ -588,19 +638,27 @@ jobs:
             echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r ./doc/requirements.txt
+        shell: bash
+
+      - name: Install LaTeX (release tags only)
+        if: env.BUILD_PDF == '1'
+        run: |
           sudo apt-get update && sudo apt-get install -y latexmk texlive-xetex texlive-fonts-recommended texlive-latex-extra fonts-freefont-otf fonts-noto-cjk texlive-lang-cjk
         shell: bash
 
       - name: Build documentation
+        env:
+          BLUNDERDB_DOC_SKIP_PDF: ${{ env.BUILD_PDF == '1' && '0' || '1' }}
         run: |
           cd ./doc
           python build.py
 
       - name: Rename PDF files
+        if: env.BUILD_PDF == '1'
         run: |
           for lang in fr en de el es fi it ja ru; do
             find ./doc/build/pdf_${lang}/ -name '*.pdf' -exec mv {} ./doc/build/pdf_${lang}/blunderDB-${{ steps.vars.outputs.version }}-${lang}.pdf \;
@@ -613,6 +671,7 @@ jobs:
 
       # Upload build assets
       - uses: actions/upload-artifact@v4
+        if: env.BUILD_PDF == '1'
         with:
           name: blunderDB pdf docs
           path: |
@@ -636,7 +695,10 @@ jobs:
 
   # Only publish on push (main / tags); pull_request runs still build the docs
   # above to catch breakage, but must not push to gh-pages — doing so both
-  # pollutes the published site and races the real push deploys.
+  # pollutes the published site and races the real push deploys. When `docs`
+  # is skipped (a push that touched no documentation) this job is skipped with
+  # it: the site is a pure function of doc/**, so there is nothing new to
+  # publish.
   pages:
     runs-on: ubuntu-latest
     timeout-minutes: 10
