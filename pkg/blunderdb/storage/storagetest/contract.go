@@ -15,8 +15,8 @@
 //
 // This file holds the case table and the fixtures several families share;
 // the cases themselves live in one contract_<family>.go per family
-// (positions, match, match_delete, tournament, search, collections, anki,
-// stats, stats_detail, misc). A new case is registered here and written in
+// (positions, match, match_delete, tournament, search, collections,
+// comments, anki, stats, stats_detail, misc). A new case is registered here and written in
 // its family's file.
 package storagetest
 
@@ -55,6 +55,12 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Collection/CopyPosition", testCollectionCopyPosition},
+		{"Collection/ReorderPositions", testCollectionReorderPositions},
+		{"Collection/RenameAndDelete", testCollectionRenameAndDelete},
+		{"Collection/PositionIndexMap", testCollectionPositionIndexMap},
+		{"Comment/CRUD", testCommentCRUD},
+		{"Comment/SearchAcrossPositions", testCommentSearchAcrossPositions},
+		{"Comment/PositionDeleteCascades", testCommentPositionDeleteCascades},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
 		{"Filter/SaveAndList", testFilterSaveAndList},
 		{"History/SaveLoadClear", testCommandHistory},
