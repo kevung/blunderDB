@@ -881,7 +881,7 @@
 
     function setBoardOrientation(orientation) {
         boardCfg.orientation = orientation;
-        drawBoard();
+        scheduleRedraw();
     }
 
     function handleOrientationChange(event) {
@@ -933,7 +933,11 @@
         canvas.addEventListener('mousedown', handleRectangleAndDiceClick);
         canvas.addEventListener('mousedown', handleScoreClick);
         canvas.addEventListener('contextmenu', handleContextMenu);
-        drawBoard();
+        // No direct drawBoard() here: subscribeBoardRedrawTriggers() below
+        // fires each subscription once on the spot (svelte/store calls the
+        // callback synchronously), which schedules the first paint on the
+        // next animation frame — before the browser paints the mounted DOM.
+        // A synchronous draw on top of it built the whole scene twice.
         window.addEventListener('resize', resizeBoard);
         window.addEventListener('keydown', handleOrientationChange);
         window.addEventListener('keydown', handleKeyDown);

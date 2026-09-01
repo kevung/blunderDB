@@ -23,6 +23,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 // ── two.js mock ──────────────────────────────────────────────────────────────
 // Board.svelte only ever calls appendTo/clear/update/makeGroup/makeText/
@@ -124,13 +125,16 @@ describe('Board — redraws are coalesced to one drawBoard() per frame (fiche-12
         const two = twoInstances[0];
         expect(two).toBeTruthy();
 
-        // Mount does its own synchronous first paint, plus the redraw
-        // triggers' subscribe() firing once immediately (svelte/store invokes
-        // the callback synchronously on subscription) which schedules one
-        // coalesced frame. Flush it so we start from a clean baseline.
+        // Mount does not draw synchronously: the redraw triggers' subscribe()
+        // fire once immediately (svelte/store invokes the callback
+        // synchronously on subscription) and that schedules the one coalesced
+        // frame the first paint rides on. Flush it so we start from a clean
+        // baseline.
+        expect(two.clear.mock.calls.length).toBe(0);
         expect(pendingFrames.size).toBe(1);
         flushFrame();
         const baseline = two.clear.mock.calls.length;
+        expect(baseline).toBe(1);
 
         // Simulate a position navigation the way positionService.showPosition()
         // drives it: position, selected move and analysis all update in the
@@ -194,6 +198,26 @@ describe('Board — redraws are coalesced to one drawBoard() per frame (fiche-12
         expect(pendingFrames.size).toBe(0);
     });
 
+    test('Ctrl-Arrow (board orientation) redraws on the next frame, not inline', async () => {
+        render(Board);
+        await tick();
+        await tick();
+        flushFrame(); // consume the mount-time coalesced frame
+
+        const two = twoInstances[0];
+        const baseline = two.clear.mock.calls.length;
+
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', ctrlKey: true }));
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', ctrlKey: true }));
+
+        expect(two.clear.mock.calls.length).toBe(baseline);
+        expect(pendingFrames.size).toBe(1);
+
+        flushFrame();
+
+        expect(two.clear.mock.calls.length).toBe(baseline + 1);
+    });
+
     test('an unmount with a pending frame cancels it (no draw on a detached board)', async () => {
         const { unmount } = render(Board);
         await tick();
@@ -211,5 +235,56 @@ describe('Board — redraws are coalesced to one drawBoard() per frame (fiche-12
         // Flushing the frame after teardown must not draw again.
         flushFrame();
         expect(two.clear.mock.calls.length).toBe(drawsAtUnmount);
+    });
+});
+
+// The positionStore subscription in Board.svelte carries one business rule
+// next to the redraw: the move picked in the analysis panel is dropped only on
+// a *real* navigation, i.e. when the position id changes. Every other tick of
+// the store (a board edit, an analysis refresh re-setting the same position)
+// must leave it alone — otherwise the arrows the user asked for vanish on the
+// first unrelated store write.
+describe('Board — selectedMoveStore is reset only when the position id changes', () => {
+    beforeEach(() => {
+        resetStores();
+        stubRaf();
+    });
+    afterEach(() => {
+        cleanup();
+        twoInstances.length = 0;
+        vi.unstubAllGlobals();
+    });
+
+    async function mountOnPosition(id) {
+        render(Board);
+        await tick();
+        await tick();
+        flushFrame();
+        const position = emptyPosition();
+        position.id = id;
+        positionStore.set(position);
+        flushFrame();
+    }
+
+    test('the same id written again keeps the selected move', async () => {
+        await mountOnPosition(42);
+        selectedMoveStore.set('24/18 13/7');
+        expect(get(selectedMoveStore)).toBe('24/18 13/7');
+
+        // A board edit or an analysis refresh: new object, same position.
+        positionStore.update((p) => ({ ...p }));
+        positionStore.set({ ...get(positionStore), id: 42 });
+        flushFrame();
+
+        expect(get(selectedMoveStore)).toBe('24/18 13/7');
+    });
+
+    test('a different id clears the selected move', async () => {
+        await mountOnPosition(42);
+        selectedMoveStore.set('24/18 13/7');
+
+        positionStore.set({ ...get(positionStore), id: 43 });
+
+        expect(get(selectedMoveStore)).toBeNull();
     });
 });
