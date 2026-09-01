@@ -27,7 +27,7 @@
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
-    import { analysisStore } from './stores/analysisStore.js';
+    import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
     import {
         showImportProgressModalStore,
@@ -185,42 +185,7 @@
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set(emptyPosition());
-            analysisStore.set({
-                positionId: null,
-                xgid: '',
-                player1: '',
-                player2: '',
-                analysisType: '',
-                analysisEngineVersion: '',
-                checkerAnalysis: { moves: [] },
-                doublingCubeAnalysis: {
-                    analysisDepth: '',
-                    playerWinChances: 0,
-                    playerGammonChances: 0,
-                    playerBackgammonChances: 0,
-                    opponentWinChances: 0,
-                    opponentGammonChances: 0,
-                    opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0,
-                    cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0,
-                    cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0,
-                    cubefulDoublePassError: 0,
-                    bestCubeAction: '',
-                    wrongPassPercentage: 0,
-                    wrongTakePercentage: 0
-                },
-                allCubeAnalyses: [],
-                playedMove: '',
-                playedCubeAction: '',
-                playedMoves: [],
-                playedCubeActions: [],
-                creationDate: '',
-                lastModifiedDate: ''
-            });
+            analysisStore.set(emptyAnalysis());
         }
     });
 

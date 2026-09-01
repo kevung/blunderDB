@@ -14,7 +14,7 @@ import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
+import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
 import { logger } from '../utils/logger.js';
@@ -41,42 +41,7 @@ function resetAnkiStores() {
 }
 
 function resetAnalysisAndCommentStores() {
-    analysisStore.set({
-        positionId: null,
-        xgid: '',
-        player1: '',
-        player2: '',
-        analysisType: '',
-        analysisEngineVersion: '',
-        checkerAnalysis: { moves: [] },
-        doublingCubeAnalysis: {
-            analysisDepth: '',
-            playerWinChances: 0,
-            playerGammonChances: 0,
-            playerBackgammonChances: 0,
-            opponentWinChances: 0,
-            opponentGammonChances: 0,
-            opponentBackgammonChances: 0,
-            cubelessNoDoubleEquity: 0,
-            cubelessDoubleEquity: 0,
-            cubefulNoDoubleEquity: 0,
-            cubefulNoDoubleError: 0,
-            cubefulDoubleTakeEquity: 0,
-            cubefulDoubleTakeError: 0,
-            cubefulDoublePassEquity: 0,
-            cubefulDoublePassError: 0,
-            bestCubeAction: '',
-            wrongPassPercentage: 0,
-            wrongTakePercentage: 0
-        },
-        allCubeAnalyses: [],
-        playedMove: '',
-        playedCubeAction: '',
-        playedMoves: [],
-        playedCubeActions: [],
-        creationDate: '',
-        lastModifiedDate: ''
-    });
+    analysisStore.set(emptyAnalysis());
     commentTextStore.set('');
     selectedMoveStore.set(null);
 }
