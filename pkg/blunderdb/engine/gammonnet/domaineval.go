@@ -255,6 +255,10 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 		}
 
 		mine := InvertProbs(&c.Probs) // Candidate.Probs is the RESULTING position's distribution, opponent's POV
+		// domain.CheckerMove's chance fields are percentages [0,100] — the
+		// scale every importer (xgmap.go, gnubgmap.go, bgfmap.go) and
+		// CandidateMovesTable.svelte's unscaled .toFixed(2) already use, not
+		// the fraction PreRollFacts below is in.
 		moves = append(moves, domain.CheckerMove{
 			Index:                    i,
 			AnalysisDepth:            depthLabel,
@@ -262,12 +266,12 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 			Move:                     notation,
 			Equity:                   equity,
 			EquityError:              equityError,
-			PlayerWinChance:          float64(mine[PWin]),
-			PlayerGammonChance:       float64(mine[PWinGammon]),
-			PlayerBackgammonChance:   float64(mine[PWinBackgammon]),
-			OpponentWinChance:        1 - float64(mine[PWin]),
-			OpponentGammonChance:     float64(mine[PLoseGammon]),
-			OpponentBackgammonChance: float64(mine[PLoseBackgammon]),
+			PlayerWinChance:          100 * float64(mine[PWin]),
+			PlayerGammonChance:       100 * float64(mine[PWinGammon]),
+			PlayerBackgammonChance:   100 * float64(mine[PWinBackgammon]),
+			OpponentWinChance:        100 * (1 - float64(mine[PWin])),
+			OpponentGammonChance:     100 * float64(mine[PLoseGammon]),
+			OpponentBackgammonChance: 100 * float64(mine[PLoseBackgammon]),
 		})
 	}
 	return moves, nil
@@ -361,15 +365,19 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		best = effectiveDouble
 	}
 
+	// domain.DoublingCubeAnalysis's chance fields are percentages [0,100],
+	// same convention as CheckerMove above and every importer — unlike
+	// preRoll above, built from the same probs but staying a fraction for
+	// EPCPanel's live "position fact" display (moverFactsToSides.js).
 	return &domain.DoublingCubeAnalysis{
 		AnalysisDepth:             depthLabel,
 		AnalysisEngine:            EngineVersion,
-		PlayerWinChances:          float64(probs[PWin]),
-		PlayerGammonChances:       float64(probs[PWinGammon]),
-		PlayerBackgammonChances:   float64(probs[PWinBackgammon]),
-		OpponentWinChances:        1 - float64(probs[PWin]),
-		OpponentGammonChances:     float64(probs[PLoseGammon]),
-		OpponentBackgammonChances: float64(probs[PLoseBackgammon]),
+		PlayerWinChances:          100 * float64(probs[PWin]),
+		PlayerGammonChances:       100 * float64(probs[PWinGammon]),
+		PlayerBackgammonChances:   100 * float64(probs[PWinBackgammon]),
+		OpponentWinChances:        100 * (1 - float64(probs[PWin])),
+		OpponentGammonChances:     100 * float64(probs[PLoseGammon]),
+		OpponentBackgammonChances: 100 * float64(probs[PLoseBackgammon]),
 		CubefulNoDoubleEquity:     noDouble,
 		CubefulNoDoubleError:      noDouble - best,
 		CubefulDoubleTakeEquity:   doubleTake,
