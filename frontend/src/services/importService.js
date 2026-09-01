@@ -56,6 +56,31 @@ import { logger } from '../utils/logger.js';
 let pendingImportPath = null;
 let fileImportCancelled = false;
 
+// Reload the whole position table from the backend. This is the expensive
+// step of any import — every row crosses the Wails IPC — so an import path
+// performs it once, after its last write, never per file: a batch of N files
+// reloads at the end of the loop, not N times inside it.
+async function reloadPositions() {
+    const { loadAllPositions } = await import('./positionService.js');
+    await loadAllPositions();
+}
+
+// Leave match mode the way loadAllPositions() does. Import paths that already
+// reloaded have left it on their own; only a path that never reached a reload
+// (dialog cancelled, import failed) still has to.
+async function leaveMatchModeIfStillIn() {
+    if (!get(matchContextStore).isMatchMode && get(statusBarModeStore) !== 'MATCH') return;
+    matchContextStore.set({
+        isMatchMode: false,
+        matchID: null,
+        movePositions: [],
+        currentIndex: 0,
+        player1Name: '',
+        player2Name: ''
+    });
+    await reloadPositions();
+}
+
 // gammonNet auto-analyze after import (#129, ADR-0013): a config toggle, not
 // a per-import-type special case — any import completion checks whether
 // there is a backlog of positions with no analysis at all, and if the
@@ -153,8 +178,7 @@ async function handleImportCommitCore() {
 
         setStatusBarMessage(tMsg('status.importCompleted', { added: result.added, merged: result.merged, skipped: result.skipped }));
 
-        const { loadAllPositions } = await import('./positionService.js');
-        await loadAllPositions();
+        await reloadPositions();
     } catch (error) {
         logger.error('Error committing import:', error);
         showImportProgressModalStore.set(false);
@@ -238,8 +262,7 @@ export async function showImportedPosition(positionID) {
         if (index < 0) {
             // The position is not in the current view (search subset, match mode,
             // or a brand-new row): reload the full list so we can point at it.
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             index = get(positionsStore).findIndex((pos) => pos.id === positionID);
         }
         if (index >= 0) {
@@ -251,7 +274,12 @@ export async function showImportedPosition(positionID) {
 }
 
 // Returns the ID of the saved (or merged) position, or null on failure.
-export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage) {
+//
+// `reload` (default true) refreshes the position table after a brand-new row
+// is written. A batch import passes false: it reloads once itself, after its
+// last file, instead of paying one full reload per position (see
+// importMultipleFilesCore).
+export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage, { reload = true } = {}) {
     if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
         parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
     }
@@ -324,8 +352,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         await SaveComment(positionID, parsedAnalysis.comment);
         logger.log('Analysis and comment saved for position ID:', positionID);
 
-        const { loadAllPositions } = await import('./positionService.js');
-        await loadAllPositions();
+        if (reload) await reloadPositions();
         setStatusBarMessage(successMessage);
         return positionID;
     } catch (error) {
@@ -354,18 +381,7 @@ export async function importPosition() {
     } catch (error) {
         logger.error('Error importing position:', error);
     } finally {
-        if (wasMatchMode) {
-            matchContextStore.set({
-                isMatchMode: false,
-                matchID: null,
-                movePositions: [],
-                currentIndex: 0,
-                player1Name: '',
-                player2Name: ''
-            });
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
-        }
+        if (wasMatchMode) await leaveMatchModeIfStillIn();
         statusBarModeStore.set('NORMAL');
         // Re-apply the analysis view: leaving match mode reloads every position,
         // which resets the tab back to matches.
@@ -396,18 +412,7 @@ export async function importFolder() {
     } catch (error) {
         logger.error('Error importing folder:', error);
     } finally {
-        if (wasMatchMode) {
-            matchContextStore.set({
-                isMatchMode: false,
-                matchID: null,
-                movePositions: [],
-                currentIndex: 0,
-                player1Name: '',
-                player2Name: ''
-            });
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
-        }
+        if (wasMatchMode) await leaveMatchModeIfStillIn();
         statusBarModeStore.set('NORMAL');
         if (outcome && outcome.type === 'position') {
             await showImportedPosition(outcome.id);
@@ -438,8 +443,7 @@ async function importSingleFileCore(filePath) {
         try {
             const posID = await ImportXGPPosition(filePath);
             setStatusBarMessage(tMsg('status.xgpPosImported', { posID }));
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             await showImportedPosition(posID);
             return { type: 'position', id: posID };
         } catch (error) {
@@ -454,8 +458,7 @@ async function importSingleFileCore(filePath) {
             setStatusBarMessage(tMsg('status.xgMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
             return { type: 'match', id: matchID };
@@ -476,8 +479,7 @@ async function importSingleFileCore(filePath) {
             setStatusBarMessage(tMsg('status.bgblitzMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
             return { type: 'match', id: matchID };
@@ -499,8 +501,7 @@ async function importSingleFileCore(filePath) {
             setStatusBarMessage(tMsg('status.matchImported', { formatName, matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
             return { type: 'match', id: matchID };
@@ -539,8 +540,7 @@ async function importTxtFile(filePath) {
             setStatusBarMessage(tMsg('status.jellyfishMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
             return { type: 'match', id: matchID };
@@ -559,8 +559,7 @@ async function importTxtFile(filePath) {
         try {
             const posID = await ImportBGFPosition(filePath);
             setStatusBarMessage(tMsg('status.bgblitzPosImported', { posID }));
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             await showImportedPosition(posID);
             return { type: 'position', id: posID };
         } catch (error) {
@@ -666,7 +665,7 @@ async function importTxtFileBatch(filePath) {
     } else {
         const { positionData, parsedAnalysis } = await parsePositionText(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
-        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, '');
+        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, '', { reload: false });
         return { type: 'position', id: posID };
     }
 }
@@ -735,8 +734,7 @@ async function importMultipleFilesCore(files) {
         matchPanelRefreshTriggerStore.update((n) => n + 1);
         dbMutationCounterStore.update((n) => n + 1);
     }
-    const { loadAllPositions } = await import('./positionService.js');
-    await loadAllPositions();
+    await reloadPositions();
 
     const results = get(fileImportResultsStore);
     setStatusBarMessage(tMsg('status.importDone', { succeeded: results.succeeded, skipped: results.skipped, failed: results.failed }));
@@ -805,8 +803,7 @@ async function pastePositionCore() {
             setStatusBarMessage(tMsg('status.clipboardMatchImported', { matchID }));
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             dbMutationCounterStore.update((n) => n + 1);
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
         } catch (error) {
@@ -822,8 +819,7 @@ async function pastePositionCore() {
         try {
             const posID = await ImportBGFPositionFromText(result);
             setStatusBarMessage(tMsg('status.bgblitzPosPasted', { posID }));
-            const { loadAllPositions } = await import('./positionService.js');
-            await loadAllPositions();
+            await reloadPositions();
             await showImportedPosition(posID);
         } catch (error) {
             logger.error('Error pasting BGBlitz position:', error);
