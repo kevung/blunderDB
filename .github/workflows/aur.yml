@@ -87,7 +87,7 @@ jobs:
 
       - name: Publish to the AUR
         if: steps.guard.outputs.enabled == 'true'
-        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        uses: KSXGitHub/github-actions-deploy-aur@9dfe151cf48f26a957bbd0379c120e79cb990e13 # v2.7.2
         with:
           pkgname: blunderdb-bin
           pkgbuild: ./PKGBUILD

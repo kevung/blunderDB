@@ -1,10 +1,35 @@
 # Keep the Docker build context lean for Dockerfile.serve and Dockerfile.hostile.
-# Everything the Go builds need (sources, go.mod/sum, embedded *.bd assets) stays;
-# only heavy generated/VCS trees are excluded. frontend/dist is regenerated as a
-# stub inside Dockerfile.hostile, so excluding the (usually symlinked) node_modules
-# and any stale dist is safe.
+# Everything the Go builds need stays: sources, go.mod/sum, the embedded *.bd
+# assets, testdata/ (the hostile image runs the whole Go suite) and build/
+# minus build/bin — main.go embeds build/appicon.png, and wails.json plus the
+# platform folders are read by tooling, so only the compiled output goes.
+# frontend/dist is regenerated as a stub inside Dockerfile.hostile, so excluding
+# the (usually symlinked) node_modules and any stale dist is safe.
 .git
 frontend/node_modules
 frontend/dist
 build/bin
 doc/build
+
+# Local, gitignored trees that can be very large: sibling parser checkouts
+# and gnubg sources (they are Go modules fetched by go.mod, never read from
+# here), Python virtualenvs, the downloaded two-sided bearoff table and its
+# partial downloads, scratch space, task sheets and Claude Code config.
+gnubg/
+xgparser/
+gnubgparser/
+bgfparser/
+.venv
+doc/.venv
+gnubg_ts6x11.bd
+*.bd.part
+tmp/
+tasks/
+.claude/
+
+# Databases opened at the repo root (and their WAL/lock companions) must
+# never end up in an image.
+*.db
+*.db-wal
+*.db-shm
+*.db.lock

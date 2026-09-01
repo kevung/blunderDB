@@ -12,7 +12,9 @@
 #   ./scripts/release.sh 1.0.0 --changelog "Bug fixes and new features."
 #   ./scripts/release.sh 1.0.0 --push
 #   ./scripts/release.sh 1.0.0 --changelog "Bug fixes." --push
-#   ./scripts/release.sh --check          # Show current versions
+#   ./scripts/release.sh --check          # Show current versions; exit 1 if
+#                                         # conf.py/metaStore.js/wails.json
+#                                         # disagree (CI runs this)
 #
 # Files updated:
 #   - doc/source/conf.py           (Sphinx release variable)
@@ -98,18 +100,24 @@ check_versions() {
     printf "  %-40s %s\n" "Latest git tag" "$latest_tag"
     echo ""
 
+    local in_sync=true
     if [[ "$conf_ver" == "$meta_ver" && "$conf_ver" == "$wails_ver" ]]; then
         echo -e "  ${GREEN}✓ conf.py, metaStore.js and wails.json are in sync${NC}"
     else
         echo -e "  ${RED}✗ conf.py, metaStore.js and wails.json are OUT OF SYNC${NC}"
+        in_sync=false
     fi
 
+    # Informational only: between two releases the files legitimately carry
+    # the version of the last tag, and a shallow CI checkout has no tag at all.
     if [[ "$conf_ver" == "$latest_tag" ]]; then
         echo -e "  ${GREEN}✓ conf.py matches latest git tag${NC}"
     else
         echo -e "  ${YELLOW}! conf.py ($conf_ver) differs from latest tag ($latest_tag)${NC}"
     fi
     echo ""
+
+    $in_sync
 }
 
 validate_semver() {
@@ -171,7 +179,7 @@ done
 # --- Check mode ---
 if $CHECK_ONLY; then
     check_versions
-    exit 0
+    exit $?
 fi
 
 # --- Validate inputs ---

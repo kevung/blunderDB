@@ -4,6 +4,10 @@ import subprocess
 import zipfile
 
 CREATE_ARCHIVE = False
+# BLUNDERDB_DOC_SKIP_PDF=1 builds the HTML sites only. CI sets it on pull
+# requests and merges, where the LaTeX toolchain (~1 GB) would be installed
+# for PDFs nobody publishes; release tags build everything.
+SKIP_PDF = os.environ.get("BLUNDERDB_DOC_SKIP_PDF") == "1"
 # All documentation languages. French is the source language; the others are
 # gettext translations under source/locale/<code>/. Keep this in sync with
 # LANGUAGES in source/conf.py (the switcher) — same set of codes.
@@ -138,11 +142,14 @@ def main():
     for lang in LANG:
         build_sphinx_docs(root_dir, lang)
 
-    latest_commit = get_latest_commit()
+    if SKIP_PDF:
+        print("BLUNDERDB_DOC_SKIP_PDF=1: skipping the LaTeX/PDF builds")
+    else:
+        latest_commit = get_latest_commit()
 
-    for lang in LANG:
-        build_latex_docs(root_dir, lang)
-        rename_pdf(root_dir, lang, latest_commit)
+        for lang in LANG:
+            build_latex_docs(root_dir, lang)
+            rename_pdf(root_dir, lang, latest_commit)
 
     if CREATE_ARCHIVE:
         build_folders = find_build_folders(root_dir)
