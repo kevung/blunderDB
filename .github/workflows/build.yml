@@ -315,6 +315,14 @@ jobs:
         with:
           version: v2.11.4
 
+      # The app version lives in three files (doc/source/conf.py,
+      # frontend/src/stores/metaStore.js, wails.json); scripts/release.sh
+      # keeps them together and its --check exits 1 if they drift apart.
+      # The comparison with the latest tag it also prints is informational.
+      - name: Version strings in sync
+        run: scripts/release.sh --check
+        shell: bash
+
   # Blocking, as CLAUDE.md states: a known vulnerability in a dependency
   # fails the run. Bumping the offending module (or documenting a
   # verified non-reachability) is the way out, not a green-through-red job.
