@@ -90,7 +90,7 @@ body {
     font-weight: normal;
     src:
         local(''),
-        url('assets/fonts/NotoSansJP-Regular.ttf') format('truetype');
+        url('assets/fonts/NotoSansJP-Regular.woff2') format('woff2');
 }
 
 #app {
