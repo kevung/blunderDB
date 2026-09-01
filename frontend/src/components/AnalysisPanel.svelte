@@ -31,10 +31,22 @@
     // is the single cubeless figure this table shows (see
     // CubeVerdictTable's own doc comment on why the pair it used to render
     // collapsed to one column).
+    //
+    // DoublingCubeAnalysis's win/gammon/backgammon chances are stored as
+    // percentages [0,100] (the scale every importer and RoundToHundredthPercent
+    // use), but moverFactsToSides/PositionFactsTable's shared contract is
+    // fractions [0,1] — divide here, at this caller's boundary, rather than
+    // touch the stored scale.
     function cubeFacts(cubeAnalysis) {
+        const frac = (x) => (x == null ? null : x / 100);
         return moverFactsToSides(
-            { win: cubeAnalysis.playerWinChances, gammon: cubeAnalysis.playerGammonChances, backgammon: cubeAnalysis.playerBackgammonChances, cubeless: cubeAnalysis.cubelessNoDoubleEquity },
-            { win: cubeAnalysis.opponentWinChances, gammon: cubeAnalysis.opponentGammonChances, backgammon: cubeAnalysis.opponentBackgammonChances },
+            {
+                win: frac(cubeAnalysis.playerWinChances),
+                gammon: frac(cubeAnalysis.playerGammonChances),
+                backgammon: frac(cubeAnalysis.playerBackgammonChances),
+                cubeless: cubeAnalysis.cubelessNoDoubleEquity
+            },
+            { win: frac(cubeAnalysis.opponentWinChances), gammon: frac(cubeAnalysis.opponentGammonChances), backgammon: frac(cubeAnalysis.opponentBackgammonChances) },
             onRoll
         );
     }
