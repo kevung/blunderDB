@@ -470,10 +470,10 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 // the player1 and player2 columns) to a single canonical name.
 func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []string, canonical string) error {
 	if canonical == "" {
-		return fmt.Errorf("postgres: merge players: canonical name must not be empty: %w", storage.ErrInternal)
+		return fmt.Errorf("postgres: merge players: canonical name must not be empty: %w", storage.ErrInvalid)
 	}
 	if len(names) == 0 {
-		return fmt.Errorf("postgres: merge players: no names to merge: %w", storage.ErrInternal)
+		return fmt.Errorf("postgres: merge players: no names to merge: %w", storage.ErrInvalid)
 	}
 	tenant := tenantID(scope)
 	return s.inTx(ctx, "merge players", func(tx pgx.Tx) error {

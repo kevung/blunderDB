@@ -156,7 +156,7 @@ func (s *collectionStore) AddPosition(ctx context.Context, scope string, collect
 		return addPositionTx(ctx, tx, collectionID, positionID)
 	})
 	if err != nil {
-		return fmt.Errorf("sqlite: add position %d to collection %d: %w", positionID, collectionID, err)
+		return fmt.Errorf("sqlite: add position %d to collection %d: %w", positionID, collectionID, referenced(err))
 	}
 	return nil
 }
@@ -276,7 +276,7 @@ func (s *collectionStore) MovePosition(ctx context.Context, scope string, fromCo
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("sqlite: move position %d to collection %d: %w", positionID, toCollectionID, err)
+		return fmt.Errorf("sqlite: move position %d to collection %d: %w", positionID, toCollectionID, referenced(err))
 	}
 	return nil
 }

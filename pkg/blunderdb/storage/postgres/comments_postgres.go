@@ -39,7 +39,7 @@ func (s *commentStore) Add(ctx context.Context, scope string, positionID int64, 
 	if err := s.db.QueryRow(ctx,
 		`INSERT INTO comment (tenant_id, position_id, text) VALUES ($1,$2,$3) RETURNING id`,
 		tenantID(scope), positionID, text).Scan(&id); err != nil {
-		return 0, fmt.Errorf("postgres: add comment: %w", err)
+		return 0, fmt.Errorf("postgres: add comment: %w", referenced(err))
 	}
 	return id, nil
 }

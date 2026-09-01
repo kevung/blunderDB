@@ -61,10 +61,16 @@ func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	return []route{
 		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (idResp, error) {
+			if req.Position == nil {
+				return idResp{}, errMissing("position")
+			}
 			id, err := ps().Save(ctx, scope, req.Position)
 			return idResp{ID: id}, err
 		})},
 		{http.MethodPost, "/v1/positions.update", rpcVoid(func(ctx context.Context, scope string, req positionReq) error {
+			if req.Position == nil {
+				return errMissing("position")
+			}
 			return ps().Update(ctx, scope, req.Position)
 		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
@@ -131,7 +137,7 @@ func (s *Server) positionRoutes() []route {
 		// and the Desktop board). Empty slice = no legal move (a dance).
 		{http.MethodPost, "/v1/positions.legalMoves", rpc(func(ctx context.Context, scope string, req legalMovesReq) ([]domain.LegalPlay, error) {
 			if req.Position == nil {
-				return nil, fmt.Errorf("%w: missing position", storage.ErrInvalid)
+				return nil, errMissing("position")
 			}
 			plays := domain.LegalMoves(req.Position)
 			if plays == nil {
@@ -148,7 +154,7 @@ func (s *Server) positionRoutes() []route {
 		// configures; the daemon never downloads.
 		{http.MethodPost, "/v1/positions.epc", rpc(func(ctx context.Context, scope string, req positionReq) (race.Result, error) {
 			if req.Position == nil {
-				return race.Result{}, fmt.Errorf("%w: missing position", storage.ErrInvalid)
+				return race.Result{}, errMissing("position")
 			}
 			return race.Evaluate(req.Position), nil
 		})},
