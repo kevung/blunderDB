@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 21:51+0200\n"
+"POT-Creation-Date: 2026-09-02 01:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: it <LL@li.org>\n"
 "Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/mode_headless.rst:5
@@ -24,19 +24,21 @@ msgstr "Modalità headless (server)"
 
 #: ../../source/mode_headless.rst:9
 msgid ""
-"Cette section décrit un **mode avancé et facultatif** de blunderDB, destiné "
-"aux déploiements sur serveur, au multi-utilisateur et à l'automatisation. "
-"**L'usage normal et recommandé de blunderDB reste l'application de bureau** "
-"décrite dans les chapitres précédents. Si vous utilisez blunderDB seul, sur "
-"votre ordinateur, vous n'avez pas besoin de ce mode : vous pouvez ignorer ce"
-" chapitre sans rien perdre des fonctionnalités d'analyse."
+"Cette section décrit un **mode avancé et facultatif** de blunderDB, "
+"destiné aux déploiements sur serveur, au multi-utilisateur et à "
+"l'automatisation. **L'usage normal et recommandé de blunderDB reste "
+"l'application de bureau** décrite dans les chapitres précédents. Si vous "
+"utilisez blunderDB seul, sur votre ordinateur, vous n'avez pas besoin de "
+"ce mode : vous pouvez ignorer ce chapitre sans rien perdre des "
+"fonctionnalités d'analyse."
 msgstr ""
 "Questa sezione descrive una **modalità avanzata e facoltativa** di "
 "blunderDB, destinata ai deployment su server, all'uso multiutente e "
 "all'automazione. **L'uso normale e consigliato di blunderDB resta "
-"l'applicazione desktop** descritta nei capitoli precedenti. Se usi blunderDB"
-" da solo, sul tuo computer, non hai bisogno di questa modalità: puoi "
-"ignorare questo capitolo senza perdere nulla delle funzionalità di analisi."
+"l'applicazione desktop** descritta nei capitoli precedenti. Se usi "
+"blunderDB da solo, sul tuo computer, non hai bisogno di questa modalità: "
+"puoi ignorare questo capitolo senza perdere nulla delle funzionalità di "
+"analisi."
 
 #: ../../source/mode_headless.rst:18
 msgid "Vue d'ensemble"
@@ -44,10 +46,10 @@ msgstr "Panoramica"
 
 #: ../../source/mode_headless.rst:20
 msgid ""
-"Le même binaire ``blunderdb`` peut, en plus de l'application de bureau et "
-"des commandes en ligne (voir :ref:`cli`), fonctionner en **mode headless** :"
-" sans interface graphique, piloté entièrement en ligne de commande ou par le"
-" réseau. Ce mode regroupe trois usages :"
+"Le même binaire ``blunderdb`` peut, en plus de l'application de bureau et"
+" des commandes en ligne (voir :ref:`cli`), fonctionner en **mode "
+"headless** : sans interface graphique, piloté entièrement en ligne de "
+"commande ou par le réseau. Ce mode regroupe trois usages :"
 msgstr ""
 "Lo stesso binario ``blunderdb`` può, oltre all'applicazione desktop e ai "
 "comandi a riga di comando (vedi :ref:`cli`), funzionare in **modalità "
@@ -56,13 +58,13 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:25
 msgid ""
-"**le démon** ``serve`` — expose le moteur de blunderDB comme un service HTTP"
-" + JSON, pour faire tourner une base partagée sur un serveur et y accéder à "
-"plusieurs ;"
+"**le démon** ``serve`` — expose le moteur de blunderDB comme un service "
+"HTTP + JSON, pour faire tourner une base partagée sur un serveur et y "
+"accéder à plusieurs ;"
 msgstr ""
-"**il demone** ``serve`` — espone il motore di blunderDB come servizio HTTP +"
-" JSON, per far girare un database condiviso su un server e accedervi in più "
-"persone;"
+"**il demone** ``serve`` — espone il motore di blunderDB come servizio "
+"HTTP + JSON, per far girare un database condiviso su un server e "
+"accedervi in più persone;"
 
 #: ../../source/mode_headless.rst:28
 msgid ""
@@ -74,23 +76,23 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:30
 msgid ""
-"la commande ``migrate`` — transfère une base SQLite mono-utilisateur vers un"
-" backend PostgreSQL multi-utilisateur."
+"la commande ``migrate`` — transfère une base SQLite mono-utilisateur vers"
+" un backend PostgreSQL multi-utilisateur."
 msgstr ""
-"il comando ``migrate`` — trasferisce un database SQLite monoutente verso un "
-"backend PostgreSQL multiutente."
+"il comando ``migrate`` — trasferisce un database SQLite monoutente verso "
+"un backend PostgreSQL multiutente."
 
 #: ../../source/mode_headless.rst:33
 msgid ""
-"Ces trois usages s'appuient sur une **couche de stockage** commune qui sait "
-"parler à deux backends : **SQLite** (le format de fichier ``.db`` habituel "
-"de l'application de bureau) et **PostgreSQL** (pour les déploiements serveur"
-" multi-utilisateurs)."
+"Ces trois usages s'appuient sur une **couche de stockage** commune qui "
+"sait parler à deux backends : **SQLite** (le format de fichier ``.db`` "
+"habituel de l'application de bureau) et **PostgreSQL** (pour les "
+"déploiements serveur multi-utilisateurs)."
 msgstr ""
-"Questi tre usi si basano su un **livello di archiviazione** comune capace di"
-" dialogare con due backend: **SQLite** (il consueto formato di file ``.db`` "
-"dell'applicazione desktop) e **PostgreSQL** (per i deployment server "
-"multiutente)."
+"Questi tre usi si basano su un **livello di archiviazione** comune capace"
+" di dialogare con due backend: **SQLite** (il consueto formato di file "
+"``.db`` dell'applicazione desktop) e **PostgreSQL** (per i deployment "
+"server multiutente)."
 
 #: ../../source/mode_headless.rst:41
 msgid "Le démon ``serve``"
@@ -102,62 +104,62 @@ msgid ""
 "JSON. Il permet d'héberger une base de positions sur une machine et d'y "
 "accéder depuis plusieurs clients."
 msgstr ""
-"``blunderdb serve`` avvia il motore come servizio HTTP che risponde in JSON."
-" Permette di ospitare un database di posizioni su una macchina e di "
+"``blunderdb serve`` avvia il motore come servizio HTTP che risponde in "
+"JSON. Permette di ospitare un database di posizioni su una macchina e di "
 "accedervi da più client."
 
 #: ../../source/mode_headless.rst:59
 msgid ""
-"**Le démon n'effectue aucune authentification.** Il fait confiance à l'en-"
-"tête de requête ``X-Tenant-ID`` et **doit** tourner derrière un reverse-"
-"proxy (nginx, Caddy…) chargé de l'authentification. **Ne l'exposez jamais "
-"directement sur l'Internet public.**"
+"**Le démon n'effectue aucune authentification.** Il fait confiance à l"
+"'en-tête de requête ``X-Tenant-ID`` et **doit** tourner derrière un "
+"reverse-proxy (nginx, Caddy…) chargé de l'authentification. **Ne "
+"l'exposez jamais directement sur l'Internet public.**"
 msgstr ""
 "**Il demone non effettua alcuna autenticazione.** Si fida dell'header di "
-"richiesta ``X-Tenant-ID`` e **deve** girare dietro un reverse-proxy (nginx, "
-"Caddy…) incaricato dell'autenticazione. **Non esporlo mai direttamente su "
-"Internet pubblico.**"
+"richiesta ``X-Tenant-ID`` e **deve** girare dietro un reverse-proxy "
+"(nginx, Caddy…) incaricato dell'autenticazione. **Non esporlo mai "
+"direttamente su Internet pubblico.**"
 
-#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:333
+#: ../../source/mode_headless.rst:64 ../../source/mode_headless.rst:346
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
-#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:281
-#: ../../source/mode_headless.rst:339
+#: ../../source/mode_headless.rst:70 ../../source/mode_headless.rst:294
+#: ../../source/mode_headless.rst:352
 msgid "Option"
 msgstr "Opzione"
 
-#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:282
-#: ../../source/mode_headless.rst:340
+#: ../../source/mode_headless.rst:71 ../../source/mode_headless.rst:295
+#: ../../source/mode_headless.rst:353
 msgid "Défaut"
 msgstr "Predefinito"
 
-#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:283
-#: ../../source/mode_headless.rst:341
+#: ../../source/mode_headless.rst:72 ../../source/mode_headless.rst:296
+#: ../../source/mode_headless.rst:354
 msgid "Signification"
 msgstr "Significato"
 
-#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:342
+#: ../../source/mode_headless.rst:73 ../../source/mode_headless.rst:355
 msgid "``--db <chemin>``"
 msgstr "``--db <percorso>``"
 
 #: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:92
-#: ../../source/mode_headless.rst:105 ../../source/mode_headless.rst:285
-#: ../../source/mode_headless.rst:288 ../../source/mode_headless.rst:291
-#: ../../source/mode_headless.rst:294 ../../source/mode_headless.rst:343
-#: ../../source/mode_headless.rst:358 ../../source/mode_headless.rst:361
+#: ../../source/mode_headless.rst:105 ../../source/mode_headless.rst:298
+#: ../../source/mode_headless.rst:301 ../../source/mode_headless.rst:304
+#: ../../source/mode_headless.rst:307 ../../source/mode_headless.rst:356
+#: ../../source/mode_headless.rst:371 ../../source/mode_headless.rst:374
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:344
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:357
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "file SQLite (scorciatoia per ``--backend sqlite --dsn <percorso>``)"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:345
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:358
 msgid "``--backend <type>``"
 msgstr "``--backend <tipo>``"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:346
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:359
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -165,15 +167,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "backend di archiviazione: ``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:348
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:361
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <stringa>``"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:349
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:362
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:350
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:363
 msgid "chaîne de connexion du backend"
 msgstr "stringa di connessione del backend"
 
@@ -220,7 +222,8 @@ msgstr "``--cors-allow-origin <origine>``"
 #: ../../source/mode_headless.rst:93
 msgid "active CORS pour cette origine (désactivé par défaut)"
 msgstr ""
-"abilita CORS per questa origine (disabilitato per impostazione predefinita)"
+"abilita CORS per questa origine (disabilitato per impostazione "
+"predefinita)"
 
 #: ../../source/mode_headless.rst:94
 msgid "``--rate-limit-rps <n>``"
@@ -256,11 +259,11 @@ msgstr "``false``"
 
 #: ../../source/mode_headless.rst:102
 msgid ""
-"PostgreSQL : active la Row-Level Security par tenant (défense en profondeur,"
-" sur option)"
+"PostgreSQL : active la Row-Level Security par tenant (défense en "
+"profondeur, sur option)"
 msgstr ""
-"PostgreSQL: abilita la Row-Level Security per tenant (difesa in profondità, "
-"opzionale)"
+"PostgreSQL: abilita la Row-Level Security per tenant (difesa in "
+"profondità, opzionale)"
 
 #: ../../source/mode_headless.rst:104
 msgid "``--bearoff-ts <fichier>``"
@@ -268,15 +271,15 @@ msgstr "``--bearoff-ts <file>``"
 
 #: ../../source/mode_headless.rst:106
 msgid ""
-"base de bearoff two-sided (``.bd``) optionnelle élargissant la base intégrée"
-" TS-06-06 pour l'analyse de course du point d'accès EPC ; le démon ne "
-"télécharge jamais de base lui-même — monter le fichier en volume et le "
-"désigner ici"
+"base de bearoff two-sided (``.bd``) optionnelle élargissant la base "
+"intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ; le "
+"démon ne télécharge jamais de base lui-même — monter le fichier en volume"
+" et le désigner ici"
 msgstr ""
-"database di bearoff two-sided (``.bd``) opzionale che estende il database "
-"integrato TS-06-06 per l'analisi di corsa dell'endpoint EPC; il demone non "
-"scarica mai un database da solo — montare il file come volume e indicarlo "
-"qui"
+"database di bearoff two-sided (``.bd``) opzionale che estende il database"
+" integrato TS-06-06 per l'analisi di corsa dell'endpoint EPC; il demone "
+"non scarica mai un database da solo — montare il file come volume e "
+"indicarlo qui"
 
 #: ../../source/mode_headless.rst:111
 msgid ""
@@ -285,17 +288,17 @@ msgid ""
 "``BLUNDERDB_ADDR``, ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, "
 "``BLUNDERDB_TS_PATH``)."
 msgstr ""
-"La maggior parte delle opzioni può anche essere fornita tramite variabile "
-"d'ambiente (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``, "
-"``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``)."
+"La maggior parte delle opzioni può anche essere fornita tramite variabile"
+" d'ambiente (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
+"``BLUNDERDB_ADDR``, ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, "
+"``BLUNDERDB_TS_PATH``)."
 
 #: ../../source/mode_headless.rst:116
 msgid "Points d'accès"
 msgstr "Punti di accesso"
 
 #: ../../source/mode_headless.rst:118
-msgid ""
-"Le service expose des points d'accès d'exploitation, toujours présents :"
+msgid "Le service expose des points d'accès d'exploitation, toujours présents :"
 msgstr "Il servizio espone dei punti di accesso operativi, sempre presenti:"
 
 #: ../../source/mode_headless.rst:120
@@ -313,22 +316,24 @@ msgstr "``GET /metrics`` — metriche Prometheus (se ``--metrics`` è attivo)."
 #: ../../source/mode_headless.rst:124
 msgid ""
 "La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par "
-"exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent "
-"les positions, analyses, matchs, commentaires, collections, tournois, cartes"
-" Anki, filtres, sessions, historique (recherche et commandes), recherche, "
-"métadonnées, statistiques, import et export, ainsi que le cycle de vie des "
-"tenants (``tenant.purge``, réservé au backend PostgreSQL). Les endpoints de "
-"listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur "
-"s'arrête proprement sur ``SIGINT`` / ``SIGTERM``."
+"exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles "
+"couvrent les positions, analyses, matchs, commentaires, collections, "
+"tournois, cartes Anki, filtres, sessions, historique (recherche et "
+"commandes), recherche, métadonnées, statistiques, import et export, ainsi"
+" que le cycle de vie des tenants (``tenant.purge``, réservé au backend "
+"PostgreSQL). Les endpoints de listing renvoient un flux NDJSON (un objet "
+"JSON par ligne). Le serveur s'arrête proprement sur ``SIGINT`` / "
+"``SIGTERM``."
 msgstr ""
-"La superficie applicativa segue lo schema ``POST /v1/<famiglia>.<metodo>`` "
-"(per esempio ``/v1/positions.save``, ``/v1/matches.get``). Le famiglie "
-"coprono posizioni, analisi, match, commenti, collezioni, tornei, carte Anki,"
-" filtri, sessioni, cronologia (ricerche e comandi), ricerca, metadati, "
-"statistiche, import ed export, oltre al ciclo di vita dei tenant "
-"(``tenant.purge``, riservato al backend PostgreSQL). Gli endpoint di elenco "
-"restituiscono un flusso NDJSON (un oggetto JSON per riga). Il server si "
-"arresta in modo pulito su ``SIGINT`` / ``SIGTERM``."
+"La superficie applicativa segue lo schema ``POST "
+"/v1/<famiglia>.<metodo>`` (per esempio ``/v1/positions.save``, "
+"``/v1/matches.get``). Le famiglie coprono posizioni, analisi, match, "
+"commenti, collezioni, tornei, carte Anki, filtri, sessioni, cronologia "
+"(ricerche e comandi), ricerca, metadati, statistiche, import ed export, "
+"oltre al ciclo di vita dei tenant (``tenant.purge``, riservato al backend"
+" PostgreSQL). Gli endpoint di elenco restituiscono un flusso NDJSON (un "
+"oggetto JSON per riga). Il server si arresta in modo pulito su ``SIGINT``"
+" / ``SIGTERM``."
 
 #: ../../source/mode_headless.rst:133
 msgid ""
@@ -338,172 +343,207 @@ msgid ""
 "position unique ``.xgp``."
 msgstr ""
 "Due metodi della famiglia ``positions`` decodificano una posizione senza "
-"salvarla: ``positions.fromXGID`` ricostruisce una posizione da una stringa "
-"XGID e ``positions.fromXGP`` da un file di posizione singola ``.xgp``."
+"salvarla: ``positions.fromXGID`` ricostruisce una posizione da una "
+"stringa XGID e ``positions.fromXGP`` da un file di posizione singola "
+"``.xgp``."
 
 #: ../../source/mode_headless.rst:138
 msgid ""
 "La famille ``anki`` gagne six méthodes qui étendent le planificateur à "
-"répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —"
-" notation et résultat FSRS — pour les statistiques de rétention et un "
-"historique fidèle), ``anki.forecast`` (projection du nombre de cartes dues "
-"sur les prochains jours, cartes en retard comprises), ``anki.suspendCard`` /"
-" ``anki.buryCard`` / ``anki.removeCard`` (retirer une carte de la file de "
-"révision temporairement ou définitivement) et ``anki.optimizeParams`` "
-"(ajuste le taux de rétention visé d'un paquet vers le taux de réussite "
-"observé sur ses révisions)."
+"répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque "
+"révision — notation et résultat FSRS — pour les statistiques de rétention"
+" et un historique fidèle), ``anki.forecast`` (projection du nombre de "
+"cartes dues sur les prochains jours, cartes en retard comprises), "
+"``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard`` (retirer "
+"une carte de la file de révision temporairement ou définitivement) et "
+"``anki.optimizeParams`` (ajuste le taux de rétention visé d'un paquet "
+"vers le taux de réussite observé sur ses révisions)."
 msgstr ""
-"La famiglia ``anki`` guadagna sei metodi che estendono il pianificatore a "
-"ripetizione dilazionata (FSRS): ``anki.reviewLog`` (registro di ogni "
-"revisione — valutazione e risultato FSRS — per le statistiche di ritenzione "
-"e uno storico fedele), ``anki.forecast`` (proiezione del numero di carte in "
-"scadenza nei prossimi giorni, incluse quelle in ritardo), "
-"``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard`` (rimuovere "
-"una carta dalla coda di revisione temporaneamente o definitivamente) e "
-"``anki.optimizeParams`` (avvicina il tasso di ritenzione obiettivo di un "
-"mazzo al tasso di successo osservato sulle sue revisioni)."
+"La famiglia ``anki`` guadagna sei metodi che estendono il pianificatore a"
+" ripetizione dilazionata (FSRS): ``anki.reviewLog`` (registro di ogni "
+"revisione — valutazione e risultato FSRS — per le statistiche di "
+"ritenzione e uno storico fedele), ``anki.forecast`` (proiezione del "
+"numero di carte in scadenza nei prossimi giorni, incluse quelle in "
+"ritardo), ``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard`` "
+"(rimuovere una carta dalla coda di revisione temporaneamente o "
+"definitivamente) e ``anki.optimizeParams`` (avvicina il tasso di "
+"ritenzione obiettivo di un mazzo al tasso di successo osservato sulle sue"
+" revisioni)."
 
 #: ../../source/mode_headless.rst:148
 msgid ""
-"La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne de"
-" statistiques par joueur (matchs, victoires/défaites, décisions comptées, PR"
-" global / pions / videau, Snowie Error Rate, erreurs, blunders et chance) "
-"sur les matchs retenus par le filtre transmis. Comme dans l'interface "
-"graphique, ce tableau n'honore du filtre que la période, les tournois et la "
-"longueur des matchs : la sélection d'un joueur et le type de décision sont "
-"ignorés, puisque le tableau porte sur tous les joueurs et ventile déjà pions"
-" et videau en colonnes distinctes. Le champ ``luck_known`` indique si la "
-"chance a été mesurée pour ce joueur ; ``luck_rate_mp`` ne doit pas être lu "
-"quand il vaut ``false``, une chance inconnue n'étant pas une chance nulle."
+"La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne"
+" de statistiques par joueur (matchs, victoires/défaites, décisions "
+"comptées, PR global / pions / videau, Snowie Error Rate, erreurs, "
+"blunders et chance) sur les matchs retenus par le filtre transmis. Comme "
+"dans l'interface graphique, ce tableau n'honore du filtre que la période,"
+" les tournois et la longueur des matchs : la sélection d'un joueur et le "
+"type de décision sont ignorés, puisque le tableau porte sur tous les "
+"joueurs et ventile déjà pions et videau en colonnes distinctes. Le champ "
+"``luck_known`` indique si la chance a été mesurée pour ce joueur ; "
+"``luck_rate_mp`` ne doit pas être lu quand il vaut ``false``, une chance "
+"inconnue n'étant pas une chance nulle."
 msgstr ""
-"La famiglia ``stats`` fornisce ``stats.playerTable``, che restituisce una "
-"riga di statistiche per giocatore (match, vittorie/sconfitte, decisioni "
-"conteggiate, PR globale / pedine / cubo, Snowie Error Rate, errori, blunder "
-"e fortuna) sui match trattenuti dal filtro trasmesso. Come nell'interfaccia "
-"grafica, questa tabella onora del filtro solo il periodo, i tornei e la "
-"lunghezza dei match: la selezione di un giocatore e il tipo di decisione "
-"sono ignorati, poiché la tabella riguarda tutti i giocatori e ripartisce già"
-" pedine e cubo in colonne distinte. Il campo ``luck_known`` indica se la "
-"fortuna è stata misurata per quel giocatore; ``luck_rate_mp`` non va letto "
-"quando vale ``false``, perché una fortuna sconosciuta non è una fortuna "
-"nulla."
+"La famiglia ``stats`` fornisce ``stats.playerTable``, che restituisce una"
+" riga di statistiche per giocatore (match, vittorie/sconfitte, decisioni "
+"conteggiate, PR globale / pedine / cubo, Snowie Error Rate, errori, "
+"blunder e fortuna) sui match trattenuti dal filtro trasmesso. Come "
+"nell'interfaccia grafica, questa tabella onora del filtro solo il "
+"periodo, i tornei e la lunghezza dei match: la selezione di un giocatore "
+"e il tipo di decisione sono ignorati, poiché la tabella riguarda tutti i "
+"giocatori e ripartisce già pedine e cubo in colonne distinte. Il campo "
+"``luck_known`` indica se la fortuna è stata misurata per quel giocatore; "
+"``luck_rate_mp`` non va letto quando vale ``false``, perché una fortuna "
+"sconosciuta non è una fortuna nulla."
 
 #: ../../source/mode_headless.rst:159
 msgid ""
-"Le filtre transmis aux méthodes ``stats`` accepte, à côté de ``PlayerName``,"
-" un champ ``PlayerAliases`` : les autres orthographes sous lesquelles la "
-"même personne a signé. Le nom d'un joueur étant saisi à la main dans chaque "
-"fichier, une même personne apparaît couramment sous plusieurs graphies, et "
-"un filtre qui n'en retient qu'une calcule sur une partie des matchs sans que"
-" rien n'ait l'air anormal. Le champ est purement additif : les décisions de "
-"n'importe lequel des noms sont retenues. Fusionner les noms en base "
-"(``MergePlayers``) est l'autre réponse, à réserver aux bases qu'on n'a pas "
-"reçues de quelqu'un d'autre — elle réécrit les matchs de tout le monde."
+"Le filtre transmis aux méthodes ``stats`` accepte, à côté de "
+"``PlayerName``, un champ ``PlayerAliases`` : les autres orthographes sous"
+" lesquelles la même personne a signé. Le nom d'un joueur étant saisi à la"
+" main dans chaque fichier, une même personne apparaît couramment sous "
+"plusieurs graphies, et un filtre qui n'en retient qu'une calcule sur une "
+"partie des matchs sans que rien n'ait l'air anormal. Le champ est "
+"purement additif : les décisions de n'importe lequel des noms sont "
+"retenues. Fusionner les noms en base (``MergePlayers``) est l'autre "
+"réponse, à réserver aux bases qu'on n'a pas reçues de quelqu'un d'autre —"
+" elle réécrit les matchs de tout le monde."
 msgstr ""
-"Il filtro trasmesso ai metodi ``stats`` accetta, accanto a ``PlayerName``, "
-"un campo ``PlayerAliases``: le altre grafie con cui la stessa persona ha "
-"firmato. Poiché il nome di un giocatore viene digitato a mano in ogni file, "
-"una stessa persona compare spesso sotto più grafie, e un filtro che ne "
-"trattiene una sola calcola su una parte dei match senza che nulla sembri "
-"anomalo. Il campo è puramente additivo: vengono trattenute le decisioni di "
-"uno qualsiasi dei nomi. Fondere i nomi nel database (``MergePlayers``) è "
-"l'altra risposta, da riservare ai database non ricevuti da qualcun altro — "
-"riscrive i match di tutti."
+"Il filtro trasmesso ai metodi ``stats`` accetta, accanto a "
+"``PlayerName``, un campo ``PlayerAliases``: le altre grafie con cui la "
+"stessa persona ha firmato. Poiché il nome di un giocatore viene digitato "
+"a mano in ogni file, una stessa persona compare spesso sotto più grafie, "
+"e un filtro che ne trattiene una sola calcola su una parte dei match "
+"senza che nulla sembri anomalo. Il campo è puramente additivo: vengono "
+"trattenute le decisioni di uno qualsiasi dei nomi. Fondere i nomi nel "
+"database (``MergePlayers``) è l'altra risposta, da riservare ai database "
+"non ricevuti da qualcun altro — riscrive i match di tutti."
 
 #: ../../source/mode_headless.rst:169
 msgid ""
 "Deux méthodes complètent la parité avec l'interface graphique : "
 "``stats.tournamentBadges`` renvoie, pour chaque tournoi de la base, "
 "l'indicateur affiché sur sa vignette (PR du joueur de référence), et "
-"``matches.findByHash`` indique si un match donné est déjà présent, à partir "
-"des deux empreintes de détection de doublon — de quoi éviter un import "
-"redondant avant de l'engager."
+"``matches.findByHash`` indique si un match donné est déjà présent, à "
+"partir des deux empreintes de détection de doublon — de quoi éviter un "
+"import redondant avant de l'engager."
 msgstr ""
 "Due metodi completano la parità con l'interfaccia grafica: "
 "``stats.tournamentBadges`` restituisce, per ogni torneo del database, "
-"l'indicatore mostrato sulla sua scheda (PR del giocatore di riferimento), e "
-"``matches.findByHash`` indica se un dato match è già presente, a partire "
-"dalle due impronte di rilevamento dei duplicati — quanto basta per evitare "
-"un'importazione ridondante prima di avviarla."
+"l'indicatore mostrato sulla sua scheda (PR del giocatore di riferimento),"
+" e ``matches.findByHash`` indica se un dato match è già presente, a "
+"partire dalle due impronte di rilevamento dei duplicati — quanto basta "
+"per evitare un'importazione ridondante prima di avviarla."
 
 #: ../../source/mode_headless.rst:175
 msgid ""
-"``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse (dont"
-" ``cube_error``) à partir de son analyse complète, et renvoie le nombre de "
-"lignes **réellement** corrigées. Ces colonnes ne sont qu'une projection : "
-"une erreur de projection se répare donc sans réimporter les fichiers source."
-" L'opération est explicite et n'est jamais déclenchée toute seule — ni à "
-"l'ouverture d'une base, ni par une migration, le schéma n'étant pas en "
-"cause. Une analyse illisible est laissée telle quelle plutôt que remise à "
-"zéro. Le cas d'usage connu : les non-doubles étiquetés « Double No » par "
-"gnuBG, dont la lecture était fautive avant la version 0.33.0 et qui "
-"portaient l'erreur d'un double qui n'a jamais eu lieu."
+"``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse "
+"(dont ``cube_error``) à partir de son analyse complète, et renvoie le "
+"nombre de lignes **réellement** corrigées. Ces colonnes ne sont qu'une "
+"projection : une erreur de projection se répare donc sans réimporter les "
+"fichiers source. L'opération est explicite et n'est jamais déclenchée "
+"toute seule — ni à l'ouverture d'une base, ni par une migration, le "
+"schéma n'étant pas en cause. Une analyse illisible est laissée telle "
+"quelle plutôt que remise à zéro. Le cas d'usage connu : les non-doubles "
+"étiquetés « Double No » par gnuBG, dont la lecture était fautive avant la"
+" version 0.33.0 et qui portaient l'erreur d'un double qui n'a jamais eu "
+"lieu."
 msgstr ""
-"``analyses.repair`` ricalcola le colonne denormalizzate di un'analisi (fra "
-"cui ``cube_error``) a partire dalla sua analisi completa, e restituisce il "
-"numero di righe **realmente** corrette. Quelle colonne sono soltanto una "
-"proiezione: un errore di proiezione si ripara dunque senza reimportare i "
-"file di origine. L'operazione è esplicita e non parte mai da sola — né "
-"all'apertura di un database né per effetto di una migrazione, dato che lo "
-"schema non è in causa. Un'analisi illeggibile viene lasciata com'è anziché "
-"azzerata. Il caso noto: i non-doppi etichettati «Double No» da gnuBG, letti "
-"male prima della versione 0.33.0, che portavano l'errore di un doppio mai "
-"avvenuto."
+"``analyses.repair`` ricalcola le colonne denormalizzate di un'analisi "
+"(fra cui ``cube_error``) a partire dalla sua analisi completa, e "
+"restituisce il numero di righe **realmente** corrette. Quelle colonne "
+"sono soltanto una proiezione: un errore di proiezione si ripara dunque "
+"senza reimportare i file di origine. L'operazione è esplicita e non parte"
+" mai da sola — né all'apertura di un database né per effetto di una "
+"migrazione, dato che lo schema non è in causa. Un'analisi illeggibile "
+"viene lasciata com'è anziché azzerata. Il caso noto: i non-doppi "
+"etichettati «Double No» da gnuBG, letti male prima della versione 0.33.0,"
+" che portavano l'errore di un doppio mai avvenuto."
 
-#: ../../source/mode_headless.rst:189
+#: ../../source/mode_headless.rst:186
+msgid ""
+"``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant "
+"courant : écrire une analyse pour chaque position qui n'en a aucune "
+"(ADR-0013, ADR-0015). C'est une opération de **bibliothèque** — elle lit "
+"et écrit des positions et des analyses stockées — jamais un évaluateur nu"
+" : ``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` "
+"évalue une position. La réponse est un flux NDJSON (``started``, "
+"``progress``, puis ``done`` ou ``error``/``cancelled``), sur le même "
+"modèle que les points d'accès d'import ; "
+"``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` reçu dans "
+"l'évènement ``started``) annule un rattrapage en cours. C'est la même "
+"opération que le déclenchement automatique après import et le geste "
+"explicite de l'interface graphique, et que la sous-commande ``blunderdb "
+"analyze`` (voir :ref:`cli`) — trois formes, une seule logique."
+msgstr ""
+"``gammonnet.analyzeMissing`` avvia il recupero gammonNet del tenant "
+"corrente: scrivere un'analisi per ogni posizione che non ne ha alcuna "
+"(ADR-0013, ADR-0015). È un'operazione di **libreria** — legge e scrive "
+"posizioni e analisi memorizzate — mai un valutatore nudo: ``blunderdb "
+"serve`` opera su una libreria, ``gammonnet serve`` valuta una posizione. "
+"La risposta è un flusso NDJSON (``started``, ``progress``, poi ``done`` "
+"oppure ``error``/``cancelled``), sullo stesso modello dei punti di "
+"accesso di importazione; ``gammonnet.analyzeMissing.cancel`` (con il "
+"``job_id`` ricevuto nell'evento ``started``) annulla un recupero in "
+"corso. È la stessa operazione dell'avvio automatico dopo l'importazione e "
+"del gesto esplicito dell'interfaccia grafica, e del sottocomando "
+"``blunderdb analyze`` (vedere :ref:`cli`) — tre forme, una sola logica."
+
+#: ../../source/mode_headless.rst:202
 msgid "Déploiement avec Docker"
 msgstr "Deployment con Docker"
 
-#: ../../source/mode_headless.rst:191
+#: ../../source/mode_headless.rst:204
 msgid ""
-"Le dépôt fournit un ``Dockerfile.serve`` qui construit une image conteneur "
-"minimale du démon : seul le binaire ``serve`` est compilé (Go pur, sans "
-"interface graphique et sans CGO, donc lié statiquement), puis placé dans une"
-" image *distroless*."
+"Le dépôt fournit un ``Dockerfile.serve`` qui construit une image "
+"conteneur minimale du démon : seul le binaire ``serve`` est compilé (Go "
+"pur, sans interface graphique et sans CGO, donc lié statiquement), puis "
+"placé dans une image *distroless*."
 msgstr ""
-"Il repository fornisce un ``Dockerfile.serve`` che costruisce un'immagine "
-"container minima del demone: viene compilato solo il binario ``serve`` (Go "
-"puro, senza interfaccia grafica e senza CGO, quindi collegato staticamente),"
-" poi collocato in un'immagine *distroless*."
+"Il repository fornisce un ``Dockerfile.serve`` che costruisce un'immagine"
+" container minima del demone: viene compilato solo il binario ``serve`` "
+"(Go puro, senza interfaccia grafica e senza CGO, quindi collegato "
+"staticamente), poi collocato in un'immagine *distroless*."
 
-#: ../../source/mode_headless.rst:206
+#: ../../source/mode_headless.rst:219
 msgid ""
 "L'image écoute sur le port 8080 et se configure par variables "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
 "``BLUNDERDB_ADDR``, ``BLUNDERDB_RLS``)."
 msgstr ""
 "L'immagine ascolta sulla porta 8080 e si configura tramite variabili "
-"d'ambiente (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``, "
-"``BLUNDERDB_RLS``)."
+"d'ambiente (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,"
+" ``BLUNDERDB_RLS``)."
 
-#: ../../source/mode_headless.rst:212
+#: ../../source/mode_headless.rst:225
 msgid ""
-"Comme le démon lui-même, le conteneur n'effectue **aucune authentification**"
-" : il doit être placé derrière un reverse-proxy chargé de l'authentification"
-" et ne jamais être exposé directement sur l'Internet public."
+"Comme le démon lui-même, le conteneur n'effectue **aucune "
+"authentification** : il doit être placé derrière un reverse-proxy chargé "
+"de l'authentification et ne jamais être exposé directement sur l'Internet"
+" public."
 msgstr ""
-"Come il demone stesso, il container non effettua **alcuna autenticazione** :"
-" deve essere collocato dietro un reverse-proxy incaricato "
-"dell'autenticazione e non essere mai esposto direttamente su Internet "
-"pubblico."
+"Come il demone stesso, il container non effettua **alcuna "
+"autenticazione** : deve essere collocato dietro un reverse-proxy "
+"incaricato dell'autenticazione e non essere mai esposto direttamente su "
+"Internet pubblico."
 
-#: ../../source/mode_headless.rst:220
+#: ../../source/mode_headless.rst:233
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "Backend PostgreSQL e multiutente"
 
-#: ../../source/mode_headless.rst:222
+#: ../../source/mode_headless.rst:235
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
-"**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est sélectionné"
-" par ``--backend postgres`` et la chaîne de connexion ``--dsn``. Le schéma "
-"est créé et migré automatiquement au démarrage."
+"**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
+"sélectionné par ``--backend postgres`` et la chaîne de connexion "
+"``--dsn``. Le schéma est créé et migré automatiquement au démarrage."
 msgstr ""
 "Per un deployment condiviso, blunderDB può memorizzare i dati in "
 "**PostgreSQL** invece che in un file SQLite. Il backend è selezionato "
 "tramite ``--backend postgres`` e la stringa di connessione ``--dsn``. Lo "
 "schema viene creato e migrato automaticamente all'avvio."
 
-#: ../../source/mode_headless.rst:227
+#: ../../source/mode_headless.rst:240
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte un identifiant de scope (en-tête ``X-Tenant-ID``, par défaut "
@@ -514,70 +554,73 @@ msgid ""
 "connexion. C'est une défense en profondeur facultative, désactivée par "
 "défaut."
 msgstr ""
-"I dati sono **compartimentati per tenant** (locatario): ogni richiesta porta"
-" un identificatore di scope (header ``X-Tenant-ID``, per impostazione "
-"predefinita ``default``), il che permette a più utenti di condividere la "
-"stessa istanza senza vedere i dati altrui. L'opzione ``--rls`` abilita in "
-"aggiunta la **Row-Level Security** di PostgreSQL: vengono installate "
-"politiche di isolamento per tenant e ``app.tenant_id`` viene impostato per "
-"connessione. È una difesa in profondità facoltativa, disabilitata per "
-"impostazione predefinita."
+"I dati sono **compartimentati per tenant** (locatario): ogni richiesta "
+"porta un identificatore di scope (header ``X-Tenant-ID``, per "
+"impostazione predefinita ``default``), il che permette a più utenti di "
+"condividere la stessa istanza senza vedere i dati altrui. L'opzione "
+"``--rls`` abilita in aggiunta la **Row-Level Security** di PostgreSQL: "
+"vengono installate politiche di isolamento per tenant e ``app.tenant_id``"
+" viene impostato per connessione. È una difesa in profondità facoltativa,"
+" disabilitata per impostazione predefinita."
 
-#: ../../source/mode_headless.rst:235
+#: ../../source/mode_headless.rst:248
 msgid ""
 "Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
-"historique, etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``), "
-"**ainsi que son état de session** (dernière recherche, dernière position, "
-"onglets ouverts — les quelques lignes ``metadata`` préfixées par ce scope) :"
-" l'opération s'exécute dans une seule transaction, est idempotente (aucune "
-"erreur à purger un tenant déjà vide ou à répéter l'appel) et n'affecte aucun"
-" autre tenant ni la ligne globale de version de schéma. Elle n'est "
-"disponible qu'avec le backend PostgreSQL — elle renvoie une erreur "
-"``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant."
+"historique, etc.) sur le tenant courant (celui porté par ``X-Tenant-"
+"ID``), **ainsi que son état de session** (dernière recherche, dernière "
+"position, onglets ouverts — les quelques lignes ``metadata`` préfixées "
+"par ce scope) : l'opération s'exécute dans une seule transaction, est "
+"idempotente (aucune erreur à purger un tenant déjà vide ou à répéter "
+"l'appel) et n'affecte aucun autre tenant ni la ligne globale de version "
+"de schéma. Elle n'est disponible qu'avec le backend PostgreSQL — elle "
+"renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a pas de "
+"notion de tenant."
 msgstr ""
 "Quando un tenant viene dismesso, ``POST /v1/tenant.purge`` elimina "
 "definitivamente tutti i suoi dati (posizioni, partite, collezioni, "
-"cronologia, ecc.) sul tenant corrente (quello indicato da ``X-Tenant-ID``), "
-"**oltre al suo stato di sessione** (ultima ricerca, ultima posizione, schede"
-" aperte — le poche righe ``metadata`` prefissate con questo scope): "
-"l'operazione viene eseguita in un'unica transazione, è idempotente (nessun "
-"errore nel purgare un tenant già vuoto o nel ripetere la chiamata) e non ha "
-"effetto su nessun altro tenant né sulla riga globale di versione dello "
-"schema. È disponibile solo con il backend PostgreSQL — restituisce un errore"
-" ``invalid`` su un backend SQLite, che non ha alcuna nozione di tenant."
+"cronologia, ecc.) sul tenant corrente (quello indicato da ``X-Tenant-"
+"ID``), **oltre al suo stato di sessione** (ultima ricerca, ultima "
+"posizione, schede aperte — le poche righe ``metadata`` prefissate con "
+"questo scope): l'operazione viene eseguita in un'unica transazione, è "
+"idempotente (nessun errore nel purgare un tenant già vuoto o nel ripetere"
+" la chiamata) e non ha effetto su nessun altro tenant né sulla riga "
+"globale di versione dello schema. È disponibile solo con il backend "
+"PostgreSQL — restituisce un errore ``invalid`` su un backend SQLite, che "
+"non ha alcuna nozione di tenant."
 
-#: ../../source/mode_headless.rst:249
+#: ../../source/mode_headless.rst:262
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "Migrare un database SQLite verso PostgreSQL"
 
-#: ../../source/mode_headless.rst:251
+#: ../../source/mode_headless.rst:264
 msgid ""
-"``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un backend"
-" PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour « "
-"téléverser » une bibliothèque de bureau vers un déploiement serveur."
+"``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
+"backend PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour"
+" « téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
-"``blunderdb migrate`` copia un database SQLite monoutente verso un backend "
-"PostgreSQL, sotto uno scope di tenant scelto — è il percorso per « caricare "
-"» una libreria desktop verso un deployment server."
+"``blunderdb migrate`` copia un database SQLite monoutente verso un "
+"backend PostgreSQL, sotto uno scope di tenant scelto — è il percorso per "
+"« caricare » una libreria desktop verso un deployment server."
 
-#: ../../source/mode_headless.rst:266
+#: ../../source/mode_headless.rst:279
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
-"matchs (parties + coups), les tournois (avec leurs liens de match) et les "
-"collections (avec leur composition)**, en réattribuant les clés primaires et"
-" étrangères, le tout dans une **seule transaction** côté destination : "
-"l'opération est atomique (un échec laisse la destination intacte, il suffit "
-"de relancer). La progression et le bilan final sont émis en NDJSON sur la "
-"sortie standard. Si la base source est assez ancienne pour nécessiter sa "
-"propre mise à niveau de schéma sur place, celle-ci s'exécute d'abord et émet"
-" ses propres événements ``\"schema-migration\"`` (phase/effectué/total) "
-"avant que la copie ligne à ligne ne commence."
+"matchs (parties + coups), les tournois (avec leurs liens de match) et les"
+" collections (avec leur composition)**, en réattribuant les clés "
+"primaires et étrangères, le tout dans une **seule transaction** côté "
+"destination : l'opération est atomique (un échec laisse la destination "
+"intacte, il suffit de relancer). La progression et le bilan final sont "
+"émis en NDJSON sur la sortie standard. Si la base source est assez "
+"ancienne pour nécessiter sa propre mise à niveau de schéma sur place, "
+"celle-ci s'exécute d'abord et émet ses propres événements ``\"schema-"
+"migration\"`` (phase/effectué/total) avant que la copie ligne à ligne ne "
+"commence."
 msgstr ""
 "La migrazione copia le **posizioni, le loro analisi e commenti, i match "
 "(partite + mosse), i tornei (con i loro collegamenti ai match) e le "
-"collezioni (con la loro composizione)**, riassegnando le chiavi primarie ed "
-"esterne, il tutto in una **sola transazione** lato destinazione: "
+"collezioni (con la loro composizione)**, riassegnando le chiavi primarie "
+"ed esterne, il tutto in una **sola transazione** lato destinazione: "
 "l'operazione è atomica (un errore lascia la destinazione intatta, basta "
 "riavviarla). L'avanzamento e il bilancio finale vengono emessi in NDJSON "
 "sullo standard output. Se il database di origine è abbastanza vecchio da "
@@ -585,49 +628,47 @@ msgstr ""
 "eseguito per primo ed emette i propri eventi ``\"schema-migration\"`` "
 "(fase/fatto/totale) prima che inizi la copia riga per riga."
 
-#: ../../source/mode_headless.rst:284
+#: ../../source/mode_headless.rst:297
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:286
+#: ../../source/mode_headless.rst:299
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
-msgstr ""
-"database SQLite di origine (``sqlite:///percorso`` o un semplice percorso)"
+msgstr "database SQLite di origine (``sqlite:///percorso`` o un semplice percorso)"
 
-#: ../../source/mode_headless.rst:287
+#: ../../source/mode_headless.rst:300
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:289
+#: ../../source/mode_headless.rst:302
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "DSN PostgreSQL di destinazione (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:290
+#: ../../source/mode_headless.rst:303
 msgid "``--tenant-id <scope>``"
 msgstr "``--tenant-id <scope>``"
 
-#: ../../source/mode_headless.rst:292
+#: ../../source/mode_headless.rst:305
 msgid "scope de tenant de destination (obligatoire sauf en ``--dry-run``)"
-msgstr ""
-"scope di tenant di destinazione (obbligatorio tranne in ``--dry-run``)"
+msgstr "scope di tenant di destinazione (obbligatorio tranne in ``--dry-run``)"
 
-#: ../../source/mode_headless.rst:293
+#: ../../source/mode_headless.rst:306
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:295
+#: ../../source/mode_headless.rst:308
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "conta ciò che verrebbe copiato senza scrivere nulla"
 
-#: ../../source/mode_headless.rst:296
+#: ../../source/mode_headless.rst:309
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politica>``"
 
-#: ../../source/mode_headless.rst:297
+#: ../../source/mode_headless.rst:310
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:298
+#: ../../source/mode_headless.rst:311
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -635,90 +676,92 @@ msgstr ""
 "``\"\"`` interrompe se il tenant ha già dei dati; ``skip`` unisce "
 "(deduplicazione delle posizioni tramite hash Zobrist)"
 
-#: ../../source/mode_headless.rst:303
+#: ../../source/mode_headless.rst:316
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
-"métadonnées de session. La priorité est la migration de la bibliothèque de "
-"positions et de l'historique de matchs."
+"métadonnées de session. La priorité est la migration de la bibliothèque "
+"de positions et de l'historique de matchs."
 msgstr ""
 "Non vengono (ancora) migrati gli stati applicativi: deck/carte Anki, "
 "libreria di filtri, cronologia di ricerca e di comandi, e metadati di "
-"sessione. La priorità è la migrazione della libreria di posizioni e della "
-"cronologia dei match."
+"sessione. La priorità è la migrazione della libreria di posizioni e della"
+" cronologia dei match."
 
-#: ../../source/mode_headless.rst:311
+#: ../../source/mode_headless.rst:324
 msgid "Le dispatcher générique ``call``"
 msgstr "Il dispatcher generico ``call``"
 
-#: ../../source/mode_headless.rst:313
+#: ../../source/mode_headless.rst:326
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
-"call`` expose **toutes** les opérations de stockage directement, en local. "
-"Il passe par les mêmes gestionnaires que le démon ``serve`` : le "
-"comportement est donc identique à ``POST /v1/<famille>.<méthode>``. C'est "
-"utile pour le scripting et les tests d'intégration."
+"call`` expose **toutes** les opérations de stockage directement, en "
+"local. Il passe par les mêmes gestionnaires que le démon ``serve`` : le "
+"comportement est donc identique à ``POST /v1/<famille>.<méthode>``. C'est"
+" utile pour le scripting et les tests d'intégration."
 msgstr ""
-"In aggiunta ai sottocomandi storici (:ref:`cli`), ``blunderdb call`` espone "
-"**tutte** le operazioni di archiviazione direttamente, in locale. Passa per "
-"gli stessi gestori del demone ``serve``: il comportamento è quindi identico "
-"a ``POST /v1/<famiglia>.<metodo>``. È utile per lo scripting e i test di "
-"integrazione."
+"In aggiunta ai sottocomandi storici (:ref:`cli`), ``blunderdb call`` "
+"espone **tutte** le operazioni di archiviazione direttamente, in locale. "
+"Passa per gli stessi gestori del demone ``serve``: il comportamento è "
+"quindi identico a ``POST /v1/<famiglia>.<metodo>``. È utile per lo "
+"scripting e i test di integrazione."
 
-#: ../../source/mode_headless.rst:347
+#: ../../source/mode_headless.rst:360
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:351
+#: ../../source/mode_headless.rst:364
 msgid "``--scope <chaîne>``"
 msgstr "``--scope <stringa>``"
 
-#: ../../source/mode_headless.rst:352
+#: ../../source/mode_headless.rst:365
 msgid "``default``"
 msgstr "``default``"
 
-#: ../../source/mode_headless.rst:353
+#: ../../source/mode_headless.rst:366
 msgid "scope de tenant (envoyé comme ``X-Tenant-ID``)"
 msgstr "scope di tenant (inviato come ``X-Tenant-ID``)"
 
-#: ../../source/mode_headless.rst:354
+#: ../../source/mode_headless.rst:367
 msgid "``--json <chaîne>``"
 msgstr "``--json <stringa>``"
 
-#: ../../source/mode_headless.rst:355
+#: ../../source/mode_headless.rst:368
 #, python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:356
+#: ../../source/mode_headless.rst:369
 msgid "corps de la requête au format JSON"
 msgstr "corpo della richiesta in formato JSON"
 
-#: ../../source/mode_headless.rst:357
+#: ../../source/mode_headless.rst:370
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <percorso>``"
 
-#: ../../source/mode_headless.rst:359
+#: ../../source/mode_headless.rst:372
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "legge il corpo della richiesta da un file"
 
-#: ../../source/mode_headless.rst:360
+#: ../../source/mode_headless.rst:373
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:362
+#: ../../source/mode_headless.rst:375
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "mostra tutti i metodi ``<famiglia>.<metodo>`` ed esce"
 
-#: ../../source/mode_headless.rst:364
+#: ../../source/mode_headless.rst:377
 #, python-brace-format
 msgid ""
-"La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite"
-" sur la sortie standard. En cas d'erreur, le processus se termine avec un "
-"code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur la sortie "
-"standard pour rester analysable (par exemple avec ``jq``)."
+"La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
+"écrite sur la sortie standard. En cas d'erreur, le processus se termine "
+"avec un code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur "
+"la sortie standard pour rester analysable (par exemple avec ``jq``)."
 msgstr ""
 "La risposta JSON (o il flusso NDJSON per gli endpoint ``*.list``) viene "
-"scritta sullo standard output. In caso di errore, il processo termina con un"
-" codice diverso da zero e l'envelope ``{\"error\":{…}}`` viene stampato "
-"sullo standard output per restare analizzabile (per esempio con ``jq``)."
+"scritta sullo standard output. In caso di errore, il processo termina con"
+" un codice diverso da zero e l'envelope ``{\"error\":{…}}`` viene "
+"stampato sullo standard output per restare analizzabile (per esempio con "
+"``jq``)."
+

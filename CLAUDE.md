@@ -19,7 +19,7 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|verify|vacuum|delete|help|version|info|edit|search|epc` → **CLI**. The
+- `create|import|export|identity|open|list|match|verify|vacuum|delete|help|version|info|edit|search|epc|analyze` → **CLI**. The
   names live in one place — `handlers()` in `internal/cli/cli.go`; `main.go`
   asks `cli.IsCommand`. Never re-introduce a second list there.
 
@@ -213,7 +213,8 @@ Violating one of these is a bug even if all tests pass:
   Keep the *predicate* identical in all three (placeholders and boolean syntax
   differ by SQL dialect).
 - **Schema changes** require bumping `DatabaseVersion` in `pkg/blunderdb/domain/`
-  **and** a migration path (`CheckVersion` in `db_migration.go`, DDL in
+  **and** a migration path (`CheckVersion` in `db_schema.go` — it only compares the major version — and
+  `runMigrationChain` in `db_migration.go`, DDL in
   `db_schema.go`, PostgreSQL side under `storage/postgres/migrations/`), covered by
   a test in `migration_test.go`.
 - **The serve daemon performs NO authentication** — it trusts `X-Tenant-ID` and
