@@ -11,6 +11,8 @@
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
+    import { sendPositionToEval } from '../services/positionService.js';
+    import ContextMenu from './ContextMenu.svelte';
 
     // Sentinel colour stored on an exclude-structure point that must hold no checker.
     const EXCLUDE_EMPTY = 2;
@@ -924,7 +926,7 @@
         canvas.addEventListener('mousedown', handleDoublingCubeClick);
         canvas.addEventListener('mousedown', handleRectangleAndDiceClick);
         canvas.addEventListener('mousedown', handleScoreClick);
-        canvas.addEventListener('contextmenu', (event) => event.preventDefault()); // Deactivate contextual menu
+        canvas.addEventListener('contextmenu', handleContextMenu);
         drawBoard();
         window.addEventListener('resize', resizeBoard);
         window.addEventListener('keydown', handleOrientationChange);
@@ -944,7 +946,7 @@
         canvas.removeEventListener('mousedown', handleDoublingCubeClick);
         canvas.removeEventListener('mousedown', handleRectangleAndDiceClick);
         canvas.removeEventListener('mousedown', handleScoreClick);
-        canvas.removeEventListener('contextmenu', (event) => event.preventDefault()); // Remove event listener
+        canvas.removeEventListener('contextmenu', handleContextMenu);
         window.removeEventListener('resize', resizeBoard);
         window.removeEventListener('resize', logCanvasSize);
         window.removeEventListener('keydown', handleOrientationChange);
@@ -955,6 +957,33 @@
         // a detached two.js instance.
         if (redrawFrameId !== null) cancelAnimationFrame(redrawFrameId);
     });
+
+    // ── Board context menu ─────────────────────────────────────────────────
+    // Right-clicking the board opens actions on the position it shows, but
+    // ONLY in the modes where the right button is otherwise idle. In EDIT and
+    // EPC the right button already means "place the other colour's checker"
+    // (see handleMouseDown), so the menu stays out of their way.
+    let boardMenu = $state(null);
+
+    function handleContextMenu(event) {
+        event.preventDefault(); // no native menu, in every mode
+        if (mode === 'EDIT' || mode === 'EPC') return;
+        if (get(isAnyModalOpen)) return;
+        boardMenu = {
+            x: event.clientX,
+            y: event.clientY,
+            items: [
+                {
+                    label: $t('board.menu.evaluate'),
+                    // The position AS DISPLAYED, not the stored record: in a
+                    // match with player 2 on roll the board is mirrored, and
+                    // the Eval panel must open on the board the user is
+                    // actually looking at.
+                    onClick: () => sendPositionToEval(getDisplayPosition())
+                }
+            ]
+        };
+    }
 
     // Helper function to get the position to display
     //
@@ -1632,6 +1661,9 @@
 
 <div class="canvas-container">
     <div id="backgammon-board" class="full-size-board" role="img" aria-label={boardDescription}></div>
+    {#if boardMenu}
+        <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />
+    {/if}
 </div>
 
 <style>

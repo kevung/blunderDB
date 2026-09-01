@@ -632,7 +632,10 @@
         "description": "Backgammon-Brett. Pip-Count von Spieler 1 {pip1}, Pip-Count von Spieler 2 {pip2}. {roller} ist am Zug.",
         "label": "Backgammon-Brett",
         "player1": "Spieler 1",
-        "player2": "Spieler 2"
+        "player2": "Spieler 2",
+        "menu": {
+            "evaluate": "Diese Position auswerten"
+        }
     },
     "epc": {
         "avgRolls": "Ø Würfe",

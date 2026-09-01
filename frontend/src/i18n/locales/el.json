@@ -632,7 +632,10 @@
         "description": "Ταμπλό backgammon. Μέτρηση pip Παίκτη 1 {pip1}, μέτρηση pip Παίκτη 2 {pip2}. Σειρά του {roller}.",
         "label": "Ταμπλό backgammon",
         "player1": "Παίκτης 1",
-        "player2": "Παίκτης 2"
+        "player2": "Παίκτης 2",
+        "menu": {
+            "evaluate": "Αξιολόγηση αυτής της θέσης"
+        }
     },
     "epc": {
         "avgRolls": "Μέσες ζαριές",

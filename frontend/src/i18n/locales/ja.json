@@ -632,7 +632,10 @@
         "description": "backgammon の盤面。プレイヤー 1 の pip カウント {pip1}、プレイヤー 2 の pip カウント {pip2}。{roller} の手番です。",
         "label": "backgammon の盤面",
         "player1": "プレイヤー 1",
-        "player2": "プレイヤー 2"
+        "player2": "プレイヤー 2",
+        "menu": {
+            "evaluate": "この局面を評価"
+        }
     },
     "epc": {
         "avgRolls": "平均ロール",

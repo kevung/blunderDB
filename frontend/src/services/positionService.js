@@ -49,6 +49,12 @@ let savedPositionsBeforeEPC = null;
 // the studied match position instead of dropping to NORMAL (bug 2).
 let savedMatchContextBeforeEPC = null;
 let savedModeBeforeEPC = null;
+// The position the Eval panel must open on instead of its default bearoff,
+// set by sendPositionToEval() just before it switches to the Eval tab and
+// consumed by enterEPCMode(). It is a hand-off between two calls one tick
+// apart (the tab switch reaches enterEPCMode through App.svelte's tab effect,
+// not a direct call), which is why it lives here rather than in a parameter.
+let seedPositionForEPC = null;
 
 // The match context when the search/EDIT tab was entered from a match, so leaving
 // search returns to the studied match position instead of the last of all
@@ -1008,16 +1014,9 @@ export function toggleEPCMode() {
     }
 }
 
-export function enterEPCMode() {
-    if (get(statusBarModeStore) === 'EPC') return;
-
-    savedPositionBeforeEPC = get(positionStore) ? { ...get(positionStore) } : null;
-    savedPositionIndexBeforeEPC = get(currentPositionIndexStore);
-    savedPositionsBeforeEPC = get(positionsStore) ? [...get(positionsStore)] : null;
-    // Remember whether EPC was opened from a match so exit can return to it.
-    savedModeBeforeEPC = get(statusBarModeStore);
-    savedMatchContextBeforeEPC = { ...get(matchContextStore) };
-
+// The board the Eval panel opens on when nothing was handed to it: the
+// canonical 6-point bearoff the EPC trainer starts from.
+function defaultEPCPosition() {
     const epcPoints = Array(26).fill({ checkers: 0, color: -1 });
     epcPoints[1] = { checkers: 2, color: 0 };
     epcPoints[2] = { checkers: 2, color: 0 };
@@ -1026,7 +1025,7 @@ export function enterEPCMode() {
     epcPoints[5] = { checkers: 3, color: 0 };
     epcPoints[6] = { checkers: 3, color: 0 };
 
-    const epcPosition = {
+    return {
         id: 0,
         board: { points: epcPoints, bearoff: [0, 15] },
         cube: { owner: -1, value: 0 },
@@ -1037,6 +1036,55 @@ export function enterEPCMode() {
         has_jacoby: 0,
         has_beaver: 0
     };
+}
+
+/**
+ * Open the Eval panel on `position` instead of its default bearoff — the
+ * "study THIS position" gesture, reached from the board's context menu or
+ * from a Ctrl-C/Ctrl-V round trip.
+ *
+ * The copy is detached and its id cleared: the Eval board is a scratch pad,
+ * and a position carrying a database id there would let a later Ctrl-U write
+ * an edited board back over the record it came from. Everything else travels
+ * as-is, including player_on_roll: the Eval panel reads the on-roll side for
+ * its own facts table and gammonNet evaluates from it, so a mirrored match
+ * position keeps both its orientation on screen and its meaning to the engine.
+ */
+export function sendPositionToEval(position) {
+    if (!position) return;
+    const seed = JSON.parse(JSON.stringify(position));
+    seed.id = 0;
+
+    if (get(statusBarModeStore) === 'EPC') {
+        // Already in the Eval panel: replace the board in place. Going through
+        // the tab store would be a no-op and enterEPCMode() returns early.
+        positionsStore.set([seed]);
+        positionStore.set(seed);
+        currentPositionIndexStore.set(0);
+        return;
+    }
+
+    seedPositionForEPC = seed;
+    // Normally the tab switch reaches enterEPCMode() through App.svelte's tab
+    // effect. If the Eval tab is somehow already selected without EPC mode
+    // being on, that set() is a no-op and the effect never re-runs, so enter
+    // directly rather than leave the seed stranded.
+    if (get(activeTabStore) === 'epc') enterEPCMode();
+    else activeTabStore.set('epc');
+}
+
+export function enterEPCMode() {
+    if (get(statusBarModeStore) === 'EPC') return;
+
+    savedPositionBeforeEPC = get(positionStore) ? { ...get(positionStore) } : null;
+    savedPositionIndexBeforeEPC = get(currentPositionIndexStore);
+    savedPositionsBeforeEPC = get(positionsStore) ? [...get(positionsStore)] : null;
+    // Remember whether EPC was opened from a match so exit can return to it.
+    savedModeBeforeEPC = get(statusBarModeStore);
+    savedMatchContextBeforeEPC = { ...get(matchContextStore) };
+
+    const epcPosition = seedPositionForEPC ? seedPositionForEPC : defaultEPCPosition();
+    seedPositionForEPC = null;
 
     statusBarModeStore.set('EPC');
     closePanel(PANEL.COMMENT);

@@ -63,6 +63,15 @@ Position
    que vers celles du mode édition (score 7 partout, dés 3-1). Un double-clic
    en dehors du plateau produit la même réinitialisation.
 
+.. note::
+
+   Dans le panneau Eval et dans le panneau Recherche, le plateau est un
+   brouillon et non une position de la base : CTRL-V y **pose la position sur
+   le plateau** au lieu de l'importer dans la base, et CTRL-C copie le plateau
+   affiché — son XGID est recalculé à partir des pions posés, sans l'analyse
+   de la position consultée auparavant. La position copiée se colle ainsi
+   telle quelle dans eXtreme Gammon ou dans une autre instance de blunderDB.
+
 .. _raccourcis_navigation:
 
 Navigation
