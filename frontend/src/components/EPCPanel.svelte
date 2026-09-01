@@ -412,12 +412,14 @@
                 </label>
             </div>
 
-            <!-- Content row: the always-present facts table and the one
-                 decision block the board asks for (never both a cube verdict
-                 and a checker decision — ADR-0017 rule 2). flex-wrap so a
-                 narrow panel stacks it instead of squeezing (ADR-0017's
-                 container-query layout); nothing pushes anything to a far
-                 edge, so no width can produce a void. -->
+            <!-- Content row: the facts stack and the one decision block the
+                 board asks for (never both a cube verdict and a checker
+                 decision — ADR-0017 rule 2). The facts are two blocks stacked
+                 on one column grid rather than one line of ten columns
+                 (ADR-0021), which is what keeps the decision ON this row at the
+                 default window size in all nine languages; flex-wrap stays as
+                 the safety net for a panel narrowed by hand. Nothing pushes
+                 anything to a far edge, so no width can produce a void. -->
             <div class="top-row">
                 {#if showFactsTable}
                     <PositionFactsTable
@@ -540,10 +542,14 @@
         flex-wrap: wrap;
     }
 
-    /* Facts + the one decision block, on one row when the panel is wide enough
-       (~1000px, ADR-0017's budget), wrapping to two lines and then a stacked
-       column as it narrows — one flow, driven by the panel's own width, not by
-       whether it is docked at the bottom or the side. */
+    /* Facts + the one decision block, side by side. Since ADR-0021 the facts
+       are two blocks stacked on one column grid (561 px at worst) instead of a
+       single line of ten columns (up to 880 px), so the pair fits the default
+       panel in all nine languages and the decision no longer falls under the
+       numbers it answers. The wrap is still there — one flow, driven by the
+       panel's own width, not by whether it is docked at the bottom or the side
+       — but it is now a fallback for a hand-narrowed panel, not the normal
+       case. */
     .top-row {
         flex: 0 0 auto;
         display: flex;

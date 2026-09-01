@@ -107,6 +107,41 @@ test('a race cube position fits too — five race columns and all', async ({ pag
     expect(await overflow(page)).toBeLessThanOrEqual(0);
 });
 
+// blunderDB's own default window (config.go: 1024 px), not the suite's 1280:
+// the claim ADR-0021 makes is about the width the app actually ships with, and
+// at 1280 the old layout fit in French too — the test would have passed against
+// the very layout it is written to rule out.
+test.describe("at blunderDB's default window width", () => {
+    test.use({ viewport: { width: 1024, height: 768 } });
+
+    test('the decision sits beside the facts, not under them (ADR-0021)', async ({ page }) => {
+        await openEval(page, { epc: raceEpc, evalResult: cubeEval });
+
+        // The facts are two stacked blocks — two tbodies of one table, sharing
+        // one column grid — precisely so this holds at the default window in
+        // every language: on a single line of ten columns they needed 963 px
+        // (fr) to 1125 px (el) against the 996 px the panel has, so the cube
+        // block, last in the flex row, wrapped under them in seven languages
+        // out of nine.
+        await expect(page.locator('.epc-panel .facts-table tbody')).toHaveCount(2);
+
+        const box = (sel) => page.locator(sel).boundingBox();
+        const facts = await box('.epc-panel .facts-table');
+        const cube = await box('.epc-panel .decision-cube');
+        expect(cube.x).toBeGreaterThan(facts.x + facts.width - 1); // to the right of
+        expect(cube.y).toBeLessThan(facts.y + 4); // and on the same line, not below
+
+        // Rule 4: the slack is left over at the end of the row, never inserted
+        // between the blocks.
+        expect(cube.x - (facts.x + facts.width)).toBeLessThan(40);
+    });
+
+    test('and the panel still does not scroll there', async ({ page }) => {
+        await openEval(page, { epc: raceEpc, evalResult: cubeEval });
+        expect(await overflow(page)).toBeLessThanOrEqual(0);
+    });
+});
+
 test('the decision has the same three options plus a verdict, race or not', async ({ page }) => {
     await openEval(page, { epc: raceEpc, evalResult: cubeEval });
     await expect(page.locator('.epc-panel .cube-table tbody tr')).toHaveCount(4);
