@@ -92,7 +92,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 			writeErrorCode(w, CodeRateLimited, "too many requests")
 		})(h)
 	}
-	h = middleware.Tenant(func(w http.ResponseWriter, _ *http.Request, msg string) {
+	h = middleware.Tenant(s.publicPaths(), func(w http.ResponseWriter, _ *http.Request, msg string) {
 		writeErrorCode(w, CodeInvalid, msg)
 	})(h)
 	h = middleware.CORS(s.opts.CORSAllowOrigin)(h)
@@ -105,6 +105,20 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 		writeErrorCode(w, CodeInternal, "internal error")
 	})(h)
 	return h
+}
+
+// publicPaths is the set of routes reachable without a tenant: everything in
+// the routing table outside the /v1 domain surface, i.e. the ops endpoints.
+// Derived rather than listed so a new ops route is public the day it lands,
+// and a new domain route can never be.
+func (s *Server) publicPaths() map[string]bool {
+	public := make(map[string]bool)
+	for _, rt := range s.routes() {
+		if !strings.HasPrefix(rt.pattern, "/v1/") {
+			public[rt.pattern] = true
+		}
+	}
+	return public
 }
 
 // limitBody caps request bodies to guard against OOM from a malicious client.

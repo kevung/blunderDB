@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -16,24 +17,26 @@ const TenantHeader = "X-Tenant-ID"
 
 type tenantKey struct{}
 
-// publicPaths are reachable without a tenant header (ops endpoints).
-var publicPaths = map[string]bool{
-	"/healthz": true,
-	"/readyz":  true,
-	"/metrics": true,
-}
-
 // Tenant extracts the X-Tenant-ID header and stores it in the request context.
-// Requests to non-public paths without a tenant are rejected; the rejection
-// itself is delegated to errFn so the server controls the error envelope.
-func Tenant(errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
+// Requests to paths outside public without a tenant are rejected; the
+// rejection itself is delegated to errFn so the server controls the error
+// envelope. public is the set of paths reachable without a tenant (the ops
+// endpoints) — the server derives it from its routing table so the two can
+// never drift apart.
+//
+// The header value is an opaque identifier: surrounding whitespace is
+// trimmed (a proxy that pads the value must not create a distinct tenant), a
+// value that is blank once trimmed counts as missing, and anything else —
+// however long, ASCII or not — is passed through verbatim. Shaping the
+// identifier is the proxy's job, not this daemon's.
+func Tenant(public map[string]bool, errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if publicPaths[r.URL.Path] {
+			if public[r.URL.Path] {
 				next.ServeHTTP(w, r)
 				return
 			}
-			tenant := r.Header.Get(TenantHeader)
+			tenant := strings.TrimSpace(r.Header.Get(TenantHeader))
 			if tenant == "" {
 				errFn(w, r, "missing or empty "+TenantHeader+" header")
 				return
