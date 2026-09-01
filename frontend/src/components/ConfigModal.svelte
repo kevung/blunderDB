@@ -750,10 +750,11 @@
     }
 
     /* Monospace looks a size larger than a proportional face at the same nominal size, so
-       it is nudged down to sit level with the text beside it. */
+       it takes the small token to sit level with the base-size text beside it (ADR-0008
+       rule 4). */
     .identity-fingerprint {
         font-family: monospace;
-        font-size: 0.92em;
+        font-size: var(--font-size-small);
     }
 
     .tabs {

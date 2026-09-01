@@ -227,7 +227,6 @@
     }
 
     .sort-btn {
-        font: inherit;
         color: inherit;
         background: none;
         border: none;

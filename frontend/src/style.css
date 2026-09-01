@@ -7,7 +7,7 @@
        exceptions: dialog chrome (below), and the large figures of the statistics tabs
        and import counters (--font-size-stat-figure). */
     --font-size-base: 12px; /* body text, labels, values, controls, buttons */
-    --font-size-small: 11px; /* dense lists, secondary notes and hints */
+    --font-size-small: 11px; /* dense lists, secondary notes and hints, monospace beside base text */
     --font-size-title: 15px; /* panel titles, and a few deliberately compact dialog titles */
 
     /* Dialog chrome — named exceptions under ADR-0008, not part of the body scale above.
