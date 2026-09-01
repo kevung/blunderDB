@@ -11,7 +11,7 @@
 //
 // Only fr.js is parsed: it is the source language (the other 8 are declined
 // translations of the same table structure, see i18nKeys.sync.test.js and the
-// row-count check in this file for how the *other* 8 are kept honest without
+// per-tab h3/li/tr count check in this file for how the *other* 8 are kept honest without
 // re-implementing this whole parse per language).
 //
 // A lighter, one-directional check does the same for search filter tokens:
@@ -105,16 +105,29 @@ describe('help ↔ parseFilters sync (fr.js)', () => {
 
 describe('help translations stay structurally in sync', () => {
     // Translating help/*.js does not require re-implementing the DOM parse
-    // above for all 9 languages: as long as every translation's "commands"
-    // table carries the same number of <tr> rows as fr.js, no row was dropped
-    // or left behind when fr.js gained the entries checked above. This does
-    // not verify translation quality — only that the structural change (row
-    // added/removed) reached every language file.
-    const rowCount = (commandsHTML) => [...new DOMParser().parseFromString(`<div>${commandsHTML}</div>`, 'text/html').querySelectorAll('table tbody tr')].length;
-    const frCount = rowCount(helpFr.commands);
+    // above for all 9 languages: as long as every translation carries, tab by
+    // tab, the same number of <h3> sections, <li> items and <tr> rows as
+    // fr.js, no section, item or row was dropped or left behind when fr.js
+    // changed. This does not verify translation quality — only that the
+    // structural change reached every language file, in every tab (a row
+    // added to the commands table used to be the only thing checked; a new
+    // shortcut or manual section could still silently miss a language).
+    const TABS = ['manual', 'shortcuts', 'commands', 'about'];
+    const COUNTED = ['h3', 'li', 'tr'];
+    const shape = (html) => {
+        const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
+        return Object.fromEntries(COUNTED.map((tag) => [tag, doc.querySelectorAll(tag).length]));
+    };
+    const frShape = Object.fromEntries(TABS.map((tab) => [tab, shape(helpFr[tab])]));
 
-    test('fr.js has rows to compare against', () => {
-        expect(frCount).toBeGreaterThan(0);
+    test('fr.js has sections, items and rows to compare against', () => {
+        for (const tab of TABS) {
+            expect(typeof helpFr[tab], `help/fr.js has no "${tab}" tab`).toBe('string');
+        }
+        expect(frShape.commands.tr).toBeGreaterThan(0);
+        expect(frShape.shortcuts.tr).toBeGreaterThan(0);
+        expect(frShape.manual.h3).toBeGreaterThan(0);
+        expect(frShape.manual.li + frShape.about.li).toBeGreaterThan(0);
     });
 
     const helpDir = path.join(__dirname, '../i18n/help');
@@ -123,8 +136,13 @@ describe('help translations stay structurally in sync', () => {
         .filter((f) => f.endsWith('.js') && f !== 'index.js' && f !== 'fr.js')
         .map((f) => f.replace(/\.js$/, ''));
 
-    test.each(otherLanguages)('%s.js has the same commands-table row count as fr.js', async (lang) => {
+    test('the 8 translations are all present', () => {
+        expect(otherLanguages.sort()).toEqual(['de', 'el', 'en', 'es', 'fi', 'it', 'ja', 'ru']);
+    });
+
+    test.each(otherLanguages)('%s.js has the same h3/li/tr counts as fr.js in every tab', async (lang) => {
         const mod = await import(`../i18n/help/${lang}.js`);
-        expect(rowCount(mod.default.commands)).toBe(frCount);
+        const langShape = Object.fromEntries(TABS.map((tab) => [tab, shape(mod.default[tab] ?? '')]));
+        expect(langShape, `${lang}.js drifted structurally from fr.js (counts are h3/li/tr per tab)`).toEqual(frShape);
     });
 });
