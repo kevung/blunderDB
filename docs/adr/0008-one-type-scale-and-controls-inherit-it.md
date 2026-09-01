@@ -70,8 +70,10 @@ Four rules follow from it, and they are what a reviewer should check:
    by being uppercase, semibold and grey — no smaller.
 3. **Form controls inherit** (`font: inherit`). This single line is what fixes the twelve
    components at once; setting only a size leaves the family wrong.
-4. **Monospace is nudged to `0.92em`** where it sits next to proportional text, because a
-   monospaced face reads a size larger at equal nominal size.
+4. **Monospace next to proportional text takes `--font-size-small`**, because a monospaced
+   face reads a size larger at equal nominal size. (Until 2026-09-02 the nudge was written
+   `0.92em` — 11.04 px against a 12 px base, i.e. the small token to within a rounding
+   error; it is now the token, so that the rule below has no arithmetic exception.)
 
 Named exceptions, because a rule with no exceptions gets broken silently instead of
 argued, each now behind its own token rather than a repeated magic number:
@@ -86,9 +88,17 @@ argued, each now behind its own token rather than a repeated magic number:
   numbers in the statistics tabs, and the running counters in the import-progress dialogs
   (`FileImportProgressModal`, `ImportProgressModal`). Both are numbers the screen exists to
   show, not "text".
-- **Monospace nudged to `0.92em`** (rule 4 above) and explicit `font-size: inherit` (which is
-  rule 1's "or nothing at all, and inherits" spelled out) are not exceptions to name — they
-  already comply with the rule as written.
+- **Explicit `font-size: inherit`** (rule 1's "or nothing at all, and inherits" spelled out)
+  is not an exception to name — it already complies with the rule as written.
+
+**The rule is mechanically enforced** since 2026-09-02 by
+`frontend/src/__tests__/fontScale.sync.test.js`: every `font-size` in a `.svelte` file must
+be one of the tokens above or `inherit`, every `font` shorthand must be `inherit`, and the
+three chrome tokens are accepted only where this section places them — dialog title and
+close cross in modals (and `App.svelte`'s drop overlay), the figure token in the statistics
+tabs and the two import-progress dialogs. A new absolute value, or a chrome token in a
+panel, fails the frontend suite; adding an exception means adding it to the ADR *and* to the
+test's list, in that order.
 
 ## Considered options
 
@@ -168,7 +178,9 @@ argued, each now behind its own token rather than a repeated magic number:
   ```
 
   Both remaining lines already comply with rule 1 as written (`inherit` *is* "nothing at all,
-  and inherits") and rule 4 (the monospace nudge) — zero unexplained absolute values.
+  and inherits") and rule 4 (the monospace nudge) — zero unexplained absolute values. The
+  two `0.92em` became `var(--font-size-small)` on 2026-09-02, when the guard test landed, so
+  that the guard could reject every non-token value without a special case.
   `ConfigModal` and `ProtectedCopyModal` keep `--font-size-title` on their dialog title
   instead of adopting the new `--font-size-dialog-title`: both are compact utility dialogs
   where the smaller, panel-scale title was judged to read right, so they were left alone

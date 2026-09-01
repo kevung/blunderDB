@@ -4,25 +4,34 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 )
 
-// xgidContractCase mirrors one entry of testdata/xgid_corpus.json. The same
-// corpus is asserted by the GUI parser in
-// frontend/src/__tests__/xgidContract.test.js, so any drift between the Go
-// decoder and the GUI clipboard parser fails a test on at least one side.
-// See the corpus file's _comment for conventions and intentionally excluded
-// fields (decision_type) / edge cases (turn=0, match away score of 1).
+// xgidContractCase mirrors one entry of testdata/xgid_corpus.json. The corpus
+// is shared with the GUI: this side decodes `xgid` and must produce exactly
+// `position` and `pips` (and the board part of `xgidCanonical`); the GUI side
+// (frontend/src/__tests__/xgidContract.test.js) starts from that same
+// `position` and must re-encode it to `xgidCanonical` (generateXGID) and count
+// `pips` (computePipCount). The GUI has no XGID parser any more (commit
+// cd33de85), so `position` is the hand-off point between the two halves.
+// The flat fields restate `position` for readability and are cross-checked
+// against it. See the corpus _comment for conventions and the deliberately
+// lossy re-encoding.
 type xgidContractCase struct {
-	Name         string `json:"name"`
-	XGID         string `json:"xgid"`
-	CubeOwner    int    `json:"cubeOwner"`
-	CubeValueExp int    `json:"cubeValueExp"`
-	Dice         [2]int `json:"dice"`
-	PlayerOnRoll int    `json:"playerOnRoll"`
-	Score        [2]int `json:"score"`
-	HasJacoby    int    `json:"hasJacoby"`
-	HasBeaver    int    `json:"hasBeaver"`
+	Name          string   `json:"name"`
+	XGID          string   `json:"xgid"`
+	CubeOwner     int      `json:"cubeOwner"`
+	CubeValueExp  int      `json:"cubeValueExp"`
+	Dice          [2]int   `json:"dice"`
+	PlayerOnRoll  int      `json:"playerOnRoll"`
+	Score         [2]int   `json:"score"`
+	HasJacoby     int      `json:"hasJacoby"`
+	HasBeaver     int      `json:"hasBeaver"`
+	Pips          [2]int   `json:"pips"`
+	XGIDCanonical string   `json:"xgidCanonical"`
+	Position      Position `json:"position"`
 }
 
 func TestDecodeXGIDContract(t *testing.T) {
@@ -48,6 +57,9 @@ func TestDecodeXGIDContract(t *testing.T) {
 			if err != nil {
 				t.Fatalf("DecodeXGID(%q): %v", c.XGID, err)
 			}
+
+			// The flat fields are what the corpus reader sees first; they
+			// must agree with the decoder and with the `position` document.
 			if pos.Cube.Owner != c.CubeOwner {
 				t.Errorf("cubeOwner: got %d, want %d", pos.Cube.Owner, c.CubeOwner)
 			}
@@ -68,6 +80,28 @@ func TestDecodeXGIDContract(t *testing.T) {
 			}
 			if pos.HasBeaver != c.HasBeaver {
 				t.Errorf("hasBeaver: got %d, want %d", pos.HasBeaver, c.HasBeaver)
+			}
+
+			// `position` is the exact document the GUI test starts from: the
+			// decoder must reproduce it field for field (board, bearoff, cube,
+			// dice, score, player on roll, decision type, jacoby, beaver).
+			// ID and the provenance flags are not part of an XGID.
+			want := c.Position
+			want.ID, want.IndividuallyImported, want.Flagged = pos.ID, pos.IndividuallyImported, pos.Flagged
+			if !reflect.DeepEqual(pos, want) {
+				t.Errorf("position: decoded\n%+v\ndiffers from corpus\n%+v", pos, want)
+			}
+
+			p1, p2 := pos.ComputePipCounts()
+			if got := [2]int{p1, p2}; got != c.Pips {
+				t.Errorf("pips: got %v, want %v", got, c.Pips)
+			}
+
+			// The board is the only part of the XGID this package re-encodes;
+			// the GUI test covers the full canonical string.
+			board := strings.SplitN(c.XGIDCanonical, ":", 2)[0]
+			if got := EncodeXGIDBoard(&pos); got != board {
+				t.Errorf("EncodeXGIDBoard: got %q, want %q (board of xgidCanonical)", got, board)
 			}
 		})
 	}

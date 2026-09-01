@@ -252,7 +252,6 @@
         color: #1a56c4;
         text-decoration: underline;
         cursor: pointer;
-        font: inherit;
         font-size: var(--font-size-small);
     }
 

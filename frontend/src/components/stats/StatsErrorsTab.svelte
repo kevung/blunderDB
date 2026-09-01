@@ -326,7 +326,6 @@
     }
 
     .direction-cell {
-        font: inherit;
         width: 100%;
         display: flex;
         flex-direction: column;
