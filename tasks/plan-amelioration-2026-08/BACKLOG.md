@@ -6,12 +6,14 @@ commencer « en passant ».
 
 ## Backend
 
-- **Bug `CommitImportDatabase` : colonnes scalaires NULL** (découvert en
-  fiche 04) : le chemin legacy d'import de `.db` insère une position « neuve »
-  sans remplir les colonnes scalaires de recherche, ce qui casse sa propre
-  déduplication au second import et rend ces positions invisibles aux filtres
-  SQL. Voir les Notes d'exécution de la fiche 04. Effort S/M, à corriger en
-  priorité dans le prochain cycle (même famille que le correctif d'export).
+- ~~**Bug `CommitImportDatabase` : colonnes scalaires NULL**~~ — **corrigé le
+  2026-09-02** (branche `feat/commit-import-scalars`) : la branche « position
+  neuve » écrit désormais via `PositionStore.Save` (hash Zobrist + colonnes
+  scalaires, dans la transaction de l'import, `sqlite.WrapTx`) ; les bases
+  déjà touchées sont réparées à l'ouverture par
+  `repairPositionsWithoutScalars` (recalcul depuis l'état JSON, fusion des
+  doublons sur la ligne indexée), sans bump de `DatabaseVersion`. Tests :
+  `TestImport_CommitFillsScalarColumns`, `TestOpen_RepairsPositionsWithoutScalars`.
 - **Export unifié, schéma unique** : faire de `storage/sqlite/schema_sqlite.go`
   la source DDL unique (7 copies aujourd'hui, 93 `CREATE TABLE`) et fusionner
   les 3+1 chemins d'export en un exporteur paramétré par une sélection

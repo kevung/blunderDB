@@ -1,6 +1,8 @@
 package database
 
 import (
+	"encoding/json"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -149,5 +151,153 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	}
 	if version != DatabaseVersion {
 		t.Errorf("expected DatabaseVersion %s, got %s", DatabaseVersion, version)
+	}
+}
+
+// TestOpen_RepairsPositionsWithoutScalars covers the databases the bug above
+// already damaged: rows CommitImportDatabase inserted with their state alone.
+// Opening such a database must give those rows their hash and scalar columns
+// back (from the full JSON state, the only faithful record) and fold the
+// duplicates the missing hash let through onto the row the index holds —
+// carrying the analysis, comment and collection membership across — without a
+// schema version bump.
+func TestOpen_RepairsPositionsWithoutScalars(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "damaged.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(path); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+
+	// A healthy row, saved the ordinary way.
+	healthy := InitializePosition()
+	healthyID, err := d.SavePosition(&healthy)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	// insertDamaged writes a row exactly the way the old importer did.
+	insertDamaged := func(pos Position) int64 {
+		t.Helper()
+		data, err := json.Marshal(pos.NormalizeForStorage())
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+		res, err := d.db.Exec(`INSERT INTO position (state, individually_imported) VALUES (?, 1)`, string(data))
+		if err != nil {
+			t.Fatalf("insert damaged row: %v", err)
+		}
+		id, _ := res.LastInsertId()
+		return id
+	}
+
+	// A damaged duplicate of the healthy row, carrying what the healthy one lacks.
+	dupID := insertDamaged(healthy)
+	if err := d.SaveAnalysis(dupID, PositionAnalysis{XGID: "dup-xgid", AnalysisType: "XG Roller++"}); err != nil {
+		t.Fatalf("SaveAnalysis: %v", err)
+	}
+	if err := d.SaveComment(dupID, "moved along"); err != nil {
+		t.Fatalf("SaveComment: %v", err)
+	}
+	collID, err := d.CreateCollection("course", "")
+	if err != nil {
+		t.Fatalf("CreateCollection: %v", err)
+	}
+	if err := d.AddPositionToCollection(collID, dupID); err != nil {
+		t.Fatalf("AddPositionToCollection: %v", err)
+	}
+
+	// A damaged row that is a position of its own: dice 6-5 live only in its JSON.
+	lone := InitializePosition()
+	lone.Dice = [2]int{6, 5}
+	loneID := insertDamaged(lone)
+
+	// A damaged row nobody can decode must not block the open.
+	if _, err := d.db.Exec(`INSERT INTO position (state) VALUES ('{not json')`); err != nil {
+		t.Fatalf("insert undecodable row: %v", err)
+	}
+
+	if n := countPositionsMissingScalars(t, d); n != 3 {
+		t.Fatalf("fixture: %d rows without scalars, want 3", n)
+	}
+	d.Close()
+
+	if err := d.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+	defer d.Close()
+
+	// Only the undecodable row is left without scalars.
+	if n := countPositionsMissingScalars(t, d); n != 1 {
+		t.Errorf("after open: %d rows without scalars, want 1 (the undecodable one)", n)
+	}
+	var total int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&total); err != nil {
+		t.Fatal(err)
+	}
+	if total != 3 {
+		t.Errorf("after open: %d positions, want 3 (healthy, lone, undecodable)", total)
+	}
+
+	// The duplicate folded onto the healthy row, with its belongings.
+	if _, err := d.LoadPosition(int(dupID)); err == nil {
+		t.Errorf("duplicate row %d still exists", dupID)
+	}
+	if a, err := d.LoadAnalysis(healthyID); err != nil || a.XGID != "dup-xgid" {
+		t.Errorf("analysis did not follow the duplicate onto %d: %v, %v", healthyID, a, err)
+	} else if a.PositionID != int(healthyID) {
+		t.Errorf("moved analysis names position %d inside its blob, want %d", a.PositionID, healthyID)
+	}
+	if c, err := d.LoadComment(healthyID); err != nil || c != "moved along" {
+		t.Errorf("comment did not follow the duplicate: %q, %v", c, err)
+	}
+	members, err := d.GetCollectionPositions(collID)
+	if err != nil {
+		t.Fatalf("GetCollectionPositions: %v", err)
+	}
+	if len(members) != 1 || members[0].ID != healthyID {
+		t.Errorf("collection membership did not follow the duplicate: %+v", members)
+	}
+	kept, err := d.LoadPosition(int(healthyID))
+	if err != nil {
+		t.Fatalf("LoadPosition(healthy): %v", err)
+	}
+	if !kept.IndividuallyImported {
+		t.Errorf("sticky provenance was not raised on the kept row")
+	}
+
+	// The lone row got its columns back from its JSON, so the search sees it
+	// and the store recognises it.
+	repaired, err := d.LoadPosition(int(loneID))
+	if err != nil {
+		t.Fatalf("LoadPosition(lone): %v", err)
+	}
+	if repaired.Dice != [2]int{6, 5} || repaired.Score != lone.Score {
+		t.Errorf("lone row lost its identity: dice=%v score=%v", repaired.Dice, repaired.Score)
+	}
+	found, err := d.LoadPositionsByFilters(SearchFilters{
+		Filter:         Position{Dice: [2]int{6, 5}, PlayerOnRoll: lone.PlayerOnRoll, DecisionType: lone.DecisionType},
+		DiceRollFilter: true,
+	})
+	if err != nil {
+		t.Fatalf("LoadPositionsByFilters: %v", err)
+	}
+	if len(found) != 1 || found[0].ID != loneID {
+		t.Errorf("dice filter found %+v, want the repaired row %d", found, loneID)
+	}
+	again := lone
+	if res, err := d.SaveIndividualPosition(&again); err != nil || !res.Existed || res.ID != loneID {
+		t.Errorf("SaveIndividualPosition after repair: %+v, %v (want existed id %d)", res, err, loneID)
+	}
+
+	// Idempotent: a second open has nothing to do and changes nothing.
+	d.Close()
+	if err := d.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase #2: %v", err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&total); err != nil {
+		t.Fatal(err)
+	}
+	if total != 3 {
+		t.Errorf("second open changed the row count: %d", total)
 	}
 }
