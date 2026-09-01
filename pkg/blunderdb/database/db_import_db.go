@@ -1,11 +1,16 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // sourcePositionQuery selects (id, state, individually_imported) from the
@@ -198,6 +203,12 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
 		existingPositionID, existsInCurrent := currentPositionsMap[importPositionJSON]
+		if !existsInCurrent {
+			existingPositionID, existsInCurrent, err = heldByZobrist(d.store.Positions(), &importPosition)
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		if existsInCurrent {
 			// Check if there's actually something to merge
@@ -286,6 +297,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	if err != nil {
 		return nil, err
 	}
+	// The same transaction seen through the Storage contract: brand-new
+	// positions are written with PositionStore.Save, so they get their Zobrist
+	// hash and scalar search columns like every other position (see the
+	// "add it" branch below). Commit/Rollback stay on tx.
+	stx := sqlite.WrapTx(tx)
 
 	// Ensure rollback on error or cancellation
 	defer func() {
@@ -402,6 +418,15 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
 		existingPositionID, existsInCurrent := currentPositionsMap[importPositionJSON]
+		if !existsInCurrent {
+			// Read through the transaction: a source that holds the same
+			// position twice (pre-2.0.0 databases were never deduplicated) must
+			// see the row this very import inserted a moment ago.
+			existingPositionID, existsInCurrent, err = heldByZobrist(stx.Positions(), &importPosition)
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		if existsInCurrent {
 			// Track if we actually merge anything
@@ -504,26 +529,19 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				positionsSkipped++
 			}
 		} else {
-			// Position doesn't exist, add it (using transaction)
-			// Store as full JSON (import DB may not have denormalized columns)
-			fullJSON, marshalErr := fullPositionJSON(importPosition)
-			if marshalErr != nil {
-				slog.Warn("marshalling position for import", "err", marshalErr)
-				positionsSkipped++
-				continue
-			}
-			result, err := tx.Exec(
-				`INSERT INTO position (state, individually_imported) VALUES (?, ?)`,
-				fullJSON, sourceIndividual)
+			// Position doesn't exist: add it through the canonical write path,
+			// inside the transaction. Save is what computes the Zobrist hash and
+			// the scalar search columns (pip counts, back checkers, no-contact,
+			// dice, score, cube…); a raw INSERT of the state used to leave them
+			// all NULL, which hid the row from every SQL filter and — because
+			// ReconstructPosition trusts the columns over the state — made it
+			// fail to match itself on the next import of the same database.
+			// Provenance rides along: Save ORs IndividuallyImported into the
+			// stored flag (ADR-0001).
+			importPosition.IndividuallyImported = sourceIndividual
+			newPositionID, err := stx.Positions().Save(ctx, "", &importPosition)
 			if err != nil {
 				slog.Warn("inserting position", "err", err)
-				positionsSkipped++
-				continue
-			}
-
-			newPositionID, err := result.LastInsertId()
-			if err != nil {
-				slog.Warn("getting last insert ID", "err", err)
 				positionsSkipped++
 				continue
 			}
@@ -590,4 +608,20 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, error) {
 	// This function is kept for backward compatibility but redirects to the new ACID approach
 	return d.CommitImportDatabase(importPath)
+}
+
+// heldByZobrist reports whether the target already stores pos, judged the way
+// the store itself judges it — by Zobrist hash. It backs up the JSON identity
+// map the importer keys its lookup on: that map compares marshalled Positions
+// byte for byte, so a source position that is the same position but was
+// stored un-normalised (a hand-built fixture, a database written before
+// NormalizeForStorage existed) would slip past it and be inserted again, only
+// for Save's unique index to hand back the existing id. Asking the index first
+// keeps the merge branch (analysis, comment, provenance) on that path too.
+func heldByZobrist(positions storage.PositionStore, pos *Position) (int64, bool, error) {
+	id, held, err := positions.Exists(context.Background(), "", engine.ZobristHash(pos))
+	if err != nil {
+		return 0, false, fmt.Errorf("checking whether the position is already held: %w", err)
+	}
+	return id, held, nil
 }
