@@ -2,8 +2,7 @@
     // Asks for the password of a protected file. This is the ONE prompt a recipient ever
     // sees: once opened, the result is an ordinary database, nothing further is asked, and
     // nothing about the opening is recorded anywhere. See ADR-0007.
-    import { onMount, onDestroy } from 'svelte';
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { t } from '../i18n';
 
     let { visible = false, fileName = '', error = '', onSubmit = () => {}, onCancel = () => {} } = $props();
@@ -25,88 +24,53 @@
     }
 
     function handleKeyDown(event) {
-        if (!visible) return;
-        if (event.key === 'Escape') {
-            event.stopImmediatePropagation();
-            onCancel();
-        } else if (event.key === 'Enter') {
+        if (event.key === 'Enter') {
             event.stopImmediatePropagation();
             submit();
         }
     }
-
-    onMount(() => window.addEventListener('keydown', handleKeyDown));
-    onDestroy(() => window.removeEventListener('keydown', handleKeyDown));
 </script>
 
-{#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('issuance.protectedTitle')} use:trapFocus>
-        <div class="modal-content">
-            <h2>{$t('issuance.protectedTitle')}</h2>
-            <p class="file">{fileName}</p>
-            <p class="hint">{$t('issuance.protectedHint')}</p>
-            <div class="password-row">
-                <input bind:this={input} bind:value={password} type={passwordVisible ? 'text' : 'password'} aria-label={$t('issuance.passwordLabel')} placeholder={$t('issuance.passwordLabel')} />
-                <!-- Same behaviour as the export dialog: revealed only while the button is
-                     held, never toggled, so a password cannot be left showing on screen. -->
-                <button
-                    type="button"
-                    class="reveal"
-                    aria-label={$t('issuance.revealPassword')}
-                    title={$t('issuance.revealPassword')}
-                    onpointerdown={() => (passwordVisible = true)}
-                    onpointerup={() => (passwordVisible = false)}
-                    onpointerleave={() => (passwordVisible = false)}
-                    onpointercancel={() => (passwordVisible = false)}
-                    onkeydown={(e) => {
-                        if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
-                    }}
-                    onkeyup={() => (passwordVisible = false)}
-                    onblur={() => (passwordVisible = false)}
-                >
-                    {passwordVisible ? '🙈' : '👁'}
-                </button>
-            </div>
-            <label class="remove-row">
-                <input type="checkbox" bind:checked={removeContainer} />
-                {$t('issuance.removeContainer')}
-            </label>
-            {#if error}<p class="error">{error}</p>{/if}
-            <div class="buttons">
-                <button type="button" onclick={onCancel}>{$t('common.cancel')}</button>
-                <button type="button" class="primary" onclick={submit} disabled={!password}>
-                    {$t('issuance.openCopy')}
-                </button>
-            </div>
-        </div>
+<Modal open={visible} onclose={onCancel} size="medium" compactTitle closeButton={false} onkeydown={handleKeyDown}>
+    {#snippet title()}{$t('issuance.protectedTitle')}{/snippet}
+    <p class="file">{fileName}</p>
+    <p class="hint">{$t('issuance.protectedHint')}</p>
+    <div class="password-row">
+        <input bind:this={input} bind:value={password} type={passwordVisible ? 'text' : 'password'} aria-label={$t('issuance.passwordLabel')} placeholder={$t('issuance.passwordLabel')} />
+        <!-- Same behaviour as the export dialog: revealed only while the button is
+             held, never toggled, so a password cannot be left showing on screen. -->
+        <button
+            type="button"
+            class="reveal"
+            aria-label={$t('issuance.revealPassword')}
+            title={$t('issuance.revealPassword')}
+            onpointerdown={() => (passwordVisible = true)}
+            onpointerup={() => (passwordVisible = false)}
+            onpointerleave={() => (passwordVisible = false)}
+            onpointercancel={() => (passwordVisible = false)}
+            onkeydown={(e) => {
+                if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
+            }}
+            onkeyup={() => (passwordVisible = false)}
+            onblur={() => (passwordVisible = false)}
+        >
+            {passwordVisible ? '🙈' : '👁'}
+        </button>
     </div>
-{/if}
+    <label class="remove-row">
+        <input type="checkbox" bind:checked={removeContainer} />
+        {$t('issuance.removeContainer')}
+    </label>
+    {#if error}<p class="error">{error}</p>{/if}
+    {#snippet footer()}
+        <button type="button" onclick={onCancel}>{$t('common.cancel')}</button>
+        <button type="button" class="primary" onclick={submit} disabled={!password}>
+            {$t('issuance.openCopy')}
+        </button>
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 6px;
-        min-width: 340px;
-        max-width: 460px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-    }
-
-    h2 {
-        margin: 0 0 6px;
-        font-size: var(--font-size-title);
-    }
-
     .file {
         margin: 0 0 8px;
         font-family: monospace;
@@ -157,13 +121,6 @@
         color: #b3261e;
         font-size: var(--font-size-base);
         margin: 6px 0 0;
-    }
-
-    .buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 14px;
     }
 
     button {

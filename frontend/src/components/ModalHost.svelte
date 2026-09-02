@@ -1,7 +1,7 @@
 <!--
   Every application-level modal, mounted once for the app's lifetime. Each is
-  always in the tree and shows itself on its own `visible` prop, so the
-  keyboard handling (Escape, focus trap) lives in the modal, not here. App.svelte
+  always in the tree and shows itself on its own `visible` prop; the keyboard
+  handling (Escape, focus trap) lives in Modal.svelte, not here. App.svelte
   only places <ModalHost />; the state driving each modal comes from the stores
   and services imported below, never through props.
 -->
@@ -23,7 +23,7 @@
     import { closeWarningModal, warningMessageStore, protectedCopyPathStore, protectedCopyErrorStore, unlockProtectedCopy, cancelProtectedCopy } from '../services/databaseService.js';
     import { handleImportCommit, handleImportCancel, handleImportClose, handleFileImportCancel, handleFileImportClose } from '../services/importService.js';
     import { handleExportCommit, handleExportCancel } from '../services/exportService.js';
-    import { handleKeyDown, toggleHelpModal } from '../services/keyboardService.js';
+    import { toggleHelpModal } from '../services/keyboardService.js';
     import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
     import { MODAL_TABLES } from './modalTables.js';
 
@@ -92,7 +92,7 @@
     onExport={handleExportCommit}
 />
 
-<HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
+<HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} />
 <ConfigModal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
 
 <TourCatalogModal visible={$activeModal === MODAL.TOUR} onClose={() => closeModal()} />
