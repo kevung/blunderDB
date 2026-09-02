@@ -113,15 +113,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   phase 06) : parcourir chaque filtre de la fenêtre de recherche. Priorité
   basse ; couvert indirectement par `searchFilterService.test.js` (unitaires
   + round-trip).
-- **Réponse masquée d'une carte Anki — validation sur une vraie base**
-  (ADR-0025, mergé le 2026-09-02) : les neuf scénarios de
-  `tests/e2e/anki-answer-reveal.spec.js` pilotent l'application réelle, mais
-  avec le backend Wails simulé. Rien n'a donc été exercé contre un SQLite
-  réel ni contre un vrai paquet FSRS : reste à ouvrir une base de production,
-  créer un paquet, réviser quelques cartes et vérifier que l'analyse dévoilée
-  est bien celle que la base contient — en bande basse **et** en colonne
-  latérale. Priorité basse : le chemin de chargement (`showPosition`) est
-  celui que la navigation ordinaire emprunte déjà.
 ## Ouvert — Produit / docs
 
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
@@ -132,6 +123,16 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 - **Skill `release-blunderdb`** : mentionner les nouveaux assets de release (manifestes winget, cask Homebrew, bundle Flatpak, image GHCR).
 
 ## Historique — items faits
+
+- **2026-09-02 — Réponse masquée d'une carte Anki, validée sur une vraie base**
+  (ADR-0025). Base bâtie à la CLI depuis `testdata/` (349 positions et analyses
+  XG d'un match), paquet créé et synchronisé, puis l'application réelle pilotée
+  par son pont Wails de développement : la réponse dévoilée est identique au
+  blob SQLite de la position, et la notation a bien fait avancer FSRS en base
+  (carte neuve → apprentissage, journal écrit, compteurs du paquet à jour).
+  Piège rencontré : une instance `wails dev` tournait déjà sur une autre base
+  et c'est elle qu'on pilote si on ne vérifie pas — `-devserver` et
+  `-frontenddevserverurl` isolent la sienne.
 
 - **2026-09-02 — Composant `<Modal>` unique** : fait le 2026-09-02 (2dc51a36) : `components/Modal.svelte`, 13 modales migrées, 0 warning a11y.
 - **2026-09-02 — Contrat storage : familles restantes** : fait le 2026-09-02 : cas Comment/*, Collection/*, Anki/RandomCard, batch (LoadByIDs, ByPositions…) ; le wrapper `database/` délègue désormais toutes ses familles à `storage`.
