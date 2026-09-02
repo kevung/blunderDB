@@ -13,14 +13,16 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// The SQLite schema is declared in several places that nothing else ties
-// together: sqlite.Bootstrap (schema_sqlite.go — fresh databases, and since
-// SetupDatabase delegates to it, the wrapper's fresh path too),
-// ensureAllTablesExist (db_schema.go — every open of an existing database),
-// and the version-by-version chain in db_migration.go. These tests take a
-// normalised snapshot of sqlite_master (tables, columns with type / NOT NULL /
-// default / pk, foreign keys, indexes with their columns and WHERE clause,
-// triggers, views) on databases produced by each path and diff them.
+// The SQLite schema has one declaration, storage/sqlite's schemaStatements,
+// but several paths lead a database to it: sqlite.Bootstrap (fresh databases,
+// and since SetupDatabase delegates to it, the wrapper's fresh path too),
+// sqlite.EnsureSchema (every open of an existing database, through
+// ensureAllTablesExist in db_schema.go, deriving the missing columns from a
+// reference database rather than a second list), and the version-by-version
+// chain in db_migration.go, which keeps its own historical DDL. These tests
+// take a normalised snapshot of sqlite_master (tables, columns with type /
+// NOT NULL / default / pk, foreign keys, indexes with their columns and WHERE
+// clause, triggers, views) on databases produced by each path and diff them.
 //
 // A difference fails the test unless it is listed in an allow-list, and every
 // allow-list entry must explain itself and must actually match something —
