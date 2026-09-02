@@ -1,5 +1,5 @@
 <script>
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { t } from '../i18n';
 
     let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
@@ -14,109 +14,60 @@
         if (!path) return '';
         return path.split('/').pop().split('\\').pop();
     }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Escape' && closable) {
-            event.preventDefault();
-            onClose();
-        }
-    }
 </script>
 
-{#if visible}
-    <div class="modal-overlay" onkeydown={handleKeyDown} role="dialog" tabindex="-1" aria-modal="true" aria-label={$t('import.fileProgressTitle')} use:trapFocus>
-        <div class="modal-content">
-            {#if mode === 'importing'}
-                <h2>{$t('import.importingFiles')} <span class="spinner"></span></h2>
-                <p class="status-text">{$t('import.importingFileN', { current: currentIndex, total: totalFiles })}</p>
-                <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
+<Modal open={visible} onclose={onClose} size="large" layer="top" closeButton={false} closeOnEscape={closable} label={$t('import.fileProgressTitle')}>
+    {#if mode === 'importing'}
+        <h2 class="modal-title">{$t('import.importingFiles')} <span class="spinner"></span></h2>
+        <p class="status-text">{$t('import.importingFileN', { current: currentIndex, total: totalFiles })}</p>
+        <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
 
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {progressPercent}%"></div>
-                </div>
-                <p class="progress-text">{progressPercent}%</p>
-
-                <div class="button-group">
-                    <button onclick={onCancel}>{$t('common.cancel')}</button>
-                </div>
-            {:else if mode === 'completed'}
-                <h2>{$t('import.completedTitle')}</h2>
-
-                <div class="summary">
-                    <p><strong>{$t('import.finished')}</strong> {$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-label">{$t('import.imported')}</div>
-                        <div class="stat-value">{results.succeeded}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">{$t('import.skipped')}</div>
-                        <div class="stat-value">{results.skipped}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">{$t('import.failed')}</div>
-                        <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
-                    </div>
-                </div>
-
-                {#if results.errors.length > 0}
-                    <div class="error-list">
-                        {#each results.errors as err, i (i)}
-                            <div class="error-item">
-                                <span class="error-file">{basename(err.file)}</span>: {err.message}
-                            </div>
-                        {/each}
-                    </div>
-                {/if}
-
-                <div class="button-group">
-                    <button onclick={onClose}>{$t('common.close')}</button>
-                </div>
-            {/if}
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: {progressPercent}%"></div>
         </div>
-    </div>
-{/if}
+        <p class="progress-text">{progressPercent}%</p>
+    {:else if mode === 'completed'}
+        <h2 class="modal-title">{$t('import.completedTitle')}</h2>
+
+        <div class="summary">
+            <p><strong>{$t('import.finished')}</strong> {$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">{$t('import.imported')}</div>
+                <div class="stat-value">{results.succeeded}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">{$t('import.skipped')}</div>
+                <div class="stat-value">{results.skipped}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">{$t('import.failed')}</div>
+                <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
+            </div>
+        </div>
+
+        {#if results.errors.length > 0}
+            <div class="error-list">
+                {#each results.errors as err, i (i)}
+                    <div class="error-item">
+                        <span class="error-file">{basename(err.file)}</span>: {err.message}
+                    </div>
+                {/each}
+            </div>
+        {/if}
+    {/if}
+    {#snippet footer()}
+        {#if mode === 'importing'}
+            <button onclick={onCancel}>{$t('common.cancel')}</button>
+        {:else if mode === 'completed'}
+            <button onclick={onClose}>{$t('common.close')}</button>
+        {/if}
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 30px;
-        border-radius: 8px;
-        width: 520px;
-        max-height: 80vh;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    h2 {
-        margin: 0;
-        font-size: var(--font-size-dialog-title);
-        color: #333;
-    }
-
-    .status-text {
-        color: #666;
-        font-size: var(--font-size-base);
-        margin: 0;
-    }
-
     .current-file {
         color: #999;
         font-size: var(--font-size-base);
@@ -178,73 +129,6 @@
 
     .stat-value.errors {
         color: #c33;
-    }
-
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .button-group {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 10px;
-    }
-
-    button {
-        padding: 10px 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: var(--font-size-base);
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background-color: white;
-        color: #333;
-    }
-
-    button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    button:hover:not(:disabled) {
-        background-color: #f5f5f5;
-        border-color: #999;
-    }
-
-    .summary {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 4px;
-        border-left: 4px solid #666;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        font-size: var(--font-size-base);
-        color: #555;
-    }
-
-    .summary strong {
-        color: #333;
     }
 
     .error-list {

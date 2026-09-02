@@ -1,6 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { get } from 'svelte/store';
     import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/database/Database.js';
@@ -90,174 +90,90 @@
             saving = false;
         }
     }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Escape') {
-            event.stopPropagation();
-            event.preventDefault();
-            onClose();
-        }
-    }
 </script>
 
-<div class="modal-backdrop" role="dialog" aria-modal="true" aria-label={$t('merge.ariaLabel')} onkeydown={handleKeyDown} use:trapFocus>
-    <div class="modal-box">
-        <div class="modal-header">
-            <span class="modal-title">{$t('merge.title')}</span>
-            <button class="close-btn" onclick={onClose} title={$t('common.close')}>×</button>
-        </div>
+<Modal open onclose={onClose} size="medium">
+    {#snippet title()}{$t('merge.title')}{/snippet}
+    <p class="hint">{$t('merge.hint')}</p>
 
-        <div class="modal-body">
-            <p class="hint">{$t('merge.hint')}</p>
+    <!-- Filter input. Escape here clears the filter first; only an empty one lets
+         it through to the dialog, which then closes. -->
+    <input
+        class="filter-input"
+        type="text"
+        placeholder={$t('merge.filterPlaceholder')}
+        bind:value={filterText}
+        onkeydown={(e) => {
+            if (e.key === 'Escape' && filterText) {
+                e.stopPropagation();
+                filterText = '';
+            }
+        }}
+    />
 
-            <!-- Filter input -->
-            <input
-                class="filter-input"
-                type="text"
-                placeholder={$t('merge.filterPlaceholder')}
-                bind:value={filterText}
-                onkeydown={(e) => {
-                    if (e.key === 'Escape') {
-                        e.stopPropagation();
-                        if (filterText) {
-                            filterText = '';
-                        } else {
-                            onClose();
-                        }
-                    }
-                }}
-            />
-
-            <!-- Player list -->
-            {#if loading}
-                <div class="state-msg">{$t('common.loading')}</div>
-            {:else if allPlayers.length === 0}
-                <div class="state-msg">{$t('merge.noPlayers')}</div>
-            {:else}
-                <div class="player-list">
-                    {#each filteredPlayers as p (p.Name)}
-                        <!-- svelte-ignore a11y_click_events_have_key_events -->
-                        <!-- svelte-ignore a11y_no_static_element_interactions -->
-                        <div class="player-row" class:selected={selectedNames.has(p.Name)} onclick={() => toggleSelect(p.Name)}>
-                            <input type="checkbox" checked={selectedNames.has(p.Name)} tabindex="-1" onclick={(e) => e.stopPropagation()} onchange={() => toggleSelect(p.Name)} />
-                            <span class="player-name">{p.Name}</span>
-                            <span class="player-count" title={$t('merge.matchCountTitle')}>{p.Count}</span>
-                            <button
-                                class="use-btn"
-                                title={$t('merge.useAsCanonical')}
-                                onclick={(e) => {
-                                    e.stopPropagation();
-                                    useAsCanonical(p.Name);
-                                }}>✓ {$t('merge.use')}</button
-                            >
-                        </div>
-                    {/each}
-                </div>
-            {/if}
-
-            <!-- Canonical name -->
-            <div class="canonical-row">
-                <label class="canonical-label" for="canonical-input">{$t('merge.canonicalName')}</label>
-                <input
-                    id="canonical-input"
-                    class="canonical-input"
-                    type="text"
-                    bind:value={canonicalName}
-                    placeholder={$t('merge.nameToKeepPlaceholder')}
-                    onkeydown={(e) => {
-                        if (e.key === 'Enter') doMerge();
-                        if (e.key === 'Escape') {
+    <!-- Player list -->
+    {#if loading}
+        <div class="state-msg">{$t('common.loading')}</div>
+    {:else if allPlayers.length === 0}
+        <div class="state-msg">{$t('merge.noPlayers')}</div>
+    {:else}
+        <div class="player-list">
+            {#each filteredPlayers as p (p.Name)}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div class="player-row" class:selected={selectedNames.has(p.Name)} onclick={() => toggleSelect(p.Name)}>
+                    <input type="checkbox" checked={selectedNames.has(p.Name)} tabindex="-1" onclick={(e) => e.stopPropagation()} onchange={() => toggleSelect(p.Name)} />
+                    <span class="player-name">{p.Name}</span>
+                    <span class="player-count" title={$t('merge.matchCountTitle')}>{p.Count}</span>
+                    <button
+                        class="use-btn"
+                        title={$t('merge.useAsCanonical')}
+                        onclick={(e) => {
                             e.stopPropagation();
-                            onClose();
-                        }
-                    }}
-                />
-            </div>
-
-            {#if error}
-                <div class="error-msg">{error}</div>
-            {/if}
-
-            <!-- Summary of selection -->
-            {#if selectedNames.size > 0}
-                <div class="selection-summary">
-                    {selectedNames.size === 1 ? $t('merge.selectedSummary', { n: selectedNames.size }) : $t('merge.selectedSummaryPlural', { n: selectedNames.size })}
-                    {[...selectedNames].join(', ')}
+                            useAsCanonical(p.Name);
+                        }}>✓ {$t('merge.use')}</button
+                    >
                 </div>
-            {/if}
+            {/each}
         </div>
+    {/if}
 
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick={onClose} disabled={saving}>{$t('common.cancel')}</button>
-            <button class="btn-merge" onclick={doMerge} disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}>
-                {saving ? $t('merge.merging') : $t('merge.mergeButton', { n: selectedNames.size > 0 ? selectedNames.size : '' })}
-            </button>
-        </div>
+    <!-- Canonical name -->
+    <div class="canonical-row">
+        <label class="canonical-label" for="canonical-input">{$t('merge.canonicalName')}</label>
+        <input
+            id="canonical-input"
+            class="canonical-input"
+            type="text"
+            bind:value={canonicalName}
+            placeholder={$t('merge.nameToKeepPlaceholder')}
+            onkeydown={(e) => {
+                if (e.key === 'Enter') doMerge();
+            }}
+        />
     </div>
-</div>
+
+    {#if error}
+        <div class="error-msg">{error}</div>
+    {/if}
+
+    <!-- Summary of selection -->
+    {#if selectedNames.size > 0}
+        <div class="selection-summary">
+            {selectedNames.size === 1 ? $t('merge.selectedSummary', { n: selectedNames.size }) : $t('merge.selectedSummaryPlural', { n: selectedNames.size })}
+            {[...selectedNames].join(', ')}
+        </div>
+    {/if}
+
+    {#snippet footer()}
+        <button onclick={onClose} disabled={saving}>{$t('common.cancel')}</button>
+        <button class="btn-merge primary" onclick={doMerge} disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}>
+            {saving ? $t('merge.merging') : $t('merge.mergeButton', { n: selectedNames.size > 0 ? selectedNames.size : '' })}
+        </button>
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-
-    .modal-box {
-        background: #fff;
-        border-radius: 6px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-        width: 480px;
-        max-width: 95vw;
-        max-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    .modal-header {
-        display: flex;
-        align-items: center;
-        padding: 10px 14px;
-        border-bottom: 1px solid #e0e0e0;
-        background: #fafafa;
-        flex-shrink: 0;
-    }
-
-    .modal-title {
-        font-size: var(--font-size-dialog-title);
-        font-weight: 600;
-        color: #222;
-        flex: 1;
-    }
-
-    .close-btn {
-        background: none;
-        border: none;
-        font-size: var(--font-size-dialog-close);
-        color: #888;
-        cursor: pointer;
-        line-height: 1;
-        padding: 0 2px;
-    }
-
-    .close-btn:hover {
-        color: #333;
-    }
-
-    .modal-body {
-        padding: 12px 14px;
-        overflow-y: auto;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
     .hint {
         font-size: var(--font-size-small);
         color: #666;
@@ -388,51 +304,5 @@
         color: #555;
         font-style: italic;
         word-break: break-word;
-    }
-
-    .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        padding: 10px 14px;
-        border-top: 1px solid #e0e0e0;
-        background: #fafafa;
-        flex-shrink: 0;
-    }
-
-    .btn-cancel,
-    .btn-merge {
-        font-size: var(--font-size-base);
-        padding: 5px 14px;
-        border-radius: 3px;
-        cursor: pointer;
-        border: 1px solid transparent;
-    }
-
-    .btn-cancel {
-        background: #fff;
-        border-color: #ccc;
-        color: #444;
-    }
-
-    .btn-cancel:hover:not(:disabled) {
-        background: #f5f5f5;
-    }
-
-    .btn-merge {
-        background: #1976d2;
-        color: #fff;
-        border-color: #1565c0;
-        font-weight: 600;
-    }
-
-    .btn-merge:hover:not(:disabled) {
-        background: #1565c0;
-    }
-
-    .btn-merge:disabled,
-    .btn-cancel:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
     }
 </style>

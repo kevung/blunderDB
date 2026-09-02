@@ -278,7 +278,6 @@
         "noHistory": "Ei hakuhistoriaa",
         "noSaved": "Ei tallennettuja suodattimia",
         "openPicker": "Valitse…",
-        "pickerDialogLabel": "Valitse ottelut ja turnaukset",
         "pickerFilterPlaceholder": "Suodata…",
         "pickerMatchesHeader": "Ottelut",
         "pickerTitle": "Valitse ottelut ja turnaukset",
@@ -789,7 +788,6 @@
         "title": "Match equity -taulukko"
     },
     "merge": {
-        "ariaLabel": "Yhdistä pelaajat",
         "canonicalName": "Kanoninen nimi:",
         "filterPlaceholder": "Suodata pelaajia…",
         "hint": "Valitse nimet, jotka edustavat samaa henkilöä, ja valitse tai kirjoita säilytettävä kanoninen nimi. Kaikki ottelut päivitetään.",

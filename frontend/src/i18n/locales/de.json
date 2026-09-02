@@ -278,7 +278,6 @@
         "noHistory": "Kein Suchverlauf",
         "noSaved": "Keine gespeicherten Filter",
         "openPicker": "Auswählen…",
-        "pickerDialogLabel": "Matches und Turniere auswählen",
         "pickerFilterPlaceholder": "Filtern…",
         "pickerMatchesHeader": "Matches",
         "pickerTitle": "Matches und Turniere auswählen",
@@ -789,7 +788,6 @@
         "title": "MET-Tabelle"
     },
     "merge": {
-        "ariaLabel": "Spieler zusammenführen",
         "canonicalName": "Kanonischer Name:",
         "filterPlaceholder": "Spieler filtern…",
         "hint": "Wählen Sie die Namen aus, die dieselbe Person bezeichnen, und wählen oder geben Sie dann den zu behaltenden kanonischen Namen ein. Alle Matches werden aktualisiert.",

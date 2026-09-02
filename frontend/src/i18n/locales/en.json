@@ -278,7 +278,6 @@
         "noHistory": "No search history",
         "noSaved": "No saved filters",
         "openPicker": "Select…",
-        "pickerDialogLabel": "Select matches and tournaments",
         "pickerFilterPlaceholder": "Filter…",
         "pickerMatchesHeader": "Matches",
         "pickerTitle": "Select Matches and Tournaments",
@@ -789,7 +788,6 @@
         "title": "Match equity table"
     },
     "merge": {
-        "ariaLabel": "Merge players",
         "canonicalName": "Canonical name:",
         "filterPlaceholder": "Filter players…",
         "hint": "Select the names that represent the same person, then choose or type the canonical name to keep. All matches will be updated.",

@@ -1,16 +1,15 @@
 <!-- HelpModal.svelte -->
 <script>
+    import Modal from './Modal.svelte';
     import { logger } from '../utils/logger.js';
-    import { trapFocus } from '../utils/focusTrap.js';
     import { isBareLetter } from '../utils/keys.js';
-    import { onMount, onDestroy } from 'svelte';
-    import { fade } from 'svelte/transition';
+    import { onMount } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { t } from '../i18n';
     import { help } from '../i18n/help/index.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
-    let { visible = false, onClose, handleGlobalKeydown } = $props();
+    let { visible = false, onClose } = $props();
 
     let activeTab = $state('manual'); // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
@@ -33,57 +32,38 @@
         activeTab = tab;
     }
 
-    function activateGlobalShortcuts() {
-        window.addEventListener('keydown', handleGlobalKeydown);
-    }
-
-    function deactivateGlobalShortcuts() {
-        window.removeEventListener('keydown', handleGlobalKeydown);
-    }
-
-    // Close on Esc key
+    // Every key pressed while the help is open belongs to it. Escape is Modal's; the
+    // rest is handled here and stopped so the global dispatcher never sees it.
     function handleKeyDown(event) {
-        // Prevent default action and stop event propagation
-        event.stopPropagation();
-
-        if (visible) {
-            event.preventDefault();
-            // Block the global keyboard dispatcher (another window-level listener)
-            // from re-processing this same event. The two window listeners fire in a
-            // load-order-dependent sequence; without this, closing on '?'/Ctrl+F nulls
-            // activeModal, defeating the global handler's isAnyModalOpen guard, which
-            // then re-toggles the modal back open (a flaky open/close race).
-            event.stopImmediatePropagation();
-            if (event.key === 'Escape') {
-                onClose();
-            } else if (event.ctrlKey && event.code === 'KeyF') {
-                onClose();
-            } else if (!event.ctrlKey && event.key === '?') {
-                onClose();
-            } else if (!event.ctrlKey && event.key === 'ArrowRight') {
-                navigateTabs(1); // Move to the next tab
-            } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
-                navigateTabs(-1); // Move to the previous tab
-            } else if (isBareLetter(event, 'l')) {
-                navigateTabs(1); // Move to the next tab
-            } else if (isBareLetter(event, 'h')) {
-                navigateTabs(-1); // Move to the previous tab
-            } else if (!event.ctrlKey && event.key === 'ArrowDown') {
-                scrollContent(1); // Scroll down
-            } else if (!event.ctrlKey && event.key === 'ArrowUp') {
-                scrollContent(-1); // Scroll up
-            } else if (isBareLetter(event, 'j')) {
-                scrollContent(1); // Scroll down
-            } else if (isBareLetter(event, 'k')) {
-                scrollContent(-1); // Scroll up
-            } else if (!event.ctrlKey && event.key === 'PageDown') {
-                scrollContent('bottom'); // Go to the bottom of the page
-            } else if (!event.ctrlKey && event.key === 'PageUp') {
-                scrollContent('top'); // Go to the top of the page
-            } else if (!event.ctrlKey && event.key === ' ') {
-                // Space key
-                scrollContent('page'); // Scroll down by the height of the content
-            }
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (event.ctrlKey && event.code === 'KeyF') {
+            onClose();
+        } else if (!event.ctrlKey && event.key === '?') {
+            onClose();
+        } else if (!event.ctrlKey && event.key === 'ArrowRight') {
+            navigateTabs(1); // Move to the next tab
+        } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
+            navigateTabs(-1); // Move to the previous tab
+        } else if (isBareLetter(event, 'l')) {
+            navigateTabs(1); // Move to the next tab
+        } else if (isBareLetter(event, 'h')) {
+            navigateTabs(-1); // Move to the previous tab
+        } else if (!event.ctrlKey && event.key === 'ArrowDown') {
+            scrollContent(1); // Scroll down
+        } else if (!event.ctrlKey && event.key === 'ArrowUp') {
+            scrollContent(-1); // Scroll up
+        } else if (isBareLetter(event, 'j')) {
+            scrollContent(1); // Scroll down
+        } else if (isBareLetter(event, 'k')) {
+            scrollContent(-1); // Scroll up
+        } else if (!event.ctrlKey && event.key === 'PageDown') {
+            scrollContent('bottom'); // Go to the bottom of the page
+        } else if (!event.ctrlKey && event.key === 'PageUp') {
+            scrollContent('top'); // Go to the top of the page
+        } else if (!event.ctrlKey && event.key === ' ') {
+            // Space key
+            scrollContent('page'); // Scroll down by the height of the content
         }
     }
 
@@ -115,122 +95,38 @@
             }
         }
     }
-
-    // Close the modal when clicking outside of it
-    function handleClickOutside(event) {
-        const modalContent = document.getElementById('modalContent');
-        if (modalContent && !modalContent.contains(event.target)) {
-            onClose(); // Close the help modal if the click is outside of it
-        }
-    }
-
-    onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('click', handleClickOutside); // Add click event listener
-        deactivateGlobalShortcuts();
-    });
-
-    onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('click', handleClickOutside); // Remove click event listener
-        activateGlobalShortcuts();
-    });
-
-    // Focus modal content when visible and listen for Esc key
-    $effect(() => {
-        if (visible) {
-            setTimeout(() => {
-                const helpModal = document.getElementById('helpModal');
-                if (helpModal) {
-                    helpModal.focus();
-                }
-            }, 0);
-            window.addEventListener('keydown', handleKeyDown);
-            window.addEventListener('click', handleClickOutside);
-            deactivateGlobalShortcuts();
-        } else {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('click', handleClickOutside);
-            activateGlobalShortcuts();
-        }
-    });
 </script>
 
-{#if visible}
-    <div class="modal-overlay" id="helpModal" tabindex="0" transition:fade={{ duration: 30 }} role="dialog" aria-modal="true" aria-label="Help" use:trapFocus>
-        <div class="modal-content" id="modalContent">
-            <div class="close-button" onclick={onClose} onkeydown={handleKeyDown}>×</div>
-
-            <!-- Tabs -->
-            <div class="tab-header">
-                <button class={activeTab === 'manual' ? 'active' : ''} onclick={() => switchTab('manual')}>{$t('help.tabManual')}</button>
-                <button class={activeTab === 'shortcuts' ? 'active' : ''} onclick={() => switchTab('shortcuts')}>{$t('help.tabShortcuts')}</button>
-                <button class={activeTab === 'commands' ? 'active' : ''} onclick={() => switchTab('commands')}>{$t('help.tabCommands')}</button>
-                <button class={activeTab === 'about' ? 'active' : ''} onclick={() => switchTab('about')}>{$t('help.tabAbout')}</button>
-            </div>
-
-            <!-- Tab Content -->
-            <div class="tab-content" bind:this={contentArea}>
-                {#if activeTab === 'manual'}
-                    {@html $help.manual}
-                {/if}
-
-                {#if activeTab === 'shortcuts'}
-                    {@html $help.shortcuts}
-                {/if}
-
-                {#if activeTab === 'commands'}
-                    {@html $help.commands}
-                {/if}
-
-                {#if activeTab === 'about'}
-                    {@html aboutHtml}
-                {/if}
-            </div>
-        </div>
+<Modal open={visible} onclose={onClose} size="panel" closeOnOverlay label="Help" onkeydown={handleKeyDown}>
+    <!-- Tabs -->
+    <div class="tab-header">
+        <button class={activeTab === 'manual' ? 'active' : ''} onclick={() => switchTab('manual')}>{$t('help.tabManual')}</button>
+        <button class={activeTab === 'shortcuts' ? 'active' : ''} onclick={() => switchTab('shortcuts')}>{$t('help.tabShortcuts')}</button>
+        <button class={activeTab === 'commands' ? 'active' : ''} onclick={() => switchTab('commands')}>{$t('help.tabCommands')}</button>
+        <button class={activeTab === 'about' ? 'active' : ''} onclick={() => switchTab('about')}>{$t('help.tabAbout')}</button>
     </div>
-{/if}
+
+    <!-- Tab Content -->
+    <div class="tab-content" bind:this={contentArea}>
+        {#if activeTab === 'manual'}
+            {@html $help.manual}
+        {/if}
+
+        {#if activeTab === 'shortcuts'}
+            {@html $help.shortcuts}
+        {/if}
+
+        {#if activeTab === 'commands'}
+            {@html $help.commands}
+        {/if}
+
+        {#if activeTab === 'about'}
+            {@html aboutHtml}
+        {/if}
+    </div>
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 0; /* Remove padding */
-        border-radius: 4px;
-        width: 80%;
-        height: 70%; /* Fix height to 70% of the viewport */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .close-button {
-        position: absolute;
-        top: -8px;
-        right: 4px;
-        font-size: var(--font-size-dialog-close);
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        z-index: 10;
-        transition:
-            background-color 0.3s ease,
-            opacity 0.3s ease;
-    }
-
     .tab-header {
         display: flex;
         margin-bottom: 0; /* Remove bottom margin */

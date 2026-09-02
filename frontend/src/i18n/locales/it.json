@@ -278,7 +278,6 @@
         "noHistory": "Nessuna cronologia di ricerca",
         "noSaved": "Nessun filtro salvato",
         "openPicker": "Seleziona…",
-        "pickerDialogLabel": "Seleziona match e tornei",
         "pickerFilterPlaceholder": "Filtra…",
         "pickerMatchesHeader": "Match",
         "pickerTitle": "Seleziona match e tornei",
@@ -789,7 +788,6 @@
         "title": "Tabella di equity del match"
     },
     "merge": {
-        "ariaLabel": "Unisci giocatori",
         "canonicalName": "Nome canonico:",
         "filterPlaceholder": "Filtra giocatori…",
         "hint": "Seleziona i nomi che rappresentano la stessa persona, poi scegli o digita il nome canonico da mantenere. Tutti i match verranno aggiornati.",

@@ -278,7 +278,6 @@
         "noHistory": "検索履歴がありません",
         "noSaved": "保存済みフィルターがありません",
         "openPicker": "選択…",
-        "pickerDialogLabel": "マッチとトーナメントを選択",
         "pickerFilterPlaceholder": "絞り込み…",
         "pickerMatchesHeader": "マッチ",
         "pickerTitle": "マッチとトーナメントの選択",
@@ -789,7 +788,6 @@
         "title": "MET（マッチ equity テーブル）"
     },
     "merge": {
-        "ariaLabel": "プレイヤーを統合",
         "canonicalName": "正規名:",
         "filterPlaceholder": "プレイヤーを絞り込み…",
         "hint": "同一人物を表す名前を選択し、残す正規名を選択または入力してください。すべてのマッチが更新されます。",

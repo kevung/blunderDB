@@ -49,6 +49,17 @@ describe('trapFocus', () => {
         expect(document.activeElement).toBe(previousActive);
     });
 
+    test('focuses the node itself when it carries a tabindex and holds nothing focusable', () => {
+        container = document.createElement('div');
+        container.setAttribute('tabindex', '-1');
+        container.innerHTML = `<table><tr><td>1.0</td></tr></table>`;
+        document.body.appendChild(container);
+
+        trapFocus(container);
+
+        expect(document.activeElement).toBe(container);
+    });
+
     test('Tab on the last element wraps focus to the first', () => {
         container = document.createElement('div');
         container.innerHTML = `

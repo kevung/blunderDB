@@ -1,6 +1,6 @@
 <script>
-    import { onMount, onDestroy, untrack } from 'svelte';
-    import { trapFocus } from '../utils/focusTrap.js';
+    import { untrack } from 'svelte';
+    import Modal from './Modal.svelte';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
@@ -232,308 +232,240 @@
         tournamentsManuallyModified = true;
         exportOptions.includeTournamentIDs = [];
     }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Escape' && visible) {
-            onCancel();
-        }
-    }
-
-    onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-    });
-
-    onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-    });
 </script>
 
-{#if visible}
-    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label={$t('export.dialogLabel')} use:trapFocus>
-        <div class="modal-scroll">
-            <div class="modal-content">
-                {#if mode === 'metadata' || mode === 'exporting'}
-                    <h2>{$t('export.titleExport')}</h2>
-
-                    <div class="summary">
-                        <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
-                    </div>
-
-                    <!-- These describe the file being produced, not the database being
-                         exported from. They start from the source's values, which most
-                         exports keep. -->
-                    <p class="group-title">{$t('export.metadataTitle')}</p>
-
-                    <div class="form-group">
-                        <label for="export-user">{$t('export.user')}</label>
-                        <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="export-description">{$t('export.description')}</label>
-                        <textarea id="export-description" bind:value={metadata.description} placeholder={$t('export.descriptionPlaceholder')}></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="export-date">{$t('export.creationDate')}</label>
-                        <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
-                    </div>
-
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
-                            <label for="export-analysis">{$t('export.includeAnalysis')}</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
-                            <label for="export-comments">{$t('export.includeComments')}</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
-                            <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
-                            <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
-                            <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <!-- A tournament is linked to its matches only when the matches
-                                 are exported too; without them it would arrive empty. -->
-                            <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0 || !exportOptions.includeMatches} />
-                            <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
-                            {#if tournaments.length > 0 && !exportOptions.includeMatches}
-                                <span class="info-tip" title={$t('export.tournamentsNeedMatches')} aria-label={$t('export.tournamentsNeedMatches')} role="note">?</span>
-                            {/if}
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
-                            <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
-                        </div>
-                    </div>
-
-                    <!-- Not content but working preferences: the producer's own saved searches,
-                     which have no business in a recipient's database. Kept apart from the
-                     options above for that reason, and off by default. -->
-                    <div class="checkbox-group issuance-toggle">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
-                            <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
-                            <span class="info-tip" title={$t('export.filterLibraryHint')} aria-label={$t('export.filterLibraryHint')} role="note">?</span>
-                        </div>
-                    </div>
-
-                    <!-- Two independent, optional mechanisms, both the producer's choice and
-                     both off by default: mark where the file comes from, and protect it
-                     with a password. Neither makes the recipient's side record anything.
-                     See ADR-0007. -->
-                    <div class="checkbox-group issuance-toggle">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
-                            <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
-                            <span class="info-tip" title={$t('issuance.watermarkNote')} aria-label={$t('issuance.watermarkNote')} role="note">?</span>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
-                            <label for="export-protect">{$t('issuance.enablePassword')}</label>
-                            <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
-                        </div>
-                    </div>
-
-                    {#if exportOptions.watermarkEnabled}
-                        <div class="issuance-section">
-                            <div class="form-group">
-                                <label for="export-origin">{$t('issuance.originLabel')}</label>
-                                <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
-                                {#if missingOrigin}
-                                    <p class="issuance-required">{$t('issuance.originRequired')}</p>
-                                {/if}
-                            </div>
-                            <div class="form-group">
-                                <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
-                                <input id="export-watermark-note" type="text" bind:value={exportOptions.watermarkNote} placeholder={$t('issuance.notePlaceholder')} />
-                            </div>
-                        </div>
-                    {/if}
-
-                    {#if exportOptions.passwordEnabled}
-                        <div class="issuance-section">
-                            <div class="form-group">
-                                <label for="export-password">
-                                    {$t('issuance.passwordLabel')}
-                                    <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
-                                </label>
-                                <div class="password-row">
-                                    <input id="export-password" type={passwordVisible ? 'text' : 'password'} bind:value={exportOptions.password} />
-                                    <!-- Reveal while held, never toggled: the password goes back
-                                     out of sight the moment the button is released, so it
-                                     cannot be left showing by accident. Pointer and keyboard
-                                     both work. -->
-                                    <button
-                                        type="button"
-                                        class="reveal"
-                                        aria-label={$t('issuance.revealPassword')}
-                                        title={$t('issuance.revealPassword')}
-                                        onpointerdown={() => (passwordVisible = true)}
-                                        onpointerup={() => (passwordVisible = false)}
-                                        onpointerleave={() => (passwordVisible = false)}
-                                        onpointercancel={() => (passwordVisible = false)}
-                                        onkeydown={(e) => {
-                                            if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
-                                        }}
-                                        onkeyup={() => (passwordVisible = false)}
-                                        onblur={() => (passwordVisible = false)}
-                                    >
-                                        {passwordVisible ? '🙈' : '👁'}
-                                    </button>
-                                </div>
-                                {#if missingPassword}
-                                    <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
-                                {/if}
-                            </div>
-                        </div>
-                    {/if}
-
-                    {#if exportOptions.includeMatches && matches.length > 0}
-                        <div class="collections-section">
-                            <div class="collections-header">
-                                <span>{$t('export.selectMatches')}</span>
-                                <div class="collections-buttons">
-                                    <button type="button" class="small-btn" onclick={selectAllMatches}>{$t('export.all')}</button>
-                                    <button type="button" class="small-btn" onclick={selectNoMatches}>{$t('export.none')}</button>
-                                </div>
-                            </div>
-                            <div class="collections-list">
-                                {#each matches as match (match.id)}
-                                    <label class="collection-checkbox">
-                                        <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
-                                        <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
-                                        <span class="coll-count">({match.game_count}g)</span>
-                                    </label>
-                                {/each}
-                            </div>
-                        </div>
-                    {/if}
-
-                    {#if exportOptions.includeTournaments && tournaments.length > 0}
-                        <div class="collections-section">
-                            <div class="collections-header">
-                                <span>{$t('export.selectTournaments')}</span>
-                                <div class="collections-buttons">
-                                    <button type="button" class="small-btn" onclick={selectAllTournaments}>{$t('export.all')}</button>
-                                    <button type="button" class="small-btn" onclick={selectNoTournaments}>{$t('export.none')}</button>
-                                </div>
-                            </div>
-                            <div class="collections-list">
-                                {#each tournaments as tournament (tournament.id)}
-                                    <label class="collection-checkbox">
-                                        <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
-                                        <span class="coll-name">{tournament.name}</span>
-                                        <span class="coll-count">({tournament.matchCount})</span>
-                                    </label>
-                                {/each}
-                            </div>
-                        </div>
-                    {/if}
-
-                    {#if exportOptions.includeCollections && collections.length > 0}
-                        <div class="collections-section">
-                            <div class="collections-header">
-                                <span>{$t('export.selectCollections')}</span>
-                                <div class="collections-buttons">
-                                    <button type="button" class="small-btn" onclick={selectAllCollections}>{$t('export.all')}</button>
-                                    <button type="button" class="small-btn" onclick={selectNoCollections}>{$t('export.none')}</button>
-                                </div>
-                            </div>
-                            <div class="collections-list">
-                                {#each collections as collection (collection.id)}
-                                    <label class="collection-checkbox">
-                                        <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
-                                        <span class="coll-name">{collection.name}</span>
-                                        <!-- Covered / total. The export writes membership
-                                             only for positions it exports, so a partial
-                                             collection arrives truncated — said here rather
-                                             than discovered by the recipient. -->
-                                        <span class="coll-count" class:partial={isPartial(collection)}>
-                                            ({covered(collection)}/{collection.positionCount})
-                                        </span>
-                                    </label>
-                                {/each}
-                            </div>
-                        </div>
-                    {/if}
-
-                    <div class="button-group">
-                        <button onclick={onCancel}>{$t('common.cancel')}</button>
-                        <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
-                    </div>
-                {/if}
-
-                {#if mode === 'exporting'}
-                    <!-- Laid over the form rather than replacing it: the dialog keeps
-                         exactly the same box, which is what stops WebKitGTK leaving a blank
-                         white rectangle when the content changes. It also covers the
-                         controls, so nothing can be edited while the export runs. -->
-                    <div class="busy-overlay">
-                        <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
-                        <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
-                        <p class="status-text">{$t('export.mayTakeMoments')}</p>
-                        <button onclick={onCancel}>{$t('common.cancel')}</button>
-                    </div>
-                {/if}
+<!-- A titled list of tick boxes with All/None, for matches, tournaments and collections
+     alike. `describe` names an item and gives its count; `partial` flags a count short
+     of the whole. -->
+{#snippet pickList(header, items, isChecked, toggle, selectAll, selectNone, describe)}
+    <div class="collections-section">
+        <div class="collections-header">
+            <span>{header}</span>
+            <div class="collections-buttons">
+                <button type="button" class="small-btn" onclick={selectAll}>{$t('export.all')}</button>
+                <button type="button" class="small-btn" onclick={selectNone}>{$t('export.none')}</button>
             </div>
         </div>
+        <div class="collections-list">
+            {#each items as item (item.id)}
+                {@const d = describe(item)}
+                <label class="collection-checkbox">
+                    <input type="checkbox" checked={isChecked(item.id)} onchange={() => toggle(item.id)} />
+                    <span class="coll-name">{d.name}</span>
+                    <span class="coll-count" class:partial={d.partial}>({d.count})</span>
+                </label>
+            {/each}
+        </div>
     </div>
-{/if}
+{/snippet}
+
+<Modal open={visible} onclose={onCancel} size="large" layer="top" closeButton={false} label={$t('export.dialogLabel')}>
+    {#if mode === 'metadata' || mode === 'exporting'}
+        <h2 class="modal-title">{$t('export.titleExport')}</h2>
+
+        <div class="summary">
+            <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
+        </div>
+
+        <!-- These describe the file being produced, not the database being
+             exported from. They start from the source's values, which most
+             exports keep. -->
+        <p class="group-title">{$t('export.metadataTitle')}</p>
+
+        <div class="form-group">
+            <label for="export-user">{$t('export.user')}</label>
+            <input id="export-user" type="text" bind:value={metadata.user} placeholder={$t('export.userPlaceholder')} />
+        </div>
+
+        <div class="form-group">
+            <label for="export-description">{$t('export.description')}</label>
+            <textarea id="export-description" bind:value={metadata.description} placeholder={$t('export.descriptionPlaceholder')}></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="export-date">{$t('export.creationDate')}</label>
+            <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
+        </div>
+
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
+                <label for="export-analysis">{$t('export.includeAnalysis')}</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
+                <label for="export-comments">{$t('export.includeComments')}</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
+                <label for="export-played-moves">{$t('export.includePlayedMoves')}</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
+                <label for="export-matches">{$t('export.includeMatches', { count: matches.length })}</label>
+            </div>
+            <div class="checkbox-item">
+                <!-- A tournament is linked to its matches only when the matches
+                     are exported too; without them it would arrive empty. -->
+                <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0 || !exportOptions.includeMatches} />
+                <label for="export-tournaments">{$t('export.includeTournaments', { count: tournaments.length })}</label>
+                {#if tournaments.length > 0 && !exportOptions.includeMatches}
+                    <span class="info-tip" title={$t('export.tournamentsNeedMatches')} aria-label={$t('export.tournamentsNeedMatches')} role="note">?</span>
+                {/if}
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
+                <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
+            </div>
+        </div>
+
+        <!-- Not content but working preferences: the producer's own saved searches,
+         which have no business in a recipient's database. Kept apart from the
+         options above for that reason, and off by default. -->
+        <div class="checkbox-group issuance-toggle">
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                <label for="export-filter-library">{$t('export.includeFilterLibrary')}</label>
+                <span class="info-tip" title={$t('export.filterLibraryHint')} aria-label={$t('export.filterLibraryHint')} role="note">?</span>
+            </div>
+        </div>
+
+        <!-- Two independent, optional mechanisms, both the producer's choice and
+         both off by default: mark where the file comes from, and protect it
+         with a password. Neither makes the recipient's side record anything.
+         See ADR-0007. -->
+        <div class="checkbox-group issuance-toggle">
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-watermark" bind:checked={exportOptions.watermarkEnabled} />
+                <label for="export-watermark">{$t('issuance.enableWatermark')}</label>
+                <span class="info-tip" title={$t('issuance.watermarkNote')} aria-label={$t('issuance.watermarkNote')} role="note">?</span>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-protect" bind:checked={exportOptions.passwordEnabled} />
+                <label for="export-protect">{$t('issuance.enablePassword')}</label>
+                <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
+            </div>
+        </div>
+
+        {#if exportOptions.watermarkEnabled}
+            <div class="issuance-section">
+                <div class="form-group">
+                    <label for="export-origin">{$t('issuance.originLabel')}</label>
+                    <input id="export-origin" type="text" bind:value={exportOptions.watermark} placeholder={$t('issuance.originPlaceholder')} />
+                    {#if missingOrigin}
+                        <p class="issuance-required">{$t('issuance.originRequired')}</p>
+                    {/if}
+                </div>
+                <div class="form-group">
+                    <label for="export-watermark-note">{$t('issuance.noteLabel')}</label>
+                    <input id="export-watermark-note" type="text" bind:value={exportOptions.watermarkNote} placeholder={$t('issuance.notePlaceholder')} />
+                </div>
+            </div>
+        {/if}
+
+        {#if exportOptions.passwordEnabled}
+            <div class="issuance-section">
+                <div class="form-group">
+                    <label for="export-password">
+                        {$t('issuance.passwordLabel')}
+                        <span class="info-tip" title={$t('issuance.passwordHint')} aria-label={$t('issuance.passwordHint')} role="note">?</span>
+                    </label>
+                    <div class="password-row">
+                        <input id="export-password" type={passwordVisible ? 'text' : 'password'} bind:value={exportOptions.password} />
+                        <!-- Reveal while held, never toggled: the password goes back
+                         out of sight the moment the button is released, so it
+                         cannot be left showing by accident. Pointer and keyboard
+                         both work. -->
+                        <button
+                            type="button"
+                            class="reveal"
+                            aria-label={$t('issuance.revealPassword')}
+                            title={$t('issuance.revealPassword')}
+                            onpointerdown={() => (passwordVisible = true)}
+                            onpointerup={() => (passwordVisible = false)}
+                            onpointerleave={() => (passwordVisible = false)}
+                            onpointercancel={() => (passwordVisible = false)}
+                            onkeydown={(e) => {
+                                if (e.key === ' ' || e.key === 'Enter') passwordVisible = true;
+                            }}
+                            onkeyup={() => (passwordVisible = false)}
+                            onblur={() => (passwordVisible = false)}
+                        >
+                            {passwordVisible ? '🙈' : '👁'}
+                        </button>
+                    </div>
+                    {#if missingPassword}
+                        <p class="issuance-required">{$t('issuance.passwordRequired')}</p>
+                    {/if}
+                </div>
+            </div>
+        {/if}
+
+        {#if exportOptions.includeMatches && matches.length > 0}
+            {@render pickList(
+                $t('export.selectMatches'),
+                matches,
+                (id) => exportOptions.matchIDs.includes(id),
+                toggleMatchSelection,
+                selectAllMatches,
+                selectNoMatches,
+                (m) => ({ name: `${m.player1_name} vs ${m.player2_name}`, count: `${m.game_count}g` })
+            )}
+        {/if}
+
+        {#if exportOptions.includeTournaments && tournaments.length > 0}
+            {@render pickList(
+                $t('export.selectTournaments'),
+                tournaments,
+                (id) => exportOptions.includeTournamentIDs.includes(id),
+                toggleTournamentSelection,
+                selectAllTournaments,
+                selectNoTournaments,
+                (tournament) => ({ name: tournament.name, count: tournament.matchCount })
+            )}
+        {/if}
+
+        {#if exportOptions.includeCollections && collections.length > 0}
+            <!-- Covered / total. The export writes membership only for positions it
+                 exports, so a partial collection arrives truncated — said here rather
+                 than discovered by the recipient. -->
+            {@render pickList(
+                $t('export.selectCollections'),
+                collections,
+                (id) => exportOptions.collectionIDs.includes(id),
+                toggleCollectionSelection,
+                selectAllCollections,
+                selectNoCollections,
+                (collection) => ({ name: collection.name, count: `${covered(collection)}/${collection.positionCount}`, partial: isPartial(collection) })
+            )}
+        {/if}
+    {/if}
+
+    {#if mode === 'exporting'}
+        <!-- Laid over the form rather than replacing it: the dialog keeps
+             exactly the same box, which is what stops WebKitGTK leaving a blank
+             white rectangle when the content changes. It also covers the
+             controls, so nothing can be edited while the export runs. -->
+        <div class="busy-overlay">
+            <h2 class="modal-title">{$t('export.exportingTitle')} <span class="spinner"></span></h2>
+            <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
+            <p class="status-text">{$t('export.mayTakeMoments')}</p>
+            <button onclick={onCancel}>{$t('common.cancel')}</button>
+        </div>
+    {/if}
+    {#snippet footer()}
+        {#if mode === 'metadata' || mode === 'exporting'}
+            <button onclick={onCancel}>{$t('common.cancel')}</button>
+            <button class="btn-export primary" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
+        {/if}
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        /* The dialog must stay reachable when it is taller than the window, but it must not
-           be a scroll container itself: WebKitGTK failed to repaint it when its box changed
-           size sharply between branches (560x819 for the form, 560x237 for the completion
-           screen), leaving an empty white box that even a window resize would not refresh.
-           So the overlay scrolls — its own box never changes — and .modal-scroll below does
-           the centring. Auto margins were tried first and left the dialog stuck at the top:
-           they do not resolve to centred inside a scrolling container. */
-        overflow-y: auto;
-        z-index: 2000;
-    }
-
-    /* min-height rather than height: it fills the window when the dialog is short, so the
-       dialog is centred, and grows past it when the dialog is tall, so the top stays
-       reachable instead of being clipped. */
-    .modal-scroll {
-        min-height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 30px;
-        border-radius: 8px;
-        width: 500px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        /* No max-height and no scrolling here: see .modal-overlay and .modal-scroll. */
-        flex: none;
-        position: relative;
-    }
-
     .busy-overlay {
         position: absolute;
         inset: 0;
@@ -543,19 +475,7 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        border-radius: 8px;
-    }
-
-    h2 {
-        margin: 0;
-        font-size: var(--font-size-dialog-title);
-        color: #333;
-    }
-
-    .status-text {
-        color: #666;
-        font-size: var(--font-size-base);
-        margin: 0;
+        border-radius: 6px;
     }
 
     .form-group {
@@ -629,35 +549,9 @@
         opacity: 0.5;
     }
 
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .button-group {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 10px;
-    }
-
-    button {
+    .small-btn,
+    .reveal,
+    .busy-overlay button {
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -669,42 +563,16 @@
         color: #333;
     }
 
-    button:disabled {
+    .busy-overlay button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
 
-    button:hover:not(:disabled) {
+    .small-btn:hover,
+    .reveal:hover,
+    .busy-overlay button:hover:not(:disabled) {
         background-color: #f5f5f5;
         border-color: #999;
-    }
-
-    .btn-export {
-        background-color: #333;
-        color: white;
-        border-color: #333;
-    }
-
-    .btn-export:hover:not(:disabled) {
-        background-color: #555;
-        border-color: #555;
-    }
-
-    .summary {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 4px;
-        border-left: 4px solid #666;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        font-size: var(--font-size-base);
-        color: #555;
-    }
-
-    .summary strong {
-        color: #333;
     }
 
     .collections-section {
