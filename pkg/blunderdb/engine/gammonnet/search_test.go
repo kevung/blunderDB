@@ -342,3 +342,40 @@ func BenchmarkSortByEquity(b *testing.B) {
 		})
 	}
 }
+
+// busyXGID is a middle-game board with every checker still in play: the
+// shape that makes the play generator work — a double from here reaches four
+// levels and hundreds of distinct intermediate positions.
+const busyXGID = "XGID=---BBaB-BbA-bC-b--BdAca---:0:0:1:00:0:5:0:9:10"
+
+// BenchmarkLegalPlays is the per-poste figure for play generation (#150):
+// a non-double and a double, from the opening and from a busy middle game.
+// The whole-decision figure is BenchmarkDecision2Ply.
+func BenchmarkLegalPlays(b *testing.B) {
+	boards := map[string]string{"opening": openingXGID, "busy": busyXGID}
+	for _, name := range []string{"opening", "busy"} {
+		dp, err := domain.DecodeXGID(boards[name])
+		if err != nil {
+			b.Fatal(err)
+		}
+		dp.PlayerOnRoll = domain.White
+		p, err := FromDomain(&dp)
+		if err != nil {
+			b.Fatal(err)
+		}
+		for _, d := range [][2]int{{3, 1}, {6, 5}, {6, 6}, {3, 3}} {
+			var g Generator
+			out := make([]Play, MaxPlays)
+			n := g.LegalPlays(&p, d[0], d[1], out)
+			b.Run(fmt.Sprintf("%s/%d-%d/n=%d", name, d[0], d[1], n), func(b *testing.B) {
+				b.ReportAllocs()
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					if g.LegalPlays(&p, d[0], d[1], out) < 0 {
+						b.Fatal("generation refused")
+					}
+				}
+			})
+		}
+	}
+}

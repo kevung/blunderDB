@@ -16,11 +16,26 @@ type levelEntry struct {
 
 // Generator holds the scratch legal-play generation needs. Allocate one per
 // goroutine and reuse it; generating then allocates nothing.
+//
+// The two working levels sit in one array and generation ALTERNATES between
+// them. It used to hold them in two fields and swap them by value — and a
+// levelEntry is 48 octets, maxLevel is 1024, so that assignment moved 147 Ko
+// per die played, four times for a double, at every node of the search. That
+// single copy was the whole of the generator's cost: generating the sixteen
+// legal plays of the opening 3-1 took 17 µs before this and 1,5 µs after.
 type Generator struct {
-	cur  [maxLevel]levelEntry
-	next [maxLevel]levelEntry
-	sub  [NumPoints + 1]Move
+	levels [2][maxLevel]levelEntry
+	side   int // which half of levels is the current one
+	sub    [NumPoints + 1]Move
 }
+
+// cur is the level being played from, next the one being written. advance
+// makes the written level current — what the swap used to do, without moving
+// anything. side survives from one call to the next, which is harmless:
+// every entry point rewrites cur[0] before reading it.
+func (g *Generator) cur() *[maxLevel]levelEntry  { return &g.levels[g.side] }
+func (g *Generator) next() *[maxLevel]levelEntry { return &g.levels[g.side^1] }
+func (g *Generator) advance()                    { g.side ^= 1 }
 
 // LegalPlays fills out with every distinct legal play for p.Turn given the
 // dice, and returns how many there are.
@@ -55,15 +70,16 @@ func (g *Generator) LegalPlays(p *Position, d1, d2 int, out []Play) int {
 // resulting position. It returns the number of distinct entries written, or -1
 // on capacity overflow.
 func (g *Generator) expand(count, die int, player uint8) int {
+	cur, next := g.cur(), g.next()
 	n := 0
 	for i := 0; i < count; i++ {
-		e := &g.cur[i]
+		e := &cur[i]
 		k := subMoves(&e.pos, player, die, &g.sub)
 		for s := 0; s < k; s++ {
 			res := apply(&e.pos, player, g.sub[s])
 			dup := false
 			for j := 0; j < n; j++ {
-				if g.next[j].pos == res {
+				if next[j].pos == res {
 					dup = true
 					break
 				}
@@ -74,10 +90,10 @@ func (g *Generator) expand(count, die int, player uint8) int {
 			if n == maxLevel {
 				return -1
 			}
-			g.next[n].pos = res
-			g.next[n].moves = e.moves
-			g.next[n].moves[e.n] = g.sub[s]
-			g.next[n].n = e.n + 1
+			next[n].pos = res
+			next[n].moves = e.moves
+			next[n].moves[e.n] = g.sub[s]
+			next[n].n = e.n + 1
 			n++
 		}
 	}
@@ -88,7 +104,7 @@ func (g *Generator) expand(count, die int, player uint8) int {
 // plays that used the most dice. `usedFloor` is the number of dice a play must
 // use to be admissible at all (0 for doubles, set by the caller otherwise).
 func (g *Generator) generate(p *Position, player uint8, dice []int, out []Play, usedFloor int) int {
-	g.cur[0] = levelEntry{pos: *p}
+	g.cur()[0] = levelEntry{pos: *p}
 	count := 1
 	deepest := 0
 	deepestCount := 1
@@ -101,7 +117,7 @@ func (g *Generator) generate(p *Position, player uint8, dice []int, out []Play, 
 		if n == 0 {
 			break
 		}
-		g.cur, g.next = g.next, g.cur
+		g.advance()
 		count = n
 		deepest++
 		deepestCount = n
@@ -124,8 +140,9 @@ func (g *Generator) emit(count int, player uint8, out []Play) int {
 	if player == White {
 		opp = Black
 	}
+	cur := g.cur()
 	for i := 0; i < count; i++ {
-		e := &g.cur[i]
+		e := &cur[i]
 		out[i].Result = e.pos
 		out[i].Result.Turn = opp
 		out[i].Moves = e.moves
@@ -151,13 +168,13 @@ func (g *Generator) generateOrders(p *Position, player uint8, hi, lo int, out []
 	// Only one die can be played. The larger one wins if it can be played at
 	// all; the smaller is only a fallback.
 	for _, die := range [2]int{hi, lo} {
-		g.cur[0] = levelEntry{pos: *p}
+		g.cur()[0] = levelEntry{pos: *p}
 		n := g.expand(1, die, player)
 		if n < 0 {
 			return -1
 		}
 		if n > 0 {
-			g.cur, g.next = g.next, g.cur
+			g.advance()
 			return g.emit(n, player, out)
 		}
 	}
@@ -169,7 +186,7 @@ func (g *Generator) generateOrders(p *Position, player uint8, hi, lo int, out []
 func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) int {
 	total := 0
 	for _, order := range [2][2]int{{hi, lo}, {lo, hi}} {
-		g.cur[0] = levelEntry{pos: *p}
+		g.cur()[0] = levelEntry{pos: *p}
 		n := g.expand(1, order[0], player)
 		if n < 0 {
 			return -1
@@ -177,7 +194,7 @@ func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) i
 		if n == 0 {
 			continue
 		}
-		g.cur, g.next = g.next, g.cur
+		g.advance()
 		n = g.expand(n, order[1], player)
 		if n < 0 {
 			return -1
@@ -185,15 +202,16 @@ func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) i
 		if n == 0 {
 			continue
 		}
-		g.cur, g.next = g.next, g.cur
+		g.advance()
 
 		// Merge into out, deduplicating against what the other order produced.
 		opp := uint8(White)
 		if player == White {
 			opp = Black
 		}
+		cur := g.cur()
 		for i := 0; i < n; i++ {
-			res := g.cur[i].pos
+			res := cur[i].pos
 			res.Turn = opp
 			dup := false
 			for j := 0; j < total; j++ {
@@ -209,8 +227,8 @@ func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) i
 				return -1
 			}
 			out[total].Result = res
-			out[total].Moves = g.cur[i].moves
-			out[total].NumMoves = g.cur[i].n
+			out[total].Moves = cur[i].moves
+			out[total].NumMoves = cur[i].n
 			total++
 		}
 	}
