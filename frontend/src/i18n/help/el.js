@@ -1265,6 +1265,7 @@ export default {
                     </p>
                     <p>Ακολουθούν αρκετοί τρόποι επικοινωνίας:</p>
                     <ul>
+                        <li>Γίνετε μέλος του διακομιστή Discord του blunderDB: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
                         <li>Συζητήστε μαζί μου αν συναντηθούμε σε ένα τουρνουά,</li>
                         <li>Στείλτε μου ένα email,</li>
                     </ul>

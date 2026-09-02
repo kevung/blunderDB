@@ -1265,6 +1265,7 @@ export default {
                     </p>
                     <p>Вот несколько способов связаться со мной:</p>
                     <ul>
+                        <li>Присоединиться к Discord-серверу blunderDB: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
                         <li>Поговорить со мной, если мы встретимся на турнире,</li>
                         <li>Прислать мне письмо по электронной почте,</li>
                     </ul>

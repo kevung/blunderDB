@@ -98,22 +98,17 @@ In the desktop app, open or create a `.db` file, then import match files via the
 | Framework | [Wails v2](https://wails.io/) (Go ↔ WebView bridge) |
 | Docs | Sphinx, 9 languages (French source + 8 gettext translations) |
 
+## Community
+
+- **Discord**: <https://discord.gg/DA5PpzM9En> — questions, feedback, a position to discuss, the quickest way to reach the author.
+- **GitHub Discussions**: <https://github.com/kevung/blunderDB/discussions> — release announcements and longer threads.
+- **Issues**: bugs and feature requests, with the match file that reproduces them. A security problem goes through [SECURITY.md](SECURITY.md) instead.
+
+Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
+
 ## Contributing
 
-Contributions are welcome — open an issue or submit a pull request. Read [CLAUDE.md](CLAUDE.md) first: it holds the working rules and the invariants that tests do not catch, and every user-visible change ships with its French documentation in the same branch.
-
-CI runs the following; run them before pushing anything nontrivial:
-
-```bash
-go vet ./...
-go test ./...
-go test -race ./...
-golangci-lint run ./...          # v2, config in .golangci.yml
-govulncheck ./...
-cd frontend && npm run lint && npm run format:check && npm test && npm run test:e2e
-```
-
-Design decisions are recorded in [docs/adr/](docs/adr/README.md).
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md): prerequisites, `make check` (everything CI enforces), the worktree workflow, and the two documentation rules — a user-visible change ships with its French documentation in the same branch, and a modified `.rst` ships with its eight `.po` in the same commit. The invariants that tests do not catch are listed in [CLAUDE.md](CLAUDE.md); design decisions are recorded in [docs/adr/](docs/adr/README.md).
 
 ## License
 
