@@ -69,7 +69,7 @@ func testPositionDedup(t *testing.T, s storage.Storage) {
 	}
 }
 
-func testPositionUpdatePreservesId(t *testing.T, s storage.Storage) {
+func testPositionUpdatePreservesID(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p := checkerPos()
 	id, err := s.Positions().Save(ctx, "", &p)

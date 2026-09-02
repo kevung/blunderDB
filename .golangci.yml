@@ -37,7 +37,6 @@ linters:
       checks:
         - "all"
         - "-QF*"    # quick-fix suggestions are style, not bugs — revisit later
-        - "-ST1003" # migration functions use underscores (migrate_X_to_Y) by convention
 
   exclusions:
     generated: lax
@@ -57,6 +56,11 @@ linters:
       # touch the old one — every edit here is a merge conflict there.
       - linters: [errorlint, sqlclosecheck]
         path: "db_migration\\.go$"
+      # ST1003 (initialisms) is enforced everywhere but the migration
+      # functions, which use underscores (migrate_X_to_Y) by convention.
+      - linters: [staticcheck]
+        path: "db_migration\\.go$"
+        text: "ST1003"
       # stats_legacy_oracle_test.go is the pre-unification statistics SQL,
       # copied verbatim as the oracle the storage backends are checked
       # against; its loops swallow iteration errors the way the old code did,

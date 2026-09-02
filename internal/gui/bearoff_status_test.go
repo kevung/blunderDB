@@ -100,9 +100,9 @@ func TestBearoffStatusExternalPath(t *testing.T) {
 	race.SetExternalPath("/some/external/gnubg_ts0.bd")
 	t.Cleanup(func() { race.SetExternalPath("") })
 
-	// BearoffStatus itself doesn't read config.BearoffTsPath (the GUI's
+	// BearoffStatus itself doesn't read config.BearoffTSPath (the GUI's
 	// external-path setting is applied to the race engine separately, from
-	// config.SaveBearoffTsPath / main.go's startup); it reports the engine's
+	// config.SaveBearoffTSPath / main.go's startup); it reports the engine's
 	// currently resolved source, so this only exercises that the struct
 	// reflects race.Resolve() consistently while an external path is set.
 	st := a.BearoffStatus()

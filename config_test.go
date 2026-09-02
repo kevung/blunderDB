@@ -18,10 +18,10 @@ func isolateXDGConfig(t *testing.T) {
 
 // TestLoadConfigPropagatesBearoffAndEpcChallenge is a regression test for a
 // bug found while writing the fuller round-trip test in
-// TestConfigRoundTripLoadSave: LoadConfig read BearoffTsPath and EpcChallenge
+// TestConfigRoundTripLoadSave: LoadConfig read BearoffTSPath and EpcChallenge
 // from disk into the *returned* Config, but never copied them onto the
 // receiver `c` (unlike every other field). Since the Wails binding exposes
-// methods on that receiver, GetBearoffTsPath()/GetEpcChallenge() — what the
+// methods on that receiver, GetBearoffTSPath()/GetEpcChallenge() — what the
 // frontend actually calls — silently reported the zero value after every
 // restart, even though the value was correctly persisted and even correctly
 // applied to the race engine once via the separate `config` return value in
@@ -30,7 +30,7 @@ func TestLoadConfigPropagatesBearoffAndEpcChallenge(t *testing.T) {
 	isolateXDGConfig(t)
 
 	saver := NewConfig()
-	saver.BearoffTsPath = "/tmp/some/external.bd"
+	saver.BearoffTSPath = "/tmp/some/external.bd"
 	saver.EpcChallenge = true
 	if err := saver.SaveConfig(saver); err != nil {
 		t.Fatalf("SaveConfig: %v", err)
@@ -40,8 +40,8 @@ func TestLoadConfigPropagatesBearoffAndEpcChallenge(t *testing.T) {
 	if _, err := loader.LoadConfig(); err != nil {
 		t.Fatalf("LoadConfig: %v", err)
 	}
-	if loader.BearoffTsPath != "/tmp/some/external.bd" {
-		t.Errorf("receiver BearoffTsPath = %q, want %q (frontend calls GetBearoffTsPath() on this receiver)", loader.BearoffTsPath, "/tmp/some/external.bd")
+	if loader.BearoffTSPath != "/tmp/some/external.bd" {
+		t.Errorf("receiver BearoffTSPath = %q, want %q (frontend calls GetBearoffTSPath() on this receiver)", loader.BearoffTSPath, "/tmp/some/external.bd")
 	}
 	if !loader.EpcChallenge {
 		t.Error("receiver EpcChallenge = false, want true (frontend calls GetEpcChallenge() on this receiver)")
@@ -175,7 +175,7 @@ func TestClampPanelWidth(t *testing.T) {
 
 // TestConfigRoundTripLoadSave writes a fully populated Config to a temporary
 // XDG_CONFIG_HOME, reloads it from scratch on a fresh receiver, and checks
-// every persisted field survives — including the two (BearoffTsPath,
+// every persisted field survives — including the two (BearoffTSPath,
 // EpcChallenge) that TestLoadConfigPropagatesBearoffAndEpcChallenge caught
 // missing from the receiver-side propagation.
 func TestConfigRoundTripLoadSave(t *testing.T) {
@@ -202,7 +202,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		PanelHeight:          520,
 		PanelWidth:           640,
 		TourSeen:             true,
-		BearoffTsPath:        "/home/user/gnubg_ts6x11.bd",
+		BearoffTSPath:        "/home/user/gnubg_ts6x11.bd",
 		EpcChallenge:         true,
 		GammonNetDisplayPly:  intPtr(1),
 		GammonNetAnalysisPly: intPtr(3),
@@ -245,7 +245,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"PanelHeight", loaded.GetPanelHeight(), original.PanelHeight},
 		{"PanelWidth", loaded.GetPanelWidth(), original.PanelWidth},
 		{"TourSeen", loaded.GetTourSeen(), original.TourSeen},
-		{"BearoffTsPath", loaded.GetBearoffTsPath(), original.BearoffTsPath},
+		{"BearoffTSPath", loaded.GetBearoffTSPath(), original.BearoffTSPath},
 		{"EpcChallenge", loaded.GetEpcChallenge(), original.EpcChallenge},
 		{"GammonNetDisplayPly", loaded.GetGammonNetDisplayPly(), *original.GammonNetDisplayPly},
 		{"GammonNetAnalysisPly", loaded.GetGammonNetAnalysisPly(), *original.GammonNetAnalysisPly},
@@ -300,8 +300,8 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	if got := loaded.GetTourSeen(); got != false {
 		t.Errorf("GetTourSeen() = %v, want false", got)
 	}
-	if got := loaded.GetBearoffTsPath(); got != "" {
-		t.Errorf("GetBearoffTsPath() = %q, want empty", got)
+	if got := loaded.GetBearoffTSPath(); got != "" {
+		t.Errorf("GetBearoffTSPath() = %q, want empty", got)
 	}
 	if got := loaded.GetEpcChallenge(); got != false {
 		t.Errorf("GetEpcChallenge() = %v, want false", got)

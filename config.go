@@ -155,9 +155,9 @@ type Config struct {
 	PanelHeight      int                  `json:"panel_height,omitempty"`
 	PanelWidth       int                  `json:"panel_width,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
-	// BearoffTsPath is an optional user-supplied two-sided bearoff database
+	// BearoffTSPath is an optional user-supplied two-sided bearoff database
 	// (.bd) widening the embedded TS-06-06 (ADR-0009). Empty = none.
-	BearoffTsPath string `json:"bearoff_ts_path,omitempty"`
+	BearoffTSPath string `json:"bearoff_ts_path,omitempty"`
 	// EpcChallenge persists the EPC panel's training mode ("défi"): results
 	// are masked after each edit until the user clicks a zone to reveal it.
 	EpcChallenge bool `json:"epc_challenge,omitempty"`
@@ -354,7 +354,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.PanelWidth = clampPanelWidth(config.PanelWidth)
 	config.PanelWidth = c.PanelWidth
 	c.TourSeen = config.TourSeen
-	c.BearoffTsPath = config.BearoffTsPath
+	c.BearoffTSPath = config.BearoffTSPath
 	c.EpcChallenge = config.EpcChallenge
 	c.GammonNetDisplayPly = config.GammonNetDisplayPly
 	c.GammonNetAnalysisPly = config.GammonNetAnalysisPly
@@ -484,15 +484,15 @@ func (c *Config) SaveTourSeen(seen bool) error {
 	return c.SaveConfig(c)
 }
 
-// GetBearoffTsPath returns the persisted external two-sided bearoff path.
-func (c *Config) GetBearoffTsPath() string {
-	return c.BearoffTsPath
+// GetBearoffTSPath returns the persisted external two-sided bearoff path.
+func (c *Config) GetBearoffTSPath() string {
+	return c.BearoffTSPath
 }
 
-// SaveBearoffTsPath persists the external two-sided bearoff path ("" clears
+// SaveBearoffTSPath persists the external two-sided bearoff path ("" clears
 // it) and applies it to the running engine immediately.
-func (c *Config) SaveBearoffTsPath(path string) error {
-	c.BearoffTsPath = path
+func (c *Config) SaveBearoffTSPath(path string) error {
+	c.BearoffTSPath = path
 	race.SetExternalPath(path)
 	return c.SaveConfig(c)
 }
