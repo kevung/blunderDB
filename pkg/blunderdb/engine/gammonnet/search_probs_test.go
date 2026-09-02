@@ -50,7 +50,7 @@ func TestProbsMoneyEquityMatchesPositionEquity(t *testing.T) {
 				continue
 			}
 
-			wantEquity, ok := s.positionEquity(&pos, cfg.Ply, 0, false, nil)
+			wantEquity, ok := s.positionEquity(&pos, cfg.Ply, 0, false, nil, CubeCentred)
 			if !ok {
 				t.Fatalf("ply=%d: positionEquity refused", ply)
 			}

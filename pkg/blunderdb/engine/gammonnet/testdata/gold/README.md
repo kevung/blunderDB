@@ -14,7 +14,7 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.0.1**), including `vendor/backgammon-ai-engine` (fetched by its
+  (currently **v1.2.1**), including `vendor/backgammon-ai-engine` (fetched by its
   `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
@@ -48,10 +48,35 @@ two moving targets.
           $M/strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin \
           $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
           $M/testdata/search_gold.bin
+   ./gold $M/testdata/search_cube_corpus.bin \
+          $M/strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin \
+          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/testdata/search_cube_gold.bin
    ```
 
    About five seconds for the 85 cases — the C evaluates in batches of 32, which is why it is
    an order of magnitude faster than the Go port on the 2-ply cases (see ADR-0011 and #133).
+
+## The second corpus: match states and the cube (ADR-0023)
+
+`../search_cube_corpus.bin` (magic `GNC2`, 48 bytes a case) carries what the first one cannot
+say: a match state (`use_match`) and a cube state (`use_cube`, owner, efficiency) per decision
+— the opening at gammon-go and gammon-save, money with every owner, a Crawford game,
+post-Crawford, an owned cube at 2, and random boards through a cycle of states. The same
+`gold.c` reads both formats (it dispatches on the magic) and writes the same `GNGD` gold; the
+same gate replays both (`TestSearchMatchesTheGoldFile`, subtests `money-cubeless` and
+`match-and-cube`). `TestSearchCubeCorpusIsInSync` guards it like the first.
+
+**Generated with no shared two-sided table.** `gn_search.c`'s `node_value` reads exact cubeful
+equities from `gn_bearoff_shared()` for money leaves inside its domain when a table is loaded;
+`gold.c` loads none, and the Go port never takes that shortcut (blunderDB has no such table in
+this package — `engine/race` has its own, for its own regime). So on money bear-off leaves the
+two agree on the *model* path, and that is a documented divergence from a gammonNet build with
+the table, not a drift between the two implementations.
+
+**First generated on 2026-09-02 against gammonNet v1.2.1** (the release that carries the
+Crawford dead-value fix; `use_cube` itself predates it upstream). Measured margin: see the gate's
+own log line — it is reported per subtest.
 
 ## What the gate asserts, and what it deliberately does not
 

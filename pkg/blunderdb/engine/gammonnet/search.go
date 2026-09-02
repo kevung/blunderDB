@@ -30,12 +30,17 @@ import (
 // — depth k, NOT k-1: the play itself is not one of the opponent rolls to
 // enumerate. The reference carries a comment saying that mistake was made once.
 //
-// # What this tranche does not do
+// # What the leaves are worth
 //
-// The search is CUBELESS and MONEY-only. Valuing nodes through the match equity
-// table is what makes a gammonish move worth what it is actually worth at
-// 4-away/2-away, and no money test will ever say otherwise — it arrives with
-// the MET work, together with the cube decision.
+// V(pos, 0) above is the cubeless money equity only in the simplest
+// configuration. With UseMatch every node is valued through the match equity
+// table (2×MWC−1, the state swapped at every ply — ADR-0016), and with
+// UseCube every LEAF goes through the cube model at the cube state that
+// node's mover sees, mirrored at every ply alongside the state (ADR-0023).
+// Both keep the one property the negations rely on: the value negates
+// between sides. Valuing a gammonish move at 4-away/2-away correctly needs
+// both — the table for the score, the cube for the double that makes the
+// gammon worth the match — and no money test will ever say otherwise.
 const (
 	// MaxPly is the deepest search this engine will build. It is not a claim
 	// that four plies are useful: upstream measured a whole extra ply at
@@ -94,6 +99,31 @@ type SearchConfig struct {
 	// Searcher per score, exactly as it already builds one per Ply.
 	UseMatch bool
 	Match    MatchState
+
+	// UseCube, CubeOwner and CubeX value every LEAF through the cube model
+	// instead of cubeless (gn_search.c's use_cube, t34-videau-spec §8 step 2,
+	// ADR-0023): Value at efficiency CubeX — the money model, or the match
+	// redouble recursion when UseMatch is also set. CubeOwner is the cube AS
+	// THE SEARCHER'S OWN CALLER SEES IT (the player on roll at the root); the
+	// search mirrors it (Owned <-> Opponent) at every ply exactly where it
+	// swaps the match state, and nowhere else. Two sign conventions in one
+	// recursion is the failure mode this file's header warns about, which is
+	// why state and owner travel together, in the same calls, always.
+	//
+	// No double/take/pass branches in the tree: the cube-aware value is
+	// applied at the leaves and rides the same expectiminimax, which is what
+	// the reference engines do (§8 records why). A finished game is worth its
+	// stake whatever the cube — terminalValue is untouched, as in the C.
+	//
+	// What this buys is not a bolder or more sober search in the abstract; at
+	// a match score it is the WHOLE gammon-go / gammon-save effect. Cubeless,
+	// the trailer at 4-away/2-away prices their own gammons below the
+	// leader's and plays 24/18 13/9 with the opening 6-4; with the cube they
+	// double early, at 2 their gammon wins the match, and 8/2 6/2 comes first
+	// — exactly gnubg's cubeful choice (docs/adr/0023).
+	UseCube   bool
+	CubeOwner CubeOwner
+	CubeX     float64
 }
 
 // DefaultConfig returns the canonical configuration for a given depth: pruning
@@ -236,7 +266,7 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	if d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
 		return 0, fmt.Errorf("gammonnet: dice %d-%d out of range", d1, d2)
 	}
-	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, s.matchState(), out)
+	n := s.rankPlays(pos, d1, d2, s.cfg.Ply, 0, s.matchState(), s.cfg.CubeOwner, out)
 	if n < 0 {
 		return 0, fmt.Errorf("gammonnet: play generation refused or overflowed")
 	}
@@ -258,12 +288,13 @@ func (s *Searcher) BestPlay(pos *Position, d1, d2 int) (Candidate, bool, error) 
 // level indexes the scratch buffers; it is the recursion's nesting, not the
 // search depth. state is the match state AS pos's OWN mover sees it, or nil
 // under money valuation — the same on every call here, since every play
-// generated shares pos's mover. theirs (state, swapped once) is what values
-// the results and what the deep pass hands to the position on the other side
-// of each play — gn_search.c's rank_plays_finish/rank_plays_deepen both
-// derive it exactly this way, from the SAME unswapped state, never from one
-// another's swap.
-func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *MatchState, out []Candidate) int {
+// generated shares pos's mover; owner is the cube as that same mover sees it
+// (read only under UseCube). theirs (state, swapped once) and theirOwner
+// (owner, mirrored once) are what value the results and what the deep pass
+// hands to the position on the other side of each play — gn_search.c's
+// rank_plays_finish/rank_plays_deepen both derive them exactly this way,
+// from the SAME unswapped pair, never from one another's swap.
+func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
 	if level >= len(s.plays) {
 		return -1
 	}
@@ -285,11 +316,12 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	}
 
 	theirs := swapMatchState(state)
+	theirOwner := owner.Mirror()
 
 	// Phase one: the small network sorts, and only the survivors go on.
 	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
 		s.shallowFill(s.pruneEv, out[:written], false)
-		s.valueSweep(out[:written], theirs)
+		s.valueSweep(out[:written], theirs, theirOwner)
 		sortByEquity(out[:written])
 		written = keep
 	}
@@ -298,7 +330,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	// network's probabilities — five plausible numbers from the wrong network
 	// must never reach a caller.
 	s.shallowFill(s.ev, out[:written], true)
-	s.valueSweep(out[:written], theirs)
+	s.valueSweep(out[:written], theirs, theirOwner)
 	sortByEquity(out[:written])
 
 	// Phase three: search the best few deeper.
@@ -313,7 +345,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 		if out[i].Play.Result.isOver() {
 			continue // keeps the exact terminal value from the sweep
 		}
-		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0, theirs)
+		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0, theirs, theirOwner)
 		if !ok {
 			return -1
 		}
@@ -365,29 +397,53 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 }
 
 // valueSweep turns each candidate's distribution into its value to the player
-// who made the play — hence the negation. state is theirs: the match state as
-// the RESULTING position's own mover sees it (rankPlays already swapped it),
-// or nil under money valuation.
-func (s *Searcher) valueSweep(cands []Candidate, state *MatchState) {
+// who made the play — hence the negation. state and owner are theirs: the
+// match state and the cube as the RESULTING position's own mover sees them
+// (rankPlays already swapped and mirrored them), or nil/unused under money
+// cubeless valuation.
+func (s *Searcher) valueSweep(cands []Candidate, state *MatchState, owner CubeOwner) {
 	for i := range cands {
 		res := &cands[i].Play.Result
 		if res.isOver() {
 			cands[i].Equity = -terminalValue(res, state)
 			continue
 		}
-		cands[i].Equity = -valueFromProbs(&cands[i].Probs, state)
+		cands[i].Equity = -s.nodeValue(&cands[i].Probs, state, owner)
 	}
+}
+
+// nodeValue is the value of one evaluated node from its own mover's point of
+// view: valueFromProbs (cubeless money, or 2×MWC−1) unless UseCube, in which
+// case Value at owner — the cube as THAT node's mover sees it — on the very
+// same scale, which is what lets the two valuations share one recursion. A
+// failure (only reachable with a state NewSearcher already refuses) values
+// the node as 0, the same choice valueFromProbs makes for its own.
+//
+// gn_search.c's node_value also reads the exact two-sided table for money
+// leaves inside its domain; this port never does — blunderDB carries no such
+// table in this package (engine/race has its own, for its own regime) — and
+// the search gold is produced with no shared table loaded, so the two agree
+// on the model path and the divergence is a documented one, not a drift.
+func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owner CubeOwner) float64 {
+	if !s.cfg.UseCube {
+		return valueFromProbs(probs, state)
+	}
+	v, ok := Value(probs, owner, state, s.cfg.CubeX)
+	if !ok {
+		return 0
+	}
+	return v
 }
 
 // positionEquity is the value of a position to the player on turn, at depth.
 // state is the match state as pos's OWN mover sees it, or nil under money
-// valuation.
-func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool, state *MatchState) (float64, bool) {
+// valuation; owner the cube as that mover sees it.
+func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool, state *MatchState, owner CubeOwner) (float64, bool) {
 	if pos.isOver() {
 		return terminalValue(pos, state), true
 	}
 	if depth <= 0 {
-		return s.leafValue(pos, state), true
+		return s.leafValue(pos, state, owner), true
 	}
 	if level >= len(s.cands) {
 		return 0, false
@@ -401,12 +457,12 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	// one. A parallel reduction would not be.
 	var best [NumRolls]float64
 	if parallel && len(s.workers) > 0 {
-		if !s.rollsInParallel(pos, depth, state, &best) {
+		if !s.rollsInParallel(pos, depth, state, owner, &best) {
 			return 0, false
 		}
 	} else {
 		for r := 0; r < NumRolls; r++ {
-			v, ok := s.oneRoll(pos, depth, level, r, state, cands)
+			v, ok := s.oneRoll(pos, depth, level, r, state, owner, cands)
 			if !ok {
 				return 0, false
 			}
@@ -421,11 +477,12 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	return sum, true
 }
 
-// oneRoll is the value of the best reply to one roll. state is pos's own —
-// unswapped, since pos and its mover are unchanged by which dice came up.
-func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, cands []Candidate) (float64, bool) {
+// oneRoll is the value of the best reply to one roll. state and owner are
+// pos's own — unswapped, since pos and its mover are unchanged by which dice
+// came up.
+func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState, owner CubeOwner, cands []Candidate) (float64, bool) {
 	roll := s.rolls[r]
-	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, cands)
+	n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
 	if n < 0 {
 		return 0, false
 	}
@@ -433,10 +490,11 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 		return cands[0].Equity, true
 	}
 	// No legal play: the turn passes. Not an error. The passed position's own
-	// mover is the opponent, so its state is state, swapped.
+	// mover is the opponent, so its state is state, swapped, and its cube
+	// owner, mirrored.
 	passed := *pos
 	passed.swapTurn()
-	v, ok := s.positionEquity(&passed, depth-1, level+1, false, swapMatchState(state))
+	v, ok := s.positionEquity(&passed, depth-1, level+1, false, swapMatchState(state), owner.Mirror())
 	if !ok {
 		return 0, false
 	}
@@ -447,7 +505,7 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 // runs on its own scratch and its own cache, so nothing needs a lock. state
 // is read-only here (MatchState is a plain value; Swap never mutates it in
 // place), so sharing one pointer across goroutines is safe.
-func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, best *[NumRolls]float64) bool {
+func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, owner CubeOwner, best *[NumRolls]float64) bool {
 	nw := len(s.workers)
 	var wg sync.WaitGroup
 	ok := make([]bool, nw)
@@ -458,7 +516,7 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 			worker := s.workers[w]
 			ok[w] = true
 			for r := w; r < NumRolls; r += nw {
-				v, good := worker.oneRoll(pos, depth, 0, r, state, worker.cands[0])
+				v, good := worker.oneRoll(pos, depth, 0, r, state, owner, worker.cands[0])
 				if !good {
 					ok[w] = false
 					return
@@ -477,8 +535,9 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 }
 
 // leafValue is the value of a position from its own turn's point of view:
-// cubeless money equity with no match state, 2×MWC−1 otherwise.
-func (s *Searcher) leafValue(pos *Position, state *MatchState) float64 {
+// evaluate once, then nodeValue — cubeless money equity with no match state,
+// 2×MWC−1 otherwise, either one through the cube model under UseCube.
+func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) float64 {
 	var probs [NumOutputs]float32
 	if !s.cache.lookup(pos, &probs) {
 		if !Encode(pos, &s.feat) {
@@ -490,7 +549,7 @@ func (s *Searcher) leafValue(pos *Position, state *MatchState) float64 {
 	} else {
 		s.cacheHits++
 	}
-	return valueFromProbs(&probs, state)
+	return s.nodeValue(&probs, state, owner)
 }
 
 // sortByEquity orders candidates best first.

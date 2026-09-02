@@ -20,7 +20,7 @@ import { epcResultA } from './helpers/fixtures.js';
 const cubeEval = {
     cube: {
         analysisDepth: '2-ply',
-        analysisEngine: 'gammonNet v1.2.0',
+        analysisEngine: 'gammonNet v1.2.1',
         playerWinChances: 0.5432,
         playerGammonChances: 0.1321,
         playerBackgammonChances: 0.0071,

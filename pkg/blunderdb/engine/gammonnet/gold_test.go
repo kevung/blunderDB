@@ -48,7 +48,7 @@ type goldEntry struct {
 	eq    []float64
 }
 
-func loadGold(t *testing.T) []goldEntry {
+func loadGold(t *testing.T, goldPath string) []goldEntry {
 	t.Helper()
 	raw, err := os.ReadFile(goldPath)
 	if err != nil {
@@ -95,20 +95,38 @@ func TestSearchMatchesTheGoldFile(t *testing.T) {
 	if err != nil {
 		t.Skipf("no corpus: %v", err)
 	}
-	cases := decodeCorpus(t, raw)
-	gold := loadGold(t)
+	t.Run("money-cubeless", func(t *testing.T) { replayGold(t, decodeCorpus(t, raw), loadGold(t, goldPath)) })
+
+	// The ADR-0023 corpus: match states and cube states, one searcher per
+	// case since the configuration is part of the question.
+	raw2, err := os.ReadFile(searchCubeCorpusPath)
+	if err != nil {
+		t.Skipf("no cube corpus: %v", err)
+	}
+	t.Run("match-and-cube", func(t *testing.T) { replayGold(t, decodeSearchCubeCorpus(t, raw2), loadGold(t, searchCubeGoldPath)) })
+}
+
+func replayGold(t *testing.T, cases []goldCase, gold []goldEntry) {
+	t.Helper()
 	if len(cases) != len(gold) {
 		t.Fatalf("%d cases, %d gold entries — they are not the same question", len(cases), len(gold))
 	}
 
-	// One searcher per ply, reused: building one allocates megabytes.
-	searchers := map[int8]*Searcher{}
-	for _, ply := range []int8{0, 1, 2} {
-		s, err := NewSearcher(DefaultConfig(int(ply)))
+	// One searcher per distinct configuration, reused: building one
+	// allocates megabytes. Money cubeless collapses to one per ply.
+	searchers := map[SearchConfig]*Searcher{}
+	searcherFor := func(c goldCase) *Searcher {
+		cfg := c.config()
+		if s, ok := searchers[cfg]; ok {
+			return s
+		}
+		s, err := NewSearcher(cfg)
 		if err != nil {
 			t.Fatal(err)
 		}
-		searchers[ply] = s.WithWorkers(8)
+		s = s.WithWorkers(8)
+		searchers[cfg] = s
+		return s
 	}
 
 	out := make([]Candidate, MaxPlays)
@@ -118,7 +136,7 @@ func TestSearchMatchesTheGoldFile(t *testing.T) {
 	for i, c := range cases {
 		g := gold[i]
 		pos := c.pos
-		n, err := searchers[c.ply].Plays(&pos, int(c.d1), int(c.d2), out)
+		n, err := searcherFor(c).Plays(&pos, int(c.d1), int(c.d2), out)
 		if err != nil {
 			t.Fatalf("case %d: %v", i, err)
 		}

@@ -84,10 +84,16 @@ func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 		return p
 	}
 
+	// Score is indexed by PLAYER, and White is the one on roll here, so
+	// Score[1] is the mover's own away score. Gammon-go is the score where
+	// the MOVER is the trailer chasing the gammon — 4-away against a 2-away
+	// leader, i.e. {2, 4}. The mirror, {4, 2}, puts the mover 2-away: the
+	// leader, who wants the plain win he is about to double for and has the
+	// least use for a gammon of any score here.
 	money := atScore([2]int{-1, -1})
 	dmp := atScore([2]int{1, 1})        // both 1-away: a gammon is worth nothing extra
-	gammonGo := atScore([2]int{4, 2})   // White 2-away: a gammon White wins is worth a lot
-	gammonSave := atScore([2]int{2, 4}) // White 4-away, Black 2-away: mirror of gammonGo
+	gammonGo := atScore([2]int{2, 4})   // mover 4-away vs a 2-away leader
+	gammonSave := atScore([2]int{4, 2}) // mover 2-away: the mirror of gammonGo
 
 	moneyRes, err := EvaluatePosition(money, 0, 0, 0)
 	if err != nil {
@@ -144,7 +150,10 @@ func TestEvaluatePositionHonoursTheScore(t *testing.T) {
 		t.Errorf("the gammonish play's loss is identical at DMP (%v) and gammon-go (%v) — the score is not reaching the checker-move search", dmpLoss, goLoss)
 	}
 	// At gammon-go the gammon-chasing play should cost LESS relative to the
-	// field than at DMP, where its extra gammon chances buy nothing.
+	// field than at DMP, where its extra gammon chances buy nothing. Since
+	// ADR-0023 prices the leaves with the cube this is no longer a near-tie:
+	// 8/2 6/2 IS the best play at 4-away/2-away (loss 0), and costs 0.038 at
+	// the mirror score — which is what gnubg plays there too.
 	if goLoss > dmpLoss {
 		t.Errorf("gammon-go loss (%v) > DMP loss (%v) for the gammonish play — a gammon should be cheaper to chase at gammon-go, never more expensive", goLoss, dmpLoss)
 	}

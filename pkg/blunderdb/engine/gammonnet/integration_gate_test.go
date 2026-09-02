@@ -58,6 +58,28 @@ import (
 // tranche's motivation, not a sign this one is wrong. Left failing rather
 // than loosened: re-measure once use_cube lands, and only silence this if
 // that tranche does not close it either.
+//
+// Result at the 2026-09-02 measurement (ADR-0023's use_cube, this file's own
+// searcherFor now cubeful like ConfigForPosition): FAIL, by the SAME two
+// decisions, at the SAME costs to the fourth decimal — 0.0552 and 0.0738.
+// 765s. Criterion 3 (candidacy) 421/426 unchanged; criterion 1 106 checked
+// (one more than before), median 0.0000; criterion 2 91 checked, 0 blocking
+// flips, 2 adjacent disagreements.
+//
+// That identity REFUTES the paragraph above, and the refutation is the
+// finding: every decision at score [1,5] in this fixture is in the CRAWFORD
+// game (measured — the cube is absent and its owner is None throughout), so
+// use_cube cannot move them by construction, and since gammonNet v1.2.1 it
+// is guaranteed not to (the cube value in the Crawford game is the dead
+// value, which is the cubeless one). The two outliers were never the cube's
+// doing; a cubeless search agreeing with a cubeful judge at a score where
+// there IS no cube is not evidence of anything. What is left to explain them
+// is depth and table: this gate runs 2-ply k=12 against XG's own deeper
+// setting and XG's own MET, on the score where the MET is most lopsided
+// (1-away Crawford: the trailer needs the gammon, the leader needs nothing).
+// Still left failing rather than loosened — the block is at 0.05 and two
+// decisions sit just over it — but it is now a DEPTH/MET question to
+// measure, not a missing tranche to write.
 func TestIntegrationGate(t *testing.T) {
 	if os.Getenv("BLUNDERDB_GATE") == "" {
 		t.Skip("set BLUNDERDB_GATE to run the integration gate (~8 min at 2-ply k=12, measured 2026-08-29)")
@@ -334,14 +356,19 @@ func matchStateFor(pos *domain.Position, crawford bool) (MatchState, CubeOwner, 
 }
 
 // searcherFor builds a Searcher over the shared networks, configured for
-// state (nil for money) — one per decision, since a Searcher is bound to one
-// Match for its whole life exactly as it is bound to one Ply (SearchConfig's
-// UseMatch/Match doc comment). Cheap: net/prune are the same singletons every
-// call, so this allocates scratch buffers, nothing more. WithWorkers(16)
-// matches what the single shared searcher this file used to build once —
-// the two gnubg fixtures plus the xg fixture cross many different scores, so
-// there is no single Searcher left to share.
-func searcherFor(t *testing.T, net, prune *Network, cfg SearchConfig, state *MatchState) (*Searcher, bool) {
+// state (nil for money) and for the cube owner — one per decision, since a
+// Searcher is bound to one Match and one cube for its whole life exactly as
+// it is bound to one Ply (SearchConfig's UseMatch/Match doc comment). Cheap:
+// net/prune are the same singletons every call, so this allocates scratch
+// buffers, nothing more. WithWorkers(16) matches what the single shared
+// searcher this file used to build once — the two gnubg fixtures plus the xg
+// fixture cross many different scores, so there is no single Searcher left to
+// share.
+//
+// UseCube is on (ADR-0023), as it is in ConfigForPosition — the gate judges
+// the search the application actually runs, and both arbiters here (XG and
+// gnubg) analyse cubeful.
+func searcherFor(t *testing.T, net, prune *Network, cfg SearchConfig, state *MatchState, owner CubeOwner) (*Searcher, bool) {
 	t.Helper()
 	if state != nil {
 		if !state.IsValid() {
@@ -352,6 +379,9 @@ func searcherFor(t *testing.T, net, prune *Network, cfg SearchConfig, state *Mat
 	} else {
 		cfg.UseMatch = false
 	}
+	cfg.UseCube = true
+	cfg.CubeOwner = owner
+	cfg.CubeX = DefaultEfficiency(owner)
 	s := NewSearcherWith(cfg, net, prune)
 	s.WithWorkers(16)
 	return s, true
@@ -381,7 +411,7 @@ func ourChoice(t *testing.T, net, prune *Network, cfg SearchConfig, d gateDecisi
 		}
 		state = &m
 	}
-	s, ok := searcherFor(t, net, prune, cfg, state)
+	s, ok := searcherFor(t, net, prune, cfg, state, CubeOwnerOf(&pos))
 	if !ok {
 		return domain.LegalPlay{}, false
 	}
@@ -498,7 +528,7 @@ func ourCubeAction(t *testing.T, net, prune *Network, cfg SearchConfig, d gateDe
 	if !ok {
 		return 0, false
 	}
-	s, ok := searcherFor(t, net, prune, cfg, &state)
+	s, ok := searcherFor(t, net, prune, cfg, &state, owner)
 	if !ok {
 		return 0, false
 	}
