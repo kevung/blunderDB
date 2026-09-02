@@ -30,6 +30,11 @@ function isEditable(mode) {
     return mode === 'EDIT' || mode === 'EPC';
 }
 
+/** A real roll: both dice on a face. Anything else is "no dice" (a cube decision). */
+function hasRoll(dice) {
+    return dice[0] >= 1 && dice[0] <= 6 && dice[1] >= 1 && dice[1] <= 6;
+}
+
 /**
  * Which side control (if any) a drawing-space point falls on:
  *   { die: 0|1|null, playerRect: 0|1|null, score: 0|1|null }
@@ -163,10 +168,16 @@ export function applyScoreClick(pos, player, button) {
     return pos;
 }
 
-/** Roll a die: left click up (6 wraps to 1), right click down (1 wraps to 6). */
+/**
+ * Roll a die: left click up (6 wraps to 1), right click down (1 wraps to 6).
+ * A cleared die (0) is a valid starting point — a board asking a cube
+ * question has no dice — so stepping down from it wraps to 6 rather than
+ * walking into negatives, which read as "no dice" forever after.
+ */
 function stepDie(value, button) {
-    if (button === 0) return (value % 6) + 1;
-    if (button === 2) return value === 1 ? 6 : value - 1;
+    const v = value >= 1 && value <= 6 ? value : 0;
+    if (button === 0) return (v % 6) + 1;
+    if (button === 2) return v <= 1 ? 6 : v - 1;
     return value;
 }
 
@@ -225,12 +236,28 @@ export function attachBoardInteractions(canvas, deps) {
         stores.position.update((pos) => {
             if (hit.die !== null) {
                 pos.decision_type = 0;
-                pos.dice = deps.getPreviousDice(); // restore the dice the rectangle cleared
+                // Restore the dice the rectangle cleared — but ONLY when they
+                // are actually cleared. With a roll already on the board (a
+                // position loaded, pasted into the Eval panel, or just built
+                // by hand) a die click steps THAT die; reinstating an older
+                // roll used to overwrite both dice with a stale [0, 0], and
+                // the click then left [n, 0] — half a roll, which every
+                // reader of the position (EPCPanel's hasDiceSet, the engine's
+                // own hasDice) takes for "no dice", i.e. a cube decision on a
+                // board plainly asking a checker question.
+                const base = hasRoll(pos.dice) ? pos.dice : deps.getPreviousDice();
+                pos.dice = [base[0], base[1]]; // never alias previousDice
                 pos.dice[hit.die] = stepDie(pos.dice[hit.die], event.button);
+                // The two dice are set together or not at all (CONTEXT.md:
+                // dice set → checker decision, no dice → cube decision).
+                // Stepping one die of a cleared pair means "make this a
+                // checker decision", so the other one comes along.
+                const other = 1 - hit.die;
+                if (pos.dice[other] < 1 || pos.dice[other] > 6) pos.dice[other] = 1;
             } else if (hit.playerRect !== null) {
                 pos.player_on_roll = hit.playerRect;
                 pos.decision_type = 1; // doubling cube decision
-                deps.setPreviousDice(pos.dice);
+                deps.setPreviousDice([pos.dice[0], pos.dice[1]]);
                 pos.dice = [0, 0];
             } else {
                 applyScoreClick(pos, hit.score, event.button);
