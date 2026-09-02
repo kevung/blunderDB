@@ -136,7 +136,7 @@
         "catalogTitle": "Guided tours",
         "catalogDesc": "Quick tours of the interface — replay them any time.",
         "loadDemo": "Load demo data",
-        "demoHint": "Explore a sample database (2 matches + a tournament).",
+        "demoHint": "Explore a sample database: 3 matches, a tournament, collections, comments and an Anki deck.",
         "general": {
             "title": "General tour",
             "desc": "A quick overview of the interface.",

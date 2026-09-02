@@ -136,7 +136,7 @@
         "catalogTitle": "Opastetut kierrokset",
         "catalogDesc": "Tutustu käyttöliittymään nopeasti. Voit toistaa kierrokset milloin tahansa.",
         "loadDemo": "Lataa demo-data",
-        "demoHint": "Tutustu esimerkkitietokantaan (2 ottelua + turnaus).",
+        "demoHint": "Tutustu esimerkkitietokantaan: 3 ottelua, turnaus, kokoelmia, kommentteja ja Anki-pakka.",
         "general": {
             "title": "Yleiskierros",
             "desc": "Nopea katsaus käyttöliittymän pääosiin.",

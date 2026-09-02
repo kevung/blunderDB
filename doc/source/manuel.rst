@@ -250,10 +250,13 @@ tour général de l'interface, et des visites dédiées à la recherche de posit
 les éléments concernés de l'interface, étape par étape, et peut être rejouée à
 tout moment. Au premier démarrage, le tour général est proposé automatiquement.
 
-La commande ``demo`` charge une **base d'exemple** (matchs, tournoi et analyses)
-permettant de découvrir les fonctionnalités de l'outil sans importer ses propres
-parties. Les visites guidées s'appuient sur cette base lorsqu'aucune base n'est
-ouverte.
+La commande ``demo`` charge une **base d'exemple** permettant de découvrir les
+fonctionnalités de l'outil sans importer ses propres parties : trois matchs
+(dont deux regroupés dans un tournoi) analysés par eXtreme Gammon, BGBlitz et
+gammonNet, trois collections thématiques, des commentaires étiquetés
+(``#blunder``, ``#cube``) et un paquet Anki avec son journal de révisions. Les
+joueurs, le tournoi et le lieu sont fictifs. Les visites guidées s'appuient sur
+cette base lorsqu'aucune base n'est ouverte.
 
 .. _navigation_positions:
 

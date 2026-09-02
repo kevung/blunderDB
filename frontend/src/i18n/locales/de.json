@@ -136,7 +136,7 @@
         "catalogTitle": "Geführte Touren",
         "catalogDesc": "Machen Sie eine kurze Tour durch die Oberfläche. Sie können sie jederzeit wiederholen.",
         "loadDemo": "Demo-Daten laden",
-        "demoHint": "Eine Beispieldatenbank erkunden (2 Partien + ein Turnier).",
+        "demoHint": "Eine Beispieldatenbank erkunden: 3 Partien, ein Turnier, Sammlungen, Kommentare und ein Anki-Stapel.",
         "general": {
             "title": "Allgemeine Tour",
             "desc": "Ein kurzer Überblick über die Hauptoberfläche.",

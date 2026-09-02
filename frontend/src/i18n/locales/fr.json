@@ -136,7 +136,7 @@
         "catalogTitle": "Visites guidées",
         "catalogDesc": "Visites rapides de l'interface — rejouables à tout moment.",
         "loadDemo": "Charger des données de démo",
-        "demoHint": "Explorez une base d'exemple (2 matchs + un tournoi).",
+        "demoHint": "Explorez une base d'exemple : 3 matchs, un tournoi, des collections, des commentaires et un paquet Anki.",
         "general": {
             "title": "Tour général",
             "desc": "Un aperçu rapide de l'interface.",

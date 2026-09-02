@@ -113,11 +113,11 @@ msgstr "demo"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
-"l'outil."
+"Charge une base d'exemple (matchs, tournoi, collections, commentaires, "
+"paquet Anki, analyses) pour découvrir l'outil."
 msgstr ""
-"Lataa esimerkkitietokannan (otteluita, turnaus, analyysejä) työkaluun "
-"tutustumista varten."
+"Lataa esimerkkitietokannan (otteluita, turnaus, kokoelmia, kommentteja, "
+"Anki-pakka, analyysejä) työkaluun tutustumista varten."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"

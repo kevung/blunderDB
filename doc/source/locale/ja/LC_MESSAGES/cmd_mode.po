@@ -110,9 +110,9 @@ msgstr "demo"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Charge une base d'exemple (matchs, tournoi, analyses) pour découvrir "
-"l'outil."
-msgstr "ツールを試すためのサンプルデータベース（マッチ、トーナメント、解析）を読み込みます。"
+"Charge une base d'exemple (matchs, tournoi, collections, commentaires, "
+"paquet Anki, analyses) pour découvrir l'outil."
+msgstr "ツールを試すためのサンプルデータベース（マッチ、トーナメント、コレクション、コメント、Anki デッキ、解析）を読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"

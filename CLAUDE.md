@@ -302,6 +302,10 @@ Violating one of these is a bug even if all tests pass:
   why `sqlite.ConfigurePool` pins it to a single connection (each pooled
   connection would otherwise be a separate empty database). PRAGMAs (WAL,
   `synchronous=NORMAL`, …) live in `storage/sqlite/sqlite.go`.
+- `internal/gui/demo.db.gz` is generated, never hand-built: run
+  `scripts/build-demo-db.sh` after every `DatabaseVersion` bump
+  (`TestDemoDatabaseIsCurrent` fails otherwise). Fictional names only — the
+  fixtures name real people and `scripts/demodb` disguises them (#162).
 - `tasks/` holds finished task sheets (v2.0.0 optimization, headless refactor,
   stats parity…) kept as execution history; `tasks/FOLLOWUPS.md` lists still-open
   follow-ups.
