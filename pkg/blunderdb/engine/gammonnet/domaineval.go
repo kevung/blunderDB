@@ -48,6 +48,18 @@ import (
 // gammon-go / gammon-save come out of the search where v1.2.0's cubeless
 // leaves could not see them. Money equities move too, slightly. Every row
 // stored under an earlier label is therefore stale as a whole.
+// v1.2.1 ET PAS v1.3.0, alors que le fichier d'or est désormais produit par
+// v1.3.0 : les deux épingles ne disent pas la même chose. EngineVersion nomme
+// la version amont que ce portage IMPLÉMENTE, et c'est la clé de péremption
+// d'une analyse stockée (AnalyzeStaleGammonNet) ; l'épingle du gold nomme la
+// build de référence contre laquelle la porte compare. Mesuré avant de les
+// laisser diverger (2026-09-03, verticale ADR-0003 poste 3) : de v1.2.1 à
+// v1.3.0, le gold argent est bit à bit identique, le gold match+videau bouge
+// 41 équités de candidat d'au plus 2,2e-16 — une contraction en FMA que ce
+// portage s'interdit de toute façon (ADR-0024) — et AUCUN coup choisi ne
+// change. Les deux versions calculent donc la même chose pour ce que ce
+// portage lit, et monter l'étiquette rendrait périmée chaque ligne stockée
+// pour rien.
 const EngineVersion = "gammonNet v1.2.1"
 
 // ErrNotEvaluable marks a position this build declines to answer for — a
