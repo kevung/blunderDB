@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"compress/zlib"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"runtime"
-	"sync"
-	"sync/atomic"
 )
 
 // This file holds the pure analysis-encoding helpers shared by the Database
@@ -38,8 +39,22 @@ func CompressAnalysisData(jsonData []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// MaxAnalysisBytes bounds what one analysis blob may inflate to. A real one is
+// a few kilobytes of JSON — the largest rollout ever stored is well under a
+// megabyte — while zlib can inflate a few kilobytes into gigabytes. The blob
+// comes from the `analysis.data` column of a database that may have been
+// imported from a third party, so a crafted row must be refused rather than
+// allowed to exhaust memory.
+const MaxAnalysisBytes = 16 << 20
+
+// ErrAnalysisTooLarge is returned when a compressed analysis inflates past
+// MaxAnalysisBytes.
+var ErrAnalysisTooLarge = fmt.Errorf("analysis blob inflates past %d bytes", MaxAnalysisBytes)
+
 // DecompressAnalysisData auto-detects zlib-compressed data vs raw JSON. If the
 // first byte is '{' the data is returned as-is; otherwise zlib is attempted.
+// Inflation stops at MaxAnalysisBytes: a blob claiming more is an error, not a
+// bigger allocation.
 func DecompressAnalysisData(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
@@ -52,7 +67,16 @@ func DecompressAnalysisData(data []byte) ([]byte, error) {
 		return data, nil
 	}
 	defer r.Close()
-	return io.ReadAll(r)
+	// One byte past the cap tells an oversized stream from one that is exactly
+	// the cap.
+	out, err := io.ReadAll(io.LimitReader(r, MaxAnalysisBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(out) > MaxAnalysisBytes {
+		return nil, ErrAnalysisTooLarge
+	}
+	return out, nil
 }
 
 // RecompressAnalysisData ensures data is in compressed form: raw JSON is

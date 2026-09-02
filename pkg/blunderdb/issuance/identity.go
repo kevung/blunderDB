@@ -33,6 +33,12 @@ type Identity struct {
 	priv ed25519.PrivateKey
 }
 
+// identityVersion is the only on-disk shape of an identity file this package has written.
+// A file claiming another one was not written by a blunderDB this package knows and is
+// refused rather than guessed at — a seed read under the wrong layout would mint a
+// different identity in silence.
+const identityVersion = 1
+
 // storedIdentity is the on-disk shape. The seed is kept rather than the expanded key so the
 // file stays small and the transfer format stays obvious.
 type storedIdentity struct {
@@ -44,9 +50,15 @@ type storedIdentity struct {
 	// theft lets someone forge emissions in the Issuer's name — real, but requiring
 	// access to their machine — and a passphrase there would put a forgotten secret
 	// between an ordinary user and a feature they never asked to configure.
-	KDF   string `json:"kdf,omitempty"`
-	Salt  string `json:"salt,omitempty"`
-	Nonce string `json:"nonce,omitempty"`
+	KDF string `json:"kdf,omitempty"`
+	// Argon2 records the derivation's cost parameters next to its name. Files exported
+	// before it was recorded all used the defaults; a file naming any other set is refused
+	// (see resolveArgon2). Unlike the container, the clear fields here are only the seal's
+	// own parameters — nothing a third party would gain by rewriting — so the seed is
+	// sealed without additional data.
+	Argon2 *Argon2Params `json:"argon2,omitempty"`
+	Salt   string        `json:"salt,omitempty"`
+	Nonce  string        `json:"nonce,omitempty"`
 }
 
 // NewIdentity mints a fresh Issuer identity. Callers normally want LoadOrCreateIdentity.
@@ -103,7 +115,7 @@ func (id *Identity) save(configDir string) error {
 		return fmt.Errorf("cannot create config directory: %w", err)
 	}
 	raw, err := json.Marshal(storedIdentity{
-		Version: 1,
+		Version: identityVersion,
 		Name:    id.Name,
 		Seed:    base64.StdEncoding.EncodeToString(id.priv.Seed()),
 	})
@@ -127,16 +139,17 @@ func (id *Identity) Fingerprint() string { return FormatFingerprint(id.PublicKey
 // passphrase is optional and applies only here: this is the copy that travels by mail or
 // on a USB stick, which is the exposed one.
 func (id *Identity) ExportIdentity(path, passphrase string) error {
-	stored := storedIdentity{Version: 1, Name: id.Name}
+	stored := storedIdentity{Version: identityVersion, Name: id.Name}
 	seed := id.priv.Seed()
 	if passphrase == "" {
 		stored.Seed = base64.StdEncoding.EncodeToString(seed)
 	} else {
-		sealed, salt, nonce, err := encryptSecret(seed, passphrase)
+		sealed, salt, nonce, err := encryptSecret(seed, nil, passphrase)
 		if err != nil {
 			return err
 		}
 		stored.KDF = kdfArgon2id
+		stored.Argon2 = &argon2Default
 		stored.Seed = base64.StdEncoding.EncodeToString(sealed)
 		stored.Salt = base64.StdEncoding.EncodeToString(salt)
 		stored.Nonce = base64.StdEncoding.EncodeToString(nonce)
@@ -185,6 +198,9 @@ func decodeIdentity(raw []byte, passphrase string) (*Identity, error) {
 	if err := json.Unmarshal(raw, &stored); err != nil {
 		return nil, fmt.Errorf("not a blunderDB identity file: %w", err)
 	}
+	if stored.Version != identityVersion {
+		return nil, fmt.Errorf("identity file version %d: this file needs a newer blunderDB", stored.Version)
+	}
 	sealed, err := base64.StdEncoding.DecodeString(stored.Seed)
 	if err != nil {
 		return nil, fmt.Errorf("corrupt identity file: %w", err)
@@ -194,6 +210,10 @@ func decodeIdentity(raw []byte, passphrase string) (*Identity, error) {
 		if passphrase == "" {
 			return nil, ErrPassphraseRequired
 		}
+		params, err := resolveArgon2(stored.KDF, stored.Argon2)
+		if err != nil {
+			return nil, err
+		}
 		salt, err := base64.StdEncoding.DecodeString(stored.Salt)
 		if err != nil {
 			return nil, fmt.Errorf("corrupt identity file: %w", err)
@@ -202,7 +222,7 @@ func decodeIdentity(raw []byte, passphrase string) (*Identity, error) {
 		if err != nil {
 			return nil, fmt.Errorf("corrupt identity file: %w", err)
 		}
-		if seed, err = decryptSecret(sealed, passphrase, salt, nonce); err != nil {
+		if seed, err = decryptSecret(sealed, nil, passphrase, salt, nonce, params); err != nil {
 			return nil, err
 		}
 	}

@@ -281,14 +281,14 @@ et winget ne sont pas touchés.
   une bombe de décompression.
 
 **À faire.**
-- [ ] Passer les octets d'en-tête en `additionalData` de `Seal`/`Open`. Le
+- [x] Passer les octets d'en-tête en `additionalData` de `Seal`/`Open`. Le
       format change : **version de conteneur 2**, lecture de la v1 conservée
       (sans AAD), écriture en v2 ; test des deux chemins.
-- [ ] `os.Stat` avant lecture, refus au-delà de `maxContainerPayload` ;
+- [x] `os.Stat` avant lecture, refus au-delà de `maxContainerPayload` ;
       `UnwrapContainer` streame vers le fichier de sortie.
-- [ ] `io.LimitReader(r, maxAnalysisBytes)` (16 Mio) ; la cible
+- [x] `io.LimitReader(r, maxAnalysisBytes)` (16 Mio) ; la cible
       `FuzzDecodeAnalysisFromStorage` reçoit un seed « bombe ».
-- [ ] Stocker `t/m/p` d'Argon2id dans l'en-tête d'identité (`identity.go:44-48`)
+- [x] Stocker `t/m/p` d'Argon2id dans l'en-tête d'identité (`identity.go:44-48`)
       et vérifier `stored.Version` (`identity.go:175-206`).
 
 **Recette.** Un `.dbx` v1 s'ouvre toujours ; un `.dbx` v2 dont l'en-tête est

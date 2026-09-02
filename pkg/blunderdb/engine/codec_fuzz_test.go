@@ -49,6 +49,9 @@ func FuzzDecodeAnalysisFromStorage(f *testing.F) {
 	f.Add([]byte(nil))
 	f.Add([]byte("not json, not zlib"))
 	f.Add([]byte{0x78, 0x9c, 0x00}) // truncated zlib header
+	// A decompression bomb: a few hundred bytes that inflate to 64 MiB, four
+	// times MaxAnalysisBytes. The decoder must refuse it, not allocate it.
+	f.Add(zlibZeroBomb(64 << 20))
 
 	f.Fuzz(func(t *testing.T, data []byte) {
 		// Contract: never panics. Both error and success are acceptable.
