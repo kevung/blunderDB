@@ -126,6 +126,53 @@ jobs:
             ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/...
         shell: bash
 
+  # The Go suite on the two other desktop platforms. `test` above is
+  # Linux-only, yet the binary ships for Windows and macOS with OS-specific
+  # code (filelock_windows.go, diskspace_windows.go, the host-capability
+  # probes of ADR-0004). -short keeps it cheap: the 2-ply gammonnet searches
+  # and the schema benchmarks skip themselves, everything else runs. No -race
+  # (the race detector's slowdown is what this job avoids, and `test`
+  # already covers it). The PostgreSQL tests sit behind the `postgres` build
+  # tag, so the absence of Docker on these runners changes nothing.
+  #
+  # `continue-on-error` — to be removed after the first green run on a real
+  # tag/PR: this job was written without a Windows machine at hand, and the
+  # usual suspects (a SQLite file still open when t.TempDir() is cleaned up,
+  # a golden string compared against a fixture checked out with CRLF) can
+  # only be confirmed by running it. The autocrlf step closes the second
+  # one: GitHub's Windows runners set core.autocrlf=true globally, which
+  # rewrites every text fixture at checkout.
+  test-os:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - name: Keep LF line endings at checkout
+        run: git config --global core.autocrlf false
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Run Go tests (short, no race)
+        run: go test -short -count=1 -timeout 1500s ./...
+        shell: bash
+
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
   # capability (no clipboard tool, no fonts, an exotic locale). Catches code
   # that inline-assumes a host facility and only fails when it is truly absent —
