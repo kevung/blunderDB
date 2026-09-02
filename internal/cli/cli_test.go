@@ -13,6 +13,76 @@ import (
 	"testing"
 )
 
+// closeOnCleanup registers db.Close (idempotent) via tb.Cleanup so the
+// underlying SQLite handle is released before t.TempDir() tries to remove the
+// directory it lives in. Production main.go never closes the CLI's Database
+// either — the process exits right after Run(), which reclaims the handle —
+// but a test keeps running, so a leaked handle here is a real bug: on Windows
+// the temp dir's own removal fails with "the process cannot access the file
+// because it is being used by another process."
+func closeOnCleanup(tb testing.TB, db *Database) {
+	tb.Helper()
+	tb.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			tb.Logf("Close: %v", err)
+		}
+	})
+}
+
+// tempDir behaves like tb.TempDir, but also registers a tb.Cleanup guard
+// (assertNoLeakedTempFiles) that fails the test if, once every other cleanup
+// has run, a file under the directory is still open. Call it before any
+// closeOnCleanup for the same test: t.Cleanup runs LIFO, so the guard —
+// registered first — runs last, after the Close it is meant to wait for.
+func tempDir(tb testing.TB) string {
+	tb.Helper()
+	dir := tb.TempDir()
+	assertNoLeakedTempFiles(tb, dir)
+	return dir
+}
+
+// assertNoLeakedTempFiles registers the leak check tempDir relies on. Windows
+// reports a leaked SQLite handle loudly, as a TempDir cleanup failure; Linux
+// normally unlinks the file out from under the open descriptor without
+// complaint, hiding the same bug. /proc/self/fd makes it visible here too: a
+// symlink under it resolving inside dir after the test's own cleanups have
+// run means something never called Close. Best-effort — silently a no-op
+// where /proc is unavailable (non-Linux).
+func assertNoLeakedTempFiles(tb testing.TB, dir string) {
+	tb.Helper()
+	tb.Cleanup(func() {
+		for _, f := range leakedFilesUnder(dir) {
+			tb.Errorf("leaked open file descriptor for %s (a Database/*sql.DB was not Close()d before the temp dir cleanup)", f)
+		}
+	})
+}
+
+// leakedFilesUnder lists the files under dir that this process still holds
+// open, by resolving every /proc/self/fd symlink. Returns nil (no error) on
+// any platform or sandbox where /proc/self/fd cannot be read.
+func leakedFilesUnder(dir string) []string {
+	entries, err := os.ReadDir("/proc/self/fd")
+	if err != nil {
+		return nil
+	}
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return nil
+	}
+	prefix := absDir + string(filepath.Separator)
+	var leaked []string
+	for _, e := range entries {
+		target, err := os.Readlink(filepath.Join("/proc/self/fd", e.Name()))
+		if err != nil {
+			continue
+		}
+		if strings.HasPrefix(target, prefix) {
+			leaked = append(leaked, target)
+		}
+	}
+	return leaked
+}
+
 // setupCLI creates a CLI with an in-memory DB for tests that call internal
 // methods directly (listMatches, showStats, etc.).
 func setupCLI(t *testing.T) *CLI {
@@ -31,7 +101,7 @@ func setupCLI(t *testing.T) *CLI {
 // The file is cleaned up automatically by t.TempDir().
 func setupCLIWithDB(t *testing.T) (*CLI, string) {
 	t.Helper()
-	dbPath := filepath.Join(t.TempDir(), "test.db")
+	dbPath := filepath.Join(tempDir(t), "test.db")
 	db := NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
@@ -361,7 +431,7 @@ func TestCLI_Export(t *testing.T) {
 		t.Fatalf("import: %v", err)
 	}
 
-	exportPath := filepath.Join(t.TempDir(), "export.db")
+	exportPath := filepath.Join(tempDir(t), "export.db")
 	err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", exportPath})
 	if err != nil {
 		t.Fatalf("export: %v", err)
@@ -385,7 +455,7 @@ func TestCLI_ExportRoundTrip(t *testing.T) {
 	// Count positions in original DB.
 	origPositions, _ := cli.db.LoadAllPositions()
 
-	exportPath := filepath.Join(t.TempDir(), "roundtrip.db")
+	exportPath := filepath.Join(tempDir(t), "roundtrip.db")
 	if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", exportPath}); err != nil {
 		t.Fatalf("export: %v", err)
 	}
@@ -443,8 +513,9 @@ func TestCLI_DeleteMatchNotFound(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_Create(t *testing.T) {
-	dbPath := filepath.Join(t.TempDir(), "created.db")
+	dbPath := filepath.Join(tempDir(t), "created.db")
 	cli := &CLI{db: NewDatabase()}
+	closeOnCleanup(t, cli.db)
 
 	err := cli.Run([]string{"create", "--db", dbPath, "--user", "tester", "--description", "test db"})
 	if err != nil {
@@ -461,13 +532,14 @@ func TestCLI_Create(t *testing.T) {
 }
 
 func TestCLI_CreateExistingNoForce(t *testing.T) {
-	dbPath := filepath.Join(t.TempDir(), "existing.db")
+	dbPath := filepath.Join(tempDir(t), "existing.db")
 	// Create the file first.
 	if err := os.WriteFile(dbPath, []byte("x"), 0644); err != nil {
 		t.Fatal(err)
 	}
 
 	cli := &CLI{db: NewDatabase()}
+	closeOnCleanup(t, cli.db)
 	err := cli.Run([]string{"create", "--db", dbPath})
 	if err == nil {
 		t.Fatal("expected error when creating over existing DB without --force")
@@ -475,12 +547,13 @@ func TestCLI_CreateExistingNoForce(t *testing.T) {
 }
 
 func TestCLI_CreateForce(t *testing.T) {
-	dbPath := filepath.Join(t.TempDir(), "force.db")
+	dbPath := filepath.Join(tempDir(t), "force.db")
 	if err := os.WriteFile(dbPath, []byte("x"), 0644); err != nil {
 		t.Fatal(err)
 	}
 
 	cli := &CLI{db: NewDatabase()}
+	closeOnCleanup(t, cli.db)
 	err := cli.Run([]string{"create", "--db", dbPath, "--force"})
 	if err != nil {
 		t.Fatalf("create --force: %v", err)
@@ -630,7 +703,7 @@ func TestCLI_ImportNonexistentFile(t *testing.T) {
 
 func TestCLI_ImportCorruptFile(t *testing.T) {
 	// Create a temp file with garbage content and a .xg extension.
-	tmp := filepath.Join(t.TempDir(), "corrupt.xg")
+	tmp := filepath.Join(tempDir(t), "corrupt.xg")
 	if err := os.WriteFile(tmp, []byte("not a valid xg file"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -644,7 +717,7 @@ func TestCLI_ImportCorruptFile(t *testing.T) {
 
 func TestCLI_ExportNoData(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	exportPath := filepath.Join(t.TempDir(), "empty_export.db")
+	exportPath := filepath.Join(tempDir(t), "empty_export.db")
 	// Export from empty DB should not panic.
 	err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", exportPath})
 	if err != nil {

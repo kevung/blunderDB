@@ -39,7 +39,7 @@ var lockGuardOverrides = map[string]func(t *testing.T) []any{
 	"OpenDatabase":  func(*testing.T) []any { return []any{":memory:"} },
 	"ExportDatabase": func(t *testing.T) []any {
 		return []any{ExportOptions{
-			ExportPath:           filepath.Join(t.TempDir(), "export.db"),
+			ExportPath:           filepath.Join(tempDir(t), "export.db"),
 			PositionIDs:          []int64{1, 2},
 			IncludeAnalysis:      true,
 			IncludeComments:      true,
@@ -52,13 +52,13 @@ var lockGuardOverrides = map[string]func(t *testing.T) []any{
 		}}
 	},
 	"ExportCollections": func(t *testing.T) []any {
-		return []any{filepath.Join(t.TempDir(), "collections.db"), []int64{1}, map[string]string{}, true, true, "", ""}
+		return []any{filepath.Join(tempDir(t), "collections.db"), []int64{1}, map[string]string{}, true, true, "", ""}
 	},
 	"ExportTournaments": func(t *testing.T) []any {
-		return []any{filepath.Join(t.TempDir(), "tournaments.db"), []int64{1}, map[string]string{}, true, true, "", ""}
+		return []any{filepath.Join(tempDir(t), "tournaments.db"), []int64{1}, map[string]string{}, true, true, "", ""}
 	},
 	"ExportMatchMAT": func(t *testing.T) []any {
-		return []any{int64(1), filepath.Join(t.TempDir(), "match.mat")}
+		return []any{int64(1), filepath.Join(tempDir(t), "match.mat")}
 	},
 }
 
@@ -109,7 +109,7 @@ func TestPublicMethods_ReturnUnderLock(t *testing.T) {
 					if reason, ok := lockGuardSkips[method.Name]; ok {
 						t.Skip(reason)
 					}
-					path := filepath.Join(t.TempDir(), variant.name+".db")
+					path := filepath.Join(tempDir(t), variant.name+".db")
 					if err := os.WriteFile(path, variant.fixture, 0o600); err != nil {
 						t.Fatal(err)
 					}
@@ -117,6 +117,7 @@ func TestPublicMethods_ReturnUnderLock(t *testing.T) {
 					if err := db.OpenDatabase(path); err != nil {
 						t.Fatalf("OpenDatabase(%s): %v", path, err)
 					}
+					closeOnCleanup(t, db)
 					callWithinTimeout(t, db, method)
 				})
 			}
@@ -128,11 +129,12 @@ func TestPublicMethods_ReturnUnderLock(t *testing.T) {
 // and returns its bytes.
 func lockGuardEmptyFixture(t *testing.T) []byte {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), "empty.db")
+	path := filepath.Join(tempDir(t), "empty.db")
 	db := NewDatabase()
 	if err := db.SetupDatabase(path); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, db)
 	if err := db.Close(); err != nil {
 		t.Fatalf("Close: %v", err)
 	}

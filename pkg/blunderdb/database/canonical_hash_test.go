@@ -119,13 +119,14 @@ func TestCanonicalHashDuplicateImport(t *testing.T) {
 	}
 
 	// Create a temporary database
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test.db")
 
 	db := NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("Failed to setup database: %v", err)
 	}
+	closeOnCleanup(t, db)
 
 	// Import XG match first
 	matchID1, err := db.ImportXGMatch(xgFile)
@@ -169,13 +170,14 @@ func TestCanonicalHashTripleImport(t *testing.T) {
 		}
 	}
 
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test.db")
 
 	db := NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("Failed to setup database: %v", err)
 	}
+	closeOnCleanup(t, db)
 
 	// Import XG first
 	matchID, err := db.ImportXGMatch(xgFile)

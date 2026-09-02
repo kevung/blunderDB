@@ -2,7 +2,9 @@ package database
 
 import (
 	"context"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -10,17 +12,83 @@ import (
 // Cleanup is registered automatically via t.Cleanup.
 func newTestDB(t *testing.T) *Database {
 	t.Helper()
-	dbPath := filepath.Join(t.TempDir(), "test.db")
+	dbPath := filepath.Join(tempDir(t), "test.db")
 	db := NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
-	t.Cleanup(func() {
-		if db.db != nil {
-			db.db.Close()
+	closeOnCleanup(t, db)
+	return db
+}
+
+// closeOnCleanup registers db.Close (idempotent — see Database.Close) via
+// tb.Cleanup so the underlying SQLite handle is released before t.TempDir()
+// tries to remove the directory it lives in. On Linux a still-open handle is
+// unlinked silently; on Windows the removal itself fails ("The process cannot
+// access the file because it is being used by another process"), which is
+// where this class of bug was first noticed (windows-latest CI).
+func closeOnCleanup(tb testing.TB, db *Database) {
+	tb.Helper()
+	tb.Cleanup(func() {
+		if err := db.Close(); err != nil {
+			tb.Logf("Close: %v", err)
 		}
 	})
-	return db
+}
+
+// tempDir behaves like tb.TempDir, but also registers a tb.Cleanup guard
+// (assertNoLeakedTempFiles) that fails the test if, once every other cleanup
+// has run, a file under the directory is still open. It must be called before
+// any closeOnCleanup for the same test so the guard — registered first —
+// runs last (t.Cleanup is LIFO): otherwise it would see the handle still open
+// and fail on the very Close it is meant to wait for.
+func tempDir(tb testing.TB) string {
+	tb.Helper()
+	dir := tb.TempDir()
+	assertNoLeakedTempFiles(tb, dir)
+	return dir
+}
+
+// assertNoLeakedTempFiles registers the leak check tempDir relies on. Windows
+// reports a leaked SQLite handle loudly, as a TempDir cleanup failure; Linux
+// normally unlinks the file out from under the open descriptor without
+// complaint, hiding the same bug. /proc/self/fd makes it visible here too: a
+// symlink under it resolving inside dir after the test's own cleanups have
+// run means something never called Close. Best-effort — silently a no-op
+// where /proc is unavailable (non-Linux).
+func assertNoLeakedTempFiles(tb testing.TB, dir string) {
+	tb.Helper()
+	tb.Cleanup(func() {
+		for _, f := range leakedFilesUnder(dir) {
+			tb.Errorf("leaked open file descriptor for %s (a Database/*sql.DB was not Close()d before the temp dir cleanup)", f)
+		}
+	})
+}
+
+// leakedFilesUnder lists the files under dir that this process still holds
+// open, by resolving every /proc/self/fd symlink. Returns nil (no error) on
+// any platform or sandbox where /proc/self/fd cannot be read.
+func leakedFilesUnder(dir string) []string {
+	entries, err := os.ReadDir("/proc/self/fd")
+	if err != nil {
+		return nil
+	}
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return nil
+	}
+	prefix := absDir + string(filepath.Separator)
+	var leaked []string
+	for _, e := range entries {
+		target, err := os.Readlink(filepath.Join("/proc/self/fd", e.Name()))
+		if err != nil {
+			continue
+		}
+		if strings.HasPrefix(target, prefix) {
+			leaked = append(leaked, target)
+		}
+	}
+	return leaked
 }
 
 // newTestDBWithXG creates a file-backed database and imports testdata/test.xg.

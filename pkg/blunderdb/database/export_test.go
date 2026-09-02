@@ -36,7 +36,7 @@ func captureSlog(t *testing.T) *strings.Builder {
 func setupExportTestDB(t *testing.T) (*Database, string, func()) {
 	t.Helper()
 
-	dir := t.TempDir()
+	dir := tempDir(t)
 	srcPath := filepath.Join(dir, "source.db")
 
 	db := NewDatabase()
@@ -209,6 +209,11 @@ func openExportDB(t *testing.T, path string) *sql.DB {
 	if err != nil {
 		t.Fatalf("failed to open export db: %v", err)
 	}
+	t.Cleanup(func() {
+		if err := edb.Close(); err != nil {
+			t.Logf("Close: %v", err)
+		}
+	})
 	return edb
 }
 
@@ -1048,7 +1053,7 @@ func TestExport_OverwritesExistingFile(t *testing.T) {
 
 func TestExport_NoDatabaseOpen(t *testing.T) {
 	db := NewDatabase()
-	dir := t.TempDir()
+	dir := tempDir(t)
 	exportPath := filepath.Join(dir, "export.db")
 
 	err := db.ExportDatabase(ExportOptions{

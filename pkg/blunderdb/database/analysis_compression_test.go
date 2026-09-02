@@ -144,7 +144,7 @@ func TestRecompressAnalysisData(t *testing.T) {
 // TestMigrate_2_2_0_to_2_3_0 verifies that the migration compresses analysis
 // data and that the compressed data is readable.
 func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v220.db")
 
 	// Create a v2.2.0 database with raw JSON analysis data
@@ -283,6 +283,7 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify version bumped
 	ver, _ := d.CheckDatabaseVersion()
@@ -327,13 +328,14 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 // TestSaveAndLoadAnalysisCompressed verifies the full save→load round trip
 // with compressed storage on a fresh database.
 func TestSaveAndLoadAnalysisCompressed(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_compressed.db")
 
 	d := NewDatabase()
 	if err := d.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Create a position
 	pos := initialPosition()
@@ -415,13 +417,14 @@ func TestSaveAndLoadAnalysisCompressed(t *testing.T) {
 // TestExportWritesUncompressedJSON verifies that ExportDatabase writes
 // uncompressed JSON to the export file for backward compatibility.
 func TestExportWritesUncompressedJSON(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_export_src.db")
 
 	d := NewDatabase()
 	if err := d.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Create a position with analysis
 	pos := initialPosition()
@@ -484,13 +487,14 @@ func TestExportWritesUncompressedJSON(t *testing.T) {
 // TestAnalysisCompressionSavings measures the compression ratio on a larger
 // analysis dataset to confirm storage savings.
 func TestAnalysisCompressionSavings(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_savings.db")
 
 	d := NewDatabase()
 	if err := d.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Create 50 positions with varied analysis data
 	var totalRawJSON int
@@ -561,7 +565,7 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 // TestImportV220DatabaseIntoV230 verifies that importing an older v2.2.0 database
 // (with uncompressed analysis JSON) into a v2.3.0 database works correctly.
 func TestImportV220DatabaseIntoV230(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 
 	// Create a v2.3.0 "current" database with one position
 	currentPath := filepath.Join(tmpDir, "current.db")
@@ -569,6 +573,7 @@ func TestImportV220DatabaseIntoV230(t *testing.T) {
 	if err := dCurrent.SetupDatabase(currentPath); err != nil {
 		t.Fatalf("SetupDatabase current: %v", err)
 	}
+	closeOnCleanup(t, dCurrent)
 
 	// Create a v2.2.0-style "import" database with uncompressed JSON
 	importPath := filepath.Join(tmpDir, "import.db")

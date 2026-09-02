@@ -12,13 +12,14 @@ func TestCountPositionsAfterImports(t *testing.T) {
 	sgfFile := filepath.Join("testdata", "test.sgf")
 	matFile := filepath.Join("testdata", "test.mat")
 
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test.db")
 
 	db := NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
 		t.Fatalf("Failed to setup database: %v", err)
 	}
+	closeOnCleanup(t, db)
 
 	countPositions := func() int {
 		var count int
@@ -103,7 +104,7 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 	matFile := filepath.Join("testdata", "test.mat")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 
 	// Import MAT into db1
 	dbPath1 := filepath.Join(tmpDir, "mat.db")
@@ -111,6 +112,7 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 	if err := db1.SetupDatabase(dbPath1); err != nil {
 		t.Fatal(err)
 	}
+	closeOnCleanup(t, db1)
 	if _, err := db1.ImportGnuBGMatch(matFile); err != nil {
 		t.Fatal(err)
 	}
@@ -121,6 +123,7 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 	if err := db2.SetupDatabase(dbPath2); err != nil {
 		t.Fatal(err)
 	}
+	closeOnCleanup(t, db2)
 	if _, err := db2.ImportGnuBGMatch(sgfFile); err != nil {
 		t.Fatal(err)
 	}
