@@ -243,6 +243,9 @@ func loadExportAnalysis(t *testing.T, db *sql.DB) []PositionAnalysis {
 		}
 		analyses = append(analyses, a)
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	return analyses
 }
 
@@ -842,6 +845,9 @@ func TestExport_PositionIDRemapping(t *testing.T) {
 		}
 		expected++
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 
 	// Verify analysis position_id matches
 	analysisRows, err := edb.Query("SELECT position_id FROM analysis ORDER BY position_id")
@@ -862,6 +868,9 @@ func TestExport_PositionIDRemapping(t *testing.T) {
 			t.Errorf("analysis references non-existent position_id %d", posID)
 		}
 	}
+	if err := analysisRows.Err(); err != nil {
+		t.Fatal(err)
+	}
 
 	// Verify analysis JSON positionId matches the SQL position_id
 	analyses := loadExportAnalysis(t, edb)
@@ -869,11 +878,16 @@ func TestExport_PositionIDRemapping(t *testing.T) {
 	defer aPosIDRows.Close()
 	for i := 0; aPosIDRows.Next(); i++ {
 		var sqlPosID int64
-		aPosIDRows.Scan(&sqlPosID)
+		if err := aPosIDRows.Scan(&sqlPosID); err != nil {
+			t.Fatal(err)
+		}
 		if int64(analyses[i].PositionID) != sqlPosID {
 			t.Errorf("analysis[%d]: JSON positionId=%d != SQL position_id=%d",
 				i, analyses[i].PositionID, sqlPosID)
 		}
+	}
+	if err := aPosIDRows.Err(); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -909,6 +923,9 @@ func TestExport_MovePositionIDRemapping(t *testing.T) {
 			t.Errorf("move references non-existent position_id %d in export", posID)
 		}
 		count++
+	}
+	if err := moveRows.Err(); err != nil {
+		t.Fatal(err)
 	}
 	if count == 0 {
 		t.Error("expected at least one move with position_id, got none")

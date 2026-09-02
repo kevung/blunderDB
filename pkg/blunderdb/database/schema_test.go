@@ -95,6 +95,9 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		}
 		gotSet[name] = true
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	for _, idx := range wantIndexes {
 		if !gotSet[idx] {
 			t.Errorf("index missing: %s", idx)

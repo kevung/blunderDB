@@ -45,13 +45,12 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	if err != nil {
 		t.Fatalf("prepare: %v", err)
 	}
+	defer stmt.Close()
 	for i := 0; i < numPadding; i++ {
 		if _, err := stmt.Exec(blob); err != nil {
-			stmt.Close()
 			t.Fatalf("insert padding %d: %v", i, err)
 		}
 	}
-	stmt.Close()
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("commit padding: %v", err)
 	}

@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 )
 
 func (d *Database) DeleteComment(positionID int64) error {
@@ -66,7 +67,7 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 	// Check if a comment already exists for the given position ID
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM comment WHERE position_id = ?`, positionID).Scan(&existingID)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
 
@@ -95,7 +96,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	var text string
 	err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, positionID).Scan(&text)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil // No comment found
 		}
 		return "", err
@@ -108,7 +109,7 @@ func (d *Database) commentTableHasTimestamps() bool {
 	var dummy string
 	err := d.db.QueryRow(`SELECT COALESCE(created_at, '') FROM comment LIMIT 1`).Scan(&dummy)
 	// If the column doesn't exist, the error message contains "no such column"
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return false
 	}
 	return true

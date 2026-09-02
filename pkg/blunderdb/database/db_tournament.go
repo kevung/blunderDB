@@ -404,28 +404,17 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	// Collect all match IDs from selected tournaments
 	var matchIDs []int64
 	for _, tournamentID := range tournamentIDs {
-		rows, err := d.db.Query(`SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
+		ids, err := queryInt64s(d.db, `SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
 		if err != nil {
 			return err
 		}
-		for rows.Next() {
-			var matchID int64
-			if err := rows.Scan(&matchID); err != nil {
-				slog.Warn("scanning match id for tournament export", "tournamentID", tournamentID, "err", err)
-				continue
-			}
-			matchIDs = append(matchIDs, matchID)
-		}
-		if err := rows.Err(); err != nil {
-			return err
-		}
-		rows.Close()
+		matchIDs = append(matchIDs, ids...)
 	}
 
 	// Collect all unique position IDs from matches
 	positionIDsMap := make(map[int64]bool)
 	for _, matchID := range matchIDs {
-		rows, err := d.db.Query(`
+		ids, err := queryInt64s(d.db, `
 			SELECT DISTINCT m.position_id
 			FROM move m
 			JOIN game g ON m.game_id = g.id
@@ -435,18 +424,9 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			slog.Warn("querying positions for tournament export", "matchID", matchID, "err", err)
 			continue
 		}
-		for rows.Next() {
-			var posID int64
-			if err := rows.Scan(&posID); err != nil {
-				slog.Warn("scanning position id for tournament export", "matchID", matchID, "err", err)
-				continue
-			}
+		for _, posID := range ids {
 			positionIDsMap[posID] = true
 		}
-		if err := rows.Err(); err != nil {
-			return err
-		}
-		rows.Close()
 	}
 
 	// Convert map to slice
@@ -614,107 +594,113 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		matchIDMapping[matchID] = newMatchID
 
 		// Export games
-		gameRows, err := d.db.Query(`SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count FROM game WHERE match_id = ?`, matchID)
-		if err != nil {
-			slog.Warn("querying games for tournament export", "matchID", matchID, "err", err)
-			continue
-		}
-
 		gameIDMapping := make(map[int64]int64)
-		for gameRows.Next() {
-			var gameID int64
-			var gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount int
-			if err := gameRows.Scan(&gameID, &gameNumber, &initialScore1, &initialScore2, &winner, &pointsWon, &moveCount); err != nil {
-				slog.Warn("scanning game for tournament export", "matchID", matchID, "err", err)
-				continue
-			}
-
-			result, err := exportDB.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-				newMatchID, gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount)
+		if err := func() error {
+			gameRows, err := d.db.Query(`SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count FROM game WHERE match_id = ?`, matchID)
 			if err != nil {
-				slog.Warn("inserting game for tournament export", "matchID", matchID, "err", err)
-				continue
+				slog.Warn("querying games for tournament export", "matchID", matchID, "err", err)
+				return nil
 			}
-			newGameID, err := result.LastInsertId()
-			if err != nil {
-				return fmt.Errorf("failed to get last insert ID: %w", err)
-			}
-			gameIDMapping[gameID] = newGameID
-		}
-		if err := gameRows.Err(); err != nil {
-			return err
-		}
-		gameRows.Close()
+			defer gameRows.Close()
 
-		// Export moves for each game
-		for oldGameID, newGameID := range gameIDMapping {
-			moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp FROM move WHERE game_id = ?`, oldGameID)
-			if err != nil {
-				slog.Warn("querying moves for tournament export", "gameID", oldGameID, "err", err)
-				continue
-			}
-
-			for moveRows.Next() {
-				var moveID int64
-				var moveNumber, player, dice1, dice2 int
-				var moveType, checkerMove, cubeAction string
-				var oldPosID sql.NullInt64
-				var luckMP sql.NullInt32
-				if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP); err != nil {
-					slog.Warn("scanning move for tournament export", "gameID", oldGameID, "err", err)
+			for gameRows.Next() {
+				var gameID int64
+				var gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount int
+				if err := gameRows.Scan(&gameID, &gameNumber, &initialScore1, &initialScore2, &winner, &pointsWon, &moveCount); err != nil {
+					slog.Warn("scanning game for tournament export", "matchID", matchID, "err", err)
 					continue
 				}
 
-				var newPosID sql.NullInt64
-				if oldPosID.Valid {
-					if newID, ok := oldToNewID[oldPosID.Int64]; ok {
-						newPosID = sql.NullInt64{Int64: newID, Valid: true}
-					}
-				}
-
-				// NULL travels as NULL: an unknown luck must not land in the
-				// exported database as a neutral roll.
-				var luckValue any
-				if luckMP.Valid {
-					luckValue = luckMP.Int32
-				}
-
-				result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction, luckValue)
+				result, err := exportDB.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+					newMatchID, gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount)
 				if err != nil {
-					slog.Warn("inserting move for tournament export", "moveID", moveID, "err", err)
+					slog.Warn("inserting game for tournament export", "matchID", matchID, "err", err)
 					continue
 				}
-				newMoveID, err := result.LastInsertId()
+				newGameID, err := result.LastInsertId()
 				if err != nil {
 					return fmt.Errorf("failed to get last insert ID: %w", err)
 				}
+				gameIDMapping[gameID] = newGameID
+			}
+			return gameRows.Err()
+		}(); err != nil {
+			return err
+		}
 
-				// Export move_analysis
-				analysisRows, err := d.db.Query(`SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate FROM move_analysis WHERE move_id = ?`, moveID)
+		// Export moves for each game
+		for oldGameID, newGameID := range gameIDMapping {
+			if err := func() error {
+				moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp FROM move WHERE game_id = ?`, oldGameID)
 				if err != nil {
-					slog.Warn("querying move analysis for tournament export", "moveID", moveID, "err", err)
-					continue
+					slog.Warn("querying moves for tournament export", "gameID", oldGameID, "err", err)
+					return nil
 				}
-				for analysisRows.Next() {
-					var analysisType, depth string
-					var equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate float64
-					if err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &bgRate, &oppWinRate, &oppGammonRate, &oppBgRate); err != nil {
-						slog.Warn("scanning move analysis for tournament export", "moveID", moveID, "err", err)
+				defer moveRows.Close()
+
+				for moveRows.Next() {
+					var moveID int64
+					var moveNumber, player, dice1, dice2 int
+					var moveType, checkerMove, cubeAction string
+					var oldPosID sql.NullInt64
+					var luckMP sql.NullInt32
+					if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP); err != nil {
+						slog.Warn("scanning move for tournament export", "gameID", oldGameID, "err", err)
 						continue
 					}
-					_, _ = exportDB.Exec(`INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-						newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate)
+
+					var newPosID sql.NullInt64
+					if oldPosID.Valid {
+						if newID, ok := oldToNewID[oldPosID.Int64]; ok {
+							newPosID = sql.NullInt64{Int64: newID, Valid: true}
+						}
+					}
+
+					// NULL travels as NULL: an unknown luck must not land in the
+					// exported database as a neutral roll.
+					var luckValue any
+					if luckMP.Valid {
+						luckValue = luckMP.Int32
+					}
+
+					result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+						newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction, luckValue)
+					if err != nil {
+						slog.Warn("inserting move for tournament export", "moveID", moveID, "err", err)
+						continue
+					}
+					newMoveID, err := result.LastInsertId()
+					if err != nil {
+						return fmt.Errorf("failed to get last insert ID: %w", err)
+					}
+
+					// Export move_analysis
+					if err := func() error {
+						analysisRows, err := d.db.Query(`SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate FROM move_analysis WHERE move_id = ?`, moveID)
+						if err != nil {
+							slog.Warn("querying move analysis for tournament export", "moveID", moveID, "err", err)
+							return nil
+						}
+						defer analysisRows.Close()
+						for analysisRows.Next() {
+							var analysisType, depth string
+							var equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate float64
+							if err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &bgRate, &oppWinRate, &oppGammonRate, &oppBgRate); err != nil {
+								slog.Warn("scanning move analysis for tournament export", "moveID", moveID, "err", err)
+								continue
+							}
+							_, _ = exportDB.Exec(`INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+								newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate)
+						}
+						return analysisRows.Err()
+					}(); err != nil {
+						return err
+					}
 				}
-				if err := analysisRows.Err(); err != nil {
-					return err
-				}
-				analysisRows.Close()
-			}
-			if err := moveRows.Err(); err != nil {
+				return moveRows.Err()
+			}(); err != nil {
 				return err
 			}
-			moveRows.Close()
 		}
 	}
 

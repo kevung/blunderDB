@@ -19,7 +19,9 @@ func writeGraph(t *testing.T, s storage.Storage, g *MatchGraph) WriteResult {
 	}
 	res, err := WriteMatch(ctx, tx, "", g, nil)
 	if err != nil {
-		tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			t.Fatal(err)
+		}
 		t.Fatalf("WriteMatch: %v", err)
 	}
 	if err := tx.Commit(); err != nil {

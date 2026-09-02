@@ -14,8 +14,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -89,7 +89,9 @@ func TestImportExportJSONRoundtrip(t *testing.T) {
 	p := domain.InitializePosition()
 	saveResp := post(t, ts, "/v1/positions.save", positionReq{Position: &p})
 	var saved idResp
-	json.NewDecoder(saveResp.Body).Decode(&saved)
+	if err := json.NewDecoder(saveResp.Body).Decode(&saved); err != nil {
+		t.Fatal(err)
+	}
 	saveResp.Body.Close()
 	post(t, ts, "/v1/comments.add", commentAddReq{PositionID: saved.ID, Text: "hello"}).Body.Close()
 

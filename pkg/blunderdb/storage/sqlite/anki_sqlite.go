@@ -152,22 +152,9 @@ func (s *ankiStore) Sync(ctx context.Context, scope string, deckID int64) error 
 	var positionIDs []int64
 	switch sourceType {
 	case domain.AnkiSourceCollection:
-		rows, err := s.db.QueryContext(ctx,
+		positionIDs, err = queryInt64s(ctx, s.db,
 			`SELECT position_id FROM collection_position WHERE collection_id = ? ORDER BY sort_order ASC`,
 			sourceID)
-		if err != nil {
-			return fmt.Errorf("sqlite: sync anki deck %d: %w", deckID, err)
-		}
-		for rows.Next() {
-			var pid int64
-			if err := rows.Scan(&pid); err != nil {
-				rows.Close()
-				return fmt.Errorf("sqlite: sync anki deck %d: %w", deckID, err)
-			}
-			positionIDs = append(positionIDs, pid)
-		}
-		err = rows.Err()
-		rows.Close()
 		if err != nil {
 			return fmt.Errorf("sqlite: sync anki deck %d: %w", deckID, err)
 		}

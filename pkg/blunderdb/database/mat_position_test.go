@@ -74,9 +74,16 @@ func TestCompareTXTvsXGPositions(t *testing.T) {
 				Dice2   int
 				MoveStr string
 			}
-			rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr)
-			testUnmarshalPositionState(stateJSON, &r.Pos)
+			if err := rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr); err != nil {
+				t.Fatal(err)
+			}
+			if err := testUnmarshalPositionState(stateJSON, &r.Pos); err != nil {
+				t.Fatal(err)
+			}
 			results = append(results, r)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 		return results
 	}
@@ -219,9 +226,16 @@ func TestCompareMATvsXGPositions(t *testing.T) {
 				Dice2   int
 				MoveStr string
 			}
-			rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr)
-			testUnmarshalPositionState(stateJSON, &r.Pos)
+			if err := rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr); err != nil {
+				t.Fatal(err)
+			}
+			if err := testUnmarshalPositionState(stateJSON, &r.Pos); err != nil {
+				t.Fatal(err)
+			}
 			results = append(results, r)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 		return results
 	}
@@ -336,10 +350,14 @@ func TestImportMatchFromText(t *testing.T) {
 			for rows.Next() {
 				var stateJSON string
 				var moveNum, gameNum int
-				rows.Scan(&stateJSON, &moveNum, &gameNum)
+				if err := rows.Scan(&stateJSON, &moveNum, &gameNum); err != nil {
+					t.Fatal(err)
+				}
 
 				var pos Position
-				testUnmarshalPositionState(stateJSON, &pos)
+				if err := testUnmarshalPositionState(stateJSON, &pos); err != nil {
+					t.Fatal(err)
+				}
 
 				totalPositions++
 
@@ -363,6 +381,9 @@ func TestImportMatchFromText(t *testing.T) {
 							gameNum, moveNum, player0, player1)
 					}
 				}
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
 			}
 
 			if badPositions > 0 {

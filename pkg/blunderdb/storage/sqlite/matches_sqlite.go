@@ -323,24 +323,11 @@ func deleteOrphanedPositions(ctx context.Context, tx execer, ids []int64) error 
 // cleanup run atomically.
 func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
-		rows, err := tx.QueryContext(ctx,
+		positionIDs, err := queryInt64s(ctx, tx,
 			`SELECT DISTINCT mv.position_id
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = ? AND mv.position_id IS NOT NULL`, id)
 		if err != nil {
-			return fmt.Errorf("collect positions: %w", err)
-		}
-		var positionIDs []int64
-		for rows.Next() {
-			var pid int64
-			if err := rows.Scan(&pid); err != nil {
-				rows.Close()
-				return fmt.Errorf("scan position id: %w", err)
-			}
-			positionIDs = append(positionIDs, pid)
-		}
-		rows.Close()
-		if err := rows.Err(); err != nil {
 			return fmt.Errorf("collect positions: %w", err)
 		}
 
@@ -387,24 +374,11 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		// score/cube are part of that hash. For each position this match uses, save
 		// a swapped copy (Save recomputes the Zobrist and dedups) and repoint this
 		// match's moves to it; the original stays intact for whoever else holds it.
-		rows, err := tx.QueryContext(ctx,
+		posIDs, err := queryInt64s(ctx, tx,
 			`SELECT DISTINCT mv.position_id FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = ? AND mv.position_id IS NOT NULL`, id)
 		if err != nil {
-			return fmt.Errorf("collect swap positions: %w", err)
-		}
-		var posIDs []int64
-		for rows.Next() {
-			var pid int64
-			if err := rows.Scan(&pid); err != nil {
-				rows.Close()
-				return fmt.Errorf("scan swap position id: %w", err)
-			}
-			posIDs = append(posIDs, pid)
-		}
-		rows.Close()
-		if err := rows.Err(); err != nil {
 			return fmt.Errorf("collect swap positions: %w", err)
 		}
 

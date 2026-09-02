@@ -713,7 +713,7 @@ func parseFilterIDList(s string) ([]int64, error) {
 		}
 		id, err := strconv.ParseInt(p, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("invalid ID %q: %v", p, err)
+			return nil, fmt.Errorf("invalid ID %q: %w", p, err)
 		}
 		ids = append(ids, id)
 	}

@@ -188,8 +188,10 @@ func importAndStats(t *testing.T, file string) (player1Name, player2Name string,
 	if err != nil {
 		t.Fatalf("import %s: %v", file, err)
 	}
-	db.db.QueryRow(`SELECT COALESCE(player1_name,''), COALESCE(player2_name,'') FROM match WHERE id = ?`, matchID).
-		Scan(&player1Name, &player2Name)
+	if err := db.db.QueryRow(`SELECT COALESCE(player1_name,''), COALESCE(player2_name,'') FROM match WHERE id = ?`, matchID).
+		Scan(&player1Name, &player2Name); err != nil {
+		t.Fatal(err)
+	}
 	s, err = db.GetMatchDetailStats(matchID)
 	if err != nil {
 		t.Fatalf("GetMatchDetailStats: %v", err)
@@ -199,31 +201,37 @@ func importAndStats(t *testing.T, file string) (player1Name, player2Name string,
 
 // countForcedChecker returns the number of is_forced=1 checker positions for
 // the given player in the given match. player is 1 or -1 (blunderDB convention).
-func countForcedChecker(db *Database, matchID int64, player int) int {
+func countForcedChecker(t testing.TB, db *Database, matchID int64, player int) int {
+	t.Helper()
 	var n int
-	db.db.QueryRow(`
+	if err := db.db.QueryRow(`
 		SELECT COUNT(*)
 		FROM analysis a
 		JOIN position p ON p.id = a.position_id
 		JOIN move mv ON mv.position_id = p.id
 		JOIN game g ON g.id = mv.game_id
 		WHERE g.match_id = ? AND mv.player = ? AND p.decision_type = 0 AND a.is_forced = 1`,
-		matchID, player).Scan(&n)
+		matchID, player).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
 	return n
 }
 
 // countCloseCube returns the number of is_close_cube=1 cube positions for
 // the given player in the given match.
-func countCloseCube(db *Database, matchID int64, player int) int {
+func countCloseCube(t testing.TB, db *Database, matchID int64, player int) int {
+	t.Helper()
 	var n int
-	db.db.QueryRow(`
+	if err := db.db.QueryRow(`
 		SELECT COUNT(*)
 		FROM analysis a
 		JOIN position p ON p.id = a.position_id
 		JOIN move mv ON mv.position_id = p.id
 		JOIN game g ON g.id = mv.game_id
 		WHERE g.match_id = ? AND mv.player = ? AND p.decision_type = 1 AND a.is_close_cube = 1`,
-		matchID, player).Scan(&n)
+		matchID, player).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
 	return n
 }
 
@@ -334,7 +342,7 @@ func TestStatsParity(t *testing.T) {
 						if rp := ref.XG["player1"]; rp != nil {
 							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, xgTol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, 1)
+								gotForced := countForcedChecker(t, db, matchID, 1)
 								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
@@ -348,14 +356,14 @@ func TestStatsParity(t *testing.T) {
 								if rp.PassDecisions != nil {
 									wantClose += *rp.PassDecisions
 								}
-								gotClose := countCloseCube(db, matchID, 1)
+								gotClose := countCloseCube(t, db, matchID, 1)
 								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
 						}
 						if rp := ref.XG["player2"]; rp != nil {
 							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, xgTol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, -1)
+								gotForced := countForcedChecker(t, db, matchID, -1)
 								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
@@ -369,7 +377,7 @@ func TestStatsParity(t *testing.T) {
 								if rp.PassDecisions != nil {
 									wantClose += *rp.PassDecisions
 								}
-								gotClose := countCloseCube(db, matchID, -1)
+								gotClose := countCloseCube(t, db, matchID, -1)
 								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
 						}
@@ -383,7 +391,7 @@ func TestStatsParity(t *testing.T) {
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, xgVsGnuTol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, 1)
+								gotForced := countForcedChecker(t, db, matchID, 1)
 								// Forced count is a "best effort" diagnostic; XG moves
 								// include all alternatives, so detection is accurate here.
 								diffInt(t, "XG→gnuBGref/P1 checker_forced_count", rp.CheckerForced, gotForced, 45)
@@ -392,7 +400,7 @@ func TestStatsParity(t *testing.T) {
 						if rp := ref.GnuBG["player2"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P2", rp, bdbStats.Player2, xgVsGnuTol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, -1)
+								gotForced := countForcedChecker(t, db, matchID, -1)
 								diffInt(t, "XG→gnuBGref/P2 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 						}
@@ -412,7 +420,7 @@ func TestStatsParity(t *testing.T) {
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P1", rp, bdbStats.Player1, tol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, 1)
+								gotForced := countForcedChecker(t, db, matchID, 1)
 								// SGF forced count is a "best effort" diagnostic: gnuBG
 								// omits alternatives for forced moves, so some forced
 								// positions have no analysis row and are not detected.
@@ -429,14 +437,14 @@ func TestStatsParity(t *testing.T) {
 								if rp.PassDecisions != nil {
 									wantClose += *rp.PassDecisions
 								}
-								gotClose := countCloseCube(db, matchID, 1)
+								gotClose := countCloseCube(t, db, matchID, 1)
 								diffInt(t, "SGF/P1 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
 						}
 						if rp := ref.GnuBG["player2"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P2", rp, bdbStats.Player2, tol)
 							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(db, matchID, -1)
+								gotForced := countForcedChecker(t, db, matchID, -1)
 								diffInt(t, "SGF/P2 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
@@ -450,7 +458,7 @@ func TestStatsParity(t *testing.T) {
 								if rp.PassDecisions != nil {
 									wantClose += *rp.PassDecisions
 								}
-								gotClose := countCloseCube(db, matchID, -1)
+								gotClose := countCloseCube(t, db, matchID, -1)
 								diffInt(t, "SGF/P2 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
 						}

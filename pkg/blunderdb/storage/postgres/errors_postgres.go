@@ -18,7 +18,7 @@ const pgForeignKeyViolation = "23503"
 func referenced(err error) error {
 	var pe *pgconn.PgError
 	if errors.As(err, &pe) && pe.Code == pgForeignKeyViolation {
-		return fmt.Errorf("%w: %v", storage.ErrNotFound, err)
+		return fmt.Errorf("%w: %w", storage.ErrNotFound, err)
 	}
 	return err
 }

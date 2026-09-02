@@ -543,7 +543,9 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 		}
 
 		var storedData []byte
-		d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&storedData)
+		if err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&storedData); err != nil {
+			t.Fatal(err)
+		}
 		totalCompressed += len(storedData)
 	}
 
@@ -575,19 +577,31 @@ func TestImportV220DatabaseIntoV230(t *testing.T) {
 		t.Fatalf("open import: %v", err)
 	}
 
-	importDB.Exec(`CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT)`)
-	importDB.Exec(`CREATE TABLE analysis (id INTEGER PRIMARY KEY, position_id INTEGER, data JSON,
-		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE)`)
-	importDB.Exec(`CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT,
-		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE)`)
-	importDB.Exec(`CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT)`)
-	importDB.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', '2.2.0')`)
+	if _, err := importDB.Exec(`CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := importDB.Exec(`CREATE TABLE analysis (id INTEGER PRIMARY KEY, position_id INTEGER, data JSON,
+		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := importDB.Exec(`CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT,
+		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := importDB.Exec(`CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := importDB.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', '2.2.0')`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Insert a position + raw JSON analysis
 	pos := initialPosition()
 	norm := pos.NormalizeForStorage()
 	posJSON, _ := json.Marshal(norm)
-	importDB.Exec(`INSERT INTO position (state) VALUES (?)`, string(posJSON))
+	if _, err := importDB.Exec(`INSERT INTO position (state) VALUES (?)`, string(posJSON)); err != nil {
+		t.Fatal(err)
+	}
 
 	analysis := PositionAnalysis{
 		PositionID:   1,
@@ -599,7 +613,9 @@ func TestImportV220DatabaseIntoV230(t *testing.T) {
 		},
 	}
 	analysisJSON, _ := json.Marshal(analysis)
-	importDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (1, ?)`, string(analysisJSON))
+	if _, err := importDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (1, ?)`, string(analysisJSON)); err != nil {
+		t.Fatal(err)
+	}
 	importDB.Close()
 
 	// Import into current DB

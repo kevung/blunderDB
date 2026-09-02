@@ -12,8 +12,12 @@ func TestMigrationOnRealDB(t *testing.T) {
 
 	// Check how many positions now have non-zero best_move_equity_error
 	var total, nonzero int
-	d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error IS NOT NULL`).Scan(&total)
-	d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error != 0`).Scan(&nonzero)
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error IS NOT NULL`).Scan(&total); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error != 0`).Scan(&nonzero); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("total=%d, nonzero_error=%d (%.1f%%)", total, nonzero, float64(nonzero)/float64(total)*100)
 
 	// Check version

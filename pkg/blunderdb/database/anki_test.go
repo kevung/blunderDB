@@ -38,8 +38,12 @@ func TestCreateAnkiDeck(t *testing.T) {
 func TestGetAllAnkiDecks(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
-	db.CreateAnkiDeck("D1", "", "collection", colID, "")
-	db.CreateAnkiDeck("D2", "", "collection", colID, "")
+	if _, err := db.CreateAnkiDeck("D1", "", "collection", colID, ""); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.CreateAnkiDeck("D2", "", "collection", colID, ""); err != nil {
+		t.Fatal(err)
+	}
 
 	decks, err := db.GetAllAnkiDecks()
 	if err != nil {
@@ -115,7 +119,9 @@ func TestDeleteAnkiDeck(t *testing.T) {
 
 	// Cards should be cascade-deleted
 	var count int
-	db.db.QueryRow(`SELECT COUNT(*) FROM anki_card WHERE deck_id = ?`, id).Scan(&count)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM anki_card WHERE deck_id = ?`, id).Scan(&count); err != nil {
+		t.Fatal(err)
+	}
 	if count != 0 {
 		t.Errorf("found %d orphan cards after deck delete", count)
 	}
@@ -335,8 +341,10 @@ func TestReviewAnkiCard_Again(t *testing.T) {
 
 	// Verify card was updated
 	var reps, state int
-	db.db.QueryRow(`SELECT reps, state FROM anki_card WHERE id = ?`, card.Card.ID).
-		Scan(&reps, &state)
+	if err := db.db.QueryRow(`SELECT reps, state FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&reps, &state); err != nil {
+		t.Fatal(err)
+	}
 	if reps != 1 {
 		t.Errorf("reps = %d, want 1", reps)
 	}
@@ -365,8 +373,10 @@ func TestReviewAnkiCard_Good(t *testing.T) {
 
 	var reps int
 	var stability float64
-	db.db.QueryRow(`SELECT reps, stability FROM anki_card WHERE id = ?`, card.Card.ID).
-		Scan(&reps, &stability)
+	if err := db.db.QueryRow(`SELECT reps, stability FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&reps, &stability); err != nil {
+		t.Fatal(err)
+	}
 	if reps != 1 {
 		t.Errorf("reps = %d, want 1", reps)
 	}
@@ -393,8 +403,10 @@ func TestReviewAnkiCard_Easy(t *testing.T) {
 	}
 
 	var stability float64
-	db.db.QueryRow(`SELECT stability FROM anki_card WHERE id = ?`, card.Card.ID).
-		Scan(&stability)
+	if err := db.db.QueryRow(`SELECT stability FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&stability); err != nil {
+		t.Fatal(err)
+	}
 	if stability <= 0 {
 		t.Errorf("stability = %f, want > 0", stability)
 	}
@@ -421,7 +433,9 @@ func TestReviewAnkiCard_Progression(t *testing.T) {
 	}
 
 	var reps int
-	db.db.QueryRow(`SELECT reps FROM anki_card WHERE id = ?`, cardID).Scan(&reps)
+	if err := db.db.QueryRow(`SELECT reps FROM anki_card WHERE id = ?`, cardID).Scan(&reps); err != nil {
+		t.Fatal(err)
+	}
 	if reps != 4 {
 		t.Errorf("reps = %d after 4 reviews, want 4", reps)
 	}
@@ -436,7 +450,9 @@ func TestResetAnkiDeck(t *testing.T) {
 	// Review a card
 	card, _ := db.GetNextAnkiCard(deckID)
 	if card != nil {
-		db.ReviewAnkiCard(card.Card.ID, 3)
+		if _, err := db.ReviewAnkiCard(card.Card.ID, 3); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	if err := db.ResetAnkiDeck(deckID); err != nil {
@@ -445,7 +461,9 @@ func TestResetAnkiDeck(t *testing.T) {
 
 	// All cards should be back to new
 	var maxReps int
-	db.db.QueryRow(`SELECT COALESCE(MAX(reps), 0) FROM anki_card WHERE deck_id = ?`, deckID).Scan(&maxReps)
+	if err := db.db.QueryRow(`SELECT COALESCE(MAX(reps), 0) FROM anki_card WHERE deck_id = ?`, deckID).Scan(&maxReps); err != nil {
+		t.Fatal(err)
+	}
 	if maxReps != 0 {
 		t.Errorf("max reps = %d after reset, want 0", maxReps)
 	}

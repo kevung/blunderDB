@@ -192,7 +192,6 @@ func TestMatchMovesByMatch(t *testing.T) {
 		{GameID: g1ID, MoveNumber: 2, MoveType: "checker", CheckerMove: "g1m2"},
 		{GameID: g1ID, MoveNumber: 1, MoveType: "checker", CheckerMove: "g1m1"},
 	} {
-		mv := mv
 		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
 			t.Fatalf("CreateMove: %v", err)
 		}

@@ -99,7 +99,7 @@ func runGUI() {
 	}
 
 	// Apply the persisted two-sided bearoff path to the engine (ADR-0009).
-	if p := config.GetBearoffTsPath(); p != "" {
+	if p := config.GetBearoffTSPath(); p != "" {
 		race.SetExternalPath(p)
 	}
 

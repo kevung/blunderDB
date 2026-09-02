@@ -7,9 +7,21 @@ linters:
   # unused, ineffassign, gosimple.  We add nolintlint to enforce hygiene and
   # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
   # an iteration error otherwise truncates the result silently.
+  #
+  # Evaluated and deliberately NOT enabled (2026-09):
+  # - gosec: 202 findings, 108 of them G115 (int width conversions on board
+  #   indices and pip counts that cannot overflow), then G306 file modes in
+  #   tests, G602, G202 (SQL built by concatenation — the search filters,
+  #   parameterised), G404 (math/rand for the Zobrist keys and shuffles).
+  #   None is a bug; enabling it would mean ~200 nolint directives.
+  # - noctx: 874 findings — every database call would need a context first.
   enable:
+    - bodyclose
+    - copyloopvar
+    - errorlint
     - nolintlint
     - rowserrcheck
+    - sqlclosecheck
 
   settings:
     errcheck:
@@ -33,7 +45,6 @@ linters:
       checks:
         - "all"
         - "-QF*"    # quick-fix suggestions are style, not bugs — revisit later
-        - "-ST1003" # migration functions use underscores (migrate_X_to_Y) by convention
 
   exclusions:
     generated: lax
@@ -48,10 +59,23 @@ linters:
       - builtin$
       - examples$
     rules:
-      # Test files commonly skip error checks; suppress until task 12
-      # (test utilities) introduces proper helpers.
-      - linters: [errcheck, rowserrcheck]
-        path: "_test\\.go$"
+      # db_migration.go is being rewritten on feat/migrations-registry; that
+      # branch removes this rule once the new file lands. Until then, do not
+      # touch the old one — every edit here is a merge conflict there.
+      - linters: [errorlint, sqlclosecheck]
+        path: "db_migration\\.go$"
+      # ST1003 (initialisms) is enforced everywhere but the migration
+      # functions, which use underscores (migrate_X_to_Y) by convention.
+      - linters: [staticcheck]
+        path: "db_migration\\.go$"
+        text: "ST1003"
+      # stats_legacy_oracle_test.go is the pre-unification statistics SQL,
+      # copied verbatim as the oracle the storage backends are checked
+      # against; its loops swallow iteration errors the way the old code did,
+      # and three of the findings are false positives (rows handed to
+      # scanPositionIDs, which does check Err). It is not maintained code.
+      - linters: [rowserrcheck]
+        path: "stats_legacy_oracle_test\\.go$"
       # internal/cli and cmd/ print user-facing output straight to stdout/stderr
       # via fmt.Print*; checking those errors buys nothing (the process is about
       # to exit either way). Everywhere else, an unchecked fmt.Print* error is

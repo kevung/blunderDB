@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -335,7 +336,7 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 		&card.ElapsedDays, &card.ScheduledDays, &card.Reps, &card.Lapses, &card.State,
 		&card.LastReview)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
@@ -371,12 +372,12 @@ func (d *Database) GetRandomAnkiCard(deckID int64, excludePositionID int64) (*An
 	}
 
 	card, err := d.queryRandomAnkiCard(deckID, excludePositionID)
-	if err == sql.ErrNoRows && excludePositionID != 0 {
+	if errors.Is(err, sql.ErrNoRows) && excludePositionID != 0 {
 		// Only the excluded card remains (single-card deck): draw again
 		// without the exclusion so cram still serves it.
 		card, err = d.queryRandomAnkiCard(deckID, 0)
 	}
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
@@ -522,7 +523,7 @@ func (d *Database) ReviewAnkiCard(cardID int64, rating int) (*AnkiReviewCard, er
 		&nextCard.ElapsedDays, &nextCard.ScheduledDays, &nextCard.Reps, &nextCard.Lapses, &nextCard.State,
 		&nextCard.LastReview)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {

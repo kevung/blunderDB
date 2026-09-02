@@ -147,27 +147,9 @@ func isStaleGammonNetOnly(a *PositionAnalysis) bool {
 // existing gap-fill batch.
 func (d *Database) positionIDsWithStaleGammonNet() ([]int64, error) {
 	d.mu.RLock()
-	rows, err := d.db.Query(`SELECT position_id FROM analysis ORDER BY position_id`)
-	if err != nil {
-		d.mu.RUnlock()
-		return nil, err
-	}
-	var ids []int64
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			rows.Close()
-			d.mu.RUnlock()
-			return nil, err
-		}
-		ids = append(ids, id)
-	}
-	closeErr := rows.Close()
+	ids, err := queryInt64s(d.db, `SELECT position_id FROM analysis ORDER BY position_id`)
 	d.mu.RUnlock()
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	if err := rows.Err(); err != nil {
+	if err != nil {
 		return nil, err
 	}
 

@@ -92,6 +92,7 @@ func tableFacts(t *testing.T, db *sql.DB, table string) []schemaFact {
 	if err != nil {
 		t.Fatalf("pragma_table_info(%s): %v", table, err)
 	}
+	defer cols.Close()
 	for cols.Next() {
 		var name, typ, dflt string
 		var notnull, pk int
@@ -104,7 +105,6 @@ func tableFacts(t *testing.T, db *sql.DB, table string) []schemaFact {
 	if err := cols.Err(); err != nil {
 		t.Fatalf("iterate table_info(%s): %v", table, err)
 	}
-	cols.Close()
 
 	fks, err := db.Query(`SELECT "table", "from", COALESCE("to", ''), on_update, on_delete FROM pragma_foreign_key_list(?)`, table)
 	if err != nil {

@@ -48,5 +48,8 @@ func TestCheckErrorColumns(t *testing.T) {
 			zeroWithCubeAction++
 		}
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("total=%d nonZeroMove=%d zeroMoveButHasCubeAction=%d", total, nonZeroMove, zeroWithCubeAction)
 }

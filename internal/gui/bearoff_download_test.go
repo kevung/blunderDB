@@ -37,7 +37,9 @@ func rangeServer(t *testing.T, blob []byte, failAfter *int64) *httptest.Server {
 		}
 		body := blob[start:]
 		if failAfter != nil && *failAfter > 0 && *failAfter < int64(len(body)) {
-			w.Write(body[:*failAfter])
+			if _, err := w.Write(body[:*failAfter]); err != nil {
+				t.Fatal(err)
+			}
 			// Abort the connection mid-body.
 			if hj, ok := w.(http.Hijacker); ok {
 				conn, _, _ := hj.Hijack()
@@ -45,7 +47,9 @@ func rangeServer(t *testing.T, blob []byte, failAfter *int64) *httptest.Server {
 			}
 			return
 		}
-		w.Write(body)
+		if _, err := w.Write(body); err != nil {
+			t.Fatal(err)
+		}
 	}))
 }
 

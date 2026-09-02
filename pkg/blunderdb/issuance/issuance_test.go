@@ -2,6 +2,7 @@ package issuance
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -245,10 +246,10 @@ func TestProtectedIdentityFileNeedsItsPassphrase(t *testing.T) {
 	if needs, err := IdentityFileNeedsPassphrase(file); err != nil || !needs {
 		t.Fatalf("a protected export must announce it (%v, %v)", needs, err)
 	}
-	if _, err := ImportIdentity(t.TempDir(), file, ""); err != ErrPassphraseRequired {
+	if _, err := ImportIdentity(t.TempDir(), file, ""); !errors.Is(err, ErrPassphraseRequired) {
 		t.Fatalf("expected ErrPassphraseRequired, got %v", err)
 	}
-	if _, err := ImportIdentity(t.TempDir(), file, "wrong"); err != ErrWrongPassphrase {
+	if _, err := ImportIdentity(t.TempDir(), file, "wrong"); !errors.Is(err, ErrWrongPassphrase) {
 		t.Fatalf("expected ErrWrongPassphrase, got %v", err)
 	}
 	back, err := ImportIdentity(t.TempDir(), file, "correct horse")
@@ -366,10 +367,10 @@ func TestContainerRoundTrip(t *testing.T) {
 	}
 
 	opened := filepath.Join(dir, "opened.db")
-	if _, err := UnwrapContainer(out, opened, ""); err != ErrPassphraseRequired {
+	if _, err := UnwrapContainer(out, opened, ""); !errors.Is(err, ErrPassphraseRequired) {
 		t.Fatalf("expected ErrPassphraseRequired, got %v", err)
 	}
-	if _, err := UnwrapContainer(out, opened, "wrong"); err != ErrWrongPassphrase {
+	if _, err := UnwrapContainer(out, opened, "wrong"); !errors.Is(err, ErrWrongPassphrase) {
 		t.Fatalf("expected ErrWrongPassphrase, got %v", err)
 	}
 	if _, err := UnwrapContainer(out, opened, "s3cret"); err != nil {
@@ -398,10 +399,10 @@ func TestVerifyPassword(t *testing.T) {
 	if err := VerifyPassword(out, "s3cret"); err != nil {
 		t.Fatalf("the right password must verify: %v", err)
 	}
-	if err := VerifyPassword(out, "wrong"); err != ErrWrongPassphrase {
+	if err := VerifyPassword(out, "wrong"); !errors.Is(err, ErrWrongPassphrase) {
 		t.Fatalf("expected ErrWrongPassphrase, got %v", err)
 	}
-	if err := VerifyPassword(out, ""); err != ErrPassphraseRequired {
+	if err := VerifyPassword(out, ""); !errors.Is(err, ErrPassphraseRequired) {
 		t.Fatalf("expected ErrPassphraseRequired, got %v", err)
 	}
 	if err := VerifyPassword(dbPath, "s3cret"); err == nil {

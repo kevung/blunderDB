@@ -205,7 +205,9 @@ func splitTrimmed(s string) []string {
 
 func parseInt64(s string) int64 {
 	var v int64
-	fmt.Sscanf(s, "%d", &v)
+	if _, err := fmt.Sscanf(s, "%d", &v); err != nil {
+		return 0
+	}
 	return v
 }
 
@@ -423,7 +425,9 @@ func TestSearch_PaginationStable(t *testing.T) {
 	// Count total positions in DB.
 	var total int
 	db.mu.Lock()
-	db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&total)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&total); err != nil {
+		t.Fatal(err)
+	}
 	db.mu.Unlock()
 
 	if total < 10 {

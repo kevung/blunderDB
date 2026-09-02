@@ -52,18 +52,26 @@ func captureStdout(t *testing.T, fn func()) string {
 	}
 	os.Stdout = w
 
-	outC := make(chan string)
+	type captured struct {
+		out string
+		err error
+	}
+	outC := make(chan captured, 1)
 	go func() {
 		var buf bytes.Buffer
-		io.Copy(&buf, r)
-		outC <- buf.String()
+		_, err := io.Copy(&buf, r)
+		outC <- captured{buf.String(), err}
 	}()
 
 	fn()
 
 	w.Close()
 	os.Stdout = old
-	return <-outC
+	got := <-outC
+	if got.err != nil {
+		t.Fatalf("capturing stdout: %v", got.err)
+	}
+	return got.out
 }
 
 // testdataPath returns the absolute path for a testdata fixture file.
@@ -672,7 +680,9 @@ func TestCLI_MissingRequiredFlags(t *testing.T) {
 func TestCLI_Version(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
 	out := captureStdout(t, func() {
-		cli.Run([]string{"version"})
+		if err := cli.Run([]string{"version"}); err != nil {
+			t.Fatal(err)
+		}
 	})
 	if len(out) == 0 {
 		t.Error("expected non-empty version output")
@@ -682,7 +692,9 @@ func TestCLI_Version(t *testing.T) {
 func TestCLI_Help(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
 	out := captureStdout(t, func() {
-		cli.Run([]string{"help"})
+		if err := cli.Run([]string{"help"}); err != nil {
+			t.Fatal(err)
+		}
 	})
 	if !bytes.Contains([]byte(out), []byte("blunderDB")) {
 		t.Errorf("help output missing tool name:\n%s", out)

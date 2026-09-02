@@ -564,22 +564,13 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	// Collect all unique position IDs from selected collections
 	positionIDsMap := make(map[int64]bool)
 	for _, collectionID := range collectionIDs {
-		rows, err := d.db.Query(`SELECT position_id FROM collection_position WHERE collection_id = ?`, collectionID)
+		ids, err := queryInt64s(d.db, `SELECT position_id FROM collection_position WHERE collection_id = ?`, collectionID)
 		if err != nil {
 			return err
 		}
-		for rows.Next() {
-			var posID int64
-			if err := rows.Scan(&posID); err != nil {
-				slog.Warn("scanning collection_position id for export", "collectionID", collectionID, "err", err)
-				continue
-			}
+		for _, posID := range ids {
 			positionIDsMap[posID] = true
 		}
-		if err := rows.Err(); err != nil {
-			return err
-		}
-		rows.Close()
 	}
 
 	// Convert map to slice
@@ -697,32 +688,32 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		}
 
 		// Export collection_position mappings
-		rows, qErr := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
-		if qErr != nil {
-			slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", qErr)
-			continue
-		}
-		for rows.Next() {
-			var oldPosID int64
-			var cpSortOrder int
-			var addedAt string
-			if sErr := rows.Scan(&oldPosID, &cpSortOrder, &addedAt); sErr != nil {
-				slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", sErr)
-				continue
+		if err = func() error {
+			rows, qErr := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
+			if qErr != nil {
+				slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", qErr)
+				return nil
 			}
-			if newPosID, ok := oldToNewID[oldPosID]; ok {
-				if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
-					newCollectionID, newPosID, cpSortOrder, addedAt); insErr != nil {
-					slog.Warn("inserting collection_position into export database", "collectionID", collectionID, "err", insErr)
+			defer rows.Close()
+			for rows.Next() {
+				var oldPosID int64
+				var cpSortOrder int
+				var addedAt string
+				if sErr := rows.Scan(&oldPosID, &cpSortOrder, &addedAt); sErr != nil {
+					slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", sErr)
+					continue
+				}
+				if newPosID, ok := oldToNewID[oldPosID]; ok {
+					if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+						newCollectionID, newPosID, cpSortOrder, addedAt); insErr != nil {
+						slog.Warn("inserting collection_position into export database", "collectionID", collectionID, "err", insErr)
+					}
 				}
 			}
-		}
-		if rErr := rows.Err(); rErr != nil {
-			rows.Close()
-			err = rErr
+			return rows.Err()
+		}(); err != nil {
 			return err
 		}
-		rows.Close()
 	}
 
 	if err = tx.Commit(); err != nil {
