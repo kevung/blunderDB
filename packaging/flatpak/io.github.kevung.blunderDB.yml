@@ -6,6 +6,12 @@
 # need a from-source build (Go + Node, offline) — that is the open decision in
 # Phase 4 of the packaging plan.
 #
+# CI (the `flatpak` job of .github/workflows/build.yml) builds the bundle on
+# every release tag and attaches blunderDB-<version>.flatpak to the release:
+# it renders a copy of this file with a local `path:` source pointing at the
+# tarball the matrix just built and the real sha256, so the url/sha256 below
+# are a template — they are not what the published bundle was built from.
+#
 # Build & install locally (once a release with the new CI tarball exists):
 #   flatpak install -y flathub org.gnome.Platform//47 org.gnome.Sdk//47
 #   flatpak-builder --user --install --force-clean build-dir \
