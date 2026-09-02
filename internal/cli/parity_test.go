@@ -46,7 +46,7 @@ const (
 	whyGUIEdit   = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
 	whyTwoPhase  = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
 	whyIssuance  = "issuance is a person's act on a file they are producing (ADR-0007); the daemon operates on a library and signs, seals or opens nothing on anyone's behalf (ADR-0015)"
-	whySubsetExp = "the daemon's exports.sqlite writes the whole tenant, unmarked; a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
+	whySubsetExp = "the daemon's exports.sqlite writes the whole tenant, optionally watermarked with the daemon's own signing identity (Options.Identity, --identity-dir); a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
 	whyReview    = "reviewing a card needs the board in front of the player: a GUI gesture (the daemon serves a client that has one)"
 	whyCram      = "cram mode picks a random card for the board; the daemon's review loop goes through anki.nextCard and the CLI reviews nothing"
 	whyWrapper   = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"

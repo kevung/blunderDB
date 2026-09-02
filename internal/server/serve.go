@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -50,6 +51,7 @@ func RunServe(args []string) error {
 		rateLimitBurst = fs.Int("rate-limit-burst", 0, "per-tenant token-bucket burst (default 2×rps)")
 		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
 		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
+		identityDir    = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -94,6 +96,14 @@ func RunServe(args []string) error {
 		logger.Info("Row-Level Security enabled (per-tenant policies installed)")
 	}
 
+	var identity *issuance.Identity
+	if *identityDir != "" {
+		identity, err = issuance.LoadOrCreateIdentity(*identityDir, "blunderdb-serve")
+		if err != nil {
+			return fmt.Errorf("serve: identity: %w", err)
+		}
+	}
+
 	srv, err := New(Options{
 		Addr:            *addr,
 		Storage:         st,
@@ -103,6 +113,7 @@ func RunServe(args []string) error {
 		CORSAllowOrigin: *corsOrigin,
 		RateLimitRPS:    *rateLimitRPS,
 		RateLimitBurst:  *rateLimitBurst,
+		Identity:        identity,
 	})
 	if err != nil {
 		return err
