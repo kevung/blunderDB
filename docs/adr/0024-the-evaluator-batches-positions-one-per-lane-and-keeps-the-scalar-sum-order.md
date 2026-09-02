@@ -60,6 +60,16 @@ tolerance, above zero, and different on every architecture.
 - Assembly enters the tree, generated, with a pure-Go twin that must stay in lockstep; the
   bit-identity test is the invariant, not the gold suites (which tolerate 1e-6 and would let
   an FMA through).
+- **Amended 2026-09-02 while executing F1 (#133): decision 3 named avo for both kernels, and
+  avo has no arm64 back end** (v0.6.0 ships `avo/x86` and nothing else; confirmed by the P1
+  research note). F1 therefore ships the AVX2 kernel plus the pure-Go fallback, and arm64
+  runs the fallback — correct, simply not accelerated. The NEON twin is a follow-up and must
+  be hand-written Plan 9 arm64 assembly (`simd/archsimd` is Go 1.26+, arm64 only from 1.27;
+  this project is on 1.25). It is deliberately not written blind: nothing in this repository's
+  toolchain can execute arm64 code, so a NEON kernel written here could not be put through
+  `kernel_identity_test.go`, and shipping an unverified fast path is the failure mode #133's
+  fourth acceptance criterion exists to prevent. The kernel seam takes one more entry when
+  someone can run the test on a real arm64 machine.
 - A ×1.5–2 on the kernel is deliberately left on the table. Revisiting it means revisiting
   cross-machine reproducibility of stored analyses, and that is this ADR's decision to
   reverse, not a tuning knob.

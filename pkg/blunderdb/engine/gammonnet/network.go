@@ -188,6 +188,12 @@ func Load(raw []byte) (*Network, error) {
 	if pos != len(raw) {
 		return nil, fmt.Errorf("gammonnet: %d trailing bytes after the weights", len(raw)-pos)
 	}
+	// A kernel selector that names an unavailable path fails HERE, at the
+	// first door into the package, rather than silently downgrading to a
+	// slower one much later (decision D7 of the plan, criterion 4 of #133).
+	if err := KernelError(); err != nil {
+		return nil, err
+	}
 	return n, nil
 }
 
@@ -202,6 +208,18 @@ type Evaluator struct {
 	net *Network
 	a   []float32
 	b   []float32
+
+	// Batched scratch (kernel.go). Allocated on the first EvaluateBatch and
+	// not before: the compacted first-layer weights are as big as the layer
+	// itself, and a caller that only ever evaluates one position at a time
+	// should not pay 400 KB for a path it never takes.
+	kernel      denseKernel
+	kernelErr   error
+	batchA      []float32 // feature-major activations, widest × EvalBatchWidth
+	batchB      []float32 // the alternate buffer, same size
+	batchAct    []float32 // the input layer, transposed and stripped of its zero columns
+	batchWeight []float32 // the first layer's weights, compacted to those columns
+	nz          []int32   // the surviving feature indices, ascending
 }
 
 // NewEvaluator returns an evaluator over net. It allocates once; evaluating
