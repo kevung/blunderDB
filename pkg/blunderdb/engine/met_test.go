@@ -182,3 +182,247 @@ func TestNormalMatchEquityIsUnchanged(t *testing.T) {
 		t.Fatalf("unexpected MWC loss for a 120 mp error: %v", got)
 	}
 }
+
+// ── The table itself (#188) ─────────────────────────────────────────────────
+//
+// A table of 625 numbers is not proof-read; its PROPERTIES are. Until these
+// tests the file only exercised the EMG→MWC converter, and a transcription
+// error — one digit, one swapped pair of indices — would have moved a cube
+// verdict one time in a thousand without anything ever looking broken.
+
+// A handful of the published Kazaross-XG2 values, as Tom Keith's article
+// (https://bkgm.com/articles/Keith/KazarossXG2MET/index.html) and GNU
+// Backgammon's met/Kazaross-XG2.xml print them: the textbook cells everyone
+// quotes, and the four corners of the explicit table. Checked on 2026-09-03
+// against gammonNet's own extraction of the XML (tests/data/met_reference.json,
+// 625 pre-Crawford entries, worst |Δ| = 2.96e-8 — float32 rounding).
+func TestKazarossXG2MatchesThePublication(t *testing.T) {
+	pre := []struct {
+		awayA, awayB int
+		mwc          float64
+	}{
+		{1, 2, 0.67736}, // Crawford, leader on roll: the most quoted cell of any MET
+		{2, 1, 0.32264},
+		{2, 2, 0.50000},
+		{2, 3, 0.59947},
+		{3, 2, 0.40053},
+		{2, 4, 0.66870},
+		{3, 4, 0.57150},
+		{4, 5, 0.57732},
+		{5, 5, 0.50000},
+		{3, 7, 0.76209},
+		{7, 10, 0.656283},
+		{7, 11, 0.700209},
+		{1, 25, 0.99905},
+		{25, 1, 0.00095},
+		{25, 24, 0.46914},
+		{24, 25, 0.53086},
+		{25, 25, 0.50000},
+	}
+	for _, c := range pre {
+		got := float64(kazarossXG2PreCrawford[c.awayA-1][c.awayB-1])
+		if math.Abs(got-c.mwc) > 1e-6 {
+			t.Errorf("pre-Crawford %d-away/%d-away: table %.6f, published %.6f", c.awayA, c.awayB, got, c.mwc)
+		}
+		// And the live table reads the same cell: the overlay covers it.
+		if live := float64(preCrawfordMET[c.awayA-1][c.awayB-1]); live != got {
+			t.Errorf("pre-Crawford %d-away/%d-away: live table %.6f differs from the explicit %.6f", c.awayA, c.awayB, live, got)
+		}
+	}
+
+	post := []struct {
+		away int
+		mwc  float64
+	}{
+		{1, 0.50000},
+		{2, 0.48803}, // the free drop: 2-away post-Crawford is barely worse than 1-away
+		{3, 0.32264},
+		{4, 0.31002},
+		{5, 0.19012},
+		{24, 0.00182},
+	}
+	for _, c := range post {
+		got := float64(kazarossXG2PostCrawford[c.away-1])
+		if math.Abs(got-c.mwc) > 1e-6 {
+			t.Errorf("post-Crawford %d-away: table %.6f, published %.6f", c.away, got, c.mwc)
+		}
+		if live := float64(postCrawfordMET[c.away-1]); live != got {
+			t.Errorf("post-Crawford %d-away: live table %.6f differs from the explicit %.6f", c.away, live, got)
+		}
+	}
+
+	// The 25th post-Crawford entry is a known, documented divergence, not a
+	// transcription error: the XML publishes 0.00123 for the 25-away trailer
+	// and this file's explicit table stops at 24, so the live cell is the
+	// Zadeh extension (0.000888 — see the gold README's note on
+	// "post-Crawford trailer-at-25"). Pinned here so the divergence is a
+	// fact the suite states rather than one it rediscovers.
+	if got := float64(postCrawfordMET[24]); math.Abs(got-0.00123) < 1e-6 {
+		t.Errorf("post-Crawford 25-away = %.6f: the explicit table now reaches 25 entries; drop this note and pin the published value", got)
+	} else if got <= 0 || got >= float64(postCrawfordMET[23]) {
+		t.Errorf("post-Crawford 25-away (Zadeh) = %.6f, want strictly inside (0, %.6f)", got, postCrawfordMET[23])
+	}
+}
+
+// What one side wins the other loses: MET[i][j] + MET[j][i] = 1 over the whole
+// 64×64 live table — explicit cells and Zadeh extension alike — with the
+// diagonal at one half. Float32 storage rounds each cell on its own, so the
+// identity holds to float32 (measured worst 2.4e-7), not to the bit; the
+// explicit diagonal is exactly 0.5 as transcribed.
+func TestMETIsAntisymmetric(t *testing.T) {
+	worst := 0.0
+	for i := 0; i < gnuBGMaxScore; i++ {
+		for j := 0; j < gnuBGMaxScore; j++ {
+			d := math.Abs(float64(preCrawfordMET[i][j]) + float64(preCrawfordMET[j][i]) - 1)
+			if d > worst {
+				worst = d
+			}
+			if d > 1e-6 {
+				t.Errorf("MET[%d][%d] + MET[%d][%d] = %.8f, want 1", i, j, j, i, 1+d)
+			}
+		}
+		if i < 25 && preCrawfordMET[i][i] != 0.5 {
+			t.Errorf("explicit diagonal MET[%d][%d] = %v, want exactly 0.5", i, i, preCrawfordMET[i][i])
+		}
+		if d := math.Abs(float64(preCrawfordMET[i][i]) - 0.5); d > 1e-6 {
+			t.Errorf("diagonal MET[%d][%d] = %v, want 0.5", i, i, preCrawfordMET[i][i])
+		}
+	}
+	t.Logf("antisymmetry: worst |MET[i][j] + MET[j][i] − 1| = %.3e over %d×%d", worst, gnuBGMaxScore, gnuBGMaxScore)
+}
+
+// The seam between Neil Kazaross's explicit 25×25 table and the Zadeh
+// extension: index 24 (25-away) is the last explicit row, index 25 the first
+// computed one. Across it the table must stay what a MET is — needing more
+// points is worse, against every opponent — and it must not jump: the first
+// Zadeh row sits within a few hundredths of the last explicit one (measured
+// 0.031 at 25-away/25-away → 26-away/25-away, the largest step anywhere at
+// the seam), which is the same order as the steps inside the table itself.
+// A seam that broke monotonicity, or stepped by a tenth, would mean the
+// overlay landed one row off — plausible numbers, wrong table.
+func TestZadehExtensionJoinsKazarossAtTheSeam(t *testing.T) {
+	const last, first = 24, 25
+	for j := 0; j < 25; j++ {
+		if preCrawfordMET[last][j] != kazarossXG2PreCrawford[last][j] {
+			t.Errorf("row %d, column %d is not the explicit value", last, j)
+		}
+		if preCrawfordMET[j][last] != kazarossXG2PreCrawford[j][last] {
+			t.Errorf("row %d, column %d is not the explicit value", j, last)
+		}
+	}
+	maxStep := 0.0
+	for j := 0; j < gnuBGMaxScore; j++ {
+		rowLast, rowFirst := float64(preCrawfordMET[last][j]), float64(preCrawfordMET[first][j])
+		colLast, colFirst := float64(preCrawfordMET[j][last]), float64(preCrawfordMET[j][first])
+		if !(rowFirst < rowLast) {
+			t.Errorf("against %d-away: 26-away (%.6f) is not worse than 25-away (%.6f)", j+1, rowFirst, rowLast)
+		}
+		if !(colFirst > colLast) {
+			t.Errorf("%d-away: a 26-away opponent (%.6f) is not better than a 25-away one (%.6f)", j+1, colFirst, colLast)
+		}
+		if d := rowLast - rowFirst; d > maxStep {
+			maxStep = d
+		}
+	}
+	if maxStep > 0.05 {
+		t.Errorf("largest step across the seam is %.4f, want under 0.05", maxStep)
+	}
+	t.Logf("largest step across the Kazaross/Zadeh seam: %.4f", maxStep)
+
+	// The whole live table is monotone in each argument — non-strictly, since
+	// float32 saturates at 0.99999994 in the far corner (1-away vs 63-away
+	// and 2-away vs 63-away share it).
+	for i := 0; i+1 < gnuBGMaxScore; i++ {
+		for j := 0; j < gnuBGMaxScore; j++ {
+			if preCrawfordMET[i+1][j] > preCrawfordMET[i][j] {
+				t.Errorf("MET[%d][%d] = %v > MET[%d][%d] = %v: needing more points is better?", i+1, j, preCrawfordMET[i+1][j], i, j, preCrawfordMET[i][j])
+			}
+		}
+	}
+}
+
+// The lookup is antisymmetric in fPlayer at every score it distinguishes —
+// pre-Crawford, the two post-Crawford branches, and a match already won by
+// either side: what player 1 is told is one minus what player 0 is told, to
+// float32, for the same game outcome.
+func TestGnuBGGetMEIsAntisymmetricInPlayer(t *testing.T) {
+	cases := []struct {
+		name                       string
+		score0, score1, matchTo, n int
+		crawford                   bool
+	}{
+		{"pre-Crawford 3-4 of 7", 3, 4, 7, 1, false},
+		{"pre-Crawford, cube 4", 2, 5, 11, 4, false},
+		{"Crawford, leader is player 0", 6, 3, 7, 1, true},
+		{"Crawford, leader is player 1", 3, 6, 7, 1, true},
+		{"post-Crawford, player 0 at match point", 6, 4, 7, 2, false},
+		{"post-Crawford, player 1 at match point", 4, 6, 7, 2, false},
+		{"player 0 wins the match", 6, 0, 7, 1, false},
+		{"player 1 wins the match", 0, 6, 7, 1, false},
+		{"player 1 wins the match by a gammon", 0, 5, 7, 2, false},
+	}
+	for _, c := range cases {
+		for whoWins := 0; whoWins <= 1; whoWins++ {
+			p0 := GnuBGGetME(c.score0, c.score1, c.matchTo, 0, c.n, whoWins, c.crawford)
+			p1 := GnuBGGetME(c.score0, c.score1, c.matchTo, 1, c.n, whoWins, c.crawford)
+			if math.Abs(p0+p1-1) > 1e-6 {
+				t.Errorf("%s, player %d wins %d: player 0 sees %.6f, player 1 sees %.6f — they do not sum to 1", c.name, whoWins, c.n, p0, p1)
+			}
+			if p0 < 0 || p0 > 1 || p1 < 0 || p1 > 1 {
+				t.Errorf("%s, player %d wins %d: %.6f / %.6f are not probabilities", c.name, whoWins, c.n, p0, p1)
+			}
+		}
+	}
+	// A match already won is certain, from both sides.
+	if got := GnuBGGetME(6, 0, 7, 0, 1, 0, false); got != 1 {
+		t.Errorf("player 0 wins the match: player 0's MWC = %v, want 1", got)
+	}
+	if got := GnuBGGetME(6, 0, 7, 1, 1, 0, false); got != 0 {
+		t.Errorf("player 0 wins the match: player 1's MWC = %v, want 0", got)
+	}
+	if got := GnuBGGetME(0, 6, 7, 1, 1, 1, false); got != 1 {
+		t.Errorf("player 1 wins the match: player 1's MWC = %v, want 1", got)
+	}
+}
+
+// The horizon. GnuBGGetME CLAMPS an away score past MaxScore (64) to the
+// table's last row rather than refusing it — the decision this file
+// documents at the clamp itself: the lookup is called from bound methods
+// where a panic costs far more than a wrong number, and callers are expected
+// to filter (ConvertEMGLossToMWCLoss returns NaN, gammonnet.MatchState.IsValid
+// refuses). The clamp is therefore a documented degradation and this test
+// pins what it degrades TO, so a caller reading 0.5 for a 70-point match
+// can find out here that the number is the corner of the table and not an
+// equity: both scores saturate at index 63, and MET[63][63] is one half.
+func TestGnuBGGetMEClampsBeyondTheHorizon(t *testing.T) {
+	at64 := GnuBGGetME(0, 0, gnuBGMaxScore, 0, 1, 0, false)
+	if at64 <= 0.5 || at64 >= 0.6 {
+		t.Fatalf("64-away/64-away, winning one point: %v, want a little over one half", at64)
+	}
+	corner := float64(preCrawfordMET[gnuBGMaxScore-1][gnuBGMaxScore-1])
+	for _, matchTo := range []int{gnuBGMaxScore + 2, 70, 99, 99999} {
+		got := GnuBGGetME(0, 0, matchTo, 0, 1, 0, false)
+		if got != corner {
+			t.Errorf("matchTo=%d: %v, want the clamped corner MET[63][63] = %v", matchTo, got, corner)
+		}
+		if got == at64 {
+			t.Errorf("matchTo=%d answers exactly what 64 does (%v) — the clamp is not the corner", matchTo, got)
+		}
+	}
+	// One past the horizon on one side only — a 66-point match at 0-3, the
+	// leader winning a point: 65-away (clamped to 64) against 63-away. n0
+	// clamps, n1 does not, and the answer is the last row's second-to-last
+	// cell — not the corner.
+	got := GnuBGGetME(0, 3, gnuBGMaxScore+2, 0, 1, 0, false)
+	if want := float64(preCrawfordMET[gnuBGMaxScore-1][gnuBGMaxScore-2]); got != want {
+		t.Errorf("65-away (clamped) vs 63-away: %v, want MET[63][62] = %v", got, want)
+	}
+	if got == corner {
+		t.Errorf("65-away vs 63-away answers the corner: the clamp hit both sides")
+	}
+	// The refusal lives one layer up, and must stay there: MaxScore is what
+	// gammonnet.matchMaxAway reads.
+	if MaxScore != gnuBGMaxScore {
+		t.Errorf("MaxScore = %d, want %d", MaxScore, gnuBGMaxScore)
+	}
+}
