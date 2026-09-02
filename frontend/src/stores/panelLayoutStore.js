@@ -77,11 +77,13 @@ export function setPanelPosition(pos) {
 
 // Panel size, in pixels: the height App.svelte applies in bottom mode, the
 // width it applies in side mode (the other dimension stretches to fill the
-// window — see App.svelte's .panel-wrapper.side rule). Generous enough by
-// default that the Eval tab's stacked evaluation and race tables fit without
-// scrolling in the common case (mirrors config.go's DefaultPanelHeight/Width).
-export const DEFAULT_PANEL_HEIGHT = 380;
-export const DEFAULT_PANEL_WIDTH = 520;
+// window — see App.svelte's .panel-wrapper.side rule). These are the values
+// of config.go's DefaultPanelHeight/Width, which the backend answers on a
+// first launch: the layout is drawn with them before the answer arrives, so
+// a different pair here made the panel jump on every first launch (#201).
+// panelDefaults.sync.test.js keeps the two files in step.
+export const DEFAULT_PANEL_HEIGHT = 250;
+export const DEFAULT_PANEL_WIDTH = 420;
 
 export const panelHeightStore = writable(DEFAULT_PANEL_HEIGHT);
 export const panelWidthStore = writable(DEFAULT_PANEL_WIDTH);
