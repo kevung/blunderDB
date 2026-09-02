@@ -151,6 +151,9 @@ export default {
                         e tornare alla lista dei mazzi.
                     </p>
                     <p>
+                        <strong>Mostrare la risposta:</strong> La carta pone una domanda; rifletti, poi premi <strong>Spazio</strong> (o fai clic sull'area mascherata) per rivelare l'analisi registrata della posizione. Compare sotto i pulsanti di valutazione, che restano a portata. Non è necessario rivelarla per valutare, e si rimaschera alla carta successiva, non quando cambi semplicemente scheda.
+                    </p>
+                    <p>
                         <strong>Ferma/Riprendi:</strong> Puoi fermare una sessione di ripasso in qualsiasi momento premendo <strong>Esc</strong>. Il pulsante cambia in <em>Riprendi</em> mostrando i tuoi progressi. Fai clic su di esso per
                         continuare da dove avevi lasciato.
                     </p>
@@ -648,6 +651,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>SPAZIO</td>
+                                <td>Mostrare la risposta (l'analisi registrata della posizione)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Valuta: Di nuovo (ripasso fallito, mostra di nuovo presto)</td>
