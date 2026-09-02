@@ -9,7 +9,9 @@ Règles : un item **fait** reste dans la section *Historique* avec sa date et
 son commit ; un item **ouvert** est rangé par domaine. Les gros chantiers
 méritent chacun leur propre décision (et éventuellement leur ADR) avant
 lancement — ne pas les commencer « en passant ». Le plan courant qui
-priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
+priorise ces items est `tasks/plan-amelioration-2026-09b/README.md` (second
+audit du 2026-09-02) ; sa fiche A.14 liste les items de ce fichier à basculer
+dans l'historique.
 
 ## Ouvert — Backend
 

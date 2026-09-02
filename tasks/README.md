@@ -1,7 +1,7 @@
 # blunderDB v2.0.0 Optimization — Task Sheets
 
 > `tasks/` also holds the later plans (`plan-amelioration-2026-08/`,
-> `plan-amelioration-2026-09/`), the per-feature sheets (`ts-bearoff/`,
+> `plan-amelioration-2026-09/`, `plan-amelioration-2026-09b/` — the current one), the per-feature sheets (`ts-bearoff/`,
 > `stats-panel/`, `gammonnet-perf/`, …) and the single open-items list, [`BACKLOG.md`](BACKLOG.md).
 > The rest of this file is the v2.0.0 sheet index, kept as execution history.
 
