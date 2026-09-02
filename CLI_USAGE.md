@@ -36,6 +36,8 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `search` - Search positions with filters
 - `list` - List database contents
 - `match` - Display match positions and analysis
+- `collection` - Manage collections (list, show, create, rename, delete, export)
+- `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `epc` - EPC, win probability and money cube verdict for a bearoff position
 - `analyze` - Write a gammonNet analysis for every position missing one
 - `info` - Display database metadata
@@ -642,6 +644,112 @@ Position 2 [Game 1, Move 2]
   ...
 ```
 
+## Collection Command
+
+Manage collections — the hand-picked sets of positions of the GUI's
+Collections panel. Every sub-command takes `--db`; `list` and `show` print
+`text` (default), `json` or `csv` like `list`.
+
+```bash
+./blunderDB collection <sub-command> [options]
+```
+
+**Sub-commands:**
+- `list` - List collections: id, name, number of positions, description
+- `show --id <id>` - List the positions of one collection: id, 1-based index in
+  the database (the number the GUI's status bar shows), score, decision type
+  and XGID
+- `create --name <name> [--description <text>]` - Create an empty collection
+- `rename --id <id> --name <name> [--description <text>]` - Rename a collection
+  (the description is kept unless given)
+- `delete --id <id> [--confirm]` - Delete a collection; its positions stay in
+  the database
+- `export --id <id[,id…]> --out <file.db> [--analysis=false] [--comments=false]
+  [--watermark <text>] [--watermark-note <text>]` - Export one or more
+  collections to a new database file, the same call the GUI's export dialog
+  makes (see *Marking and protecting an export*)
+
+The XGID printed by `show` is the one stored with the position's analysis when
+there is one (BGF and XGP imports); otherwise it is generated from the board
+exactly as the GUI's *Copy position* does — the match length is then the
+larger away score, since a stored position does not retain the real one.
+
+**Examples:**
+```bash
+# All collections
+./blunderDB collection list --db database.db
+
+# Positions of collection 3, as CSV for a spreadsheet
+./blunderDB collection show --db database.db --id 3 --format csv
+
+# Create, rename, delete
+./blunderDB collection create --db database.db --name "Blitz openings"
+./blunderDB collection rename --db database.db --id 3 --name "Openings"
+./blunderDB collection delete --db database.db --id 3 --confirm
+
+# Export two collections, marked with their origin
+./blunderDB collection export --db database.db --id 3,4 --out openings.db \
+    --watermark "Cours de Jean Dupont - 12 mars 2026"
+```
+
+**Example output (`show`):**
+```
+Collection 1: Openings
+  Positions: 2
+
+ID  Index  Score  Type  XGID
+--  -----  -----  ----  ----
+12  12     7-7    cube  -a-B-aD-C---cD---cbeB-----:0:0:1:00:0:0:0:7:0
+40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
+```
+
+## Anki Command
+
+Inspect and maintain the spaced-repetition (FSRS) decks of the GUI's Anki
+panel. Reviewing a card needs the board and stays in the GUI; the CLI lists,
+measures and resynchronises.
+
+```bash
+./blunderDB anki <sub-command> [options]
+```
+
+**Sub-commands:**
+- `decks [--format text|json|csv]` - List decks with their source, card count,
+  cards due and new cards
+- `stats --deck <id> [--format text|json]` - Review statistics of one deck:
+  total, new, learning, review due, due now, plus its FSRS parameters
+- `forecast [--deck <id>] [--days <n>] [--format text|json|csv]` - Cards coming
+  due per calendar day (UTC) over the next `n` days (default 30, max 365); day
+  0 holds every overdue card; `--deck 0` (the default) covers every deck
+- `sync --deck <id>` - Add a card for every position of the deck's source that
+  has none yet; existing cards keep their scheduling state
+
+A deck built from a collection re-reads its collection. A deck built from a
+search stores the search as the GUI saved it (command, board and the position
+ids found at the time): the search grammar lives in the GUI, so the CLI
+resynchronises from the stored ids and says so on stderr — open the deck in
+the GUI to re-run the search itself.
+
+**Examples:**
+```bash
+./blunderDB anki decks --db database.db
+./blunderDB anki stats --db database.db --deck 2 --format json
+./blunderDB anki forecast --db database.db --deck 2 --days 14
+./blunderDB anki sync --db database.db --deck 2
+```
+
+**Example output (`forecast`):**
+```
+Day         Due
+---         ---
+2026-09-02  12
+2026-09-03  4
+2026-09-04  0
+...
+
+37 card(s) due over 14 day(s)
+```
+
 ## EPC Command
 
 Compute the Effective Pip Count, the win probability and the money cube
@@ -1012,6 +1120,9 @@ blunderDB call matches.get      --db mydb.db --json '{"id":1}'
 # Mutations
 blunderDB call positions.save   --db mydb.db --json '{"position":{...}}'
 blunderDB call matches.delete   --db mydb.db --json '{"id":42}'
+
+# Maintenance (SQLite backend only; the same code path as `vacuum`)
+blunderDB call maintenance.vacuum --db mydb.db
 ```
 
 Flags:

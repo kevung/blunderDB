@@ -46,6 +46,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.statsRoutes()...)
 	rs = append(rs, s.ingestRoutes()...)
 	rs = append(rs, s.tenantRoutes()...)
+	rs = append(rs, s.maintenanceRoutes()...)
 	rs = append(rs, s.gammonnetRoutes()...)
 	return rs
 }

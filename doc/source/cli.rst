@@ -56,6 +56,8 @@ Commandes disponibles
    "search", "Recherche des positions avec filtres."
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
+   "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
+   "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID)."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "info", "Affiche les métadonnées de la base."
@@ -456,6 +458,111 @@ Affiche les positions et analyses d'un match importé.
 
    # Export JSON vers un fichier
    ./blunderdb match --db base.db --id 1 --output match1.json
+
+collection — Gérer les collections
+----------------------------------
+
+Gère les collections, ces ensembles de positions choisies à la main dans le
+panneau Collections de l'interface graphique. Chaque sous-commande prend
+``--db`` ; ``list`` et ``show`` acceptent ``--format text`` (défaut), ``json``
+ou ``csv``, comme ``list``.
+
+.. code-block:: bash
+
+   ./blunderdb collection <sous-commande> [options]
+
+**Sous-commandes:**
+
+* ``list`` — Liste des collections : id, nom, nombre de positions, description.
+* ``show --id <id>`` — Positions d'une collection : id, index (le numéro
+  1-based affiché dans la barre d'état de l'interface graphique), score, type
+  de décision et XGID.
+* ``create --name <nom> [--description <texte>]`` — Crée une collection vide.
+* ``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une
+  collection (la description est conservée si elle n'est pas donnée).
+* ``delete --id <id> [--confirm]`` — Supprime une collection ; ses positions
+  restent dans la base.
+* ``export --id <id[,id…]> --out <fichier.db> [--analysis=false]
+  [--comments=false] [--watermark <texte>] [--watermark-note <texte>]`` —
+  Exporte une ou plusieurs collections vers un nouveau fichier de base, par
+  le même appel que la fenêtre d'export de l'interface graphique (voir la
+  commande ``export`` pour le filigrane).
+
+Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la
+position quand il existe (imports BGF et XGP) ; sinon il est généré depuis le
+damier exactement comme le fait *Copier la position* dans l'interface
+graphique — la longueur du match est alors le plus grand des deux scores
+restants, une position enregistrée ne retenant pas la vraie.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Toutes les collections
+   ./blunderdb collection list --db base.db
+
+   # Positions de la collection 3, en CSV pour un tableur
+   ./blunderdb collection show --db base.db --id 3 --format csv
+
+   # Créer, renommer, supprimer
+   ./blunderdb collection create --db base.db --name "Ouvertures blitz"
+   ./blunderdb collection rename --db base.db --id 3 --name "Ouvertures"
+   ./blunderdb collection delete --db base.db --id 3 --confirm
+
+   # Exporter deux collections, marquées de leur origine
+   ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
+       --watermark "Cours de Jean Dupont - 12 mars 2026"
+
+anki — Paquets de répétition espacée
+-------------------------------------
+
+Consulte et entretient les paquets de répétition espacée (FSRS) du panneau
+Anki de l'interface graphique. La révision d'une carte demande le damier et
+reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
+
+.. code-block:: bash
+
+   ./blunderdb anki <sous-commande> [options]
+
+**Sous-commandes:**
+
+* ``decks [--format text|json|csv]`` — Liste des paquets : source, nombre de
+  cartes, cartes dues, cartes nouvelles.
+* ``stats --deck <id> [--format text|json]`` — Statistiques de révision d'un
+  paquet : total, nouvelles, en apprentissage, à revoir, dues maintenant, et
+  ses paramètres FSRS.
+* ``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes
+  arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours
+  (défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard ;
+  ``--deck 0`` (défaut) couvre tous les paquets.
+* ``sync --deck <id>`` — Ajoute une carte pour chaque position de la source du
+  paquet qui n'en a pas encore ; les cartes existantes gardent leur
+  planification.
+
+Un paquet fondé sur une collection relit sa collection. Un paquet fondé sur
+une recherche conserve la recherche telle que l'interface graphique l'a
+enregistrée (commande, damier et identifiants des positions trouvées à ce
+moment-là) : la grammaire de recherche vit dans l'interface graphique, la CLI
+resynchronise donc depuis les identifiants enregistrés et le signale sur la
+sortie d'erreur — ouvrez le paquet dans l'interface graphique pour rejouer la
+recherche elle-même.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb anki decks --db base.db
+   ./blunderdb anki stats --db base.db --deck 2 --format json
+   ./blunderdb anki forecast --db base.db --deck 2 --days 14
+   ./blunderdb anki sync --db base.db --deck 2
+
+   # Day         Due
+   # ---         ---
+   # 2026-09-02  12
+   # 2026-09-03  4
+   # ...
+   #
+   # 37 card(s) due over 14 day(s)
 
 epc — Calculatrice EPC
 ------------------------

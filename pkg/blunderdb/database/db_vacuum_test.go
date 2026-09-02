@@ -60,10 +60,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 		t.Fatalf("delete padding: %v", err)
 	}
 
-	sizeBeforeOnDisk, err := vacuumFileSize(dbPath)
-	if err != nil {
-		t.Fatalf("stat before: %v", err)
-	}
+	sizeBeforeOnDisk := fileSizeOf(t, dbPath)
 
 	result, err := d.Vacuum()
 	if err != nil {
@@ -85,10 +82,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	}
 
 	// The reported "after" size must match reality.
-	sizeAfterOnDisk, err := vacuumFileSize(dbPath)
-	if err != nil {
-		t.Fatalf("stat after: %v", err)
-	}
+	sizeAfterOnDisk := fileSizeOf(t, dbPath)
 	if sizeAfter != sizeAfterOnDisk {
 		t.Errorf("Vacuum sizeAfter=%d does not match on-disk size=%d", sizeAfter, sizeAfterOnDisk)
 	}
@@ -110,7 +104,17 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 		t.Errorf("position count after vacuum = %d, want 1", remaining)
 	}
 
-	t.Logf("vacuum reclaimed %s (%d -> %d bytes)", vacuumHumanBytes(sizeBefore-sizeAfter), sizeBefore, sizeAfter)
+	t.Logf("vacuum reclaimed %d bytes (%d -> %d)", sizeBefore-sizeAfter, sizeBefore, sizeAfter)
+}
+
+// fileSizeOf is os.Stat().Size() with the failure folded into the test.
+func fileSizeOf(t *testing.T, path string) int64 {
+	t.Helper()
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("stat %s: %v", path, err)
+	}
+	return info.Size()
 }
 
 // TestVacuum_InMemoryDatabase makes sure Vacuum degrades gracefully on
@@ -139,23 +143,5 @@ func TestVacuum_NoDatabaseOpen(t *testing.T) {
 	d := NewDatabase()
 	if _, err := d.Vacuum(); err == nil {
 		t.Fatal("Vacuum on an unopened Database: want error, got nil")
-	}
-}
-
-// TestFreeSpaceBytes is a light sanity check on the platform-specific helper:
-// the current working directory's filesystem must report a nonzero amount of
-// free space, and asking about a nonexistent path must error rather than
-// silently report zero (which Vacuum would otherwise read as "no room").
-func TestFreeSpaceBytes(t *testing.T) {
-	wd, err := os.Getwd()
-	if err != nil {
-		t.Fatalf("Getwd: %v", err)
-	}
-	free, err := freeSpaceBytes(wd)
-	if err != nil {
-		t.Fatalf("freeSpaceBytes(%q): %v", wd, err)
-	}
-	if free == 0 {
-		t.Errorf("freeSpaceBytes(%q) = 0, want > 0", wd)
 	}
 }

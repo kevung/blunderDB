@@ -1,6 +1,6 @@
 //go:build !windows
 
-package database
+package sqlite
 
 import "syscall"
 

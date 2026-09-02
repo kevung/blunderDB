@@ -47,6 +47,7 @@ type (
 	AnkiCard             = domain.AnkiCard
 	AnkiReviewCard       = domain.AnkiReviewCard
 	AnkiDeckStats        = domain.AnkiDeckStats
+	AnkiForecastDay      = domain.AnkiForecastDay
 	Tournament           = domain.Tournament
 	CommentEntry         = domain.CommentEntry
 	Point                = domain.Point

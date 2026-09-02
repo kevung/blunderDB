@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"strconv"
@@ -288,6 +289,20 @@ func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {
 	`, now, now, deckID).Scan(&stats.NewCount, &stats.LearningCount, &stats.ReviewCount, &stats.DueCount, &stats.TotalCount)
 
 	return stats, err
+}
+
+// GetAnkiForecast projects how many cards of a deck come due over the next
+// days calendar days (offset 0 absorbing every overdue card); deckID 0 covers
+// every deck. It delegates to the Storage backend so the CLI's `anki forecast`
+// and the daemon's /v1/anki.forecast read the same projection.
+func (d *Database) GetAnkiForecast(deckID int64, days int) ([]AnkiForecastDay, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().Forecast(context.Background(), "", deckID, days)
 }
 
 // GetNextAnkiCard returns the next card due for review in a deck
