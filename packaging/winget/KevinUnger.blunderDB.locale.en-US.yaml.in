@@ -1,0 +1,41 @@
+# Template — the @-placeholders are substituted by scripts/winget-render.sh (also
+# run by the `package-manifests` job in .github/workflows/build.yml on a tag).
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+
+PackageIdentifier: KevinUnger.blunderDB
+PackageVersion: @VERSION@
+PackageLocale: en-US
+Publisher: Kévin Unger
+PublisherUrl: https://github.com/kevung
+PublisherSupportUrl: https://github.com/kevung/blunderDB/issues
+Author: Kévin Unger
+PackageName: blunderDB
+PackageUrl: https://github.com/kevung/blunderDB
+License: MIT
+LicenseUrl: https://github.com/kevung/blunderDB/blob/main/LICENSE
+Copyright: © 2024-2026 Kévin Unger. All rights reserved.
+CopyrightUrl: https://github.com/kevung/blunderDB/blob/main/LICENSE
+ShortDescription: Backgammon blunder analysis tool
+Description: |-
+  blunderDB stores backgammon positions and matches analysed by eXtreme Gammon,
+  GNU Backgammon or BGBlitz in a single SQLite file, then lets you search them
+  by checker structure, score, cube, error size or free text, review your
+  blunders as flashcards, and track your error rate over time. The same
+  executable runs the desktop application and a command-line interface
+  (import, search, export, statistics, headless server).
+Moniker: blunderdb
+Tags:
+- backgammon
+- blunder
+- analysis
+- extreme-gammon
+- gnubg
+- sqlite
+ReleaseNotesUrl: https://github.com/kevung/blunderDB/releases/tag/@VERSION@
+Documentations:
+- DocumentLabel: User manual
+  DocumentUrl: https://kevung.github.io/blunderDB/en/
+- DocumentLabel: Repository
+  DocumentUrl: https://github.com/kevung/blunderDB
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

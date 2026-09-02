@@ -1,0 +1,20 @@
+# Template — the @-placeholders (version, checksum, release date) are
+# substituted by scripts/winget-render.sh (also run by the `package-manifests`
+# job in .github/workflows/build.yml on a release tag).
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+
+PackageIdentifier: KevinUnger.blunderDB
+PackageVersion: @VERSION@
+# The release .exe is a single self-contained binary (Wails, WebView2 runtime
+# fetched on first launch if missing): no installer, so winget copies it to
+# its portable packages root and exposes the command alias below.
+InstallerType: portable
+Commands:
+- blunderdb
+ReleaseDate: @RELEASE_DATE@
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/kevung/blunderDB/releases/download/@VERSION@/blunderDB-windows-@VERSION@.exe
+  InstallerSha256: @SHA256@
+ManifestType: installer
+ManifestVersion: 1.6.0
