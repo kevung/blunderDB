@@ -39,7 +39,7 @@ func (b binder) Search() storage.SearchStore          { return &sqlshared.Search
 func (b binder) SearchHistory() storage.SearchHistoryStore {
 	return &sqlshared.SearchHistoryStore{DB: b.shared()}
 }
-func (b binder) Stats() storage.StatsStore { return &statsStore{b.db} }
+func (b binder) Stats() storage.StatsStore { return &statsStore{&sqlshared.StatsStore{DB: b.shared()}} }
 func (b binder) History() storage.CommandHistoryStore {
 	return &sqlshared.CommandHistoryStore{DB: b.shared()}
 }

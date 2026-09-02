@@ -19,10 +19,6 @@ type SearchStore struct{ DB Execer }
 
 var _ storage.SearchStore = (*SearchStore)(nil)
 
-// statsErrExpr is the SQL CASE expression that selects the correct error
-// column based on a position's decision type.
-const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
-
 // Find streams the positions matching f. It is a faithful port of the
 // Database wrapper's LoadPositionsByFiltersCore: the cheap predicates are
 // pushed to SQL, the rest are evaluated in Go on the narrowed result set.
