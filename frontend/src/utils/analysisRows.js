@@ -169,6 +169,41 @@ const CHECKER_HEADER_KEYS = {
     engine: 'analysis.engine'
 };
 
+// The reading order of a play: the least advanced checker moves first.
+//
+// A play is a set of steps, and the order its tokens are written in carries no
+// meaning to the engine — which is why they arrive in whatever order their
+// producer chose: gammonNet sorts them as strings ("18/14 24/18"), and an
+// imported analysis keeps XG's or gnubg's own order. A reader, though, replays
+// them one after the other on the board, so a play reads naturally only when it
+// starts from the back: "24/18 18/14", never "18/14 24/18".
+//
+// The rank of a token is its ORIGIN point, in the mover-relative numbering the
+// notation already uses (24 = the mover's own back checkers, "bar" further back
+// still, 25 here). Ties keep their original order — sort is stable — so
+// "8/5 8/3" is left exactly as its producer wrote it.
+//
+// Anything that does not parse as this notation ("Cannot move", a free-text
+// cell) is returned untouched: the rule reorders a play, it never rewrites a
+// string it does not understand.
+function tokenOrigin(token) {
+    const from = token.split('/')[0];
+    if (from.toLowerCase() === 'bar') return 25;
+    const point = Number.parseInt(from, 10);
+    return Number.isNaN(point) || point < 1 || point > 24 ? null : point;
+}
+
+export function orderMoveTokens(move) {
+    if (!move) return '';
+    const tokens = move.trim().split(/\s+/).filter(Boolean);
+    const ranked = tokens.map((token) => ({ token, origin: tokenOrigin(token) }));
+    if (ranked.some((r) => r.origin === null)) return move;
+    return ranked
+        .sort((a, b) => b.origin - a.origin)
+        .map((r) => r.token)
+        .join(' ');
+}
+
 function chanceCells(vector) {
     return [vector?.playerWinChance, vector?.playerGammonChance, vector?.playerBackgammonChance, vector?.opponentWinChance, vector?.opponentGammonChance, vector?.opponentBackgammonChance].map(
         (v) => formatChance(v) ?? DASH
@@ -178,6 +213,9 @@ function chanceCells(vector) {
 /**
  * checkerRows lays out a ranked candidate list. Sorting, truncation and
  * selection stay with the caller; the rows come back in the order given.
+ *
+ * The move cell is rewritten in reading order (orderMoveTokens above): the
+ * least advanced checker moves first, whatever order the producer wrote.
  *
  * An absent value is a dash — the project's mark for a value never measured,
  * never for a zero. The one exception is the error column: the best move of a
@@ -204,7 +242,7 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
         rows: (moves ?? []).map((move) => ({
             key: move.index ?? move.move,
             move,
-            label: move.move ?? '',
+            label: orderMoveTokens(move.move),
             cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError ?? 0), ...chanceCells(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
             highlight: isPlayedMove(move)
         }))
