@@ -106,8 +106,11 @@ Même bump que A.2/B.3.
 - `positions_sqlite.go:152-171` : éditer une position vers un hash existant
   remonte `UNIQUE constraint failed` brut.
 - [ ] Diagnostic « bloc d'analyse non reconnu (langue ?) » remonté à la GUI
-      (toast) et à la CLI ; ajouter ES/IT/RU/EL/FI aux marqueurs si XG les
-      exporte (à vérifier sur échantillons — voir prompt P9).
+      (toast) et à la CLI. **Le rapport [P9](../../docs/recherche/P9-formats-de-fichiers.md)
+      tranche la liste** : XG n'existe qu'en anglais, allemand, français, espagnol,
+      japonais, grec et russe — donc n'ajouter que **ES, EL, RU** (jamais IT, FI, NL, PT :
+      ces interfaces XG n'existent pas). Les libellés exacts restent à relever sur des
+      échantillons réels ; ne pas inventer de marqueur.
 - [ ] Refuser l'import avec un message nommant le jeu et le coup si un joueur
       a ≠ 15 pions ; helper `domain.AwayScores`, `domain.CubeExponent`,
       `(*Board).RecomputeBearoff()` partagés par les trois importeurs.
@@ -192,9 +195,15 @@ Préalable de D.8 (pagination front) et de I.x (catégorisation).
 chaque fusion pendant l'import, pas de dictionnaire.
 - [ ] Étape 1 (sans changement de format) : fusionner les fragments en
       mémoire, une seule compression ; mesurer niveau 6 vs 9 (temps × taille).
-- [ ] Étape 2 (format versionné) : dictionnaire partagé (zlib `NewWriterLevelDict`
-      ou zstd) — voir prompt P11 ; bump de la **version de blob**, pas du schéma ;
-      fuzz étendu ; `vacuum` peut recompresser en tâche de fond.
+- [ ] Étape 2 (format versionné) : **zstd niveau 19 avec dictionnaire partagé**, via
+      `github.com/klauspost/compress/zstd` (pur Go, pas de cgo) — recommandation chiffrée
+      du rapport [P11](../../docs/recherche/P11-compression-blobs.md), qui établit que le
+      **dictionnaire est le levier principal** et qu'un format binaire (CBOR,
+      MessagePack) ne rapporte plus que 10 à 20 % une fois la compression appliquée, donc
+      **garder le JSON**. Migration par **octet de version en tête de blob** (zlib
+      commence par `78 9C`, zstd par `28 B5 2F FD`), recompression par lots en tâche de
+      fond, `vacuum` comme déclencheur. Bump de la version de blob, pas du schéma ; fuzz
+      étendu avec un seed par format.
 - [ ] `analysis_engine` **et** `analysis_depth` promus en colonnes indexées
       (bump schéma, même vague que B.3/B.5 si le calendrier le permet) :
       supprime le décodage complet de `positionIDsWithStaleGammonNet` (C.7).
