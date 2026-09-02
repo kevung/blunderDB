@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-02 14:11+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1303,15 +1303,64 @@ msgstr ""
 "size of the side panel is remembered. See :ref:`panneau_epc`, "
 ":ref:`manuel` and :ref:`cli`."
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:1
+msgid "0.35.0"
+msgstr "0.35.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet). Le mode serveur est publié en **image "
+"Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la "
+"route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité"
+" d'émetteur du serveur (``--identity-dir``). L'évaluateur gammonNet "
+"**value ses feuilles avec le videau** : au score, les verdicts de la "
+"recherche se rapprochent de ceux d'eXtreme Gammon. Chaque release livre "
+"désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en "
+"plus des paquets Debian, RPM et AUR. Dans l'interface, la bibliothèque "
+"est **paginée** (une base de 50 000 positions ne charge plus tout en "
+"mémoire à chaque rafraîchissement), les fenêtres modales partagent un "
+"même socle (focus, Échap, accessibilité), le plateau ne redessine que ce "
+"qui change, et le binaire perd 5,5 Mo de police japonaise inutile. "
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient. Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr ""
+"The command line gains two families: ``blunderdb collection`` (list, "
+"show, create, rename, delete, export a collection) and ``blunderdb anki``"
+" (decks, statistics, review forecast, resynchronising a deck). Server "
+"mode is published as a **Docker image** (``ghcr.io/kevung/blunderdb-"
+"serve``, amd64 and arm64), gains the ``maintenance.vacuum`` endpoint and "
+"**watermarks its exports** with the server's issuer identity "
+"(``--identity-dir``). The gammonNet evaluator **values its leaves with "
+"the cube**: at the match score, the search's verdicts move closer to "
+"those of eXtreme Gammon. Each release now ships **winget and Homebrew "
+"manifests** and a Flatpak bundle, in addition to the Debian, RPM and AUR "
+"packages. In the interface, the library is **paginated** (a database of "
+"50,000 positions no longer loads entirely into memory on every "
+"refresh), modal windows share a common foundation (focus, Escape, "
+"accessibility), the board only redraws what changes, and the binary "
+"sheds 5.5 MB of unused Japanese font. Notable fixes: a database imported "
+"through \"Import Database\" kept positions invisible to filters and "
+"duplicated on a second import (fixed on open), the Merge button in the "
+"player-merge window stayed greyed out, the server's export was empty, "
+"and on Windows deleting the downloaded bearoff database and ``create "
+"--force`` both failed. See :ref:`cli`, :ref:`headless` and :ref:`manuel`."
+
+#: ../../source/index.rst:171
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1319,7 +1368,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1334,41 +1383,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -1376,19 +1425,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:236
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:241
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:242
+#: ../../source/index.rst:243
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1396,7 +1445,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:246
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1407,7 +1456,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:251
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1416,4 +1465,47 @@ msgstr ""
 "*Nicolas Harmand*, a cheerful companion for over a decade in great "
 "adventures, and a fantastic sparring partner since he has caught the "
 "backgammon bug."
+
+#~ msgid ""
+#~ "La ligne de commande gagne deux "
+#~ "familles : ``blunderdb collection`` (lister,"
+#~ " afficher, créer, renommer, supprimer, "
+#~ "exporter une collection) et ``blunderdb "
+#~ "anki`` (paquets, statistiques, prévision des"
+#~ " révisions, resynchronisation d'un paquet). "
+#~ "Le mode serveur est publié en "
+#~ "**image Docker** (``ghcr.io/kevung/blunderdb-"
+#~ "serve``, amd64 et arm64), gagne la "
+#~ "route ``maintenance.vacuum`` et **filigrane "
+#~ "ses exports** avec l'identité d'émetteur "
+#~ "du serveur (``--identity-dir``). L'évaluateur"
+#~ " gammonNet **value ses feuilles avec "
+#~ "le videau** : au score, les "
+#~ "verdicts de la recherche se rapprochent"
+#~ " de ceux d'eXtreme Gammon. Chaque "
+#~ "release livre désormais les **manifestes "
+#~ "winget et Homebrew** et un bundle "
+#~ "Flatpak, en plus des paquets Debian, "
+#~ "RPM et AUR. Dans l'interface, la "
+#~ "bibliothèque est **paginée** (une base "
+#~ "de 50 000 positions ne charge plus"
+#~ " tout en mémoire à chaque "
+#~ "rafraîchissement), les fenêtres modales "
+#~ "partagent un même socle (focus, Échap,"
+#~ " accessibilité), le plateau ne redessine"
+#~ " que ce qui change, et le "
+#~ "binaire perd 5,5 Mo de police "
+#~ "japonaise inutile. Corrections notables : "
+#~ "une base importée par « Importer "
+#~ "une base » gardait des positions "
+#~ "invisibles aux filtres et dédoublées au"
+#~ " second import (réparé à l'ouverture), "
+#~ "le bouton Fusionner de la fenêtre "
+#~ "de fusion des joueurs restait grisé, "
+#~ "l'export du serveur était vide, et "
+#~ "sous Windows la suppression de la "
+#~ "base bearoff téléchargée et ``create "
+#~ "--force`` échouaient. Voir :ref:`cli`, "
+#~ ":ref:`mode_headless` et :ref:`manuel`."
+#~ msgstr ""
 

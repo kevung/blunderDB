@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-02 14:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -521,7 +521,14 @@ msgid ""
 "mode EDIT après une recherche sans résultats. Restauration de l'état du "
 "panneau de recherche lors du changement d'onglets. Suppression de 62 "
 "instructions de débogage des chemins critiques."
-msgstr "Tallennuksen optimointi: analyysitietojen zlib-pakkaus (noin 80 % osuudella pienempi), positioiden kompakti koodaus (noin 90 % osuudella pienempi koko). Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi. Korjattu tuplausvirheen mukaan tehtävä haku. Korjattu EDIT-tila haun jälkeen, kun tuloksia ei ole. Hakupaneelin tilan palautus välilehtiä vaihdettaessa. Poistettu 62 virheenkorjaustulostetta kriittisiltä poluilta."
+msgstr ""
+"Tallennuksen optimointi: analyysitietojen zlib-pakkaus (noin 80 % "
+"osuudella pienempi), positioiden kompakti koodaus (noin 90 % osuudella "
+"pienempi koko). Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn "
+"parantamiseksi. Korjattu tuplausvirheen mukaan tehtävä haku. Korjattu "
+"EDIT-tila haun jälkeen, kun tuloksia ei ole. Hakupaneelin tilan palautus "
+"välilehtiä vaihdettaessa. Poistettu 62 virheenkorjaustulostetta "
+"kriittisiltä poluilta."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -1296,23 +1303,24 @@ msgstr ""
 "**Sisäänrakennettu evaluaattori**: gammonNet, Go-kielelle siirrettynä ja "
 "blunderDB:hen käännettynä, evaluoi minkä tahansa aseman offline-tilassa "
 "ilman XG:tä tai gnuBG:tä — neuroverkko, 0–2-plyn haku karsinnalla, "
-"kuutiopäätös Janowskin mallin ja blunderDB:n match-ekviteettitaulukon mukaan "
-"sekä haku, joka kunnioittaa ottelun pistetilannetta. Bearoff-paneelista "
-"tulee **Eval**-paneeli: se esittää aseman faktat (molempien puolten voitto-, "
-"gammon- ja backgammon-todennäköisyydet, ekviteetti) ja sitten sen ainoan "
-"päätöksen, jota lauta pyytää, vakaalla ruudukolla ilman vieritystä; ottelun "
-"ekviteetit ovat **normalisoituja**, ja päätös « liian hyvä tuplattavaksi » "
-"tulee taas näkyviin. Evaluointi on **asteittainen**: 0-ply heti eleen "
-"jälkeen, sitten 2-ply lepotilassa, minkä tahansa uuden eleen "
-"peruutettavissa, ja syvyysmerkintä kertoo aina sen syvyyden, joka luvun "
-"tuotti. Koko lautaa, noppia ja pistetilannetta voi muokata siinä sekä "
-"hiirellä että näppäimistöllä, ja kirjaston asema tulee paneeliin ja poistuu "
-"siitä. Kaksipuolisen tietokannan ulkopuolisessa kilpajuoksussa kolmas, "
-"**evaluoitu** tila antaa kuutiopäätöksen ottelun pistetilanteessa, jota "
-"paneeli ei aiemmin tarjonnut. Asetusten **gammonNet**-välilehti erottaa "
-"näyttösyvyyden analyysisyvyydestä. Tuonnin jälkeen rajattu, näkyvä, "
-"peruutettava ja jatkettava **analyysierä** täydentää asemat, joilla ei ole "
-"yhtään analyysiä, korvaamatta koskaan tuotua analyysiä; olemassa olevan "
+"kuutiopäätös Janowskin mallin ja blunderDB:n match-ekviteettitaulukon "
+"mukaan sekä haku, joka kunnioittaa ottelun pistetilannetta. Bearoff-"
+"paneelista tulee **Eval**-paneeli: se esittää aseman faktat (molempien "
+"puolten voitto-, gammon- ja backgammon-todennäköisyydet, ekviteetti) ja "
+"sitten sen ainoan päätöksen, jota lauta pyytää, vakaalla ruudukolla ilman"
+" vieritystä; ottelun ekviteetit ovat **normalisoituja**, ja päätös « "
+"liian hyvä tuplattavaksi » tulee taas näkyviin. Evaluointi on "
+"**asteittainen**: 0-ply heti eleen jälkeen, sitten 2-ply lepotilassa, "
+"minkä tahansa uuden eleen peruutettavissa, ja syvyysmerkintä kertoo aina "
+"sen syvyyden, joka luvun tuotti. Koko lautaa, noppia ja pistetilannetta "
+"voi muokata siinä sekä hiirellä että näppäimistöllä, ja kirjaston asema "
+"tulee paneeliin ja poistuu siitä. Kaksipuolisen tietokannan "
+"ulkopuolisessa kilpajuoksussa kolmas, **evaluoitu** tila antaa "
+"kuutiopäätöksen ottelun pistetilanteessa, jota paneeli ei aiemmin "
+"tarjonnut. Asetusten **gammonNet**-välilehti erottaa näyttösyvyyden "
+"analyysisyvyydestä. Tuonnin jälkeen rajattu, näkyvä, peruutettava ja "
+"jatkettava **analyysierä** täydentää asemat, joilla ei ole yhtään "
+"analyysiä, korvaamatta koskaan tuotua analyysiä; olemassa olevan "
 "**kirjaston täydennysanalyysi** käynnistetään käyttöliittymästä, uudella "
 "komennolla ``blunderdb analyze`` tai palvelintilassa. Merkittäviä "
 "korjauksia: eXtreme Gammonista tuotu vastaus tuplaukseen peri tuplaajan "
@@ -1321,15 +1329,66 @@ msgstr ""
 "oikein, ja sivupaneelin koko muistetaan. Katso :ref:`panneau_epc`, "
 ":ref:`manuel` ja :ref:`cli`."
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:1
+msgid "0.35.0"
+msgstr "0.35.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet). Le mode serveur est publié en **image "
+"Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la "
+"route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité"
+" d'émetteur du serveur (``--identity-dir``). L'évaluateur gammonNet "
+"**value ses feuilles avec le videau** : au score, les verdicts de la "
+"recherche se rapprochent de ceux d'eXtreme Gammon. Chaque release livre "
+"désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en "
+"plus des paquets Debian, RPM et AUR. Dans l'interface, la bibliothèque "
+"est **paginée** (une base de 50 000 positions ne charge plus tout en "
+"mémoire à chaque rafraîchissement), les fenêtres modales partagent un "
+"même socle (focus, Échap, accessibilité), le plateau ne redessine que ce "
+"qui change, et le binaire perd 5,5 Mo de police japonaise inutile. "
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient. Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr ""
+"Komentorivi saa kaksi uutta perhettä: ``blunderdb collection`` (kokoelman "
+"luettelointi, näyttäminen, luonti, uudelleennimeäminen, poistaminen, "
+"vienti) ja ``blunderdb anki`` (pakat, tilastot, kertausten ennuste, pakan "
+"uudelleensynkronointi). Palvelintila julkaistaan **Docker-kuvana** "
+"(``ghcr.io/kevung/blunderdb-serve``, amd64 ja arm64), saa reitin "
+"``maintenance.vacuum`` ja **kirjoittaa vesileiman vienteihinsä** "
+"palvelimen liikkeeseenlaskijaidentiteetillä (``--identity-dir``). "
+"gammonNet-evaluaattori **arvottaa lehtisolmunsa kuutiolla**: "
+"pistetilanteessa haun arviot lähenevät eXtreme Gammonin arvioita. "
+"Jokainen julkaisu tarjoaa nyt **winget- ja Homebrew-manifestit** sekä "
+"Flatpak-paketin, Debian-, RPM- ja AUR-pakettien lisäksi. "
+"Käyttöliittymässä kirjasto on **sivutettu** (50 000 aseman tietokanta ei "
+"enää lataudu kokonaan muistiin joka päivityksellä), modaali-ikkunat "
+"jakavat saman perustan (fokus, Esc, saavutettavuus), lauta piirtää "
+"uudelleen vain muuttuvan osan, ja binääristä katoaa 5,5 Mt tarpeetonta "
+"japanilaista fonttia. Merkittäviä korjauksia: « Tuo tietokanta » "
+"-toiminnolla tuotu tietokanta säilytti suodattimille näkymättömiä ja "
+"toisella tuonnilla kahdentuneita asemia (korjattu avattaessa), "
+"pelaajien yhdistämisikkunan Yhdistä-painike pysyi harmaana, palvelimen "
+"vienti oli tyhjä, ja Windowsissa ladatun bearoff-tietokannan poistaminen "
+"sekä ``create --force`` epäonnistuivat. Katso :ref:`cli`, :ref:`headless` "
+"ja :ref:`manuel`."
+
+#: ../../source/index.rst:171
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1337,7 +1396,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1352,41 +1411,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -1394,19 +1453,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:236
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:241
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:242
+#: ../../source/index.rst:243
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1415,7 +1474,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:246
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1427,7 +1486,7 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:251
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1485,4 +1544,47 @@ msgstr ""
 #~ "tyhjäksi (järjestelmän leikepöydän hajottamat "
 #~ "aksentit). Katso :ref:`headless` ja "
 #~ ":ref:`telecharge_install`."
+
+#~ msgid ""
+#~ "La ligne de commande gagne deux "
+#~ "familles : ``blunderdb collection`` (lister,"
+#~ " afficher, créer, renommer, supprimer, "
+#~ "exporter une collection) et ``blunderdb "
+#~ "anki`` (paquets, statistiques, prévision des"
+#~ " révisions, resynchronisation d'un paquet). "
+#~ "Le mode serveur est publié en "
+#~ "**image Docker** (``ghcr.io/kevung/blunderdb-"
+#~ "serve``, amd64 et arm64), gagne la "
+#~ "route ``maintenance.vacuum`` et **filigrane "
+#~ "ses exports** avec l'identité d'émetteur "
+#~ "du serveur (``--identity-dir``). L'évaluateur"
+#~ " gammonNet **value ses feuilles avec "
+#~ "le videau** : au score, les "
+#~ "verdicts de la recherche se rapprochent"
+#~ " de ceux d'eXtreme Gammon. Chaque "
+#~ "release livre désormais les **manifestes "
+#~ "winget et Homebrew** et un bundle "
+#~ "Flatpak, en plus des paquets Debian, "
+#~ "RPM et AUR. Dans l'interface, la "
+#~ "bibliothèque est **paginée** (une base "
+#~ "de 50 000 positions ne charge plus"
+#~ " tout en mémoire à chaque "
+#~ "rafraîchissement), les fenêtres modales "
+#~ "partagent un même socle (focus, Échap,"
+#~ " accessibilité), le plateau ne redessine"
+#~ " que ce qui change, et le "
+#~ "binaire perd 5,5 Mo de police "
+#~ "japonaise inutile. Corrections notables : "
+#~ "une base importée par « Importer "
+#~ "une base » gardait des positions "
+#~ "invisibles aux filtres et dédoublées au"
+#~ " second import (réparé à l'ouverture), "
+#~ "le bouton Fusionner de la fenêtre "
+#~ "de fusion des joueurs restait grisé, "
+#~ "l'export du serveur était vide, et "
+#~ "sous Windows la suppression de la "
+#~ "base bearoff téléchargée et ``create "
+#~ "--force`` échouaient. Voir :ref:`cli`, "
+#~ ":ref:`mode_headless` et :ref:`manuel`."
+#~ msgstr ""
 

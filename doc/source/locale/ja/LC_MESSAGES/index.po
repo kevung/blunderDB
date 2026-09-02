@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-02 14:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1133,12 +1133,13 @@ msgid ""
 msgstr ""
 "**内蔵の評価エンジン**\\ ：Go に移植され blunderDB にコンパイルされた gammonNet が、XG も gnuBG "
 "もなしに、任意のポジションをオフラインで評価します——ニューラルネットワーク、枝刈り付きの 0〜2-ply 探索、Janowski と "
-"blunderDB のマッチエクイティテーブルによるキューブ判断、そしてマッチスコアを尊重する探索。Bearoff パネルは\\ **Eval**\\ "
-"パネルになりました：ポジションの事実（両陣営の勝率・ギャモン率・バックギャモン率、エクイティ）を示し、次にボードが求める唯一の判断を、スクロールのない安定したグリッド上に表示します；マッチエクイティは\\ "
-"**正規化**\\ され、「ダブルには強すぎる」という判定が再び見えるようになりました。評価は\\ **段階的**\\ です：操作のたびに即座に "
-"0-ply、静止時に 2-ply "
-"が続き、新しい操作があればキャンセルされ、深さのラベルは常にその数値を生み出した深さを示します。ボード全体、ダイス、スコアはクリックでもキーボードでもそこで編集でき、ライブラリのポジションはパネルに入り、また出ていきます。two-sided "
-"データベースの範囲を超えるレースでは、第三の\\ **評価**\\ "
+"blunderDB のマッチエクイティテーブルによるキューブ判断、そしてマッチスコアを尊重する探索。Bearoff パネルは\\ "
+"**Eval**\\ "
+"パネルになりました：ポジションの事実（両陣営の勝率・ギャモン率・バックギャモン率、エクイティ）を示し、次にボードが求める唯一の判断を、スクロールのない安定したグリッド上に表示します；マッチエクイティは\\"
+" **正規化**\\ され、「ダブルには強すぎる」という判定が再び見えるようになりました。評価は\\ **段階的**\\ です：操作のたびに即座に"
+" 0-ply、静止時に 2-ply "
+"が続き、新しい操作があればキャンセルされ、深さのラベルは常にその数値を生み出した深さを示します。ボード全体、ダイス、スコアはクリックでもキーボードでもそこで編集でき、ライブラリのポジションはパネルに入り、また出ていきます"
+"。two-sided データベースの範囲を超えるレースでは、第三の\\ **評価**\\ "
 "方式が、これまでパネルが示せなかったマッチスコアでのキューブ判定を提供します。設定の\\ **gammonNet**\\ "
 "タブは表示深度と解析深度を分離します。インポート後、範囲が定まり、可視で、キャンセル可能かつ再開可能な\\ **分析バッチ**\\ "
 "が、分析を一つも持たないポジションを埋めます——インポートされた分析を上書きすることは決してありません；既存の\\ **ライブラリの補完**\\ "
@@ -1148,15 +1149,64 @@ msgstr ""
 "に従うようになった点、gnuBG 分析の深さが正しく読み取られる点、サイドパネルのサイズが記憶される点。:ref:`panneau_epc`\\ "
 "、\\ :ref:`manuel`\\ 、\\ :ref:`cli` を参照。"
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:1
+msgid "0.35.0"
+msgstr "0.35.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet). Le mode serveur est publié en **image "
+"Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la "
+"route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité"
+" d'émetteur du serveur (``--identity-dir``). L'évaluateur gammonNet "
+"**value ses feuilles avec le videau** : au score, les verdicts de la "
+"recherche se rapprochent de ceux d'eXtreme Gammon. Chaque release livre "
+"désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en "
+"plus des paquets Debian, RPM et AUR. Dans l'interface, la bibliothèque "
+"est **paginée** (une base de 50 000 positions ne charge plus tout en "
+"mémoire à chaque rafraîchissement), les fenêtres modales partagent un "
+"même socle (focus, Échap, accessibilité), le plateau ne redessine que ce "
+"qui change, et le binaire perd 5,5 Mo de police japonaise inutile. "
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient. Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr ""
+"コマンドラインに\\ ``blunderdb collection``\\ "
+"（コレクションの一覧表示、表示、作成、名前変更、削除、エクスポート）と\\ "
+"``blunderdb anki``\\ "
+"（デッキの一覧表示、統計、復習の予測、デッキの再同期）という2つのファミリーが加わりました。サーバーモードは\\ "
+"**Docker イメージ**\\ （``ghcr.io/kevung/blunderdb-serve``、amd64 と "
+"arm64）として公開され、``maintenance.vacuum``\\ "
+"メソッドが加わり、サーバー自身の発行者識別情報（``--identity-dir``）で\\ "
+"**エクスポートに透かしを入れる**\\ ようになりました。gammonNet 評価エンジンは\\ "
+"**キューブを踏まえて末端局面を評価する**\\ "
+"ようになり、スコアがある状況での探索の判定は eXtreme Gammon のそれに近づきます。各リリースは、Debian、RPM、AUR "
+"の各パッケージに加えて、**winget と Homebrew のマニフェスト**\\ および Flatpak "
+"バンドルを提供するようになりました。インターフェースでは、ライブラリが\\ **ページネーション**\\ "
+"されるようになり（5万件のポジションを持つデータベースが、更新のたびに全件をメモリへ読み込むことがなくなりました）、"
+"モーダルウィンドウが共通の基盤（フォーカス、Escape、アクセシビリティ）を共有するようになり、盤面は変化した部分だけを"
+"再描画するようになり、バイナリから不要な日本語フォント5.5MBが取り除かれました。主な修正：「データベースをインポート」"
+"で取り込んだデータベースは、フィルターに現れないポジションを保持したまま、2回目のインポートで重複していました"
+"（データベースを開く際に修復されるようになりました）。プレイヤー統合ウィンドウの「統合」ボタンがグレーアウトした"
+"ままでした。サーバーのエクスポートが空になっていました。Windows "
+"でダウンロード済みのベアオフデータベースの削除と\\ ``create --force``\\ が失敗していました。:ref:`cli`\\ 、\\ "
+":ref:`headless`\\ 、\\ :ref:`manuel`\\ を参照。"
+
+#: ../../source/index.rst:171
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1164,7 +1214,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1174,59 +1224,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:236
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:241
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:242
+#: ../../source/index.rst:243
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1234,7 +1284,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:246
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1244,7 +1294,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:251
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1292,4 +1342,47 @@ msgstr ""
 #~ "eXtreme Gammon "
 #~ "解析を貼り付けると空になる問題を修正しました（システムのクリップボードによってアクセント記号が分解されていたため）。:ref:`headless`"
 #~ " および :ref:`telecharge_install` を参照してください。"
+
+#~ msgid ""
+#~ "La ligne de commande gagne deux "
+#~ "familles : ``blunderdb collection`` (lister,"
+#~ " afficher, créer, renommer, supprimer, "
+#~ "exporter une collection) et ``blunderdb "
+#~ "anki`` (paquets, statistiques, prévision des"
+#~ " révisions, resynchronisation d'un paquet). "
+#~ "Le mode serveur est publié en "
+#~ "**image Docker** (``ghcr.io/kevung/blunderdb-"
+#~ "serve``, amd64 et arm64), gagne la "
+#~ "route ``maintenance.vacuum`` et **filigrane "
+#~ "ses exports** avec l'identité d'émetteur "
+#~ "du serveur (``--identity-dir``). L'évaluateur"
+#~ " gammonNet **value ses feuilles avec "
+#~ "le videau** : au score, les "
+#~ "verdicts de la recherche se rapprochent"
+#~ " de ceux d'eXtreme Gammon. Chaque "
+#~ "release livre désormais les **manifestes "
+#~ "winget et Homebrew** et un bundle "
+#~ "Flatpak, en plus des paquets Debian, "
+#~ "RPM et AUR. Dans l'interface, la "
+#~ "bibliothèque est **paginée** (une base "
+#~ "de 50 000 positions ne charge plus"
+#~ " tout en mémoire à chaque "
+#~ "rafraîchissement), les fenêtres modales "
+#~ "partagent un même socle (focus, Échap,"
+#~ " accessibilité), le plateau ne redessine"
+#~ " que ce qui change, et le "
+#~ "binaire perd 5,5 Mo de police "
+#~ "japonaise inutile. Corrections notables : "
+#~ "une base importée par « Importer "
+#~ "une base » gardait des positions "
+#~ "invisibles aux filtres et dédoublées au"
+#~ " second import (réparé à l'ouverture), "
+#~ "le bouton Fusionner de la fenêtre "
+#~ "de fusion des joueurs restait grisé, "
+#~ "l'export du serveur était vide, et "
+#~ "sous Windows la suppression de la "
+#~ "base bearoff téléchargée et ``create "
+#~ "--force`` échouaient. Voir :ref:`cli`, "
+#~ ":ref:`mode_headless` et :ref:`manuel`."
+#~ msgstr ""
 

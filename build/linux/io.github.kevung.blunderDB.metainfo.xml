@@ -40,6 +40,7 @@
   </categories>
 
   <releases>
+    <release version="0.35.0" date="2026-09-02" />
     <release version="0.34.1" date="2026-09-02" />
     <release version="0.34.0" date="2026-09-02" />
     <release version="0.33.1" date="2026-08-27" />

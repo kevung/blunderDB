@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-02 14:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1324,43 +1324,99 @@ msgid ""
 "et :ref:`cli`."
 msgstr ""
 "Ein **eingebetteter Evaluator**: gammonNet, nach Go portiert und in "
-"blunderDB einkompiliert, bewertet jede beliebige Stellung offline, ohne XG "
-"und ohne gnuBG — neuronales Netz, Suche mit 0 bis 2 Ply und Beschneidung, "
-"Doppler-Entscheidung nach Janowski und der Match-Equity-Tabelle von "
-"blunderDB sowie eine Suche, die den Matchstand berücksichtigt. Das "
-"Bearoff-Panel wird zum Panel **Eval**: Es zeigt die Fakten der Stellung "
-"(Gewinn-, Gammon- und Backgammon-Chancen beider Seiten, Equity) und dann die "
-"einzige Entscheidung, die das Brett verlangt, auf einem stabilen Raster ohne "
-"Scrollen; die Match-Equities sind **normalisiert**, und das Urteil „zu gut "
-"zum Doppeln“ wird wieder sichtbar. Die Bewertung ist **progressiv**: 0-Ply "
-"sofort bei jeder Eingabe, dann 2-Ply in der Ruhe, durch jede neue Eingabe "
-"abbrechbar, wobei das Tiefen-Label stets die Tiefe nennt, die den Wert "
-"erzeugt hat. Das ganze Brett, die Würfel und der Spielstand lassen sich dort "
+"blunderDB einkompiliert, bewertet jede beliebige Stellung offline, ohne "
+"XG und ohne gnuBG — neuronales Netz, Suche mit 0 bis 2 Ply und "
+"Beschneidung, Doppler-Entscheidung nach Janowski und der Match-Equity-"
+"Tabelle von blunderDB sowie eine Suche, die den Matchstand "
+"berücksichtigt. Das Bearoff-Panel wird zum Panel **Eval**: Es zeigt die "
+"Fakten der Stellung (Gewinn-, Gammon- und Backgammon-Chancen beider "
+"Seiten, Equity) und dann die einzige Entscheidung, die das Brett "
+"verlangt, auf einem stabilen Raster ohne Scrollen; die Match-Equities "
+"sind **normalisiert**, und das Urteil „zu gut zum Doppeln“ wird wieder "
+"sichtbar. Die Bewertung ist **progressiv**: 0-Ply sofort bei jeder "
+"Eingabe, dann 2-Ply in der Ruhe, durch jede neue Eingabe abbrechbar, "
+"wobei das Tiefen-Label stets die Tiefe nennt, die den Wert erzeugt hat. "
+"Das ganze Brett, die Würfel und der Spielstand lassen sich dort "
 "bearbeiten, per Klick wie per Tastatur, und eine Stellung der Bibliothek "
-"gelangt in das Panel hinein und wieder heraus. In einem Rennen jenseits der "
-"zweiseitigen Datenbank liefert ein drittes Regime, **bewertet**, das "
-"Würfel-Urteil beim Matchstand, das das Panel bisher nicht gab. Ein Reiter "
-"**gammonNet** in den Einstellungen trennt die Anzeigetiefe von der "
+"gelangt in das Panel hinein und wieder heraus. In einem Rennen jenseits "
+"der zweiseitigen Datenbank liefert ein drittes Regime, **bewertet**, das "
+"Würfel-Urteil beim Matchstand, das das Panel bisher nicht gab. Ein Reiter"
+" **gammonNet** in den Einstellungen trennt die Anzeigetiefe von der "
 "Analysetiefe. Nach einem Import füllt ein begrenzter, sichtbarer, "
-"abbrechbarer und wiederaufnehmbarer **Analyselauf** die Stellungen ohne jede "
-"Analyse, ohne je eine importierte Analyse zu überschreiben; das **Nachholen "
-"einer bestehenden Bibliothek** startet aus der Oberfläche, mit dem neuen "
-"Befehl ``blunderdb analyze`` oder im Servermodus. Nennenswerte Korrekturen: "
-"Die aus eXtreme Gammon importierte Antwort auf ein Doppel erbte die Analyse "
-"des Doppelnden, ohne gespiegelt zu werden; die Notation der Züge von Weiß "
-"und der Einträge von der Bar folgt gnuBG und XG; die Tiefe einer "
-"gnuBG-Analyse wird korrekt gelesen; und die Größe des Seitenpanels wird "
-"gespeichert. Siehe :ref:`panneau_epc`, :ref:`manuel` und :ref:`cli`."
+"abbrechbarer und wiederaufnehmbarer **Analyselauf** die Stellungen ohne "
+"jede Analyse, ohne je eine importierte Analyse zu überschreiben; das "
+"**Nachholen einer bestehenden Bibliothek** startet aus der Oberfläche, "
+"mit dem neuen Befehl ``blunderdb analyze`` oder im Servermodus. "
+"Nennenswerte Korrekturen: Die aus eXtreme Gammon importierte Antwort auf "
+"ein Doppel erbte die Analyse des Doppelnden, ohne gespiegelt zu werden; "
+"die Notation der Züge von Weiß und der Einträge von der Bar folgt gnuBG "
+"und XG; die Tiefe einer gnuBG-Analyse wird korrekt gelesen; und die Größe"
+" des Seitenpanels wird gespeichert. Siehe :ref:`panneau_epc`, "
+":ref:`manuel` und :ref:`cli`."
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:1
+msgid "0.35.0"
+msgstr "0.35.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet). Le mode serveur est publié en **image "
+"Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la "
+"route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité"
+" d'émetteur du serveur (``--identity-dir``). L'évaluateur gammonNet "
+"**value ses feuilles avec le videau** : au score, les verdicts de la "
+"recherche se rapprochent de ceux d'eXtreme Gammon. Chaque release livre "
+"désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en "
+"plus des paquets Debian, RPM et AUR. Dans l'interface, la bibliothèque "
+"est **paginée** (une base de 50 000 positions ne charge plus tout en "
+"mémoire à chaque rafraîchissement), les fenêtres modales partagent un "
+"même socle (focus, Échap, accessibilité), le plateau ne redessine que ce "
+"qui change, et le binaire perd 5,5 Mo de police japonaise inutile. "
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient. Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr ""
+"Die Kommandozeile erhält zwei Familien: ``blunderdb collection`` "
+"(Sammlungen auflisten, anzeigen, erstellen, umbenennen, löschen, "
+"exportieren) und ``blunderdb anki`` (Stapel, Statistiken, Vorschau der "
+"Wiederholungen, Neusynchronisierung eines Stapels). Der Servermodus wird "
+"als **Docker-Image** veröffentlicht (``ghcr.io/kevung/blunderdb-serve``, "
+"amd64 und arm64), erhält die Route ``maintenance.vacuum`` und **versieht "
+"seine Exporte mit einem Wasserzeichen** anhand der Aussteller-Identität "
+"des Servers (``--identity-dir``). Der Evaluator gammonNet **bewertet "
+"seine Blätter mit dem Doppler**: Beim Matchstand nähern sich die Urteile "
+"der Suche denen von eXtreme Gammon an. Jede Release liefert nun die "
+"**winget- und Homebrew-Manifeste** sowie ein Flatpak-Bundle, zusätzlich "
+"zu den Debian-, RPM- und AUR-Paketen. In der Oberfläche ist die "
+"Bibliothek **paginiert** (eine Datenbank mit 50 000 Positionen wird bei "
+"jeder Aktualisierung nicht mehr vollständig in den Speicher geladen), "
+"die modalen Fenster teilen sich eine gemeinsame Basis (Fokus, Escape, "
+"Barrierefreiheit), das Brett zeichnet nur noch das neu, was sich ändert,"
+" und die ausführbare Datei verliert 5,5 MB unnötiger japanischer "
+"Schriftart. Nennenswerte Korrekturen: Eine über „Datenbank importieren“ "
+"importierte Datenbank behielt Positionen, die für Filter unsichtbar "
+"waren und beim zweiten Import verdoppelt wurden (behoben beim Öffnen); "
+"die Schaltfläche „Zusammenführen“ im Fenster zum Zusammenführen der "
+"Spieler blieb ausgegraut; der Export des Servers war leer; und unter "
+"Windows schlugen das Löschen der heruntergeladenen Bearoff-Datenbank und"
+" ``create --force`` fehl. Siehe :ref:`cli`, :ref:`headless` und "
+":ref:`manuel`."
+
+#: ../../source/index.rst:171
 msgid "Sommaire"
 msgstr "Inhaltsverzeichnis"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "Contacts"
 msgstr "Kontakt"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1368,7 +1424,7 @@ msgstr ""
 "Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes"
 " unter dem Benutzernamen postmanpat."
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1384,31 +1440,31 @@ msgstr ""
 "Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
 "(konstruktive) Feedback ist willkommen."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "sur Github,"
 msgstr "auf GitHub,"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -1416,11 +1472,11 @@ msgstr ""
 "für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
 "erstellen."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid "Faire un don"
 msgstr "Spenden"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -1428,19 +1484,19 @@ msgstr ""
 "Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
 "unterstützen möchten, können Sie"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:236
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:241
 msgid "Remerciements"
 msgstr "Danksagungen"
 
-#: ../../source/index.rst:242
+#: ../../source/index.rst:243
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1449,7 +1505,7 @@ msgstr ""
 "lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
 "danken:"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:246
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1461,7 +1517,7 @@ msgstr ""
 "wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
 "besser zu spielen, weiter ermutigt."
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:251
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1521,4 +1577,47 @@ msgstr ""
 #~ "macOS, die leer blieb (von der "
 #~ "System-Zwischenablage zerlegte Akzente). Siehe"
 #~ " :ref:`headless` und :ref:`telecharge_install`."
+
+#~ msgid ""
+#~ "La ligne de commande gagne deux "
+#~ "familles : ``blunderdb collection`` (lister,"
+#~ " afficher, créer, renommer, supprimer, "
+#~ "exporter une collection) et ``blunderdb "
+#~ "anki`` (paquets, statistiques, prévision des"
+#~ " révisions, resynchronisation d'un paquet). "
+#~ "Le mode serveur est publié en "
+#~ "**image Docker** (``ghcr.io/kevung/blunderdb-"
+#~ "serve``, amd64 et arm64), gagne la "
+#~ "route ``maintenance.vacuum`` et **filigrane "
+#~ "ses exports** avec l'identité d'émetteur "
+#~ "du serveur (``--identity-dir``). L'évaluateur"
+#~ " gammonNet **value ses feuilles avec "
+#~ "le videau** : au score, les "
+#~ "verdicts de la recherche se rapprochent"
+#~ " de ceux d'eXtreme Gammon. Chaque "
+#~ "release livre désormais les **manifestes "
+#~ "winget et Homebrew** et un bundle "
+#~ "Flatpak, en plus des paquets Debian, "
+#~ "RPM et AUR. Dans l'interface, la "
+#~ "bibliothèque est **paginée** (une base "
+#~ "de 50 000 positions ne charge plus"
+#~ " tout en mémoire à chaque "
+#~ "rafraîchissement), les fenêtres modales "
+#~ "partagent un même socle (focus, Échap,"
+#~ " accessibilité), le plateau ne redessine"
+#~ " que ce qui change, et le "
+#~ "binaire perd 5,5 Mo de police "
+#~ "japonaise inutile. Corrections notables : "
+#~ "une base importée par « Importer "
+#~ "une base » gardait des positions "
+#~ "invisibles aux filtres et dédoublées au"
+#~ " second import (réparé à l'ouverture), "
+#~ "le bouton Fusionner de la fenêtre "
+#~ "de fusion des joueurs restait grisé, "
+#~ "l'export du serveur était vide, et "
+#~ "sous Windows la suppression de la "
+#~ "base bearoff téléchargée et ``create "
+#~ "--force`` échouaient. Voir :ref:`cli`, "
+#~ ":ref:`mode_headless` et :ref:`manuel`."
+#~ msgstr ""
 

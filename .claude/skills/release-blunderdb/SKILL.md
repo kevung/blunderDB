@@ -482,6 +482,15 @@ gh run list --workflow=aur.yml --limit 3      # did it run / succeed?
 If the secret isn't configured (or the run failed), publish manually from an Arch
 box: `scripts/aur-publish.sh <version> --push`.
 
+**Other assets CI attaches to the release (since 0.35.0).** The `package-manifests`
+job renders and uploads the winget manifests (`blunderDB-winget-manifests-<v>.zip`)
+and the Homebrew cask (`blunderdb-<v>.rb`); the `flatpak` job attaches
+`blunderDB-<v>.flatpak`; the `docker-serve` job pushes
+`ghcr.io/kevung/blunderdb-serve:<v>` and `:latest`. Submitting to winget-pkgs and to a
+Homebrew tap stays a human step (`packaging/winget/README.md`,
+`packaging/homebrew/README.md`). Check they all ran on the tag before the final
+report.
+
 **Flatpak — manual follow-up.** `packaging/flatpak/io.github.kevung.blunderDB.yml`
 pins the tarball `url` + `sha256`. It is **not** wired into CI (Flathub builds on
 its own infra). If/when maintaining a Flatpak, bump those two fields to the new

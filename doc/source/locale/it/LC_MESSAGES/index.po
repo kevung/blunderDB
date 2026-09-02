@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-02 14:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1322,8 +1322,8 @@ msgstr ""
 "rispetta il punteggio del match. Il pannello Bearoff diventa il pannello "
 "**Eval**: presenta i fatti della posizione (probabilità di vittoria, "
 "gammon e backgammon di entrambi i campi, equità) e poi l'unica decisione "
-"che il tavoliere richiede, su una griglia stabile e senza scorrimento; le "
-"equità di match sono **normalizzate** e il verdetto « troppo forte per "
+"che il tavoliere richiede, su una griglia stabile e senza scorrimento; le"
+" equità di match sono **normalizzate** e il verdetto « troppo forte per "
 "raddoppiare » torna visibile. La valutazione è **progressiva**: 0-ply "
 "immediato a ogni gesto, poi 2-ply a riposo, annullabile da qualsiasi "
 "nuovo gesto, con l'etichetta di profondità che indica sempre quella che "
@@ -1345,15 +1345,66 @@ msgstr ""
 "letta correttamente, e la dimensione del pannello laterale viene "
 "memorizzata. Vedere :ref:`panneau_epc`, :ref:`manuel` e :ref:`cli`."
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:1
+msgid "0.35.0"
+msgstr "0.35.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet). Le mode serveur est publié en **image "
+"Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la "
+"route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité"
+" d'émetteur du serveur (``--identity-dir``). L'évaluateur gammonNet "
+"**value ses feuilles avec le videau** : au score, les verdicts de la "
+"recherche se rapprochent de ceux d'eXtreme Gammon. Chaque release livre "
+"désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en "
+"plus des paquets Debian, RPM et AUR. Dans l'interface, la bibliothèque "
+"est **paginée** (une base de 50 000 positions ne charge plus tout en "
+"mémoire à chaque rafraîchissement), les fenêtres modales partagent un "
+"même socle (focus, Échap, accessibilité), le plateau ne redessine que ce "
+"qui change, et le binaire perd 5,5 Mo de police japonaise inutile. "
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient. Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr ""
+"La riga di comando guadagna due famiglie: ``blunderdb collection`` "
+"(elencare, visualizzare, creare, rinominare, eliminare, esportare una "
+"collezione) e ``blunderdb anki`` (mazzi, statistiche, previsione dei "
+"ripassi, risincronizzazione di un mazzo). La modalità server viene "
+"pubblicata come **immagine Docker** (``ghcr.io/kevung/blunderdb-serve``, "
+"amd64 e arm64), guadagna la route ``maintenance.vacuum`` e **appone una "
+"filigrana alle proprie esportazioni** con l'identità di emittente del "
+"server (``--identity-dir``). Il valutatore gammonNet **valuta le sue foglie "
+"tenendo conto del cubo**: al punteggio, i verdetti della ricerca si "
+"avvicinano a quelli di eXtreme Gammon. Ogni release fornisce ormai i "
+"**manifesti winget e Homebrew** e un bundle Flatpak, oltre ai pacchetti "
+"Debian, RPM e AUR. Nell'interfaccia, la libreria è **paginata** (un "
+"database di 50 000 posizioni non carica più tutto in memoria a ogni "
+"aggiornamento), le finestre modali condividono una stessa base (focus, Esc, "
+"accessibilità), il tavoliere ridisegna solo ciò che cambia, e il binario "
+"perde 5,5 MB di font giapponese inutile. Correzioni degne di nota: un "
+"database importato tramite « Importa un database » manteneva posizioni "
+"invisibili ai filtri e duplicate al secondo import (riparato all'apertura), "
+"il pulsante Unisci della finestra di fusione dei giocatori restava "
+"disattivato, l'esportazione del server era vuota, e su Windows "
+"l'eliminazione del database bearoff scaricato e ``create --force`` "
+"fallivano. Vedere :ref:`cli`, :ref:`headless` e :ref:`manuel`."
+
+#: ../../source/index.rst:171
 msgid "Sommaire"
 msgstr "Indice"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:204
 msgid "Contacts"
 msgstr "Contatti"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:206
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1361,7 +1412,7 @@ msgstr ""
 "Autore: Kévin Unger <blunderdb@proton.me>. Puoi anche trovarmi su Heroes "
 "con il nickname postmanpat."
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:209
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1377,31 +1428,31 @@ msgstr ""
 "per condividere la tua esperienza. Tutti i riscontri (costruttivi) sono "
 "benvenuti."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:216
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Ecco diversi modi per discutere:"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:218
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "unirsi al server Discord di blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:220
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "scrivermi una mail a blunderdb@proton.me,"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:222
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "parlare con me, se ci incontriamo a un torneo,"
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:224
 msgid "sur Github,"
 msgstr "su Github,"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:226
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "aprire un ticket: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:228
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
@@ -1409,31 +1460,31 @@ msgstr ""
 "per correzioni di bug o proposte di miglioramento, creare una pull "
 "request."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:232
 msgid "Faire un don"
 msgstr "Fare una donazione"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:234
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "Se apprezzi blunderDB e vuoi sostenere gli sviluppi passati e futuri, puoi"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:236
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "offrirmi da bere se abbiamo il piacere di incontrarci!"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:238
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 "fare una piccola donazione tramite PayPal all'indirizzo "
 "blunderdb@proton.me"
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:241
 msgid "Remerciements"
 msgstr "Ringraziamenti"
 
-#: ../../source/index.rst:242
+#: ../../source/index.rst:243
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1442,7 +1493,7 @@ msgstr ""
 "nostra cara figlia Perrine. Desidero ringraziare in modo particolare "
 "alcuni amici:"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:246
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1454,7 +1505,7 @@ msgstr ""
 "meraviglioso gioco; per continuare a incoraggiarmi nonostante i miei "
 "modesti tentativi di giocare meglio."
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:251
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
