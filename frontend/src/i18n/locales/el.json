@@ -387,6 +387,7 @@
         "mwcLoss": "Απώλεια MWC",
         "noAnalysedPositions": "Δεν βρέθηκαν αναλυμένες θέσεις για αυτόν τον αγώνα.",
         "noMatchesImported": "Δεν έχουν εισαχθεί ακόμη αγώνες",
+        "selectMatchHint": "Επιλέξτε έναν αγώνα για να εμφανιστεί η καταγραφή του",
         "noMovesRecorded": "Δεν έχουν καταγραφεί κινήσεις",
         "overallPr": "Συνολικό PR",
         "performanceRating": "Βαθμολογία απόδοσης",

@@ -573,7 +573,7 @@
 <section class="match-panel" role="region" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
-        <div class="match-list-pane" class:has-detail={detailMatch !== null}>
+        <div class="match-list-pane">
             <div class="match-list-toolbar">
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
@@ -703,7 +703,10 @@
             </PanelTable>
         </div>
 
-        <!-- Detail pane (right side, shown when a match is selected) -->
+        <!-- Detail pane (right side). Its width is reserved whether or not a
+             match is selected: when the pane appeared on the first click, the
+             list narrowed from 100% to 45% and the clicked row moved under the
+             cursor before the second click of a double-click (#201). -->
         {#if detailMatch}
             <div class="detail-pane">
                 <!-- Match metadata header -->
@@ -905,6 +908,10 @@
                     </div>
                 {/if}
             </div>
+        {:else}
+            <div class="detail-pane">
+                <div class="empty-state">{$t('match.selectMatchHint')}</div>
+            </div>
         {/if}
     </div>
 </section>
@@ -937,14 +944,17 @@
     }
 
     /* --- Match list pane (left) --- */
+    /* Fixed split with the detail pane (see the template's note): the list
+       never changes width, so a row never moves under the cursor. */
     .match-list-pane {
-        flex: 1;
+        flex: 0 0 45%;
+        max-width: 45%;
         min-width: 0;
         height: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        transition: flex 0.15s;
+        border-right: 1px solid #ddd;
     }
 
     .match-list-toolbar {
@@ -977,12 +987,6 @@
     .toolbar-btn:disabled {
         opacity: 0.4;
         cursor: not-allowed;
-    }
-
-    .match-list-pane.has-detail {
-        flex: 0 0 45%;
-        max-width: 45%;
-        border-right: 1px solid #ddd;
     }
 
     /* Header and cells of the tournament column alike (the header is PanelTable's). */
