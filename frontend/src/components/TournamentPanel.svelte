@@ -5,6 +5,7 @@
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
+    import { createReorder } from '../utils/reorder.js';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -275,53 +276,17 @@
         }
     }
 
-    // Match reordering
-    async function moveMatchUp(index) {
-        if (index <= 0 || !selectedTournament) return;
-        const newList = [...tournamentMatches];
-        [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
-        tournamentMatchesStore.set(newList);
-        try {
-            await ReorderTournamentMatches(
+    // Match reordering: ▲/▼ buttons and pointer drag share one helper.
+    const matchOrder = createReorder({
+        get: () => (selectedTournament ? tournamentMatches : null),
+        set: (next) => tournamentMatchesStore.set(next),
+        persist: (next) =>
+            ReorderTournamentMatches(
                 selectedTournament.id,
-                newList.map((m) => m.id)
-            );
-        } catch (error) {
-            logger.error('Error reordering matches:', error);
-        }
-    }
-
-    async function moveMatchDown(index) {
-        if (index >= tournamentMatches.length - 1 || !selectedTournament) return;
-        const newList = [...tournamentMatches];
-        [newList[index], newList[index + 1]] = [newList[index + 1], newList[index]];
-        tournamentMatchesStore.set(newList);
-        try {
-            await ReorderTournamentMatches(
-                selectedTournament.id,
-                newList.map((m) => m.id)
-            );
-        } catch (error) {
-            logger.error('Error reordering matches:', error);
-        }
-    }
-
-    // Pointer-based drag reorder callback
-    async function handleMatchReorder(fromIndex, toIndex) {
-        if (!selectedTournament) return;
-        const newList = [...tournamentMatches];
-        const [moved] = newList.splice(fromIndex, 1);
-        newList.splice(toIndex, 0, moved);
-        tournamentMatchesStore.set(newList);
-        try {
-            await ReorderTournamentMatches(
-                selectedTournament.id,
-                newList.map((m) => m.id)
-            );
-        } catch (error) {
-            logger.error('Error reordering matches:', error);
-        }
-    }
+                next.map((m) => m.id)
+            ),
+        label: 'matches'
+    });
 
     async function swapMatchPlayersInTournament(match) {
         try {
@@ -761,7 +726,7 @@
                                 <th class="no-select actions-col"></th>
                             </tr>
                         </thead>
-                        <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
+                        <tbody use:dragReorder={{ onReorder: matchOrder.reorder }}>
                             {#each tournamentMatches as match, index (match.id)}
                                 <tr ondblclick={() => openMatch(match)}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
@@ -800,7 +765,7 @@
                                                 class="icon-btn"
                                                 onclick={(e) => {
                                                     e.stopPropagation();
-                                                    (() => moveMatchUp(index))();
+                                                    matchOrder.moveUp(index);
                                                 }}
                                                 disabled={index === 0}
                                                 title={$t('tournament.moveUp')}>▲</button
@@ -809,7 +774,7 @@
                                                 class="icon-btn"
                                                 onclick={(e) => {
                                                     e.stopPropagation();
-                                                    (() => moveMatchDown(index))();
+                                                    matchOrder.moveDown(index);
                                                 }}
                                                 disabled={index === tournamentMatches.length - 1}
                                                 title={$t('tournament.moveDown')}>▼</button

@@ -3,6 +3,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { dragReorder } from '../utils/dragReorder.js';
+    import { createReorder } from '../utils/reorder.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
@@ -268,32 +269,31 @@
         collectionEdit.start(collection.id, { name: collection.name, description: collection.description || '' });
     }
 
-    // Collection reorder
-    async function moveCollectionUp(index, event) {
-        event.stopPropagation();
-        if (index <= 0) return;
-        const newOrder = [...collections];
-        [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
-        collectionsStore.set(newOrder);
-        try {
-            await ReorderCollections(newOrder.map((c) => c.id));
-        } catch (error) {
-            logger.error('Error reordering collections:', error);
-        }
-    }
+    // Collection reorder: ▲/▼ buttons and pointer drag share one helper.
+    const collectionOrder = createReorder({
+        get: () => collections,
+        set: (next) => collectionsStore.set(next),
+        persist: (next) => ReorderCollections(next.map((c) => c.id)),
+        label: 'collections'
+    });
 
-    async function moveCollectionDown(index, event) {
-        event.stopPropagation();
-        if (index >= collections.length - 1) return;
-        const newOrder = [...collections];
-        [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-        collectionsStore.set(newOrder);
-        try {
-            await ReorderCollections(newOrder.map((c) => c.id));
-        } catch (error) {
-            logger.error('Error reordering collections:', error);
-        }
-    }
+    // Position reorder within the active collection; a selected row follows its move.
+    const positionOrder = createReorder({
+        get: () => (activeCollection ? collectionPositions : null),
+        set: (next, from, to) => {
+            collectionPositionsStore.set(next);
+            if (selectedPositionIndices.has(from)) {
+                selectedPositionIndices.delete(from);
+                selectedPositionIndices.add(to);
+            }
+        },
+        persist: (next) =>
+            ReorderCollectionPositions(
+                activeCollection.id,
+                next.map((p) => p.id)
+            ),
+        label: 'positions'
+    });
 
     // Select a position and display it
     async function selectAndDisplayPosition(index, event) {
@@ -344,46 +344,6 @@
         }
     }
 
-    async function movePositionUp(index, event) {
-        event.stopPropagation();
-        if (!activeCollection || index <= 0) return;
-        const newOrder = [...collectionPositions];
-        [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
-        collectionPositionsStore.set(newOrder);
-        if (selectedPositionIndices.has(index)) {
-            selectedPositionIndices.delete(index);
-            selectedPositionIndices.add(index - 1);
-        }
-        try {
-            await ReorderCollectionPositions(
-                activeCollection.id,
-                newOrder.map((p) => p.id)
-            );
-        } catch (error) {
-            logger.error('Error reordering positions:', error);
-        }
-    }
-
-    async function movePositionDown(index, event) {
-        event.stopPropagation();
-        if (!activeCollection || index >= collectionPositions.length - 1) return;
-        const newOrder = [...collectionPositions];
-        [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-        collectionPositionsStore.set(newOrder);
-        if (selectedPositionIndices.has(index)) {
-            selectedPositionIndices.delete(index);
-            selectedPositionIndices.add(index + 1);
-        }
-        try {
-            await ReorderCollectionPositions(
-                activeCollection.id,
-                newOrder.map((p) => p.id)
-            );
-        } catch (error) {
-            logger.error('Error reordering positions:', error);
-        }
-    }
-
     async function removePositionFromRow(index, event) {
         event.stopPropagation();
         if (!activeCollection) return;
@@ -418,20 +378,8 @@
         }
     }
 
-    // Pointer-based drag reorder for collections
-    async function handleCollectionReorder(fromIndex, toIndex) {
-        const newOrder = [...collections];
-        const [moved] = newOrder.splice(fromIndex, 1);
-        newOrder.splice(toIndex, 0, moved);
-        collectionsStore.set(newOrder);
-        try {
-            await ReorderCollections(newOrder.map((c) => c.id));
-        } catch (error) {
-            logger.error('Error reordering collections:', error);
-        }
-    }
-
-    // Pointer-based drag reorder for positions within a collection
+    // Pointer-based drag reorder for positions within a collection. A
+    // multi-selection moves as a block; anything else is a single-item move.
     async function handlePositionReorder(fromIndex, toIndex) {
         if (!activeCollection) return;
 
@@ -458,22 +406,7 @@
                 logger.error('Error reordering positions:', error);
             }
         } else {
-            const newOrder = [...collectionPositions];
-            const [moved] = newOrder.splice(fromIndex, 1);
-            newOrder.splice(toIndex, 0, moved);
-            collectionPositionsStore.set(newOrder);
-            if (selectedPositionIndices.has(fromIndex)) {
-                selectedPositionIndices.clear();
-                selectedPositionIndices.add(toIndex);
-            }
-            try {
-                await ReorderCollectionPositions(
-                    activeCollection.id,
-                    newOrder.map((p) => p.id)
-                );
-            } catch (error) {
-                logger.error('Error reordering positions:', error);
-            }
+            await positionOrder.reorder(fromIndex, toIndex);
         }
     }
 
@@ -567,7 +500,7 @@
                         <th class="no-select actions-col"></th>
                     </tr>
                 </thead>
-                <tbody use:dragReorder={{ onReorder: handleCollectionReorder }}>
+                <tbody use:dragReorder={{ onReorder: collectionOrder.reorder }}>
                     {#each collections as collection, index (collection.id)}
                         <tr
                             class:selected={selectedCollection?.id === collection.id}
@@ -628,7 +561,7 @@
                                         class="icon-btn"
                                         onclick={(e) => {
                                             e.stopPropagation();
-                                            ((e) => moveCollectionUp(index, e))(e);
+                                            collectionOrder.moveUp(index);
                                         }}
                                         disabled={index === 0}
                                         title={$t('collection.moveUp')}>▲</button
@@ -637,7 +570,7 @@
                                         class="icon-btn"
                                         onclick={(e) => {
                                             e.stopPropagation();
-                                            ((e) => moveCollectionDown(index, e))(e);
+                                            collectionOrder.moveDown(index);
                                         }}
                                         disabled={index === collections.length - 1}
                                         title={$t('collection.moveDown')}>▼</button
@@ -743,7 +676,7 @@
                                         class="icon-btn"
                                         onclick={(e) => {
                                             e.stopPropagation();
-                                            ((e) => movePositionUp(index, e))(e);
+                                            positionOrder.moveUp(index);
                                         }}
                                         disabled={index === 0}
                                         title={$t('collection.moveUp')}>▲</button
@@ -752,7 +685,7 @@
                                         class="icon-btn"
                                         onclick={(e) => {
                                             e.stopPropagation();
-                                            ((e) => movePositionDown(index, e))(e);
+                                            positionOrder.moveDown(index);
                                         }}
                                         disabled={index === collectionPositions.length - 1}
                                         title={$t('collection.moveDown')}>▼</button
