@@ -25,6 +25,13 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    # A major bump of one build-chain package alone (vite 8 while
+    # vite-plugin-svelte still wants 7, jest-dom 7, prettier-plugin-svelte 4)
+    # cannot resolve: npm ci fails with ERESOLVE on every job. Those upgrades
+    # are done by hand, together, with their peers.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       npm-minor-patch:
         update-types:

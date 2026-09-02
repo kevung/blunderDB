@@ -10,7 +10,7 @@ VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 # race detector's slowdown pushes it past any sane timeout, so it runs on its
 # own without -race — the same split as the CI `test` job.
 GAMMONNET := ./pkg/blunderdb/engine/gammonnet/
-GO_PKGS_RACE = $(shell go list ./... | grep -v '/pkg/blunderdb/engine/gammonnet$$')
+GO_PKGS_RACE = $(shell go list ./... | grep -v '/pkg/blunderdb/engine/gammonnet$$' | grep -v node_modules)
 
 dev:
 	wails dev -tags webkit2_41

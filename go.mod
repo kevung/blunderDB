@@ -3,9 +3,11 @@ module github.com/kevung/blunderdb
 go 1.25.13
 
 // frontend/node_modules ships a stray Go package (flatted/golang) that
-// `go test ./...` and `go vet ./...` would otherwise pick up as part of this
-// module.
-ignore ./frontend/node_modules
+// `go test ./...` picks up as part of this module. Go 1.25's `ignore`
+// directive would exclude it, but the Wails CLI (v2.10.x) parses go.mod with
+// an older x/mod and aborts on "unknown directive: ignore" — it broke every
+// platform build of the 0.34.0 tag. Filter with `go list ./... | grep -v
+// node_modules` where it matters (Makefile) instead.
 
 require (
 	github.com/adrg/xdg v0.5.3
