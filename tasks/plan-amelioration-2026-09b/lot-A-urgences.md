@@ -212,14 +212,14 @@ produit : 0 commentaire, 0 collection, 0 paquet Anki, analyses XG seulement,
 `database_version` 2.9.0 migrée à chaque ouverture.
 
 **À faire.**
-- [ ] Régénérer `demo.db.gz` via la CLI : pseudonymes fictifs (ou « Joueur A /
+- [x] Régénérer `demo.db.gz` via la CLI : pseudonymes fictifs (ou « Joueur A /
       Joueur B ») dans `match` et `tournament` ; `database_version` courante.
-- [ ] Enrichir : 2-3 collections thématiques, 10 commentaires taggés
+- [x] Enrichir : 2-3 collections thématiques, 10 commentaires taggés
       (`#blunder`, `#cube`), un paquet Anki avec 20 cartes et un journal de
       révisions, 50 positions analysées par gammonNet (`blunderdb analyze`).
-- [ ] Script `scripts/build-demo-db.sh` versionné, pour que la régénération
+- [x] Script `scripts/build-demo-db.sh` versionné, pour que la régénération
       soit reproductible à chaque changement de schéma.
-- [ ] Vérifier que le tour `general` et la doc (`manuel.rst` § `demo`) restent
+- [x] Vérifier que le tour `general` et la doc (`manuel.rst` § `demo`) restent
       justes.
 
 **Recette.** `sqlite3 demo.db "select distinct player1_name from match"` ne
