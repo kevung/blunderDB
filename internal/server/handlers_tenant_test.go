@@ -129,7 +129,7 @@ func TestTenantPurgeEndpoint(t *testing.T) {
 		t.Fatalf("purge body.OK = %v, want true", purgeBody.OK)
 	}
 
-	loadResp := postTenant(t, ts, "1", "/v1/positions.load", idReq{ID: saved.ID})
+	loadResp := postTenant(t, ts, "1", "/v1/positions.load", idReq(saved))
 	defer loadResp.Body.Close()
 	if loadResp.StatusCode != http.StatusNotFound {
 		t.Fatalf("post-purge load status = %d, want 404 (position should be gone)", loadResp.StatusCode)
