@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	fsrs "github.com/open-spaced-repetition/go-fsrs/v3"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/anki"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -445,90 +445,99 @@ func (s *ankiStore) RandomCard(ctx context.Context, scope string, deckID, exclud
 // ReviewCard records a review rating against a card, advances its FSRS
 // scheduling state, and returns the next card still due in the same deck (nil
 // when none remain).
+//
+// The card update and the review-log append are one transaction: a log entry
+// without its card advance (or the reverse) would make the log lie about the
+// schedule it is supposed to explain. Looking up the next card happens after
+// the commit — failing to load it must not undo a grade that was given.
 func (s *ankiStore) ReviewCard(ctx context.Context, scope string, cardID int64, rating int) (*domain.AnkiReviewCard, error) {
 	tenant := tenantID(scope)
 
-	var (
-		card       domain.AnkiCard
-		due        time.Time
-		lastReview *time.Time
-	)
-	err := s.db.QueryRow(ctx,
-		`SELECT id, deck_id, position_id, due, stability, difficulty,
-		 elapsed_days, scheduled_days, reps, lapses, state, last_review
-		 FROM anki_card WHERE id = $1 AND tenant_id = $2`, cardID, tenant).
-		Scan(&card.ID, &card.DeckID, &card.PositionID, &due, &card.Stability, &card.Difficulty,
-			&card.ElapsedDays, &card.ScheduledDays, &card.Reps, &card.Lapses, &card.State, &lastReview)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, fmt.Errorf("postgres: review anki card %d: %w", cardID, storage.ErrNotFound)
-	}
+	var deckID int64
+	err := withTx(ctx, s.db, func(db execer) error {
+		// The timestamps are read typed and formatted in UTC by hand: the
+		// scheduler reads anki.TimeLayout strings as UTC, so the zone pgx
+		// decoded the column into must not leak into the string.
+		var (
+			card            domain.AnkiCard
+			due, lastReview *time.Time
+		)
+		err := db.QueryRow(ctx,
+			`SELECT id, deck_id, position_id, due, stability, difficulty,
+			 elapsed_days, scheduled_days, reps, lapses, state, last_review
+			 FROM anki_card WHERE id = $1 AND tenant_id = $2`, cardID, tenant).
+			Scan(&card.ID, &card.DeckID, &card.PositionID, &due, &card.Stability, &card.Difficulty,
+				&card.ElapsedDays, &card.ScheduledDays, &card.Reps, &card.Lapses, &card.State, &lastReview)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return storage.ErrNotFound
+		}
+		if err != nil {
+			return err
+		}
+		if due != nil {
+			card.Due = due.UTC().Format(anki.TimeLayout)
+		}
+		if lastReview != nil {
+			card.LastReview = lastReview.UTC().Format(anki.TimeLayout)
+		}
+		deckID = card.DeckID
+
+		var params anki.Params
+		err = db.QueryRow(ctx,
+			`SELECT request_retention, maximum_interval, enable_fuzz FROM anki_deck
+			 WHERE id = $1 AND tenant_id = $2`, card.DeckID, tenant).
+			Scan(&params.RequestRetention, &params.MaximumInterval, &params.EnableFuzz)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("deck: %w", storage.ErrNotFound)
+		}
+		if err != nil {
+			return err
+		}
+
+		next, log, err := anki.ScheduleNext(card, params, rating, time.Now())
+		if errors.Is(err, anki.ErrInvalidRating) {
+			return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+		}
+		if err != nil {
+			return err
+		}
+		// Both strings were written by ScheduleNext in TimeLayout; parsing
+		// them back is how the typed columns get exactly what the log says.
+		nextDue, err := anki.ParseTime(next.Due)
+		if err != nil {
+			return fmt.Errorf("scheduled due: %w", err)
+		}
+		reviewedAt, err := anki.ParseTime(log.ReviewedAt)
+		if err != nil {
+			return fmt.Errorf("reviewed at: %w", err)
+		}
+
+		if _, err := db.Exec(ctx,
+			`UPDATE anki_card SET due = $1, stability = $2, difficulty = $3,
+			 elapsed_days = $4, scheduled_days = $5, reps = $6, lapses = $7, state = $8, last_review = $9
+			 WHERE id = $10 AND tenant_id = $11`,
+			nextDue, next.Stability, next.Difficulty,
+			int64(next.ElapsedDays), int64(next.ScheduledDays), int64(next.Reps), int64(next.Lapses),
+			int64(next.State), reviewedAt, cardID, tenant); err != nil {
+			return err
+		}
+		if _, err := db.Exec(ctx,
+			`INSERT INTO anki_review_log
+			 (tenant_id, card_id, deck_id, position_id, rating, state,
+			  stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+			tenant, log.CardID, log.DeckID, log.PositionID, log.Rating, int64(log.State),
+			log.Stability, log.Difficulty,
+			int64(log.ElapsedDays), int64(log.ScheduledDays), reviewedAt); err != nil {
+			return fmt.Errorf("log: %w", err)
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, fmt.Errorf("postgres: review anki card %d: %w", cardID, err)
 	}
 
-	var (
-		requestRetention float64
-		maximumInterval  float64
-		enableFuzz       bool
-	)
-	err = s.db.QueryRow(ctx,
-		`SELECT request_retention, maximum_interval, enable_fuzz FROM anki_deck
-		 WHERE id = $1 AND tenant_id = $2`, card.DeckID, tenant).
-		Scan(&requestRetention, &maximumInterval, &enableFuzz)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, fmt.Errorf("postgres: review anki card %d: deck: %w", cardID, storage.ErrNotFound)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("postgres: review anki card %d: %w", cardID, err)
-	}
-
-	now := time.Now().UTC()
-	fsrsCard := fsrs.Card{
-		Due:           due,
-		Stability:     card.Stability,
-		Difficulty:    card.Difficulty,
-		ElapsedDays:   uint64(card.ElapsedDays),
-		ScheduledDays: uint64(card.ScheduledDays),
-		Reps:          uint64(card.Reps),
-		Lapses:        uint64(card.Lapses),
-		State:         fsrs.State(card.State),
-	}
-	if lastReview != nil {
-		fsrsCard.LastReview = *lastReview
-	}
-
-	params := fsrs.DefaultParam()
-	params.RequestRetention = requestRetention
-	params.MaximumInterval = maximumInterval
-	params.EnableFuzz = enableFuzz
-	info := fsrs.NewFSRS(params).Next(fsrsCard, now, fsrs.Rating(rating))
-	next := info.Card
-
-	if _, err := s.db.Exec(ctx,
-		`UPDATE anki_card SET due = $1, stability = $2, difficulty = $3,
-		 elapsed_days = $4, scheduled_days = $5, reps = $6, lapses = $7, state = $8, last_review = $9
-		 WHERE id = $10 AND tenant_id = $11`,
-		next.Due.UTC(), next.Stability, next.Difficulty,
-		int64(next.ElapsedDays), int64(next.ScheduledDays), int64(next.Reps), int64(next.Lapses),
-		int64(next.State), now, cardID, tenant); err != nil {
-		return nil, fmt.Errorf("postgres: review anki card %d: %w", cardID, err)
-	}
-
-	// Append the review to the immutable log. The recorded state is the one the
-	// card was in *before* this review (info.ReviewLog.State); stability and
-	// difficulty are the post-review values.
-	if _, err := s.db.Exec(ctx,
-		`INSERT INTO anki_review_log
-		 (tenant_id, card_id, deck_id, position_id, rating, state,
-		  stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-		tenant, cardID, card.DeckID, card.PositionID, rating, int64(info.ReviewLog.State),
-		next.Stability, next.Difficulty,
-		int64(info.ReviewLog.ElapsedDays), int64(next.ScheduledDays), now); err != nil {
-		return nil, fmt.Errorf("postgres: review anki card %d: log: %w", cardID, err)
-	}
-
-	nextCard, err := s.nextDueCard(ctx, tenant, card.DeckID)
+	nextCard, err := s.nextDueCard(ctx, tenant, deckID)
 	if errors.Is(err, storage.ErrNotFound) {
 		return nil, nil
 	}
