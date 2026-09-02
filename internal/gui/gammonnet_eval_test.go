@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
 // racePosition puts every checker of each colour on one point — enough
@@ -88,6 +89,128 @@ func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	for _, m := range result.Moves {
 		if m.AnalysisDepth == "99-ply" {
 			t.Fatalf("AnalysisDepth reports the requested depth (99-ply), not the depth that ran")
+		}
+	}
+}
+
+// isolateRaceSources points the race resolver at an empty directory so the
+// regime a test sees is decided by the embedded TS-06-06 and not by whatever
+// the developer has downloaded — race/eval_test.go's isolateSources, from
+// outside the package.
+func isolateRaceSources(t *testing.T) {
+	t.Helper()
+	race.SetDataDir(t.TempDir())
+	race.SetExternalPath("")
+	race.Invalidate()
+	t.Cleanup(func() {
+		race.SetDataDir("")
+		race.SetExternalPath("")
+		race.Invalidate()
+	})
+}
+
+// The three race regimes, as the panel receives them (#188, ADR-0012,
+// ADR-0017 decision 4). race.Evaluate is the fast path that decides the
+// regime on its own; evaluateGammonNet then either leaves it alone (exact
+// and money: Race nil, the panel keeps the exact row) or replaces it with
+// the evaluated regime — over an estimate, always, and over an exact lookup
+// only when a score puts the money table in the wrong referential.
+func TestEvaluateGammonNetRaceRegimes(t *testing.T) {
+	isolateRaceSources(t)
+
+	inside := func(score [2]int) domain.Position {
+		// 3 checkers a side on the ace points: inside TS-06-06.
+		pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
+		pos.Board.Points[24] = domain.Point{Checkers: 3, Color: domain.White}
+		pos.Board.Points[1] = domain.Point{Checkers: 3, Color: domain.Black}
+		pos.Board.Bearoff[domain.White] = 12
+		pos.Board.Bearoff[domain.Black] = 12
+		pos.Score = score
+		return pos
+	}
+	outside := func(score [2]int) domain.Position {
+		pos := racePosition(24, 1, [2]int{0, 0}, domain.White) // 15 a side: far outside
+		pos.Score = score
+		return pos
+	}
+
+	cases := []struct {
+		name string
+		pos  domain.Position
+		fast race.Regime // what race.Evaluate says on its own
+		gui  race.Regime // what the panel gets; "" = Race nil, keep the fast row
+	}{
+		{"exact, money", inside([2]int{-1, -1}), race.RegimeExact, ""},
+		{"exact, at a score", inside([2]int{5, 7}), race.RegimeExact, race.RegimeEvaluated},
+		{"estimated, money", outside([2]int{-1, -1}), race.RegimeEstimated, race.RegimeEvaluated},
+		{"estimated, at a score", outside([2]int{5, 7}), race.RegimeEstimated, race.RegimeEvaluated},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			fast := race.Evaluate(&c.pos)
+			if fast.Race == nil || fast.Race.Regime != c.fast {
+				t.Fatalf("race.Evaluate regime = %+v, want %q", fast.Race, c.fast)
+			}
+			if c.fast == race.RegimeEstimated && (fast.Race.Sigma <= 0 || fast.Race.P99 <= 0) {
+				t.Errorf("an estimate without its error bounds: %+v", fast.Race)
+			}
+			if c.fast == race.RegimeExact && (fast.Race.Money == nil || fast.Race.SourceCheckers == 0) {
+				t.Errorf("an exact lookup without its table or verdict: %+v", fast.Race)
+			}
+
+			result, err := evaluateGammonNet(c.pos, 0, 0, 0)
+			if err != nil {
+				t.Fatalf("evaluateGammonNet: %v", err)
+			}
+			if result.Refused {
+				t.Fatal("refused a position the engine evaluates")
+			}
+			if c.gui == "" {
+				if result.Race != nil {
+					t.Fatalf("Race = %+v, want nil: the exact money row is not displaced", result.Race)
+				}
+				return
+			}
+			if result.Race == nil || result.Race.Regime != c.gui {
+				t.Fatalf("Race = %+v, want regime %q", result.Race, c.gui)
+			}
+			if result.Race.OnRoll != fast.Race.OnRoll {
+				t.Errorf("OnRoll %d, fast path says %d", result.Race.OnRoll, fast.Race.OnRoll)
+			}
+			if result.Race.Money == nil || result.Race.Money.Verdict == "" {
+				t.Errorf("evaluated regime without a verdict: %+v", result.Race)
+			}
+			if result.Race.Depth != "0-ply" {
+				t.Errorf("Depth %q, want the depth that ran", result.Race.Depth)
+			}
+			// The win probability is the same question answered twice —
+			// exact table or convolution, then the network: the player on
+			// roll in a symmetric bear-off is the favourite either way.
+			if (fast.Race.WinProb > 0.5) != (result.Race.WinProb > 0.5) {
+				t.Errorf("WinProb %.3f (fast) and %.3f (evaluated) disagree on the favourite", fast.Race.WinProb, result.Race.WinProb)
+			}
+		})
+	}
+}
+
+// A score this build cannot judge — past the MET's 64-point horizon — comes
+// back as Refused, a value, with nothing else filled in: not an error the
+// panel would swallow, not a silent fall to money (ADR-0019 rule 4).
+func TestEvaluateGammonNetRefusesBeyondTheHorizon(t *testing.T) {
+	isolateRaceSources(t)
+	for _, dice := range [][2]int{{0, 0}, {6, 5}} {
+		pos := racePosition(24, 1, dice, domain.White)
+		pos.Score = [2]int{65, 65}
+
+		result, err := evaluateGammonNet(pos, 0, 0, 0)
+		if err != nil {
+			t.Fatalf("dice %v: a refusal must be data, got an error: %v", dice, err)
+		}
+		if !result.Refused {
+			t.Fatalf("dice %v: 65-away/65-away evaluated: %+v", dice, result)
+		}
+		if result.Moves != nil || result.Cube != nil || result.Race != nil || result.PreRoll != nil || result.CubeVerdict != "" {
+			t.Errorf("dice %v: a refused result carries values: %+v", dice, result)
 		}
 	}
 }
