@@ -82,6 +82,10 @@ export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
 
+export function CountOrphans() {
+  return window['go']['database']['Database']['CountOrphans']();
+}
+
 export function CountPositionsWithoutAnalysis() {
   return window['go']['database']['Database']['CountPositionsWithoutAnalysis']();
 }
@@ -184,6 +188,10 @@ export function GetAllTournaments() {
 
 export function GetAnkiDeckPositions(arg1) {
   return window['go']['database']['Database']['GetAnkiDeckPositions'](arg1);
+}
+
+export function GetAnkiDeckRetention(arg1) {
+  return window['go']['database']['Database']['GetAnkiDeckRetention'](arg1);
 }
 
 export function GetAnkiDeckStats(arg1) {
