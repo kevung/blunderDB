@@ -35,6 +35,8 @@ vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) =
 import * as db from '../../wailsjs/go/database/Database.js';
 import { showPosition } from '../services/positionService.js';
 import { showCard, startSession, reviewCard } from '../services/ankiService.js';
+import { ankiAnswerShownStore } from '../stores/ankiStore.js';
+import { selectedMoveStore } from '../stores/analysisStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 
@@ -44,6 +46,8 @@ beforeEach(() => {
     vi.clearAllMocks();
     positionsStore.set([{ id: 10 }, { id: 11 }]);
     currentPositionIndexStore.set(0);
+    ankiAnswerShownStore.set(false);
+    selectedMoveStore.set(null);
 });
 
 describe('showCard', () => {
@@ -62,6 +66,42 @@ describe('showCard', () => {
         currentPositionIndexStore.set(1);
         await showCard(card(99));
         expect(get(currentPositionIndexStore)).toBe(1);
+    });
+});
+
+describe('what resets the reveal', () => {
+    // ADR-0025 rule 5: a change of QUESTION re-hides the answer, a change of
+    // VIEW does not. AnkiPanel calls showCard again every time the Anki tab
+    // regains focus — so putting the reset inside showCard erased the answer
+    // of someone who had merely gone to look at the Eval panel.
+    test('re-showing the SAME card leaves the answer revealed', async () => {
+        ankiAnswerShownStore.set(true);
+        selectedMoveStore.set('13/7 8/7');
+
+        await showCard(card(10));
+
+        expect(get(ankiAnswerShownStore)).toBe(true);
+        expect(get(selectedMoveStore)).toBe('13/7 8/7');
+    });
+
+    test('the next card of a session hides its answer', async () => {
+        ankiAnswerShownStore.set(true);
+        selectedMoveStore.set('13/7 8/7');
+        db.ReviewAnkiCard.mockResolvedValueOnce(card(11));
+
+        await reviewCard(card(10), 3);
+
+        expect(get(ankiAnswerShownStore)).toBe(false);
+        expect(get(selectedMoveStore)).toBeNull();
+    });
+
+    test('starting a session hides the first card answer', async () => {
+        ankiAnswerShownStore.set(true);
+        db.GetNextAnkiCard.mockResolvedValueOnce(card(10));
+
+        await startSession({ id: 1 });
+
+        expect(get(ankiAnswerShownStore)).toBe(false);
     });
 });
 

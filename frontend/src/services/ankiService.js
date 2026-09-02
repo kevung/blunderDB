@@ -293,14 +293,22 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
  * revealed answer of ADR-0025 rule 1 would have inherited that lie.
  */
 export async function showCard(card) {
-    // A new card is a new question: its answer starts hidden (ADR-0025 rule 5),
-    // and the move picked on the previous one is dropped. Left set,
-    // selectedMoveStore freezes j/k position browsing app-wide.
-    hideAnkiAnswer();
-    selectedMoveStore.set(null);
     await showPosition(card.position);
     const idx = positionsStore.indexOf(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
+}
+
+/**
+ * A new question: hide its answer and drop the move picked on the previous one
+ * (ADR-0025 rule 5). Deliberately NOT inside showCard — the panel re-shows the
+ * current card every time the Anki tab regains focus, and going to look at the
+ * Eval panel is not a new question.
+ *
+ * Left set, selectedMoveStore freezes j/k position browsing app-wide.
+ */
+function newQuestion() {
+    hideAnkiAnswer();
+    selectedMoveStore.set(null);
 }
 
 /**
@@ -314,6 +322,7 @@ export async function startSession(deck, { cram = false } = {}) {
     const card = cram ? await GetRandomAnkiCard(deck.id, 0) : await GetNextAnkiCard(deck.id);
     if (!card) return null;
     ankiReviewCardStore.set(card);
+    newQuestion();
     await showCard(card);
     return card;
 }
@@ -336,6 +345,7 @@ export async function nextCramCard(deck, card) {
 async function advance(next) {
     if (next) {
         ankiReviewCardStore.set(next);
+        newQuestion();
         await showCard(next);
     } else {
         ankiReviewCardStore.set(null);
