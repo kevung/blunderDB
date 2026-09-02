@@ -23,6 +23,71 @@ La dernière version de blunderDB est disponible en licence MIT:
    blunderDB proposera de le télécharger et de l'installer. Aucune manipulation
    de la part de l'utilisateur n'est attendue.
 
+Quel fichier choisir ?
+----------------------
+
+Chaque version publiée sur la `page des releases
+<https://github.com/kevung/blunderDB/releases>`__ est accompagnée d'une
+trentaine de fichiers. Le tableau ci-dessous indique lequel prendre selon
+votre système ; remplacez ``x.y.z`` par le numéro de la version.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 24 34 42
+
+   * - Système
+     - Fichier
+     - Installation
+   * - Debian, Ubuntu, Linux Mint
+     - ``blunderdb_x.y.z_amd64.deb``
+     - ``sudo apt install ./blunderdb_x.y.z_amd64.deb``
+   * - Fedora, openSUSE
+     - ``blunderdb-x.y.z.x86_64.rpm``
+     - ``sudo dnf install ./blunderdb-x.y.z.x86_64.rpm``
+   * - Arch Linux, Manjaro
+     - paquet AUR ``blunderdb-bin``
+     - ``yay -S blunderdb-bin``
+   * - Toute distribution Linux, avec Flatpak
+     - ``blunderDB-x.y.z.flatpak``
+     - ``flatpak install ./blunderDB-x.y.z.flatpak``
+   * - Autre distribution Linux
+     - ``blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz``
+     - ``tar xzf`` puis ``./blunderDB``
+   * - macOS (Intel et Apple Silicon)
+     - ``blunderDB-macos-x.y.z.zip``
+     - Décompresser, puis glisser ``blunderDB.app`` dans *Applications*
+   * - Windows
+     - ``blunderDB-windows-x.y.z.exe``
+     - Exécuter directement, sans installation
+   * - Serveur (mode ``serve``, Docker)
+     - image ``ghcr.io/kevung/blunderdb-serve``
+     - ``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``
+
+Les autres fichiers de la page sont les binaires Linux bruts (voir plus bas),
+les manifestes winget et Homebrew (voir :ref:`install_winget_homebrew`), la
+documentation en PDF dans neuf langues, et les empreintes ``.sha256``.
+
+Vérifier un téléchargement
+--------------------------
+
+Chaque fichier publié est accompagné de son empreinte SHA-256, dans un fichier
+du même nom suivi de ``.sha256``. Téléchargez les deux dans le même dossier et
+vérifiez que le fichier reçu est bien celui qui a été publié :
+
+.. code-block:: bash
+
+   sha256sum -c blunderdb_x.y.z_amd64.deb.sha256        # Linux
+   shasum -a 256 -c blunderDB-macos-x.y.z.zip.sha256   # macOS
+
+.. code-block:: powershell
+
+   Get-FileHash .\blunderDB-windows-x.y.z.exe -Algorithm SHA256   # Windows
+
+Sous Linux et macOS, la commande affiche ``OK`` ; sous Windows, comparez la
+valeur affichée avec le contenu du fichier ``.sha256``. Cette vérification est
+la garantie disponible en l'absence de signature de code (voir
+:numref:`annexe_windows_malware` et :numref:`annexe_mac_malware`).
+
 Installation sous Linux
 -----------------------
 
@@ -55,6 +120,24 @@ automatiquement par les assistants AUR :
 
    yay -S blunderdb-bin      # ou : paru -S blunderdb-bin
 
+Flatpak
+~~~~~~~
+
+Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution où
+Flatpak est installé. Il repose sur l'environnement GNOME 47, que Flatpak
+télécharge depuis Flathub s'il manque :
+
+.. code-block:: bash
+
+   flatpak install ./blunderDB-x.y.z.flatpak
+   flatpak run io.github.kevung.blunderDB
+
+blunderDB n'est pas encore publié sur Flathub : le bundle s'installe depuis le
+fichier téléchargé, et se met à jour en installant celui de la version
+suivante. L'application a accès au dossier personnel pour ouvrir et
+enregistrer les bases. La ligne de commande (:ref:`cli`) s'obtient par
+``flatpak run io.github.kevung.blunderDB <commande>``.
+
 Archive .tar.gz
 ~~~~~~~~~~~~~~~~
 
@@ -68,9 +151,10 @@ exécutable, aucun ``chmod`` n'est donc nécessaire :
    ./blunderDB
 
 .. note:: L'exécutable de l'archive s'appelle ``blunderDB``, avec les
-   majuscules. Les paquets ``.deb``, ``.rpm`` et AUR installent en plus le
-   lien ``blunderdb`` en minuscules, le nom que la documentation de la ligne
-   de commande (:ref:`cli`) utilise ; pour l'obtenir aussi depuis l'archive :
+   majuscules. Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en
+   plus le lien ``blunderdb`` en minuscules, le nom que la documentation de la
+   ligne de commande (:ref:`cli`) utilise ; l'archive contient le même lien
+   à côté de l'exécutable. Pour l'avoir dans votre ``PATH`` :
    ``ln -s "$PWD/blunderDB" ~/.local/bin/blunderdb``.
 
 Binaire brut (méthode avancée)
@@ -91,6 +175,23 @@ exécution :
    le paquet AUR, ou téléchargez la version dédiée
    |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent
    automatiquement la bonne dépendance.
+
+Image Docker (mode serveur)
+---------------------------
+
+Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de bureau :
+chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve`` sur le
+registre GitHub, pour ``linux/amd64`` et ``linux/arm64``, sous l'étiquette de
+la version et sous ``latest`` :
+
+.. code-block:: bash
+
+   docker pull ghcr.io/kevung/blunderdb-serve:x.y.z
+
+Le lancement, la configuration et l'avertissement sur le mandataire
+d'authentification sont décrits dans :ref:`headless_docker_image`.
+
+.. _install_winget_homebrew:
 
 Gestionnaires de paquets Windows et Mac (à venir)
 -------------------------------------------------

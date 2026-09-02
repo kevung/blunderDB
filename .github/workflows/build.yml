@@ -622,8 +622,11 @@ jobs:
 
       # Ship a .tar.gz alongside each raw Linux binary: extracting a tarball
       # preserves the execute bit, so novices no longer need `chmod +x`. The
-      # binary is renamed to `blunderdb` inside the archive and bundled with the
-      # .desktop entry, icon and INSTALL notes.
+      # binary keeps its name, `blunderDB`, with a `blunderdb` symlink next to
+      # it — the lowercase name the CLI documentation and every package (.deb,
+      # .rpm, AUR, Flatpak, cask, winget) use. The archive also carries the
+      # .desktop entry, icon, metainfo, INSTALL notes, LICENSE and the
+      # third-party notices the embedded licences require (THIRD_PARTY.md).
       - name: Package Linux tar.gz
         if: runner.os == 'Linux'
         shell: bash
@@ -637,9 +640,10 @@ jobs:
             mkdir -p "$stage"
             cp "$bin" "$stage/blunderDB"
             chmod +x "$stage/blunderDB"
+            ln -s blunderDB "$stage/blunderdb"
             cp build/linux/blunderdb.desktop build/linux/blunderdb-256.png \
                build/linux/io.github.kevung.blunderDB.metainfo.xml \
-               build/linux/INSTALL.txt LICENSE "$stage/"
+               build/linux/INSTALL.txt LICENSE THIRD_PARTY.md "$stage/"
             tar -czf "build/bin/${base}.tar.gz" -C "$tmp" "$base"
             rm -rf "$tmp"
           done
@@ -664,6 +668,31 @@ jobs:
           nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
           nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
           rm -f build/bin/blunderDB
+
+      # Install what was just packaged, on the runner that built it (the
+      # webkit2gtk-4.1 deps are already there). A .deb whose symlink points
+      # nowhere, or that dropped the third-party notices, used to be found by
+      # a user; here `blunderdb version` (the lowercase link, the name the
+      # documentation uses) must answer with the version being packaged, and
+      # the tarball must extract with the same link and notices.
+      - name: Test the Linux packages
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
+        run: |
+          set -euo pipefail
+          sudo dpkg -i "build/bin/blunderdb_${VERSION}_amd64.deb"
+          blunderdb version | tee /dev/stderr | grep -F -- "$VERSION"
+          test -f /usr/share/doc/blunderdb/THIRD_PARTY.md
+          test -f /usr/share/doc/blunderdb/LICENSE
+          sudo dpkg -r blunderdb
+          tmp="$(mktemp -d)"
+          tar -xzf "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz" -C "$tmp"
+          dir="$tmp/blunderDB-linux-webkit2gtk-4.1-${VERSION}"
+          "$dir/blunderdb" version | grep -F -- "$VERSION"
+          test -f "$dir/THIRD_PARTY.md"
+          rm -rf "$tmp"
 
       - name: Add macOS perms
         if: runner.os == 'macOS'
@@ -715,17 +744,31 @@ jobs:
   # .sha256 files included (they are computed next to the binaries in
   # `build` and travel in the artifact), and the release glob is the one the
   # `build` step used, so the release carries the same assets and checksums.
+  #
+  # The release notes open with an "Installation" block (which of the thirty
+  # assets to pick, per system, and how to verify it), written here so that it
+  # is never stale: the ADR count is counted in the checkout, not typed. The
+  # block sits between `<!-- installation -->` markers; the notes the
+  # maintainer writes afterwards (release-blunderdb skill, `gh release edit`)
+  # go below it and keep it. If the release already exists with notes, they
+  # are kept too — only the block is replaced.
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
-    # softprops/action-gh-release attaches the files to the release.
+    # softprops/action-gh-release attaches the files to the release; `gh`
+    # reads the existing notes with the same token.
     permissions:
       contents: write
     env:
       VERSION: ${{ github.ref_name }}
     steps:
+      # The checkout comes first: it cleans the workspace, and it is what the
+      # ADR count and the installation block are read from.
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
       - name: Download the build artifacts of the four platforms
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -742,9 +785,46 @@ jobs:
           test "$n" -gt 0 || { echo "::error::no build asset found under */bin/ — did the build job fail?"; exit 1; }
         shell: bash
 
+      - name: Installation block of the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          adr=$(find docs/adr -maxdepth 1 -name '[0-9]*.md' | wc -l)
+          {
+            echo '<!-- installation -->'
+            echo '## Installation'
+            echo
+            echo '| System | Take | Then |'
+            echo '|---|---|---|'
+            echo "| Debian, Ubuntu, Mint | \`blunderdb_${VERSION}_amd64.deb\` | \`sudo apt install ./blunderdb_${VERSION}_amd64.deb\` |"
+            echo "| Fedora, openSUSE | \`blunderdb-${VERSION}.x86_64.rpm\` | \`sudo dnf install ./blunderdb-${VERSION}.x86_64.rpm\` |"
+            echo "| Arch Linux | AUR \`blunderdb-bin\` | \`yay -S blunderdb-bin\` |"
+            echo "| Any Linux | \`blunderDB-${VERSION}.flatpak\`, or the \`webkit2gtk-4.1\` tarball (the plain one on Ubuntu 22.04-era systems) | \`flatpak install ./blunderDB-${VERSION}.flatpak\` |"
+            echo "| macOS | \`blunderDB-macos-${VERSION}.zip\` (universal, unsigned: right-click → *Open* the first time) | drag \`blunderDB.app\` to *Applications* |"
+            echo "| Windows | \`blunderDB-windows-${VERSION}.exe\` (unsigned: *More info* → *Run anyway*) | run it, nothing to install |"
+            echo "| Server | \`ghcr.io/kevung/blunderdb-serve:${VERSION}\` (amd64, arm64) | \`docker pull ghcr.io/kevung/blunderdb-serve:${VERSION}\` |"
+            echo
+            echo "Every asset has a \`.sha256\` next to it: \`sha256sum -c <asset>.sha256\`. Full guide, nine languages: https://kevung.github.io/blunderDB/en/telecharge_install.html — winget and Homebrew manifests are attached, not yet submitted. ${adr} architecture decisions are indexed in [docs/adr](https://github.com/kevung/blunderDB/blob/${VERSION}/docs/adr/README.md)."
+            echo '<!-- /installation -->'
+          } > installation.md
+          # Keep whatever notes the release already carries, minus a previous
+          # block (a re-run of this job, or notes written before it ran).
+          existing=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null || true)
+          {
+            cat installation.md
+            if [ -n "$existing" ]; then
+              echo
+              printf '%s\n' "$existing" | sed '/<!-- installation -->/,/<!-- \/installation -->/d'
+            fi
+          } > release-notes.md
+          cat release-notes.md
+        shell: bash
+
       - name: Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
+          body_path: release-notes.md
           files: |
             */bin/*
 

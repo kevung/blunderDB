@@ -51,13 +51,15 @@ Every asset on the [Releases page](https://github.com/kevung/blunderDB/releases)
 | Debian, Ubuntu, Mint | `sudo apt install ./blunderdb_x.y.z_amd64.deb` |
 | Fedora, openSUSE | `sudo dnf install ./blunderdb-x.y.z.x86_64.rpm` |
 | Arch Linux | `yay -S blunderdb-bin` (AUR, updated on each release) |
-| Other Linux | Raw binary — `webkit2gtk-4.1` build for current distributions, `webkit2gtk-4.0` build for Ubuntu 22.04-era systems |
+| Any Linux with Flatpak | `flatpak install ./blunderDB-x.y.z.flatpak` (bundle attached to each release; not on Flathub yet) |
+| Other Linux | `.tar.gz` or raw binary — `webkit2gtk-4.1` build for current distributions, `webkit2gtk-4.0` build for Ubuntu 22.04-era systems |
 | macOS | Universal `.app` (unsigned — see the security appendix in the docs) |
 | Windows | `.exe` (unsigned — see the security appendix in the docs) |
+| Server (`serve` mode) | `docker pull ghcr.io/kevung/blunderdb-serve:x.y.z` (amd64 and arm64; also builds from `Dockerfile.serve`) |
 
 winget and Homebrew are not published yet: each release ships the rendered manifests (`blunderDB-winget-manifests-x.y.z.zip`, `blunderdb-x.y.z.rb`) — see `packaging/winget/` and `packaging/homebrew/` for the submission steps.
 
-The headless daemon also builds as a container image from `Dockerfile.serve`.
+The full guide, per system and in nine languages: [Download and install](https://kevung.github.io/blunderDB/en/telecharge_install.html).
 
 ### Build from source
 
@@ -96,22 +98,17 @@ In the desktop app, open or create a `.db` file, then import match files via the
 | Framework | [Wails v2](https://wails.io/) (Go ↔ WebView bridge) |
 | Docs | Sphinx, 9 languages (French source + 8 gettext translations) |
 
+## Community
+
+- **Discord**: <https://discord.gg/DA5PpzM9En> — questions, feedback, a position to discuss, the quickest way to reach the author.
+- **GitHub Discussions**: <https://github.com/kevung/blunderDB/discussions> — release announcements and longer threads.
+- **Issues**: bugs and feature requests, with the match file that reproduces them. A security problem goes through [SECURITY.md](SECURITY.md) instead.
+
+Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
+
 ## Contributing
 
-Contributions are welcome — open an issue or submit a pull request. Read [CLAUDE.md](CLAUDE.md) first: it holds the working rules and the invariants that tests do not catch, and every user-visible change ships with its French documentation in the same branch.
-
-CI runs the following; run them before pushing anything nontrivial:
-
-```bash
-go vet ./...
-go test ./...
-go test -race ./...
-golangci-lint run ./...          # v2, config in .golangci.yml
-govulncheck ./...
-cd frontend && npm run lint && npm run format:check && npm test && npm run test:e2e
-```
-
-Design decisions are recorded in [docs/adr/](docs/adr/README.md).
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md): prerequisites, `make check` (everything CI enforces), the worktree workflow, and the two documentation rules — a user-visible change ships with its French documentation in the same branch, and a modified `.rst` ships with its eight `.po` in the same commit. The invariants that tests do not catch are listed in [CLAUDE.md](CLAUDE.md); design decisions are recorded in [docs/adr/](docs/adr/README.md).
 
 ## License
 

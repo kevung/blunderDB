@@ -1267,6 +1267,7 @@ export default {
                     </p>
                     <p>連絡方法はいくつかあります:</p>
                     <ul>
+                        <li>blunderDB の Discord サーバーに参加してください：<a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>、</li>
                         <li>トーナメントで会ったら声をかけてください、</li>
                         <li>メールを送ってください、</li>
                     </ul>

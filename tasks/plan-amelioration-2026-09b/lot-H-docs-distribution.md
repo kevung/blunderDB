@@ -20,11 +20,11 @@ H.1 à H.6 = **étape 1** ; H.7 à H.14 = **étape 2**.
 
 `telecharge_install.rst` : 0 mention de Flatpak, de GHCR, de `.sha256` ; notes
 de release : 31 assets sans guide de choix, « 22 ADRs indexed » faux.
-- [ ] Tableau par OS/canal (le README l'a déjà) + Flatpak + GHCR + vérification
-      `sha256sum -c` + (E.7) signature minisign.
-- [ ] Bloc « Installation » de 8 lignes injecté par la CI en tête de chaque
+- [x] Tableau par OS/canal (le README l'a déjà) + Flatpak + GHCR + vérification
+      `sha256sum -c` ; (E.7) signature minisign reste avec E.7.
+- [x] Bloc « Installation » de 8 lignes injecté par la CI en tête de chaque
       release (`build.yml`, job release) ; chiffre des ADR calculé, pas écrit.
-- [ ] `.po` dans le même commit.
+- [x] `.po` dans le même commit.
 
 ## H.2 — `CONTRIBUTING.md` et ce qui va avec [S] — adoption (#244)
 
@@ -32,13 +32,16 @@ Le README renvoie les contributeurs vers `CLAUDE.md`, écrit pour un agent ;
 pas de `CODE_OF_CONDUCT.md` (Discord public) ; Discord visible seulement dans
 `index.rst` FR ; `contactLinks` vides ; description GitHub « Backgammon
 position database software » et 3 topics.
-- [ ] `CONTRIBUTING.md` (60 lignes : setup, `make check`, une PR = sa doc FR +
+- [x] `CONTRIBUTING.md` (60 lignes : setup, `make check`, une PR = sa doc FR +
       ses `.po`, invariants renvoyés à `CLAUDE.md`, ADR) ; `CODE_OF_CONDUCT.md`
-      (Contributor Covenant).
-- [ ] Section *Community* du README (Discord, Discussions « Annonces »),
-      lien Discord dans l'onglet À propos (9 langues) et `contactLinks`.
+      (Contributor Covenant 2.1, contact `blunderdb@proton.me`).
+- [x] Section *Community* du README (Discord, Discussions « Annonces »),
+      lien Discord dans l'onglet À propos (9 langues) — `contactLinks` n'existe
+      pas dans le code, rien à remplir.
 - [ ] Description et topics GitHub (`gnubg`, `extreme-gammon`, `wails`,
-      `svelte`, `go`, `spaced-repetition`, `backgammon-analysis`).
+      `svelte`, `go`, `spaced-repetition`, `backgammon-analysis`) — à lancer
+      depuis une session où `gh` atteint le trousseau :
+      `gh repo edit kevung/blunderDB --description "Backgammon blunder analysis: import your matches, search positions by structure and mistake, measure your play, study with spaced repetition — with an embedded evaluator" --add-topic backgammon,blunder,database,gnubg,extreme-gammon,wails,svelte,go,spaced-repetition,backgammon-analysis`
 
 ## H.3 — Homebrew tap, Flatpak, metainfo [S puis M] — adoption (#245)
 

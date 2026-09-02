@@ -269,7 +269,8 @@ et winget ne sont pas touchés.
 - [x] Symlink `/usr/bin/blunderdb → blunderDB` dans nfpm et PKGBUILD ; le
       tarball livre les deux noms (ou `INSTALL.txt` explique).
 - [x] `telecharge_install.rst:70` corrigé ; `.po` dans le même commit (A.7).
-- [ ] Test de packaging en CI : après `dpkg -i`, `blunderdb version` répond.
+- [x] Test de packaging en CI : après `dpkg -i`, `blunderdb version` répond
+      (étape « Test the Linux packages » de `build.yml`, H.1).
 
 ---
 

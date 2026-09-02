@@ -1269,6 +1269,7 @@ export default {
                     </p>
                     <p>Hier sind mehrere Möglichkeiten, mich zu erreichen:</p>
                     <ul>
+                        <li>Treten Sie dem Discord-Server von blunderDB bei: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
                         <li>Sprechen Sie mit mir, wenn wir uns in einem Turnier treffen,</li>
                         <li>Schicken Sie mir eine E-Mail,</li>
                     </ul>

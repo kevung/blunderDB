@@ -11,8 +11,9 @@ Run it directly:
 
 The executable is named `blunderDB` (capitals). The command-line
 documentation calls it `blunderdb`, which is the name the .deb/.rpm/AUR
-packages, the Homebrew cask and winget install as well; the step below
-creates the same lowercase link for a per-user install.
+packages, Flatpak, the Homebrew cask and winget install as well; this archive
+carries that lowercase name as a symlink next to the executable, and the step
+below creates the same link for a per-user install.
 
 Optional — install a menu entry for the current user:
 

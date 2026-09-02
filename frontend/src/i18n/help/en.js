@@ -1269,6 +1269,7 @@ export default {
                     </p>
                     <p>Here are several ways to reach out:</p>
                     <ul>
+                        <li>Join the blunderDB Discord server: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
                         <li>Discuss with me if we meet in a tournament,</li>
                         <li>Send me an email,</li>
                     </ul>

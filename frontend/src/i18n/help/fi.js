@@ -1267,6 +1267,7 @@ export default {
                     </p>
                     <p>Tässä useita tapoja ottaa yhteyttä:</p>
                     <ul>
+                        <li>Liity blunderDB:n Discord-palvelimelle: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
                         <li>Keskustele kanssani, jos tapaamme turnauksessa,</li>
                         <li>Lähetä minulle sähköpostia,</li>
                     </ul>
