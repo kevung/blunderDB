@@ -3,7 +3,11 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strings"
+	"time"
+
+	sqlitedriver "modernc.org/sqlite"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
@@ -82,6 +86,52 @@ func queryInt64s(ctx context.Context, db execer, query string, args ...any) ([]i
 		out = append(out, v)
 	}
 	return out, rows.Err()
+}
+
+// sqliteBusyCode is SQLite's SQLITE_BUSY result code (the writer lock could
+// not be acquired within busy_timeout). https://www.sqlite.org/rescode.html#busy
+const sqliteBusyCode = 5
+
+// isBusyErr reports whether err is (or wraps) a SQLITE_BUSY error from the
+// modernc.org/sqlite driver.
+func isBusyErr(err error) bool {
+	var sqliteErr *sqlitedriver.Error
+	return errors.As(err, &sqliteErr) && sqliteErr.Code() == sqliteBusyCode
+}
+
+// busyRetryAttempts bounds retryOnBusy: enough to ride out a burst of
+// contending writers without turning a real deadlock or a stuck lock into a
+// long hang.
+const busyRetryAttempts = 5
+
+// busyBackoff is a short, bounded exponential backoff between busy retries:
+// 10ms, 20ms, 40ms, 80ms, capped at 160ms.
+func busyBackoff(attempt int) time.Duration {
+	d := 10 * time.Millisecond << attempt
+	if d > 160*time.Millisecond {
+		d = 160 * time.Millisecond
+	}
+	return d
+}
+
+// retryOnBusy runs fn, retrying up to busyRetryAttempts times with
+// busyBackoff between attempts whenever fn fails with SQLITE_BUSY. Even at a
+// 10s busy_timeout (perConnPragmas) a pooled connection can occasionally
+// still lose the race for the write lock under a heavy burst of concurrent
+// writers — more often on Windows, where file locking is measurably slower
+// than POSIX advisory locks. fn must be safe to call more than once: it is
+// not wrapped in a transaction retryOnBusy could roll back, so every
+// statement it runs needs to already be idempotent on its own.
+func retryOnBusy(fn func() error) error {
+	var err error
+	for attempt := 0; attempt < busyRetryAttempts; attempt++ {
+		err = fn()
+		if err == nil || !isBusyErr(err) {
+			return err
+		}
+		time.Sleep(busyBackoff(attempt))
+	}
+	return err
 }
 
 // forEachIn runs `prefix (?,?,…) suffix` over ids in chunks that stay under

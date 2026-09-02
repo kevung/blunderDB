@@ -77,11 +77,15 @@ func New(db *sql.DB) *Storage {
 // perConnPragmas are the connection-scoped PRAGMAs every SQLite connection
 // must carry. They are set per connection (via the DSN, or via ApplyPragmas on
 // a borrowed handle) because a PRAGMA only affects the connection it runs on.
-// busy_timeout makes a contending writer wait up to 5 s for the write lock
+// busy_timeout makes a contending writer wait up to 10 s for the write lock
 // rather than failing immediately with SQLITE_BUSY — essential now that the
-// global Database mutex no longer serializes writers (P5).
+// global Database mutex no longer serializes writers (P5). 10 s (not gnubg's
+// usual 5 s) because Windows file locking is measurably slower under the
+// heavy concurrent-writer load the storagetest suite exercises; positionStore
+// Save additionally retries a handful of times with a short backoff, which
+// busy_timeout alone cannot cover — see its doc comment.
 var perConnPragmas = [][2]string{
-	{"busy_timeout", "5000"},
+	{"busy_timeout", "10000"},
 	{"foreign_keys", "ON"},
 	{"synchronous", "NORMAL"},
 	{"cache_size", "-65536"},

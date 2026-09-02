@@ -73,7 +73,27 @@ const markFlaggedSQL = `UPDATE position SET flagged = 1
 // position the user had already imported on its own, and an individual import
 // of a position a match had already brought in still marks it. The flag is
 // therefore independent of the order the user imports their files in.
+//
+// Under heavy concurrent writers a pooled connection can still lose the race
+// for the write lock once busy_timeout itself has been exhausted (more often
+// on Windows, where file locking is measurably slower — P5); Save retries a
+// bounded number of times on SQLITE_BUSY via retryOnBusy. Every statement
+// saveOnce runs is naturally idempotent (INSERT … ON CONFLICT DO NOTHING, the
+// two mark statements are guarded by their own WHERE, the dedup lookup is a
+// pure read), and *p is only mutated once saveOnce has fully succeeded, so
+// re-running the whole attempt from scratch is safe.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
+	var id int64
+	err := retryOnBusy(func() error {
+		var innerErr error
+		id, innerErr = s.saveOnce(ctx, scope, p)
+		return innerErr
+	})
+	return id, err
+}
+
+// saveOnce is Save's single attempt, with no retry of its own.
+func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Position) (int64, error) {
 	norm := p.NormalizeForStorage()
 	cols := engine.PopulatePositionColumns(p)
 	res, err := s.db.ExecContext(ctx, positionInsertSQL,
