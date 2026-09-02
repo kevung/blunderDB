@@ -149,3 +149,116 @@ export const epcResultB = {
     },
     top: { all_in_home: false, checker_count: 15 }
 };
+
+// ── Bibliothèque ouverte ─────────────────────────────────────────────────────
+
+/**
+ * Position C — troisième position de la bibliothèque (jeu de contact).
+ * Sert de dernier élément : l'app s'ouvre dessus après restauration de session.
+ */
+export const positionC = {
+    ...positionA,
+    id: 1003,
+    board: {
+        points: (() => {
+            const pts = emptyPoints();
+            pts[6] = { checkers: 5, color: 0 };
+            pts[8] = { checkers: 3, color: 0 };
+            pts[13] = { checkers: 5, color: 0 };
+            pts[24] = { checkers: 2, color: 0 };
+            pts[1] = { checkers: 2, color: 1 };
+            pts[12] = { checkers: 5, color: 1 };
+            pts[17] = { checkers: 3, color: 1 };
+            pts[19] = { checkers: 5, color: 1 };
+            return pts;
+        })(),
+        bearoff: [0, 0]
+    },
+    dice: [6, 5]
+};
+
+/** Les trois positions de la bibliothèque factice, dans l'ordre du backend. */
+export const libraryPositions = [positionA, positionB, positionC];
+
+/** Chemin de la base factice mémorisée dans la config. */
+export const libraryDbPath = '/tmp/e2e-library.db';
+
+/**
+ * Overrides pour installWailsMock qui font démarrer l'app sur une base
+ * ouverte : le chemin mémorisé existe, la version du schéma concorde, aucune
+ * session à restaurer → loadAllPositions affiche libraryPositions.
+ *
+ * @param {{ database?: object, app?: object, config?: object, runtime?: object }} [extra]
+ */
+export function openLibraryMock(extra = {}) {
+    return {
+        config: { GetLastDatabasePath: libraryDbPath, ...(extra.config || {}) },
+        app: { PathExists: true, ...(extra.app || {}) },
+        runtime: { ...(extra.runtime || {}) },
+        database: {
+            IsProtectedCopyPath: false,
+            OpenDatabase: null,
+            CheckDatabaseVersion: '2.15.0',
+            GetDatabaseVersion: '2.15.0',
+            IsReadOnly: false,
+            LoadSessionState: null,
+            LoadAllPositions: libraryPositions,
+            GetAllMatches: [],
+            GetAllTournaments: [],
+            GetAllCollections: [],
+            LoadSearchHistory: [],
+            LoadFilters: [],
+            ...(extra.database || {})
+        }
+    };
+}
+
+// ── Match factice de deux parties ────────────────────────────────────────────
+
+/** Ligne du panneau Match (forme renvoyée par GetAllMatches). */
+export const matchSample = {
+    id: 7,
+    player1_name: 'Alice',
+    player2_name: 'Bob',
+    match_length: 7,
+    match_date: '2026-01-15',
+    game_count: 2,
+    last_visited_position: 0,
+    event: '',
+    location: '',
+    round: '',
+    file_path: '/tmp/alice-bob.xg',
+    import_date: '2026-01-16'
+};
+
+/** Parties du match (GetGamesByMatch). */
+export const matchGames = [
+    { game_number: 1, initial_score: [0, 0], winner: 0, points_won: 1 },
+    { game_number: 2, initial_score: [1, 0], winner: -1, points_won: 0 }
+];
+
+/**
+ * Six coups joués (GetMatchMovePositions) : trois par partie, tous des coups de
+ * pions pour que j/k et les flèches les parcourent un à un.
+ */
+export const matchMovePositions = [1, 2].flatMap((game) =>
+    [1, 2, 3].map((move) => ({
+        game_number: game,
+        move_number: move,
+        move_type: 'checker',
+        checker_move: `${13 - move}/${10 - move}`,
+        cube_action: '',
+        position: { ...positionC, id: 2000 + game * 10 + move, dice: [move + 1, move], score: [game - 1, 0] }
+    }))
+);
+
+// ── Position collée / importée ───────────────────────────────────────────────
+
+/** Texte XGID tel que copié depuis XG (position de départ, 3-1 à jouer). */
+export const xgidSample = 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:7:10';
+
+/** Position que ParsePositionText renvoie pour xgidSample (pas encore en base : id 0). */
+export const pastedPosition = { ...positionC, id: 0, dice: [3, 1], score: [0, 0] };
+
+/** Retour de ParsePositionText : position seule, sans analyse ni commentaire. */
+export const parsedPositionResult = { position: pastedPosition, analysis: null, comment: '' };

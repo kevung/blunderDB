@@ -30,6 +30,9 @@ tests/e2e/
 │   └── fixtures.js    – positions, matches, stats, résultats EPC factices
 ├── tab-switch-stats.spec.js          – S2 : transitions d'onglets Stats
 ├── epc-bar-refreshes-on-return.spec.js – S1 étendu : mise à jour EPC
+├── search-flow.spec.js               – Recherche : filtres + structure, résultats, navigation
+├── match-navigation.spec.js          – Match : ouverture, parcours des coups, sortie
+├── import-position.spec.js           – Import : XGID collé, fichier via dialogue
 └── README.md (ce fichier)
 ```
 
@@ -52,6 +55,17 @@ test.beforeEach(async ({ page }) => {
 });
 ```
 
+Un second argument passe des constantes par méthode, une par espace de noms
+(`database`, `app`, `config`, `runtime`). `openLibraryMock()` (fixtures.js)
+fournit le jeu qui fait démarrer l'app sur une base ouverte de trois positions :
+
+```js
+await installWailsMock(page, openLibraryMock({ database: { GetAllMatches: [matchSample] } }));
+```
+
+Chaque appel de binding est journalisé ; `getWailsCalls(page, 'LoadPositionsByFilters')`
+renvoie `{ ns, method, args }` pour vérifier ce que le frontend a demandé au backend.
+
 ### `overrideDbMethod(page, methodName, returnValue)`
 
 Modifie dynamiquement une méthode Database **après** le chargement de la page.
@@ -61,6 +75,20 @@ Modifie dynamiquement une méthode Database **après** le chargement de la page.
 import { overrideDbMethod } from './helpers/wailsMock.js';
 await overrideDbMethod(page, 'ComputeEPCFromPosition', epcResultB);
 ```
+
+### `overrideDbMethodThen(page, methodName, returnValue, afterCall)`
+
+Simule une mutation du backend : `methodName` répond `returnValue` et, dès son
+premier appel, les méthodes de `afterCall` sont remplacées (une position
+enregistrée apparaît ensuite dans `LoadAllPositions`).
+
+## Panneaux ancrés et touches nues
+
+Le panneau Match (onglet ouvert au chargement) et le panneau Recherche (tant
+qu'un champ a le focus) gardent les touches nues pour eux : Tab, flèches, j/k
+n'atteignent pas le dispatcher global. Dans une spec, ouvrir la recherche par
+`Ctrl+F`, sortir d'un champ en cliquant un bouton, et parcourir la bibliothèque
+depuis l'onglet Analyse.
 
 ## Conventions
 
