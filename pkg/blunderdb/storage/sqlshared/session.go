@@ -1,21 +1,19 @@
-package postgres
+package sqlshared
 
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-type sessionStore struct{ db execer }
+// SessionStore implements storage.SessionStore. Session state is persisted as
+// individual metadata key/value rows under the keys below.
+type SessionStore struct{ DB Execer }
 
-var _ storage.SessionStore = (*sessionStore)(nil)
+var _ storage.SessionStore = (*SessionStore)(nil)
 
-// Session state is persisted as individual metadata key/value rows. The keys
-// are namespaced by scope so several tenants can co-exist in one database; the
-// empty scope (single-user) is left unprefixed.
 const (
 	sessionKeySearchCommand  = "session_last_search_command"
 	sessionKeySearchPosition = "session_last_search_position"
@@ -30,6 +28,9 @@ var sessionKeys = []string{
 	sessionKeyPositionIDs, sessionKeyActiveSearch, sessionKeyViews,
 }
 
+// sessionScopedKey namespaces a session metadata key by scope so several
+// tenants can co-exist in one database. The empty scope (single-user GUI/CLI)
+// is left unprefixed, so existing databases keep working with no migration.
 func sessionScopedKey(scope, key string) string {
 	if scope == "" {
 		return key
@@ -37,11 +38,33 @@ func sessionScopedKey(scope, key string) string {
 	return scope + ":" + key
 }
 
+// SessionKeys returns the scope's six session metadata keys. The PostgreSQL
+// tenant purge deletes exactly these rows (rather than a LIKE prefix pattern,
+// which a scope containing % or _ could over-match) so a decommissioned
+// tenant leaves no session crumbs behind; taking them from here keeps the
+// purge in lockstep with Save/Load/Clear.
+func SessionKeys(scope string) []string {
+	keys := make([]string, len(sessionKeys))
+	for i, k := range sessionKeys {
+		keys[i] = sessionScopedKey(scope, k)
+	}
+	return keys
+}
+
+// scopedSessionKeys returns the scope's six metadata keys as query arguments.
+func scopedSessionKeys(scope string) []any {
+	args := make([]any, len(sessionKeys))
+	for i, k := range SessionKeys(scope) {
+		args[i] = k
+	}
+	return args
+}
+
 // Save persists the UI session state across the six (scoped) metadata rows.
-func (s *sessionStore) Save(ctx context.Context, scope string, state storage.SessionState) error {
+func (s *SessionStore) Save(ctx context.Context, scope string, state storage.SessionState) error {
 	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
 	if err != nil {
-		return fmt.Errorf("postgres: save session: %w", err)
+		return errf(s.DB, "save session", err)
 	}
 	hasActiveSearch := "false"
 	if state.HasActiveSearch {
@@ -55,38 +78,34 @@ func (s *sessionStore) Save(ctx context.Context, scope string, state storage.Ses
 		{sessionKeyActiveSearch, hasActiveSearch},
 		{sessionKeyViews, state.ViewsJSON},
 	}
-	err = withTx(ctx, s.db, func(tx execer) error {
+	err = s.DB.Transact(ctx, func(tx Execer) error {
 		for _, kv := range pairs {
-			if _, err := tx.Exec(ctx,
-				`INSERT INTO metadata (key, value) VALUES ($1, $2)
-				 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-				sessionScopedKey(scope, kv[0]), kv[1]); err != nil {
+			if _, err := tx.Exec(ctx, upsertMetadataSQL, sessionScopedKey(scope, kv[0]), kv[1]); err != nil {
 				return err
 			}
 		}
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("postgres: save session: %w", err)
+		return errf(s.DB, "save session", err)
 	}
 	return nil
 }
 
 // Load returns the persisted session state for the scope. Missing keys yield
-// zero values, so a scope that never stored a session loads empty.
-func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.SessionState, error) {
+// zero values, so a scope that never stored a session loads an empty
+// SessionState.
+func (s *SessionStore) Load(ctx context.Context, scope string) (*storage.SessionState, error) {
+	// Query the scope-namespaced keys and map each back to its base key.
 	baseByScoped := make(map[string]string, len(sessionKeys))
-	scoped := make([]string, len(sessionKeys))
-	for i, k := range sessionKeys {
-		sk := sessionScopedKey(scope, k)
-		baseByScoped[sk] = k
-		scoped[i] = sk
+	for _, k := range sessionKeys {
+		baseByScoped[sessionScopedKey(scope, k)] = k
 	}
-
-	rows, err := s.db.Query(ctx,
-		`SELECT key, COALESCE(value, '') FROM metadata WHERE key = ANY($1)`, scoped)
+	rows, err := s.DB.Query(ctx,
+		`SELECT key, COALESCE(value,'') FROM metadata WHERE key IN (`+Placeholders(len(sessionKeys))+`)`,
+		scopedSessionKeys(scope)...)
 	if err != nil {
-		return nil, fmt.Errorf("postgres: load session: %w", err)
+		return nil, errf(s.DB, "load session", err)
 	}
 	defer rows.Close()
 
@@ -94,7 +113,7 @@ func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.Session
 	for rows.Next() {
 		var key, value string
 		if err := rows.Scan(&key, &value); err != nil {
-			return nil, fmt.Errorf("postgres: load session: %w", err)
+			return nil, errf(s.DB, "load session", err)
 		}
 		switch baseByScoped[key] {
 		case sessionKeySearchCommand:
@@ -119,19 +138,17 @@ func (s *sessionStore) Load(ctx context.Context, scope string) (*storage.Session
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("postgres: load session: %w", err)
+		return nil, errf(s.DB, "load session", err)
 	}
 	return state, nil
 }
 
 // Clear removes the persisted session state for the scope.
-func (s *sessionStore) Clear(ctx context.Context, scope string) error {
-	scoped := make([]string, len(sessionKeys))
-	for i, k := range sessionKeys {
-		scoped[i] = sessionScopedKey(scope, k)
-	}
-	if _, err := s.db.Exec(ctx, `DELETE FROM metadata WHERE key = ANY($1)`, scoped); err != nil {
-		return fmt.Errorf("postgres: clear session: %w", err)
+func (s *SessionStore) Clear(ctx context.Context, scope string) error {
+	if _, err := s.DB.Exec(ctx,
+		`DELETE FROM metadata WHERE key IN (`+Placeholders(len(sessionKeys))+`)`,
+		scopedSessionKeys(scope)...); err != nil {
+		return errf(s.DB, "clear session", err)
 	}
 	return nil
 }
