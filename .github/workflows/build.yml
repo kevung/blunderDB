@@ -61,6 +61,20 @@ jobs:
           # testing.Short() are skipped), the full suite on version tags.
           - shard: gammonnet
             run: go test -timeout 1500s -count=1 $GAMMONNET_FLAGS -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/engine/gammonnet/
+          # Every Fuzz* target of the module in seed mode: without -fuzz, `go
+          # test` replays the f.Add seeds and the committed testdata/fuzz/
+          # corpora (the regression inputs of past crashes) as plain tests.
+          # `-run` filters Fuzz* names too, so a shard selecting by test name
+          # like database-a/-b silently drops them — this shard is the one
+          # place that guarantees they run, whatever the other shards filter
+          # on. Packages are discovered from the sources so a new target needs
+          # no edit here; -v is deliberate: the log must show every
+          # `FuzzXxx/seed#N`. fuzz.yml does the open-ended search.
+          - shard: fuzz-seeds
+            run: |
+              pkgs=$(grep -rl --include='*_test.go' '^func Fuzz' . | xargs -n1 dirname | sed 's|^\./||; s|^|./|' | sort -u)
+              echo "fuzz packages: $pkgs"
+              go test -timeout 600s -race -count=1 -run '^Fuzz' -v $pkgs
     env:
       GAMMONNET_FLAGS: ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }}
     steps:

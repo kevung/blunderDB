@@ -137,11 +137,13 @@ lance 9. `FuzzBGFApplyCheckerMove` et ses seeds de régression ne tournent
 plus, contrairement à ce que `fuzz.yml:5-8` affirme.
 
 **À faire.**
-- [ ] Shard supplémentaire (ou `-run '^(Test[A-I]|Fuzz)'`) qui joue tous les
-      `Fuzz*` en mode seeds.
-- [ ] Dédupliquer `database/db_import_bgf_fuzz_test.go` et la cible d'`ingest`
-      (même fonction fuzzée deux fois) ; ajouter la cible manquante à `fuzz.yml`.
-- [ ] `fuzz.yml` : `fuzztime` 90 s → 5 min par cible (le timeout de step le
+- [x] Shard supplémentaire (ou `-run '^(Test[A-I]|Fuzz)'`) qui joue tous les
+      `Fuzz*` en mode seeds (shard `fuzz-seeds`, paquets découverts par `grep`).
+- [x] Dédupliquer `database/db_import_bgf_fuzz_test.go` et la cible d'`ingest`
+      (même fonction fuzzée deux fois) ; ajouter la cible manquante à `fuzz.yml`
+      (la copie `database` et sa fonction morte sont supprimées ; les 5 cibles
+      restantes sont toutes dans `fuzz.yml`).
+- [x] `fuzz.yml` : `fuzztime` 90 s → 5 min par cible (le timeout de step le
       permet).
 
 **Recette.** Le log du job `test` montre `FuzzXxx … seed#N` pour chaque cible.
