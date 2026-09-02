@@ -14,6 +14,7 @@ import {
     cubeInfoRows,
     cubeFactRows,
     checkerRows,
+    orderMoveTokens,
     playedMovePredicate,
     playedCubePredicate,
     isPlayedOption,
@@ -202,6 +203,34 @@ const moves = [
     }
 ];
 
+describe('orderMoveTokens — a play reads from the back', () => {
+    test('the least advanced checker moves first, whatever order the producer wrote', () => {
+        expect(orderMoveTokens('18/14 24/18')).toBe('24/18 18/14');
+        expect(orderMoveTokens('13/11 24/22 22/20')).toBe('24/22 22/20 13/11');
+    });
+
+    test('the bar comes before every point', () => {
+        expect(orderMoveTokens('13/11 bar/24')).toBe('bar/24 13/11');
+        expect(orderMoveTokens('6/2 bar/21*')).toBe('bar/21* 6/2');
+    });
+
+    test('hits, repetitions and bear-offs travel with their token', () => {
+        expect(orderMoveTokens('6/off(2) 13/7*')).toBe('13/7* 6/off(2)');
+        expect(orderMoveTokens('8/3 24/18/13')).toBe('24/18/13 8/3');
+    });
+
+    test('a tie keeps the producer order — nothing to decide between two checkers from the same point', () => {
+        expect(orderMoveTokens('8/5 8/3')).toBe('8/5 8/3');
+        expect(orderMoveTokens('8/3 8/5')).toBe('8/3 8/5');
+    });
+
+    test('what does not parse as this notation is returned untouched', () => {
+        expect(orderMoveTokens('Cannot move')).toBe('Cannot move');
+        expect(orderMoveTokens('')).toBe('');
+        expect(orderMoveTokens(undefined)).toBe('');
+    });
+});
+
 describe('checkerRows', () => {
     test('the header follows CHECKER_COLUMNS, with and without provenance', () => {
         expect(checkerRows(moves, { t }).header).toEqual(CHECKER_COLUMNS.map(() => expect.stringMatching(/^analysis\./)));
@@ -238,6 +267,12 @@ describe('checkerRows', () => {
         const block = checkerRows([...moves].reverse(), { t, isPlayedMove: (m) => m.index === 1 });
         expect(block.rows.map((r) => r.label)).toEqual(['24/21 13/12', '24/23 13/10']);
         expect(block.rows.map((r) => r.highlight)).toEqual([true, false]);
+    });
+
+    test('the move cell is reordered for reading, the move object is not', () => {
+        const row = checkerRows([{ move: '18/14 24/18', index: 0 }], { t }).rows[0];
+        expect(row.label).toBe('24/18 18/14');
+        expect(row.move.move).toBe('18/14 24/18');
     });
 
     test('the baseline row: no error figure (ADR-0018 rule 3), a dash for a missing equity', () => {
