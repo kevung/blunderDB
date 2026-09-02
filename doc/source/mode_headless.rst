@@ -107,10 +107,16 @@ depuis plusieurs clients.
        intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ;
        le démon ne télécharge jamais de base lui-même — monter le fichier
        en volume et le désigner ici
+   * - ``--identity-dir <répertoire>``
+     - –
+     - répertoire de l'identité de signature du démon (créée au premier
+       usage) ; nécessaire pour qu'``exports.sqlite`` puisse apposer un
+       filigrane — voir plus bas
 
 La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``).
+``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``,
+``BLUNDERDB_IDENTITY_DIR``).
 
 Points d'accès
 --------------
@@ -135,6 +141,17 @@ Deux méthodes de la famille ``positions`` décodent une position sans
 l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
 chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``.xgp``.
+
+``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
+collections, matchs, tournois, analyses, commentaires, coups joués,
+bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
+quel par le poste de travail ; il n'existe pas encore d'export partiel côté
+serveur (cette sélection est un geste du bureau ou de la CLI). Le corps JSON
+de la requête est optionnel et n'accepte que ``watermarkOrigin`` /
+``watermarkNote``, pour apposer un filigrane signé de l'identité propre du
+démon (``--identity-dir``) — sans ces champs, l'export ne porte aucun
+filigrane ; les demander sans identité configurée échoue avec le code
+``invalid``.
 
 La famille ``anki`` gagne six méthodes qui étendent le planificateur à
 répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —

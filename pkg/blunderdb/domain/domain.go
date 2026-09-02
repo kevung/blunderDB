@@ -359,7 +359,12 @@ type ExportOptions struct {
 	//
 	// Positions still wins when it is set, so callers holding positions that are not in the
 	// database keep working.
-	PositionIDs          []int64           `json:"positionIDs"`
+	PositionIDs []int64 `json:"positionIDs"`
+	// AllPositions exports every position of the database without listing
+	// them — what the CLI's `export --type database` means, and what used to
+	// cost it loading the whole library into memory first. Positions and
+	// PositionIDs win over it when set.
+	AllPositions         bool              `json:"allPositions"`
 	Metadata             map[string]string `json:"metadata"`
 	IncludeAnalysis      bool              `json:"includeAnalysis"`
 	IncludeComments      bool              `json:"includeComments"`

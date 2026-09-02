@@ -38,8 +38,10 @@ type PositionStore interface {
 	ListIDs(ctx context.Context, scope string, opts ListOpts) ([]int64, error)
 
 	// LoadByIDs returns the positions whose ids are listed, in the order the
-	// caller gave them. Unknown ids are skipped rather than failing the
-	// call: a position deleted between the moment its id was listed and the
-	// moment it is fetched is not a reason to lose the rest of the window.
+	// caller gave them, in one round trip per batch rather than one per id.
+	// Unknown ids are skipped rather than failing the call: callers hand
+	// over lists gathered earlier (a search result, a saved selection, an id
+	// window from ListIDs), and a position deleted in between is not a
+	// reason to fail — or lose the rest of — the batch.
 	LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error)
 }

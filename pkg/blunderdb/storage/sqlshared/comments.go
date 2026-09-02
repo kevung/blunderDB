@@ -178,6 +178,50 @@ func (s *CommentStore) ByPosition(ctx context.Context, scope string, positionID 
 		append([]any{positionID}, targs...)...)
 }
 
+// byPositionsChunk bounds one IN (...) list, leaving headroom under
+// SQLite's bound-variable limit (999 on older builds) for the query's tenant
+// placeholder.
+const byPositionsChunk = 900
+
+// ByPositions returns the non-empty comments of the given positions, keyed by
+// position id and oldest first within a position — see storage.CommentStore.
+func (s *CommentStore) ByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.CommentEntry, error) {
+	out := make(map[int64][]*domain.CommentEntry)
+	if len(positionIDs) == 0 {
+		return out, nil
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	for start := 0; start < len(positionIDs); start += byPositionsChunk {
+		batch := positionIDs[start:min(start+byPositionsChunk, len(positionIDs))]
+		args := make([]any, 0, len(batch)+len(targs))
+		for _, id := range batch {
+			args = append(args, id)
+		}
+		args = append(args, targs...)
+		rows, err := s.DB.Query(ctx,
+			`SELECT `+s.selectCols()+` FROM comment
+			 WHERE position_id IN (`+Placeholders(len(batch))+`) AND `+tenant+` AND text != '' ORDER BY id ASC`,
+			args...)
+		if err != nil {
+			return nil, errf(s.DB, "comments by positions", err)
+		}
+		for rows.Next() {
+			e, err := scanCommentEntry(rows)
+			if err != nil {
+				rows.Close()
+				return nil, errf(s.DB, "comments by positions", err)
+			}
+			out[e.PositionID] = append(out[e.PositionID], &e)
+		}
+		rerr := rows.Err()
+		rows.Close()
+		if rerr != nil {
+			return nil, errf(s.DB, "comments by positions", rerr)
+		}
+	}
+	return out, nil
+}
+
 // ListAll streams every non-empty comment entry, most recent first.
 func (s *CommentStore) ListAll(ctx context.Context, scope string) iter.Seq2[*domain.CommentEntry, error] {
 	tenant, targs := s.DB.TenantFilter("", scope)

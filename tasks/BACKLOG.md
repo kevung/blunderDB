@@ -21,11 +21,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   donc pour un vrai Double/Take/Pass et entrerait au dénominateur du PR.
   Aucune occurrence connue dans les corpus. Correctif si ça mord un jour :
   tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **Export unifié, schéma unique** : faire de `storage/sqlite/schema_sqlite.go`
-  la source DDL unique (7 copies aujourd'hui, 93 `CREATE TABLE`) et fusionner
-  les 3+1 chemins d'export en un exporteur paramétré par une sélection
-  (`ingest/`), consommé par GUI/CLI/serveur. Règle aussi : matchs absents de
-  l'export serveur, watermark côté serveur. Effort L.
 - **`SwapPlayers`/`DeleteCascade` partagés** entre backends via closures SQL
   dialectales (~90 lignes dupliquées à l'octet près).
 - **Découpage `db_session.go`** (603 lignes, 5 responsabilités) — les
@@ -113,6 +108,18 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 - **2026-09-02 — `utils/boardRenderer.js` / `boardScene.js`** : fait le 2026-09-02 (fcd81620) : `utils/boardScene.js`, `boardInteractions.js`, couche statique/dynamique.
 - **2026-09-02 — E2E des parcours produit** : fait le 2026-09-02 (451ce542) : specs recherche, navigation match, import de position.
 - **2026-09-02 — Job docs** : fait le 2026-09-02 (ba578f9c) : filtrage par chemins, cache pip, PDF sur tag seulement.
+- **2026-09-02 — Export unifié, schéma unique** (commits `dac6d630` DDL
+  unique ; `475c1b4a`, `bb77b247`, `1cd53334` export unifié) :
+  `storage/sqlite/schema_sqlite.go` est la source DDL unique, et
+  `ingest.ExportSQLite` remplace les quatre chemins d'export
+  (`ExportDatabase`, `ExportCollections`, `ExportTournaments`, l'export du
+  serveur) — GUI/CLI/serveur lisent tous via `storage.Storage`, sur SQLite
+  comme PostgreSQL. Les deux écarts connus sont corrigés : l'export du
+  serveur (`exports.sqlite`) portait un `Selection` vide (rien n'en
+  sortait, ni positions ni matchs) et n'avait aucune identité de signature ;
+  il exporte maintenant tout le tenant et peut apposer un filigrane
+  (`Options.Identity`, `--identity-dir`). Parité GUI/serveur testée
+  (`ingest/export_parity_test.go`).
 - **2026-09-02 — Bug `CommitImportDatabase`, colonnes scalaires NULL** (commits bd33df8d, 086f5466) : la branche « position neuve » écrit désormais via `PositionStore.Save` (hash + colonnes canoniques), et une réparation idempotente à l'ouverture (`repairPositionsWithoutScalars`, sans bump de `DatabaseVersion`) rattrape les lignes existantes.
 | Fait le | Item | Origine | Où |
 |---|---|---|---|

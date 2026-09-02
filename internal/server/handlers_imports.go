@@ -10,10 +10,12 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // importRegistry tracks in-flight imports so imports.cancel can abort them.
@@ -106,8 +108,37 @@ func (s *Server) ingestRoutes() []route {
 	}
 }
 
-// handleExportSQLite serializes the caller's tenant into a blunderDB SQLite file
-// and returns it as a binary download.
+// exportSQLiteReq optionally asks for a watermark on the export — origin is
+// free text (who this copy is for, or why it left), mirroring the desktop's
+// export dialog and the CLI's --watermark/--watermark-note. An empty (or
+// absent) origin means the export carries none.
+type exportSQLiteReq struct {
+	WatermarkOrigin string `json:"watermarkOrigin"`
+	WatermarkNote   string `json:"watermarkNote"`
+}
+
+// sealExportWatermark seals a watermark for origin/note with this daemon's own
+// signing identity (Options.Identity — see its doc comment), or returns ""
+// when origin is empty (no watermark asked for). A watermark asked for
+// without a configured identity is a CodeInvalid error, not a silently
+// unmarked export.
+func (s *Server) sealExportWatermark(origin, note string) (string, error) {
+	if strings.TrimSpace(origin) == "" {
+		return "", nil
+	}
+	if s.opts.Identity == nil {
+		return "", fmt.Errorf("%w: watermarkOrigin was given but this server has no signing identity (start it with --identity-dir)", storage.ErrInvalid)
+	}
+	return ingest.SealWatermark(s.opts.Identity, origin, note)
+}
+
+// handleExportSQLite serializes the caller's whole tenant — every position,
+// collection, match and tournament, with analyses, comments, played moves,
+// the filter library and Anki decks — into a blunderDB SQLite file and
+// returns it as a binary download. An optional JSON body asks for a
+// watermark (see exportSQLiteReq); everything else about the export is
+// WholeTenant, matching the GUI/CLI's "export everything" preset — a
+// selective server-side export is not offered yet.
 //
 // ingest.SQLiteExporter already materializes the whole file into its own temp
 // path before copying it to the writer it is given, but this handler must not
@@ -122,17 +153,30 @@ func (s *Server) ingestRoutes() []route {
 // proper status/content-type — nothing has reached the client yet.
 func (s *Server) handleExportSQLite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req exportSQLiteReq
+		if err := decodeJSON(r, &req); err != nil {
+			writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+			return
+		}
+		watermark, err := s.sealExportWatermark(req.WatermarkOrigin, req.WatermarkNote)
+		if err != nil {
+			writeStorageError(w, err)
+			return
+		}
+
 		exp := s.exporterFor(ingest.FormatSQLite)
 
-		tmp, err := os.CreateTemp("", "blunderdb-export-resp-*.sqlite")
-		if err != nil {
-			writeStorageError(w, fmt.Errorf("server: create temp export file: %w", err))
+		tmp, tmpErr := os.CreateTemp("", "blunderdb-export-resp-*.sqlite")
+		if tmpErr != nil {
+			writeStorageError(w, fmt.Errorf("server: create temp export file: %w", tmpErr))
 			return
 		}
 		tmpPath := tmp.Name()
 		defer os.Remove(tmpPath)
 
-		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, ingest.ExportOptions{Format: ingest.FormatSQLite})
+		opts := ingest.WholeTenant(ingest.FormatSQLite)
+		opts.Watermark = watermark
+		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, opts)
 		closeErr := tmp.Close()
 		if exportErr != nil {
 			writeStorageError(w, exportErr)
