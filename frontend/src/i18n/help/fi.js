@@ -150,6 +150,9 @@ export default {
                         ja palataksesi pakkalistaan.
                     </p>
                     <p>
+                        <strong>Muistiinjäänti:</strong> Tavoitetaso on sinun valintasi työmäärän ja laadun välillä. Asetukset näyttävät sen vieressä omista kertauksistasi <em>mitatun</em> tason — tieto, ei ohjaus. Tavoitteen muutos ei ole takautuva: kukin kortti omaksuu uuden rytmin seuraavassa kertauksessaan.
+                    </p>
+                    <p>
                         <strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen; mieti se ensin ja paina sitten <strong>välilyöntiä</strong> (tai napsauta peitettyä aluetta) paljastaaksesi aseman tallennetun analyysin. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät ulottuvilla. Vastausta ei tarvitse paljastaa arvioidakseen, ja se peittyy taas seuraavan kortin kohdalla — ei kuitenkaan pelkästä välilehden vaihdosta.
                     </p>
                     <p>

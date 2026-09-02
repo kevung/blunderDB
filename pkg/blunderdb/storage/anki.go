@@ -80,8 +80,8 @@ type AnkiStore interface {
 	// of 0 spans every deck in the tenant; limit <= 0 means no limit.
 	ReviewLog(ctx context.Context, scope string, deckID int64, limit int) iter.Seq2[*domain.AnkiReviewLog, error]
 
-	// OptimizeParams derives a request-retention tuning suggestion for a deck
-	// from its review log and, when apply is true, writes it back. Returns
+	// Retention reports what a deck's review log measures against the target
+	// the user set. It reads and never writes (ADR-0026 rule 5). Returns
 	// ErrNotFound for an unknown deck.
-	OptimizeParams(ctx context.Context, scope string, deckID int64, apply bool) (*domain.AnkiOptimizeResult, error)
+	Retention(ctx context.Context, scope string, deckID int64) (*domain.AnkiRetention, error)
 }

@@ -1272,6 +1272,24 @@ pour ces deux dernières actions). Les paramètres FSRS (rétention cible,
 intervalle maximum, aléa) peuvent être configurés par paquet dans les
 Paramètres (icône engrenage).
 
+**Rétention : la cible et la mesure.** La *rétention cible* est votre choix sur
+le compromis entre charge de travail et qualité du rappel : plus elle est haute,
+plus les intervalles raccourcissent et plus vous révisez. En regard, les
+Paramètres affichent la **rétention mesurée** sur vos propres révisions — une
+information, jamais un pilotage : blunderDB ne modifie pas votre cible pour
+poursuivre votre taux de réussite. Sous une vingtaine de révisions, la mesure
+n'est pas affichée : elle se lirait comme un fait alors qu'elle n'est que du
+bruit.
+
+Changer la rétention **n'est pas rétroactif** : chaque carte adopte le nouveau
+rythme à sa prochaine révision, et les échéances déjà fixées ne bougent pas.
+L'effet est donc progressif, et invisible le jour même.
+
+L'*intervalle maximum* borne l'espacement. Un paquet créé récemment démarre à
+un an : une position que l'algorithme reporterait de plusieurs années a quitté
+le paquet sans que vous l'ayez décidé, et votre propre jeu change plus vite que
+cela. Les paquets plus anciens conservent la valeur qu'ils avaient.
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

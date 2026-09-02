@@ -350,15 +350,15 @@ func TestAnkiReviewLog(t *testing.T) {
 	}
 }
 
-// TestAnkiOptimizeParams covers the retention tuner plumbing (ANK-E2/B10):
-// unknown deck → ErrNotFound; a deck with no review-state history leaves the
-// request_retention unchanged (not enough signal).
-func TestAnkiOptimizeParams(t *testing.T) {
+// TestAnkiRetention covers the retention MEASUREMENT (ADR-0026 rule 5):
+// unknown deck → ErrNotFound; a review logged from the New state is no
+// review-state sample; and reading never moves the deck's target.
+func TestAnkiRetention(t *testing.T) {
 	ctx := context.Background()
 	s, _ := openMatchStore(t)
 
-	if _, err := s.Anki().OptimizeParams(ctx, "", 999, false); !errors.Is(err, storage.ErrNotFound) {
-		t.Errorf("OptimizeParams unknown deck: got %v, want ErrNotFound", err)
+	if _, err := s.Anki().Retention(ctx, "", 999); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Retention unknown deck: got %v, want ErrNotFound", err)
 	}
 
 	deckID, _ := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
@@ -366,8 +366,6 @@ func TestAnkiOptimizeParams(t *testing.T) {
 	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{pos}); err != nil {
 		t.Fatalf("SyncWithPositions: %v", err)
 	}
-	// The single review logs from the New state, so it is not a review-state
-	// (state=2) sample: the tuner sees no signal and leaves retention alone.
 	next, _ := s.Anki().NextCard(ctx, "", deckID)
 	if next != nil {
 		if _, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 3); err != nil {
@@ -375,17 +373,18 @@ func TestAnkiOptimizeParams(t *testing.T) {
 		}
 	}
 
-	res, err := s.Anki().OptimizeParams(ctx, "", deckID, true)
+	before, err := s.Anki().Retention(ctx, "", deckID)
 	if err != nil {
-		t.Fatalf("OptimizeParams: %v", err)
+		t.Fatalf("Retention: %v", err)
 	}
-	if res.SampleSize != 0 {
-		t.Errorf("expected 0 review-state samples, got %d", res.SampleSize)
+	if before.SampleSize != 0 {
+		t.Errorf("expected 0 review-state samples, got %d", before.SampleSize)
 	}
-	if res.Applied {
-		t.Errorf("nothing to optimize → should not apply")
+	after, err := s.Anki().Retention(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("Retention (second read): %v", err)
 	}
-	if res.SuggestedRetention != res.CurrentRetention {
-		t.Errorf("retention should be unchanged: %+v", res)
+	if after.TargetRetention != before.TargetRetention {
+		t.Errorf("measuring changed the target: %v then %v", before.TargetRetention, after.TargetRetention)
 	}
 }

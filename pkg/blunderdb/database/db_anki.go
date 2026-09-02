@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -218,4 +219,23 @@ func (d *Database) ResetAnkiDeck(deckID int64) error {
 		return fmt.Errorf("no database is currently open")
 	}
 	return d.store.Anki().ResetDeck(context.Background(), "", deckID)
+}
+
+// GetAnkiDeckRetention reports what a deck's review log measures against the
+// target retention its owner chose.
+//
+// Read-only, and deliberately so (ADR-0026 rule 5): the target is a choice on
+// the work/knowledge trade-off, the measurement is its outcome, and steering
+// one by the other is the mechanism FSRS's authors reject. Exposed here because
+// the GUI must be able to show what the daemon and the CLI can already read —
+// this method is the parity that was missing while the same capability was
+// served over HTTP and reachable from nowhere else.
+func (d *Database) GetAnkiDeckRetention(deckID int64) (*domain.AnkiRetention, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().Retention(context.Background(), "", deckID)
 }

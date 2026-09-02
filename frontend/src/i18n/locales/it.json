@@ -493,6 +493,9 @@
         "confirmDelete": "Eliminare il torneo \"{name}\"?"
     },
     "anki": {
+        "retentionMeasured": "Ritenzione misurata: {measured}% su {sample} ripassi",
+        "retentionNotEnough": "Ritenzione misurata: ripassi ancora insufficienti ({sample} su {needed})",
+        "retentionNotRetroactive": "Si applica man mano che si ripassa; le scadenze già fissate non cambiano.",
         "clickToReveal": "Clic o barra spaziatrice per rivelare la risposta",
         "noAnalysis": "Nessuna analisi registrata per questa posizione",
         "again": "Di nuovo",

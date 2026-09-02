@@ -493,6 +493,9 @@
         "confirmDelete": "Turnier „{name}“ löschen?"
     },
     "anki": {
+        "retentionMeasured": "Gemessene Behaltensrate: {measured} % über {sample} Wiederholungen",
+        "retentionNotEnough": "Gemessene Behaltensrate: noch zu wenige Wiederholungen ({sample} von {needed})",
+        "retentionNotRetroactive": "Wirkt sich nach und nach bei den Wiederholungen aus; bereits gesetzte Fälligkeiten ändern sich nicht.",
         "clickToReveal": "Klicken oder Leertaste, um die Antwort aufzudecken",
         "noAnalysis": "Für diese Stellung ist keine Analyse gespeichert",
         "again": "Nochmal",

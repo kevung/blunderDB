@@ -152,6 +152,9 @@ export default {
                         and return to the deck list.
                     </p>
                     <p>
+                        <strong>Retention:</strong> Desired retention is your choice on the workload/quality trade-off. The settings show the <em>measured</em> retention from your own reviews beside it — information, never a control. Changing the target is not retroactive: each card adopts the new rhythm at its next review.
+                    </p>
+                    <p>
                         <strong>Showing the answer:</strong> The card asks a question; think it through, then press <strong>Space</strong> (or click the masked area) to reveal the position's stored analysis. It appears below the grading buttons, which stay within reach. You are never required to reveal it in order to grade, and it re-hides on the next card — not when you simply switch tabs.
                     </p>
                     <p>

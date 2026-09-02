@@ -119,6 +119,9 @@
     let settingsRetention = $state(0.9);
     let settingsMaxInterval = $state(36500);
     let settingsFuzz = $state(true);
+    // What the deck's log measures, read when the settings view opens. Null
+    // until it answers, and reported as unavailable below the sample floor.
+    let retention = $state(null);
 
     const deckColumns = $derived([
         { key: 'name', label: $t('anki.colName') },
@@ -260,6 +263,10 @@
         settingsRetention = selectedDeck.requestRetention;
         settingsMaxInterval = selectedDeck.maximumInterval;
         settingsFuzz = selectedDeck.enableFuzz;
+        retention = null;
+        anki.deckRetention(selectedDeck.id)
+            .then((r) => (retention = r))
+            .catch(() => (retention = null));
         ankiViewModeStore.set('settings');
     }
 
@@ -401,6 +408,18 @@
                 <input type="number" bind:value={settingsRetention} min="0.7" max="0.99" step="0.01" />
                 <span class="settings-hint">{Math.round(settingsRetention * 100)}%</span>
             </div>
+            <!-- The target is a choice; this is its outcome, shown and never
+                 acted upon (ADR-0026 rule 5). -->
+            <div class="settings-note">
+                {#if retention && retention.sampleSize >= anki.RETENTION_MIN_SAMPLE}
+                    {$t('anki.retentionMeasured', { measured: Math.round(retention.observedRetention * 100), sample: retention.sampleSize })}
+                {:else if retention}
+                    {$t('anki.retentionNotEnough', { sample: retention.sampleSize, needed: anki.RETENTION_MIN_SAMPLE })}
+                {/if}
+            </div>
+            <!-- Without this line the change looks broken: it takes effect one
+                 review at a time and moves no existing due date (rule 8). -->
+            <div class="settings-note">{$t('anki.retentionNotRetroactive')}</div>
             <div class="settings-row">
                 <label>{$t('anki.maxInterval')}</label>
                 <input type="number" bind:value={settingsMaxInterval} min="1" max="36500" step="1" />
@@ -872,6 +891,12 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+    }
+
+    .settings-note {
+        font-size: var(--font-size-small);
+        color: #888;
+        margin: -2px 0 6px;
     }
 
     .settings-row {

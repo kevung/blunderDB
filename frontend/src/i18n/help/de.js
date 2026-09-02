@@ -152,6 +152,9 @@ export default {
                         und zur Deck-Liste zurückzukehren.
                     </p>
                     <p>
+                        <strong>Behaltensrate:</strong> Die Zielrate ist Ihre Wahl beim Kompromiss zwischen Aufwand und Qualität. Daneben zeigen die Einstellungen die <em>gemessene</em> Rate aus Ihren Wiederholungen — eine Information, keine Steuerung. Eine Änderung wirkt nicht rückwirkend: Jede Karte übernimmt den neuen Rhythmus bei ihrer nächsten Wiederholung.
+                    </p>
+                    <p>
                         <strong>Antwort anzeigen:</strong> Die Karte stellt eine Frage; überlegen Sie, und drücken Sie dann die <strong>Leertaste</strong> (oder klicken Sie auf den verdeckten Bereich), um die gespeicherte Analyse der Stellung aufzudecken. Sie erscheint unter den Bewertungstasten, die in Reichweite bleiben. Zum Bewerten müssen Sie sie nicht aufdecken; bei der nächsten Karte wird sie wieder verdeckt — nicht jedoch, wenn Sie nur den Reiter wechseln.
                     </p>
                     <p>
