@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -37,7 +38,7 @@ func TestCallRouteCoverage(t *testing.T) {
 	}
 	for _, p := range paths {
 		req := httptest.NewRequest(http.MethodPost, p, strings.NewReader("{}"))
-		req.Header.Set(middleware.TenantHeader, "t")
+		req.Header.Set(middleware.TenantHeader, "1")
 		rec := httptest.NewRecorder()
 		srv.Handler().ServeHTTP(rec, req)
 		// A 404 from a handler (ErrNotFound, e.g. load id 0) is fine; only the
@@ -164,5 +165,23 @@ func TestRunCallErrorExit(t *testing.T) {
 	}
 	if !strings.Contains(out, `"error"`) {
 		t.Fatalf("expected an error envelope on stdout, got: %q", out)
+	}
+}
+
+// TestRunCallRejectsNamedScope pins that `call --scope alice` fails before
+// anything is opened, naming the flag and the expected format: it used to be
+// forwarded as X-Tenant-ID and land on tenant 0 (ADR-0005, amendment
+// 2026-09-03).
+func TestRunCallRejectsNamedScope(t *testing.T) {
+	for _, scope := range []string{"alice", "default", "0"} {
+		err := RunCall([]string{"metadata.counts", "--db", "/nonexistent/x.db", "--scope", scope})
+		if err == nil {
+			t.Fatalf("--scope %q accepted", scope)
+		}
+		for _, want := range []string{"--scope", storage.TenantFormat, `"` + scope + `"`} {
+			if !strings.Contains(err.Error(), want) {
+				t.Errorf("--scope %q: error %q does not mention %q", scope, err, want)
+			}
+		}
 	}
 }

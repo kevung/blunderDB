@@ -27,17 +27,17 @@ tous les tenants nommés. Le loadtest ne génère que des tenants numériques
 (`cmd/blunderdb-loadtest/scenario.go:117`), il ne l'a jamais vu.
 
 **À faire.**
-- [ ] `middleware.Tenant` : rejeter en 400 `code=invalid` tout scope qui n'est
+- [x] `middleware.Tenant` : rejeter en 400 `code=invalid` tout scope qui n'est
       pas un entier décimal positif (message nommant le format attendu).
-- [ ] Même garde dans `migrate --tenant-id`, `call --scope`, et dans
+- [x] Même garde dans `migrate --tenant-id`, `call --scope`, et dans
       `storage.ParseTenant` (retourner l'erreur au lieu de l'ignorer).
-- [ ] Corriger `tenant_test.go:83` et la doc (`mode_headless.rst`, aide de
+- [x] Corriger `tenant_test.go:83` et la doc (`mode_headless.rst`, aide de
       `--scope`, `CLI_USAGE.md`) : exemples numériques uniquement.
-- [ ] Décision à écrire dans l'ADR-0005 (amendement court) : « un tenant est un
+- [x] Décision à écrire dans l'ADR-0005 (amendement court) : « un tenant est un
       entier ; le proxy fait la correspondance nom → entier ». L'option table
       `tenant(scope TEXT UNIQUE, id BIGSERIAL)` est notée comme évolution
       possible, pas retenue ici.
-- [ ] Test d'isolation à deux tenants **nommés** côté HTTP (A écrit, B lit → 404 ;
+- [x] Test d'isolation à deux tenants **nommés** côté HTTP (A écrit, B lit → 404 ;
       `alice` → 400) et scénario loadtest à tenants nommés.
 
 **Recette.** `curl -H 'X-Tenant-ID: alice' …` → 400 ; `TestTenantIsolationNamed`

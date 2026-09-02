@@ -55,6 +55,13 @@ type Report struct {
 func Run(ctx context.Context, src, dst storage.Storage, scope string, opts Options) (Report, error) {
 	var rep Report
 
+	// A tenant is a positive decimal integer (ADR-0005, amendment
+	// 2026-09-03); the PostgreSQL backend panics on anything else rather than
+	// collapsing it onto tenant 0, so validate up front and fail cleanly.
+	if _, err := storage.ParseTenant(scope); err != nil {
+		return rep, fmt.Errorf("migrate: %w", err)
+	}
+
 	if !opts.DryRun && opts.OnConflict != "skip" {
 		for _, err := range dst.Positions().List(ctx, scope, storage.ListOpts{Limit: 1}) {
 			if err != nil {

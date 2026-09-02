@@ -43,7 +43,12 @@ var purgeOrder = []string{
 // RLS/the app.tenant_id GUC, so it purges exactly the requested tenant
 // whether or not RLS (Options.EnableRLS) is enabled.
 func (s *Storage) PurgeTenant(ctx context.Context, scope string) error {
-	tenantID := storage.ParseTenant(scope)
+	tenantID, err := storage.ParseTenant(scope)
+	if err != nil {
+		// Never fall through to tenant 0: before ADR-0005's 2026-09-03
+		// amendment `tenant.purge "alice"` purged every named tenant at once.
+		return fmt.Errorf("postgres: purge tenant: %w", err)
+	}
 
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {

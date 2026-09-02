@@ -13,7 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-const testTenant = "tenant-a"
+const testTenant = "1"
 
 // post issues a POST to the daemon with the tenant header and a JSON body.
 func post(t *testing.T, ts *httptest.Server, path string, body any) *http.Response {

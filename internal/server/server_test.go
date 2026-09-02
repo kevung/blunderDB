@@ -126,7 +126,7 @@ func TestTenantHeaderReachesCatchAll(t *testing.T) {
 	// With a tenant header, the request passes the tenant gate and reaches the
 	// catch-all for an unknown /v1 method → 404 not_found envelope.
 	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/positions.doesNotExist", strings.NewReader("{}"))
-	req.Header.Set(middleware.TenantHeader, "tenant-a")
+	req.Header.Set(middleware.TenantHeader, "1")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal(err)
@@ -147,7 +147,7 @@ func TestTenantHeaderReachesCatchAll(t *testing.T) {
 func TestUnknownRouteEnvelope(t *testing.T) {
 	ts := newTestServer(t)
 	req, _ := http.NewRequest(http.MethodGet, ts.URL+"/nope", nil)
-	req.Header.Set(middleware.TenantHeader, "tenant-a")
+	req.Header.Set(middleware.TenantHeader, "1")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal(err)

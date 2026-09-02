@@ -66,8 +66,11 @@ func TestTenant_MissingHeaderIsRejected(t *testing.T) {
 }
 
 // TestTenant_MalformedValues pins the contract for values a proxy could
-// plausibly send: whitespace is trimmed, blank means missing, and anything
-// else is an opaque identifier taken verbatim — the daemon shapes nothing.
+// plausibly send: whitespace is trimmed, blank means missing, a positive
+// decimal integer is the tenant, and anything else is rejected as invalid —
+// the daemon never shapes a value into a tenant. Before ADR-0005's 2026-09-03
+// amendment "tenant-a", "a b" and every other name passed through and landed
+// on tenant 0, so all named tenants shared one set of rows.
 func TestTenant_MalformedValues(t *testing.T) {
 	long := strings.Repeat("x", 64*1024)
 	cases := []struct {
@@ -80,11 +83,20 @@ func TestTenant_MalformedValues(t *testing.T) {
 		{"spaces only", "   ", false, "", 0},
 		{"tab only", "\t", false, "", 0},
 		{"padded numeric", "  42  ", true, "42", 42},
-		{"padded name", " tenant-a ", true, "tenant-a", 0},
-		{"inner spaces kept", "a b", true, "a b", 0},
-		{"very long", long, true, long, 0},
-		{"non-ASCII", "société-é-日本-🎲", true, "société-é-日本-🎲", 0},
 		{"numeric", "7", true, "7", 7},
+		{"max int64", "9223372036854775807", true, "9223372036854775807", 1<<63 - 1},
+		{"padded name", " tenant-a ", false, "", 0},
+		{"alice", "alice", false, "", 0},
+		{"default", "default", false, "", 0},
+		{"inner spaces", "a b", false, "", 0},
+		{"very long", long, false, "", 0},
+		{"non-ASCII", "société-é-日本-🎲", false, "", 0},
+		{"zero", "0", false, "", 0},
+		{"negative", "-1", false, "", 0},
+		{"signed", "+1", false, "", 0},
+		{"leading zero", "007", false, "", 0},
+		{"decimal point", "1.0", false, "", 0},
+		{"overflow", "9223372036854775808", false, "", 0},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -95,6 +107,15 @@ func TestTenant_MalformedValues(t *testing.T) {
 			if !tc.ran {
 				if code != http.StatusBadRequest {
 					t.Errorf("code = %d, want 400", code)
+				}
+				if !strings.Contains(p.reject, TenantHeader) {
+					t.Errorf("rejection %q does not name the header", p.reject)
+				}
+				if strings.TrimSpace(tc.header) != "" && !strings.Contains(p.reject, storage.TenantFormat) {
+					t.Errorf("rejection %q does not name the expected format", p.reject)
+				}
+				if len(p.reject) > 512 {
+					t.Errorf("rejection is %d bytes long: the header value is reflected wholesale", len(p.reject))
 				}
 				return
 			}

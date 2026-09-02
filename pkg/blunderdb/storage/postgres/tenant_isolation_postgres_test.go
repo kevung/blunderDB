@@ -169,3 +169,36 @@ func TestAnalysisTenantIsolation(t *testing.T) {
 		t.Errorf("Load analysis t2 (t1 id): got %v, want ErrNotFound", err)
 	}
 }
+
+// TestTenantIsolationNamedScope pins the storage-level half of ADR-0005's
+// 2026-09-03 amendment: a scope that is not a positive decimal integer never
+// reaches tenant 0's rows. PurgeTenant, the one method that used to be
+// reachable with such a scope from the daemon, returns ErrInvalidTenant and
+// deletes nothing — `tenant.purge "alice"` used to wipe every named tenant.
+func TestTenantIsolationNamedScope(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	resetPublicSchema(t, dsn)
+	s, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer s.Close()
+
+	// Rows under the implicit tenant 0 (the empty scope), which named scopes
+	// used to collapse onto.
+	p := domain.InitializePosition()
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("save under the empty scope: %v", err)
+	}
+
+	for _, scope := range []string{"alice", "default", "mon-tenant", "0"} {
+		if err := s.PurgeTenant(ctx, scope); !errors.Is(err, storage.ErrInvalidTenant) {
+			t.Errorf("PurgeTenant(%q): err = %v, want ErrInvalidTenant", scope, err)
+		}
+	}
+	if _, err := s.Positions().Load(ctx, "", id); err != nil {
+		t.Errorf("tenant 0's position is gone after the rejected purges: %v", err)
+	}
+}

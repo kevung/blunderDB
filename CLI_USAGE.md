@@ -1187,7 +1187,7 @@ Flags:
 | `--db <path>` | – | SQLite database file (shorthand for `--backend sqlite --dsn <path>`) |
 | `--backend <kind>` | `sqlite` | `sqlite` or `postgres` (or `$BLUNDERDB_BACKEND`) |
 | `--dsn <string>` | `$BLUNDERDB_DSN` | backend connection string |
-| `--scope <string>` | `default` | tenant scope (sent as `X-Tenant-ID`; SQLite ignores it for most families) |
+| `--scope <n>` | `1` | tenant, a positive decimal integer (sent as `X-Tenant-ID`; a name such as `alice` is refused; SQLite ignores it for most families) |
 | `--json <string>` | `{}` | request body as JSON |
 | `--json-file <path>` | – | read the request body from a file |
 | `--list` | – | print every `<family>.<method>` and exit |
@@ -1199,17 +1199,18 @@ is printed to stdout so it stays parseable (e.g. with `jq`).
 ## Migrating a SQLite database into PostgreSQL
 
 `blunderDB migrate` copies a single-user SQLite database into a PostgreSQL
-backend under a chosen tenant scope — the path for a desktop user to "upload"
-their library into a server deployment.
+backend under a chosen tenant — the positive decimal integer the reverse-proxy
+will send as `X-Tenant-ID` for that user — the path for a desktop user to
+"upload" their library into a server deployment.
 
 ```bash
 blunderDB migrate \
     --from sqlite:///path/to/user.db \
     --to   "postgres://user:pass@host:5432/db?sslmode=disable" \
-    --tenant-id my-tenant
+    --tenant-id 42
 
 # Preview without writing
-blunderDB migrate --from sqlite:///path/to/user.db --tenant-id my-tenant --dry-run
+blunderDB migrate --from sqlite:///path/to/user.db --tenant-id 42 --dry-run
 ```
 
 It copies **positions, their analyses and comments, matches (games + moves),
@@ -1222,7 +1223,7 @@ re-run). Progress and the final tally are emitted as NDJSON to stdout.
 |------|---------|---------|
 | `--from <uri>` | – | source SQLite DB (`sqlite:///path` or a bare path) |
 | `--to <dsn>` | – | destination PostgreSQL DSN (`postgres://…`) |
-| `--tenant-id <scope>` | – | destination tenant scope (required unless `--dry-run`) |
+| `--tenant-id <n>` | – | destination tenant, a positive decimal integer (required unless `--dry-run`; a name such as `my-tenant` is refused) |
 | `--dry-run` | – | count what would be copied without writing |
 | `--on-conflict <policy>` | `""` | `""` aborts if the tenant already has data; `skip` merges (positions dedup by Zobrist) |
 

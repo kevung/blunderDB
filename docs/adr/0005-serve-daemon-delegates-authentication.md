@@ -58,3 +58,30 @@ substitute for the proxy — RLS still believes whatever tenant the header named
   check — the proxy decides who may call them, like everything else.
 - Local single-user use is unaffected: the desktop app and CLI never start the
   daemon and pass the implicit empty Tenant directly.
+
+## Amendment 2026-09-03 — a tenant is a positive integer (#155)
+
+`X-Tenant-ID` was accepted verbatim, and every backend then converted it with
+`strconv.ParseInt`, error discarded: `alice`, `default` and `mon-tenant` all
+became `tenant_id = 0` and shared positions, matches, analyses, collections and
+Anki decks; RLS saw the same 0 in `app.tenant_id`; `tenant.purge "alice"`
+purged every named tenant at once. The documentation encouraged exactly that
+(`--scope` defaulting to `default`, `migrate --tenant-id mon-tenant`).
+
+**Decision.** A tenant is a positive decimal integer (`1`, `2`, `42`, … as
+`storage.ParseTenant` defines it: canonical spelling, no sign, no leading
+zero, at most int64). The empty scope remains the desktop's implicit tenant
+and is never sent over HTTP. Anything else is rejected — 400 `code=invalid`
+by the tenant middleware, an error from `storage.ParseTenant`,
+`migrate --tenant-id` and `call --scope`, `ErrInvalidTenant` from
+`PurgeTenant`. Mapping an account name to its integer is the proxy's job,
+like authentication: the daemon still trusts the header, it just refuses to
+guess what a name means. The SQLite backend keeps treating the scope as an
+opaque string with the empty scope for the desktop; the format rule is
+enforced at the entry points, not in its tables.
+
+**Not retained (possible evolution).** A `tenant(scope TEXT UNIQUE, id
+BIGSERIAL)` table would let the daemon accept names and mint integers itself.
+It moves identity management into the engine — the very thing the Decision
+above keeps out — and is not needed while the only host, gammonGo, already
+has numeric user ids. Reconsider if a host without them appears.

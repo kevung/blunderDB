@@ -18,10 +18,11 @@ const migrateUsage = `blunderdb migrate — copy a SQLite database into PostgreS
 Usage:
   blunderdb migrate --from sqlite:///path/to/user.db \
                     --to postgres://user:pass@host:5432/db?sslmode=disable \
-                    --tenant-id <scope> [--dry-run] [--on-conflict skip]
+                    --tenant-id <n> [--dry-run] [--on-conflict skip]
 
 Copies positions, analyses, comments, matches (games + moves), tournaments and
-collections under the given tenant scope, inside a single destination
+collections under the given tenant — a positive decimal integer, the value the
+reverse-proxy will send as X-Tenant-ID — inside a single destination
 transaction (atomic; a failed run leaves the destination untouched). App-state
 families (anki, filter library, history, session) are not migrated.
 
@@ -44,7 +45,7 @@ func RunCLI(args []string) error {
 	var (
 		from       = fs.String("from", "", "source SQLite database (sqlite:///path or a bare path)")
 		to         = fs.String("to", "", "destination PostgreSQL DSN (postgres://…)")
-		tenant     = fs.String("tenant-id", "", "destination tenant scope (X-Tenant-ID)")
+		tenant     = fs.String("tenant-id", "", "destination tenant: a positive decimal integer (the X-Tenant-ID value)")
 		dryRun     = fs.Bool("dry-run", false, "count what would be copied without writing")
 		onConflict = fs.String("on-conflict", "", "destination-not-empty policy: \"\" (abort) | skip")
 		_          = fs.Int("batch-size", 1000, "reserved for future batching (currently unused)")
@@ -57,7 +58,14 @@ func RunCLI(args []string) error {
 		return fmt.Errorf("migrate: --from and --to are required")
 	}
 	if *tenant == "" && !*dryRun {
-		return fmt.Errorf("migrate: --tenant-id is required (the destination scope)")
+		return fmt.Errorf("migrate: --tenant-id is required (the destination tenant)")
+	}
+	// Refuse a named tenant here, before anything is opened: it used to be
+	// accepted and silently copied into tenant 0, where every other named
+	// tenant already lived (ADR-0005, amendment 2026-09-03). Run re-checks,
+	// but its error would only surface after the source was upgraded.
+	if _, err := storage.ParseTenant(*tenant); err != nil {
+		return fmt.Errorf("migrate: --tenant-id must be %s, got %q", storage.TenantFormat, *tenant)
 	}
 
 	ctx := context.Background()

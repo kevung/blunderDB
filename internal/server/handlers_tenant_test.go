@@ -135,3 +135,48 @@ func TestTenantPurgeEndpoint(t *testing.T) {
 		t.Fatalf("post-purge load status = %d, want 404 (position should be gone)", loadResp.StatusCode)
 	}
 }
+
+// TestTenantIsolationNamed is the PostgreSQL half of issue #155's recipe:
+// tenant 1 writes a position, tenant 2 reads it and gets 404; and a named
+// tenant ("alice") is refused at the door with 400 code=invalid. Before
+// ADR-0005's 2026-09-03 amendment "alice" and "bob" both landed on tenant 0
+// and read each other's rows.
+func TestTenantIsolationNamed(t *testing.T) {
+	ts := newPostgresTestServer(t)
+
+	p := domain.InitializePosition()
+	saveResp := postTenant(t, ts, "1", "/v1/positions.save", positionReq{Position: &p})
+	defer saveResp.Body.Close()
+	if saveResp.StatusCode != http.StatusOK {
+		t.Fatalf("tenant 1 save status = %d, want 200", saveResp.StatusCode)
+	}
+	var saved idResp
+	if err := json.NewDecoder(saveResp.Body).Decode(&saved); err != nil {
+		t.Fatal(err)
+	}
+
+	ownResp := postTenant(t, ts, "1", "/v1/positions.load", idReq(saved))
+	defer ownResp.Body.Close()
+	if ownResp.StatusCode != http.StatusOK {
+		t.Fatalf("tenant 1 load of its own position: status %d, want 200", ownResp.StatusCode)
+	}
+
+	otherResp := postTenant(t, ts, "2", "/v1/positions.load", idReq(saved))
+	defer otherResp.Body.Close()
+	if otherResp.StatusCode != http.StatusNotFound {
+		t.Fatalf("tenant 2 load of tenant 1's position: status %d, want 404", otherResp.StatusCode)
+	}
+
+	for _, named := range []string{"alice", "bob", "default"} {
+		resp := postTenant(t, ts, named, "/v1/positions.load", idReq(saved))
+		var env errorEnvelope
+		err := json.NewDecoder(resp.Body).Decode(&env)
+		resp.Body.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if resp.StatusCode != http.StatusBadRequest || env.Error.Code != CodeInvalid {
+			t.Errorf("X-Tenant-ID %q: status %d code %q, want 400 %q", named, resp.StatusCode, env.Error.Code, CodeInvalid)
+		}
+	}
+}

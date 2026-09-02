@@ -28,7 +28,7 @@ func TestPositionsEPC(t *testing.T) {
 
 	post := func(body string) *httptest.ResponseRecorder {
 		req := httptest.NewRequest(http.MethodPost, "/v1/positions.epc", strings.NewReader(body))
-		req.Header.Set(middleware.TenantHeader, "t")
+		req.Header.Set(middleware.TenantHeader, "1")
 		rec := httptest.NewRecorder()
 		srv.Handler().ServeHTTP(rec, req)
 		return rec

@@ -56,9 +56,9 @@ func callCounts(t *testing.T, ts *httptest.Server, tenant string) *http.Response
 func TestServerRateLimitThrottles(t *testing.T) {
 	ts, reg := rateLimitedServer(t, 1, 2) // burst 2, frozen clock → no refill
 
-	// First two requests for tenant "a" pass.
+	// First two requests for tenant "1" pass.
 	for i := 0; i < 2; i++ {
-		resp := callCounts(t, ts, "a")
+		resp := callCounts(t, ts, "1")
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusOK {
 			t.Fatalf("request %d: status %d, want 200", i+1, resp.StatusCode)
@@ -66,7 +66,7 @@ func TestServerRateLimitThrottles(t *testing.T) {
 	}
 
 	// The third is throttled with the rate_limited envelope and Retry-After.
-	resp := callCounts(t, ts, "a")
+	resp := callCounts(t, ts, "1")
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusTooManyRequests {
 		t.Fatalf("3rd request: status %d, want 429", resp.StatusCode)
@@ -87,10 +87,10 @@ func TestServerRateLimitThrottles(t *testing.T) {
 	}
 
 	// A different tenant has its own bucket and is unaffected.
-	respB := callCounts(t, ts, "b")
+	respB := callCounts(t, ts, "2")
 	respB.Body.Close()
 	if respB.StatusCode != http.StatusOK {
-		t.Fatalf("tenant b: status %d, want 200 (independent bucket)", respB.StatusCode)
+		t.Fatalf("tenant 2: status %d, want 200 (independent bucket)", respB.StatusCode)
 	}
 
 	// The rejection is reflected in /metrics.
@@ -104,7 +104,7 @@ func TestServerRateLimitThrottles(t *testing.T) {
 func TestServerRateLimitDisabledByDefault(t *testing.T) {
 	ts := newTestServer(t) // no RateLimitRPS → middleware not mounted
 	for i := 0; i < 50; i++ {
-		resp := callCounts(t, ts, "a")
+		resp := callCounts(t, ts, "1")
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusOK {
 			t.Fatalf("request %d throttled unexpectedly: status %d", i+1, resp.StatusCode)
