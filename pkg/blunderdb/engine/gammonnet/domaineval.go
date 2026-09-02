@@ -188,6 +188,65 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{}, err
 	}
 
+	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
+}
+
+// NewBatchSearcher builds the searcher a batch job keeps for the whole run:
+// the canonical configuration at the given depth and pruning width, with no
+// position aimed at it yet. EvaluatePositionWith re-aims it position by
+// position (Searcher.Reconfigure).
+//
+// It exists because a Searcher costs about 5.5 MB to allocate and zero, and
+// the batch used to pay that per position (#147). One per goroutine, reused,
+// pays it once — and the evaluation cache stays warm from one position to
+// the next, which is free and licit (cache.go: a hit returns exactly what a
+// miss would have computed).
+func NewBatchSearcher(ply, pruneK int) (*Searcher, error) {
+	cfg := DefaultConfig(ply)
+	if pruneK > 0 {
+		cfg.PruneK = pruneK
+	}
+	return NewSearcher(cfg)
+}
+
+// EvaluatePositionWith is EvaluatePosition on a searcher the caller owns and
+// reuses — same result, bit for bit, for the same position and parameters:
+// the searcher is re-pointed at pos's own configuration before the search
+// runs, and nothing that survives from the previous position can change an
+// answer (only the cache does, and a cache hit is by construction what a
+// miss would have computed).
+//
+// The plain EvaluatePosition remains the form for one-shot callers — the
+// Eval panel, the server's per-position endpoint — which have no reason to
+// manage a searcher's lifetime. searcher must not be shared between
+// goroutines: it owns mutable scratch buffers, so a batch gives each
+// goroutine its own.
+func EvaluatePositionWith(searcher *Searcher, pos domain.Position, ply, pruneK, candidates int) (EvalResult, error) {
+	if searcher == nil {
+		return EvaluatePosition(pos, ply, pruneK, candidates)
+	}
+
+	gnPos, err := FromDomain(&pos)
+	if err != nil {
+		return EvalResult{}, err
+	}
+
+	cfg, state, err := ConfigForPosition(&pos, ply, pruneK)
+	if err != nil {
+		return EvalResult{}, err
+	}
+
+	if err := searcher.Reconfigure(cfg); err != nil {
+		return EvalResult{}, err
+	}
+
+	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
+}
+
+// evaluateConfigured is the body the two entry points share: the searcher is
+// already aimed at cfg, all that is left is to ask the position's own
+// question and convert the answer once.
+func evaluateConfigured(gnPos *Position, pos *domain.Position, searcher *Searcher, cfg SearchConfig, state *MatchState, candidates int) (EvalResult, error) {
 	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply)
 
 	// The one referential conversion (ADR-0019): the search and the cube
@@ -202,14 +261,14 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 
 	hasDice := pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
 	if hasDice {
-		moves, err := evaluateMoves(&gnPos, &pos, searcher, depthLabel, candidates, scale)
+		moves, err := evaluateMoves(gnPos, pos, searcher, depthLabel, candidates, scale)
 		if err != nil {
 			return EvalResult{}, err
 		}
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, preRoll, action, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, cfg.CubeOwner, scale)
+	cube, preRoll, action, err := evaluateCube(gnPos, pos, searcher, depthLabel, state, cfg.CubeOwner, scale)
 	if err != nil {
 		return EvalResult{}, err
 	}

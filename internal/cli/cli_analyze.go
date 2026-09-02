@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 )
 
 // runAnalyze handles the analyze command: gammonNet's catch-up sweep (#130,
@@ -14,7 +15,7 @@ import (
 // import trigger (#129) and its explicit "analyze now" button use
 // (Database.AnalyzeMissingWithGammonNet); a CLI run has no interactive
 // evaluation to yield to, so it passes no yield func and simply runs at full
-// speed.
+// speed, on --jobs cores at once (#147).
 func (cli *CLI) runAnalyze(args []string) error {
 	analyzeCmd := flag.NewFlagSet("analyze", flag.ExitOnError)
 
@@ -22,6 +23,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 	ply := analyzeCmd.Int("ply", 2, "Search depth (canonical: 2, k=12)")
 	pruneK := analyzeCmd.Int("prune-k", 12, "Pruning width (canonical: 12)")
 	candidates := analyzeCmd.Int("candidates", 10, "Candidate moves kept per checker decision")
+	jobs := analyzeCmd.Int("jobs", runtime.NumCPU(), "Positions analysed in parallel (one CPU each)")
 
 	analyzeCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb analyze [options]")
@@ -34,11 +36,16 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("cleanly — nothing is lost, and re-running picks up exactly where")
 		fmt.Println("it left off, with no journal needed.")
 		fmt.Println()
+		fmt.Println("Positions are analysed --jobs at a time, on that many cores: the")
+		fmt.Println("positions of a batch are independent, so the result is the same")
+		fmt.Println("whatever --jobs says. Use --jobs 1 to leave the machine free.")
+		fmt.Println()
 		fmt.Println("Options:")
 		analyzeCmd.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb analyze --db database.db")
+		fmt.Println("  blunderdb analyze --db database.db --jobs 1")
 	}
 
 	if err := analyzeCmd.Parse(args); err != nil {
@@ -62,7 +69,10 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("Nothing to do: every position already has an analysis.")
 		return nil
 	}
-	fmt.Printf("Analyzing %d position(s) with gammonNet (%d-ply, k=%d)...\n", total, *ply, *pruneK)
+	if *jobs < 1 {
+		*jobs = 1
+	}
+	fmt.Printf("Analyzing %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", total, *ply, *pruneK, *jobs)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -87,7 +97,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		lastReported = pct
 	}
 
-	err = cli.db.AnalyzeMissingWithGammonNet(ctx, *ply, *pruneK, *candidates, nil, onProgress)
+	err = cli.db.AnalyzeMissingWithGammonNet(ctx, *ply, *pruneK, *candidates, *jobs, nil, onProgress)
 	if err != nil {
 		if ctx.Err() != nil {
 			fmt.Println("Cancelled.")

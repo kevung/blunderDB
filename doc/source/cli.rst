@@ -622,6 +622,16 @@ trois logiques distinctes (voir :ref:`headless`).
 * ``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique).
 * ``--candidates`` — Nombre de coups candidats conservés par décision de
   déplacement (défaut: 10).
+* ``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre
+  de cœurs de la machine).
+
+**Le parallélisme (``--jobs``).** Les positions d'un lot sont indépendantes —
+aucune recherche n'informe la suivante — donc elles sont réparties sur
+``--jobs`` fils d'exécution, chacun avec son propre évaluateur. Les analyses
+écrites sont **identiques quelle que soit la valeur de** ``--jobs`` ; seul le
+temps de calcul change. ``--jobs 1`` laisse la machine libre pour autre
+chose. L'annulation n'est pas affectée : Ctrl-C arrête le lot avant toute
+nouvelle position, et tout ce qui était déjà calculé est écrit.
 
 **La règle du trou (ADR-0013).** Une position portant déjà une analyse —
 XG, GNUbg, BGBlitz, ou un précédent passage de gammonNet — n'est jamais
@@ -638,12 +648,15 @@ positions sans analyse » est recalculé à chaque lancement.
 
    ./blunderdb analyze --db base.db
 
-   # Analyzing 1204 position(s) with gammonNet (2-ply, k=12)...
+   # Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...
    #   1/1204 (0%)
    #   61/1204 (5%)
    #   ...
    #   1204/1204 (100%)
    # Done.
+
+   # Sur un seul cœur, pour laisser la machine à autre chose
+   ./blunderdb analyze --db base.db --jobs 1
 
 info — Métadonnées de la base
 ------------------------------
