@@ -2,6 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { nextSort } from '../utils/tableSort.js';
     import { isBareLetter } from '../utils/keys.js';
+    import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import {
@@ -45,11 +46,22 @@
     let newTournamentDate = $state('');
     let newTournamentLocation = $state('');
 
-    // Edit tournament
-    let editingTournament = $state(null);
-    let editName = $state('');
-    let editDate = $state('');
-    let editLocation = $state('');
+    // Edit tournament (name, date, location in one row)
+    const tournamentEdit = createInlineEdit({
+        onSave: async (id, draft) => {
+            const name = draft.name.trim();
+            if (!name) return false; // a tournament keeps its name until a new one is typed
+            try {
+                await UpdateTournament(id, name, draft.date, draft.location.trim());
+                await loadTournaments();
+                if (selectedTournament && selectedTournament.id === id) {
+                    selectedTournamentStore.set({ ...selectedTournament, name, date: draft.date, location: draft.location.trim() });
+                }
+            } catch (error) {
+                logger.error('Error updating tournament:', error);
+            }
+        }
+    });
 
     // Add match to tournament
     let addMatchSearch = $state('');
@@ -58,13 +70,30 @@
     let addMatchFocused = $state(false);
     let matchDropdownStyle = $state('');
 
-    // Match comment editing
-    let editingMatchCommentId = $state(null);
-    let editingMatchComment = $state('');
+    // Match comment editing (one cell of the matches table)
+    const matchCommentEdit = createInlineEdit({
+        onSave: async (matchId, comment) => {
+            try {
+                await UpdateMatchComment(matchId, comment);
+                tournamentMatchesStore.set(tournamentMatches.map((m) => (m.id === matchId ? { ...m, comment } : m)));
+            } catch (error) {
+                logger.error('Error saving match comment:', error);
+            }
+        }
+    });
 
-    // Tournament comment editing
-    let editingTournamentComment = $state(false);
-    let tournamentCommentText = $state('');
+    // Tournament comment editing (detail header)
+    const tournamentCommentEdit = createInlineEdit({
+        onSave: async (tournamentId, comment) => {
+            if (!selectedTournament || selectedTournament.id !== tournamentId) return;
+            try {
+                await UpdateTournamentComment(tournamentId, comment);
+                selectedTournamentStore.set({ ...selectedTournament, comment });
+            } catch (error) {
+                logger.error('Error saving tournament comment:', error);
+            }
+        }
+    });
 
     // Load/unload data when the panel is shown or hidden
     let _prevVisible = false;
@@ -78,7 +107,7 @@
             } else {
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
-                editingTournament = null;
+                tournamentEdit.cancel();
                 addMatchSearch = '';
                 addMatchFocused = false;
             }
@@ -200,28 +229,7 @@
 
     function startEdit(tournament, event) {
         event.stopPropagation();
-        editingTournament = tournament;
-        editName = tournament.name;
-        editDate = tournament.date || '';
-        editLocation = tournament.location || '';
-    }
-
-    async function saveEdit() {
-        if (!editName.trim()) return;
-        try {
-            await UpdateTournament(editingTournament.id, editName.trim(), editDate, editLocation.trim());
-            await loadTournaments();
-            if (selectedTournament && selectedTournament.id === editingTournament.id) {
-                selectedTournamentStore.set({ ...selectedTournament, name: editName.trim(), date: editDate, location: editLocation.trim() });
-            }
-            editingTournament = null;
-        } catch (error) {
-            logger.error('Error updating tournament:', error);
-        }
-    }
-
-    function cancelEdit() {
-        editingTournament = null;
+        tournamentEdit.start(tournament.id, { name: tournament.name, date: tournament.date || '', location: tournament.location || '' });
     }
 
     function updateFilteredMatches() {
@@ -296,52 +304,6 @@
         } catch (error) {
             logger.error('Error reordering matches:', error);
         }
-    }
-
-    // Match comment
-    function startEditMatchComment(match, event) {
-        event.stopPropagation();
-        editingMatchCommentId = match.id;
-        editingMatchComment = match.comment || '';
-    }
-
-    async function saveMatchComment() {
-        if (editingMatchCommentId == null) return;
-        try {
-            await UpdateMatchComment(editingMatchCommentId, editingMatchComment);
-            // Update local state
-            const updated = tournamentMatches.map((m) => (m.id === editingMatchCommentId ? { ...m, comment: editingMatchComment } : m));
-            tournamentMatchesStore.set(updated);
-            editingMatchCommentId = null;
-        } catch (error) {
-            logger.error('Error saving match comment:', error);
-        }
-    }
-
-    function cancelMatchComment() {
-        editingMatchCommentId = null;
-        editingMatchComment = '';
-    }
-
-    // Tournament comment
-    function startEditTournamentComment() {
-        editingTournamentComment = true;
-        tournamentCommentText = selectedTournament?.comment || '';
-    }
-
-    async function saveTournamentComment() {
-        if (!selectedTournament) return;
-        try {
-            await UpdateTournamentComment(selectedTournament.id, tournamentCommentText);
-            selectedTournamentStore.set({ ...selectedTournament, comment: tournamentCommentText });
-            editingTournamentComment = false;
-        } catch (error) {
-            logger.error('Error saving tournament comment:', error);
-        }
-    }
-
-    function cancelTournamentComment() {
-        editingTournamentComment = false;
     }
 
     // Pointer-based drag reorder callback
@@ -509,8 +471,8 @@
 
         if (event.key === 'Escape') {
             event.preventDefault();
-            if (editingTournament) {
-                cancelEdit();
+            if (tournamentEdit.editingId !== null) {
+                tournamentEdit.cancel();
             } else if (addMatchSearch) {
                 addMatchSearch = '';
             } else if (selectedTournament) {
@@ -608,64 +570,26 @@
                         </thead>
                         <tbody>
                             {#each tournaments as tournament, _index (tournament.id)}
-                                {#if editingTournament && editingTournament.id === tournament.id}
+                                {#if tournamentEdit.isEditing(tournament.id)}
                                     <tr class="editing-row">
-                                        <td
-                                            ><input
-                                                class="edit-input"
-                                                type="text"
-                                                bind:value={editName}
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        e.stopPropagation();
-                                                        saveEdit();
-                                                    }
-                                                    if (e.key === 'Escape') {
-                                                        e.stopPropagation();
-                                                        cancelEdit();
-                                                    }
-                                                }}
-                                                autofocus
-                                            /></td
-                                        >
+                                        <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} autofocus /></td>
                                         <td class="narrow-col"></td>
-                                        <td class="narrow-col"
-                                            ><input
-                                                class="edit-input"
-                                                type="date"
-                                                bind:value={editDate}
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Escape') {
-                                                        e.stopPropagation();
-                                                        cancelEdit();
-                                                    }
-                                                }}
-                                            /></td
-                                        >
+                                        <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
                                         <td
                                             ><input
                                                 class="edit-input"
                                                 type="text"
-                                                bind:value={editLocation}
+                                                bind:value={tournamentEdit.draft.location}
                                                 placeholder={$t('tournament.location')}
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        e.stopPropagation();
-                                                        saveEdit();
-                                                    }
-                                                    if (e.key === 'Escape') {
-                                                        e.stopPropagation();
-                                                        cancelEdit();
-                                                    }
-                                                }}
+                                                onkeydown={tournamentEdit.onKeyDown}
                                             /></td
                                         >
                                         <td class="narrow-col no-select"></td>
                                         <td class="narrow-col no-select"></td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions editing-actions">
-                                                <button class="icon-btn" onclick={saveEdit} title={$t('common.save')}>✓</button>
-                                                <button class="icon-btn" onclick={cancelEdit} title={$t('common.cancel')}>✕</button>
+                                                <button class="icon-btn" onclick={() => tournamentEdit.save()} title={$t('common.save')}>✓</button>
+                                                <button class="icon-btn" onclick={() => tournamentEdit.cancel()} title={$t('common.cancel')}>✕</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -766,7 +690,7 @@
                             selectedTournamentStore.set(null);
                             tournamentMatchesStore.set([]);
                             addMatchSearch = '';
-                            editingTournamentComment = false;
+                            tournamentCommentEdit.cancel();
                         }}
                         title={$t('tournament.backToTournaments')}>←</button
                     >
@@ -793,28 +717,19 @@
                             selectedTournamentStore.set(null);
                             tournamentMatchesStore.set([]);
                             addMatchSearch = '';
-                            editingTournamentComment = false;
+                            tournamentCommentEdit.cancel();
                             startEdit(t, e);
                         }}
                         title={$t('common.edit')}>✎</button
                     >
                     <span class="header-spacer"></span>
-                    {#if editingTournamentComment}
+                    {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
                         <input
                             class="tournament-comment-inline"
                             type="text"
-                            bind:value={tournamentCommentText}
-                            onkeydown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.stopPropagation();
-                                    saveTournamentComment();
-                                }
-                                if (e.key === 'Escape') {
-                                    e.stopPropagation();
-                                    cancelTournamentComment();
-                                }
-                            }}
-                            onblur={saveTournamentComment}
+                            bind:value={tournamentCommentEdit.draft}
+                            onkeydown={tournamentCommentEdit.onKeyDown}
+                            onblur={tournamentCommentEdit.onBlur}
                             placeholder={$t('tournament.notesPlaceholder')}
                             autofocus
                         />
@@ -824,7 +739,7 @@
                             class:has-comment={selectedTournament.comment}
                             onclick={(e) => {
                                 e.stopPropagation();
-                                startEditTournamentComment(e);
+                                tournamentCommentEdit.start(selectedTournament.id, selectedTournament.comment || '');
                             }}
                             title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
                         >
@@ -856,22 +771,13 @@
                                     <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
                                     <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     <td class="comment-col no-select">
-                                        {#if editingMatchCommentId === match.id}
+                                        {#if matchCommentEdit.isEditing(match.id)}
                                             <input
                                                 class="edit-input"
                                                 type="text"
-                                                bind:value={editingMatchComment}
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Enter') {
-                                                        e.stopPropagation();
-                                                        saveMatchComment();
-                                                    }
-                                                    if (e.key === 'Escape') {
-                                                        e.stopPropagation();
-                                                        cancelMatchComment();
-                                                    }
-                                                }}
-                                                onblur={saveMatchComment}
+                                                bind:value={matchCommentEdit.draft}
+                                                onkeydown={matchCommentEdit.onKeyDown}
+                                                onblur={matchCommentEdit.onBlur}
                                                 autofocus
                                             />
                                         {:else}
@@ -880,7 +786,7 @@
                                                 class:has-comment={match.comment}
                                                 onclick={(e) => {
                                                     e.stopPropagation();
-                                                    ((e) => startEditMatchComment(match, e))(e);
+                                                    matchCommentEdit.start(match.id, match.comment || '');
                                                 }}
                                                 title={match.comment || $t('tournament.clickToAddComment')}
                                             >

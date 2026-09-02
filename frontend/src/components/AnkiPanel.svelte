@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount } from 'svelte';
     import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore';
     import { statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
@@ -48,10 +49,19 @@
     let newDeckSourceId = $state(0);
     let showCreateForm = $state(false);
 
-    // Edit deck
-    let editingDeckId = $state(null);
-    let editingName = $state('');
-    let editingDescription = $state('');
+    // Edit deck (name + description inline)
+    const deckEdit = createInlineEdit({
+        onSave: async (deckId, draft) => {
+            const deck = decks.find((d) => d.id === deckId);
+            if (!deck) return;
+            try {
+                await UpdateAnkiDeck(deck.id, draft.name.trim() || deck.name, draft.description);
+                await loadDecks();
+            } catch (e) {
+                statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
+            }
+        }
+    });
 
     // Settings
     let settingsRetention = $state(0.9);
@@ -333,24 +343,7 @@
 
     function startEditing(deck, event) {
         event.stopPropagation();
-        editingDeckId = deck.id;
-        editingName = deck.name;
-        editingDescription = deck.description;
-    }
-
-    async function finishEditing(deck) {
-        if (editingDeckId !== deck.id) return;
-        try {
-            await UpdateAnkiDeck(deck.id, editingName.trim() || deck.name, editingDescription);
-            editingDeckId = null;
-            await loadDecks();
-        } catch (e) {
-            statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
-        }
-    }
-
-    function cancelEditing() {
-        editingDeckId = null;
+        deckEdit.start(deck.id, { name: deck.name, description: deck.description || '' });
     }
 
     // Re-execute a stored search command and return matching position IDs
@@ -699,29 +692,12 @@
                                     startReview();
                                 }}
                             >
-                                {#if editingDeckId === deck.id}
+                                {#if deckEdit.isEditing(deck.id)}
                                     <td colspan="7">
                                         <div class="deck-edit">
-                                            <input
-                                                type="text"
-                                                bind:value={editingName}
-                                                class="edit-name"
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Enter') finishEditing(deck);
-                                                    if (e.key === 'Escape') cancelEditing();
-                                                }}
-                                            />
-                                            <input
-                                                type="text"
-                                                bind:value={editingDescription}
-                                                class="edit-desc"
-                                                placeholder={$t('anki.colDescription')}
-                                                onkeydown={(e) => {
-                                                    if (e.key === 'Enter') finishEditing(deck);
-                                                    if (e.key === 'Escape') cancelEditing();
-                                                }}
-                                            />
-                                            <button class="icon-btn" onclick={() => finishEditing(deck)} title={$t('common.save')}>
+                                            <input type="text" bind:value={deckEdit.draft.name} class="edit-name" onkeydown={deckEdit.onKeyDown} />
+                                            <input type="text" bind:value={deckEdit.draft.description} class="edit-desc" placeholder={$t('anki.colDescription')} onkeydown={deckEdit.onKeyDown} />
+                                            <button class="icon-btn" onclick={() => deckEdit.save()} title={$t('common.save')}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                                 </svg>

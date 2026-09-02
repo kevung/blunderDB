@@ -3,6 +3,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { dragReorder } from '../utils/dragReorder.js';
+    import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -43,10 +44,31 @@
     // View: 'list' (all collections) or 'detail' (positions in active collection)
     let view = $state('list');
 
-    // Collection editing (unified: name + description at the same time)
-    let editingCollectionId = $state(null);
-    let editingName = $state('');
-    let editingDescription = $state('');
+    // Collection editing (unified: name + description at the same time). The
+    // fields of one row form a blur group: tabbing between them keeps editing.
+    const collectionEdit = createInlineEdit({
+        blurGroup: 'tr, .desc-bar',
+        onSave: async (id, draft) => {
+            const collection = collections.find((c) => c.id === id) || (activeCollection?.id === id ? activeCollection : null);
+            if (!collection) return;
+            const newName = draft.name.trim() || collection.name;
+            const newDesc = draft.description.trim();
+            if (newName === collection.name && newDesc === (collection.description || '')) return;
+            if (newName !== collection.name && isDuplicateName(newName, collection.id)) {
+                statusBarTextStore.set(tMsg('collection.alreadyExists', { name: newName }));
+                return;
+            }
+            try {
+                await UpdateCollection(collection.id, newName, newDesc);
+                await loadCollections();
+                if (activeCollection && activeCollection.id === collection.id) {
+                    activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });
+                }
+            } catch (error) {
+                logger.error('Error updating collection:', error);
+            }
+        }
+    });
     let inlineNewName = $state('');
 
     // Multi-select for positions: indices into collectionPositions. A SvelteSet
@@ -195,7 +217,7 @@
     }
 
     async function openCollection(collection) {
-        if (editingCollectionId === collection.id) return;
+        if (collectionEdit.isEditing(collection.id)) return;
         try {
             const positions = await GetCollectionPositions(collection.id);
             if (!positions || positions.length === 0) {
@@ -243,52 +265,7 @@
 
     function startEditing(collection, event) {
         if (event) event.stopPropagation();
-        editingCollectionId = collection.id;
-        editingName = collection.name;
-        editingDescription = collection.description || '';
-    }
-
-    async function finishEditing(collection) {
-        if (editingCollectionId !== collection.id) return;
-        const newName = editingName.trim() || collection.name;
-        const newDesc = editingDescription.trim();
-        if (newName !== collection.name || newDesc !== (collection.description || '')) {
-            if (newName !== collection.name && isDuplicateName(newName, collection.id)) {
-                statusBarTextStore.set(tMsg('collection.alreadyExists', { name: newName }));
-                editingCollectionId = null;
-                return;
-            }
-            try {
-                await UpdateCollection(collection.id, newName, newDesc);
-                await loadCollections();
-                if (activeCollection && activeCollection.id === collection.id) {
-                    activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });
-                }
-            } catch (error) {
-                logger.error('Error updating collection:', error);
-            }
-        }
-        editingCollectionId = null;
-    }
-
-    function handleEditingBlur(collection, event) {
-        // Delay to check if focus moved to another input in the same editing row
-        setTimeout(() => {
-            const active = document.activeElement;
-            const row = event.target.closest('tr') || event.target.closest('.desc-bar');
-            if (row && row.contains(active)) return; // focus still in same row
-            finishEditing(collection);
-        }, 50);
-    }
-
-    function handleEditingKeyDown(event, collection) {
-        if (event.key === 'Enter') {
-            event.stopPropagation();
-            finishEditing(collection);
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            editingCollectionId = null;
-        }
+        collectionEdit.start(collection.id, { name: collection.name, description: collection.description || '' });
     }
 
     // Collection reorder
@@ -599,13 +576,13 @@
                             ondblclick={() => openCollection(collection)}
                         >
                             <td class="name-cell">
-                                {#if editingCollectionId === collection.id}
+                                {#if collectionEdit.isEditing(collection.id)}
                                     <input
                                         class="inline-edit"
                                         type="text"
-                                        bind:value={editingName}
-                                        onblur={(e) => handleEditingBlur(collection, e)}
-                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        bind:value={collectionEdit.draft.name}
+                                        onblur={collectionEdit.onBlur}
+                                        onkeydown={collectionEdit.onKeyDown}
                                         onclick={(e) => e.stopPropagation()}
                                         ondblclick={(e) => e.stopPropagation()}
                                         autofocus
@@ -616,13 +593,13 @@
                             </td>
                             <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
                             <td class="desc-cell">
-                                {#if editingCollectionId === collection.id}
+                                {#if collectionEdit.isEditing(collection.id)}
                                     <input
                                         class="inline-edit"
                                         type="text"
-                                        bind:value={editingDescription}
-                                        onblur={(e) => handleEditingBlur(collection, e)}
-                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        bind:value={collectionEdit.draft.description}
+                                        onblur={collectionEdit.onBlur}
+                                        onkeydown={collectionEdit.onKeyDown}
                                         onclick={(e) => e.stopPropagation()}
                                         ondblclick={(e) => e.stopPropagation()}
                                         placeholder={$t('collection.descriptionPlaceholder')}
@@ -730,14 +707,14 @@
                     />
                 {/if}
             </div>
-            {#if editingCollectionId === activeCollection.id}
+            {#if collectionEdit.isEditing(activeCollection.id)}
                 <div class="desc-bar">
                     <input
                         class="inline-edit full-width"
                         type="text"
-                        bind:value={editingDescription}
-                        onblur={(e) => handleEditingBlur(activeCollection, e)}
-                        onkeydown={(e) => handleEditingKeyDown(e, activeCollection)}
+                        bind:value={collectionEdit.draft.description}
+                        onblur={collectionEdit.onBlur}
+                        onkeydown={collectionEdit.onKeyDown}
                         placeholder={$t('collection.descriptionPlaceholder')}
                         autofocus
                     />

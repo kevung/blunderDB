@@ -3,6 +3,7 @@
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { nextSort } from '../utils/tableSort.js';
     import { isBareLetter } from '../utils/keys.js';
+    import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -60,25 +61,62 @@
     let sortColumn = $state(null); // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
     let sortDirection = $state('asc'); // 'asc' | 'desc'
 
-    // Inline tournament editing
-    let editingTournamentMatchId = $state(null);
-    let editTournamentValue = $state('');
+    // Inline tournament editing (autocomplete over the known tournaments)
     let showTournamentDropdown = $state(false);
     let filteredTournaments = $state([]);
     let tournamentDropdownStyle = $state('');
+    const tournamentEdit = createInlineEdit({
+        onSave: async (matchId, value) => {
+            const name = value.trim();
+            try {
+                await SetMatchTournamentByName(matchId, name);
+                await loadMatches();
+                await loadTournaments();
+                statusBarTextStore.set(name ? tMsg('match.tournamentSet', { name }) : tMsg('match.tournamentCleared'));
+            } catch (error) {
+                logger.error('Error setting tournament:', error);
+                statusBarTextStore.set(tMsg('match.errorSettingTournament'));
+            }
+            showTournamentDropdown = false;
+        },
+        onCancel: () => {
+            showTournamentDropdown = false;
+        }
+    });
 
-    // Inline match editing (player names, date)
-    let editingMatchId = $state(null);
-    let editPlayer1Value = $state('');
-    let editPlayer2Value = $state('');
-    let editDateValue = $state('');
+    // Inline match editing (player names, date) — one draft object per row
+    const matchEdit = createInlineEdit({
+        onSave: async (matchId, draft) => {
+            try {
+                await UpdateMatch(matchId, draft.player1, draft.player2, draft.date);
+                await loadMatches();
+                statusBarTextStore.set(tMsg('match.matchUpdated'));
+            } catch (error) {
+                logger.error('Error updating match:', error);
+                statusBarTextStore.set(tMsg('match.errorUpdating'));
+            }
+        }
+    });
 
     // Merge players modal
     let showMergePlayersModal = $state(false);
 
-    // Inline match comment editing
-    let editingDetailComment = $state(false);
-    let editDetailCommentText = $state('');
+    // Inline match comment editing (detail pane, metadata view)
+    const commentEdit = createInlineEdit({
+        onSave: async (matchId, text) => {
+            try {
+                await UpdateMatchComment(matchId, text);
+                if (detailMatch && detailMatch.id === matchId) detailMatch.comment = text;
+                const m = matches.find((x) => x.id === matchId);
+                if (m) m.comment = text;
+                matches = matches;
+                statusBarTextStore.set(tMsg('match.commentUpdated'));
+            } catch (error) {
+                logger.error('Error updating comment:', error);
+                statusBarTextStore.set(tMsg('match.errorUpdatingComment'));
+            }
+        }
+    });
 
     // Reload matches when a new match is imported (trigger increments from 0)
     $effect(() => {
@@ -128,7 +166,7 @@
             selectedMatch = null;
             detailMatch = null;
             detailStats = null;
-            editingTournamentMatchId = null;
+            tournamentEdit.cancel();
         }
     });
 
@@ -156,8 +194,7 @@
 
     function startEditTournament(match, event) {
         event.stopPropagation();
-        editingTournamentMatchId = match.id;
-        editTournamentValue = match.tournament_name || match.event || '';
+        tournamentEdit.start(match.id, match.tournament_name || match.event || '');
         filteredTournaments = tournaments;
         setTimeout(() => {
             const input = document.querySelector('.tournament-edit-input');
@@ -182,7 +219,7 @@
     }
 
     function filterTournaments() {
-        const val = editTournamentValue.toLowerCase();
+        const val = tournamentEdit.draft.toLowerCase();
         if (!val) {
             filteredTournaments = tournaments;
         } else {
@@ -194,121 +231,18 @@
     }
 
     async function selectTournamentOption(name) {
-        editTournamentValue = name;
+        tournamentEdit.draft = name;
         showTournamentDropdown = false;
-        await saveTournamentEdit();
-    }
-
-    async function saveTournamentEdit() {
-        if (editingTournamentMatchId === null) return;
-        try {
-            await SetMatchTournamentByName(editingTournamentMatchId, editTournamentValue.trim());
-            await loadMatches();
-            await loadTournaments();
-            statusBarTextStore.set(editTournamentValue.trim() ? tMsg('match.tournamentSet', { name: editTournamentValue.trim() }) : tMsg('match.tournamentCleared'));
-        } catch (error) {
-            logger.error('Error setting tournament:', error);
-            statusBarTextStore.set(tMsg('match.errorSettingTournament'));
-        }
-        editingTournamentMatchId = null;
-        editTournamentValue = '';
-        showTournamentDropdown = false;
-    }
-
-    function cancelTournamentEdit() {
-        editingTournamentMatchId = null;
-        editTournamentValue = '';
-        showTournamentDropdown = false;
-    }
-
-    function handleTournamentKeyDown(event) {
-        if (event.key === 'Enter') {
-            event.stopPropagation();
-            event.preventDefault();
-            saveTournamentEdit();
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            event.preventDefault();
-            cancelTournamentEdit();
-        }
+        await tournamentEdit.save();
     }
 
     function startEditMatch(match, ev) {
         ev.stopPropagation();
-        editingMatchId = match.id;
-        editPlayer1Value = match.player1_name || '';
-        editPlayer2Value = match.player2_name || '';
-        editDateValue = toDateInputValue(match.match_date);
-    }
-
-    async function saveMatchEdit() {
-        if (editingMatchId === null) return;
-        try {
-            await UpdateMatch(editingMatchId, editPlayer1Value, editPlayer2Value, editDateValue);
-            await loadMatches();
-            statusBarTextStore.set(tMsg('match.matchUpdated'));
-        } catch (error) {
-            logger.error('Error updating match:', error);
-            statusBarTextStore.set(tMsg('match.errorUpdating'));
-        }
-        editingMatchId = null;
-    }
-
-    function cancelMatchEdit() {
-        editingMatchId = null;
-        editPlayer1Value = '';
-        editPlayer2Value = '';
-        editDateValue = '';
-    }
-
-    function startEditDetailComment() {
-        editDetailCommentText = detailMatch.comment || '';
-        editingDetailComment = true;
-    }
-
-    async function saveDetailComment() {
-        if (!detailMatch) return;
-        try {
-            await UpdateMatchComment(detailMatch.id, editDetailCommentText);
-            detailMatch.comment = editDetailCommentText;
-            const m = matches.find((x) => x.id === detailMatch.id);
-            if (m) m.comment = editDetailCommentText;
-            matches = matches;
-            statusBarTextStore.set(tMsg('match.commentUpdated'));
-        } catch (error) {
-            logger.error('Error updating comment:', error);
-            statusBarTextStore.set(tMsg('match.errorUpdatingComment'));
-        }
-        editingDetailComment = false;
-    }
-
-    function cancelDetailComment() {
-        editingDetailComment = false;
-        editDetailCommentText = '';
-    }
-
-    function handleDetailCommentKeyDown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.stopPropagation();
-            event.preventDefault();
-            saveDetailComment();
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            event.preventDefault();
-            cancelDetailComment();
-        }
-    }
-
-    function handleMatchEditKeyDown(event) {
-        if (event.key === 'Enter') {
-            event.stopPropagation();
-            event.preventDefault();
-            saveMatchEdit();
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            event.preventDefault();
-            cancelMatchEdit();
-        }
+        matchEdit.start(match.id, {
+            player1: match.player1_name || '',
+            player2: match.player2_name || '',
+            date: toDateInputValue(match.match_date)
+        });
     }
 
     // --- Sorting helpers ---
@@ -585,11 +519,11 @@
         event.stopPropagation();
 
         if (event.key === 'Escape') {
-            if (editingMatchId !== null) {
-                cancelMatchEdit();
+            if (matchEdit.editingId !== null) {
+                matchEdit.cancel();
                 event.preventDefault();
-            } else if (editingTournamentMatchId !== null) {
-                cancelTournamentEdit();
+            } else if (tournamentEdit.editingId !== null) {
+                tournamentEdit.cancel();
                 event.preventDefault();
             } else if (detailMatch) {
                 // Close detail pane first
@@ -660,12 +594,12 @@
         // Don't interfere while the merge players modal is open
         if (showMergePlayersModal) return;
         // Close tournament dropdown if clicking outside
-        if (editingTournamentMatchId !== null && !event.target.closest('.tournament-cell-edit')) {
-            cancelTournamentEdit();
+        if (tournamentEdit.editingId !== null && !event.target.closest('.tournament-cell-edit')) {
+            tournamentEdit.cancel();
         }
         // Cancel match edit if clicking outside the editing row
-        if (editingMatchId !== null && !event.target.closest('.match-editing-row')) {
-            cancelMatchEdit();
+        if (matchEdit.editingId !== null && !event.target.closest('.match-editing-row')) {
+            matchEdit.cancel();
         }
         const panel = document.getElementById('matchPanel');
         if (panel && !panel.contains(event.target)) {
@@ -742,17 +676,17 @@
                     </thead>
                     <tbody>
                         {#each sortedMatches as match, index (match.id)}
-                            {#if editingMatchId === match.id}
+                            {#if matchEdit.isEditing(match.id)}
                                 <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="narrow-col">
-                                        <input type="date" class="match-edit-input" bind:value={editDateValue} onkeydown={handleMatchEditKeyDown} />
+                                        <input type="date" class="match-edit-input" bind:value={matchEdit.draft.date} onkeydown={matchEdit.onKeyDown} />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} onkeydown={handleMatchEditKeyDown} placeholder={$t('match.player1')} />
+                                        <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player1} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player1')} />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} onkeydown={handleMatchEditKeyDown} placeholder={$t('match.player2')} />
+                                        <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player2} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player2')} />
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
@@ -764,7 +698,7 @@
                                                 class="icon-btn"
                                                 onclick={(e) => {
                                                     e.stopPropagation();
-                                                    saveMatchEdit(e);
+                                                    matchEdit.save();
                                                 }}
                                                 title={$t('common.save')}>✓</button
                                             >
@@ -772,7 +706,7 @@
                                                 class="icon-btn"
                                                 onclick={(e) => {
                                                     e.stopPropagation();
-                                                    cancelMatchEdit(e);
+                                                    matchEdit.cancel();
                                                 }}
                                                 title={$t('common.cancel')}>✕</button
                                             >
@@ -793,15 +727,15 @@
                                             ((e) => startEditTournament(match, e))(e);
                                         }}
                                     >
-                                        {#if editingTournamentMatchId === match.id}
+                                        {#if tournamentEdit.isEditing(match.id)}
                                             <div class="tournament-cell-edit">
                                                 <input
                                                     type="text"
                                                     class="tournament-edit-input"
-                                                    bind:value={editTournamentValue}
+                                                    bind:value={tournamentEdit.draft}
                                                     oninput={filterTournaments}
-                                                    onkeydown={handleTournamentKeyDown}
-                                                    onblur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    onkeydown={tournamentEdit.onKeyDown}
+                                                    onblur={() => setTimeout(tournamentEdit.cancel, 200)}
                                                     placeholder={$t('match.tournamentNamePlaceholder')}
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
@@ -987,12 +921,12 @@
                                 <tr>
                                     <td class="meta-label">{$t('match.comment')}</td>
                                     <td class="meta-value">
-                                        {#if editingDetailComment}
-                                            <input type="text" class="match-comment-input" bind:value={editDetailCommentText} onkeydown={handleDetailCommentKeyDown} onblur={saveDetailComment} />
+                                        {#if commentEdit.isEditing(detailMatch.id)}
+                                            <input type="text" class="match-comment-input" bind:value={commentEdit.draft} onkeydown={commentEdit.onKeyDown} onblur={commentEdit.onBlur} />
                                         {:else}
                                             <!-- svelte-ignore a11y_click_events_have_key_events -->
                                             <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                            <span class="match-comment-display" onclick={startEditDetailComment} title={$t('match.clickToAddComment')}>
+                                            <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
                                                 {detailMatch.comment || $t('match.addComment')}
                                             </span>
                                         {/if}
@@ -1007,15 +941,15 @@
                                             ((e) => startEditTournament(detailMatch, e))(e);
                                         }}
                                     >
-                                        {#if editingTournamentMatchId === detailMatch.id}
+                                        {#if tournamentEdit.isEditing(detailMatch.id)}
                                             <div class="tournament-cell-edit">
                                                 <input
                                                     type="text"
                                                     class="tournament-edit-input"
-                                                    bind:value={editTournamentValue}
+                                                    bind:value={tournamentEdit.draft}
                                                     oninput={filterTournaments}
-                                                    onkeydown={handleTournamentKeyDown}
-                                                    onblur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    onkeydown={tournamentEdit.onKeyDown}
+                                                    onblur={() => setTimeout(tournamentEdit.cancel, 200)}
                                                     placeholder={$t('match.tournamentNamePlaceholder')}
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
