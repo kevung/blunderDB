@@ -164,28 +164,6 @@
         }
     }
 
-    button {
-        padding: 10px 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: var(--font-size-base);
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background-color: white;
-        color: #333;
-    }
-
-    button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    button:hover:not(:disabled) {
-        background-color: #f5f5f5;
-        border-color: #999;
-    }
-
     .summary {
         background-color: #f9f9f9;
         padding: 15px;

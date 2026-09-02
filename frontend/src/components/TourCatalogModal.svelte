@@ -39,7 +39,7 @@
     </div>
 
     {#snippet footer()}
-        <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
+        <button onclick={onClose}>{$t('common.close')}</button>
     {/snippet}
 </Modal>
 
@@ -128,18 +128,5 @@
 
     .demo-button:hover {
         background-color: #f0f0f0;
-    }
-
-    .primary-button {
-        padding: 8px 14px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #f5f5f5;
-        cursor: pointer;
-        font-size: var(--font-size-title);
-    }
-
-    .primary-button:hover {
-        background-color: #e9e9e9;
     }
 </style>

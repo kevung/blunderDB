@@ -194,6 +194,55 @@
         justify-content: center;
     }
 
+    /* One palette for the footer buttons of every dialog — they used to come in five
+       (grey, dark, blue, red, light). Neutral by default, `.primary` for the action the
+       dialog exists for, `.danger` for the one destructive action. The buttons belong
+       to the modals' own templates, hence :global. */
+    .modal-footer :global(button) {
+        padding: 8px 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        color: #333;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .modal-footer :global(button:hover:not(:disabled)) {
+        background-color: #f5f5f5;
+        border-color: #999;
+    }
+
+    .modal-footer :global(button:disabled) {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .modal-footer :global(button.primary) {
+        background-color: #333;
+        border-color: #333;
+        color: white;
+    }
+
+    .modal-footer :global(button.primary:hover:not(:disabled)) {
+        background-color: #555;
+        border-color: #555;
+    }
+
+    .modal-footer :global(button.danger) {
+        background-color: #b3261e;
+        border-color: #b3261e;
+        color: white;
+    }
+
+    .modal-footer :global(button.danger:hover:not(:disabled)) {
+        background-color: #8f1e18;
+        border-color: #8f1e18;
+    }
+
     .modal-close {
         position: absolute;
         top: 2px;

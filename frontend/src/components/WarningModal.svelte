@@ -24,8 +24,8 @@
 </script>
 
 {#snippet confirmActions()}
-    <button class="btn-cancel" onclick={onClose}>{cancelLabel || $t('common.cancel')}</button>
-    <button class="btn-confirm" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
+    <button onclick={onClose}>{cancelLabel || $t('common.cancel')}</button>
+    <button class="danger" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
 {/snippet}
 
 <!-- Confirm mode must be able to layer above any other modal or always-mounted panel it was
@@ -57,24 +57,5 @@
     .highlight {
         font-weight: bold;
         color: red;
-    }
-
-    .btn-cancel,
-    .btn-confirm {
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-cancel {
-        border: 1px solid #ccc;
-        background: white;
-        color: #333;
-    }
-
-    .btn-confirm {
-        border: 1px solid #b3261e;
-        background: #b3261e;
-        color: white;
     }
 </style>

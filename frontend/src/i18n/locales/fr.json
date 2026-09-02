@@ -788,7 +788,6 @@
         "title": "Table d'équité de match"
     },
     "merge": {
-        "ariaLabel": "Fusionner les joueurs",
         "canonicalName": "Nom canonique :",
         "filterPlaceholder": "Filtrer les joueurs…",
         "hint": "Sélectionnez les noms qui représentent la même personne, puis choisissez ou saisissez le nom canonique à conserver. Tous les matchs seront mis à jour.",

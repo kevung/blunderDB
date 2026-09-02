@@ -465,7 +465,7 @@
     {#snippet footer()}
         {#if mode === 'metadata' || mode === 'exporting'}
             <button onclick={onCancel}>{$t('common.cancel')}</button>
-            <button class="btn-export" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
+            <button class="btn-export primary" onclick={confirmExport} disabled={cannotExport}>{$t('export.exportAction')}</button>
         {/if}
     {/snippet}
 </Modal>
@@ -587,7 +587,9 @@
         }
     }
 
-    button {
+    .small-btn,
+    .reveal,
+    .busy-overlay button {
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -599,25 +601,16 @@
         color: #333;
     }
 
-    button:disabled {
+    .busy-overlay button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
 
-    button:hover:not(:disabled) {
+    .small-btn:hover,
+    .reveal:hover,
+    .busy-overlay button:hover:not(:disabled) {
         background-color: #f5f5f5;
         border-color: #999;
-    }
-
-    .btn-export {
-        background-color: #333;
-        color: white;
-        border-color: #333;
-    }
-
-    .btn-export:hover:not(:disabled) {
-        background-color: #555;
-        border-color: #555;
     }
 
     .summary {

@@ -788,7 +788,6 @@
         "title": "Tabla de equity de partida"
     },
     "merge": {
-        "ariaLabel": "Fusionar jugadores",
         "canonicalName": "Nombre canónico:",
         "filterPlaceholder": "Filtrar jugadores…",
         "hint": "Selecciona los nombres que representan a la misma persona y, a continuación, elige o escribe el nombre canónico que quieres conservar. Todas las partidas se actualizarán.",

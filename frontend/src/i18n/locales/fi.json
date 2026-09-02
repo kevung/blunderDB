@@ -788,7 +788,6 @@
         "title": "Match equity -taulukko"
     },
     "merge": {
-        "ariaLabel": "Yhdistä pelaajat",
         "canonicalName": "Kanoninen nimi:",
         "filterPlaceholder": "Suodata pelaajia…",
         "hint": "Valitse nimet, jotka edustavat samaa henkilöä, ja valitse tai kirjoita säilytettävä kanoninen nimi. Kaikki ottelut päivitetään.",

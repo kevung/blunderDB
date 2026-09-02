@@ -136,8 +136,8 @@
         onkeydown={handleKeyDown}
     />
     {#snippet footer()}
-        <button class="primary-button" onclick={handleGoToPosition}>{$t('common.go')}</button>
-        <button class="secondary-button" onclick={onClose}>{$t('common.cancel')}</button>
+        <button class="primary" onclick={handleGoToPosition}>{$t('common.go')}</button>
+        <button onclick={onClose}>{$t('common.cancel')}</button>
     {/snippet}
 </Modal>
 
@@ -159,30 +159,5 @@
         outline: none;
         border-color: #6c757d; /* Sober grey color */
         box-shadow: 0 0 5px rgba(108, 117, 125, 0.5); /* Slight shadow for focus */
-    }
-
-    button {
-        padding: 8px 14px; /* Slightly increase padding */
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: var(--font-size-title); /* Slightly increase font size */
-    }
-
-    .primary-button {
-        background-color: #6c757d; /* Sober grey color */
-        color: white;
-    }
-
-    .secondary-button {
-        background-color: #ccc;
-    }
-
-    .primary-button:hover {
-        background-color: #5a6268; /* Slightly darker grey on hover */
-    }
-
-    .secondary-button:hover {
-        background-color: #999;
     }
 </style>

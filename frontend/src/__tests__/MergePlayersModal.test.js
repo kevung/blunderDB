@@ -2,7 +2,7 @@
  * MergePlayersModal.test.js
  *
  * The merge dialog was the one role="dialog" without the focus trap the other
- * modals use (utils/focusTrap.js): Tab walked out of it into the match panel
+ * modals use (now Modal.svelte's): Tab walked out of it into the match panel
  * behind. These tests pin the trap — focus lands inside on mount, Tab wraps at
  * the edges — and the dialog's contract with the binding: the names ticked in
  * the list and the canonical name typed in reach MergePlayers as-is, then the
@@ -79,22 +79,19 @@ describe('MergePlayersModal — focus', () => {
         const { container } = await mount();
         const dialog = container.querySelector('[role="dialog"]');
 
-        const first = dialog.querySelector('.close-btn');
-        const last = dialog.querySelector('.btn-merge');
+        // The filter field opens the dialog; the close cross, last in the DOM, ends it.
+        const first = dialog.querySelector('.filter-input');
+        const last = dialog.querySelector('.modal-close');
         expect(document.activeElement).toBe(first);
 
-        // The merge button is disabled until two names are ticked, so the last
-        // reachable control is the cancel button.
-        expect(last.disabled).toBe(true);
-        const lastEnabled = dialog.querySelector('.btn-cancel');
-        lastEnabled.focus();
-        const forward = tab(lastEnabled);
+        last.focus();
+        const forward = tab(last);
         expect(forward.defaultPrevented).toBe(true);
         expect(document.activeElement).toBe(first);
 
         const backward = tab(first, true);
         expect(backward.defaultPrevented).toBe(true);
-        expect(document.activeElement).toBe(lastEnabled);
+        expect(document.activeElement).toBe(last);
         expect(dialog.contains(document.activeElement)).toBe(true);
     });
 

@@ -122,20 +122,4 @@
         font-size: var(--font-size-base);
         margin: 6px 0 0;
     }
-
-    button {
-        padding: 6px 14px;
-        cursor: pointer;
-    }
-
-    .primary {
-        background: #1a73e8;
-        color: white;
-        border: 1px solid #1a73e8;
-    }
-
-    .primary:disabled {
-        opacity: 0.5;
-        cursor: default;
-    }
 </style>

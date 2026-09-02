@@ -102,7 +102,7 @@
             <button onclick={onClose}>{$t('common.close')}</button>
         {:else if mode === 'preview'}
             <button onclick={onCancel}>{$t('common.cancel')}</button>
-            <button class="btn-commit" onclick={onCommit}>{$t('import.commitImport')}</button>
+            <button class="primary" onclick={onCommit}>{$t('import.commitImport')}</button>
         {:else if mode === 'committing'}
             <button onclick={onCancel}>{$t('import.abortImport')}</button>
         {:else if mode === 'completed'}
@@ -171,39 +171,6 @@
         100% {
             transform: rotate(360deg);
         }
-    }
-
-    button {
-        padding: 10px 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: var(--font-size-base);
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background-color: white;
-        color: #333;
-    }
-
-    button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    button:hover:not(:disabled) {
-        background-color: #f5f5f5;
-        border-color: #999;
-    }
-
-    .btn-commit {
-        background-color: #333;
-        color: white;
-        border-color: #333;
-    }
-
-    .btn-commit:hover:not(:disabled) {
-        background-color: #555;
-        border-color: #555;
     }
 
     .summary {

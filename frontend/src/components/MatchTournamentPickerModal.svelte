@@ -152,7 +152,7 @@
     </section>
     {#snippet footer()}
         <button onclick={onCancel}>{$t('common.cancel')}</button>
-        <button class="btn-export" onclick={handleApply}>{$t('common.apply')}</button>
+        <button class="primary" onclick={handleApply}>{$t('common.apply')}</button>
     {/snippet}
 </Modal>
 
@@ -238,7 +238,7 @@
         font-size: var(--font-size-base);
     }
 
-    button {
+    .small-btn {
         padding: 10px 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -250,19 +250,8 @@
         color: #333;
     }
 
-    button:hover:not(:disabled) {
+    .small-btn:hover {
         background-color: #f5f5f5;
         border-color: #999;
-    }
-
-    .btn-export {
-        background-color: #333;
-        color: white;
-        border-color: #333;
-    }
-
-    .btn-export:hover:not(:disabled) {
-        background-color: #555;
-        border-color: #555;
     }
 </style>
