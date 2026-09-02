@@ -931,85 +931,56 @@ export async function updateEPC(position) {
     }
 }
 
-export function toggleAnalysisPanel() {
+// ── Tab toggles ──────────────────────────────────────────────────────────────
+// The `toggleXPanel` names date from when each panel was a floating window;
+// today every one of them selects a tab of the tabbed panel (App.svelte's tab
+// effect opens the matching PANEL). One table, one function; the eight names
+// stay as re-exports for keyboardService, commandProcessor and App.svelte.
+//
+//   tab      the activeTabStore value to select
+//   guard    extra precondition, returning a status-bar message key to refuse
+//   silent   no message when no database is open (metadata: the tab just
+//            stays where it is)
+const TAB_TOGGLES = Object.freeze({
+    analysis: { tab: 'analysis' },
+    comments: {
+        tab: 'comments',
+        guard: () => (get(positionsStore)[get(currentPositionIndexStore)] ? null : 'status.noCurrentPositionComment')
+    },
+    metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
+    anki: { tab: 'anki' },
+    matches: { tab: 'matches' },
+    collections: { tab: 'collections' },
+    tournaments: { tab: 'tournaments' },
+    stats: { tab: 'stats' }
+});
+
+/** Select the tab of `id` (a TAB_TOGGLES key) if a database is open. */
+export function toggleTab(id) {
+    const entry = TAB_TOGGLES[id];
+    if (!entry) throw new Error(`toggleTab: unknown tab '${id}'`);
+    logger.log(`toggleTab ${id}`);
     if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        if (!entry.silent) setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
-    logger.log('toggleAnalysisPanel');
-    activeTabStore.set('analysis');
+    const refusal = entry.guard?.();
+    if (refusal) {
+        setStatusBarMessage(tMsg(refusal));
+        return;
+    }
+    activeTabStore.set(entry.tab);
 }
 
-export function toggleCommentPanel() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    const positions = get(positionsStore);
-    if (!positions[get(currentPositionIndexStore)]) {
-        setStatusBarMessage(tMsg('status.noCurrentPositionComment'));
-        return;
-    }
-    logger.log('toggleCommentPanel called');
-    activeTabStore.set('comments');
-}
-
-// Opens the Metadata tab (not a modal — the standalone MetadataModal was removed).
-// Bound to the `meta` command and Ctrl+M.
-export function toggleMetadataPanel() {
-    if (get(databasePathStore)) {
-        if (get(statusBarModeStore) === 'EDIT') {
-            setStatusBarMessage(tMsg('status.cannotShowMetadataEdit'));
-        } else {
-            activeTabStore.set('metadata');
-        }
-    }
-}
-
-export function toggleAnkiPanel() {
-    logger.log('toggleAnkiPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('anki');
-}
-
-export function toggleMatchPanel() {
-    logger.log('toggleMatchPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('matches');
-}
-
-export function toggleCollectionPanelAction() {
-    logger.log('toggleCollectionPanelAction');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('collections');
-}
-
-export function toggleTournamentPanel() {
-    logger.log('toggleTournamentPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('tournaments');
-}
-
-export function toggleStatsPanel() {
-    logger.log('toggleStatsPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('stats');
-}
+export const toggleAnalysisPanel = () => toggleTab('analysis');
+export const toggleCommentPanel = () => toggleTab('comments');
+// Bound to the `meta` command and Ctrl+M (a tab, not a modal).
+export const toggleMetadataPanel = () => toggleTab('metadata');
+export const toggleAnkiPanel = () => toggleTab('anki');
+export const toggleMatchPanel = () => toggleTab('matches');
+export const toggleCollectionPanelAction = () => toggleTab('collections');
+export const toggleTournamentPanel = () => toggleTab('tournaments');
+export const toggleStatsPanel = () => toggleTab('stats');
 
 export function togglePipcount() {
     logger.log('togglePipcount');
