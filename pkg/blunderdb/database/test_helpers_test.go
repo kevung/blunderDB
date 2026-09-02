@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 )
@@ -122,4 +123,16 @@ func cubePosition(cubeExp int, cubeOwner int) Position {
 		PlayerOnRoll: 0,
 		DecisionType: CubeAction,
 	}
+}
+
+// loadPositionByIDUnlocked reads one position through the Storage backend
+// without taking d.mu. It was the Anki family's private loader until that
+// family became an adapter over storage/sqlite (which has its own); the tests
+// that reach a position by id keep using it.
+func (d *Database) loadPositionByIDUnlocked(positionID int64) (Position, error) {
+	pos, err := d.store.Positions().Load(context.Background(), "", positionID)
+	if err != nil {
+		return Position{}, err
+	}
+	return *pos, nil
 }

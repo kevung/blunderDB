@@ -376,6 +376,49 @@ func (s *ankiStore) NextCard(ctx context.Context, scope string, deckID int64) (*
 	return &domain.AnkiReviewCard{Card: card, Position: pos}, nil
 }
 
+// randomCard draws one card of the deck at random, optionally skipping
+// excludePositionID (0 = no exclusion), or ErrNotFound when none qualifies.
+func (s *ankiStore) randomCard(ctx context.Context, tenant, deckID, excludePositionID int64) (domain.AnkiCard, error) {
+	query := `SELECT ` + ankiCardCols + ` FROM anki_card WHERE deck_id = $1 AND tenant_id = $2`
+	args := []any{deckID, tenant}
+	if excludePositionID != 0 {
+		query += ` AND position_id <> $3`
+		args = append(args, excludePositionID)
+	}
+	query += ` ORDER BY random() LIMIT 1`
+	c, err := scanAnkiCard(s.db.QueryRow(ctx, query, args...))
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.AnkiCard{}, storage.ErrNotFound
+	}
+	if err != nil {
+		return domain.AnkiCard{}, err
+	}
+	return c, nil
+}
+
+// RandomCard draws one card of a deck at random for a cram session, ignoring
+// the FSRS schedule and the card's availability (see storage.AnkiStore).
+func (s *ankiStore) RandomCard(ctx context.Context, scope string, deckID, excludePositionID int64) (*domain.AnkiReviewCard, error) {
+	tenant := tenantID(scope)
+	card, err := s.randomCard(ctx, tenant, deckID, excludePositionID)
+	if errors.Is(err, storage.ErrNotFound) && excludePositionID != 0 {
+		// Only the excluded card remains (single-card deck): draw again
+		// without the exclusion so cram still serves it.
+		card, err = s.randomCard(ctx, tenant, deckID, 0)
+	}
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("postgres: random anki card of deck %d: %w", deckID, err)
+	}
+	pos, err := s.loadPosition(ctx, tenant, card.PositionID)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: random anki card of deck %d: %w", deckID, err)
+	}
+	return &domain.AnkiReviewCard{Card: card, Position: pos}, nil
+}
+
 // ReviewCard records a review rating against a card, advances its FSRS
 // scheduling state, and returns the next card still due in the same deck (nil
 // when none remain).

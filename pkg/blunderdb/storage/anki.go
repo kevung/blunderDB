@@ -53,6 +53,15 @@ type AnkiStore interface {
 	// NextCard returns the next card due for review in a deck, or ErrNotFound.
 	NextCard(ctx context.Context, scope string, deckID int64) (*domain.AnkiReviewCard, error)
 
+	// RandomCard draws one card of a deck at random for a cram (free drill)
+	// session. Cram ignores the FSRS schedule — due date, state, suspension
+	// and burial alike — and never mutates it: the user practises any position
+	// on demand without disturbing the review plan. excludePositionID, when
+	// non-zero, is skipped so two consecutive draws don't repeat; a deck whose
+	// only card is the excluded one still serves it. Returns ErrNotFound for
+	// an empty deck.
+	RandomCard(ctx context.Context, scope string, deckID, excludePositionID int64) (*domain.AnkiReviewCard, error)
+
 	// ReviewCard records a review rating and returns the next card to review.
 	ReviewCard(ctx context.Context, scope string, cardID int64, rating int) (*domain.AnkiReviewCard, error)
 
