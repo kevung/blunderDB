@@ -215,9 +215,19 @@ export async function exitEditMode() {
         return;
     }
     statusBarModeStore.set(MODE.NORMAL);
-    // Bump the index through -1 so the navigation effect redraws the library
-    // position the blank EDIT board replaced.
+    // Put the library position back on the board synchronously, from the
+    // window cache, before bumping the index. The redraw the bump triggers
+    // (App.svelte's nav effect) fetches asynchronously, and whoever runs right
+    // after this exit — App.svelte calls it without await and then
+    // enterEPCMode, which photographs the board — would otherwise see the
+    // blank query board under the library's id, and put it back on screen on
+    // the way out of Eval (#201). enterEditMode blanked a clone, so the cache
+    // still holds the record intact; on a miss the nav effect fetches it.
     const currentIndex = get(currentPositionIndexStore);
+    const cached = positionsStore.peek(currentIndex);
+    if (cached) positionStore.set(JSON.parse(JSON.stringify(cached)));
+    // Bump the index through -1 so the navigation effect redraws the library
+    // position (and reloads its analysis) the blank EDIT board replaced.
     currentPositionIndexStore.set(-1);
     currentPositionIndexStore.set(currentIndex);
 }
@@ -294,19 +304,22 @@ export function sendPositionToEval(position) {
 }
 
 /**
- * NORMAL | MATCH | COLLECTION | EDIT → EPC. Synchronous on purpose: the mode
- * must be EPC *before* the scratch board lands in positionStore, or the
- * board's EPC effect fires on the wrong position.
+ * NORMAL | MATCH | COLLECTION | EDIT → EPC. The mode is set to EPC *before*
+ * the scratch board lands in positionStore, in one synchronous run, or the
+ * board's EPC effect fires on the wrong position. The function is async only
+ * for the way in from EDIT, and that await sits before the run, never inside.
  */
-export function enterEPCMode() {
+export async function enterEPCMode() {
     if (currentMode() === MODE.EPC) return;
 
     if (currentMode() === MODE.EDIT) {
-        // Leave the search tab's scratch board first so the snapshot below is
-        // the studied position (or match), not the blank query board. Only the
-        // exit's synchronous prefix is needed here: it restores mode and match
-        // context before the first await.
-        exitEditMode();
+        // Leave the search tab's scratch board first, so the snapshot below is
+        // the studied position (or match), not the blank query board. Awaited:
+        // enterEditMode blanks the board under the library's id, and only a
+        // completed exit guarantees the record is back (#201) — see
+        // exitEditMode for why its own restore is synchronous.
+        await exitEditMode();
+        if (currentMode() === MODE.EPC) return;
     }
 
     savedContext.beforeEPC = {
