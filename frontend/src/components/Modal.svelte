@@ -173,14 +173,62 @@
         max-width: 100%;
     }
 
-    .modal-title {
+    /* The dialog's vocabulary — title, busy spinner, status line, note box — is styled
+       here once; the progress and export dialogs write their own headings and notes in
+       their templates (a title that changes with the step, a spinner beside it), hence
+       :global under the box. */
+    .modal-box :global(.modal-title) {
         margin: 0;
         font-size: var(--font-size-dialog-title);
         color: #333;
     }
 
-    .modal-title.compact {
+    .modal-box :global(.modal-title.compact) {
         font-size: var(--font-size-title);
+    }
+
+    .modal-box :global(.spinner) {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 3px solid #e0e0e0;
+        border-top: 3px solid #666;
+        border-radius: 50%;
+        animation: modal-spin 1s linear infinite;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+
+    @keyframes -global-modal-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .modal-box :global(.status-text) {
+        color: #666;
+        margin: 0;
+    }
+
+    .modal-box :global(.summary) {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #666;
+    }
+
+    .modal-box :global(.summary.warning) {
+        background-color: #f5f5f5;
+        border-left-color: #999;
+    }
+
+    .modal-box :global(.summary p) {
+        margin: 5px 0;
+        color: #555;
+    }
+
+    .modal-box :global(.summary strong) {
+        color: #333;
     }
 
     .modal-footer {

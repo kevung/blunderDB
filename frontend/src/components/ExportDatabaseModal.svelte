@@ -234,9 +234,34 @@
     }
 </script>
 
+<!-- A titled list of tick boxes with All/None, for matches, tournaments and collections
+     alike. `describe` names an item and gives its count; `partial` flags a count short
+     of the whole. -->
+{#snippet pickList(header, items, isChecked, toggle, selectAll, selectNone, describe)}
+    <div class="collections-section">
+        <div class="collections-header">
+            <span>{header}</span>
+            <div class="collections-buttons">
+                <button type="button" class="small-btn" onclick={selectAll}>{$t('export.all')}</button>
+                <button type="button" class="small-btn" onclick={selectNone}>{$t('export.none')}</button>
+            </div>
+        </div>
+        <div class="collections-list">
+            {#each items as item (item.id)}
+                {@const d = describe(item)}
+                <label class="collection-checkbox">
+                    <input type="checkbox" checked={isChecked(item.id)} onchange={() => toggle(item.id)} />
+                    <span class="coll-name">{d.name}</span>
+                    <span class="coll-count" class:partial={d.partial}>({d.count})</span>
+                </label>
+            {/each}
+        </div>
+    </div>
+{/snippet}
+
 <Modal open={visible} onclose={onCancel} size="large" layer="top" closeButton={false} label={$t('export.dialogLabel')}>
     {#if mode === 'metadata' || mode === 'exporting'}
-        <h2>{$t('export.titleExport')}</h2>
+        <h2 class="modal-title">{$t('export.titleExport')}</h2>
 
         <div class="summary">
             <p>{$t('export.willBeExported', { count: positionCount, desc: exportDescription })}</p>
@@ -381,72 +406,42 @@
         {/if}
 
         {#if exportOptions.includeMatches && matches.length > 0}
-            <div class="collections-section">
-                <div class="collections-header">
-                    <span>{$t('export.selectMatches')}</span>
-                    <div class="collections-buttons">
-                        <button type="button" class="small-btn" onclick={selectAllMatches}>{$t('export.all')}</button>
-                        <button type="button" class="small-btn" onclick={selectNoMatches}>{$t('export.none')}</button>
-                    </div>
-                </div>
-                <div class="collections-list">
-                    {#each matches as match (match.id)}
-                        <label class="collection-checkbox">
-                            <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
-                            <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
-                            <span class="coll-count">({match.game_count}g)</span>
-                        </label>
-                    {/each}
-                </div>
-            </div>
+            {@render pickList(
+                $t('export.selectMatches'),
+                matches,
+                (id) => exportOptions.matchIDs.includes(id),
+                toggleMatchSelection,
+                selectAllMatches,
+                selectNoMatches,
+                (m) => ({ name: `${m.player1_name} vs ${m.player2_name}`, count: `${m.game_count}g` })
+            )}
         {/if}
 
         {#if exportOptions.includeTournaments && tournaments.length > 0}
-            <div class="collections-section">
-                <div class="collections-header">
-                    <span>{$t('export.selectTournaments')}</span>
-                    <div class="collections-buttons">
-                        <button type="button" class="small-btn" onclick={selectAllTournaments}>{$t('export.all')}</button>
-                        <button type="button" class="small-btn" onclick={selectNoTournaments}>{$t('export.none')}</button>
-                    </div>
-                </div>
-                <div class="collections-list">
-                    {#each tournaments as tournament (tournament.id)}
-                        <label class="collection-checkbox">
-                            <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
-                            <span class="coll-name">{tournament.name}</span>
-                            <span class="coll-count">({tournament.matchCount})</span>
-                        </label>
-                    {/each}
-                </div>
-            </div>
+            {@render pickList(
+                $t('export.selectTournaments'),
+                tournaments,
+                (id) => exportOptions.includeTournamentIDs.includes(id),
+                toggleTournamentSelection,
+                selectAllTournaments,
+                selectNoTournaments,
+                (tournament) => ({ name: tournament.name, count: tournament.matchCount })
+            )}
         {/if}
 
         {#if exportOptions.includeCollections && collections.length > 0}
-            <div class="collections-section">
-                <div class="collections-header">
-                    <span>{$t('export.selectCollections')}</span>
-                    <div class="collections-buttons">
-                        <button type="button" class="small-btn" onclick={selectAllCollections}>{$t('export.all')}</button>
-                        <button type="button" class="small-btn" onclick={selectNoCollections}>{$t('export.none')}</button>
-                    </div>
-                </div>
-                <div class="collections-list">
-                    {#each collections as collection (collection.id)}
-                        <label class="collection-checkbox">
-                            <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
-                            <span class="coll-name">{collection.name}</span>
-                            <!-- Covered / total. The export writes membership
-                                 only for positions it exports, so a partial
-                                 collection arrives truncated — said here rather
-                                 than discovered by the recipient. -->
-                            <span class="coll-count" class:partial={isPartial(collection)}>
-                                ({covered(collection)}/{collection.positionCount})
-                            </span>
-                        </label>
-                    {/each}
-                </div>
-            </div>
+            <!-- Covered / total. The export writes membership only for positions it
+                 exports, so a partial collection arrives truncated — said here rather
+                 than discovered by the recipient. -->
+            {@render pickList(
+                $t('export.selectCollections'),
+                collections,
+                (id) => exportOptions.collectionIDs.includes(id),
+                toggleCollectionSelection,
+                selectAllCollections,
+                selectNoCollections,
+                (collection) => ({ name: collection.name, count: `${covered(collection)}/${collection.positionCount}`, partial: isPartial(collection) })
+            )}
         {/if}
     {/if}
 
@@ -456,7 +451,7 @@
              white rectangle when the content changes. It also covers the
              controls, so nothing can be edited while the export runs. -->
         <div class="busy-overlay">
-            <h2>{$t('export.exportingTitle')} <span class="spinner"></span></h2>
+            <h2 class="modal-title">{$t('export.exportingTitle')} <span class="spinner"></span></h2>
             <p class="status-text">{$t('export.exportingPositions', { count: positionCount })}</p>
             <p class="status-text">{$t('export.mayTakeMoments')}</p>
             <button onclick={onCancel}>{$t('common.cancel')}</button>
@@ -481,18 +476,6 @@
         justify-content: center;
         gap: 12px;
         border-radius: 6px;
-    }
-
-    h2 {
-        margin: 0;
-        font-size: var(--font-size-dialog-title);
-        color: #333;
-    }
-
-    .status-text {
-        color: #666;
-        font-size: var(--font-size-base);
-        margin: 0;
     }
 
     .form-group {
@@ -566,27 +549,6 @@
         opacity: 0.5;
     }
 
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
     .small-btn,
     .reveal,
     .busy-overlay button {
@@ -611,19 +573,6 @@
     .busy-overlay button:hover:not(:disabled) {
         background-color: #f5f5f5;
         border-color: #999;
-    }
-
-    .summary {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 4px;
-        border-left: 4px solid #666;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        font-size: var(--font-size-base);
-        color: #555;
     }
 
     .collections-section {

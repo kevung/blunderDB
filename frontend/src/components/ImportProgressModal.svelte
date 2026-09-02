@@ -33,10 +33,10 @@
 
 <Modal open={visible} onclose={onClose} size="large" layer="top" closeButton={false} closeOnEscape={closable} label={$t('import.progressTitle')}>
     {#if mode === 'analyzing'}
-        <h2>{$t('import.analyzing')} <span class="spinner"></span></h2>
+        <h2 class="modal-title">{$t('import.analyzing')} <span class="spinner"></span></h2>
         <p class="status-text">{$t('import.analyzingWait')}</p>
     {:else if mode === 'preview'}
-        <h2>{$t('import.previewTitle')}</h2>
+        <h2 class="modal-title">{$t('import.previewTitle')}</h2>
 
         <div class="summary">
             <p><strong>{$t('import.databaseToImport')}</strong> {$t('import.positionCount', { count: analysis.total })}</p>
@@ -70,11 +70,11 @@
             </div>
         {/if}
     {:else if mode === 'committing'}
-        <h2>{$t('import.committing')} <span class="spinner"></span></h2>
+        <h2 class="modal-title">{$t('import.committing')} <span class="spinner"></span></h2>
         <p class="status-text">{$t('import.committingWait')}</p>
         <p class="status-text">{$t('import.committingAtomic')}</p>
     {:else if mode === 'completed'}
-        <h2>{$t('import.completedTitle')}</h2>
+        <h2 class="modal-title">{$t('import.completedTitle')}</h2>
 
         <div class="summary">
             <p><strong>{$t('import.successful')}</strong> {$t('import.databaseUpdated')}</p>
@@ -112,18 +112,6 @@
 </Modal>
 
 <style>
-    h2 {
-        margin: 0;
-        font-size: var(--font-size-dialog-title);
-        color: #333;
-    }
-
-    .status-text {
-        color: #666;
-        font-size: var(--font-size-base);
-        margin: 0;
-    }
-
     .stats {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -150,48 +138,5 @@
         font-size: var(--font-size-stat-figure);
         font-weight: bold;
         color: #333;
-    }
-
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .summary {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 4px;
-        border-left: 4px solid #666;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        font-size: var(--font-size-base);
-        color: #555;
-    }
-
-    .summary strong {
-        color: #333;
-    }
-
-    .warning {
-        background-color: #f5f5f5;
-        border-left-color: #999;
     }
 </style>

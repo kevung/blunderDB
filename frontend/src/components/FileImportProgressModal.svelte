@@ -18,7 +18,7 @@
 
 <Modal open={visible} onclose={onClose} size="large" layer="top" closeButton={false} closeOnEscape={closable} label={$t('import.fileProgressTitle')}>
     {#if mode === 'importing'}
-        <h2>{$t('import.importingFiles')} <span class="spinner"></span></h2>
+        <h2 class="modal-title">{$t('import.importingFiles')} <span class="spinner"></span></h2>
         <p class="status-text">{$t('import.importingFileN', { current: currentIndex, total: totalFiles })}</p>
         <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
 
@@ -27,7 +27,7 @@
         </div>
         <p class="progress-text">{progressPercent}%</p>
     {:else if mode === 'completed'}
-        <h2>{$t('import.completedTitle')}</h2>
+        <h2 class="modal-title">{$t('import.completedTitle')}</h2>
 
         <div class="summary">
             <p><strong>{$t('import.finished')}</strong> {$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
@@ -68,18 +68,6 @@
 </Modal>
 
 <style>
-    h2 {
-        margin: 0;
-        font-size: var(--font-size-dialog-title);
-        color: #333;
-    }
-
-    .status-text {
-        color: #666;
-        font-size: var(--font-size-base);
-        margin: 0;
-    }
-
     .current-file {
         color: #999;
         font-size: var(--font-size-base);
@@ -141,44 +129,6 @@
 
     .stat-value.errors {
         color: #c33;
-    }
-
-    .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 3px solid #e0e0e0;
-        border-top: 3px solid #666;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
-        vertical-align: middle;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .summary {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 4px;
-        border-left: 4px solid #666;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        font-size: var(--font-size-base);
-        color: #555;
-    }
-
-    .summary strong {
-        color: #333;
     }
 
     .error-list {
