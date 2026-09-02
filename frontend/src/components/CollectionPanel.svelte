@@ -2,7 +2,6 @@
     import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
-    import { dragReorder } from '../utils/dragReorder.js';
     import { createReorder } from '../utils/reorder.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
@@ -26,6 +25,7 @@
     } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
     import { confirmAction } from '../services/confirmService.js';
+    import PanelTable from './panels/PanelTable.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
 
     let { onOpenCollection } = $props();
@@ -82,6 +82,21 @@
 
     // Inline new description
     let inlineNewDescription = $state('');
+
+    const collectionColumns = $derived([
+        { key: 'name', label: $t('collection.colName') },
+        { key: 'positions', label: $t('collection.colPos'), narrow: true },
+        { key: 'description', label: $t('collection.colDescription') },
+        { key: 'modified', label: $t('collection.colModified'), narrow: true },
+        { key: 'toggle', label: $t('collection.colPosCheck'), narrow: true, align: 'center', class: 'toggle-header', title: $t('collection.toggleHeaderTooltip') },
+        { key: 'actions', actions: true }
+    ]);
+
+    const positionColumns = $derived([
+        { key: 'index', label: '#', narrow: true },
+        { key: 'id', label: $t('collection.colId'), narrow: true },
+        { key: 'actions', actions: true }
+    ]);
 
     // Sync view with activeCollection store
     $effect(() => {
@@ -489,114 +504,104 @@
     {#if view === 'list'}
         <!-- Collections list -->
         <div class="table-wrapper">
-            <table class="coll-table">
-                <thead>
-                    <tr>
-                        <th class="no-select">{$t('collection.colName')}</th>
-                        <th class="no-select narrow-col">{$t('collection.colPos')}</th>
-                        <th class="no-select">{$t('collection.colDescription')}</th>
-                        <th class="no-select narrow-col">{$t('collection.colModified')}</th>
-                        <th class="no-select narrow-col toggle-header" title={$t('collection.toggleHeaderTooltip')}>{$t('collection.colPosCheck')}</th>
-                        <th class="no-select actions-col"></th>
-                    </tr>
-                </thead>
-                <tbody use:dragReorder={{ onReorder: collectionOrder.reorder }}>
-                    {#each collections as collection, index (collection.id)}
-                        <tr
-                            class:selected={selectedCollection?.id === collection.id}
-                            class:in-collection={positionCollectionIds.includes(collection.id)}
-                            onclick={(e) => togglePositionInCollection(collection.id, e)}
-                            ondblclick={() => openCollection(collection)}
-                        >
-                            <td class="name-cell">
-                                {#if collectionEdit.isEditing(collection.id)}
-                                    <input
-                                        class="inline-edit"
-                                        type="text"
-                                        bind:value={collectionEdit.draft.name}
-                                        onblur={collectionEdit.onBlur}
-                                        onkeydown={collectionEdit.onKeyDown}
-                                        onclick={(e) => e.stopPropagation()}
-                                        ondblclick={(e) => e.stopPropagation()}
-                                        autofocus
-                                    />
-                                {:else}
-                                    <span title={collection.name}>{collection.name}</span>
-                                {/if}
-                            </td>
-                            <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
-                            <td class="desc-cell">
-                                {#if collectionEdit.isEditing(collection.id)}
-                                    <input
-                                        class="inline-edit"
-                                        type="text"
-                                        bind:value={collectionEdit.draft.description}
-                                        onblur={collectionEdit.onBlur}
-                                        onkeydown={collectionEdit.onKeyDown}
-                                        onclick={(e) => e.stopPropagation()}
-                                        ondblclick={(e) => e.stopPropagation()}
-                                        placeholder={$t('collection.descriptionPlaceholder')}
-                                    />
-                                {:else}
-                                    <span class="desc-text" title={collection.description || ''}>{collection.description || ''}</span>
-                                {/if}
-                            </td>
-                            <td class="narrow-col date-cell">{formatDate(collection.updatedAt)}</td>
-                            <td class="narrow-col toggle-cell">
-                                {#if currentPosition && currentPosition.id}
-                                    <input
-                                        type="checkbox"
-                                        checked={positionCollectionIds.includes(collection.id)}
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => togglePositionInCollection(collection.id, e))(e);
-                                        }}
-                                        title={positionCollectionIds.includes(collection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
-                                    />
-                                {/if}
-                            </td>
-                            <td class="actions-col">
-                                <span class="item-actions">
-                                    <button
-                                        class="icon-btn"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            collectionOrder.moveUp(index);
-                                        }}
-                                        disabled={index === 0}
-                                        title={$t('collection.moveUp')}>▲</button
-                                    >
-                                    <button
-                                        class="icon-btn"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            collectionOrder.moveDown(index);
-                                        }}
-                                        disabled={index === collections.length - 1}
-                                        title={$t('collection.moveDown')}>▼</button
-                                    >
-                                    <button
-                                        class="icon-btn"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => startEditing(collection, e))(e);
-                                        }}
-                                        title={$t('common.edit')}>✎</button
-                                    >
-                                    <button
-                                        class="icon-btn delete"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => deleteCollection(collection, e))(e);
-                                        }}
-                                        title={$t('common.delete')}>×</button
-                                    >
-                                </span>
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+            <PanelTable
+                rows={collections}
+                columns={collectionColumns}
+                selectedKey={selectedCollection?.id}
+                rowClass={(collection) => (positionCollectionIds.includes(collection.id) ? 'in-collection' : '')}
+                onSelect={(collection, _index, e) => togglePositionInCollection(collection.id, e)}
+                onActivate={(collection) => openCollection(collection)}
+                onReorder={collectionOrder.reorder}
+                emptyText={$t('collection.empty')}
+            >
+                {#snippet cells(collection, index)}
+                    <td class="name-cell">
+                        {#if collectionEdit.isEditing(collection.id)}
+                            <input
+                                class="inline-edit"
+                                type="text"
+                                bind:value={collectionEdit.draft.name}
+                                onblur={collectionEdit.onBlur}
+                                onkeydown={collectionEdit.onKeyDown}
+                                onclick={(e) => e.stopPropagation()}
+                                ondblclick={(e) => e.stopPropagation()}
+                                autofocus
+                            />
+                        {:else}
+                            <span title={collection.name}>{collection.name}</span>
+                        {/if}
+                    </td>
+                    <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
+                    <td class="desc-cell">
+                        {#if collectionEdit.isEditing(collection.id)}
+                            <input
+                                class="inline-edit"
+                                type="text"
+                                bind:value={collectionEdit.draft.description}
+                                onblur={collectionEdit.onBlur}
+                                onkeydown={collectionEdit.onKeyDown}
+                                onclick={(e) => e.stopPropagation()}
+                                ondblclick={(e) => e.stopPropagation()}
+                                placeholder={$t('collection.descriptionPlaceholder')}
+                            />
+                        {:else}
+                            <span class="desc-text" title={collection.description || ''}>{collection.description || ''}</span>
+                        {/if}
+                    </td>
+                    <td class="narrow-col date-cell">{formatDate(collection.updatedAt)}</td>
+                    <td class="narrow-col toggle-cell">
+                        {#if currentPosition && currentPosition.id}
+                            <input
+                                type="checkbox"
+                                checked={positionCollectionIds.includes(collection.id)}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => togglePositionInCollection(collection.id, e))(e);
+                                }}
+                                title={positionCollectionIds.includes(collection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
+                            />
+                        {/if}
+                    </td>
+                    <td class="actions-col">
+                        <span class="item-actions">
+                            <button
+                                class="icon-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    collectionOrder.moveUp(index);
+                                }}
+                                disabled={index === 0}
+                                title={$t('collection.moveUp')}>▲</button
+                            >
+                            <button
+                                class="icon-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    collectionOrder.moveDown(index);
+                                }}
+                                disabled={index === collections.length - 1}
+                                title={$t('collection.moveDown')}>▼</button
+                            >
+                            <button
+                                class="icon-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => startEditing(collection, e))(e);
+                                }}
+                                title={$t('common.edit')}>✎</button
+                            >
+                            <button
+                                class="icon-btn delete"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => deleteCollection(collection, e))(e);
+                                }}
+                                title={$t('common.delete')}>×</button
+                            >
+                        </span>
+                    </td>
+                {/snippet}
+            </PanelTable>
             <!-- Inline add row below table -->
             <div class="add-row">
                 <input
@@ -620,93 +625,85 @@
                     }}
                 />
             </div>
-            {#if collections.length === 0}
-                <div class="empty-msg">{$t('collection.empty')}</div>
-            {/if}
         </div>
     {:else if view === 'detail' && activeCollection}
         <!-- Positions in active collection -->
         <div class="table-wrapper">
-            <div class="detail-header">
-                <button class="back-btn" onclick={goBackToList} title={$t('collection.backToCollections')}>←</button>
-                <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
-                <span class="detail-count">{$t('collection.posCount', { count: collectionPositions.length })}</span>
-                {#if currentPosition && currentPosition.id}
-                    <input
-                        type="checkbox"
-                        checked={positionCollectionIds.includes(activeCollection.id)}
-                        onclick={(e) => togglePositionInCollection(activeCollection.id, e)}
-                        title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
-                    />
-                {/if}
-            </div>
-            {#if collectionEdit.isEditing(activeCollection.id)}
-                <div class="desc-bar">
-                    <input
-                        class="inline-edit full-width"
-                        type="text"
-                        bind:value={collectionEdit.draft.description}
-                        onblur={collectionEdit.onBlur}
-                        onkeydown={collectionEdit.onKeyDown}
-                        placeholder={$t('collection.descriptionPlaceholder')}
-                        autofocus
-                    />
-                </div>
-            {:else}
-                <div class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
-                    <span class="desc-text" title={$t('collection.clickToEdit')}>{activeCollection.description || $t('collection.addDescription')}</span>
-                </div>
-            {/if}
-            <table class="coll-table">
-                <thead>
-                    <tr>
-                        <th class="no-select narrow-col">#</th>
-                        <th class="no-select narrow-col">{$t('collection.colId')}</th>
-                        <th class="no-select actions-col"></th>
-                    </tr>
-                </thead>
-                <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
-                    {#each collectionPositions as position, index (position.id)}
-                        <tr class:current={$currentPositionIndexStore === index} class:multi-selected={selectedPositionIndices.has(index)} onclick={(e) => selectAndDisplayPosition(index, e)}>
-                            <td class="narrow-col idx-cell">{index + 1}</td>
-                            <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
-                            <td class="actions-col">
-                                <span class="item-actions">
-                                    <button
-                                        class="icon-btn"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            positionOrder.moveUp(index);
-                                        }}
-                                        disabled={index === 0}
-                                        title={$t('collection.moveUp')}>▲</button
-                                    >
-                                    <button
-                                        class="icon-btn"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            positionOrder.moveDown(index);
-                                        }}
-                                        disabled={index === collectionPositions.length - 1}
-                                        title={$t('collection.moveDown')}>▼</button
-                                    >
-                                    <button
-                                        class="icon-btn delete"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => removePositionFromRow(index, e))(e);
-                                        }}
-                                        title={$t('collection.removeFromCollection')}>×</button
-                                    >
-                                </span>
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-            {#if collectionPositions.length === 0}
-                <div class="empty-msg">{$t('collection.emptyCollection')}</div>
-            {/if}
+            <PanelTable
+                rows={collectionPositions}
+                columns={positionColumns}
+                rowClass={(_position, index) => [$currentPositionIndexStore === index ? 'current' : '', selectedPositionIndices.has(index) ? 'multi-selected' : ''].join(' ')}
+                onSelect={(_position, index, e) => selectAndDisplayPosition(index, e)}
+                onReorder={handlePositionReorder}
+                emptyText={$t('collection.emptyCollection')}
+            >
+                {#snippet header()}
+                    <button class="back-btn" onclick={goBackToList} title={$t('collection.backToCollections')}>←</button>
+                    <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
+                    <span class="detail-count">{$t('collection.posCount', { count: collectionPositions.length })}</span>
+                    {#if currentPosition && currentPosition.id}
+                        <input
+                            type="checkbox"
+                            checked={positionCollectionIds.includes(activeCollection.id)}
+                            onclick={(e) => togglePositionInCollection(activeCollection.id, e)}
+                            title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
+                        />
+                    {/if}
+                {/snippet}
+                {#snippet subheader()}
+                    {#if collectionEdit.isEditing(activeCollection.id)}
+                        <div class="desc-bar">
+                            <input
+                                class="inline-edit full-width"
+                                type="text"
+                                bind:value={collectionEdit.draft.description}
+                                onblur={collectionEdit.onBlur}
+                                onkeydown={collectionEdit.onKeyDown}
+                                placeholder={$t('collection.descriptionPlaceholder')}
+                                autofocus
+                            />
+                        </div>
+                    {:else}
+                        <div class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
+                            <span class="desc-text" title={$t('collection.clickToEdit')}>{activeCollection.description || $t('collection.addDescription')}</span>
+                        </div>
+                    {/if}
+                {/snippet}
+                {#snippet cells(position, index)}
+                    <td class="narrow-col idx-cell">{index + 1}</td>
+                    <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
+                    <td class="actions-col">
+                        <span class="item-actions">
+                            <button
+                                class="icon-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    positionOrder.moveUp(index);
+                                }}
+                                disabled={index === 0}
+                                title={$t('collection.moveUp')}>▲</button
+                            >
+                            <button
+                                class="icon-btn"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    positionOrder.moveDown(index);
+                                }}
+                                disabled={index === collectionPositions.length - 1}
+                                title={$t('collection.moveDown')}>▼</button
+                            >
+                            <button
+                                class="icon-btn delete"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => removePositionFromRow(index, e))(e);
+                                }}
+                                title={$t('collection.removeFromCollection')}>×</button
+                            >
+                        </span>
+                    </td>
+                {/snippet}
+            </PanelTable>
         </div>
     {/if}
 </section>
@@ -737,51 +734,6 @@
         display: flex;
         flex-direction: column;
         min-height: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    /* Table layout (same pattern as Match/Tournament panels) */
-    .coll-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-base);
-    }
-
-    .coll-table thead {
-        position: sticky;
-        top: 0;
-        background-color: #f5f5f5;
-        z-index: 1;
-    }
-
-    .coll-table th,
-    .coll-table td {
-        padding: 4px 8px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .coll-table th {
-        font-weight: 600;
-        color: #333;
-        font-size: var(--font-size-small);
-    }
-
-    .narrow-col {
-        width: 1px;
-        white-space: nowrap;
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-
-    .actions-col {
-        width: 90px;
-        min-width: 90px;
-        max-width: 90px;
-        white-space: nowrap;
-        text-align: center;
-        padding: 0 4px;
     }
 
     .date-cell {
@@ -789,32 +741,12 @@
         color: #999;
     }
 
-    /* Row styles */
-    .coll-table tbody tr {
-        transition: background-color 0.1s;
-    }
-    .coll-table tbody tr:hover {
-        background-color: #f9f9f9;
-    }
-    .coll-table tbody tr.selected {
-        background-color: #e3f2fd;
-    }
-    .coll-table tbody tr.selected:hover {
-        background-color: #bbdefb;
-    }
-    .coll-table tbody tr.in-collection {
+    /* Row states (the rows are PanelTable's elements) */
+    .collection-panel :global(tr.in-collection) {
         border-left: 3px solid #4a8;
     }
-    .coll-table tbody :global(tr.drag-over) {
-        border-top: 2px solid #999;
-    }
-    .coll-table tbody :global(tr.dragging) {
-        opacity: 0.5;
-    }
-    .coll-table tbody tr.current {
-        background-color: #dce9f7;
-    }
-    .coll-table tbody tr.multi-selected {
+    .collection-panel :global(tr.current),
+    .collection-panel :global(tr.multi-selected) {
         background-color: #dce9f7;
     }
 
@@ -824,10 +756,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 0;
-    }
-    .count-cell {
-        text-align: center;
-        color: #666;
     }
     .desc-cell {
         overflow: hidden;
@@ -861,8 +789,7 @@
         box-sizing: border-box;
     }
 
-    .toggle-header {
-        text-align: center;
+    .collection-panel :global(th.toggle-header) {
         color: #4a8;
     }
     .toggle-cell {
@@ -874,33 +801,6 @@
         width: 15px;
         height: 15px;
         accent-color: #4a8;
-    }
-
-    /* Action buttons - always visible */
-    .item-actions {
-        display: inline-flex;
-        gap: 2px;
-        vertical-align: middle;
-    }
-
-    .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-        color: #666;
-        padding: 2px 4px;
-        line-height: 1;
-    }
-    .icon-btn:hover:not(:disabled) {
-        color: #000;
-    }
-    .icon-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-    .icon-btn.delete:hover:not(:disabled) {
-        color: #c55;
     }
 
     /* Add row */
@@ -932,24 +832,7 @@
         border-color: #999;
     }
 
-    .empty-msg {
-        text-align: center;
-        color: #bbb;
-        padding: 16px;
-        font-size: var(--font-size-small);
-        font-style: italic;
-    }
-
-    /* Detail header */
-    .detail-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 5px 8px;
-        background: #f5f5f5;
-        border-bottom: 1px solid #e0e0e0;
-        flex-shrink: 0;
-    }
+    /* Detail header (the strip itself is PanelTable's) */
     .back-btn {
         background: none;
         border: none;
@@ -991,9 +874,5 @@
     }
     .full-width {
         width: 100%;
-    }
-
-    .no-select {
-        user-select: none;
     }
 </style>

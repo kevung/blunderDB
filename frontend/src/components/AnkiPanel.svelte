@@ -12,6 +12,7 @@
     import { buildSearchFilterPayload } from '../services/searchFilterService.js';
     import { confirmAction } from '../services/confirmService.js';
     import { t, tMsg } from '../i18n';
+    import PanelTable from './panels/PanelTable.svelte';
     import {
         CreateAnkiDeck,
         GetAllAnkiDecks,
@@ -67,6 +68,16 @@
     let settingsRetention = $state(0.9);
     let settingsMaxInterval = $state(36500);
     let settingsFuzz = $state(true);
+
+    const deckColumns = $derived([
+        { key: 'name', label: $t('anki.colName') },
+        { key: 'description', label: $t('anki.colDescription') },
+        { key: 'source', label: $t('anki.colSource') },
+        { key: 'cards', label: $t('anki.colCards'), narrow: true, align: 'center' },
+        { key: 'new', label: $t('anki.colNew'), narrow: true, align: 'center' },
+        { key: 'due', label: $t('anki.colDue'), narrow: true, align: 'center' },
+        { key: 'actions', label: $t('anki.colActions'), actions: true }
+    ]);
 
     // Review state
     let reviewSessionCount = $state(0);
@@ -666,91 +677,74 @@
             {/if}
         </div>
 
-        <div class="deck-list">
-            {#if decks.length === 0}
-                <div class="empty-state">{$t('anki.empty')}</div>
-            {:else}
-                <table class="deck-table">
-                    <thead>
-                        <tr>
-                            <th>{$t('anki.colName')}</th>
-                            <th>{$t('anki.colDescription')}</th>
-                            <th>{$t('anki.colSource')}</th>
-                            <th class="narrow-col">{$t('anki.colCards')}</th>
-                            <th class="narrow-col">{$t('anki.colNew')}</th>
-                            <th class="narrow-col">{$t('anki.colDue')}</th>
-                            <th class="actions-col">{$t('anki.colActions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each decks as deck (deck.id)}
-                            <tr
-                                class:selected={selectedDeck && selectedDeck.id === deck.id}
-                                onclick={() => selectDeck(deck)}
-                                ondblclick={() => {
-                                    selectDeck(deck);
-                                    startReview();
-                                }}
-                            >
-                                {#if deckEdit.isEditing(deck.id)}
-                                    <td colspan="7">
-                                        <div class="deck-edit">
-                                            <input type="text" bind:value={deckEdit.draft.name} class="edit-name" onkeydown={deckEdit.onKeyDown} />
-                                            <input type="text" bind:value={deckEdit.draft.description} class="edit-desc" placeholder={$t('anki.colDescription')} onkeydown={deckEdit.onKeyDown} />
-                                            <button class="icon-btn" onclick={() => deckEdit.save()} title={$t('common.save')}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                {:else}
-                                    <td class="name-cell">
-                                        <span class="deck-name">{deck.name}</span>
-                                    </td>
-                                    <td class="desc-cell">{deck.description || ''}</td>
-                                    <td class="source-cell">{getSourceLabel(deck)}</td>
-                                    <td class="narrow-col count-cell">{deck.cardCount}</td>
-                                    <td class="narrow-col count-cell">{deck.newCount || ''}</td>
-                                    <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
-                                    <td class="actions-col">
-                                        <span class="item-actions">
-                                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"
-                                                    />
-                                                </svg>
-                                            </button>
-                                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title={$t('anki.syncTooltip')}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
-                                                    />
-                                                </svg>
-                                            </button>
-                                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title={$t('anki.deleteDeckTooltip')}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </td>
-                                {/if}
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            {/if}
-        </div>
+        <PanelTable
+            rows={decks}
+            columns={deckColumns}
+            selectedKey={selectedDeck?.id}
+            pointerRows
+            onSelect={(deck) => selectDeck(deck)}
+            onActivate={(deck) => {
+                selectDeck(deck);
+                startReview();
+            }}
+            emptyText={$t('anki.empty')}
+        >
+            {#snippet cells(deck)}
+                {#if deckEdit.isEditing(deck.id)}
+                    <td colspan="7">
+                        <div class="deck-edit">
+                            <input type="text" bind:value={deckEdit.draft.name} class="edit-name" onkeydown={deckEdit.onKeyDown} />
+                            <input type="text" bind:value={deckEdit.draft.description} class="edit-desc" placeholder={$t('anki.colDescription')} onkeydown={deckEdit.onKeyDown} />
+                            <button class="icon-btn" onclick={() => deckEdit.save()} title={$t('common.save')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                {:else}
+                    <td class="name-cell">
+                        <span class="deck-name">{deck.name}</span>
+                    </td>
+                    <td class="desc-cell">{deck.description || ''}</td>
+                    <td class="source-cell">{getSourceLabel(deck)}</td>
+                    <td class="narrow-col count-cell">{deck.cardCount}</td>
+                    <td class="narrow-col count-cell">{deck.newCount || ''}</td>
+                    <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
+                    <td class="actions-col">
+                        <span class="item-actions">
+                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title={$t('anki.renameTooltip')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"
+                                    />
+                                </svg>
+                            </button>
+                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title={$t('anki.syncTooltip')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182"
+                                    />
+                                </svg>
+                            </button>
+                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title={$t('anki.deleteDeckTooltip')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                    />
+                                </svg>
+                            </button>
+                        </span>
+                    </td>
+                {/if}
+            {/snippet}
+        </PanelTable>
 
         <!-- Deck detail panel (shown when a deck is selected) -->
         {#if selectedDeck && stats}
@@ -912,72 +906,6 @@
     }
 
     /* Deck table (matches CollectionPanel/MatchPanel pattern) */
-    .deck-list {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        min-height: 0;
-    }
-
-    .empty-state {
-        padding: 16px;
-        text-align: center;
-        color: #bbb;
-        font-size: var(--font-size-small);
-        font-style: italic;
-    }
-
-    .deck-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-base);
-    }
-    .deck-table thead {
-        position: sticky;
-        top: 0;
-        background-color: #f5f5f5;
-        z-index: 1;
-    }
-    .deck-table th,
-    .deck-table td {
-        padding: 4px 8px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    .deck-table th {
-        font-weight: 600;
-        color: #333;
-        font-size: var(--font-size-small);
-    }
-    .narrow-col {
-        width: 1px;
-        white-space: nowrap;
-        padding-left: 6px;
-        padding-right: 6px;
-        text-align: center;
-    }
-    .actions-col {
-        width: 80px;
-        min-width: 80px;
-        max-width: 80px;
-        white-space: nowrap;
-        text-align: center;
-        padding: 0 4px;
-    }
-    .deck-table tbody tr {
-        transition: background-color 0.1s;
-        cursor: pointer;
-    }
-    .deck-table tbody tr:hover {
-        background-color: #f9f9f9;
-    }
-    .deck-table tbody tr.selected {
-        background-color: #e3f2fd;
-    }
-    .deck-table tbody tr.selected:hover {
-        background-color: #bbdefb;
-    }
-
     .name-cell {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1004,32 +932,6 @@
         max-width: 0;
         font-family: monospace;
     }
-    .count-cell {
-        text-align: center;
-        color: #666;
-    }
-
-    .item-actions {
-        display: inline-flex;
-        gap: 2px;
-        vertical-align: middle;
-    }
-    .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-        color: #666;
-        padding: 2px 4px;
-        line-height: 1;
-    }
-    .icon-btn:hover:not(:disabled) {
-        color: #000;
-    }
-    .icon-btn.delete:hover:not(:disabled) {
-        color: #c55;
-    }
-
     .deck-edit {
         display: flex;
         align-items: center;

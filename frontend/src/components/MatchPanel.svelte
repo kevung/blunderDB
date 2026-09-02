@@ -1,8 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
-    import { nextSort } from '../utils/tableSort.js';
-    import { isBareLetter } from '../utils/keys.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
@@ -22,6 +20,7 @@
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
+    import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
@@ -58,9 +57,9 @@
     let detailStats = $state(null); // MatchDetailStats for the detail match
     let loadingStats = $state(false);
 
-    // Sorting state
-    let sortColumn = $state(null); // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
-    let sortDirection = $state('asc'); // 'asc' | 'desc'
+    // Sorting state, cycled by the table header (asc → desc → unsorted)
+    let sort = $state({ column: null, direction: 'asc' });
+    let table = $state(null); // PanelTable instance: keyboard navigation and scrolling
 
     // Inline tournament editing (autocomplete over the known tournaments)
     const tournamentEdit = createInlineEdit({
@@ -205,14 +204,19 @@
         });
     }
 
-    // --- Sorting helpers ---
-    function handleSort(column) {
-        const next = nextSort(sortColumn, sortDirection, column, { tristate: true });
-        sortColumn = next.column;
-        sortDirection = next.direction;
-    }
+    let sortedMatches = $derived.by(() => sortMatches(matches, sort.column, sort.direction));
 
-    let sortedMatches = $derived.by(() => sortMatches(matches, sortColumn, sortDirection));
+    const columns = $derived([
+        { key: 'index', label: '#', narrow: true },
+        { key: 'date', label: $t('match.date'), sortable: true, narrow: true },
+        { key: 'player1', label: $t('match.player1'), sortable: true },
+        { key: 'player2', label: $t('match.player2'), sortable: true },
+        { key: 'length', label: $t('match.pts'), sortable: true, narrow: true },
+        { key: 'tournament', label: $t('match.tournament'), sortable: true, class: 'tournament-col' },
+        { key: 'pr', label: 'PR', sortable: true, narrow: true },
+        { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
+        { key: 'actions', actions: true }
+    ]);
 
     function selectMatch(match) {
         if (selectedMatch && selectedMatch.id === match.id) {
@@ -499,40 +503,16 @@
             return;
         }
 
-        if (sortedMatches.length > 0) {
-            if ((isBareLetter(event, 'j') || event.key === 'ArrowDown') && !selectedMatch) {
-                event.preventDefault();
-                selectMatch(sortedMatches[0]);
-                setTimeout(() => {
-                    const selectedRow = document.querySelector('.match-panel tr.selected');
-                    if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 0);
-                return;
-            }
+        // j/k walk the list; with no selection, j lands on the first row.
+        const delta = navigationDelta(event);
+        if (delta !== 0 && sortedMatches.length > 0) {
+            event.preventDefault();
+            table?.navigate(delta);
+            return;
         }
 
         if (selectedMatch && sortedMatches.length > 0) {
-            const currentIndex = sortedMatches.findIndex((m) => m.id === selectedMatch.id);
-
-            if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
-                event.preventDefault();
-                if (currentIndex >= 0 && currentIndex < sortedMatches.length - 1) {
-                    selectMatch(sortedMatches[currentIndex + 1]);
-                    setTimeout(() => {
-                        const selectedRow = document.querySelector('.match-panel tr.selected');
-                        if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 0);
-                }
-            } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
-                event.preventDefault();
-                if (currentIndex > 0) {
-                    selectMatch(sortedMatches[currentIndex - 1]);
-                    setTimeout(() => {
-                        const selectedRow = document.querySelector('.match-panel tr.selected');
-                        if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 0);
-                }
-            } else if (event.key === 'Enter') {
+            if (event.key === 'Enter') {
                 event.preventDefault();
                 handleDoubleClick(selectedMatch);
             } else if (event.key === 'Delete') {
@@ -572,10 +552,7 @@
             const id = setTimeout(() => {
                 const panel = document.getElementById('matchPanel');
                 if (panel) panel.focus();
-                if (selectedMatch) {
-                    const selectedRow = document.querySelector('.match-panel tr.selected');
-                    if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                if (selectedMatch) table?.scrollToSelected('center');
             }, 100);
             return () => clearTimeout(id);
         }
@@ -600,158 +577,130 @@
             <div class="match-list-toolbar">
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
-            <div class="match-table-container">
-                <table class="match-table">
-                    <thead>
-                        <tr>
-                            <th class="no-select narrow-col">#</th>
-                            <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
-                                >{$t('match.date')}
-                                {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable" onclick={() => handleSort('player1')}
-                                >{$t('match.player1')}
-                                {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable" onclick={() => handleSort('player2')}
-                                >{$t('match.player2')}
-                                {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable narrow-col" onclick={() => handleSort('length')}
-                                >{$t('match.pts')}
-                                {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable tournament-col" onclick={() => handleSort('tournament')}
-                                >{$t('match.tournament')}
-                                {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
-                                >PR {#if sortColumn === 'pr'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select sortable narrow-col" onclick={() => handleSort('mwc')}
-                                >MWC {#if sortColumn === 'mwc'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                            >
-                            <th class="no-select actions-col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each sortedMatches as match, index (match.id)}
-                            {#if matchEdit.isEditing(match.id)}
-                                <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
-                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                    <td class="narrow-col">
-                                        <input type="date" class="match-edit-input" bind:value={matchEdit.draft.date} onkeydown={matchEdit.onKeyDown} />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player1} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player1')} />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player2} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player2')} />
-                                    </td>
-                                    <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
-                                    <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
-                                    <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
-                                    <td class="actions-col no-select">
-                                        <span class="item-actions editing-actions">
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    matchEdit.save();
-                                                }}
-                                                title={$t('common.save')}>✓</button
-                                            >
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    matchEdit.cancel();
-                                                }}
-                                                title={$t('common.cancel')}>✕</button
-                                            >
-                                        </span>
-                                    </td>
-                                </tr>
+            <PanelTable
+                bind:this={table}
+                rows={sortedMatches}
+                {columns}
+                bind:sort
+                sortOptions={{ tristate: true }}
+                selectedKey={selectedMatch?.id}
+                rowClass={(match) => (matchEdit.isEditing(match.id) ? 'match-editing-row' : '')}
+                onSelect={(match) => {
+                    if (!matchEdit.isEditing(match.id)) selectMatch(match);
+                }}
+                onActivate={(match) => {
+                    if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
+                }}
+                emptyText={matches.length === 0 ? $t('match.noMatchesImported') : ''}
+            >
+                {#snippet cells(match, index)}
+                    {#if matchEdit.isEditing(match.id)}
+                        <td class="index-cell narrow-col no-select">{index + 1}</td>
+                        <td class="narrow-col">
+                            <input type="date" class="match-edit-input" bind:value={matchEdit.draft.date} onkeydown={matchEdit.onKeyDown} />
+                        </td>
+                        <td>
+                            <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player1} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player1')} />
+                        </td>
+                        <td>
+                            <input type="text" class="match-edit-input" bind:value={matchEdit.draft.player2} onkeydown={matchEdit.onKeyDown} placeholder={$t('match.player2')} />
+                        </td>
+                        <td class="narrow-col no-select">{match.match_length}</td>
+                        <td class="tournament-col no-select">{match.tournament_name || match.event || ''}</td>
+                        <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                        <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
+                        <td class="actions-col no-select">
+                            <span class="item-actions editing-actions">
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        matchEdit.save();
+                                    }}
+                                    title={$t('common.save')}>✓</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        matchEdit.cancel();
+                                    }}
+                                    title={$t('common.cancel')}>✕</button
+                                >
+                            </span>
+                        </td>
+                    {:else}
+                        <td class="index-cell narrow-col no-select">{index + 1}</td>
+                        <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
+                        <td class="no-select">{match.player1_name}</td>
+                        <td class="no-select">{match.player2_name}</td>
+                        <td class="narrow-col no-select">{match.match_length}</td>
+                        <td
+                            class="tournament-col no-select tournament-meta-cell"
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                ((e) => startEditTournament(match, e))(e);
+                            }}
+                        >
+                            {#if tournamentEdit.isEditing(match.id)}
+                                <div class="tournament-cell-edit">
+                                    <EntityAutocomplete
+                                        bind:value={tournamentEdit.draft}
+                                        items={tournaments}
+                                        autofocus
+                                        blurDelay={200}
+                                        placeholder={$t('match.tournamentNamePlaceholder')}
+                                        onSelect={selectTournamentOption}
+                                        onSubmit={() => tournamentEdit.save()}
+                                        onCancel={tournamentEdit.cancel}
+                                        onDismiss={tournamentEdit.cancel}
+                                    />
+                                </div>
                             {:else}
-                                <tr class:selected={selectedMatch && selectedMatch.id === match.id} onclick={() => selectMatch(match)} ondblclick={() => handleDoubleClick(match)}>
-                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                    <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
-                                    <td class="no-select">{match.player1_name}</td>
-                                    <td class="no-select">{match.player2_name}</td>
-                                    <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td
-                                        class="tournament-col no-select tournament-meta-cell"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            ((e) => startEditTournament(match, e))(e);
-                                        }}
-                                    >
-                                        {#if tournamentEdit.isEditing(match.id)}
-                                            <div class="tournament-cell-edit">
-                                                <EntityAutocomplete
-                                                    bind:value={tournamentEdit.draft}
-                                                    items={tournaments}
-                                                    autofocus
-                                                    blurDelay={200}
-                                                    placeholder={$t('match.tournamentNamePlaceholder')}
-                                                    onSelect={selectTournamentOption}
-                                                    onSubmit={() => tournamentEdit.save()}
-                                                    onCancel={tournamentEdit.cancel}
-                                                    onDismiss={tournamentEdit.cancel}
-                                                />
-                                            </div>
-                                        {:else}
-                                            <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || match.event || ''}</span>
-                                        {/if}
-                                    </td>
-                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
-                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    <td class="actions-col no-select">
-                                        <span class="item-actions">
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    exportMatchMat(match);
-                                                }}
-                                                title={$t('match.exportMat')}>⬇</button
-                                            >
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    ((e) => swapMatchPlayers(match, e))(e);
-                                                }}
-                                                title={$t('match.swapPlayers')}>⇄</button
-                                            >
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    ((e) => startEditMatch(match, e))(e);
-                                                }}
-                                                title={$t('common.edit')}>✎</button
-                                            >
-                                            <button
-                                                class="icon-btn delete"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    ((e) => deleteMatchEntry(match, e))(e);
-                                                }}
-                                                title={$t('common.delete')}>×</button
-                                            >
-                                        </span>
-                                    </td>
-                                </tr>
+                                <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || match.event || ''}</span>
                             {/if}
-                        {/each}
-                    </tbody>
-                </table>
-                {#if matches.length === 0}
-                    <div class="empty-state">{$t('match.noMatchesImported')}</div>
-                {/if}
-            </div>
+                        </td>
+                        <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                        <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                        <td class="actions-col no-select">
+                            <span class="item-actions">
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        exportMatchMat(match);
+                                    }}
+                                    title={$t('match.exportMat')}>⬇</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        ((e) => swapMatchPlayers(match, e))(e);
+                                    }}
+                                    title={$t('match.swapPlayers')}>⇄</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        ((e) => startEditMatch(match, e))(e);
+                                    }}
+                                    title={$t('common.edit')}>✎</button
+                                >
+                                <button
+                                    class="icon-btn delete"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        ((e) => deleteMatchEntry(match, e))(e);
+                                    }}
+                                    title={$t('common.delete')}>×</button
+                                >
+                            </span>
+                        </td>
+                    {/if}
+                {/snippet}
+            </PanelTable>
         </div>
 
         <!-- Detail pane (right side, shown when a match is selected) -->
@@ -1036,126 +985,14 @@
         border-right: 1px solid #ddd;
     }
 
-    .match-table-container {
-        flex: 1;
-        overflow-y: auto;
-    }
-
-    .match-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-base);
-    }
-
-    .match-table thead {
-        position: sticky;
-        top: 0;
-        background-color: #f5f5f5;
-        z-index: 1;
-    }
-
-    .match-table th,
-    .match-table td {
-        padding: 4px 8px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .match-table th {
-        font-weight: 600;
-        color: #333;
-        font-size: var(--font-size-small);
-    }
-
-    .match-table th.sortable {
-        cursor: pointer;
-    }
-
-    .match-table th.sortable:hover {
-        background-color: #e8e8e8;
-    }
-
-    .sort-arrow {
-        font-size: var(--font-size-small);
-        margin-left: 3px;
-        color: #1976d2;
-    }
-
-    .match-table tbody tr {
-        transition: background-color 0.1s;
-    }
-
-    .match-table tbody tr:hover {
-        background-color: #f9f9f9;
-    }
-
-    .match-table tbody tr.selected {
-        background-color: #e3f2fd;
-    }
-
-    .match-table tbody tr.selected:hover {
-        background-color: #bbdefb;
-    }
-
-    .index-cell {
-        text-align: center;
-        color: #999;
-    }
-
-    .narrow-col {
-        width: 1px;
-        white-space: nowrap;
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-
-    .actions-col {
-        /* Size to the row's buttons (like .narrow-col) instead of a fixed
-           width: a hard 52px cap clipped the 4th action button and pushed the
-           table past its container, adding a horizontal scrollbar. The flexible
-           player-name columns absorb the width. */
-        width: 1px;
-        white-space: nowrap;
-        text-align: center;
-        padding: 0 4px;
-    }
-
-    .tournament-col {
+    /* Header and cells of the tournament column alike (the header is PanelTable's). */
+    .match-panel :global(.tournament-col) {
         max-width: 120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: var(--font-size-small);
         color: #666;
-    }
-
-    .stat-col {
-        color: #666;
-        font-variant-numeric: tabular-nums;
-    }
-
-    .item-actions {
-        display: inline-flex;
-        gap: 1px;
-        vertical-align: middle;
-    }
-
-    .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-        color: #666;
-        padding: 0 2px;
-        line-height: 1;
-    }
-
-    .icon-btn:hover {
-        color: #000;
-    }
-
-    .icon-btn.delete:hover {
-        color: #c55;
     }
 
     .match-edit-input {
@@ -1168,20 +1005,8 @@
         outline: none;
     }
 
-    .no-select {
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-    }
-
-    .empty-state {
-        text-align: center;
-        color: #999;
-        padding: 24px;
-        font-size: var(--font-size-base);
-    }
-
+    /* Detail pane placeholders (the list's own empty state is PanelTable's). */
+    .empty-state,
     .loading-state {
         text-align: center;
         color: #999;

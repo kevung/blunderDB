@@ -1,12 +1,10 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { nextSort } from '../utils/tableSort.js';
-    import { isBareLetter } from '../utils/keys.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount, onDestroy } from 'svelte';
-    import { dragReorder } from '../utils/dragReorder.js';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
+    import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -40,8 +38,31 @@
     let tournamentMatches = $derived($tournamentMatchesStore || []);
     let visible = $derived($openPanels.has(PANEL.TOURNAMENT));
 
-    let sortBy = $state(null);
-    let sortOrder = $state('asc');
+    // Sorting state, cycled by the table header (asc → desc → unsorted)
+    let sort = $state({ column: null, direction: 'asc' });
+    let listTable = $state(null); // PanelTable of the tournament list, mounted while none is selected
+    const sortedTournaments = $derived(sortTournaments(tournaments, sort));
+
+    const tournamentColumns = $derived([
+        { key: 'name', label: $t('tournament.name'), sortable: true },
+        { key: 'matches', label: $t('tournament.matches'), sortable: true, narrow: true },
+        { key: 'date', label: $t('tournament.date'), sortable: true, narrow: true },
+        { key: 'location', label: $t('tournament.location'), sortable: true },
+        { key: 'pr', label: 'PR', sortable: true, narrow: true },
+        { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
+        { key: 'actions', actions: true }
+    ]);
+
+    const matchColumns = $derived([
+        { key: 'index', label: '#', narrow: true },
+        { key: 'player1', label: $t('tournament.player1') },
+        { key: 'player2', label: $t('tournament.player2') },
+        { key: 'length', label: $t('tournament.pts'), narrow: true },
+        { key: 'pr', label: 'PR', narrow: true },
+        { key: 'mwc', label: 'MWC', narrow: true },
+        { key: 'comment', label: $t('tournament.comment'), class: 'comment-col' },
+        { key: 'actions', actions: true }
+    ]);
 
     // New tournament form
     let newTournamentName = $state('');
@@ -123,7 +144,7 @@
     async function loadTournaments() {
         try {
             const loaded = await GetAllTournaments();
-            tournamentsStore.set(sortTournaments(loaded || []));
+            tournamentsStore.set(loaded || []);
         } catch (error) {
             logger.error('Error loading tournaments:', error);
         }
@@ -138,7 +159,7 @@
         }
     }
 
-    function sortTournaments(list) {
+    function sortTournaments(list, { column: sortBy, direction: sortOrder }) {
         if (!sortBy) return list;
         return [...list].sort((a, b) => {
             let valA, valB;
@@ -166,13 +187,6 @@
             const cmp = typeof valA === 'number' ? valA - valB : valA.localeCompare(valB);
             return sortOrder === 'asc' ? cmp : -cmp;
         });
-    }
-
-    function handleSort(column) {
-        const next = nextSort(sortBy, sortOrder, column, { tristate: true });
-        sortBy = next.column;
-        sortOrder = next.direction;
-        tournamentsStore.set(sortTournaments(tournaments));
     }
 
     async function selectTournament(tournament) {
@@ -427,37 +441,17 @@
             return;
         }
 
-        // j/k / ArrowUp/Down to browse tournament list
-        if (tournaments.length > 0) {
-            const currentIndex = selectedTournament ? tournaments.findIndex((t) => t.id === selectedTournament.id) : -1;
-
-            if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
-                event.preventDefault();
-                const nextIndex = currentIndex < tournaments.length - 1 ? currentIndex + 1 : currentIndex;
-                if (nextIndex >= 0 && nextIndex !== currentIndex) {
-                    selectTournament(tournaments[nextIndex]);
-                    scrollToTournament(nextIndex);
-                } else if (currentIndex === -1 && tournaments.length > 0) {
-                    selectTournament(tournaments[0]);
-                    scrollToTournament(0);
-                }
-            } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
-                event.preventDefault();
-                if (currentIndex > 0) {
-                    selectTournament(tournaments[currentIndex - 1]);
-                    scrollToTournament(currentIndex - 1);
-                }
+        // j/k walk the tournament list, also from the detail view (where the
+        // list table is not mounted, hence the module-level helper).
+        const delta = navigationDelta(event);
+        if (delta !== 0 && sortedTournaments.length > 0) {
+            event.preventDefault();
+            const next = stepSelection(sortedTournaments, (t) => t.id, selectedTournament?.id, delta);
+            if (next) {
+                selectTournament(next);
+                listTable?.scrollToRow(next);
             }
         }
-    }
-
-    function scrollToTournament(index) {
-        setTimeout(() => {
-            const rows = document.querySelectorAll('.tournament-panel .tournament-table tbody tr');
-            if (rows[index]) {
-                rows[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }, 0);
     }
 
     $effect(() => {
@@ -482,101 +476,64 @@
         {#if !selectedTournament}
             <!-- Tournaments list -->
             <div class="tournament-list-pane">
-                <div class="table-container">
-                    <table class="tournament-table">
-                        <thead>
-                            <tr>
-                                <th class="no-select sortable" onclick={() => handleSort('name')}
-                                    >{$t('tournament.name')}
-                                    {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select sortable narrow-col" onclick={() => handleSort('matches')}
-                                    >{$t('tournament.matches')}
-                                    {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
-                                    >{$t('tournament.date')}
-                                    {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select sortable" onclick={() => handleSort('location')}
-                                    >{$t('tournament.location')}
-                                    {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
-                                    >PR {#if sortBy === 'pr'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select sortable narrow-col" onclick={() => handleSort('mwc')}
-                                    >MWC {#if sortBy === 'mwc'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
-                                >
-                                <th class="no-select actions-col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each tournaments as tournament, _index (tournament.id)}
-                                {#if tournamentEdit.isEditing(tournament.id)}
-                                    <tr class="editing-row">
-                                        <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} autofocus /></td>
-                                        <td class="narrow-col"></td>
-                                        <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
-                                        <td
-                                            ><input
-                                                class="edit-input"
-                                                type="text"
-                                                bind:value={tournamentEdit.draft.location}
-                                                placeholder={$t('tournament.location')}
-                                                onkeydown={tournamentEdit.onKeyDown}
-                                            /></td
-                                        >
-                                        <td class="narrow-col no-select"></td>
-                                        <td class="narrow-col no-select"></td>
-                                        <td class="actions-col no-select">
-                                            <span class="item-actions editing-actions">
-                                                <button class="icon-btn" onclick={() => tournamentEdit.save()} title={$t('common.save')}>✓</button>
-                                                <button class="icon-btn" onclick={() => tournamentEdit.cancel()} title={$t('common.cancel')}>✕</button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {:else}
-                                    <tr onclick={() => selectTournament(tournament)} ondblclick={() => selectTournament(tournament)}>
-                                        <td class="no-select">{tournament.name}</td>
-                                        <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
-                                        <td class="narrow-col no-select">{tournament.date || ''}</td>
-                                        <td class="no-select">{tournament.location || ''}</td>
-                                        <td
-                                            class="narrow-col no-select stat-col"
-                                            title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
-                                            >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
-                                        >
-                                        <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                        <td class="actions-col no-select">
-                                            <span class="item-actions">
-                                                <button
-                                                    class="icon-btn"
-                                                    onclick={(e) => {
-                                                        e.stopPropagation();
-                                                        ((e) => startEdit(tournament, e))(e);
-                                                    }}
-                                                    title={$t('common.edit')}>✎</button
-                                                >
-                                                <button
-                                                    class="icon-btn delete"
-                                                    onclick={(e) => {
-                                                        e.stopPropagation();
-                                                        ((e) => deleteTournamentEntry(tournament, e))(e);
-                                                    }}
-                                                    title={$t('common.delete')}>×</button
-                                                >
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {/if}
-                            {/each}
-                        </tbody>
-                    </table>
-                    {#if tournaments.length === 0}
-                        <div class="empty-state">{$t('tournament.noTournaments')}</div>
-                    {/if}
-                </div>
+                <PanelTable
+                    bind:this={listTable}
+                    rows={sortedTournaments}
+                    columns={tournamentColumns}
+                    bind:sort
+                    sortOptions={{ tristate: true }}
+                    rowClass={(tournament) => (tournamentEdit.isEditing(tournament.id) ? 'editing-row' : '')}
+                    onSelect={(tournament) => {
+                        if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
+                    }}
+                    emptyText={$t('tournament.noTournaments')}
+                >
+                    {#snippet cells(tournament)}
+                        {#if tournamentEdit.isEditing(tournament.id)}
+                            <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} autofocus /></td>
+                            <td class="narrow-col"></td>
+                            <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
+                            <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.location} placeholder={$t('tournament.location')} onkeydown={tournamentEdit.onKeyDown} /></td>
+                            <td class="narrow-col no-select"></td>
+                            <td class="narrow-col no-select"></td>
+                            <td class="actions-col no-select">
+                                <span class="item-actions editing-actions">
+                                    <button class="icon-btn" onclick={() => tournamentEdit.save()} title={$t('common.save')}>✓</button>
+                                    <button class="icon-btn" onclick={() => tournamentEdit.cancel()} title={$t('common.cancel')}>✕</button>
+                                </span>
+                            </td>
+                        {:else}
+                            <td class="no-select">{tournament.name}</td>
+                            <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
+                            <td class="narrow-col no-select">{tournament.date || ''}</td>
+                            <td class="no-select">{tournament.location || ''}</td>
+                            <td class="narrow-col no-select stat-col" title={tournament.pr > 0 && tournament.ref_player ? $t('tournament.prReferencePlayer', { player: tournament.ref_player }) : ''}
+                                >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
+                            >
+                            <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                            <td class="actions-col no-select">
+                                <span class="item-actions">
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEdit(tournament, e))(e);
+                                        }}
+                                        title={$t('common.edit')}>✎</button
+                                    >
+                                    <button
+                                        class="icon-btn delete"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => deleteTournamentEntry(tournament, e))(e);
+                                        }}
+                                        title={$t('common.delete')}>×</button
+                                    >
+                                </span>
+                            </td>
+                        {/if}
+                    {/snippet}
+                </PanelTable>
                 <div class="add-area">
                     <input
                         class="add-input name"
@@ -626,163 +583,135 @@
         {:else}
             <!-- Matches for selected tournament -->
             <div class="tournament-list-pane">
-                <div class="detail-header">
-                    <button
-                        class="back-btn"
-                        onclick={() => {
-                            selectedTournamentStore.set(null);
-                            tournamentMatchesStore.set([]);
-                            addMatchSearch = '';
-                            tournamentCommentEdit.cancel();
-                        }}
-                        title={$t('tournament.backToTournaments')}>←</button
-                    >
-                    <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
-                    {#if selectedTournament.date || selectedTournament.location}
-                        <span class="header-meta">
-                            {#if selectedTournament.date}{selectedTournament.date}{/if}
-                            {#if selectedTournament.date && selectedTournament.location}
-                                ·
-                            {/if}
-                            {#if selectedTournament.location}{selectedTournament.location}{/if}
-                        </span>
-                    {/if}
-                    <button
-                        class="icon-btn edit-header-btn"
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            // Return to the tournament list first: the inline-editable
-                            // row is only rendered in the list view ({#if !selectedTournament}).
-                            // Clicking edit here used to set editingTournament while the
-                            // detail view stayed visible, so nothing looked editable until
-                            // the user manually pressed the back arrow.
-                            const t = selectedTournament;
-                            selectedTournamentStore.set(null);
-                            tournamentMatchesStore.set([]);
-                            addMatchSearch = '';
-                            tournamentCommentEdit.cancel();
-                            startEdit(t, e);
-                        }}
-                        title={$t('common.edit')}>✎</button
-                    >
-                    <span class="header-spacer"></span>
-                    {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
-                        <input
-                            class="tournament-comment-inline"
-                            type="text"
-                            bind:value={tournamentCommentEdit.draft}
-                            onkeydown={tournamentCommentEdit.onKeyDown}
-                            onblur={tournamentCommentEdit.onBlur}
-                            placeholder={$t('tournament.notesPlaceholder')}
-                            autofocus
-                        />
-                    {:else}
-                        <span
-                            class="tournament-comment-text"
-                            class:has-comment={selectedTournament.comment}
+                <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
+                    {#snippet header()}
+                        <button
+                            class="back-btn"
+                            onclick={() => {
+                                selectedTournamentStore.set(null);
+                                tournamentMatchesStore.set([]);
+                                addMatchSearch = '';
+                                tournamentCommentEdit.cancel();
+                            }}
+                            title={$t('tournament.backToTournaments')}>←</button
+                        >
+                        <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
+                        {#if selectedTournament.date || selectedTournament.location}
+                            <span class="header-meta">
+                                {#if selectedTournament.date}{selectedTournament.date}{/if}
+                                {#if selectedTournament.date && selectedTournament.location}
+                                    ·
+                                {/if}
+                                {#if selectedTournament.location}{selectedTournament.location}{/if}
+                            </span>
+                        {/if}
+                        <button
+                            class="icon-btn edit-header-btn"
                             onclick={(e) => {
                                 e.stopPropagation();
-                                tournamentCommentEdit.start(selectedTournament.id, selectedTournament.comment || '');
+                                // Return to the tournament list first: the inline-editable
+                                // row is only rendered in the list view ({#if !selectedTournament}).
+                                // Clicking edit here used to set editingTournament while the
+                                // detail view stayed visible, so nothing looked editable until
+                                // the user manually pressed the back arrow.
+                                const t = selectedTournament;
+                                selectedTournamentStore.set(null);
+                                tournamentMatchesStore.set([]);
+                                addMatchSearch = '';
+                                tournamentCommentEdit.cancel();
+                                startEdit(t, e);
                             }}
-                            title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
+                            title={$t('common.edit')}>✎</button
                         >
-                            {selectedTournament.comment || $t('tournament.notesPlaceholder')}
-                        </span>
-                    {/if}
-                </div>
-                <div class="table-container">
-                    <table class="tournament-table">
-                        <thead>
-                            <tr>
-                                <th class="no-select narrow-col">#</th>
-                                <th class="no-select">{$t('tournament.player1')}</th>
-                                <th class="no-select">{$t('tournament.player2')}</th>
-                                <th class="no-select narrow-col">{$t('tournament.pts')}</th>
-                                <th class="no-select narrow-col">PR</th>
-                                <th class="no-select narrow-col">MWC</th>
-                                <th class="no-select comment-col">{$t('tournament.comment')}</th>
-                                <th class="no-select actions-col"></th>
-                            </tr>
-                        </thead>
-                        <tbody use:dragReorder={{ onReorder: matchOrder.reorder }}>
-                            {#each tournamentMatches as match, index (match.id)}
-                                <tr ondblclick={() => openMatch(match)}>
-                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                    <td class="no-select">{match.player1_name}</td>
-                                    <td class="no-select">{match.player2_name}</td>
-                                    <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
-                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
-                                    <td class="comment-col no-select">
-                                        {#if matchCommentEdit.isEditing(match.id)}
-                                            <input
-                                                class="edit-input"
-                                                type="text"
-                                                bind:value={matchCommentEdit.draft}
-                                                onkeydown={matchCommentEdit.onKeyDown}
-                                                onblur={matchCommentEdit.onBlur}
-                                                autofocus
-                                            />
-                                        {:else}
-                                            <span
-                                                class="comment-text"
-                                                class:has-comment={match.comment}
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    matchCommentEdit.start(match.id, match.comment || '');
-                                                }}
-                                                title={match.comment || $t('tournament.clickToAddComment')}
-                                            >
-                                                {match.comment || ''}
-                                            </span>
-                                        {/if}
-                                    </td>
-                                    <td class="actions-col no-select">
-                                        <span class="item-actions">
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    matchOrder.moveUp(index);
-                                                }}
-                                                disabled={index === 0}
-                                                title={$t('tournament.moveUp')}>▲</button
-                                            >
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    matchOrder.moveDown(index);
-                                                }}
-                                                disabled={index === tournamentMatches.length - 1}
-                                                title={$t('tournament.moveDown')}>▼</button
-                                            >
-                                            <button
-                                                class="icon-btn"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    (() => swapMatchPlayersInTournament(match))();
-                                                }}
-                                                title={$t('tournament.swap')}>⇄</button
-                                            >
-                                            <button
-                                                class="icon-btn delete"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    (() => removeMatch(match.id))();
-                                                }}
-                                                title={$t('tournament.remove')}>×</button
-                                            >
-                                        </span>
-                                    </td>
-                                </tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                    {#if tournamentMatches.length === 0}
-                        <div class="empty-state">{$t('tournament.noMatches')}</div>
-                    {/if}
-                </div>
+                        <span class="header-spacer"></span>
+                        {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
+                            <input
+                                class="tournament-comment-inline"
+                                type="text"
+                                bind:value={tournamentCommentEdit.draft}
+                                onkeydown={tournamentCommentEdit.onKeyDown}
+                                onblur={tournamentCommentEdit.onBlur}
+                                placeholder={$t('tournament.notesPlaceholder')}
+                                autofocus
+                            />
+                        {:else}
+                            <span
+                                class="tournament-comment-text"
+                                class:has-comment={selectedTournament.comment}
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    tournamentCommentEdit.start(selectedTournament.id, selectedTournament.comment || '');
+                                }}
+                                title={selectedTournament.comment || $t('tournament.clickToAddNotes')}
+                            >
+                                {selectedTournament.comment || $t('tournament.notesPlaceholder')}
+                            </span>
+                        {/if}
+                    {/snippet}
+                    {#snippet cells(match, index)}
+                        <td class="index-cell narrow-col no-select">{index + 1}</td>
+                        <td class="no-select">{match.player1_name}</td>
+                        <td class="no-select">{match.player2_name}</td>
+                        <td class="narrow-col no-select">{match.match_length}</td>
+                        <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
+                        <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                        <td class="comment-col no-select">
+                            {#if matchCommentEdit.isEditing(match.id)}
+                                <input class="edit-input" type="text" bind:value={matchCommentEdit.draft} onkeydown={matchCommentEdit.onKeyDown} onblur={matchCommentEdit.onBlur} autofocus />
+                            {:else}
+                                <span
+                                    class="comment-text"
+                                    class:has-comment={match.comment}
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        matchCommentEdit.start(match.id, match.comment || '');
+                                    }}
+                                    title={match.comment || $t('tournament.clickToAddComment')}
+                                >
+                                    {match.comment || ''}
+                                </span>
+                            {/if}
+                        </td>
+                        <td class="actions-col no-select">
+                            <span class="item-actions">
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        matchOrder.moveUp(index);
+                                    }}
+                                    disabled={index === 0}
+                                    title={$t('tournament.moveUp')}>▲</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        matchOrder.moveDown(index);
+                                    }}
+                                    disabled={index === tournamentMatches.length - 1}
+                                    title={$t('tournament.moveDown')}>▼</button
+                                >
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        (() => swapMatchPlayersInTournament(match))();
+                                    }}
+                                    title={$t('tournament.swap')}>⇄</button
+                                >
+                                <button
+                                    class="icon-btn delete"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        (() => removeMatch(match.id))();
+                                    }}
+                                    title={$t('tournament.remove')}>×</button
+                                >
+                            </span>
+                        </td>
+                    {/snippet}
+                </PanelTable>
                 <div class="add-area">
                     <div class="add-match-wrap">
                         <EntityAutocomplete
@@ -841,109 +770,6 @@
         flex-direction: column;
     }
 
-    .table-container {
-        flex: 1;
-        overflow-y: auto;
-    }
-
-    .tournament-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-base);
-    }
-    .tournament-table thead {
-        position: sticky;
-        top: 0;
-        background-color: #f5f5f5;
-        z-index: 1;
-    }
-    .tournament-table th,
-    .tournament-table td {
-        padding: 4px 8px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    .tournament-table th {
-        font-weight: 600;
-        color: #333;
-        font-size: var(--font-size-small);
-    }
-    .tournament-table th.sortable {
-        cursor: pointer;
-    }
-    .tournament-table th.sortable:hover {
-        background-color: #e8e8e8;
-    }
-    .sort-arrow {
-        font-size: var(--font-size-small);
-        margin-left: 3px;
-        color: #1976d2;
-    }
-
-    .tournament-table tbody tr {
-        transition: background-color 0.1s;
-    }
-    .tournament-table tbody tr:hover {
-        background-color: #f9f9f9;
-    }
-    .tournament-table tbody tr.editing-row {
-        background-color: #fefce8;
-        cursor: default;
-    }
-
-    .index-cell {
-        text-align: center;
-        color: #999;
-    }
-    .count-cell {
-        text-align: center;
-        color: #888;
-    }
-    .stat-col {
-        color: #666;
-        font-variant-numeric: tabular-nums;
-    }
-    .narrow-col {
-        width: 1px;
-        white-space: nowrap;
-        padding-left: 6px;
-        padding-right: 6px;
-    }
-    .actions-col {
-        width: 80px;
-        min-width: 80px;
-        max-width: 80px;
-        white-space: nowrap;
-        text-align: center;
-        padding: 0 4px;
-    }
-
-    .item-actions {
-        display: inline-flex;
-        gap: 2px;
-        vertical-align: middle;
-    }
-
-    .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-        color: #666;
-        padding: 0 3px;
-        line-height: 1;
-    }
-    .icon-btn:hover:not(:disabled) {
-        color: #000;
-    }
-    .icon-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-    .icon-btn.delete:hover:not(:disabled) {
-        color: #c55;
-    }
-
     .edit-input {
         width: 100%;
         padding: 1px 4px;
@@ -954,30 +780,7 @@
         outline: none;
     }
 
-    .no-select {
-        user-select: none;
-        -webkit-user-select: none;
-    }
-    .empty-state {
-        text-align: center;
-        color: #999;
-        padding: 24px;
-        font-size: var(--font-size-base);
-    }
-
-    /* Detail header for match view */
-    .detail-header {
-        padding: 3px 8px;
-        font-size: var(--font-size-small);
-        color: #555;
-        border-bottom: 1px solid #e0e0e0;
-        flex-shrink: 0;
-        background: #f5f5f5;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-height: 24px;
-    }
+    /* Detail header for match view (the strip itself is PanelTable's) */
     .back-btn {
         border: none;
         background: none;
@@ -1006,7 +809,7 @@
         visibility: hidden;
         flex-shrink: 0;
     }
-    .detail-header:hover .edit-header-btn {
+    .tournament-panel :global(.detail-header:hover .edit-header-btn) {
         visibility: visible;
     }
     .header-spacer {
@@ -1086,8 +889,8 @@
         color: #999;
     }
 
-    /* Match comment column */
-    .comment-col {
+    /* Match comment column, header and cells alike (the header is PanelTable's) */
+    .tournament-panel :global(.comment-col) {
         max-width: 140px;
         overflow: hidden;
     }
@@ -1106,13 +909,5 @@
     }
     .comment-text:hover {
         color: #1976d2;
-    }
-
-    /* Drag-and-drop */
-    .tournament-table tbody :global(tr.drag-over) {
-        border-top: 2px solid #1976d2;
-    }
-    .tournament-table tbody :global(tr.dragging) {
-        opacity: 0.5;
     }
 </style>
