@@ -124,7 +124,20 @@ func Resolve() *TwoSided {
 		return cachedDB
 	}
 
-	best := EmbeddedTwoSided()
+	// The stamp changed: whatever cachedDB currently holds open (an external
+	// or downloaded file) is about to be superseded. Close it *before*
+	// probing the candidates below — on Windows a file the caller just
+	// replaced or removed keeps its old directory entry alive (and refuses a
+	// fresh open) for as long as this stale handle stays open, which would
+	// make the stat/open loop below see the outgoing file instead of the
+	// caller's change.
+	embedded := EmbeddedTwoSided()
+	if cachedDB != nil && cachedDB != embedded {
+		cachedDB.Close()
+	}
+	cachedDB = nil
+
+	best := embedded
 	for _, p := range candidates {
 		if _, err := os.Stat(p); err != nil {
 			continue
@@ -135,7 +148,12 @@ func Resolve() *TwoSided {
 			continue
 		}
 		if ts.Checkers() > best.Checkers() {
+			if best != embedded {
+				best.Close()
+			}
 			best = ts
+		} else {
+			ts.Close()
 		}
 	}
 	cachedDB, cachedStamp = best, st

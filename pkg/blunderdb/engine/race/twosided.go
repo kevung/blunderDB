@@ -112,6 +112,20 @@ func EmbeddedTwoSided() *TwoSided {
 // Origin describes where this database came from (path or "embedded …").
 func (t *TwoSided) Origin() string { return t.origin }
 
+// Close releases the underlying file handle opened by OpenTwoSided. It is a
+// safe no-op for the embedded database (backed by a bytes.Reader, which does
+// not implement io.Closer). Windows in particular keeps a removed or
+// replaced file's directory entry alive — and refuses to reopen the path —
+// until every handle on it is closed, so any code that opens a TwoSided
+// outside the long-lived process cache in source.go (a test, or a one-shot
+// tool) must Close it once done.
+func (t *TwoSided) Close() error {
+	if c, ok := t.r.(io.Closer); ok {
+		return c.Close()
+	}
+	return nil
+}
+
 // Checkers returns the per-player checker capacity of the database domain.
 func (t *TwoSided) Checkers() int { return t.nCheckers }
 

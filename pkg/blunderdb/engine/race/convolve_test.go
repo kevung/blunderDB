@@ -78,6 +78,7 @@ func TestEstimatedWinProb_OracleBounds(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { oracle.Close() })
 	rng := rand.New(rand.NewSource(99)) // deliberately not the calibration seed
 	res := make([]float64, 0, 20000)
 	for len(res) < 20000 {

@@ -18,6 +18,18 @@ func isolateSources(t *testing.T) string {
 	t.Cleanup(func() {
 		SetDataDir("")
 		SetExternalPath("")
+		// Resolve()'s process-lifetime cache may still hold a handle open on
+		// a file inside dir (it is only closed the *next* time Resolve() is
+		// called). Drop it now — same package, so cachedDB is reachable
+		// directly — so t.TempDir()'s own RemoveAll cleanup (registered
+		// before this one, so it runs after, per t.Cleanup's LIFO order)
+		// does not race an open file handle on Windows.
+		srcMu.Lock()
+		if cachedDB != nil && cachedDB != embeddedDB {
+			cachedDB.Close()
+		}
+		cachedDB, cachedStamp = nil, ""
+		srcMu.Unlock()
 	})
 	return dir
 }
@@ -214,6 +226,7 @@ func TestLookup_ZeroedFileDecodesToFloor(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { ts.Close() })
 	e, err := ts.Lookup([6]int{1, 1, 0, 0, 0, 0}, [6]int{0, 2, 0, 0, 0, 0})
 	if err != nil {
 		t.Fatal(err)

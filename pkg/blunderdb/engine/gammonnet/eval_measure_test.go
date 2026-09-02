@@ -108,6 +108,7 @@ func TestEvalMeasure(t *testing.T) {
 		if err != nil {
 			t.Fatalf("BLUNDERDB_TS11_PATH: open: %v", err)
 		}
+		t.Cleanup(func() { oracle.Close() })
 		searcher2 := NewSearcherWith(DefaultConfig(2), net, prune)
 		report2 := runEvalMeasure(t, searcher2, oracle, "TS-06-11 ("+path+")", n, 2)
 		t.Logf("\n%s", report2)
