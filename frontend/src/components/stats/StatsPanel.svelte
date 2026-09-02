@@ -63,7 +63,7 @@
 
     <StatsFilterBar playersTab={activeTab === 'players'} />
 
-    <nav class="tabs" role="tablist">
+    <div class="tabs" role="tablist">
         <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}
             >{$t('stats.tabDashboard')}</button
         >
@@ -72,7 +72,7 @@
         >
         <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
         <button class="tab-btn" class:active={activeTab === 'players'} role="tab" aria-selected={activeTab === 'players'} onclick={() => (activeTab = 'players')}>{$t('stats.tabPlayers')}</button>
-    </nav>
+    </div>
 
     <div class="tab-content" role="tabpanel">
         {#if $statsLoadingStore}

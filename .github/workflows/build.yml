@@ -64,8 +64,12 @@ jobs:
             $(go list ./... | grep -v '/pkg/blunderdb/engine/gammonnet$')
         shell: bash
 
+      # -short on pushes and pull requests (~30 s: the 2-ply searches behind
+      # testing.Short() are skipped), the full suite on version tags. The full
+      # run took 8 min 41 on one runner and blew a 15-minute ceiling on the
+      # next: shared runners vary too much to gate every push on it.
       - name: Run Go tests (engine/gammonnet, no race)
-        run: go test -timeout 900s -count=1 -coverprofile=coverage-gammonnet.out -covermode=atomic ./pkg/blunderdb/engine/gammonnet/
+        run: go test -timeout 1500s -count=1 ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }} -coverprofile=coverage-gammonnet.out -covermode=atomic ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
       - name: Merge coverage profiles
