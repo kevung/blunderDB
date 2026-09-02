@@ -1,0 +1,9 @@
+# Template — the @-placeholders are substituted by scripts/winget-render.sh (also
+# run by the `package-manifests` job in .github/workflows/build.yml on a tag).
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.version.1.6.0.schema.json
+
+PackageIdentifier: KevinUnger.blunderDB
+PackageVersion: @VERSION@
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0

@@ -126,6 +126,53 @@ jobs:
             ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/...
         shell: bash
 
+  # The Go suite on the two other desktop platforms. `test` above is
+  # Linux-only, yet the binary ships for Windows and macOS with OS-specific
+  # code (filelock_windows.go, diskspace_windows.go, the host-capability
+  # probes of ADR-0004). -short keeps it cheap: the 2-ply gammonnet searches
+  # and the schema benchmarks skip themselves, everything else runs. No -race
+  # (the race detector's slowdown is what this job avoids, and `test`
+  # already covers it). The PostgreSQL tests sit behind the `postgres` build
+  # tag, so the absence of Docker on these runners changes nothing.
+  #
+  # `continue-on-error` — to be removed after the first green run on a real
+  # tag/PR: this job was written without a Windows machine at hand, and the
+  # usual suspects (a SQLite file still open when t.TempDir() is cleaned up,
+  # a golden string compared against a fixture checked out with CRLF) can
+  # only be confirmed by running it. The autocrlf step closes the second
+  # one: GitHub's Windows runners set core.autocrlf=true globally, which
+  # rewrites every text fixture at checkout.
+  test-os:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - name: Keep LF line endings at checkout
+        run: git config --global core.autocrlf false
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Run Go tests (short, no race)
+        run: go test -short -count=1 -timeout 1500s ./...
+        shell: bash
+
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
   # capability (no clipboard tool, no fonts, an exotic locale). Catches code
   # that inline-assumes a host facility and only fails when it is truly absent —
@@ -678,6 +725,61 @@ jobs:
           files: |
             blunderDB-${{ env.VERSION }}.flatpak
             blunderDB-${{ env.VERSION }}.flatpak.sha256
+
+  # winget manifests + Homebrew cask, release tags only. Renders
+  # packaging/winget/*.yaml.in and packaging/homebrew/blunderdb.rb.in against
+  # the checksums taken from the build artifacts (same reasoning as `flatpak`:
+  # no polling of the release) and attaches the results to the release: a zip
+  # of the winget manifest tree and the rendered cask. Nothing is submitted to
+  # microsoft/winget-pkgs or pushed to a Homebrew tap here — both are steps
+  # taken by hand, see packaging/winget/README.md and packaging/homebrew/README.md.
+  package-manifests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    # softprops/action-gh-release attaches the files to the release.
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download the Windows build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Wails Build windows-latest blunderDB ${{ env.VERSION }}
+          path: dist
+
+      - name: Download the macOS build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Wails Build macos-latest blunderDB ${{ env.VERSION }}
+          path: dist
+
+      - name: Render the winget manifests and the Homebrew cask
+        run: |
+          set -euo pipefail
+          scripts/winget-render.sh "$VERSION" --assets dist --out out/winget
+          scripts/homebrew-render.sh "$VERSION" --assets dist --out out/homebrew
+          (cd out/winget && zip -r "../blunderDB-winget-manifests-${VERSION}.zip" manifests)
+          cp out/homebrew/Casks/blunderdb.rb "out/blunderdb-${VERSION}.rb"
+          cd out
+          for f in "blunderDB-winget-manifests-${VERSION}.zip" "blunderdb-${VERSION}.rb"; do
+            sha256sum "$f" > "$f.sha256"
+          done
+        shell: bash
+
+      - name: Release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        with:
+          files: |
+            out/blunderDB-winget-manifests-${{ env.VERSION }}.zip
+            out/blunderDB-winget-manifests-${{ env.VERSION }}.zip.sha256
+            out/blunderdb-${{ env.VERSION }}.rb
+            out/blunderdb-${{ env.VERSION }}.rb.sha256
 
   # Cheap gate for the `docs` job below: did this push/PR touch anything the
   # documentation build reads? Only doc/** and this workflow can change the
