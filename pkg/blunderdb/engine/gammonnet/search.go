@@ -5,7 +5,7 @@ package gammonnet
 import (
 	_ "embed"
 	"fmt"
-	"sort"
+	"slices"
 	"sync"
 )
 
@@ -575,9 +575,49 @@ func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) 
 // needs; where two equities tie exactly, the two engines may legitimately pick
 // different plays, and the comparison has to allow for that rather than pretend
 // the tie is a disagreement.
+//
+// Typed, because the reflective one was not free: sort.SliceStable builds a
+// reflect swapper and two closures per call, and moves 80-octet candidates
+// through them. Three sorts per node, ~1 400 nodes, and the allocation
+// counter of a single 2-ply decision read 7 432 — nearly all of them here.
+//
+// Two shapes, one order. Under sortInsertionMax the insertion sort below is
+// stable by construction (it only ever swaps a strictly better candidate
+// past a worse one, never past an equal one) and is what a real node runs:
+// a search node ranks a few dozen plays. Above it — the pruning pass on a
+// double, which can face hundreds — the standard library's typed stable sort
+// takes over, so the cost stays O(n log² n) rather than quadratic on
+// 80-octet moves. A stable sort's output permutation is unique, so which of
+// the two ran can never change the order.
 func sortByEquity(c []Candidate) {
-	sort.SliceStable(c, func(i, j int) bool { return c[i].Equity > c[j].Equity })
+	if len(c) < 2 {
+		return
+	}
+	if len(c) <= sortInsertionMax {
+		for i := 1; i < len(c); i++ {
+			for j := i; j > 0 && c[j].Equity > c[j-1].Equity; j-- {
+				c[j], c[j-1] = c[j-1], c[j]
+			}
+		}
+		return
+	}
+	slices.SortStableFunc(c, func(a, b Candidate) int {
+		switch {
+		case a.Equity > b.Equity:
+			return -1
+		case b.Equity > a.Equity:
+			return 1
+		default:
+			return 0
+		}
+	})
 }
+
+// sortInsertionMax is where sortByEquity stops inserting and starts merging.
+// Measured on the candidate lists a 2-ply search actually produces: the vast
+// majority hold fewer than thirty plays, and an insertion sort beats a merge
+// there by a wide margin on 80-octet elements.
+const sortInsertionMax = 48
 
 // Counters reports what the last searches cost: big-network evaluations that
 // actually ran, small-network (pruning) evaluations, and cache hits. A cache

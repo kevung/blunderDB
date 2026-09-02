@@ -3,6 +3,7 @@
 package gammonnet
 
 import (
+	"fmt"
 	"math"
 	"sync"
 	"testing"
@@ -316,5 +317,28 @@ func TestParallelSearchIsBitIdentical(t *testing.T) {
 			t.Fatalf("candidate %d: serial %.17g, parallel %.17g — not bit-identical",
 				i, a[i].Equity, b[i].Equity)
 		}
+	}
+}
+
+// BenchmarkSortByEquity measures the ranking sort on the two list lengths a
+// 2-ply search actually produces: the dozen survivors the big network scores,
+// and the pruning pass on a double. It is the per-poste figure behind the
+// typed sort (#150); the whole-decision figure is BenchmarkDecision2Ply.
+func BenchmarkSortByEquity(b *testing.B) {
+	for _, n := range []int{12, 30, 240} {
+		b.Run(fmt.Sprintf("n=%d", n), func(b *testing.B) {
+			src := make([]Candidate, n)
+			for i := range src {
+				// A deterministic, unsorted, tie-bearing spread.
+				src[i].Equity = float64((i*7919)%101) / 101.0
+			}
+			buf := make([]Candidate, n)
+			b.ReportAllocs()
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				copy(buf, src)
+				sortByEquity(buf)
+			}
+		})
 	}
 }
