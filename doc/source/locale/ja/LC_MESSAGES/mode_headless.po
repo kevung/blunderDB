@@ -114,7 +114,7 @@ msgid ""
 "entier. Un nom (``alice``) est refusé avec ``400 invalid``, jamais "
 "converti."
 msgstr ""
-"``X-Tenant-ID``\ はテナントの\ **整数**\ （\ ``1``\ 、\ ``2``\ 、\ ``42``\ …）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（\ ``alice``\ ）は\ ``400 invalid``\ で拒否され、決して変換されません。"
+"``X-Tenant-ID``\\ はテナントの\\ **整数**\\ （\\ ``1``\\ 、\\ ``2``\\ 、\\ ``42``\\ …）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（\\ ``alice``\\ ）は\\ ``400 invalid``\\ で拒否され、決して変換されません。"
 
 #: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:450
 msgid "**Options:**"
@@ -642,7 +642,7 @@ msgid ""
 "tenant sont installées et ``app.tenant_id`` est fixé par connexion. C'est"
 " une défense en profondeur facultative, désactivée par défaut."
 msgstr ""
-"データは\ **テナント（利用者）ごとに分離**\ されています：各リクエストには自身のテナントの識別子（ヘッダー ``X-Tenant-ID``\ 、\ ``1``\ や\ ``42``\ のような正の10進整数）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。そのような整数でない識別子 — \ ``alice``\ や\ ``default``\ のような名前、\ ``0``\ 、\ ``007`` — は\ ``400 invalid``\ で拒否されます：アカウントをその整数に対応付けるのはリバースプロキシであり、デーモンは決して推測しません。\ ``--rls`` オプションは、補完的にPostgreSQLの **Row-Level Security** を有効にします：テナントごとの分離ポリシーがインストールされ、\ ``app.tenant_id`` が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
+"データは\\ **テナント（利用者）ごとに分離**\\ されています：各リクエストには自身のテナントの識別子（ヘッダー ``X-Tenant-ID``\\ 、\\ ``1``\\ や\\ ``42``\\ のような正の10進整数）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。そのような整数でない識別子 — \\ ``alice``\\ や\\ ``default``\\ のような名前、\\ ``0``\\ 、\\ ``007`` — は\\ ``400 invalid``\\ で拒否されます：アカウントをその整数に対応付けるのはリバースプロキシであり、デーモンは決して推測しません。\\ ``--rls`` オプションは、補完的にPostgreSQLの **Row-Level Security** を有効にします：テナントごとの分離ポリシーがインストールされ、\\ ``app.tenant_id`` が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
 
 #: ../../source/mode_headless.rst:342
 msgid ""
@@ -692,7 +692,7 @@ msgid ""
 " enverra dans ``X-Tenant-ID`` pour cet utilisateur — c'est le chemin pour"
 " « téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
-"``blunderdb migrate``\ は、単一ユーザーのSQLiteデータベースを、選択したテナント — このユーザーのためにリバースプロキシが\ ``X-Tenant-ID``\ で送る整数 — の下でPostgreSQLバックエンドにコピーします。これはデスクトップのライブラリをサーバー環境に「アップロード」する手段です。"
+"``blunderdb migrate``\\ は、単一ユーザーのSQLiteデータベースを、選択したテナント — このユーザーのためにリバースプロキシが\\ ``X-Tenant-ID``\\ で送る整数 — の下でPostgreSQLバックエンドにコピーします。これはデスクトップのライブラリをサーバー環境に「アップロード」する手段です。"
 
 #: ../../source/mode_headless.rst:382
 msgid ""
@@ -740,7 +740,7 @@ msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
 msgstr ""
-"移行先のテナント。正の10進整数（\ ``--dry-run``\ 時を除き必須。\ ``mon-tenant``\ のような名前は拒否されます）"
+"移行先のテナント。正の10進整数（\\ ``--dry-run``\\ 時を除き必須。\\ ``mon-tenant``\\ のような名前は拒否されます）"
 
 #: ../../source/mode_headless.rst:410
 msgid "``--dry-run``"
@@ -809,7 +809,7 @@ msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
 msgstr ""
-"テナント。正の10進整数（\ ``X-Tenant-ID``\ として送信。\ ``alice``\ のような名前は拒否されます）"
+"テナント。正の10進整数（\\ ``X-Tenant-ID``\\ として送信。\\ ``alice``\\ のような名前は拒否されます）"
 
 #: ../../source/mode_headless.rst:472
 msgid "``--json <chaîne>``"
