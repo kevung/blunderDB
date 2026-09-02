@@ -213,6 +213,13 @@ c'est-à-dire après le début de commande ``s``.
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
    "pl'nom'", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 
+.. note:: Une position jouée plusieurs fois par le joueur 1 (le même coup
+   dans deux matchs, ou deux coups différents) est retenue par les filtres
+   ``E>x``, ``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur
+   cette position. ``E>100`` répond ainsi à la question « ai-je un jour fait
+   un blunder ici ? », et ``E<20`` ne garde que les positions où aucun des
+   coups joués n'a dépassé 20 millipoints.
+
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D` ou `D1`)
    implique *a fortiori* de filtrer les positions en fonction du type de

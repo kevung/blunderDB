@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 01:02+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1168,7 +1168,22 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. pl'Alice'). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:216
+msgid ""
+"Une position jouée plusieurs fois par le joueur 1 (le même coup dans deux"
+" matchs, ou deux coups différents) est retenue par les filtres ``E>x``, "
+"``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur cette "
+"position. ``E>100`` répond ainsi à la question « ai-je un jour fait un "
+"blunder ici ? », et ``E<20`` ne garde que les positions où aucun des "
+"coups joués n'a dépassé 20 millipoints."
+msgstr ""
+"A position player 1 played more than once (the same move in two matches, or "
+"two different moves) is retained by the ``E>x``, ``E<x`` and ``Ex,y`` "
+"filters according to the **largest** error made on that position. ``E>100`` "
+"thus answers the question \"did I ever blunder here?\", and ``E<20`` keeps "
+"only the positions where none of the played moves exceeded 20 millipoints."
+
+#: ../../source/cmd_mode.rst:224
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1181,7 +1196,7 @@ msgstr ""
 " filter ignores the second die: only the first die's value is used to "
 "match positions (against either die of the roll)."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1195,7 +1210,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:236
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1207,7 +1222,7 @@ msgstr ""
 " to tournaments with ``tn`` and to positions with ``id`` (e.g. ``s id5 "
 "id10`` for positions 5 and 10)."
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1217,7 +1232,7 @@ msgstr ""
 "that tournament. Match and tournament IDs are visible in the ID columns "
 "of the corresponding panels."
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:245
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1232,7 +1247,7 @@ msgstr ""
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:255
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1244,7 +1259,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Clear the command history."
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:264
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."

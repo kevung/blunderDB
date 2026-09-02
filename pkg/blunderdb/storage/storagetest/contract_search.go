@@ -4,7 +4,10 @@ package storagetest
 
 import (
 	"context"
+	"reflect"
+	"sort"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -371,5 +374,136 @@ func testSearchFilterByFlagged(t *testing.T, s storage.Storage) {
 	}
 	if !p.Flagged {
 		t.Error("Load returned the marked position with Flagged=false")
+	}
+}
+
+// testSearchMoveErrorFilterMaxOverPlays pins the semantics of the move-error
+// filter on a position player 1 played more than once (#167): the position is
+// scored by the LARGEST error among its plays, on the plain search (SQL
+// column plus Go re-check) and on the mirror search (Go re-check alone)
+// alike, and the answer is the same on every run — before the fix the Go
+// re-check took whichever play a map iteration yielded first.
+//
+// The fixture is built so the denormalised column holds the SMALLER error:
+// PlayedMoves are merged sorted and the column scores the first of them, so
+// "13/11 24/23" (50 mp) is what the column sees while "13/11 6/4" (200 mp)
+// is what the user wants to find.
+func testSearchMoveErrorFilterMaxOverPlays(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	// One game per match; the same positions occur in both matches.
+	mkGame := func(n int) int64 {
+		m := domain.Match{Player1Name: "me", Player2Name: "them", MatchLength: 7,
+			MatchDate: time.Date(2025, 6, n, 0, 0, 0, 0, time.UTC)}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match %d: %v", n, err)
+		}
+		g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}
+		gameID, err := s.Matches().CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame %d: %v", n, err)
+		}
+		return gameID
+	}
+	gameA, gameB := mkGame(1), mkGame(2)
+
+	save := func(p domain.Position) int64 {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position: %v", err)
+		}
+		return id
+	}
+	play := func(gameID, posID int64, n int32, checkerMove, cubeAction string) {
+		moveType := "checker"
+		if cubeAction != "" {
+			moveType = "cube"
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: n, MoveType: moveType,
+			PositionID: posID, Player: 1, CheckerMove: checkerMove, CubeAction: cubeAction}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+	}
+	analyse := func(posID int64, a domain.PositionAnalysis) {
+		if err := s.Analyses().Save(ctx, "", posID, &a); err != nil {
+			t.Fatalf("Save analysis %d: %v", posID, err)
+		}
+	}
+	small, big := 0.05, 0.20
+
+	// Checker position played twice, 50 mp then 200 mp.
+	twice := save(statsDecisionPos(t, 0))
+	play(gameA, twice, 1, "13/11 24/23", "")
+	play(gameB, twice, 1, "13/11 6/4", "")
+	analyse(twice, domain.PositionAnalysis{
+		AnalysisType: "CheckerMove",
+		PlayedMoves:  []string{"13/11 24/23", "13/11 6/4"},
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "8/6 6/4", Equity: 0.50},
+			{Move: "13/11 24/23", Equity: 0.45, EquityError: &small},
+			{Move: "13/11 6/4", Equity: 0.30, EquityError: &big},
+		}},
+	})
+
+	// Control: the same 50 mp play, made once.
+	once := save(statsDecisionPos(t, 1))
+	play(gameA, once, 2, "13/11 24/23", "")
+	analyse(once, domain.PositionAnalysis{
+		AnalysisType: "CheckerMove",
+		PlayedMoves:  []string{"13/11 24/23"},
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "8/6 6/4", Equity: 0.50},
+			{Move: "13/11 24/23", Equity: 0.45, EquityError: &small},
+		}},
+	})
+
+	// Cube position: doubled correctly in one match (0 mp), failed to double
+	// in the other (150 mp). Sorted, "Double" comes first, so the column
+	// holds 0 — the same trap on the cube side.
+	cube := save(cubePos())
+	play(gameA, cube, 3, "", "Double")
+	play(gameB, cube, 3, "", "No double")
+	analyse(cube, domain.PositionAnalysis{
+		AnalysisType:      "DoublingCube",
+		PlayedCubeActions: []string{"Double", "No double"},
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			BestCubeAction:         "Double/Take",
+			CubefulNoDoubleError:   0.15,
+			CubefulDoubleTakeError: 0,
+			CubefulDoublePassError: 0.30,
+		},
+	})
+
+	type want struct {
+		filter string
+		ids    []int64
+	}
+	cases := []want{
+		{"E>100", []int64{twice, cube}}, // ever blundered here?
+		{"E<100", []int64{once}},        // never worse than 100 mp
+		{"E>250", nil},
+		{"E160,250", []int64{twice}},
+		{"E100,160", []int64{cube}},
+	}
+	sorted := func(ids []int64) []int64 {
+		out := append([]int64(nil), ids...)
+		sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+		return out
+	}
+	check := func(run int, mirror bool, w want) {
+		t.Helper()
+		got := sorted(searchIDs(t, s, domain.SearchFilters{MoveErrorFilter: w.filter, MirrorFilter: mirror}))
+		if !reflect.DeepEqual(got, sorted(w.ids)) {
+			t.Errorf("run %d mirror=%v %s: got %v, want %v", run, mirror, w.filter, got, sorted(w.ids))
+		}
+	}
+	// 20 runs: the answer is a property of the data, not of the run.
+	for run := range 20 {
+		for _, w := range cases {
+			check(run, false, w)
+			check(run, true, w)
+		}
 	}
 }
