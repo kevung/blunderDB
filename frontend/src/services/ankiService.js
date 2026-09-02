@@ -26,9 +26,10 @@ import {
     GetAllCollections,
     LoadPositionsByFilters
 } from '../../wailsjs/go/database/Database.js';
-import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
+import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { positionsStore } from '../stores/positionStore.js';
+import { selectedMoveStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { showPosition } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
@@ -292,6 +293,11 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
  * revealed answer of ADR-0025 rule 1 would have inherited that lie.
  */
 export async function showCard(card) {
+    // A new card is a new question: its answer starts hidden (ADR-0025 rule 5),
+    // and the move picked on the previous one is dropped. Left set,
+    // selectedMoveStore freezes j/k position browsing app-wide.
+    hideAnkiAnswer();
+    selectedMoveStore.set(null);
     await showPosition(card.position);
     const idx = positionsStore.indexOf(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);

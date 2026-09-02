@@ -5,7 +5,7 @@
     import { isLetter, isBareLetter } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { normalizeCubeAction } from '../utils/cubeAction.js';
+    import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability } from '../utils/cubeDecision.js';
     import AnalysisView from './AnalysisView.svelte';
@@ -196,82 +196,11 @@
         }
     }
 
-    // Normalize a move string for comparison by sorting individual moves
-    // "5/2 5/4" and "5/4 5/2" are the same move but in different order
-    function normalizeMoveString(move) {
-        if (!move) return '';
-        // Split by spaces and sort the individual moves
-        return move.split(' ').sort().join(' ');
-    }
-
-    function isPlayedMove(move) {
-        if (!move.move) return false;
-
-        const normalizedMoveStr = normalizeMoveString(move.move);
-
-        // In MATCH mode, only highlight the current match's specific move
-        if (matchCtx.isMatchMode) {
-            // Use the single playedMove field which contains the current match's move
-            if (analysisData.playedMove) {
-                return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
-            }
-            return false;
-        }
-
-        // In normal mode (browsing positions), highlight all played moves
-        // Check the playedMoves array first
-        if (analysisData.playedMoves && analysisData.playedMoves.length > 0) {
-            for (const playedMove of analysisData.playedMoves) {
-                if (normalizeMoveString(playedMove) === normalizedMoveStr) {
-                    return true;
-                }
-            }
-        }
-
-        // Fallback to old single playedMove field for backward compatibility
-        if (analysisData.playedMove) {
-            return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
-        }
-
-        return false;
-    }
-
-    function isPlayedCubeAction(action) {
-        const actionParts = normalizeCubeAction(action);
-
-        // In MATCH mode, only highlight the current match's specific cube action
-        if (matchCtx.isMatchMode) {
-            if (analysisData.playedCubeAction) {
-                const playedParts = normalizeCubeAction(analysisData.playedCubeAction);
-                return actionParts.every((a) => playedParts.includes(a));
-            }
-            return false;
-        }
-
-        // In normal mode, highlight all played cube actions
-        // Collect all canonical played parts from all played actions
-        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, not reactive state
-        const allPlayedParts = new Set();
-
-        if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
-            for (const playedAction of analysisData.playedCubeActions) {
-                for (const part of normalizeCubeAction(playedAction)) {
-                    allPlayedParts.add(part);
-                }
-            }
-        }
-
-        // Fallback to old single playedCubeAction field for backward compatibility
-        if (allPlayedParts.size === 0 && analysisData.playedCubeAction) {
-            for (const part of normalizeCubeAction(analysisData.playedCubeAction)) {
-                allPlayedParts.add(part);
-            }
-        }
-
-        if (allPlayedParts.size === 0) return false;
-
-        return actionParts.every((a) => allPlayedParts.has(a));
-    }
+    // The played-move / played-cube-action rules live in utils/playedMarks.js
+    // so the Anki review can highlight them too (ADR-0025 rule 6). MATCH mode
+    // is the only caller that restricts them to the current match's own play.
+    let isPlayedMove = $derived(playedMovePredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
+    let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
 
     async function switchTab(tab) {
         activeTab = tab;

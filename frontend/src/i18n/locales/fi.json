@@ -493,6 +493,8 @@
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
     },
     "anki": {
+        "clickToReveal": "Napsauta tai paina välilyöntiä paljastaaksesi vastauksen",
+        "noAnalysis": "Tälle asemalle ei ole tallennettua analyysiä",
         "again": "Uudelleen",
         "backToDeckList": "Takaisin pakkalistaan",
         "colActions": "Toiminnot",

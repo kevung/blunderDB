@@ -493,6 +493,8 @@
         "confirmDelete": "Delete tournament \"{name}\"?"
     },
     "anki": {
+        "clickToReveal": "Click or press Space to reveal the answer",
+        "noAnalysis": "No analysis recorded for this position",
         "again": "Again",
         "backToDeckList": "Back to deck list",
         "colActions": "Actions",

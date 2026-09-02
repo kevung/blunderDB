@@ -493,6 +493,8 @@
         "confirmDelete": "Turnier „{name}“ löschen?"
     },
     "anki": {
+        "clickToReveal": "Klicken oder Leertaste, um die Antwort aufzudecken",
+        "noAnalysis": "Für diese Stellung ist keine Analyse gespeichert",
         "again": "Nochmal",
         "backToDeckList": "Zurück zur Stapelliste",
         "colActions": "Aktionen",
