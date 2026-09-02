@@ -43,6 +43,8 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 blunderDB /app/bin/blunderDB
+      # Lowercase name, as the CLI documentation and the other packages use.
+      - ln -s blunderDB /app/bin/blunderdb
       # Flathub requires desktop/icon/metainfo to be named after the app-id.
       - install -Dm644 blunderdb-256.png /app/share/icons/hicolor/256x256/apps/io.github.kevung.blunderDB.png
       - |

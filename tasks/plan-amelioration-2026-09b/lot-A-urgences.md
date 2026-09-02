@@ -261,9 +261,9 @@ not found` pour tout utilisateur `.deb`/`.rpm`/AUR qui suit la doc. Homebrew
 et winget ne sont pas touchés.
 
 **À faire.**
-- [ ] Symlink `/usr/bin/blunderdb → blunderDB` dans nfpm et PKGBUILD ; le
+- [x] Symlink `/usr/bin/blunderdb → blunderDB` dans nfpm et PKGBUILD ; le
       tarball livre les deux noms (ou `INSTALL.txt` explique).
-- [ ] `telecharge_install.rst:70` corrigé ; `.po` dans le même commit (A.7).
+- [x] `telecharge_install.rst:70` corrigé ; `.po` dans le même commit (A.7).
 - [ ] Test de packaging en CI : après `dpkg -i`, `blunderdb version` répond.
 
 ---

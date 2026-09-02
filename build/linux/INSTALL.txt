@@ -9,9 +9,15 @@ Run it directly:
     ./blunderDB            # GUI
     ./blunderDB help       # CLI usage
 
+The executable is named `blunderDB` (capitals). The command-line
+documentation calls it `blunderdb`, which is the name the .deb/.rpm/AUR
+packages, the Homebrew cask and winget install as well; the step below
+creates the same lowercase link for a per-user install.
+
 Optional — install a menu entry for the current user:
 
     install -Dm755 blunderDB            ~/.local/bin/blunderDB
+    ln -sf blunderDB                    ~/.local/bin/blunderdb
     install -Dm644 blunderdb.desktop    ~/.local/share/applications/blunderdb.desktop
     install -Dm644 blunderdb-256.png    ~/.local/share/icons/hicolor/256x256/apps/blunderdb.png
     sed -i 's|^Exec=blunderDB|Exec='"$HOME"'/.local/bin/blunderDB|' \

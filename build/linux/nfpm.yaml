@@ -30,6 +30,12 @@ contents:
     dst: /usr/bin/blunderDB
     file_info:
       mode: 0755
+  # The CLI documentation (CLI_USAGE.md, doc/source/cli.rst) and the Homebrew
+  # cask / winget manifests all call the command `blunderdb`; without this
+  # link a .deb/.rpm user following it gets "command not found".
+  - src: /usr/bin/blunderDB
+    dst: /usr/bin/blunderdb
+    type: symlink
   - src: build/linux/blunderdb.desktop
     dst: /usr/share/applications/blunderdb.desktop
   - src: build/linux/io.github.kevung.blunderDB.metainfo.xml
