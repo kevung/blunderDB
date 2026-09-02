@@ -14,6 +14,88 @@ type levelEntry struct {
 	n     int
 }
 
+// Deduplication is by resulting position, and it used to be a linear scan of
+// everything written so far: quadratic, on 29-octet comparisons, with up to
+// maxLevel entries. A double on an open board reaches several hundred
+// distinct intermediate positions, and that scan was the whole of its cost.
+//
+// dedupTable is the membership test that replaces it past a threshold. It
+// changes nothing about WHAT is produced or in WHICH ORDER: entries are still
+// written in generation order, and the table only answers "already seen".
+// That order determines the stable sort, and the stable sort determines the
+// gold, so it is not negotiable.
+//
+// Open addressing with linear probing, and an epoch instead of a clear: a
+// slot belongs to the current deduplication only if its stamp matches. The
+// table is never cleared except on the epoch's (astronomically rare)
+// wraparound.
+const (
+	dedupBits  = 11 // 2048 slots for at most maxLevel = 1024 entries
+	dedupSlots = 1 << dedupBits
+	dedupMask  = dedupSlots - 1
+
+	// dedupLinearMax is where the scan stops paying. Below it, comparing a
+	// few dozen contiguous positions costs less than hashing one; above it
+	// the quadratic term takes over.
+	dedupLinearMax = 32
+)
+
+type dedupTable struct {
+	key   [dedupSlots]Position
+	stamp [dedupSlots]uint32
+	epoch uint32
+}
+
+// reset opens a new deduplication. Nothing is written: the epoch bump
+// invalidates every slot at once.
+func (d *dedupTable) reset() {
+	d.epoch++
+	if d.epoch == 0 {
+		// Wraparound: the only moment the table is actually cleared.
+		for i := range d.stamp {
+			d.stamp[i] = 0
+		}
+		d.epoch = 1
+	}
+}
+
+// add reports whether pos was already in the table, inserting it when it was
+// not. The table is sized so it can never fill.
+func (d *dedupTable) add(pos *Position) bool {
+	slot := int(dedupHash(pos)) & dedupMask
+	for {
+		if d.stamp[slot] != d.epoch {
+			d.stamp[slot] = d.epoch
+			d.key[slot] = *pos
+			return false
+		}
+		if d.key[slot] == *pos {
+			return true
+		}
+		slot = (slot + 1) & dedupMask
+	}
+}
+
+// dedupHash is FNV-1a folded four bytes at a time — seven multiplies where
+// the byte-wise hashPosition of cache.go needs twenty-nine. Nothing outside
+// this file reads it, so it owes no compatibility to that one; it only owes
+// a good spread, and a membership test that is wrong is impossible anyway
+// because add compares the whole position on a hit.
+func dedupHash(p *Position) uint64 {
+	h := uint64(fnvOffset64)
+	for i := 0; i < NumPoints; i += 4 {
+		w := uint64(uint8(p.Points[i])) |
+			uint64(uint8(p.Points[i+1]))<<8 |
+			uint64(uint8(p.Points[i+2]))<<16 |
+			uint64(uint8(p.Points[i+3]))<<24
+		h = (h ^ w) * fnvPrime64
+	}
+	w := uint64(p.Bar[0]) | uint64(p.Bar[1])<<8 |
+		uint64(p.Off[0])<<16 | uint64(p.Off[1])<<24 |
+		uint64(p.Turn)<<32
+	return (h ^ w) * fnvPrime64
+}
+
 // Generator holds the scratch legal-play generation needs. Allocate one per
 // goroutine and reuse it; generating then allocates nothing.
 //
@@ -27,6 +109,7 @@ type Generator struct {
 	levels [2][maxLevel]levelEntry
 	side   int // which half of levels is the current one
 	sub    [NumPoints + 1]Move
+	seen   dedupTable
 }
 
 // cur is the level being played from, next the one being written. advance
@@ -72,16 +155,21 @@ func (g *Generator) LegalPlays(p *Position, d1, d2 int, out []Play) int {
 func (g *Generator) expand(count, die int, player uint8) int {
 	cur, next := g.cur(), g.next()
 	n := 0
+	hashed := false
 	for i := 0; i < count; i++ {
 		e := &cur[i]
 		k := subMoves(&e.pos, player, die, &g.sub)
 		for s := 0; s < k; s++ {
 			res := apply(&e.pos, player, g.sub[s])
 			dup := false
-			for j := 0; j < n; j++ {
-				if next[j].pos == res {
-					dup = true
-					break
+			if hashed {
+				dup = g.seen.add(&res)
+			} else {
+				for j := 0; j < n; j++ {
+					if next[j].pos == res {
+						dup = true
+						break
+					}
 				}
 			}
 			if dup {
@@ -95,6 +183,13 @@ func (g *Generator) expand(count, die int, player uint8) int {
 			next[n].moves[e.n] = g.sub[s]
 			next[n].n = e.n + 1
 			n++
+			if !hashed && n > dedupLinearMax {
+				g.seen.reset()
+				for j := 0; j < n; j++ {
+					g.seen.add(&next[j].pos)
+				}
+				hashed = true
+			}
 		}
 	}
 	return n
@@ -210,14 +305,29 @@ func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) i
 			opp = Black
 		}
 		cur := g.cur()
+		// hashed is per order, not per call: the expands just above run
+		// their own deduplication through the same table, so whatever this
+		// merge had built is gone by the time the next order gets here.
+		hashed := false
+		if total > dedupLinearMax {
+			g.seen.reset()
+			for j := 0; j < total; j++ {
+				g.seen.add(&out[j].Result)
+			}
+			hashed = true
+		}
 		for i := 0; i < n; i++ {
 			res := cur[i].pos
 			res.Turn = opp
 			dup := false
-			for j := 0; j < total; j++ {
-				if out[j].Result == res {
-					dup = true
-					break
+			if hashed {
+				dup = g.seen.add(&res)
+			} else {
+				for j := 0; j < total; j++ {
+					if out[j].Result == res {
+						dup = true
+						break
+					}
 				}
 			}
 			if dup {
@@ -230,6 +340,13 @@ func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) i
 			out[total].Moves = cur[i].moves
 			out[total].NumMoves = cur[i].n
 			total++
+			if !hashed && total > dedupLinearMax {
+				g.seen.reset()
+				for j := 0; j < total; j++ {
+					g.seen.add(&out[j].Result)
+				}
+				hashed = true
+			}
 		}
 	}
 	return total
