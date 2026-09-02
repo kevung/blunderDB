@@ -5,8 +5,10 @@ package gammonnet
 import (
 	_ "embed"
 	"fmt"
+	"runtime"
 	"slices"
 	"sync"
+	"sync/atomic"
 )
 
 // Expectiminimax over dice, 0 to 4 ply, ported from gammonNet's gn_search.
@@ -189,7 +191,17 @@ type Searcher struct {
 	// the read-only networks.
 	workers []*Searcher
 
-	gen   [MaxPly + 2]Generator
+	// La file d'un niveau aplati et ses résultats (deepenLevel). Elles vivent
+	// avec le chercheur, comme le reste du brouillon : la racine les remplit
+	// une fois par décision, et une allocation par décision suffirait à faire
+	// travailler le ramasse-miettes pendant que les ouvriers calculent.
+	// frontierBest[i*NumRolls+r] est la valeur du lancer r pour le candidat i
+	// — un emplacement par tâche, fixé avant que la file ne démarre, jamais
+	// partagé entre deux ouvriers.
+	frontier     []rollTask
+	frontierBest []float64
+
+	gen   [MaxPly + 2]*Generator
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
 	feat  [NumFeatures]float32
@@ -258,11 +270,41 @@ func NewSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
 	if prune != nil {
 		s.pruneEv = NewEvaluator(prune)
 	}
-	for i := range s.plays {
-		s.plays[i] = make([]Play, MaxPlays)
-		s.cands[i] = make([]Candidate, MaxPlays)
-	}
 	return s
+}
+
+// playsAt et candsAt sont les brouillons du niveau level, alloués au premier
+// usage. Les six niveaux étaient alloués d'avance, ce qui coûtait 1,6 Mo par
+// chercheur ; depuis que la recherche de fond se donne un ouvrier par cœur,
+// ce sont dix-sept chercheurs à construire par décision, et une décision à
+// 2 ply n'en descend que trois. Le reste était payé et jamais lu.
+//
+// Aucun verrou : un Searcher appartient à une goroutine, comme tout le reste
+// de son brouillon.
+func (s *Searcher) playsAt(level int) []Play {
+	if s.plays[level] == nil {
+		s.plays[level] = make([]Play, MaxPlays)
+	}
+	return s.plays[level]
+}
+
+func (s *Searcher) candsAt(level int) []Candidate {
+	if s.cands[level] == nil {
+		s.cands[level] = make([]Candidate, MaxPlays)
+	}
+	return s.cands[level]
+}
+
+// genAt est le générateur de coups du niveau level, lui aussi alloué au
+// premier usage. Un Generator pèse 166 Ko à lui seul (ses deux demi-niveaux
+// de 2 048 entrées), soit près d'un mégaoctet par chercheur pour les six
+// niveaux — la moitié du coût de construction d'un chercheur, et le seul
+// poste qui comptait vraiment une fois le pool d'ouvriers branché.
+func (s *Searcher) genAt(level int) *Generator {
+	if s.gen[level] == nil {
+		s.gen[level] = &Generator{}
+	}
+	return s.gen[level]
 }
 
 // pruneKeep is how many candidates survive the small network at a given depth.
@@ -337,8 +379,8 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	if level >= len(s.plays) {
 		return -1
 	}
-	plays := s.plays[level]
-	count := s.gen[level].LegalPlays(pos, d1, d2, plays)
+	plays := s.playsAt(level)
+	count := s.genAt(level).LegalPlays(pos, d1, d2, plays)
 	if count <= 0 {
 		return count // 0 is a dance, -1 a refusal
 	}
@@ -380,15 +422,25 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	if f := s.cfg.Filter[depth]; f > 0 && f < searched {
 		searched = f
 	}
-	for i := 0; i < searched; i++ {
-		if out[i].Play.Result.isOver() {
-			continue // keeps the exact terminal value from the sweep
-		}
-		v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, level == 0, theirs, theirOwner)
-		if !ok {
+	// À la racine, tous les candidats à approfondir partent dans une seule
+	// file (deepenLevel) : une barrière par décision au lieu d'une par
+	// candidat, et trois fois plus de tâches à répartir. Ailleurs — et sans
+	// ouvriers — la boucle sérielle, terme pour terme identique.
+	if level == 0 && len(s.workers) > 0 {
+		if !s.deepenLevel(out[:searched], depth, theirs, theirOwner) {
 			return -1
 		}
-		out[i].Equity = -v
+	} else {
+		for i := 0; i < searched; i++ {
+			if out[i].Play.Result.isOver() {
+				continue // keeps the exact terminal value from the sweep
+			}
+			v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, false, theirs, theirOwner)
+			if !ok {
+				return -1
+			}
+			out[i].Equity = -v
+		}
 	}
 	sortByEquity(out[:searched])
 	return written
@@ -553,7 +605,7 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	if level >= len(s.cands) {
 		return 0, false
 	}
-	cands := s.cands[level]
+	cands := s.candsAt(level)
 
 	// The twenty-one rolls are independent, so the root farms them out. The
 	// weighted sum is still accumulated afterwards in ascending roll index
@@ -606,12 +658,125 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 	return -v, true
 }
 
-// rollsInParallel spreads the twenty-one rolls over the workers. Each worker
-// runs on its own scratch and its own cache, so nothing needs a lock. state
-// is read-only here (MatchState is a plain value; Swap never mutates it in
-// place), so sharing one pointer across goroutines is safe.
-func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, owner CubeOwner, best *[NumRolls]float64) bool {
+// rollTask est un lancer à évaluer depuis une position, et l'emplacement où
+// en ranger la valeur. L'emplacement est FIXE, calculé avant que la file ne
+// démarre : c'est ce qui rend l'ordonnancement libre de choisir qui calcule
+// quoi sans jamais toucher à l'ordre dans lequel les termes seront additionnés.
+type rollTask struct {
+	pos  *Position
+	roll int // index du lancer dans s.rolls, 0..20
+	slot int // index dans le tableau de résultats du niveau
+}
+
+// rollsByCost est l'ordre LPT (Longest Processing Time first) des 21 lancers :
+// coût décroissant, ce qui borne le makespan à 4/3 − 1/(3m) de l'optimum
+// (Graham 1969) au lieu de laisser la tâche la plus longue tomber en dernier.
+//
+// Le coût est mesuré, pas supposé, et la mesure contredit le proxy « les
+// doubles d'abord » que la littérature suggère. TestProbeRollCost, sur 24
+// positions du corpus à 2 ply, donne le nombre d'évaluations que déclenche le
+// sous-arbre de chaque lancer :
+//
+//	2-6 17 256   3-6 17 256   2-3 17 184   3-4 17 160   1-4 16 920
+//	2-5 16 896   4-5 16 704   5-6 16 584   1-5 16 536   1-2 14 928
+//	2-2 14 400   2-4 13 056   4-4 12 960   4-6 12 888   1-3 12 672
+//	1-6 12 456   3-5 12 120   5-5 11 976   3-3 11 928   1-1 11 736
+//	6-6 11 232
+//
+// Les doubles sont parmi les MOINS chers, à l'inverse de ce qu'on attend de
+// leurs 4 demi-coups : ils génèrent bien plus de coups légaux (1 800 pour 2-2
+// contre 168 pour 5-6), mais l'élagage n'en garde que douze, et la position
+// qu'ils laissent est plus contrainte, donc son sous-arbre est plus étroit.
+// Seule la passe du petit réseau paie la largeur, et elle est bon marché.
+// L'écart total n'est que de 1,54× en évaluations et 1,30× en temps — ce qui
+// dit aussi que l'ordre LPT ne peut pas rendre grand-chose ici, et la mesure
+// le confirme : l'essentiel du gain vient de l'aplatissement du niveau, pas
+// du tri.
+//
+// Le nombre d'évaluations est retenu plutôt que le temps : il est déterministe
+// et indépendant de la machine, là où le classement par temps sur un portable
+// à budget thermique change d'un tour à l'autre. Les deux classements se
+// recoupent d'ailleurs largement.
+var rollsByCost = [NumRolls]int{10, 14, 7, 12, 3, 9, 16, 19, 4, 1, 6, 8, 15, 17, 2, 5, 13, 18, 11, 0, 20}
+
+// deepenLevel approfondit d'un coup TOUS les candidats d'un niveau de la
+// racine, au lieu d'en approfondir un, d'attendre, puis de passer au suivant.
+//
+// C'est le point trois de la fiche F4. Avant, chaque candidat approfondi
+// ouvrait sa propre file de 21 lancers et sa propre barrière : à 2 ply, trois
+// barrières de 21 tâches pour 8 ouvriers, soit trois fois ⌈21/8⌉ = 9 tours
+// pour 7,875 tours de travail — 14 % perdus en quantification, avant même de
+// compter le déséquilibre entre lancers. En une seule file de 3 × 21 = 63
+// tâches, ⌈63/8⌉ = 8 tours : 1,6 % de quantification, et une seule barrière
+// par décision.
+//
+// Le résultat ne bouge pas d'un bit. La somme pondérée reste sérielle, par
+// candidat, en index de lancer croissant, en float64 (voir positionEquity,
+// dont ceci est l'exact équivalent aplati) ; le parallélisme choisit qui
+// calcule chaque terme, jamais l'ordre où ils s'ajoutent.
+//
+// state et owner sont ceux de la position RÉSULTANTE — rankPlays les a déjà
+// échangés et miroités —, les mêmes pour tous les candidats du niveau puisque
+// tous naissent du même coup de dés depuis la même position.
+func (s *Searcher) deepenLevel(cands []Candidate, depth int, state *MatchState, owner CubeOwner) bool {
+	need := len(cands) * NumRolls
+	if cap(s.frontierBest) < need {
+		s.frontierBest = make([]float64, need)
+		s.frontier = make([]rollTask, 0, need)
+	}
+	best := s.frontierBest[:need]
+	tasks := s.frontier[:0]
+
+	// Ordre LPT : lancer par lancer, du plus cher au moins cher, tous
+	// candidats confondus. Les copies du lancer le plus lourd partent donc en
+	// premier, ce qui est exactement ce que la borne de Graham demande.
+	for _, r := range rollsByCost {
+		for i := range cands {
+			if cands[i].Play.Result.isOver() {
+				continue // la valeur terminale du sweep est déjà la bonne
+			}
+			tasks = append(tasks, rollTask{pos: &cands[i].Play.Result, roll: r, slot: i*NumRolls + r})
+		}
+	}
+	s.frontier = tasks
+	if !s.runRollTasks(tasks, depth, state, owner, best) {
+		return false
+	}
+
+	for i := range cands {
+		if cands[i].Play.Result.isOver() {
+			continue
+		}
+		var sum float64
+		base := i * NumRolls
+		for r := 0; r < NumRolls; r++ {
+			sum += s.rolls[r].weight * best[base+r]
+		}
+		cands[i].Equity = -sum
+	}
+	return true
+}
+
+// runRollTasks vide la file sur les ouvriers. Chaque ouvrier pioche la tâche
+// suivante par un compteur atomique — l'équivalent du schedule(dynamic,1)
+// d'OpenMP, deux ou trois ordres de grandeur moins cher qu'un canal — au lieu
+// du tourniquet statique r += nw d'avant, qui figeait la répartition avant de
+// savoir ce que chaque tâche coûterait.
+//
+// Chaque ouvrier travaille sur son propre brouillon, son propre générateur et
+// son propre cache : rien n'est partagé que les réseaux, en lecture seule, et
+// state (MatchState est une valeur, Swap ne mute jamais sur place). Les
+// résultats vont dans des emplacements dédiés que la file a fixés d'avance,
+// donc aucun accès concurrent à un même mot.
+func (s *Searcher) runRollTasks(tasks []rollTask, depth int, state *MatchState, owner CubeOwner, out []float64) bool {
 	nw := len(s.workers)
+	if nw > len(tasks) {
+		nw = len(tasks)
+	}
+	if nw <= 0 {
+		return true
+	}
+	var next atomic.Int64
 	var wg sync.WaitGroup
 	ok := make([]bool, nw)
 	for w := 0; w < nw; w++ {
@@ -620,13 +785,18 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 			defer wg.Done()
 			worker := s.workers[w]
 			ok[w] = true
-			for r := w; r < NumRolls; r += nw {
-				v, good := worker.oneRoll(pos, depth, 0, r, state, owner, worker.cands[0])
+			for {
+				i := int(next.Add(1)) - 1
+				if i >= len(tasks) {
+					return
+				}
+				t := tasks[i]
+				v, good := worker.oneRoll(t.pos, depth, 0, t.roll, state, owner, worker.candsAt(0))
 				if !good {
 					ok[w] = false
 					return
 				}
-				best[r] = v
+				out[t.slot] = v
 			}
 		}(w)
 	}
@@ -637,6 +807,18 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 		}
 	}
 	return true
+}
+
+// rollsInParallel est le cas à une seule position de la même file : les 21
+// lancers d'une position, ordonnés LPT, piochés par compteur atomique. Il
+// reste le chemin des appelants qui entrent par positionEquity plutôt que par
+// la racine de rankPlays.
+func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, owner CubeOwner, best *[NumRolls]float64) bool {
+	var tasks [NumRolls]rollTask
+	for i, r := range rollsByCost {
+		tasks[i] = rollTask{pos: pos, roll: r, slot: r}
+	}
+	return s.runRollTasks(tasks[:], depth, state, owner, best[:])
 }
 
 // leafValue is the value of a position from its own turn's point of view:
@@ -759,14 +941,67 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 		s.workers = nil
 		return s
 	}
-	if n > NumRolls {
-		n = NumRolls
+	if max := s.maxUsefulWorkers(); n > max {
+		n = max
 	}
 	s.workers = make([]*Searcher, n)
 	for i := range s.workers {
 		s.workers[i] = NewSearcherWith(s.cfg, s.net, s.prune)
 	}
 	return s
+}
+
+// maxUsefulWorkers est le nombre de tâches que le plus gros niveau de cette
+// configuration peut offrir : au-delà, un ouvrier de plus ne fait qu'ajouter
+// sa table d'évaluation (3,7 Mo) et une goroutine qui ne pioche jamais rien.
+//
+// Le plafond était NumRolls, ce qui était juste tant qu'un candidat
+// approfondi ouvrait sa propre file de 21 lancers. Depuis l'aplatissement
+// (deepenLevel), un niveau porte Filter[depth] × 21 tâches — 63 à la
+// configuration canonique 2 ply —, et brider à 21 laisserait les machines à
+// plus de vingt cœurs sur la table.
+func (s *Searcher) maxUsefulWorkers() int {
+	widest := 1
+	for depth := 1; depth <= s.cfg.Ply && depth < len(s.cfg.Filter); depth++ {
+		if f := s.cfg.Filter[depth]; f > widest {
+			widest = f
+		}
+	}
+	return NumRolls * widest
+}
+
+// LiveWorkers is how many goroutines a FOREGROUND search — one the user is
+// waiting on, and the only search running — should spread its roll queue
+// over: every core the machine has, or one when the depth is too shallow for
+// the pool to pay for itself.
+//
+// ADR-0011 calls intra-search parallelism a requirement rather than an
+// optimisation ("without it the interactive promise does not hold"), and yet
+// nothing in production called WithWorkers until #148: the panel ran a
+// 2-ply decision on one core. This is the function that closes that gap, and
+// the ply floor is the whole of its policy.
+//
+// The 2-ply floor is measured, not assumed. Building the pool costs about
+// 6 ms (eight searchers to allocate), and that is the whole of the argument:
+//
+//	0 ply  286 µs serial, 352 µs with eight workers — there is no roll queue
+//	       to spread at all, only barriers to pay for. This is the tier the
+//	       board refreshes synchronously on every edit.
+//	1 ply  3,5 ms serial, 1,8 ms with eight workers — a real speedup, and
+//	       still a net LOSS once the 6 ms of pool cost the tier is on the hook
+//	       for.
+//	2 ply  250 ms serial, 55 ms with eight workers. Nothing to weigh.
+//
+// It is deliberately NOT what a batch job should use. There, the parallelism
+// is across positions (#147): a pool per position on top of that would
+// oversubscribe the cores and multiply the scratch by the number of workers
+// for nothing. That path keeps its own serial searcher per goroutine
+// (NewBatchSearcher, EvaluatePositionWith) and never comes through here.
+func LiveWorkers(ply int) int {
+	if ply < 2 {
+		return 1
+	}
+	return runtime.NumCPU()
 }
 
 // Reconfigure points an existing searcher at a new configuration — the same

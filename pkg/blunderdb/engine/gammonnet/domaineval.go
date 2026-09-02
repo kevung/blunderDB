@@ -187,6 +187,13 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 	if err != nil {
 		return EvalResult{}, err
 	}
+	// Un appelant qui entre par ici attend son résultat, et c'est la seule
+	// recherche en cours : elle prend tous les cœurs (#148, ADR-0011). Le
+	// palier 0-ply synchrone n'en prend aucun — LiveWorkers rend 1 en
+	// dessous de 2 ply —, et un LOT n'entre pas par ici : il garde son propre
+	// chercheur série (NewBatchSearcher/EvaluatePositionWith), son
+	// parallélisme étant entre positions.
+	searcher = searcher.WithWorkers(LiveWorkers(cfg.Ply))
 
 	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
 }

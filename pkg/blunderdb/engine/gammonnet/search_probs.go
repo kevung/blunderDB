@@ -121,7 +121,7 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 	if level >= len(s.cands) {
 		return [NumOutputs]float32{}, false
 	}
-	cands := s.cands[level]
+	cands := s.candsAt(level)
 
 	var total [NumOutputs]float64
 	for r := 0; r < NumRolls; r++ {

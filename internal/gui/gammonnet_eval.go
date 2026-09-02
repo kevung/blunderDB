@@ -221,6 +221,11 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 	if err != nil {
 		return nil
 	}
+	// Le même pool que la décision d'à côté (#148, ADR-0011) : cette marche
+	// est une recherche complète, pas un supplément gratuit — au palier de
+	// fond, Probs re-parcourt l'arbre. Série au palier synchrone, où
+	// LiveWorkers rend 1.
+	searcher = searcher.WithWorkers(gammonnet.LiveWorkers(ply))
 	// pos's own dice-free representation — Searcher.Plays takes the dice
 	// separately (see evaluateMoves), so gnPos here is already the pre-roll
 	// position, no clone/clear needed.
@@ -298,6 +303,7 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	if err != nil {
 		return nil
 	}
+	searcher = searcher.WithWorkers(gammonnet.LiveWorkers(ply))
 	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply)
 
 	mover := pos.PlayerOnRoll

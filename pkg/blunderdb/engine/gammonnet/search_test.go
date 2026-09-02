@@ -5,6 +5,7 @@ package gammonnet
 import (
 	"fmt"
 	"math"
+	"runtime"
 	"sync"
 	"testing"
 
@@ -289,34 +290,45 @@ func TestParallelSearchIsBitIdentical(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	par, err := NewSearcher(DefaultConfig(2))
-	if err != nil {
-		t.Fatal(err)
-	}
-	par = par.WithWorkers(8)
-
 	a := make([]Candidate, MaxPlays)
-	b := make([]Candidate, MaxPlays)
-	pa, pb := p, p
+	pa := p
 	na, err := serial.Plays(&pa, 3, 1, a)
 	if err != nil {
 		t.Fatal(err)
 	}
-	nb, err := par.Plays(&pb, 3, 1, b)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if na != nb {
-		t.Fatalf("%d candidates serial, %d parallel", na, nb)
-	}
-	for i := 0; i < na; i++ {
-		if a[i].Play.Result != b[i].Play.Result {
-			t.Fatalf("candidate %d is a different play", i)
-		}
-		if a[i].Equity != b[i].Equity {
-			t.Fatalf("candidate %d: serial %.17g, parallel %.17g — not bit-identical",
-				i, a[i].Equity, b[i].Equity)
-		}
+
+	// Le nombre d'ouvriers ne doit changer QUE qui calcule chaque terme. Un,
+	// deux, la machine, et un chiffre plus grand que le niveau ne porte de
+	// tâches (WithWorkers borne à Filter[depth] × 21 : la file se vide alors
+	// avant que les derniers ouvriers n'aient pioché quoi que ce soit, ce qui
+	// est précisément le cas limite à couvrir).
+	for _, nw := range []int{1, 2, runtime.NumCPU(), 64} {
+		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
+			par, err := NewSearcher(DefaultConfig(2))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par = par.WithWorkers(nw)
+
+			b := make([]Candidate, MaxPlays)
+			pb := p
+			nb, err := par.Plays(&pb, 3, 1, b)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if na != nb {
+				t.Fatalf("%d candidates serial, %d parallel", na, nb)
+			}
+			for i := 0; i < na; i++ {
+				if a[i].Play.Result != b[i].Play.Result {
+					t.Fatalf("candidate %d is a different play", i)
+				}
+				if a[i].Equity != b[i].Equity {
+					t.Fatalf("candidate %d: serial %.17g, parallel %.17g — not bit-identical",
+						i, a[i].Equity, b[i].Equity)
+				}
+			}
+		})
 	}
 }
 
