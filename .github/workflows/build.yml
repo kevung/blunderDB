@@ -679,18 +679,19 @@ jobs:
             blunderDB-${{ env.VERSION }}.flatpak
             blunderDB-${{ env.VERSION }}.flatpak.sha256
 
-  # winget manifests, release tags only. Renders packaging/winget/*.yaml.in
-  # against the Windows .exe checksum taken from the build artifact (same
-  # reasoning as `flatpak`: no polling of the release) and attaches the
-  # manifest tree to the release as a zip. Nothing is submitted to
-  # microsoft/winget-pkgs here — that is a pull request opened by hand, see
-  # packaging/winget/README.md.
-  winget-manifests:
+  # winget manifests + Homebrew cask, release tags only. Renders
+  # packaging/winget/*.yaml.in and packaging/homebrew/blunderdb.rb.in against
+  # the checksums taken from the build artifacts (same reasoning as `flatpak`:
+  # no polling of the release) and attaches the results to the release: a zip
+  # of the winget manifest tree and the rendered cask. Nothing is submitted to
+  # microsoft/winget-pkgs or pushed to a Homebrew tap here — both are steps
+  # taken by hand, see packaging/winget/README.md and packaging/homebrew/README.md.
+  package-manifests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
-    # softprops/action-gh-release attaches the zip to the release.
+    # softprops/action-gh-release attaches the files to the release.
     permissions:
       contents: write
     env:
@@ -705,13 +706,23 @@ jobs:
           name: Wails Build windows-latest blunderDB ${{ env.VERSION }}
           path: dist
 
-      - name: Render the winget manifests
+      - name: Download the macOS build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Wails Build macos-latest blunderDB ${{ env.VERSION }}
+          path: dist
+
+      - name: Render the winget manifests and the Homebrew cask
         run: |
           set -euo pipefail
           scripts/winget-render.sh "$VERSION" --assets dist --out out/winget
+          scripts/homebrew-render.sh "$VERSION" --assets dist --out out/homebrew
           (cd out/winget && zip -r "../blunderDB-winget-manifests-${VERSION}.zip" manifests)
-          cd out && sha256sum "blunderDB-winget-manifests-${VERSION}.zip" \
-            > "blunderDB-winget-manifests-${VERSION}.zip.sha256"
+          cp out/homebrew/Casks/blunderdb.rb "out/blunderdb-${VERSION}.rb"
+          cd out
+          for f in "blunderDB-winget-manifests-${VERSION}.zip" "blunderdb-${VERSION}.rb"; do
+            sha256sum "$f" > "$f.sha256"
+          done
         shell: bash
 
       - name: Release
@@ -720,6 +731,8 @@ jobs:
           files: |
             out/blunderDB-winget-manifests-${{ env.VERSION }}.zip
             out/blunderDB-winget-manifests-${{ env.VERSION }}.zip.sha256
+            out/blunderdb-${{ env.VERSION }}.rb
+            out/blunderdb-${{ env.VERSION }}.rb.sha256
 
   # Cheap gate for the `docs` job below: did this push/PR touch anything the
   # documentation build reads? Only doc/** and this workflow can change the
