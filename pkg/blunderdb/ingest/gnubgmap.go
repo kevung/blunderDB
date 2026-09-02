@@ -95,26 +95,12 @@ func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.Mov
 
 // createPositionFromGnuBG converts a gnubgparser.Position to a domain.Position.
 func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.Game, matchLength int) (*domain.Position, error) {
-	awayScore1 := matchLength - game.Score[0]
-	awayScore2 := matchLength - game.Score[1]
-	if matchLength == 0 {
-		awayScore1 = -1
-		awayScore2 = -1
-	}
-
-	cubeValue := 0
-	if gnubgPos.CubeValue > 0 {
-		for v := gnubgPos.CubeValue; v > 1; v >>= 1 {
-			cubeValue++
-		}
-	}
-
 	pos := &domain.Position{
 		PlayerOnRoll: gnubgPos.OnRoll,
 		DecisionType: domain.CheckerAction,
-		Score:        [2]int{awayScore1, awayScore2},
+		Score:        domain.AwayScores(matchLength, game.Score[0], game.Score[1]),
 		Cube: domain.Cube{
-			Value: cubeValue,
+			Value: domain.CubeExponent(gnubgPos.CubeValue),
 			Owner: gnubgPos.CubeOwner,
 		},
 		Dice: [2]int{0, 0},
@@ -148,17 +134,9 @@ func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.G
 		}
 	}
 
-	player1Total := 0
-	player2Total := 0
-	for i := 0; i < 26; i++ {
-		if pos.Board.Points[i].Color == 0 {
-			player1Total += pos.Board.Points[i].Checkers
-		} else if pos.Board.Points[i].Color == 1 {
-			player2Total += pos.Board.Points[i].Checkers
-		}
+	if err := pos.Board.RecomputeBearoff(); err != nil {
+		return nil, err
 	}
-	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
-
 	return pos, nil
 }
 
@@ -394,11 +372,21 @@ func buildGnuBGCubeForChecker(analysis *gnubgparser.CubeAnalysis) *domain.Positi
 // convertGnuBGCubeMWCToEMG converts a cube analysis' cubeful equities from Match
 // Winning Chances to Equivalent Money Game equity, mirroring GNUbg's mwc2eq().
 // Copied from database.convertGnuBGCubeMWCToEMG (depends only on engine + parser).
-func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1, fMove, cubeValue, matchLength int) {
+//
+// crawford is gnuBG's cubeinfo.fCrawford: true while the game being converted
+// IS the Crawford game (SGF RU[Crawford:CrawfordGame], gnubgparser.Game.CrawfordGame).
+// It used to be hard-wired to false (issue #170). The flag is passed through
+// faithfully, but it has no numerical reach: gnuBG's getME takes its
+// post-Crawford branch whenever a player is 1-away, which the score of a
+// Crawford game always says on its own, and gnuBG records no cube analysis in
+// the Crawford game anyway (the cube is dead). gnubg_crawford_test.go pins
+// both facts, so a database imported before this change carries no wrong
+// equity from it.
+func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1, fMove, cubeValue, matchLength int, crawford bool) {
 	if matchLength <= 0 || analysis == nil {
 		return
 	}
-	fCrawford := false
+	fCrawford := crawford
 
 	mwcWin := float32(engine.GnuBGGetME(score0, score1, matchLength, fMove, cubeValue, fMove, fCrawford))
 	mwcLose := float32(engine.GnuBGGetME(score0, score1, matchLength, fMove, cubeValue, 1-fMove, fCrawford))

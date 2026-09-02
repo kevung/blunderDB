@@ -196,30 +196,16 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 }
 
 // createPositionFromBGF builds a domain.Position from BGF board state.
-func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen, cubeValue, cubeOwner int, isCrawford bool) *domain.Position {
+func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen, cubeValue, cubeOwner int, isCrawford bool) (*domain.Position, error) {
 	scoreGreen := bgfGetInt(gameData, "scoreGreen")
 	scoreRed := bgfGetInt(gameData, "scoreRed")
-
-	awayScore1 := matchLen - scoreGreen
-	awayScore2 := matchLen - scoreRed
-	if matchLen == 0 {
-		awayScore1 = -1
-		awayScore2 = -1
-	}
-
-	cubeExponent := 0
-	if cubeValue > 0 {
-		for v := cubeValue; v > 1; v >>= 1 {
-			cubeExponent++
-		}
-	}
 
 	pos := &domain.Position{
 		PlayerOnRoll: 0,
 		DecisionType: domain.CheckerAction,
-		Score:        [2]int{awayScore1, awayScore2},
+		Score:        domain.AwayScores(matchLen, scoreGreen, scoreRed),
 		Cube: domain.Cube{
-			Value: cubeExponent,
+			Value: domain.CubeExponent(cubeValue),
 			Owner: cubeOwner,
 		},
 		Dice: [2]int{0, 0},
@@ -250,19 +236,12 @@ func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, 
 		pos.Board.Points[0] = domain.Point{Checkers: boardState[25], Color: 1}
 	}
 
-	player1Total := 0
-	player2Total := 0
-	for i := 0; i < 26; i++ {
-		if pos.Board.Points[i].Color == 0 {
-			player1Total += pos.Board.Points[i].Checkers
-		} else if pos.Board.Points[i].Color == 1 {
-			player2Total += pos.Board.Points[i].Checkers
-		}
+	if err := pos.Board.RecomputeBearoff(); err != nil {
+		return nil, err
 	}
-	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
 
 	_ = isCrawford // reserved (matches legacy signature; Jacoby/Beaver TODO)
-	return pos
+	return pos, nil
 }
 
 // bgfFormatSubmoves renders a from/to array (1-based player perspective, 25=bar,

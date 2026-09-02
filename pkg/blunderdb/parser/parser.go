@@ -9,10 +9,12 @@
 // doubling-cube or a checker-move analysis block (French / English / Japanese /
 // German); blunderDB's own internal export format; and a trailing comment.
 //
-// The logic is a faithful port of the JS parser — including its quirks (e.g. the
-// whole-string comma→dot normalization that also rewrites commas inside
-// comments). Go's regexp uses Perl-style leftmost-first submatching, so the
-// greedy/lazy/fixed-width captures behave like the original JS regexes.
+// The logic is a port of the JS parser. Go's regexp uses Perl-style
+// leftmost-first submatching, so the greedy/lazy/fixed-width captures behave
+// like the original JS regexes. One quirk of the original was dropped: it
+// rewrote every comma of the text into a dot to read "0,491" in a German or
+// French export, comments included; the numeric captures now accept either
+// separator and pf() reads both, so a comment keeps its commas.
 package parser
 
 import (
@@ -43,7 +45,8 @@ var (
 )
 
 // ParsePosition is the inverse of the clipboard text builders. It never panics;
-// it returns an error only for empty input or a missing XGID (as the JS does).
+// it returns an error for empty input, a missing XGID (as the JS does), and for
+// an analysis block it can see but cannot read (ErrUnrecognisedAnalysis).
 func ParsePosition(text string) (Result, error) {
 	if strings.TrimSpace(text) == "" {
 		return Result{}, errEmpty
@@ -72,9 +75,9 @@ func ParsePosition(text string) (Result, error) {
 	isInternalDoubling := strings.Contains(raw, "Analysis:\nDoubling Cube Analysis:")
 	isGerman := strings.Contains(raw, "Spieler") || strings.Contains(raw, "Gegner") || strings.Contains(raw, "Dopplerwürfel")
 
-	// Working copy with the whole-string comma→dot normalization (JS:831). This
-	// also rewrites commas inside comments — a deliberate quirk kept for parity.
-	content := strings.ReplaceAll(raw, ",", ".")
+	// The JS parser rewrote every comma into a dot here; the numeric captures
+	// below accept both separators instead, so comments keep their commas.
+	content := raw
 
 	// XGID line (JS:833-838).
 	var xgid string
@@ -105,9 +108,39 @@ func ParsePosition(text string) (Result, error) {
 		parseCubeText(content, engineName, pos.PlayerOnRoll, isFrench, isJapanese, isGerman, analysis)
 	}
 
+	if analysis.AnalysisType == "" && looksLikeAnalysis(content) {
+		return Result{}, ErrUnrecognisedAnalysis
+	}
+	if analysis.CheckerAnalysis != nil && !checkerChancesRead(analysis.CheckerAnalysis.Moves) && strings.Contains(content, "(G:") {
+		// The move lines were read (XG writes "eq:" in most of its languages)
+		// but not one win-chance line was: the Player/Opponent words are in a
+		// language the parser does not know. Saving 0 % everywhere would be
+		// silently wrong.
+		return Result{}, ErrUnrecognisedAnalysis
+	}
+
 	comment := extractComment(content, analysis.AnalysisType == "DoublingCube")
 
 	return Result{Position: pos, Analysis: analysis, Comment: comment}, nil
+}
+
+// looksLikeAnalysis reports whether the text carries what every XG analysis
+// export carries in every language: a numbered move list indented by four
+// spaces, or a win-chance breakdown "(G:…% B:…%)". A bare XGID or a board
+// diagram has neither and stays a plain position.
+func looksLikeAnalysis(content string) bool {
+	return strings.Contains(content, "(G:") || reMu.get(`(?m)^ {4}\d+\.\s`).MatchString(content)
+}
+
+// checkerChancesRead reports whether at least one move carries a win chance.
+// No real position gives every candidate 0 % to both sides.
+func checkerChancesRead(moves []domain.CheckerMove) bool {
+	for _, m := range moves {
+		if m.PlayerWinChance != 0 || m.OpponentWinChance != 0 {
+			return true
+		}
+	}
+	return false
 }
 
 // ── Position metadata ─────────────────────────────────────────────
@@ -266,7 +299,7 @@ func parseCheckerText(content, engineName string, playerOnRoll int, isFrench, is
 	if isFrench {
 		eq = "éq:"
 	}
-	moveRe := reMu.get(`(?m)^ {4}(\d+)\.\s(.{11})\s(.{28})\s` + eq + `(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?`)
+	moveRe := reMu.get(`(?m)^ {4}(\d+)\.\s(.{11})\s(.{28})\s` + eq + `(.{5,7})\s(?:\((-?[-.,\d]{5,7})\))?`)
 	playerRe := reMu.get(playerPctPattern(isFrench, isJapanese, isGerman, true))
 	opponentRe := reMu.get(playerPctPattern(isFrench, isJapanese, isGerman, false))
 
@@ -318,26 +351,33 @@ func playerPctPattern(isFrench, isJapanese, isGerman, player bool) string {
 	switch {
 	case isFrench:
 		if player {
-			return `Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+			return `Joueur:\s*` + pctTriple
 		}
-		return `Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+		return `Adversaire:\s*` + pctTriple
 	case isJapanese:
 		if player {
-			return `プレーヤー:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+			return `プレーヤー:\s*` + pctTriple
 		}
-		return `対戦相手:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+		return `対戦相手:\s*` + pctTriple
 	case isGerman:
 		if player {
-			return `Spieler:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+			return `Spieler:\s*` + pctTriple
 		}
-		return `Gegner:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+		return `Gegner:\s*` + pctTriple
 	default:
 		if player {
-			return `Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+			return `Player:\s*` + pctTriple
 		}
-		return `Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`
+		return `Opponent:\s*` + pctTriple
 	}
 }
+
+// pct is a percentage as XG prints it, with a dot or a comma for the decimal
+// separator depending on the locale.
+const (
+	pct       = `(\d+[.,]\d+)`
+	pctTriple = pct + `%.*\(G:` + pct + `% B:` + pct + `%\)`
+)
 
 // ── XG doubling-cube TEXT (JS:1036-1242) ──────────────────────────
 func hasCubefulBlock(content string, isFrench, isJapanese, isGerman bool) bool {
@@ -379,84 +419,84 @@ func parseCubeText(content, engineName string, playerOnRoll int, isFrench, isJap
 		d.AnalysisDepth = strings.TrimSpace(m[1])
 	}
 	if m := find(pick(
-		`Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Spieler Gewinnchancen:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`)); m != nil {
+		`Chance de gain du joueur:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Player Winning Chances:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Spieler Gewinnchancen:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Player Winning Chances:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`)); m != nil {
 		d.PlayerWinChances = pf(m[1])
 		d.PlayerGammonChances = pf(m[2])
 		d.PlayerBackgammonChances = pf(m[3])
 	}
 	if m := find(pick(
-		`Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Gewinnchancen des Gegners:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`,
-		`Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)`)); m != nil {
+		`Chance de gain de l'adversaire:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Opponent Winning Chances:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Gewinnchancen des Gegners:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`,
+		`Opponent Winning Chances:\s+(\d+[.,]\d+)% \(G:(\d+[.,]\d+)% B:(\d+[.,]\d+)%\)`)); m != nil {
 		d.OpponentWinChances = pf(m[1])
 		d.OpponentGammonChances = pf(m[2])
 		d.OpponentBackgammonChances = pf(m[3])
 	}
 	if m := find(pick(
-		`Equités sans videau\s*:\s*Pas de double=([+\-\d.]+).\s*Double=([+\-\d.]+)`,
-		`Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+).`,
-		`Equities ohne Dopplerwürfel\s*:\s*Nicht Doppeln=([+\-\d.]+).\s*Doppeln=([+\-\d.]+)`,
-		`Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+)`)); m != nil {
+		`Equités sans videau\s*:\s*Pas de double=([+\-]?\d+(?:[.,]\d+)?).\s*Double=([+\-]?\d+(?:[.,]\d+)?)`,
+		`Cubeless Equities:\s*No Double=([+\-]?\d+(?:[.,]\d+)?).\s*Double=([+\-]?\d+(?:[.,]\d+)?).`,
+		`Equities ohne Dopplerwürfel\s*:\s*Nicht Doppeln=([+\-]?\d+(?:[.,]\d+)?).\s*Doppeln=([+\-]?\d+(?:[.,]\d+)?)`,
+		`Cubeless Equities:\s*No Double=([+\-]?\d+(?:[.,]\d+)?).\s*Double=([+\-]?\d+(?:[.,]\d+)?)`)); m != nil {
 		d.CubelessNoDoubleEquity = pf(m[1])
 		d.CubelessDoubleEquity = pf(m[2])
 	}
 	if m := find(pick(
-		`Pas de double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`ノーダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Nicht Doppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`No double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Pas de double\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`ノーダブル\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Nicht Doppeln\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`No double\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulNoDoubleEquity = pf(m[1])
 		d.CubefulNoDoubleError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Double/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`ダブル/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Doppeln/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Double/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Double/Prend:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`ダブル/テイク:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Doppeln/Annehmen:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Double/Take:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulDoubleTakeEquity = pf(m[1])
 		d.CubefulDoubleTakeError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Double/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`ダブル/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Doppeln/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Double/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Double/Passe:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`ダブル/パス:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Doppeln/Ablehnen:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Double/Pass:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulDoublePassEquity = pf(m[1])
 		d.CubefulDoublePassError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Pas de redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`ノーリダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Nicht Redoppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`No redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Pas de redouble\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`ノーリダブル\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Nicht Redoppeln\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`No redouble\s*:\s*([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulNoDoubleEquity = pf(m[1])
 		d.CubefulNoDoubleError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Redouble/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`リダブル/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Redoppeln/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Redouble/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Redouble/Prend:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`リダブル/テイク:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Redoppeln/Annehmen:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Redouble/Take:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulDoubleTakeEquity = pf(m[1])
 		d.CubefulDoubleTakeError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Redouble/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`リダブル/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Redoppeln/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Redouble/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Redouble/Passe:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`リダブル/パス:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Redoppeln/Ablehnen:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Redouble/Pass:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulDoublePassEquity = pf(m[1])
 		d.CubefulDoublePassError = pfOrZero(m[2])
 	}
 	if m := find(pick(
-		`Double/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`ダブル/ビーバー:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Doppeln/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`,
-		`Double/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?`)); m != nil {
+		`Double/Beaver:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`ダブル/ビーバー:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Doppeln/Beaver:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`,
+		`Double/Beaver:\s+([+\-]?\d+(?:[.,]\d+)?)(?: \(([+\-]?\d+(?:[.,]\d+)?)\))?`)); m != nil {
 		d.CubefulDoubleTakeEquity = pf(m[1])
 		d.CubefulDoubleTakeError = pfOrZero(m[2])
 	}
@@ -464,17 +504,17 @@ func parseCubeText(content, engineName string, playerOnRoll int, isFrench, isJap
 		d.BestCubeAction = strings.TrimSpace(m[1])
 	}
 	if m := find(pick(
-		`Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%`,
-		`ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+\.\d+)%`,
-		`Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%`,
-		`Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%`)); m != nil {
+		`Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+[.,]\d+)%`,
+		`ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+[.,]\d+)%`,
+		`Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+[.,]\d+)%`,
+		`Percentage of wrong pass needed to make the double decision right:\s*(\d+[.,]\d+)%`)); m != nil {
 		d.WrongPassPercentage = pf(m[1])
 	}
 	if m := find(pick(
-		`Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%`,
-		`ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+\.\d+)%`,
-		`Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%`,
-		`Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%`)); m != nil {
+		`Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+[.,]\d+)%`,
+		`ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+[.,]\d+)%`,
+		`Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+[.,]\d+)%`,
+		`Percentage of wrong take needed to make the double decision right:\s*(\d+[.,]\d+)%`)); m != nil {
 		d.WrongTakePercentage = pf(m[1])
 	}
 
@@ -537,7 +577,8 @@ func extractComment(content string, isDoublingCube bool) string {
 
 // ── small helpers ─────────────────────────────────────────────────
 func pf(s string) float64 {
-	m := leadNum.FindString(strings.TrimSpace(s))
+	// XG writes "0,491" in its German, French and Russian locales.
+	m := leadNum.FindString(strings.ReplaceAll(strings.TrimSpace(s), ",", "."))
 	if m == "" {
 		return 0
 	}

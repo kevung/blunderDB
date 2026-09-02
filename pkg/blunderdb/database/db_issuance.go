@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"os"
 	"strings"
@@ -184,7 +183,7 @@ func InspectIssuance(path string) (IssuanceInfo, error) {
 	// A bare handle, deliberately: no PRAGMAs, no migration, nothing that would write to a
 	// file that is only being looked at. sqlite.New does not own the handle, so it is closed
 	// here.
-	db, err := sql.Open("sqlite", path)
+	db, err := openExistingSQLite(path)
 	if err != nil {
 		return IssuanceInfo{}, err
 	}

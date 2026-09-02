@@ -882,6 +882,7 @@
         "sessionRestoredViews": "Сессия восстановлена с видами",
         "matchAlreadyImported": "Этот матч уже импортирован",
         "positionAlreadyExists": "Эта позиция уже существует",
+        "positionAlreadyExistsWithId": "Эта позиция уже существует (№ {id}); обновление отклонено",
         "updateOnlyEdit": "Обновление возможно только в режиме редактирования",
         "failedRenderBoard": "Не удалось отрендерить изображение доски",
         "errorImportingBgblitzMatch": "Ошибка импорта матча BGBlitz: {error}",

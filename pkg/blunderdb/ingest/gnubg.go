@@ -38,7 +38,7 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 		return nil, fmt.Errorf("ingest: parse gnubg file: %w", err)
 	}
 
-	return mapGnuBGMatch(match, isSGF, path), nil
+	return mapGnuBGMatch(match, isSGF, path)
 }
 
 // MapGnuBGText maps GnuBG .mat match text (e.g. a clipboard paste) into a
@@ -50,13 +50,13 @@ func MapGnuBGText(content string) (*MatchGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse gnubg text: %w", err)
 	}
-	return mapGnuBGMatch(match, false, "clipboard"), nil
+	return mapGnuBGMatch(match, false, "clipboard")
 }
 
 // mapGnuBGMatch builds the MatchGraph from an already-parsed gnubgparser.Match.
 // isSGF selects the move-coordinate system; filePath is recorded as the match's
 // source.
-func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) *MatchGraph {
+func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) (*MatchGraph, error) {
 	graph := &MatchGraph{
 		Match: domain.Match{
 			Player1Name:   match.Metadata.Player1,
@@ -76,6 +76,10 @@ func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) *Match
 	for gameIdx := range match.Games {
 		game := match.Games[gameIdx]
 		game.GameNumber = gameIdx + 1
+		moves, err := mapGnuBGGameMoves(&game, match.Metadata.MatchLength, isSGF)
+		if err != nil {
+			return nil, fmt.Errorf("ingest: %s: %w", filepath.Base(filePath), err)
+		}
 		graph.Games = append(graph.Games, GameGraph{
 			Game: domain.Game{
 				GameNumber:   int32(game.GameNumber),
@@ -84,18 +88,18 @@ func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) *Match
 				PointsWon:    int32(game.Points),
 				MoveCount:    len(game.Moves),
 			},
-			Moves: mapGnuBGGameMoves(&game, match.Metadata.MatchLength, isSGF),
+			Moves: moves,
 		})
 	}
 
-	return graph
+	return graph, nil
 }
 
 // mapGnuBGGameMoves replays one game's move records, reconstructing the board
 // state (setboard/setcube/setcubepos/setdice events plus checker moves) and
 // emitting a MoveGraph per checker move and per cube decision. It mirrors the
 // normal-import loop in database.importGnuBGMatchInternal.
-func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) []MoveGraph {
+func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) ([]MoveGraph, error) {
 	var out []MoveGraph
 	currentBoard := initStandardGnuBGPosition()
 	moveNumber := int32(0)
@@ -127,10 +131,18 @@ func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) []Mo
 		}
 
 		switch moveRec.Type {
-		case "move":
-			out = append(out, mapGnuBGCheckerMove(moveNumber, moveRec, posPtr, game, matchLength, isSGF))
-		case "double":
-			out = append(out, mapGnuBGCubeMove(moveNumber, moveRec, posPtr, game, matchLength, i))
+		case "move", "double":
+			var mg MoveGraph
+			var err error
+			if moveRec.Type == "move" {
+				mg, err = mapGnuBGCheckerMove(moveNumber, moveRec, posPtr, game, matchLength, isSGF)
+			} else {
+				mg, err = mapGnuBGCubeMove(moveNumber, moveRec, posPtr, game, matchLength, i)
+			}
+			if err != nil {
+				return nil, fmt.Errorf("game %d, move %d: %w", game.GameNumber, moveNumber+1, err)
+			}
+			out = append(out, mg)
 		}
 
 		// Advance the board.
@@ -151,17 +163,20 @@ func mapGnuBGGameMoves(game *gnubgparser.Game, matchLength int, isSGF bool) []Mo
 		}
 	}
 
-	return out
+	return out, nil
 }
 
 // mapGnuBGCheckerMove builds the MoveGraph for a checker decision, attaching the
 // checker analysis and (if present) the cube-for-checker analysis as ordered
 // fragments — matching the legacy two-save sequence.
-func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr *gnubgparser.Position, game *gnubgparser.Game, matchLength int, isSGF bool) MoveGraph {
+func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr *gnubgparser.Position, game *gnubgparser.Game, matchLength int, isSGF bool) (MoveGraph, error) {
 	player := moveRec.Player
 	checkerMoveStr := gnuBGCheckerMoveStr(moveRec.Move, moveRec.MoveString, player, isSGF)
 
-	pos, _ := createPositionFromGnuBG(posPtr, game, matchLength)
+	pos, err := createPositionFromGnuBG(posPtr, game, matchLength)
+	if err != nil {
+		return MoveGraph{}, err
+	}
 	pos.PlayerOnRoll = player
 	pos.DecisionType = domain.CheckerAction
 	pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
@@ -175,7 +190,7 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 	if moveRec.CubeAnalysis != nil {
 		cubeAnalysis := *moveRec.CubeAnalysis
 		if matchLength > 0 {
-			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength)
+			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength, game.CrawfordGame)
 		}
 		if a := buildGnuBGCubeForChecker(&cubeAnalysis); a != nil {
 			analyses = append(analyses, a)
@@ -193,7 +208,7 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 		},
 		Position: pos,
 		Analyses: analyses,
-	}
+	}, nil
 }
 
 // gnuBGLuckMP converts the SGF LU property to signed millipoints (positive =
@@ -218,11 +233,14 @@ func gnuBGLuckMP(moveRec *gnubgparser.MoveRecord) *int32 {
 
 // mapGnuBGCubeMove builds the MoveGraph for a "double" decision. The played
 // action (Double/Take vs Double/Pass) is read from the opponent's response.
-func mapGnuBGCubeMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr *gnubgparser.Position, game *gnubgparser.Game, matchLength, idx int) MoveGraph {
+func mapGnuBGCubeMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr *gnubgparser.Position, game *gnubgparser.Game, matchLength, idx int) (MoveGraph, error) {
 	player := moveRec.Player
 	cubeAction := gnuBGDoubleResponse(game, idx)
 
-	pos, _ := createPositionFromGnuBG(posPtr, game, matchLength)
+	pos, err := createPositionFromGnuBG(posPtr, game, matchLength)
+	if err != nil {
+		return MoveGraph{}, err
+	}
 	pos.PlayerOnRoll = player
 	pos.DecisionType = domain.CubeAction
 	pos.Dice = [2]int{0, 0}
@@ -231,7 +249,7 @@ func mapGnuBGCubeMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr 
 	if moveRec.CubeAnalysis != nil {
 		cubeAnalysis := *moveRec.CubeAnalysis
 		if matchLength > 0 {
-			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength)
+			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength, game.CrawfordGame)
 		}
 		if a := buildGnuBGCubeAnalysis(&cubeAnalysis, cubeAction); a != nil {
 			analyses = append(analyses, a)
@@ -248,7 +266,7 @@ func mapGnuBGCubeMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr 
 		},
 		Position: pos,
 		Analyses: analyses,
-	}
+	}, nil
 }
 
 // gnuBGDoubleResponse looks ahead from a "double" record at index idx to find

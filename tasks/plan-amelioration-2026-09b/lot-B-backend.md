@@ -23,12 +23,20 @@ B.10 à B.19 = **étape 2 (consolider)**, perf et dette.
 `ingest/gnubgmap.go:401` : `convertGnuBGCubeMWCToEMG` appelle `GnuBGGetME(…, fCrawford=false)`.
 Toutes les décisions de videau de la partie de Crawford importées d'un `.sgf`
 sont converties avec la mauvaise référence. Touche l'invariant ADR-0019.
-- [ ] Propager le drapeau Crawford du `gnubgparser.Game`.
-- [ ] Test de parité XG↔GnuBG sur le même match (harnais `TestLuckAgreesAcrossFormats`),
-      partie de Crawford incluse (fixture à produire depuis `testdata/`).
-- [ ] Les bases déjà importées portent des équités fausses sur ces
-      positions : documenter dans la note de release ; `verify` peut les
-      compter (positions `crawford` avec `cube_error` non nul de source GnuBG).
+- [x] Propager le drapeau Crawford du `gnubgparser.Game` (`Game.CrawfordGame`,
+      posé par `RU[Crawford:CrawfordGame]` en SGF).
+- [x] Test de parité XG↔GnuBG sur le même match (harnais `TestLuckAgreesAcrossFormats`),
+      partie de Crawford incluse : `charlot1-charlot2` est un match en 7 points
+      dont la 4e partie (6-2) est la partie de Crawford dans les deux formats
+      (`ingest/gnubg_crawford_test.go`).
+- [x] Les bases déjà importées ne portent **aucune** équité fausse, constat
+      réfuté par le code et pinné par deux tests : (1) `GnuBGGetME` prend la
+      branche post-Crawford dès qu'un joueur est à 1-away, ce que le score
+      d'une partie de Crawford dit toujours de lui-même — `fCrawford` vrai ou
+      faux y donne le même MWC pour toute longueur de match, tout trait, tout
+      videau ; (2) gnuBG n'écrit aucune analyse de videau dans la partie de
+      Crawford (videau mort), donc la conversion n'y est jamais appelée. Pas
+      de note de release ni de compteur `verify` : il n'y a rien à compter.
 
 ## B.3 — `has_jacoby`/`has_beaver` jamais posés par les importeurs, mais dans le hash Zobrist [M] — bug, dédup (#171)
 
@@ -109,19 +117,33 @@ Même bump que A.2/B.3.
   inexistant crée un `.db` vide sur le disque de l'utilisateur.
 - `positions_sqlite.go:152-171` : éditer une position vers un hash existant
   remonte `UNIQUE constraint failed` brut.
-- [ ] Diagnostic « bloc d'analyse non reconnu (langue ?) » remonté à la GUI
-      (toast) et à la CLI. **Le rapport [P9](../../docs/recherche/P9-formats-de-fichiers.md)
-      tranche la liste** : XG n'existe qu'en anglais, allemand, français, espagnol,
-      japonais, grec et russe — donc n'ajouter que **ES, EL, RU** (jamais IT, FI, NL, PT :
-      ces interfaces XG n'existent pas). Les libellés exacts restent à relever sur des
-      échantillons réels ; ne pas inventer de marqueur.
-- [ ] Refuser l'import avec un message nommant le jeu et le coup si un joueur
-      a ≠ 15 pions ; helper `domain.AwayScores`, `domain.CubeExponent`,
-      `(*Board).RecomputeBearoff()` partagés par les trois importeurs.
-- [ ] Normaliser la virgule seulement dans les champs numériques.
-- [ ] `os.Stat` avant `sql.Open` (ou DSN `mode=ro`).
-- [ ] Erreur de domaine « cette position existe déjà (id N) » avec proposition
-      d'y aller.
+- [x] Diagnostic `parser.ErrUnrecognisedAnalysis` (« analysis block not
+      recognised — XG language not supported? ») dès qu'un bloc d'analyse est
+      visible (liste de coups indentée, `(G:…%)`) sans qu'aucun marqueur ne
+      l'ait lu, ou que les coups sont lus mais aucune chance de gain ; remonté
+      à la GUI par le toast d'erreur existant (le collage sur le plateau
+      retombe sur la ligne XGID seule) et au serveur/`call` en 4xx. La CLI
+      n'a pas de chemin d'import de texte XG (`import --type position` lit du
+      JSON) : rien à remonter. XG n'existe qu'en EN/DE/FR/ES/JA/EL/RU (P9) ;
+      ES/EL/RU **non ajoutés** faute d'échantillon vérifié, comportement
+      documenté par `TestUnsupportedXGLanguageIsReportedNotSwallowed`.
+- [x] `domain.AwayScores`, `domain.CubeExponent`, `(*Board).RecomputeBearoff()`
+      partagés par les trois `createPositionFrom*` ; un joueur à plus de 15
+      pions est refusé (`domain.TooManyCheckersError`), et l'erreur remonte
+      jusqu'à `MapXG`/`MapGnuBG`/`MapBGF` en nommant le fichier, la partie et
+      le coup (les mappers XG avalaient l'erreur en supprimant le coup).
+- [x] Virgule acceptée comme séparateur décimal dans les captures numériques
+      (`pf` lit les deux) ; le texte n'est plus réécrit, commentaires et
+      ligne de version gardent leurs virgules (corpus mis à jour).
+- [x] `os.Stat` avant `sql.Open` (`openExistingSQLite`) dans
+      `AnalyzeImportDatabase`, `CommitImportDatabase`, `InspectIssuance` et
+      `ingest.DBImporter` (`sqlite.Open` y créait même une base fraîche).
+- [x] `storage.DuplicatePositionError{ExistingID}` (« this position already
+      exists (id N) », `errors.Is(…, ErrConflict)`) retournée par `Update`
+      des deux backends sur violation UNIQUE du hash, test de contrat commun ;
+      la GUI affiche `status.positionAlreadyExistsWithId` (9 locales) et
+      n'efface plus l'analyse avant que la mise à jour soit acceptée. La
+      « proposition d'y aller » (navigation) reste à faire.
 
 ## B.8 — CLI : codes de retour, `ExitOnError`, sortie JSON [S/M] — DX (#176)
 

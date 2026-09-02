@@ -96,6 +96,51 @@ func testPositionUpdatePreservesID(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testPositionUpdateRefusesDuplicate: editing a position until it is the same
+// as another stored one must not create a second row for that position, nor
+// surface the backend's constraint message. The store refuses with a
+// DuplicatePositionError naming the existing row, and the edited row keeps
+// its previous content.
+func testPositionUpdateRefusesDuplicate(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	a := checkerPos()
+	idA, err := s.Positions().Save(ctx, "", &a)
+	if err != nil {
+		t.Fatalf("Save a: %v", err)
+	}
+	b := checkerPos()
+	b.Dice = [2]int{6, 5}
+	idB, err := s.Positions().Save(ctx, "", &b)
+	if err != nil {
+		t.Fatalf("Save b: %v", err)
+	}
+	if idA == idB {
+		t.Fatal("fixtures are not distinct positions")
+	}
+
+	edited := b
+	edited.Dice = a.Dice // now identical to a
+	err = s.Positions().Update(ctx, "", &edited)
+	var dup *storage.DuplicatePositionError
+	if !errors.As(err, &dup) {
+		t.Fatalf("Update to an existing position: got %v, want *storage.DuplicatePositionError", err)
+	}
+	if dup.ExistingID != idA {
+		t.Errorf("ExistingID = %d, want %d", dup.ExistingID, idA)
+	}
+	if !errors.Is(err, storage.ErrConflict) {
+		t.Errorf("a duplicate position is not reported as ErrConflict: %v", err)
+	}
+
+	got, err := s.Positions().Load(ctx, "", idB)
+	if err != nil {
+		t.Fatalf("Load b after refused update: %v", err)
+	}
+	if got.Dice != b.Dice {
+		t.Errorf("refused update changed the row: dice %v, want %v", got.Dice, b.Dice)
+	}
+}
+
 // testPositionProvenanceSticky pins the rule that makes the individually
 // imported flag usable: it is ORed into the stored value, never assigned.
 // Both orderings below are ordinary user behaviour, and the flag must mean the

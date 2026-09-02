@@ -766,6 +766,14 @@ export async function deletePosition() {
     }
 }
 
+// duplicatePositionId reads the id out of the backend's refusal when an edit
+// turns a position into one that already exists (storage.DuplicatePositionError:
+// "this position already exists (id N)"); null for any other error.
+export function duplicatePositionId(error) {
+    const m = /already exists \(id (\d+)\)/.exec(String(error));
+    return m ? Number(m[1]) : null;
+}
+
 export async function updatePosition() {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
@@ -814,14 +822,17 @@ export async function updatePosition() {
         const positionJSON = JSON.stringify(position);
         const originalPositionJSON = JSON.stringify(originalPosition);
 
+        // The position row goes first: if the edit is refused (it has become
+        // a position that already exists), nothing else must have changed —
+        // deleting the analysis before a refused update lost it for good.
+        analysis.xgid = generateXGID(position);
+        await UpdatePosition(position);
+        logger.log('Position updated with ID:', positionID);
+
         if (positionJSON !== originalPositionJSON) {
             await DeleteAnalysis(positionID);
             logger.log('Analysis deleted for position ID:', positionID);
         }
-
-        analysis.xgid = generateXGID(position);
-        await UpdatePosition(position);
-        logger.log('Position updated with ID:', positionID);
         await SaveAnalysis(positionID, analysis);
         logger.log('Analysis updated for position ID:', positionID);
 
@@ -831,7 +842,12 @@ export async function updatePosition() {
         statusBarModeStore.set('NORMAL');
     } catch (error) {
         logger.error('Error updating position and analysis:', error);
-        setStatusBarMessage(tMsg('status.errorUpdatingPosition'));
+        const existing = duplicatePositionId(error);
+        if (existing !== null) {
+            setStatusBarMessage(tMsg('status.positionAlreadyExistsWithId', { id: existing }));
+        } else {
+            setStatusBarMessage(tMsg('status.errorUpdatingPosition'));
+        }
     } finally {
         statusBarModeStore.set('NORMAL');
     }

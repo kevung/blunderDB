@@ -837,7 +837,7 @@ async function pastePositionToBoard() {
         const clipboardText = await ClipboardGetText();
         if (clipboardText && clipboardText.includes('XGID=')) {
             try {
-                const { positionData } = await parsePositionText(clipboardText);
+                const { positionData } = await parsePositionOnly(clipboardText);
                 applyPositionToBoard(positionData);
                 setStatusBarMessage(tMsg('status.positionPastedClipboard'));
                 return;
@@ -863,6 +863,21 @@ async function pastePositionToBoard() {
         }
         logger.error('Error pasting position to board:', error);
         setStatusBarMessage(tMsg('status.noPositionToPaste'));
+    }
+}
+
+// parsePositionOnly parses text when only the board is wanted. When the
+// backend refuses the analysis block (an XG language it does not know), the
+// bare XGID line is parsed instead: the board is in the XGID, and pasting it
+// onto the board must not depend on the language the analysis was written in.
+async function parsePositionOnly(text) {
+    try {
+        return await parsePositionText(text);
+    } catch (e) {
+        if (!String(e).includes('analysis block not recognised')) throw e;
+        const xgidLine = text.split(/\r?\n/).find((line) => line.trim().startsWith('XGID='));
+        if (!xgidLine) throw e;
+        return parsePositionText(xgidLine.trim());
     }
 }
 

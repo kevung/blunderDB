@@ -882,6 +882,7 @@
         "sessionRestoredViews": "Sessione ripristinata con le viste",
         "matchAlreadyImported": "Questo match è già stato importato",
         "positionAlreadyExists": "Questa posizione esiste già",
+        "positionAlreadyExistsWithId": "Questa posizione esiste già (n. {id}); l'aggiornamento è stato rifiutato",
         "updateOnlyEdit": "L'aggiornamento è possibile solo in modalità di modifica",
         "failedRenderBoard": "Impossibile renderizzare l'immagine del board",
         "errorImportingBgblitzMatch": "Errore durante l'importazione del match BGBlitz: {error}",

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -30,6 +31,15 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: native .db import requires a file path")
 	}
 
+	// sqlite.Open bootstraps a fresh database when the file does not exist —
+	// the right thing for a database being created, the wrong thing for one
+	// being imported: a mistyped path would leave a new, empty .db on disk
+	// and import nothing from it.
+	if info, err := os.Stat(src.Path); err != nil {
+		return Summary{}, fmt.Errorf("ingest: source .db not found: %w", err)
+	} else if info.IsDir() {
+		return Summary{}, fmt.Errorf("ingest: source .db not found: %s is a directory", src.Path)
+	}
 	source, err := sqlite.Open(ctx, src.Path, nil)
 	if err != nil {
 		return Summary{}, fmt.Errorf("ingest: open source .db: %w", err)
