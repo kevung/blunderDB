@@ -194,3 +194,43 @@ func TestEncodeRefusesInvalidPositions(t *testing.T) {
 		})
 	}
 }
+
+// BenchmarkEncode is the per-poste figure for the encoding (#150): Encode as
+// it stands, against the two things it does that a search's own positions do
+// not need — Valid() on a board that is legal by construction, and the full
+// 784-octet clear of a vector it then writes some forty values into.
+func BenchmarkEncode(b *testing.B) {
+	dp, err := domain.DecodeXGID("XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10")
+	if err != nil {
+		b.Fatal(err)
+	}
+	p, err := FromDomain(&dp)
+	if err != nil {
+		b.Fatal(err)
+	}
+	var out [NumFeatures]float32
+	b.Run("complet", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			if !Encode(&p, &out) {
+				b.Fatal("refused")
+			}
+		}
+	})
+	b.Run("legal", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			encodeLegal(&p, &out)
+		}
+	})
+	b.Run("valid-seul", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			if !p.Valid() {
+				b.Fatal("refused")
+			}
+		}
+	})
+	b.Run("clear-seul", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			out = [NumFeatures]float32{}
+		}
+	})
+}

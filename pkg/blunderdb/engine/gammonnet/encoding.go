@@ -45,6 +45,29 @@ func Encode(p *Position, out *[NumFeatures]float32) bool {
 	if !p.Valid() {
 		return false
 	}
+	encodeLegal(p, out)
+	return true
+}
+
+// encodeLegal is Encode on a position the caller already knows is legal.
+//
+// Valid() is not cheap — two passes over the twenty-four points plus two
+// checker counts — and it was HALF of Encode: 91 ns for the whole encoding,
+// 45 ns for the validation alone. A 2-ply decision encodes some fifty
+// thousand positions, so the search paid that half fifty thousand times to
+// re-establish something it had established by construction.
+//
+// By construction, precisely: a node's own position is validated by
+// Generator.LegalPlays before a single play is generated, and every play's
+// Result is that position with checkers moved — apply cannot invent or lose
+// one. The two entry points that take a position from outside (Searcher.Plays
+// and Searcher.Probs) validate it themselves, once, before the recursion
+// starts. Everything in between is internal.
+//
+// Encode keeps its validation. A caller outside this package hands in a
+// position this package did not build, and refusing it is the contract
+// (network.go's EvaluatePosition, and every test).
+func encodeLegal(p *Position, out *[NumFeatures]float32) {
 	*out = [NumFeatures]float32{}
 
 	me := p.Turn
@@ -87,8 +110,6 @@ func Encode(p *Position, out *[NumFeatures]float32) bool {
 	out[myOffIndex] = float32(float64(p.Off[me]) * offScale)
 	out[oppBarIndex] = float32(float64(p.Bar[opponent]) * barScale)
 	out[oppOffIndex] = float32(float64(p.Off[opponent]) * offScale)
-
-	return true
 }
 
 // encodeCheckers writes the 4-unit thermometer: 1, 2, 3, then (n-3)/2.

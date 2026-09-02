@@ -396,10 +396,7 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 			s.cacheHits++
 			continue
 		}
-		if !Encode(res, &s.feat) {
-			cands[i].Probs = [NumOutputs]float32{}
-			continue
-		}
+		encodeLegal(res, &s.feat)
 		_ = ev.Evaluate(s.feat[:], &cands[i].Probs)
 		filled++
 		if useCache {
@@ -555,9 +552,7 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) float64 {
 	var probs [NumOutputs]float32
 	if !s.cache.lookup(pos, &probs) {
-		if !Encode(pos, &s.feat) {
-			return 0
-		}
+		encodeLegal(pos, &s.feat)
 		_ = s.ev.Evaluate(s.feat[:], &probs)
 		s.evals++
 		s.cache.store(pos, &probs)
