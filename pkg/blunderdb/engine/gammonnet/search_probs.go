@@ -82,6 +82,12 @@ func terminalProbs(p *Position) [NumOutputs]float32 {
 // holds MoneyEquity(Probs(pos)) == the equity BestPlay's own recursion
 // assigns to pos, rather than trusting the identity.
 func (s *Searcher) Probs(pos *Position) ([NumOutputs]float32, bool) {
+	// The one validation of this walk, as Searcher.Plays does for the other:
+	// everything below is either this position or a play generated from it,
+	// and encodeLegal takes the rest on construction.
+	if !pos.Valid() {
+		return [NumOutputs]float32{}, false
+	}
 	return s.probsAt(pos, s.cfg.Ply, 0, s.matchState(), s.cfg.CubeOwner)
 }
 
@@ -101,9 +107,7 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 	if depth <= 0 {
 		var probs [NumOutputs]float32
 		if !s.cache.lookup(pos, &probs) {
-			if !Encode(pos, &s.feat) {
-				return [NumOutputs]float32{}, false
-			}
+			encodeLegal(pos, &s.feat)
 			if err := s.ev.Evaluate(s.feat[:], &probs); err != nil {
 				return [NumOutputs]float32{}, false
 			}

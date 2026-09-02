@@ -5,7 +5,7 @@ package gammonnet
 import (
 	_ "embed"
 	"fmt"
-	"sort"
+	"slices"
 	"sync"
 )
 
@@ -193,6 +193,17 @@ type Searcher struct {
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
 	feat  [NumFeatures]float32
+
+	// best is the candidate buffer the two entry points that do not take
+	// one rank into: BestPlay, and evaluateMoves at the domain edge. A
+	// Candidate is 80 octets and MaxPlays is 2048, so allocating one per
+	// call meant 164 Ko allocated and zeroed for every decision — for a
+	// caller that then reads the first entry and, in the batch job, a
+	// handful more. It belongs with the rest of the searcher's scratch,
+	// which already holds six buffers of exactly this size — but allocated
+	// on first use, not at construction: a worker built by WithWorkers only
+	// ever ranks into its caller's buffer and would never touch this one.
+	best []Candidate
 }
 
 // NewSearcher builds a searcher over the embedded networks. Refused, never
@@ -284,12 +295,20 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 
 // BestPlay returns the highest-valued play. It reports false on a dance.
 func (s *Searcher) BestPlay(pos *Position, d1, d2 int) (Candidate, bool, error) {
-	out := make([]Candidate, MaxPlays)
-	n, err := s.Plays(pos, d1, d2, out)
+	n, err := s.Plays(pos, d1, d2, s.scratch())
 	if err != nil || n == 0 {
 		return Candidate{}, false, err
 	}
-	return out[0], true, nil
+	return s.best[0], true, nil
+}
+
+// scratch is the ranking buffer, allocated on first use. Not goroutine-safe,
+// like every other piece of a Searcher's scratch.
+func (s *Searcher) scratch() []Candidate {
+	if s.best == nil {
+		s.best = make([]Candidate, MaxPlays)
+	}
+	return s.best
 }
 
 // rankPlays generates, scores and orders the plays at one node.
@@ -396,10 +415,7 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 			s.cacheHits++
 			continue
 		}
-		if !Encode(res, &s.feat) {
-			cands[i].Probs = [NumOutputs]float32{}
-			continue
-		}
+		encodeLegal(res, &s.feat)
 		_ = ev.Evaluate(s.feat[:], &cands[i].Probs)
 		filled++
 		if useCache {
@@ -555,9 +571,7 @@ func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, 
 func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) float64 {
 	var probs [NumOutputs]float32
 	if !s.cache.lookup(pos, &probs) {
-		if !Encode(pos, &s.feat) {
-			return 0
-		}
+		encodeLegal(pos, &s.feat)
 		_ = s.ev.Evaluate(s.feat[:], &probs)
 		s.evals++
 		s.cache.store(pos, &probs)
@@ -575,9 +589,49 @@ func (s *Searcher) leafValue(pos *Position, state *MatchState, owner CubeOwner) 
 // needs; where two equities tie exactly, the two engines may legitimately pick
 // different plays, and the comparison has to allow for that rather than pretend
 // the tie is a disagreement.
+//
+// Typed, because the reflective one was not free: sort.SliceStable builds a
+// reflect swapper and two closures per call, and moves 80-octet candidates
+// through them. Three sorts per node, ~1 400 nodes, and the allocation
+// counter of a single 2-ply decision read 7 432 — nearly all of them here.
+//
+// Two shapes, one order. Under sortInsertionMax the insertion sort below is
+// stable by construction (it only ever swaps a strictly better candidate
+// past a worse one, never past an equal one) and is what a real node runs:
+// a search node ranks a few dozen plays. Above it — the pruning pass on a
+// double, which can face hundreds — the standard library's typed stable sort
+// takes over, so the cost stays O(n log² n) rather than quadratic on
+// 80-octet moves. A stable sort's output permutation is unique, so which of
+// the two ran can never change the order.
 func sortByEquity(c []Candidate) {
-	sort.SliceStable(c, func(i, j int) bool { return c[i].Equity > c[j].Equity })
+	if len(c) < 2 {
+		return
+	}
+	if len(c) <= sortInsertionMax {
+		for i := 1; i < len(c); i++ {
+			for j := i; j > 0 && c[j].Equity > c[j-1].Equity; j-- {
+				c[j], c[j-1] = c[j-1], c[j]
+			}
+		}
+		return
+	}
+	slices.SortStableFunc(c, func(a, b Candidate) int {
+		switch {
+		case a.Equity > b.Equity:
+			return -1
+		case b.Equity > a.Equity:
+			return 1
+		default:
+			return 0
+		}
+	})
 }
+
+// sortInsertionMax is where sortByEquity stops inserting and starts merging.
+// Measured on the candidate lists a 2-ply search actually produces: the vast
+// majority hold fewer than thirty plays, and an insertion sort beats a merge
+// there by a wide margin on 80-octet elements.
+const sortInsertionMax = 48
 
 // Counters reports what the last searches cost: big-network evaluations that
 // actually ran, small-network (pruning) evaluations, and cache hits. A cache

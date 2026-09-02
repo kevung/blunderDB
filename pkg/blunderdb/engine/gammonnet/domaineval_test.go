@@ -381,3 +381,89 @@ func TestTooGoodIsReported(t *testing.T) {
 		t.Errorf("with Jacoby the too-good position should cash: got %q", res.Cube.BestCubeAction)
 	}
 }
+
+// notationForCandidateNaive is the linear rescan notationForCandidate did
+// before #150, kept for the A/B below and for the equality check that goes
+// with it.
+func notationForCandidateNaive(c *Candidate, legal []domain.LegalPlay, opponent int) string {
+	for _, play := range legal {
+		res := play.Result
+		res.PlayerOnRoll = opponent
+		gresult, err := FromDomain(&res)
+		if err != nil {
+			continue
+		}
+		if gresult == c.Play.Result {
+			return play.Notation
+		}
+	}
+	return ""
+}
+
+// notationBenchFixture ranks the plays of a position with many of them and
+// returns everything the notation phase needs.
+func notationBenchFixture(tb testing.TB) ([]Candidate, []domain.LegalPlay, map[Position]string, int) {
+	dp, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		tb.Fatal(err)
+	}
+	dp.PlayerOnRoll = domain.White
+	dp.Dice = [2]int{3, 3}
+	p, err := FromDomain(&dp)
+	if err != nil {
+		tb.Fatal(err)
+	}
+	s, err := NewSearcher(SearchConfig{Ply: 0})
+	if err != nil {
+		tb.Fatal(err)
+	}
+	out := make([]Candidate, MaxPlays)
+	n, err := s.Plays(&p, 3, 3, out)
+	if err != nil || n == 0 {
+		tb.Fatalf("no plays: %v", err)
+	}
+	opponent := domain.Black
+	return out[:n], domain.LegalMoves(&dp), notationIndex(domain.LegalMoves(&dp), dp.PlayerOnRoll), opponent
+}
+
+// TestNotationIndexMatchesTheLinearScan holds the index to the scan it
+// replaces: the same notation for every candidate, empty ones included.
+func TestNotationIndexMatchesTheLinearScan(t *testing.T) {
+	cands, legal, index, opponent := notationBenchFixture(t)
+	for i := range cands {
+		got := notationForCandidate(&cands[i], index)
+		want := notationForCandidateNaive(&cands[i], legal, opponent)
+		if got != want {
+			t.Fatalf("candidat %d: %q, balayage %q", i, got, want)
+		}
+	}
+	t.Logf("%d candidats, %d coups légaux", len(cands), len(legal))
+}
+
+// BenchmarkNotationPhase is the per-poste figure for the notation lookup
+// (#150). Both forms run in the same process, and both include what they
+// each have to build: the index for one, nothing for the other.
+func BenchmarkNotationPhase(b *testing.B) {
+	cands, legal, _, opponent := notationBenchFixture(b)
+	dp, _ := domain.DecodeXGID(openingXGID)
+	dp.PlayerOnRoll = domain.White
+	b.Run("index", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			index := notationIndex(legal, dp.PlayerOnRoll)
+			for j := range cands {
+				sinkNotation = notationForCandidate(&cands[j], index)
+			}
+		}
+	})
+	b.Run("balayage", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			for j := range cands {
+				sinkNotation = notationForCandidateNaive(&cands[j], legal, opponent)
+			}
+		}
+	})
+}
+
+var sinkNotation string

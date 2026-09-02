@@ -216,3 +216,44 @@ func BenchmarkDecision2Ply(b *testing.B) {
 		b.ReportMetric(100*float64(filled)/float64(slotted), "%fill")
 	}
 }
+
+// BenchmarkDecision2PlyMatch is the same canonical decision in the
+// configuration the application actually runs (ConfigForPosition): match
+// referential and cube-valued leaves, ADR-0016 + ADR-0023. It exists next to
+// the money benchmark above because the cube model is only ever exercised at
+// a score — money leaves take janowskiEquity's closed form and never build a
+// stake chain — so a money-only number cannot see the cost of buildLevels
+// and its bisections.
+func BenchmarkDecision2PlyMatch(b *testing.B) {
+	if testing.Short() {
+		b.Skip("a 2-ply decision costs seconds")
+	}
+	dp, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		b.Fatal(err)
+	}
+	dp.PlayerOnRoll = domain.White
+	p, err := FromDomain(&dp)
+	if err != nil {
+		b.Fatal(err)
+	}
+	cfg := DefaultConfig(2)
+	cfg.UseMatch = true
+	cfg.Match = MatchState{AwayOnRoll: 5, AwayOpponent: 5, Cube: 1}
+	cfg.UseCube = true
+	cfg.CubeOwner = CubeCentred
+	cfg.CubeX = DefaultEfficiency(CubeCentred)
+	s, err := NewSearcher(cfg)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		pos := p
+		if _, ok, err := s.BestPlay(&pos, 3, 1); err != nil || !ok {
+			b.Fatalf("search refused: %v", err)
+		}
+	}
+}
