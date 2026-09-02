@@ -87,6 +87,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"vacuum":     cli.runVacuum,
 		"analyze":    cli.runAnalyze,
 		"collection": cli.runCollection,
+		"anki":       cli.runAnki,
 		"help":       func([]string) error { cli.printUsage(); return nil },
 		"version":    func([]string) error { cli.printVersion(); return nil },
 	}
@@ -116,6 +117,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
+	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
 	fmt.Println("  info      Display database metadata")
