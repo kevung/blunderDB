@@ -203,7 +203,9 @@ func TestAnkiOptimizeParams(t *testing.T) {
 	// review-state (state=2) sample: the tuner sees no signal.
 	next, _ := s.Anki().NextCard(ctx, "", deckID)
 	if next != nil {
-		s.Anki().ReviewCard(ctx, "", next.Card.ID, 3)
+		if _, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 3); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	res, err := s.Anki().OptimizeParams(ctx, "", deckID, true)

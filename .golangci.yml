@@ -57,10 +57,13 @@ linters:
       # touch the old one — every edit here is a merge conflict there.
       - linters: [errorlint, sqlclosecheck]
         path: "db_migration\\.go$"
-      # Test files commonly skip error checks; suppress until task 12
-      # (test utilities) introduces proper helpers.
-      - linters: [errcheck, rowserrcheck]
-        path: "_test\\.go$"
+      # stats_legacy_oracle_test.go is the pre-unification statistics SQL,
+      # copied verbatim as the oracle the storage backends are checked
+      # against; its loops swallow iteration errors the way the old code did,
+      # and three of the findings are false positives (rows handed to
+      # scanPositionIDs, which does check Err). It is not maintained code.
+      - linters: [rowserrcheck]
+        path: "stats_legacy_oracle_test\\.go$"
       # internal/cli and cmd/ print user-facing output straight to stdout/stderr
       # via fmt.Print*; checking those errors buys nothing (the process is about
       # to exit either way). Everywhere else, an unchecked fmt.Print* error is

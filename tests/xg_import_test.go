@@ -143,6 +143,9 @@ func TestXGImportedDatabase(t *testing.T) {
 			}
 			i++
 		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
 	})
 
 	// Test 2: Verify cube actions in Game 2
@@ -170,6 +173,9 @@ func TestXGImportedDatabase(t *testing.T) {
 			if cubeAction == "Double/Take" {
 				foundDoublesTakes = true
 			}
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 
 		if !foundDoublesTakes {
@@ -207,6 +213,9 @@ func TestXGImportedDatabase(t *testing.T) {
 			if move == "18/16(2) 6/4(2)" && dice1 == 2 && dice2 == 2 {
 				found = true
 			}
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 
 		if !found {

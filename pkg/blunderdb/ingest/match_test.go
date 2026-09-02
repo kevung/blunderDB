@@ -75,7 +75,9 @@ func TestWriteMatchDedup(t *testing.T) {
 		}
 		res, err := WriteMatch(ctx, tx, "", sampleGraph(), nil)
 		if err != nil {
-			tx.Rollback()
+			if err := tx.Rollback(); err != nil {
+				t.Fatal(err)
+			}
 			return res, err
 		}
 		return res, tx.Commit()

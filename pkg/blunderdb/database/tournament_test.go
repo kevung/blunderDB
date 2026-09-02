@@ -164,7 +164,9 @@ func TestSetMatchTournamentByName_Existing(t *testing.T) {
 	matches, _ := db.GetAllMatches()
 	matchID := matches[0].ID
 
-	db.CreateTournament("Existing", "", "")
+	if _, err := db.CreateTournament("Existing", "", ""); err != nil {
+		t.Fatal(err)
+	}
 	if err := db.SetMatchTournamentByName(matchID, "Existing"); err != nil {
 		t.Fatalf("SetMatchTournamentByName: %v", err)
 	}

@@ -124,7 +124,7 @@ func BenchmarkImport_TournoisCold(b *testing.B) {
 	// Collect the file list once.
 	var files []string
 	tournoisDir := filepath.Join("testdata", "tournois")
-	filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
 			return nil
 		}
@@ -133,7 +133,9 @@ func BenchmarkImport_TournoisCold(b *testing.B) {
 			files = append(files, path)
 		}
 		return nil
-	})
+	}); err != nil {
+		b.Fatal(err)
+	}
 
 	restore := silenceLogs()
 	defer restore()
@@ -143,15 +145,18 @@ func BenchmarkImport_TournoisCold(b *testing.B) {
 		if err := db.SetupDatabase(":memory:"); err != nil {
 			b.Fatal(err)
 		}
+		// Same corpus setupBenchDB just loaded: duplicates and unreadable
+		// files were reported there, and a rejected file is part of the
+		// import cost being measured, not a reason to stop measuring.
 		for _, f := range files {
 			ext := strings.ToLower(filepath.Ext(f))
 			switch ext {
 			case ".xg":
-				db.ImportXGMatch(f)
+				_, _ = db.ImportXGMatch(f)
 			case ".sgf", ".mat":
-				db.ImportGnuBGMatch(f)
+				_, _ = db.ImportGnuBGMatch(f)
 			case ".bgf":
-				db.ImportBGFMatch(f)
+				_, _ = db.ImportBGFMatch(f)
 			}
 		}
 	}
@@ -165,7 +170,7 @@ func BenchmarkImport_TournoisIncremental(b *testing.B) {
 	tournoisDir := filepath.Join("testdata", "tournois")
 	var smallest string
 	var smallestSize int64 = 1<<63 - 1
-	filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
 			return nil
 		}
@@ -174,7 +179,9 @@ func BenchmarkImport_TournoisIncremental(b *testing.B) {
 			smallestSize = info.Size()
 		}
 		return nil
-	})
+	}); err != nil {
+		b.Fatal(err)
+	}
 	if smallest == "" {
 		b.Skip("no .xg files found")
 	}
@@ -183,7 +190,7 @@ func BenchmarkImport_TournoisIncremental(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.ImportXGMatch(smallest) // likely duplicate — that's fine
+		_, _ = db.ImportXGMatch(smallest) // likely duplicate — that's fine
 	}
 }
 
@@ -204,7 +211,9 @@ func BenchmarkSearch_DecisionCube(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -215,7 +224,9 @@ func BenchmarkSearch_ErrorAboveTenth(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), MoveErrorFilter: "E>100"})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), MoveErrorFilter: "E>100"}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -226,7 +237,9 @@ func BenchmarkSearch_PipWindow(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), PipCountFilter: "p-2,2"})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), PipCountFilter: "p-2,2"}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -237,7 +250,9 @@ func BenchmarkSearch_WinGammonCombo(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), WinRateFilter: "w>0.55", GammonRateFilter: "g>0.2"})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), WinRateFilter: "w>0.55", GammonRateFilter: "g>0.2"}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -251,7 +266,9 @@ func BenchmarkSearch_ScoreSpecific(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter, IncludeScore: true})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter, IncludeScore: true}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -266,7 +283,9 @@ func BenchmarkSearch_DiceAndPlayer(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DiceRollFilter: true})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter, DiceRollFilter: true}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -281,7 +300,9 @@ func BenchmarkSearch_CheckerStructure(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -297,7 +318,9 @@ func BenchmarkSearch_PrimePattern(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -315,7 +338,9 @@ func BenchmarkEPC(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, bd := range boards {
-			engine.ComputeEPC(bd)
+			if _, err := engine.ComputeEPC(bd); err != nil {
+				b.Fatal(err)
+			}
 		}
 	}
 }
@@ -465,9 +490,13 @@ func BenchmarkSearch_SmallDB(b *testing.B) {
 		ext := strings.ToLower(filepath.Ext(f))
 		switch ext {
 		case ".xg":
-			db.ImportXGMatch(f)
+			if _, err := db.ImportXGMatch(f); err != nil {
+				b.Fatal(err)
+			}
 		case ".sgf", ".mat":
-			db.ImportGnuBGMatch(f)
+			if _, err := db.ImportGnuBGMatch(f); err != nil {
+				b.Fatal(err)
+			}
 		}
 	}
 
@@ -478,6 +507,8 @@ func BenchmarkSearch_SmallDB(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true})
+		if _, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true}); err != nil {
+			b.Fatal(err)
+		}
 	}
 }

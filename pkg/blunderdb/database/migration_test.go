@@ -228,11 +228,13 @@ func createOldDatabase(t *testing.T, path string, version string) {
 	}
 }
 
-// columnExists checks if a column exists on a table.
-func columnExists(db *sql.DB, table, column string) bool {
+// columnExists checks if a column exists on a table. A failure to read the
+// table's layout fails the test rather than reading as "absent".
+func columnExists(t *testing.T, db *sql.DB, table, column string) bool {
+	t.Helper()
 	rows, err := db.Query(fmt.Sprintf("PRAGMA table_info(%s)", table))
 	if err != nil {
-		return false
+		t.Fatalf("PRAGMA table_info(%s): %v", table, err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -241,11 +243,14 @@ func columnExists(db *sql.DB, table, column string) bool {
 		var notnull, pk int
 		var dflt sql.NullString
 		if err := rows.Scan(&cid, &name, &ctype, &notnull, &dflt, &pk); err != nil {
-			return false
+			t.Fatalf("scan table_info(%s): %v", table, err)
 		}
 		if name == column {
 			return true
 		}
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("iterate table_info(%s): %v", table, err)
 	}
 	return false
 }
@@ -270,10 +275,10 @@ func TestMigrate_2_7_0_to_2_8_0(t *testing.T) {
 		t.Errorf("Expected version %s after migration, got %s", DatabaseVersion, version)
 	}
 
-	if !columnExists(d.db, "search_history", "exclude_position") {
+	if !columnExists(t, d.db, "search_history", "exclude_position") {
 		t.Errorf("search_history.exclude_position should exist after migration")
 	}
-	if !columnExists(d.db, "filter_library", "exclude_position") {
+	if !columnExists(t, d.db, "filter_library", "exclude_position") {
 		t.Errorf("filter_library.exclude_position should exist after migration")
 	}
 
@@ -580,9 +585,15 @@ func TestMigrationPreservesData(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error setting up test data: %v", err)
 	}
-	db.Exec(`INSERT INTO position (state) VALUES (?)`, string(norm1))
-	db.Exec(`INSERT INTO position (state) VALUES (?)`, string(norm2))
-	db.Exec(`INSERT INTO comment (position_id, text) VALUES (1, 'test comment')`)
+	if _, err := db.Exec(`INSERT INTO position (state) VALUES (?)`, string(norm1)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO position (state) VALUES (?)`, string(norm2)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO comment (position_id, text) VALUES (1, 'test comment')`); err != nil {
+		t.Fatal(err)
+	}
 	db.Close()
 
 	// Open with migration
@@ -859,7 +870,9 @@ func createV190Database(t *testing.T, path string) {
 		t.Fatalf("createV190Database: open: %v", err)
 	}
 	defer db.Close()
-	db.Exec(`PRAGMA foreign_keys = ON`)
+	if _, err := db.Exec(`PRAGMA foreign_keys = ON`); err != nil {
+		t.Fatal(err)
+	}
 
 	_, err = db.Exec(`
 		CREATE TABLE position (
@@ -952,28 +965,48 @@ func createV190Database(t *testing.T, path string) {
 		if err != nil {
 			t.Fatalf("createV190Database: marshal pos%d: %v", i+1, err)
 		}
-		db.Exec(`INSERT INTO position (state) VALUES (?)`, string(data))
+		if _, err := db.Exec(`INSERT INTO position (state) VALUES (?)`, string(data)); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	// Insert analyses for pos1 and pos2 (pos3 has none)
-	db.Exec(`INSERT INTO analysis (position_id, data) VALUES (1, '{"bestMove":"13/11 24/23","playedMove":"13/11 24/23"}')`)
-	db.Exec(`INSERT INTO analysis (position_id, data) VALUES (2, '{}')`)
+	if _, err := db.Exec(`INSERT INTO analysis (position_id, data) VALUES (1, '{"bestMove":"13/11 24/23","playedMove":"13/11 24/23"}')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO analysis (position_id, data) VALUES (2, '{}')`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Insert a match -> 2 games -> 5 moves (referencing all 3 positions)
-	db.Exec(`INSERT INTO match (player1_name, player2_name, match_length) VALUES ('Alice','Bob',7)`)
-	db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,0,0,0,1)`)
-	db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,2,1,0,1,1)`)
+	if _, err := db.Exec(`INSERT INTO match (player1_name, player2_name, match_length) VALUES ('Alice','Bob',7)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,0,0,0,1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,2,1,0,1,1)`); err != nil {
+		t.Fatal(err)
+	}
 	for i := 1; i <= 5; i++ {
 		posID := ((i - 1) % 3) + 1
-		db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id) VALUES (?,?,?,?)`, 1, i, "checker", posID)
+		if _, err := db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id) VALUES (?,?,?,?)`, 1, i, "checker", posID); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	// Insert a collection with pos1 in it
-	db.Exec(`INSERT INTO collection (name) VALUES ('Test collection')`)
-	db.Exec(`INSERT INTO collection_position (collection_id, position_id) VALUES (1, 1)`)
+	if _, err := db.Exec(`INSERT INTO collection (name) VALUES ('Test collection')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO collection_position (collection_id, position_id) VALUES (1, 1)`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Insert a tournament
-	db.Exec(`INSERT INTO tournament (name) VALUES ('Test tournament')`)
+	if _, err := db.Exec(`INSERT INTO tournament (name) VALUES ('Test tournament')`); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // TestMigrate_1_9_0_to_2_0_0 opens a v1.9.0 database and verifies that:
@@ -1038,6 +1071,9 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 			t.Errorf("position %d: pip_2 mismatch: stored %d, computed %d", id, pip2.Int64, c.Pip2)
 		}
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	if count != 3 {
 		t.Errorf("expected 3 positions, got %d", count)
 	}
@@ -1045,7 +1081,9 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 	// Check that key indexes exist
 	for _, idx := range []string{"idx_position_zobrist", "idx_position_decision_pip", "idx_analysis_position"} {
 		var name string
-		d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='index' AND name=?`, idx).Scan(&name)
+		if err := d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='index' AND name=?`, idx).Scan(&name); err != nil {
+			t.Fatal(err)
+		}
 		if name != idx {
 			t.Errorf("index %s not found after migration", idx)
 		}
@@ -1113,12 +1151,22 @@ func TestMigrate_1_9_0_Duplicates(t *testing.T) {
 	norm := pos.NormalizeForStorage()
 	posJSON, _ := json.Marshal(norm)
 	jsonStr := string(posJSON)
-	db.Exec(`INSERT INTO position (state) VALUES (?)`, jsonStr) // id=1
-	db.Exec(`INSERT INTO position (state) VALUES (?)`, jsonStr) // id=2 — exact duplicate
-	db.Exec(`INSERT INTO match (player1_name, player2_name, match_length) VALUES ('A','B',7)`)
-	db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,0,0,0,1)`)
+	// id=1, then id=2 as an exact duplicate.
+	for range 2 {
+		if _, err := db.Exec(`INSERT INTO position (state) VALUES (?)`, jsonStr); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := db.Exec(`INSERT INTO match (player1_name, player2_name, match_length) VALUES ('A','B',7)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,0,0,0,1)`); err != nil {
+		t.Fatal(err)
+	}
 	// Move pointing at the duplicate (id=2)
-	db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id) VALUES (1, 1, 'checker', 2)`)
+	if _, err := db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id) VALUES (1, 1, 'checker', 2)`); err != nil {
+		t.Fatal(err)
+	}
 	db.Close()
 
 	d := NewDatabase()
@@ -1128,14 +1176,18 @@ func TestMigrate_1_9_0_Duplicates(t *testing.T) {
 
 	// Only one position should remain
 	var posCount int
-	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount)
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount); err != nil {
+		t.Fatal(err)
+	}
 	if posCount != 1 {
 		t.Errorf("expected 1 position after dedup, got %d", posCount)
 	}
 
 	// The move must now point at the kept position (id=1)
 	var movePosID sql.NullInt64
-	d.db.QueryRow(`SELECT position_id FROM move WHERE id=1`).Scan(&movePosID)
+	if err := d.db.QueryRow(`SELECT position_id FROM move WHERE id=1`).Scan(&movePosID); err != nil {
+		t.Fatal(err)
+	}
 	if !movePosID.Valid || movePosID.Int64 != 1 {
 		t.Errorf("move.position_id should be 1 after dedup, got %v", movePosID)
 	}
@@ -1154,7 +1206,9 @@ func TestMigrate_Idempotent(t *testing.T) {
 		t.Fatalf("first open: %v", err)
 	}
 	var posCount1 int
-	d1.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount1)
+	if err := d1.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount1); err != nil {
+		t.Fatal(err)
+	}
 
 	// Second open → must succeed without error and leave data unchanged
 	d2 := NewDatabase()
@@ -1168,7 +1222,9 @@ func TestMigrate_Idempotent(t *testing.T) {
 	}
 
 	var posCount2 int
-	d2.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount2)
+	if err := d2.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount2); err != nil {
+		t.Fatal(err)
+	}
 	if posCount2 != posCount1 {
 		t.Errorf("position count changed on second open: %d → %d", posCount1, posCount2)
 	}
@@ -1276,10 +1332,18 @@ func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
 	}
 
 	// Insert position, move (checker_move = the non-best move), and analysis.
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1, '{}', 0)`)
-	rawDB.Exec(`INSERT INTO match (id, player1_name, player2_name, match_length) VALUES (1,'A','B',7)`)
-	rawDB.Exec(`INSERT INTO game (id, match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,1,0,0,0,1)`)
-	rawDB.Exec(`INSERT INTO move (id, game_id, move_number, move_type, position_id, player, checker_move) VALUES (1,1,1,'checker',1,1,'24/18 13/11')`)
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1, '{}', 0)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO match (id, player1_name, player2_name, match_length) VALUES (1,'A','B',7)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO game (id, match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,1,0,0,0,1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO move (id, game_id, move_number, move_type, position_id, player, checker_move) VALUES (1,1,1,'checker',1,1,'24/18 13/11')`); err != nil {
+		t.Fatal(err)
+	}
 	_, err = rawDB.Exec(`INSERT INTO analysis (id, position_id, data, best_move_equity_error) VALUES (1, 1, ?, 0)`, anaData)
 	if err != nil {
 		t.Fatalf("insert analysis: %v", err)
@@ -1298,7 +1362,9 @@ func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
 	}
 
 	var moveErr float64
-	d.db.QueryRow(`SELECT best_move_equity_error FROM analysis WHERE id = 1`).Scan(&moveErr)
+	if err := d.db.QueryRow(`SELECT best_move_equity_error FROM analysis WHERE id = 1`).Scan(&moveErr); err != nil {
+		t.Fatal(err)
+	}
 	// Expected: 100 millipoints (0.100 EMG × 1000)
 	if moveErr != 100 {
 		t.Errorf("expected best_move_equity_error = 100 millipoints after repair, got %g", moveErr)
@@ -1427,12 +1493,24 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 		},
 	})
 
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',0)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',0)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, forced)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, unforced)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, cube)
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',0)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',0)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, forced); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, unforced); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, cube); err != nil {
+		t.Fatal(err)
+	}
 	rawDB.Close()
 
 	d := NewDatabase()
@@ -1447,7 +1525,9 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 
 	// is_forced column must exist
 	var colExists int
-	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_forced'`).Scan(&colExists)
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_forced'`).Scan(&colExists); err != nil {
+		t.Fatal(err)
+	}
 	if colExists != 1 {
 		t.Fatalf("is_forced column not found in analysis table after migration")
 	}
@@ -1463,7 +1543,9 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 	}
 	for _, tc := range cases {
 		var got int
-		d.db.QueryRow(`SELECT is_forced FROM analysis WHERE id = ?`, tc.id).Scan(&got)
+		if err := d.db.QueryRow(`SELECT is_forced FROM analysis WHERE id = ?`, tc.id).Scan(&got); err != nil {
+			t.Fatal(err)
+		}
 		if got != tc.wantForced {
 			t.Errorf("analysis id=%d (%s): is_forced=%d, want %d", tc.id, tc.label, got, tc.wantForced)
 		}
@@ -1587,14 +1669,30 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 		CheckerAnalysis: &CheckerAnalysis{Moves: []CheckerMove{{Index: 0, Move: "13/7", Equity: 0.3}}},
 	})
 
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',0)`)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, close1)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, notClose)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, takeDec)
-	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (4, 4, ?)`, checker)
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',0)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, close1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, notClose); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, takeDec); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (4, 4, ?)`, checker); err != nil {
+		t.Fatal(err)
+	}
 	rawDB.Close()
 
 	d := NewDatabase()
@@ -1608,7 +1706,9 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 	}
 
 	var colExists int
-	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_close_cube'`).Scan(&colExists)
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_close_cube'`).Scan(&colExists); err != nil {
+		t.Fatal(err)
+	}
 	if colExists != 1 {
 		t.Fatalf("is_close_cube column not found after migration")
 	}
@@ -1625,7 +1725,9 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 	}
 	for _, tc := range cases {
 		var got int
-		d.db.QueryRow(`SELECT is_close_cube FROM analysis WHERE id = ?`, tc.id).Scan(&got)
+		if err := d.db.QueryRow(`SELECT is_close_cube FROM analysis WHERE id = ?`, tc.id).Scan(&got); err != nil {
+			t.Fatal(err)
+		}
 		if got != tc.wantClose {
 			t.Errorf("analysis id=%d (%s): is_close_cube=%d, want %d", tc.id, tc.label, got, tc.wantClose)
 		}
@@ -1699,15 +1801,33 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 	// id=3: cube, No Double → 0
 	// id=4: cube, Pass response → 1
 	// id=5: checker position → 0
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',1)`)
-	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (5,'{}',0)`)
-	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,1,'cube',1,'Take')`)
-	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,2,'cube',2,'Double')`)
-	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,3,'cube',3,'No Double')`)
-	rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,4,'cube',4,'Pass')`)
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',1)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (5,'{}',0)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,1,'cube',1,'Take')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,2,'cube',2,'Double')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,3,'cube',3,'No Double')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := rawDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, cube_action) VALUES (1,4,'cube',4,'Pass')`); err != nil {
+		t.Fatal(err)
+	}
 	rawDB.Close()
 
 	d := NewDatabase()
@@ -1721,7 +1841,9 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 	}
 
 	var colExists int
-	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('position') WHERE name='is_cube_response'`).Scan(&colExists)
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('position') WHERE name='is_cube_response'`).Scan(&colExists); err != nil {
+		t.Fatal(err)
+	}
 	if colExists != 1 {
 		t.Fatalf("is_cube_response column not found after migration")
 	}
@@ -1739,7 +1861,9 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 	}
 	for _, tc := range cases {
 		var got int
-		d.db.QueryRow(`SELECT is_cube_response FROM position WHERE id = ?`, tc.id).Scan(&got)
+		if err := d.db.QueryRow(`SELECT is_cube_response FROM position WHERE id = ?`, tc.id).Scan(&got); err != nil {
+			t.Fatal(err)
+		}
 		if got != tc.wantResp {
 			t.Errorf("position id=%d (%s): is_cube_response=%d, want %d", tc.id, tc.label, got, tc.wantResp)
 		}
@@ -1804,7 +1928,7 @@ func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
 	if version != DatabaseVersion {
 		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
 	}
-	if !columnExists(d.db, "position", "individually_imported") {
+	if !columnExists(t, d.db, "position", "individually_imported") {
 		t.Fatal("position.individually_imported should exist after migration")
 	}
 
@@ -1860,7 +1984,7 @@ func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
 	if version != DatabaseVersion {
 		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
 	}
-	if !columnExists(d.db, "position", "flagged") {
+	if !columnExists(t, d.db, "position", "flagged") {
 		t.Fatal("position.flagged should exist after migration")
 	}
 
@@ -1914,7 +2038,7 @@ func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
 	if version != DatabaseVersion {
 		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
 	}
-	if !columnExists(d.db, "move", "luck_mp") {
+	if !columnExists(t, d.db, "move", "luck_mp") {
 		t.Fatal("move.luck_mp should exist after migration")
 	}
 

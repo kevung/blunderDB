@@ -22,7 +22,9 @@ func TestCountPositionsAfterImports(t *testing.T) {
 
 	countPositions := func() int {
 		var count int
-		db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&count)
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&count); err != nil {
+			t.Fatal(err)
+		}
 		return count
 	}
 
@@ -38,6 +40,9 @@ func TestCountPositionsAfterImports(t *testing.T) {
 				pos.Board, pos.Cube, pos.Score,
 				pos.PlayerOnRoll, pos.DecisionType, pos.Dice)
 			seen[key]++
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 		dupes := 0
 		for _, count := range seen {
@@ -103,14 +108,22 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 	// Import MAT into db1
 	dbPath1 := filepath.Join(tmpDir, "mat.db")
 	db1 := NewDatabase()
-	db1.SetupDatabase(dbPath1)
-	db1.ImportGnuBGMatch(matFile)
+	if err := db1.SetupDatabase(dbPath1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db1.ImportGnuBGMatch(matFile); err != nil {
+		t.Fatal(err)
+	}
 
 	// Import SGF into db2
 	dbPath2 := filepath.Join(tmpDir, "sgf.db")
 	db2 := NewDatabase()
-	db2.SetupDatabase(dbPath2)
-	db2.ImportGnuBGMatch(sgfFile)
+	if err := db2.SetupDatabase(dbPath2); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db2.ImportGnuBGMatch(sgfFile); err != nil {
+		t.Fatal(err)
+	}
 
 	// Load all positions from both
 	loadAllPositions := func(db *Database) []Position {
@@ -120,6 +133,9 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 		for rows.Next() {
 			pos, _ := scanPositionRow(rows)
 			positions = append(positions, pos)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 		return positions
 	}

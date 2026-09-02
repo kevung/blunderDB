@@ -35,7 +35,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	// Collect fixture files
 	var files []string
 	var totalInputBytes int64
-	filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(tournoisDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() {
 			return nil
 		}
@@ -45,7 +45,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 			totalInputBytes += info.Size()
 		}
 		return nil
-	})
+	}); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Fixture: %d files, %.1f MB input", len(files), float64(totalInputBytes)/(1024*1024))
 
 	tmpDir := t.TempDir()
@@ -82,10 +84,18 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	importDuration := time.Since(importStart)
 
 	var posCount230, analysisCount, matchCount, moveCount int
-	db230.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount230)
-	db230.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
-	db230.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
-	db230.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
+	if err := db230.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount230); err != nil {
+		t.Fatal(err)
+	}
+	if err := db230.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount); err != nil {
+		t.Fatal(err)
+	}
+	if err := db230.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount); err != nil {
+		t.Fatal(err)
+	}
+	if err := db230.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Logf("  Import: %d files → %d matches, %d positions, %d analyses, %d moves",
 		importCount, matchCount, posCount230, analysisCount, moveCount)
@@ -93,7 +103,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		float64(posCount230)/importDuration.Seconds())
 
 	// Close and measure disk size
-	db230.db.Exec(`VACUUM`)
+	if _, err := db230.db.Exec(`VACUUM`); err != nil {
+		t.Fatal(err)
+	}
 	db230.db.Close()
 	size230 := fileSize(t, dbPath230)
 	t.Logf("  Disk size (vacuumed): %s", humanBytes(size230))
@@ -112,9 +124,15 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open v2.2.0 clone: %v", err)
 	}
-	sqlDB220.Exec(`PRAGMA journal_mode = WAL`)
-	sqlDB220.Exec(`PRAGMA synchronous = NORMAL`)
-	sqlDB220.Exec(`PRAGMA cache_size = -65536`)
+	if _, err := sqlDB220.Exec(`PRAGMA journal_mode = WAL`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB220.Exec(`PRAGMA synchronous = NORMAL`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB220.Exec(`PRAGMA cache_size = -65536`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Decompress all analysis data back to raw JSON
 	decompressStart := time.Now()
@@ -127,19 +145,27 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	for analysisRows220.Next() {
 		var id int64
 		var data []byte
-		analysisRows220.Scan(&id, &data)
+		if err := analysisRows220.Scan(&id, &data); err != nil {
+			t.Fatal(err)
+		}
 		if len(data) > 0 && data[0] != '{' {
 			decompressed, err := decompressAnalysisData(data)
 			if err == nil {
-				updateStmt220.Exec(string(decompressed), id)
+				if _, err := updateStmt220.Exec(string(decompressed), id); err != nil {
+					t.Fatal(err)
+				}
 				decompCount++
 			}
 		}
 	}
 	analysisRows220.Close()
 	updateStmt220.Close()
-	sqlDB220.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`)
-	sqlDB220.Exec(`VACUUM`)
+	if _, err := sqlDB220.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB220.Exec(`VACUUM`); err != nil {
+		t.Fatal(err)
+	}
 	sqlDB220.Close()
 	decompressDuration := time.Since(decompressStart)
 
@@ -161,9 +187,15 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open v2.1.0 clone: %v", err)
 	}
-	sqlDB210.Exec(`PRAGMA journal_mode = WAL`)
-	sqlDB210.Exec(`PRAGMA synchronous = NORMAL`)
-	sqlDB210.Exec(`PRAGMA cache_size = -65536`)
+	if _, err := sqlDB210.Exec(`PRAGMA journal_mode = WAL`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB210.Exec(`PRAGMA synchronous = NORMAL`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB210.Exec(`PRAGMA cache_size = -65536`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Revert compact states to full JSON
 	revertStart := time.Now()
@@ -193,7 +225,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 				int(cv.Int64), int(co.Int64), int(s1.Int64), int(s2.Int64),
 				int(hj.Int64), int(hb.Int64))
 		} else {
-			json.Unmarshal([]byte(r.state), &r.pos)
+			if err := json.Unmarshal([]byte(r.state), &r.pos); err != nil {
+				t.Fatal(err)
+			}
 			r.pos.ID = r.id
 		}
 		posRows = append(posRows, r)
@@ -203,11 +237,17 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	updateStmt210, _ := sqlDB210.Prepare(`UPDATE position SET state = ? WHERE id = ?`)
 	for _, r := range posRows {
 		fullJSON, _ := json.Marshal(r.pos)
-		updateStmt210.Exec(string(fullJSON), r.id)
+		if _, err := updateStmt210.Exec(string(fullJSON), r.id); err != nil {
+			t.Fatal(err)
+		}
 	}
 	updateStmt210.Close()
-	sqlDB210.Exec(`UPDATE metadata SET value='2.1.0' WHERE key='database_version'`)
-	sqlDB210.Exec(`VACUUM`)
+	if _, err := sqlDB210.Exec(`UPDATE metadata SET value='2.1.0' WHERE key='database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB210.Exec(`VACUUM`); err != nil {
+		t.Fatal(err)
+	}
 	sqlDB210.Close()
 	revertDuration := time.Since(revertStart)
 
@@ -229,7 +269,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open v1.9.0 clone: %v", err)
 	}
-	sqlDB190.Exec(`PRAGMA journal_mode = WAL`)
+	if _, err := sqlDB190.Exec(`PRAGMA journal_mode = WAL`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Drop all v2.0.0+ indexes
 	v2Indexes := []string{
@@ -244,30 +286,56 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		"idx_analysis_player1_win_rate",
 	}
 	for _, idx := range v2Indexes {
-		sqlDB190.Exec(fmt.Sprintf("DROP INDEX IF EXISTS %s", idx))
+		if _, err := sqlDB190.Exec(fmt.Sprintf("DROP INDEX IF EXISTS %s", idx)); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	// Recreate position table without denorm columns
-	sqlDB190.Exec(`CREATE TABLE position_old AS SELECT id, state FROM position`)
-	sqlDB190.Exec(`DROP TABLE position`)
-	sqlDB190.Exec(`CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT)`)
-	sqlDB190.Exec(`INSERT INTO position (id, state) SELECT id, state FROM position_old`)
-	sqlDB190.Exec(`DROP TABLE position_old`)
+	if _, err := sqlDB190.Exec(`CREATE TABLE position_old AS SELECT id, state FROM position`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`DROP TABLE position`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`INSERT INTO position (id, state) SELECT id, state FROM position_old`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`DROP TABLE position_old`); err != nil {
+		t.Fatal(err)
+	}
 
 	// Similarly strip analysis denorm columns
-	sqlDB190.Exec(`CREATE TABLE analysis_old AS SELECT id, position_id, data FROM analysis`)
-	sqlDB190.Exec(`DROP TABLE analysis`)
-	sqlDB190.Exec(`CREATE TABLE analysis (
+	if _, err := sqlDB190.Exec(`CREATE TABLE analysis_old AS SELECT id, position_id, data FROM analysis`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`DROP TABLE analysis`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`CREATE TABLE analysis (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		position_id INTEGER,
 		data JSON,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
-	)`)
-	sqlDB190.Exec(`INSERT INTO analysis (id, position_id, data) SELECT id, position_id, data FROM analysis_old`)
-	sqlDB190.Exec(`DROP TABLE analysis_old`)
+	)`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`INSERT INTO analysis (id, position_id, data) SELECT id, position_id, data FROM analysis_old`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`DROP TABLE analysis_old`); err != nil {
+		t.Fatal(err)
+	}
 
-	sqlDB190.Exec(`UPDATE metadata SET value='1.9.0' WHERE key='database_version'`)
-	sqlDB190.Exec(`VACUUM`)
+	if _, err := sqlDB190.Exec(`UPDATE metadata SET value='1.9.0' WHERE key='database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190.Exec(`VACUUM`); err != nil {
+		t.Fatal(err)
+	}
 	sqlDB190.Close()
 
 	size190 := fileSize(t, dbPath190)
@@ -293,23 +361,33 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 
 		// Measure state column total size
 		var stateTotal int64
-		db.QueryRow(`SELECT COALESCE(SUM(LENGTH(state)),0) FROM position`).Scan(&stateTotal)
+		if err := db.QueryRow(`SELECT COALESCE(SUM(LENGTH(state)),0) FROM position`).Scan(&stateTotal); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("  position.state total bytes: %s", humanBytes(stateTotal))
 
 		// Avg state size
 		var avgState float64
-		db.QueryRow(`SELECT COALESCE(AVG(LENGTH(state)),0) FROM position`).Scan(&avgState)
+		if err := db.QueryRow(`SELECT COALESCE(AVG(LENGTH(state)),0) FROM position`).Scan(&avgState); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("  position.state avg bytes:   %.0f", avgState)
 
 		// Analysis data total size
 		var analysisTotal int64
-		db.QueryRow(`SELECT COALESCE(SUM(LENGTH(data)),0) FROM analysis`).Scan(&analysisTotal)
+		if err := db.QueryRow(`SELECT COALESCE(SUM(LENGTH(data)),0) FROM analysis`).Scan(&analysisTotal); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("  analysis.data total bytes:  %s", humanBytes(analysisTotal))
 
 		// Page count and page size
 		var pageCount, pageSize int64
-		db.QueryRow(`PRAGMA page_count`).Scan(&pageCount)
-		db.QueryRow(`PRAGMA page_size`).Scan(&pageSize)
+		if err := db.QueryRow(`PRAGMA page_count`).Scan(&pageCount); err != nil {
+			t.Fatal(err)
+		}
+		if err := db.QueryRow(`PRAGMA page_size`).Scan(&pageSize); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("  pages: %d × %d = %s", pageCount, pageSize, humanBytes(pageCount*pageSize))
 
 		// Per-table page usage (dbstat virtual table if available)
@@ -325,7 +403,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 			for rows.Next() {
 				var name string
 				var sz int64
-				rows.Scan(&name, &sz)
+				if err := rows.Scan(&name, &sz); err != nil {
+					t.Fatal(err)
+				}
 				t.Logf("    %-40s %s", name, humanBytes(sz))
 			}
 			rows.Close()
@@ -487,8 +567,12 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	t.Log("\n  --- v1.9.0-style (full scan + JSON unmarshal) ---")
 
 	sqlDB190s, _ := sql.Open("sqlite", dbPath190)
-	sqlDB190s.Exec(`PRAGMA cache_size = -65536`)
-	sqlDB190s.Exec(`PRAGMA mmap_size = 268435456`)
+	if _, err := sqlDB190s.Exec(`PRAGMA cache_size = -65536`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190s.Exec(`PRAGMA mmap_size = 268435456`); err != nil {
+		t.Fatal(err)
+	}
 
 	v190Search := func(label string, match func(*Position) bool) {
 		start := time.Now()
@@ -501,13 +585,20 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 				for rows.Next() {
 					var id int64
 					var state string
-					rows.Scan(&id, &state)
+					if err := rows.Scan(&id, &state); err != nil {
+						t.Fatal(err)
+					}
 					var pos Position
-					json.Unmarshal([]byte(state), &pos)
+					if err := json.Unmarshal([]byte(state), &pos); err != nil {
+						t.Fatal(err)
+					}
 					pos.ID = id
 					if match(&pos) {
 						count++
 					}
+				}
+				if err := rows.Err(); err != nil {
+					t.Fatal(err)
 				}
 			}()
 		}
@@ -567,25 +658,38 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		defer rows.Close()
 		for rows.Next() {
 			var id int64
-			rows.Scan(&id)
+			if err := rows.Scan(&id); err != nil {
+				t.Fatal(err)
+			}
 			sampleAnalysisIDs = append(sampleAnalysisIDs, id)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 	}()
 
 	// v2.3.0: read + decompress
 	func() {
 		db, _ := sql.Open("sqlite", dbPath230)
-		db.Exec(`PRAGMA cache_size = -65536`)
-		db.Exec(`PRAGMA mmap_size = 268435456`)
+		if _, err := db.Exec(`PRAGMA cache_size = -65536`); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := db.Exec(`PRAGMA mmap_size = 268435456`); err != nil {
+			t.Fatal(err)
+		}
 		defer db.Close()
 
 		start := time.Now()
 		for i := 0; i < analysisIters; i++ {
 			for _, pid := range sampleAnalysisIDs {
 				var data []byte
-				db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data)
+				if err := db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data); err != nil {
+					t.Fatal(err)
+				}
 				if len(data) > 0 {
-					decodeAnalysisFromStorage(data)
+					if _, err := decodeAnalysisFromStorage(data); err != nil {
+						t.Fatal(err)
+					}
 				}
 			}
 		}
@@ -598,18 +702,26 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	// v2.2.0: read raw JSON
 	func() {
 		db, _ := sql.Open("sqlite", dbPath220)
-		db.Exec(`PRAGMA cache_size = -65536`)
-		db.Exec(`PRAGMA mmap_size = 268435456`)
+		if _, err := db.Exec(`PRAGMA cache_size = -65536`); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := db.Exec(`PRAGMA mmap_size = 268435456`); err != nil {
+			t.Fatal(err)
+		}
 		defer db.Close()
 
 		start := time.Now()
 		for i := 0; i < analysisIters; i++ {
 			for _, pid := range sampleAnalysisIDs {
 				var data string
-				db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data)
+				if err := db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data); err != nil {
+					t.Fatal(err)
+				}
 				if data != "" {
 					var ana PositionAnalysis
-					json.Unmarshal([]byte(data), &ana)
+					if err := json.Unmarshal([]byte(data), &ana); err != nil {
+						t.Fatal(err)
+					}
 					_ = ana
 				}
 			}
@@ -643,8 +755,12 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 
 	// Compare with v1.9.0-style full JSON scan (simulate by reading state+unmarshal)
 	sqlDB190b, _ := sql.Open("sqlite", dbPath190)
-	sqlDB190b.Exec(`PRAGMA cache_size = -65536`)
-	sqlDB190b.Exec(`PRAGMA mmap_size = 268435456`)
+	if _, err := sqlDB190b.Exec(`PRAGMA cache_size = -65536`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB190b.Exec(`PRAGMA mmap_size = 268435456`); err != nil {
+		t.Fatal(err)
+	}
 
 	start = time.Now()
 	for i := 0; i < loadIters; i++ {
@@ -653,9 +769,13 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		for rows.Next() {
 			var id int64
 			var state string
-			rows.Scan(&id, &state)
+			if err := rows.Scan(&id, &state); err != nil {
+				t.Fatal(err)
+			}
 			var pos Position
-			json.Unmarshal([]byte(state), &pos)
+			if err := json.Unmarshal([]byte(state), &pos); err != nil {
+				t.Fatal(err)
+			}
 			pos.ID = id
 			count++
 		}
@@ -670,8 +790,12 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 
 	// v2.1.0-style (full JSON in state column, but has denorm columns)
 	sqlDB210b, _ := sql.Open("sqlite", dbPath210)
-	sqlDB210b.Exec(`PRAGMA cache_size = -65536`)
-	sqlDB210b.Exec(`PRAGMA mmap_size = 268435456`)
+	if _, err := sqlDB210b.Exec(`PRAGMA cache_size = -65536`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sqlDB210b.Exec(`PRAGMA mmap_size = 268435456`); err != nil {
+		t.Fatal(err)
+	}
 
 	start = time.Now()
 	for i := 0; i < loadIters; i++ {
@@ -680,9 +804,13 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		for rows.Next() {
 			var id int64
 			var state string
-			rows.Scan(&id, &state)
+			if err := rows.Scan(&id, &state); err != nil {
+				t.Fatal(err)
+			}
 			var pos Position
-			json.Unmarshal([]byte(state), &pos)
+			if err := json.Unmarshal([]byte(state), &pos); err != nil {
+				t.Fatal(err)
+			}
 			pos.ID = id
 			count++
 		}
@@ -709,7 +837,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	start = time.Now()
 	for i := 0; i < singleIters; i++ {
 		for _, id := range testIDs {
-			db230obj.LoadPosition(id)
+			if _, err := db230obj.LoadPosition(id); err != nil {
+				t.Fatal(err)
+			}
 		}
 	}
 	elapsed230Single := time.Since(start)
@@ -740,16 +870,22 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	for i := 0; i < importIters; i++ {
 		dbPathTmp := filepath.Join(tmpDir, fmt.Sprintf("import_bench_%d.db", i))
 		dbTmp := NewDatabase()
-		dbTmp.SetupDatabase(dbPathTmp)
+		if err := dbTmp.SetupDatabase(dbPathTmp); err != nil {
+			t.Fatal(err)
+		}
 
 		start := time.Now()
 		for _, f := range xgFiles {
-			dbTmp.ImportXGMatch(f)
+			if _, err := dbTmp.ImportXGMatch(f); err != nil {
+				t.Fatal(err)
+			}
 		}
 		importTimes = append(importTimes, time.Since(start))
 
 		var cnt int
-		dbTmp.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&cnt)
+		if err := dbTmp.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&cnt); err != nil {
+			t.Fatal(err)
+		}
 		dbTmp.db.Close()
 		os.Remove(dbPathTmp)
 
@@ -773,7 +909,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	exportPath := filepath.Join(tmpDir, "export_test.db")
 	allPositions, _ := db230obj.LoadAllPositions()
 	start = time.Now()
-	db230obj.ExportDatabase(ExportOptions{
+	if err := db230obj.ExportDatabase(ExportOptions{
 		ExportPath:         exportPath,
 		Positions:          allPositions,
 		Metadata:           map[string]string{},
@@ -781,7 +917,9 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		IncludeComments:    true,
 		IncludePlayedMoves: true,
 		IncludeMatches:     true,
-	})
+	}); err != nil {
+		t.Fatal(err)
+	}
 	exportDuration := time.Since(start)
 	exportSize := fileSize(t, exportPath)
 	t.Logf("  Export: %v, disk size: %s", exportDuration, humanBytes(exportSize))

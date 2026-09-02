@@ -151,6 +151,9 @@ func TestImportGnuBGSGF(t *testing.T) {
 		}
 		totalMoves += moveCount
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Total moves imported: %d", totalMoves)
 	if totalMoves == 0 {
 		t.Error("No moves were imported")
@@ -158,20 +161,28 @@ func TestImportGnuBGSGF(t *testing.T) {
 
 	// Check position and analysis counts
 	var positionCount int
-	db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&positionCount)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&positionCount); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Total positions: %d", positionCount)
 
 	var analysisCount int
-	db.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Total analysis records: %d", analysisCount)
 
 	var moveAnalysisCount int
-	db.db.QueryRow(`SELECT COUNT(*) FROM move_analysis`).Scan(&moveAnalysisCount)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM move_analysis`).Scan(&moveAnalysisCount); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Total move_analysis records: %d", moveAnalysisCount)
 
 	// Moves with positions
 	var movesWithPos int
-	db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, matchID).Scan(&movesWithPos)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, matchID).Scan(&movesWithPos); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("Moves with position data: %d", movesWithPos)
 }
 
@@ -354,19 +365,28 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 			}
 			t.Logf("  Move %d: player=%d dice=%d/%d move=%q cube=%q", moveNum, player, dice1, dice2, moveStr, cubeStr)
 		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
 	})
 
 	// Check that positions are stored correctly
 	t.Run("PositionData", func(t *testing.T) {
 		// First check if any positions exist at all
 		var posCount int
-		db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount)
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("Total positions in DB: %d", posCount)
 
 		// Check how many moves have position_id set
 		var movesWithPos, movesWithoutPos int
-		db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, matchID).Scan(&movesWithPos)
-		db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, matchID).Scan(&movesWithoutPos)
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, matchID).Scan(&movesWithPos); err != nil {
+			t.Fatal(err)
+		}
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, matchID).Scan(&movesWithoutPos); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("Moves with position: %d, without: %d", movesWithPos, movesWithoutPos)
 
 		if posCount == 0 {
@@ -420,12 +440,16 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 	t.Run("AnalysisData", func(t *testing.T) {
 		// Check total analysis records
 		var analysisTotal int
-		db.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisTotal)
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisTotal); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("Total analysis records in DB: %d", analysisTotal)
 
 		// Check move_analysis records
 		var moveAnalysisTotal int
-		db.db.QueryRow(`SELECT COUNT(*) FROM move_analysis`).Scan(&moveAnalysisTotal)
+		if err := db.db.QueryRow(`SELECT COUNT(*) FROM move_analysis`).Scan(&moveAnalysisTotal); err != nil {
+			t.Fatal(err)
+		}
 		t.Logf("Total move_analysis records in DB: %d", moveAnalysisTotal)
 
 		if analysisTotal == 0 && moveAnalysisTotal == 0 {
@@ -489,8 +513,12 @@ func TestImportGnuBGMATvsTXT(t *testing.T) {
 
 	// Both should have the same number of games
 	var matGameCount, txtGameCount int
-	db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matMatchID).Scan(&matGameCount)
-	db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, txtMatchID).Scan(&txtGameCount)
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matMatchID).Scan(&matGameCount); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, txtMatchID).Scan(&txtGameCount); err != nil {
+		t.Fatal(err)
+	}
 	t.Logf("MAT games: %d, TXT games: %d", matGameCount, txtGameCount)
 	if matGameCount != txtGameCount {
 		t.Errorf("Game count mismatch: MAT=%d, TXT=%d", matGameCount, txtGameCount)
@@ -514,8 +542,13 @@ func TestImportGnuBGMATvsTXT(t *testing.T) {
 		var counts []int
 		for rows.Next() {
 			var c int
-			rows.Scan(&c)
+			if err := rows.Scan(&c); err != nil {
+				t.Fatal(err)
+			}
 			counts = append(counts, c)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
 		}
 		return counts
 	}
@@ -634,9 +667,13 @@ func TestImportCharlotSGF(t *testing.T) {
 
 	var player1, player2 string
 	var matchLength, gameCount int
-	db.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, matchID).
-		Scan(&player1, &player2, &matchLength)
-	db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matchID).Scan(&gameCount)
+	if err := db.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, matchID).
+		Scan(&player1, &player2, &matchLength); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matchID).Scan(&gameCount); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Logf("Charlot match: %s vs %s, length=%d, games=%d", player1, player2, matchLength, gameCount)
 	if gameCount < 1 {
@@ -660,9 +697,13 @@ func TestImportCharlotMAT(t *testing.T) {
 
 	var player1, player2 string
 	var matchLength, gameCount int
-	db.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, matchID).
-		Scan(&player1, &player2, &matchLength)
-	db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matchID).Scan(&gameCount)
+	if err := db.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, matchID).
+		Scan(&player1, &player2, &matchLength); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, matchID).Scan(&gameCount); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Logf("Charlot MAT match: %s vs %s, length=%d, games=%d", player1, player2, matchLength, gameCount)
 	if gameCount < 1 {
@@ -703,13 +744,17 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 	t.Run("MatchMetadata", func(t *testing.T) {
 		var xgP1, xgP2 string
 		var xgLen int
-		dbXG.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, xgMatchID).
-			Scan(&xgP1, &xgP2, &xgLen)
+		if err := dbXG.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, xgMatchID).
+			Scan(&xgP1, &xgP2, &xgLen); err != nil {
+			t.Fatal(err)
+		}
 
 		var sgfP1, sgfP2 string
 		var sgfLen int
-		dbSGF.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, sgfMatchID).
-			Scan(&sgfP1, &sgfP2, &sgfLen)
+		if err := dbSGF.db.QueryRow(`SELECT player1_name, player2_name, match_length FROM match WHERE id = ?`, sgfMatchID).
+			Scan(&sgfP1, &sgfP2, &sgfLen); err != nil {
+			t.Fatal(err)
+		}
 
 		t.Logf("XG:  %s vs %s, length=%d", xgP1, xgP2, xgLen)
 		t.Logf("SGF: %s vs %s, length=%d", sgfP1, sgfP2, sgfLen)
@@ -722,8 +767,12 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 	// 2. Compare game counts
 	t.Run("GameCounts", func(t *testing.T) {
 		var xgGames, sgfGames int
-		dbXG.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, xgMatchID).Scan(&xgGames)
-		dbSGF.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, sgfMatchID).Scan(&sgfGames)
+		if err := dbXG.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, xgMatchID).Scan(&xgGames); err != nil {
+			t.Fatal(err)
+		}
+		if err := dbSGF.db.QueryRow(`SELECT COUNT(*) FROM game WHERE match_id = ?`, sgfMatchID).Scan(&sgfGames); err != nil {
+			t.Fatal(err)
+		}
 
 		t.Logf("XG games: %d, SGF games: %d", xgGames, sgfGames)
 		if xgGames != sgfGames {
@@ -753,8 +802,13 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			var result []gameMoves
 			for rows.Next() {
 				var gm gameMoves
-				rows.Scan(&gm.gameNumber, &gm.moveCount)
+				if err := rows.Scan(&gm.gameNumber, &gm.moveCount); err != nil {
+					t.Fatal(err)
+				}
 				result = append(result, gm)
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
 			}
 			return result
 		}
@@ -779,12 +833,20 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 	// 4. Compare positions: moves with position data
 	t.Run("PositionCounts", func(t *testing.T) {
 		var xgWithPos, xgWithoutPos int
-		dbXG.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, xgMatchID).Scan(&xgWithPos)
-		dbXG.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, xgMatchID).Scan(&xgWithoutPos)
+		if err := dbXG.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, xgMatchID).Scan(&xgWithPos); err != nil {
+			t.Fatal(err)
+		}
+		if err := dbXG.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, xgMatchID).Scan(&xgWithoutPos); err != nil {
+			t.Fatal(err)
+		}
 
 		var sgfWithPos, sgfWithoutPos int
-		dbSGF.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, sgfMatchID).Scan(&sgfWithPos)
-		dbSGF.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, sgfMatchID).Scan(&sgfWithoutPos)
+		if err := dbSGF.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NOT NULL`, sgfMatchID).Scan(&sgfWithPos); err != nil {
+			t.Fatal(err)
+		}
+		if err := dbSGF.db.QueryRow(`SELECT COUNT(*) FROM move m JOIN game g ON m.game_id = g.id WHERE g.match_id = ? AND m.position_id IS NULL`, sgfMatchID).Scan(&sgfWithoutPos); err != nil {
+			t.Fatal(err)
+		}
 
 		t.Logf("XG:  moves with position=%d, without=%d", xgWithPos, xgWithoutPos)
 		t.Logf("SGF: moves with position=%d, without=%d", sgfWithPos, sgfWithoutPos)
@@ -821,8 +883,13 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			var result []diceRoll
 			for rows.Next() {
 				var dr diceRoll
-				rows.Scan(&dr.moveNumber, &dr.player, &dr.dice1, &dr.dice2)
+				if err := rows.Scan(&dr.moveNumber, &dr.player, &dr.dice1, &dr.dice2); err != nil {
+					t.Fatal(err)
+				}
 				result = append(result, dr)
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
 			}
 			return result
 		}
@@ -886,10 +953,17 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			var positions []Position
 			for rows.Next() {
 				var stateJSON string
-				rows.Scan(&stateJSON)
+				if err := rows.Scan(&stateJSON); err != nil {
+					t.Fatal(err)
+				}
 				var pos Position
-				testUnmarshalPositionState(stateJSON, &pos)
+				if err := testUnmarshalPositionState(stateJSON, &pos); err != nil {
+					t.Fatal(err)
+				}
 				positions = append(positions, pos)
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
 			}
 			return positions
 		}
@@ -993,7 +1067,9 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			for rows.Next() {
 				var ci cubeInfo
 				var analysisData []byte
-				rows.Scan(&ci.gameNumber, &ci.moveNumber, &ci.cubeAction, &analysisData)
+				if err := rows.Scan(&ci.gameNumber, &ci.moveNumber, &ci.cubeAction, &analysisData); err != nil {
+					t.Fatal(err)
+				}
 
 				posAnalysis, err := decodeAnalysisFromStorage(analysisData)
 				if err != nil {
@@ -1006,6 +1082,9 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 					ci.dpEquity = posAnalysis.DoublingCubeAnalysis.CubefulDoublePassEquity
 					result = append(result, ci)
 				}
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
 			}
 			return result
 		}
@@ -1168,6 +1247,9 @@ func TestMATImportCheckerCounts(t *testing.T) {
 			}
 		}
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 
 	if badCount > 0 {
 		t.Errorf("%d/%d positions have incorrect checker counts (should be 15 per player)", badCount, posCount)
@@ -1215,6 +1297,9 @@ func TestImportXGComments(t *testing.T) {
 		}
 		comments = append(comments, c)
 		t.Logf("Comment %d (position_id=%d): %q", c.id, c.positionID, c.text)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
 	}
 
 	if len(comments) != 2 {

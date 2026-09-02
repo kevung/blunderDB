@@ -58,4 +58,7 @@ func TestScoreCheck(t *testing.T) {
 		t.Logf("  g=%d p=%+d s1=%d s2=%d ml=%d cv=%d e=%d mwc=%.3f%%",
 			gameNum, player, s1, s2, ml, cv, errMP, mwc*100)
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 }

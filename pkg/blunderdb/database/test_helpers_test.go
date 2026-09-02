@@ -58,6 +58,9 @@ func getPositionIDs(t *testing.T, db *Database, limit int) []int64 {
 		}
 		ids = append(ids, id)
 	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	if len(ids) == 0 {
 		t.Fatal("no positions in database")
 	}

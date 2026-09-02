@@ -267,21 +267,27 @@ func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
 
 	// Position 1 should survive because it's in a collection
 	var pos1Exists int
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id1).Scan(&pos1Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id1).Scan(&pos1Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos1Exists != 1 {
 		t.Errorf("Position %d should be preserved (in collection), but was deleted", id1)
 	}
 
 	// Position 2 should survive because it's used by match 2
 	var pos2Exists int
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id2).Scan(&pos2Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id2).Scan(&pos2Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos2Exists != 1 {
 		t.Errorf("Position %d should be preserved (used by match 2), but was deleted", id2)
 	}
 
 	// Position 3 should survive because it's used by match 2
 	var pos3Exists int
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id3).Scan(&pos3Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id3).Scan(&pos3Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos3Exists != 1 {
 		t.Errorf("Position %d should be preserved (used by match 2), but was deleted", id3)
 	}
@@ -294,18 +300,24 @@ func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
 	assertTableCount(t, rawDB, "match", 0)
 
 	// Position 1 should STILL survive (in collection)
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id1).Scan(&pos1Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id1).Scan(&pos1Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos1Exists != 1 {
 		t.Errorf("Position %d should be preserved (in collection), but was deleted after match 2 delete", id1)
 	}
 
 	// Position 2 and 3 should now be gone (orphaned)
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id2).Scan(&pos2Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id2).Scan(&pos2Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos2Exists != 0 {
 		t.Errorf("Position %d should be deleted (orphaned), but still exists", id2)
 	}
 
-	rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id3).Scan(&pos3Exists)
+	if err := rawDB.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, id3).Scan(&pos3Exists); err != nil {
+		t.Fatal(err)
+	}
 	if pos3Exists != 0 {
 		t.Errorf("Position %d should be deleted (orphaned), but still exists", id3)
 	}
