@@ -741,6 +741,16 @@ clés étrangères sur toutes les connexions ; ils ne sont rattachés à aucun m
 et n'occupent que de la place. La commande se termine tout de même avec le code
 de sortie 0.
 
+Chaque exécution compare aussi le schéma à la DDL de référence et liste les
+tables, colonnes et index qui manquent à la base. L'ouverture d'une base ajoute
+ce qui manque quand elle le peut et ne fait que journaliser ce qu'elle ne peut
+pas ajouter (typiquement un index ``UNIQUE`` que des lignes en double
+l'empêchent de reconstruire) : c'est ici que cet écart devient visible, et une
+requête qui nomme l'un de ces éléments échoue tant que la cause n'est pas
+corrigée. Une base saine répond ``Schema: matches the reference DDL``. Comme
+les orphelins, un écart de schéma est un constat, pas un échec : le code de
+sortie reste 0.
+
 **Exemples:**
 
 .. code-block:: bash

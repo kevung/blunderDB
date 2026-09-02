@@ -277,8 +277,8 @@ msgstr "任意のメタデータとともに新しいデータベースファイ
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:761
-#: ../../source/cli.rst:793 ../../source/cli.rst:823
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
+#: ../../source/cli.rst:812 ../../source/cli.rst:842
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -304,8 +304,8 @@ msgid ""
 "répertoires parents sont créés si nécessaire."
 msgstr "``.db`` 拡張子がない場合は自動的に追加されます。必要に応じて親ディレクトリが作成されます。"
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:773
-#: ../../source/cli.rst:835
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
+#: ../../source/cli.rst:854
 msgid "**Exemple:**"
 msgstr "**例：**"
 
@@ -484,7 +484,7 @@ msgstr "``--watermark-note`` — 透かしに添える自由記述（利用条�
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:735 ../../source/cli.rst:800
+#: ../../source/cli.rst:754 ../../source/cli.rst:819
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -602,7 +602,7 @@ msgstr "**主なオプション：**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:763 ../../source/cli.rst:795
+#: ../../source/cli.rst:782 ../../source/cli.rst:814
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — データベース（必須）。"
 
@@ -1207,7 +1207,7 @@ msgstr ""
 "``--match`` オプションなしの場合、コマンドはデータベースの一般統計を表示します。\\ ``--match`` "
 "を使用すると、マッチのデータを確認し、元のソースファイルと比較できます。"
 
-#: ../../source/cli.rst:734
+#: ../../source/cli.rst:735
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -1224,11 +1224,25 @@ msgstr ""
 "と答えます。すべての接続で外部キーを強制していなかったバージョンが書き込んだデータベースには孤立行が残っていることがあります。どのマッチにも属さず、場所を取るだけです。コマンドはそれでも終了コード "
 "0 で終了します。"
 
-#: ../../source/cli.rst:749
+#: ../../source/cli.rst:744
+msgid ""
+"Chaque exécution compare aussi le schéma à la DDL de référence et liste "
+"les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
+"base ajoute ce qui manque quand elle le peut et ne fait que journaliser "
+"ce qu'elle ne peut pas ajouter (typiquement un index ``UNIQUE`` que des "
+"lignes en double l'empêchent de reconstruire) : c'est ici que cet écart "
+"devient visible, et une requête qui nomme l'un de ces éléments échoue "
+"tant que la cause n'est pas corrigée. Une base saine répond ``Schema: "
+"matches the reference DDL``. Comme les orphelins, un écart de schéma est "
+"un constat, pas un échec : le code de sortie reste 0."
+msgstr ""
+"各実行では、スキーマを参照 DDL と比較し、データベースに欠けているテーブル・列・インデックスを一覧します。データベースを開くときには、可能であれば欠けているものが追加され、追加できないもの（典型的には重複行のせいで再構築できない\\ ``UNIQUE``\\ インデックス）はログに記録されるだけです。このずれが目に見えるのはここであり、これらの要素を名指しするクエリは原因が修正されるまで失敗します。健全なデータベースは\\ ``Schema: matches the reference DDL``\\ と答えます。孤立行と同じく、スキーマのずれは所見であって失敗ではなく、終了コードは 0 のままです。"
+
+#: ../../source/cli.rst:768
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — データベースを最適化する"
 
-#: ../../source/cli.rst:751
+#: ../../source/cli.rst:770
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1240,7 +1254,7 @@ msgstr ""
 "削除（マッチ、トーナメント、パージ）によって空いたディスク領域を回収します。SQLite "
 "はデータを削除してもファイルを自分で縮めることはなく、明示的に指示する必要があります。最適化を起こす方法はこれだけです。大きなデータベースでは費用が読めないため、データベースを開いたときに自動で行われることはありません。"
 
-#: ../../source/cli.rst:765
+#: ../../source/cli.rst:784
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1257,33 +1271,33 @@ msgstr ""
 "``ANALYZE`` "
 "を実行します。ディスク容量が足りない場合は、中断された最適化の危険を冒すのではなく、明確なメッセージとともに開始を拒みます。"
 
-#: ../../source/cli.rst:785
+#: ../../source/cli.rst:804
 msgid "delete — Supprimer des données"
 msgstr "delete — データを削除する"
 
-#: ../../source/cli.rst:787
+#: ../../source/cli.rst:806
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "マッチとすべての関連データ（ゲーム、手、分析）を削除します。"
 
-#: ../../source/cli.rst:796
+#: ../../source/cli.rst:815
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — 削除の種類：\\ ``match``\\ （必須）。"
 
-#: ../../source/cli.rst:797
+#: ../../source/cli.rst:816
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — 削除する要素のID（必須）。"
 
-#: ../../source/cli.rst:798
+#: ../../source/cli.rst:817
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — 確認なしで削除する。"
 
-#: ../../source/cli.rst:811
+#: ../../source/cli.rst:830
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — デーモンを確認する"
 
-#: ../../source/cli.rst:813
+#: ../../source/cli.rst:832
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1297,7 +1311,7 @@ msgstr ""
 "、それ以外（ストレージに到達できない、スキーマが古い、アドレスで何もリッスンしていない）なら\\ ``1``\\ "
 "を返します。データベースファイルは一切開きません。"
 
-#: ../../source/cli.rst:825
+#: ../../source/cli.rst:844
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1307,13 +1321,13 @@ msgstr ""
 "）。ホストのないアドレス（\\ ``:8080``\\ ）やワイルドカードホスト（\\ ``0.0.0.0``\\ 、\\ ``[::]``\\ "
 "）はループバックインターフェースで確認します。"
 
-#: ../../source/cli.rst:828
+#: ../../source/cli.rst:847
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — この時間を過ぎると確認を諦めます（既定は\\ ``2s``\\ ）。"
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:849
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1324,7 +1338,7 @@ msgstr ""
 "``curl``\\ はありません）。\\ ``cmd/serve``\\ からビルドした\\ ``serve``\\ "
 "バイナリも同じコマンドを理解します。スクリプトや systemd ユニットからも同様に使えます。"
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:863
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1332,35 +1346,35 @@ msgstr ""
 "失敗した場合はその理由が表示され、\\ ``docker inspect``\\ も\\ ``unhealthy``\\ "
 "なコンテナについて同じ内容を示します："
 
-#: ../../source/cli.rst:852
+#: ../../source/cli.rst:871
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:855
+#: ../../source/cli.rst:874
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:869
+#: ../../source/cli.rst:888
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:877
+#: ../../source/cli.rst:896
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:907
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:890
+#: ../../source/cli.rst:909
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:891
+#: ../../source/cli.rst:910
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:893
+#: ../../source/cli.rst:912
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

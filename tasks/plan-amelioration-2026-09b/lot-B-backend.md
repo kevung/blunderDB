@@ -16,7 +16,7 @@ B.10 à B.19 = **étape 2 (consolider)**, perf et dette.
 
 `database/db_import_db.go:132` : `if importMajor > currentMajor` compare
 `"10" > "9"` → faux. `compareVersions` existe (`db_migration.go:232`).
-- [ ] Appeler `compareVersions` ; test avec `10.0.0` vs `2.15.0`.
+- [x] Appeler `compareVersions` ; test avec `10.0.0` vs `2.15.0`.
 
 ## B.2 — Crawford codé en dur à `false` dans la conversion MWC→EMG GnuBG [M] — bug, échelle d'équité (#170)
 
@@ -151,7 +151,7 @@ Même bump que A.2/B.3.
   dans les `CREATE TABLE`.
 - `schema_sqlite.go:379-388` : `EnsureSchema` dégrade en `Warn` → `verify`
   refait le diff contre la DDL de référence et le signale.
-- [ ] Les cinq points, avec un test de migration par point.
+- [x] Les cinq points, avec un test de migration par point.
 
 ---
 

@@ -1,6 +1,11 @@
 package database
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+)
 
 // OrphanCounts is what blunderdb verify reports about referential integrity:
 // child rows whose parent row is gone. The schema declares ON DELETE CASCADE
@@ -59,4 +64,20 @@ func (d *Database) CountOrphans() (OrphanCounts, error) {
 		}
 	}
 	return counts, nil
+}
+
+// CheckSchema reports what the open database lacks against the reference
+// schema — the tables, columns and indexes sqlite.EnsureSchema tried to add
+// on open and could not (it logs the failure and lets the database open; a
+// UNIQUE index over rows that violate it is the usual case). blunderdb verify
+// prints the result, so the gap is seen where a log line is not. It only
+// reads; nothing is repaired.
+func (d *Database) CheckSchema() (sqlite.SchemaDrift, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return sqlite.SchemaDrift{}, fmt.Errorf("no database is currently open")
+	}
+	return sqlite.CheckSchema(context.Background(), d.db)
 }

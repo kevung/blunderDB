@@ -304,8 +304,8 @@ msgstr "Создаёт новый файл базы данных с необяз
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:761
-#: ../../source/cli.rst:793 ../../source/cli.rst:823
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
+#: ../../source/cli.rst:812 ../../source/cli.rst:842
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -333,8 +333,8 @@ msgstr ""
 "Расширение ``.db`` добавляется автоматически, если оно отсутствует. "
 "Родительские каталоги создаются при необходимости."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:773
-#: ../../source/cli.rst:835
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
+#: ../../source/cli.rst:854
 msgid "**Exemple:**"
 msgstr "**Пример:**"
 
@@ -529,7 +529,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:735 ../../source/cli.rst:800
+#: ../../source/cli.rst:754 ../../source/cli.rst:819
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -661,7 +661,7 @@ msgstr "**Основные параметры:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:763 ../../source/cli.rst:795
+#: ../../source/cli.rst:782 ../../source/cli.rst:814
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — База данных (обязательно)."
 
@@ -1332,7 +1332,7 @@ msgstr ""
 "``--match`` она проверяет данные матча и может сравнить их с оригинальным"
 " исходным файлом."
 
-#: ../../source/cli.rst:734
+#: ../../source/cli.rst:735
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -1351,11 +1351,33 @@ msgstr ""
 "внешние ключи на всех соединениях; они не принадлежат ни одному матчу и "
 "лишь занимают место. Команда всё равно завершается с кодом выхода 0."
 
-#: ../../source/cli.rst:749
+#: ../../source/cli.rst:744
+msgid ""
+"Chaque exécution compare aussi le schéma à la DDL de référence et liste "
+"les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
+"base ajoute ce qui manque quand elle le peut et ne fait que journaliser "
+"ce qu'elle ne peut pas ajouter (typiquement un index ``UNIQUE`` que des "
+"lignes en double l'empêchent de reconstruire) : c'est ici que cet écart "
+"devient visible, et une requête qui nomme l'un de ces éléments échoue "
+"tant que la cause n'est pas corrigée. Une base saine répond ``Schema: "
+"matches the reference DDL``. Comme les orphelins, un écart de schéma est "
+"un constat, pas un échec : le code de sortie reste 0."
+msgstr ""
+"Каждый запуск также сравнивает схему с эталонной DDL и перечисляет таблицы, "
+"столбцы и индексы, которых не хватает базе. При открытии базы недостающее "
+"добавляется, когда это возможно, а то, что добавить нельзя (как правило, "
+"индекс ``UNIQUE``, который не удаётся перестроить из-за дублирующихся "
+"строк), лишь записывается в журнал: именно здесь этот разрыв становится "
+"видимым, и запрос, обращающийся к одному из этих элементов, завершается "
+"ошибкой, пока причина не устранена. Здоровая база отвечает ``Schema: matches "
+"the reference DDL``. Как и сироты, расхождение схемы — это наблюдение, а не "
+"сбой: код выхода остаётся 0."
+
+#: ../../source/cli.rst:768
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Сжатие базы данных"
 
-#: ../../source/cli.rst:751
+#: ../../source/cli.rst:770
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1370,7 +1392,7 @@ msgstr ""
 "открытии базы оно не происходит автоматически никогда, поскольку на "
 "большой базе его стоимость непредсказуема."
 
-#: ../../source/cli.rst:765
+#: ../../source/cli.rst:784
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1389,33 +1411,33 @@ msgstr ""
 "запросов. Если места на диске не хватает, команда отказывается стартовать"
 " с внятным сообщением, вместо того чтобы рисковать прерванным сжатием."
 
-#: ../../source/cli.rst:785
+#: ../../source/cli.rst:804
 msgid "delete — Supprimer des données"
 msgstr "delete — Удалить данные"
 
-#: ../../source/cli.rst:787
+#: ../../source/cli.rst:806
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Удаляет матч и все связанные данные (партии, ходы, анализы)."
 
-#: ../../source/cli.rst:796
+#: ../../source/cli.rst:815
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Тип удаления: ``match`` (обязательно)."
 
-#: ../../source/cli.rst:797
+#: ../../source/cli.rst:816
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Идентификатор элемента для удаления (обязательно)."
 
-#: ../../source/cli.rst:798
+#: ../../source/cli.rst:817
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
-#: ../../source/cli.rst:811
+#: ../../source/cli.rst:830
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Проверка демона"
 
-#: ../../source/cli.rst:813
+#: ../../source/cli.rst:832
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1429,7 +1451,7 @@ msgstr ""
 "недоступно, схема устарела или по адресу никто не слушает. Файл базы данных "
 "не открывается."
 
-#: ../../source/cli.rst:825
+#: ../../source/cli.rst:844
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1439,7 +1461,7 @@ msgstr ""
 "иначе ``:8080``). Адрес без хоста (``:8080``) или с обобщённым хостом "
 "(``0.0.0.0``, ``[::]``) проверяется через петлевой интерфейс."
 
-#: ../../source/cli.rst:828
+#: ../../source/cli.rst:847
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1447,7 +1469,7 @@ msgstr ""
 "``--timeout`` — Время, по истечении которого проверка прекращается (по "
 "умолчанию ``2s``)."
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:849
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1459,7 +1481,7 @@ msgstr ""
 "``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или юнита "
 "systemd."
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:863
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1467,35 +1489,35 @@ msgstr ""
 "При неудаче выводится причина, которую ``docker inspect`` показывает для "
 "контейнера в состоянии ``unhealthy``:"
 
-#: ../../source/cli.rst:852
+#: ../../source/cli.rst:871
 msgid "Exemples de flux de travail"
 msgstr "Примеры рабочих процессов"
 
-#: ../../source/cli.rst:855
+#: ../../source/cli.rst:874
 msgid "Import d'un répertoire de tournoi"
 msgstr "Импорт каталога турнира"
 
-#: ../../source/cli.rst:869
+#: ../../source/cli.rst:888
 msgid "Sauvegarde régulière"
 msgstr "Регулярное резервное копирование"
 
-#: ../../source/cli.rst:877
+#: ../../source/cli.rst:896
 msgid "Analyse des erreurs"
 msgstr "Анализ ошибок"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:907
 msgid "Codes de retour"
 msgstr "Коды возврата"
 
-#: ../../source/cli.rst:890
+#: ../../source/cli.rst:909
 msgid "``0`` — Succès."
 msgstr "``0`` — Успех."
 
-#: ../../source/cli.rst:891
+#: ../../source/cli.rst:910
 msgid "``1`` — Erreur."
 msgstr "``1`` — Ошибка."
 
-#: ../../source/cli.rst:893
+#: ../../source/cli.rst:912
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Это позволяет использовать CLI в скриптах с обработкой ошибок:"
 

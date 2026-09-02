@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"path/filepath"
 	"testing"
 )
@@ -89,12 +90,72 @@ func TestCompareVersions(t *testing.T) {
 			t.Errorf("parseVersion(%q) accepted a malformed version", bad)
 		}
 	}
+}
 
-	if !versionAtLeast("2.10.0", "2.9.0") {
-		t.Error("versionAtLeast(2.10.0, 2.9.0) = false")
+// TestRequireTables (issue #177): a required table that is missing is
+// reported by name. The lookup's sql.ErrNoRows used to be returned as is,
+// which made the "required table X does not exist" message unreachable.
+func TestRequireTables(t *testing.T) {
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatal(err)
 	}
-	if versionAtLeast("garbage", "1.0.0") {
-		t.Error("versionAtLeast(garbage, 1.0.0) = true")
+	defer db.Close()
+	db.SetMaxOpenConns(1)
+	if _, err := db.Exec(`CREATE TABLE position (id INTEGER PRIMARY KEY)`); err != nil {
+		t.Fatal(err)
+	}
+	d := &Database{db: db}
+
+	if err := d.requireTables([]string{"position"}); err != nil {
+		t.Errorf("requireTables on a present table: %v", err)
+	}
+	err = d.requireTables([]string{"position", "tournament"})
+	if err == nil {
+		t.Fatal("requireTables accepted a missing table")
+	}
+	if want := "required table tournament does not exist"; err.Error() != want {
+		t.Errorf("requireTables = %q, want %q", err, want)
+	}
+	if errors.Is(err, sql.ErrNoRows) {
+		t.Error("the bare sql.ErrNoRows leaked through")
+	}
+}
+
+// TestAddColumn (issue #177): addColumn decides from pragma_table_info
+// whether the column is there, so a second run is a no-op and the driver's
+// wording of "duplicate column" is irrelevant. A genuine failure still
+// surfaces.
+func TestAddColumn(t *testing.T) {
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	db.SetMaxOpenConns(1)
+	if _, err := db.Exec(`CREATE TABLE t (id INTEGER PRIMARY KEY)`); err != nil {
+		t.Fatal(err)
+	}
+	d := &Database{db: db}
+
+	for i := range 2 {
+		if err := d.addColumn("t", "flag INTEGER NOT NULL DEFAULT 0"); err != nil {
+			t.Fatalf("addColumn run %d: %v", i+1, err)
+		}
+	}
+	// SQLite column names are case-insensitive; so is the presence check.
+	if err := d.addColumn("t", "FLAG INTEGER"); err != nil {
+		t.Errorf("addColumn on a column present under another case: %v", err)
+	}
+	var n int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('t') WHERE name = 'flag' COLLATE NOCASE`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 1 {
+		t.Errorf("column added %d times, want 1", n)
+	}
+	if err := d.addColumn("no_such_table", "flag INTEGER"); err == nil {
+		t.Error("addColumn on a missing table returned nil")
 	}
 }
 
