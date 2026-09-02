@@ -260,7 +260,7 @@ func TestOnePlyValueLiesWithinItsReplies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	v, ok := s.positionEquity(&p, 1, 0, false, nil)
+	v, ok := s.positionEquity(&p, 1, 0, false, nil, CubeCentred)
 	if !ok {
 		t.Fatal("search failed")
 	}

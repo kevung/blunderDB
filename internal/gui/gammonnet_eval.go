@@ -203,25 +203,14 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 		return nil // EvaluatePosition declined the cube decision too; nothing to build facts from
 	}
 
-	cfg := gammonnet.DefaultConfig(ply)
-	if pruneK > 0 {
-		cfg.PruneK = pruneK
-	}
-
-	// Same referential as EvaluatePosition itself (ADR-0016): a match state
-	// this build cannot evaluate is nil here too, and the fact vector simply
-	// is not built — never a silent fall to money for a position the search
-	// otherwise refuses.
-	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
-	var state *gammonnet.MatchState
-	if !isMoney {
-		m, ok := gammonnet.MatchStateFromPosition(pos)
-		if !ok {
-			return nil
-		}
-		cfg.UseMatch = true
-		cfg.Match = m
-		state = &m
+	// The very configuration EvaluatePosition ran for this position — same
+	// referential (ADR-0016), same cube (ADR-0023) — so the fact vector and
+	// the decision next to it come from one and the same search. A match
+	// state this build cannot evaluate is refused there, and the fact vector
+	// simply is not built — never a silent fall to money.
+	cfg, state, err := gammonnet.ConfigForPosition(pos, ply, pruneK)
+	if err != nil {
+		return nil
 	}
 	scale, ok := gammonnet.NewEquityScale(state)
 	if !ok {
@@ -325,15 +314,7 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 		return nil
 	}
 
-	var owner gammonnet.CubeOwner
-	switch pos.Cube.Owner {
-	case mover:
-		owner = gammonnet.CubeOwned
-	case domain.None:
-		owner = gammonnet.CubeCentred
-	default:
-		owner = gammonnet.CubeOpponent
-	}
+	owner := gammonnet.CubeOwnerOf(pos)
 	efficiency := gammonnet.DefaultEfficiency(owner)
 	jacoby := pos.HasJacoby == 1
 

@@ -82,10 +82,19 @@ func terminalProbs(p *Position) [NumOutputs]float32 {
 // holds MoneyEquity(Probs(pos)) == the equity BestPlay's own recursion
 // assigns to pos, rather than trusting the identity.
 func (s *Searcher) Probs(pos *Position) ([NumOutputs]float32, bool) {
-	return s.probsAt(pos, s.cfg.Ply, 0)
+	return s.probsAt(pos, s.cfg.Ply, 0, s.matchState(), s.cfg.CubeOwner)
 }
 
-func (s *Searcher) probsAt(pos *Position, depth, level int) ([NumOutputs]float32, bool) {
+// probsAt is the recursion. state and owner are the match state and the
+// cube AS pos's OWN MOVER SEES THEM, swapped and mirrored on the way down
+// exactly as gn_search.c's position_probs does and as positionEquity does —
+// never re-read from the root. Until ADR-0023 this walk passed the ROOT's
+// state to every level, so at 2 ply the opponent's replies were ranked from
+// the root player's side of the score: exact at 1 ply (the inner call is a
+// leaf) and at every symmetric score, and silently wrong for the 2-ply cube
+// decision at 4-away/2-away. TestProbsMatchEquityMatchesPositionEquity is
+// the identity that catches it.
+func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
 	if pos.isOver() {
 		return terminalProbs(pos), true
 	}
@@ -113,7 +122,7 @@ func (s *Searcher) probsAt(pos *Position, depth, level int) ([NumOutputs]float32
 	var total [NumOutputs]float64
 	for r := 0; r < NumRolls; r++ {
 		roll := s.rolls[r]
-		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, s.matchState(), cands)
+		n := s.rankPlays(pos, int(roll.d1), int(roll.d2), depth-1, level, state, owner, cands)
 		if n < 0 {
 			return [NumOutputs]float32{}, false
 		}
@@ -123,13 +132,13 @@ func (s *Searcher) probsAt(pos *Position, depth, level int) ([NumOutputs]float32
 		if n > 0 {
 			// The best play's own distribution, at the depth its equity was
 			// scored at (depth-1) — mirroring -V(result, depth-1).
-			theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1)
+			theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1, swapMatchState(state), owner.Mirror())
 		} else {
 			// No legal play: the turn passes, exactly as the scalar
 			// recursion does — dropping the branch would bias the average.
 			passed := *pos
 			passed.swapTurn()
-			theirs, ok = s.probsAt(&passed, depth-1, level+1)
+			theirs, ok = s.probsAt(&passed, depth-1, level+1, swapMatchState(state), owner.Mirror())
 		}
 		if !ok {
 			return [NumOutputs]float32{}, false

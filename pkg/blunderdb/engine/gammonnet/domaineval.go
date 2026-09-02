@@ -39,7 +39,16 @@ import (
 // plays, not cube states, and leafValue is cubeless — but the version is
 // per-analysis, so a stored position is stale as a whole and re-run as a
 // whole.
-const EngineVersion = "gammonNet v1.2.0"
+//
+// v1.2.1 is gammonNet's Crawford fix (the cube VALUE in the Crawford game is
+// the dead one, not a live blend) — and the release under which this port
+// switched its search to use_cube (ADR-0023): every leaf is now valued
+// through the cube model at the position's own cube state, so checker-move
+// equities at a match score are cubeful, the scale XG and gnubg print, and
+// gammon-go / gammon-save come out of the search where v1.2.0's cubeless
+// leaves could not see them. Money equities move too, slightly. Every row
+// stored under an earlier label is therefore stale as a whole.
+const EngineVersion = "gammonNet v1.2.1"
 
 // ErrNotEvaluable marks a position this build declines to answer for — a
 // match score beyond the MET's horizon, or a cube decision the model refuses
@@ -61,10 +70,11 @@ type EvalResult struct {
 	Moves []domain.CheckerMove
 	Cube  *domain.DoublingCubeAnalysis
 	// PreRoll is the position's fact vector before any dice are rolled —
-	// win/gammon/backgammon chances and the cubeless equity, in the
-	// referential the search currently uses (money at every score, see
-	// ADR-0016). It is the "position fact" ADR-0017 always shows, whatever
-	// question the board is asking.
+	// win/gammon/backgammon chances and the CUBELESS equity, in the
+	// position's own referential (ADR-0016/ADR-0019). It is the "position
+	// fact" ADR-0017 always shows, whatever question the board is asking;
+	// cubeless by definition, even though the search that produced the
+	// distribution values its leaves with the cube (ADR-0023).
 	//
 	// Populated only on the no-dice (Cube) branch, where it costs nothing:
 	// Searcher.Probs has already run to produce Cube, and this just reads
@@ -98,12 +108,65 @@ type PreRollFacts struct {
 	CubelessEquity           float64
 }
 
+// CubeOwnerOf is pos's cube as the player on roll sees it — the one
+// translation from domain.Cube.Owner (a player index, or None for a centred
+// cube) to the engine's three-valued owner, shared by the search
+// configuration, the cube decision and internal/gui's race regime.
+func CubeOwnerOf(pos *domain.Position) CubeOwner {
+	switch pos.Cube.Owner {
+	case pos.PlayerOnRoll:
+		return CubeOwned
+	case domain.None:
+		return CubeCentred
+	default:
+		return CubeOpponent
+	}
+}
+
+// ConfigForPosition is THE search configuration gammonNet runs for pos: the
+// canonical depth and pruning (DefaultConfig, pruneK overriding when > 0),
+// the position's own referential (ADR-0016: UseMatch at a score, refused
+// rather than degraded to money when the score is beyond the MET), and,
+// since ADR-0023, its cube: UseCube at the cube state pos carries, at that
+// state's measured efficiency. The match state comes back alongside (nil at
+// money play) so a caller builds its EquityScale from the same translation.
+//
+// One function, every caller — EvaluatePosition, internal/gui's pre-roll
+// facts — so "what gammonNet was asked" has exactly one definition, and a
+// panel can never show a fact vector from a differently configured search
+// than the decision next to it.
+func ConfigForPosition(pos *domain.Position, ply, pruneK int) (SearchConfig, *MatchState, error) {
+	cfg := DefaultConfig(ply)
+	if pruneK > 0 {
+		cfg.PruneK = pruneK
+	}
+
+	var state *MatchState
+	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
+	if !isMoney {
+		m, ok := MatchStateFromPosition(pos)
+		if !ok {
+			return SearchConfig{}, nil, fmt.Errorf("%w: match state at score %v", ErrNotEvaluable, pos.Score)
+		}
+		cfg.UseMatch = true
+		cfg.Match = m
+		state = &m
+	}
+
+	owner := CubeOwnerOf(pos)
+	cfg.UseCube = true
+	cfg.CubeOwner = owner
+	cfg.CubeX = DefaultEfficiency(owner)
+	return cfg, state, nil
+}
+
 // EvaluatePosition runs a gammonNet search at the given ply (canonical
 // parameters when pruneK/candidates are 0) and returns the moves-or-cube
-// verdict for pos, in pos's own referential (ADR-0016): cubeless money at
-// money play, 2×MWC−1 at a match score. The depth label on the result always
-// reports the depth that actually ran, never the one requested (DefaultConfig
-// clamps).
+// verdict for pos, in pos's own referential (ADR-0016, ADR-0019): money
+// points at money play, normalised equity at a match score — cubeful either
+// way since ADR-0023, the leaves being valued with pos's own cube. The depth
+// label on the result always reports the depth that actually ran, never the
+// one requested (DefaultConfig clamps).
 //
 // A match score this build cannot evaluate (MatchStateFromPosition refuses)
 // is an error here, never a silent fall to money — the same refusal
@@ -115,21 +178,9 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{}, err
 	}
 
-	cfg := DefaultConfig(ply)
-	if pruneK > 0 {
-		cfg.PruneK = pruneK
-	}
-
-	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
-	var state *MatchState
-	if !isMoney {
-		m, ok := MatchStateFromPosition(&pos)
-		if !ok {
-			return EvalResult{}, fmt.Errorf("%w: match state at score %v", ErrNotEvaluable, pos.Score)
-		}
-		cfg.UseMatch = true
-		cfg.Match = m
-		state = &m
+	cfg, state, err := ConfigForPosition(&pos, ply, pruneK)
+	if err != nil {
+		return EvalResult{}, err
 	}
 
 	searcher, err := NewSearcher(cfg)
@@ -158,7 +209,7 @@ func EvaluatePosition(pos domain.Position, ply, pruneK, candidates int) (EvalRes
 		return EvalResult{Moves: moves}, nil
 	}
 
-	cube, preRoll, action, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, scale)
+	cube, preRoll, action, err := evaluateCube(&gnPos, &pos, searcher, depthLabel, state, cfg.CubeOwner, scale)
 	if err != nil {
 		return EvalResult{}, err
 	}
@@ -323,7 +374,7 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 // free: probs already exists for the cube decision itself — and the verdict
 // as a value (EvalResult.CubeAction), which the string label below cannot
 // carry into a reader's own language.
-func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, CubeAction, error) {
+func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, state *MatchState, owner CubeOwner, scale EquityScale) (*domain.DoublingCubeAnalysis, *PreRollFacts, CubeAction, error) {
 	probs, ok := searcher.Probs(gnPos)
 	if !ok {
 		return nil, nil, NoDouble, fmt.Errorf("gammonnet: could not evaluate the position for a cube decision")
@@ -341,19 +392,9 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		CubelessEquity: scale.FromSearch(CubelessValue(&probs, state)),
 	}
 
-	mover := pos.PlayerOnRoll
-	opponent := domain.White
-	if mover == domain.White {
-		opponent = domain.Black
-	}
-
-	owner := CubeCentred
-	switch pos.Cube.Owner {
-	case mover:
-		owner = CubeOwned
-	case opponent:
-		owner = CubeOpponent
-	}
+	// owner is the searcher's own root cube state (ConfigForPosition), so
+	// the decision below and the leaves that produced probs were priced at
+	// the same cube, by construction.
 	efficiency := DefaultEfficiency(owner)
 	jacoby := pos.HasJacoby == 1
 

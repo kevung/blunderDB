@@ -897,7 +897,15 @@ L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en **équité normalisée** — la même échelle que XG et GNU Backgammon,
 où gagner la valeur du videau courant vaut +1 et la perdre −1 — jamais
-mélangées dans un même tableau. Ce panneau ne modifie jamais la
+mélangées dans un même tableau. Elle tient compte du **videau vivant** : la
+recherche valorise chaque position finale par le modèle de videau (Janowski,
+efficacité mesurée) dans l'état du videau de la position, comme le font XG
+et GNU Backgammon en évaluation *cubeful*. C'est ce qui rend visibles au
+score les effets gammon-go et gammon-save — à 4-away/2-away, le joueur mené
+joue 8/2 6/2 sur un 6-4 d'ouverture parce que son double précoce donnera
+au gammon la valeur du match, ce qu'une évaluation sans videau ne peut pas
+voir. La ligne *avant le jet*, elle, reste une équité **cubeless** : c'est
+un fait de la position, pas une décision. Ce panneau ne modifie jamais la
 base : c'est un calcul, pas une analyse enregistrée. Cliquer un coup
 candidat l'affiche sur le plateau sous forme de flèches, exactement comme
 dans le panneau Analyse. Le bouton **?** discret, dans la bande de
