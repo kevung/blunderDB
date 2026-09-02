@@ -35,6 +35,32 @@
 // that surfaces months later on an accent or an empty field; storing the signed bytes
 // verbatim removes the class entirely.
 //
+// # The container, and what its cleartext header is worth
+//
+// A protected copy (`.dbx`) is a cleartext prefix — magic bytes, a length, a JSON header
+// carrying the Watermark, the KDF name with its Argon2id parameters, salt and nonce — followed
+// by the database sealed with AES-256-GCM under a key derived from the passphrase. The header
+// is clear so that the origin of a file stays readable without the password, and readable on
+// a file nobody can open any more.
+//
+// Clear is not the same as unprotected. Container version 2 passes the whole prefix, byte for
+// byte, as the AEAD's additional data, so relabelling a file — swapping its Watermark for
+// someone else's — fails to open exactly as a wrong passphrase does. Version 1 did not bind
+// the header; files of that version are still read, with a logged warning, because copies
+// already handed out cannot be recalled, and nothing writes version 1 any more.
+//
+// Every read is bounded before it allocates: the header by maxContainerHeader, the payload by
+// maxContainerPayload (2 GiB) checked against the file's size. AES-GCM authenticates a whole
+// message before releasing a byte of plaintext, so a container is necessarily opened in one
+// piece; it is decrypted in place so the peak is one copy of the file, not two. Streaming
+// past that would mean a chunked AEAD, a third format version, and is not worth it under the
+// cap.
+//
+// Argon2id's cost parameters are written into every protected file and identity export. A
+// file recording parameters this build never used is refused by name rather than tried:
+// a derivation that "succeeds" with the wrong cost only reports a wrong passphrase, and the
+// user would blame their memory.
+//
 // This package is pure: no SQL, and no filesystem beyond the identity file and the
 // container. The database glue lives in pkg/blunderdb/database/db_issuance.go.
 package issuance

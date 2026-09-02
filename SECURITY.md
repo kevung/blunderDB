@@ -28,9 +28,14 @@ warnings in the server-mode documentation — they are not to be weakened.
 
 **Encrypted exports (`.dbx`)** are protected with AES-256-GCM under a key
 derived from the passphrase with Argon2id (fixed parameters: 3 passes,
-64 MiB, 4 lanes). A weak passphrase is the user's choice; a way to open a
-container without the passphrase, or to alter one without detection, is a
-vulnerability.
+64 MiB, 4 lanes, recorded in the file and refused when they differ). Since
+container version 2 the cleartext header — watermark, salt, nonce — is bound
+to the payload as the AEAD's additional data, so it cannot be rewritten
+without detection either; version-1 files, whose header was not bound, still
+open with a logged warning and should be exported again. Reads are bounded
+before allocation (1 MiB header, 2 GiB payload). A weak passphrase is the
+user's choice; a way to open a container without the passphrase, or to alter
+one — header included — without detection, is a vulnerability.
 
 **Watermarks and issuer identity** mark where a database *came from*; nothing
 is ever recorded on the recipient's side. Reports that this could be used to

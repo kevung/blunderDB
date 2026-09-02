@@ -468,3 +468,57 @@ func TestProtectedPath(t *testing.T) {
 		}
 	}
 }
+
+func TestProtectedIdentityFileRecordsItsDerivationParameters(t *testing.T) {
+	id := mustIdentity(t, "Jean")
+	file := filepath.Join(t.TempDir(), "jean"+IdentityFileExtension)
+	if err := id.ExportIdentity(file, "correct horse"); err != nil {
+		t.Fatalf("ExportIdentity: %v", err)
+	}
+	raw, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatalf("read: %v", err)
+	}
+	var stored storedIdentity
+	if err := json.Unmarshal(raw, &stored); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if stored.Argon2 == nil || *stored.Argon2 != argon2Default {
+		t.Fatalf("the export must record the Argon2 parameters, got %+v", stored.Argon2)
+	}
+
+	rewrite := func(edit func(*storedIdentity)) string {
+		s := stored
+		edit(&s)
+		out, err := json.Marshal(s)
+		if err != nil {
+			t.Fatalf("marshal: %v", err)
+		}
+		path := filepath.Join(t.TempDir(), "forged"+IdentityFileExtension)
+		if err := os.WriteFile(path, out, 0o600); err != nil {
+			t.Fatalf("write: %v", err)
+		}
+		return path
+	}
+
+	// A file exported before the parameters were recorded carries none: it used the
+	// defaults, and must keep opening.
+	legacy := rewrite(func(s *storedIdentity) { s.Argon2 = nil })
+	if _, err := ImportIdentity(t.TempDir(), legacy, "correct horse"); err != nil {
+		t.Fatalf("an export without recorded parameters must still open: %v", err)
+	}
+
+	weak := rewrite(func(s *storedIdentity) { s.Argon2 = &Argon2Params{Time: 1, Memory: 8, Threads: 1} })
+	if _, err := ImportIdentity(t.TempDir(), weak, "correct horse"); err == nil || errors.Is(err, ErrWrongPassphrase) || !strings.Contains(err.Error(), "parameters") {
+		t.Fatalf("unknown parameters must be refused by name, got %v", err)
+	}
+
+	newer := rewrite(func(s *storedIdentity) { s.Version = 2 })
+	if _, err := ImportIdentity(t.TempDir(), newer, "correct horse"); err == nil || !strings.Contains(err.Error(), "version 2") {
+		t.Fatalf("an identity file of another version must be refused, got %v", err)
+	}
+	unversioned := rewrite(func(s *storedIdentity) { s.Version = 0 })
+	if _, err := ImportIdentity(t.TempDir(), unversioned, "correct horse"); err == nil {
+		t.Fatal("an identity file without a version must be refused")
+	}
+}
