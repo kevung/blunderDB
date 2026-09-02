@@ -239,7 +239,6 @@
         "dbVersion": "Versión de la base de datos: {version}",
         "dbVersionMismatch": "Discrepancia de versión mayor de la base de datos. El esquema de la base de datos podría ser incompatible con la versión actual de blunderDB. Continuar editando la base de datos es bajo tu propia responsabilidad. Haz una copia de seguridad del archivo antes de continuar.\nVersión de la base de datos: {dbVersion}\nVersión esperada: {modelVersion}",
         "epcErrorComputing": "EPC: Error al calcular",
-        "epcNotAvailable": "EPC: N/D (las fichas no están todas en el cuadro de casa)",
         "errorClearingHistory": "Error al borrar el historial de comandos.",
         "errorCreatingDb": "Error al crear la nueva base de datos",
         "errorOpeningDb": "Error al abrir la base de datos",
