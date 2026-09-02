@@ -494,20 +494,22 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		start := time.Now()
 		var count int
 		for j := 0; j < searchIters; j++ {
-			rows, _ := sqlDB190s.Query(`SELECT id, state FROM position`)
 			count = 0
-			for rows.Next() {
-				var id int64
-				var state string
-				rows.Scan(&id, &state)
-				var pos Position
-				json.Unmarshal([]byte(state), &pos)
-				pos.ID = id
-				if match(&pos) {
-					count++
+			func() {
+				rows, _ := sqlDB190s.Query(`SELECT id, state FROM position`)
+				defer rows.Close()
+				for rows.Next() {
+					var id int64
+					var state string
+					rows.Scan(&id, &state)
+					var pos Position
+					json.Unmarshal([]byte(state), &pos)
+					pos.ID = id
+					if match(&pos) {
+						count++
+					}
 				}
-			}
-			rows.Close()
+			}()
 		}
 		elapsed := time.Since(start)
 		avgMs := float64(elapsed.Microseconds()) / float64(searchIters) / 1000.0
@@ -562,12 +564,12 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		db, _ := sql.Open("sqlite", dbPath230)
 		defer db.Close()
 		rows, _ := db.Query(`SELECT position_id FROM analysis ORDER BY id LIMIT 1000`)
+		defer rows.Close()
 		for rows.Next() {
 			var id int64
 			rows.Scan(&id)
 			sampleAnalysisIDs = append(sampleAnalysisIDs, id)
 		}
-		rows.Close()
 	}()
 
 	// v2.3.0: read + decompress
@@ -772,13 +774,13 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	allPositions, _ := db230obj.LoadAllPositions()
 	start = time.Now()
 	db230obj.ExportDatabase(ExportOptions{
-		ExportPath:      exportPath,
-		Positions:       allPositions,
-		Metadata:        map[string]string{},
-		IncludeAnalysis: true,
-		IncludeComments: true,
+		ExportPath:         exportPath,
+		Positions:          allPositions,
+		Metadata:           map[string]string{},
+		IncludeAnalysis:    true,
+		IncludeComments:    true,
 		IncludePlayedMoves: true,
-		IncludeMatches:  true,
+		IncludeMatches:     true,
 	})
 	exportDuration := time.Since(start)
 	exportSize := fileSize(t, exportPath)

@@ -453,181 +453,187 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			gameIDMapping := make(map[int64]int64) // old game ID -> new game ID
 
 			for oldMatchID, newMatchID := range matchIDMapping {
-				gameRows, err := d.db.Query(`
-					SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count
-					FROM game
-					WHERE match_id = ?
-				`, oldMatchID)
-				if err != nil {
-					slog.Warn("querying games for match", "matchID", oldMatchID, "err", err)
-					skipped++
-					continue
-				}
-
-				for gameRows.Next() {
-					var oldGameID int64
-					var gameNumber, score1, score2, winner, pointsWon int32
-					var moveCountVal int
-
-					err := gameRows.Scan(&oldGameID, &gameNumber, &score1, &score2, &winner, &pointsWon, &moveCountVal)
+				if err := func() error {
+					gameRows, err := d.db.Query(`
+						SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count
+						FROM game
+						WHERE match_id = ?
+					`, oldMatchID)
 					if err != nil {
-						slog.Warn("scanning game", "err", err)
+						slog.Warn("querying games for match", "matchID", oldMatchID, "err", err)
 						skipped++
-						continue
+						return nil
 					}
+					defer gameRows.Close()
 
-					result, err := exportDB.Exec(`
-						INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
-						VALUES (?, ?, ?, ?, ?, ?, ?)
-					`, newMatchID, gameNumber, score1, score2, winner, pointsWon, moveCountVal)
-					if err != nil {
-						slog.Warn("inserting game", "err", err)
-						skipped++
-						continue
-					}
+					for gameRows.Next() {
+						var oldGameID int64
+						var gameNumber, score1, score2, winner, pointsWon int32
+						var moveCountVal int
 
-					newGameID, err := result.LastInsertId()
-					if err != nil {
-						slog.Warn("getting new game ID", "err", err)
-						skipped++
-						continue
+						err := gameRows.Scan(&oldGameID, &gameNumber, &score1, &score2, &winner, &pointsWon, &moveCountVal)
+						if err != nil {
+							slog.Warn("scanning game", "err", err)
+							skipped++
+							continue
+						}
+
+						result, err := exportDB.Exec(`
+							INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+							VALUES (?, ?, ?, ?, ?, ?, ?)
+						`, newMatchID, gameNumber, score1, score2, winner, pointsWon, moveCountVal)
+						if err != nil {
+							slog.Warn("inserting game", "err", err)
+							skipped++
+							continue
+						}
+
+						newGameID, err := result.LastInsertId()
+						if err != nil {
+							slog.Warn("getting new game ID", "err", err)
+							skipped++
+							continue
+						}
+						gameIDMapping[oldGameID] = newGameID
+						gameCount++
 					}
-					gameIDMapping[oldGameID] = newGameID
-					gameCount++
-				}
-				if err := gameRows.Err(); err != nil {
+					return gameRows.Err()
+				}(); err != nil {
 					return err
 				}
-				gameRows.Close()
 			}
 
 			// Export moves for each game
 			moveIDMapping := make(map[int64]int64) // old move ID -> new move ID
 
 			for oldGameID, newGameID := range gameIDMapping {
-				moveRows, err := d.db.Query(`
-					SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp
-					FROM move
-					WHERE game_id = ?
-				`, oldGameID)
-				if err != nil {
-					slog.Warn("querying moves for game", "gameID", oldGameID, "err", err)
-					skipped++
-					continue
-				}
-
-				for moveRows.Next() {
-					var oldMoveID, positionID int64
-					var moveNumber, player, dice1, dice2 int32
-					var moveType string
-					var checkerMove, cubeAction sql.NullString
-					var luckMP sql.NullInt32
-
-					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP)
+				if err := func() error {
+					moveRows, err := d.db.Query(`
+						SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp
+						FROM move
+						WHERE game_id = ?
+					`, oldGameID)
 					if err != nil {
-						slog.Warn("scanning move", "err", err)
+						slog.Warn("querying moves for game", "gameID", oldGameID, "err", err)
 						skipped++
-						continue
+						return nil
 					}
+					defer moveRows.Close()
 
-					// Map the position ID to the new database
-					newPositionID, posExists := idMapping[positionID]
-					if !posExists {
-						// Position might not have been exported (not in the selection)
-						// Still export the move but with null position_id
-						newPositionID = 0
-					}
+					for moveRows.Next() {
+						var oldMoveID, positionID int64
+						var moveNumber, player, dice1, dice2 int32
+						var moveType string
+						var checkerMove, cubeAction sql.NullString
+						var luckMP sql.NullInt32
 
-					// NULL travels as NULL: an unknown luck must not land in the
-					// exported database as a neutral roll.
-					var luckValue any
-					if luckMP.Valid {
-						luckValue = luckMP.Int32
-					}
+						err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP)
+						if err != nil {
+							slog.Warn("scanning move", "err", err)
+							skipped++
+							continue
+						}
 
-					var result sql.Result
-					if newPositionID > 0 {
-						// Preparing these two statements once was measured and made no
-						// difference (7.08 s against 7.16 s, inside the noise): the driver
-						// already caches them. The transaction around this whole phase is
-						// what mattered.
-						result, err = exportDB.Exec(`
-							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
-							VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-						`, newGameID, moveNumber, moveType, newPositionID, player, dice1, dice2,
-							checkerMove.String, cubeAction.String, luckValue)
-					} else {
-						result, err = exportDB.Exec(`
-							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
-							VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
-						`, newGameID, moveNumber, moveType, player, dice1, dice2,
-							checkerMove.String, cubeAction.String, luckValue)
-					}
-					if err != nil {
-						slog.Warn("inserting move", "err", err)
-						skipped++
-						continue
-					}
+						// Map the position ID to the new database
+						newPositionID, posExists := idMapping[positionID]
+						if !posExists {
+							// Position might not have been exported (not in the selection)
+							// Still export the move but with null position_id
+							newPositionID = 0
+						}
 
-					newMoveID, err := result.LastInsertId()
-					if err != nil {
-						slog.Warn("getting new move ID", "err", err)
-						skipped++
-						continue
+						// NULL travels as NULL: an unknown luck must not land in the
+						// exported database as a neutral roll.
+						var luckValue any
+						if luckMP.Valid {
+							luckValue = luckMP.Int32
+						}
+
+						var result sql.Result
+						if newPositionID > 0 {
+							// Preparing these two statements once was measured and made no
+							// difference (7.08 s against 7.16 s, inside the noise): the driver
+							// already caches them. The transaction around this whole phase is
+							// what mattered.
+							result, err = exportDB.Exec(`
+								INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
+								VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+							`, newGameID, moveNumber, moveType, newPositionID, player, dice1, dice2,
+								checkerMove.String, cubeAction.String, luckValue)
+						} else {
+							result, err = exportDB.Exec(`
+								INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action, luck_mp)
+								VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
+							`, newGameID, moveNumber, moveType, player, dice1, dice2,
+								checkerMove.String, cubeAction.String, luckValue)
+						}
+						if err != nil {
+							slog.Warn("inserting move", "err", err)
+							skipped++
+							continue
+						}
+
+						newMoveID, err := result.LastInsertId()
+						if err != nil {
+							slog.Warn("getting new move ID", "err", err)
+							skipped++
+							continue
+						}
+						moveIDMapping[oldMoveID] = newMoveID
+						moveCount++
 					}
-					moveIDMapping[oldMoveID] = newMoveID
-					moveCount++
-				}
-				if err := moveRows.Err(); err != nil {
+					return moveRows.Err()
+				}(); err != nil {
 					return err
 				}
-				moveRows.Close()
 			}
 
 			// Export move analysis for each move
 			for oldMoveID, newMoveID := range moveIDMapping {
-				analysisRows, err := d.db.Query(`
-					SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
-					       opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate
-					FROM move_analysis
-					WHERE move_id = ?
-				`, oldMoveID)
-				if err != nil {
-					slog.Warn("querying move analysis for move", "moveID", oldMoveID, "err", err)
-					skipped++
-					continue
-				}
-
-				for analysisRows.Next() {
-					var analysisType, depth string
-					var equity, equityError, winRate, gammonRate, backgammonRate float64
-					var oppWinRate, oppGammonRate, oppBackgammonRate float64
-
-					err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &backgammonRate,
-						&oppWinRate, &oppGammonRate, &oppBackgammonRate)
+				if err := func() error {
+					analysisRows, err := d.db.Query(`
+						SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
+						       opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate
+						FROM move_analysis
+						WHERE move_id = ?
+					`, oldMoveID)
 					if err != nil {
-						slog.Warn("scanning move analysis", "moveID", oldMoveID, "err", err)
+						slog.Warn("querying move analysis for move", "moveID", oldMoveID, "err", err)
 						skipped++
-						continue
+						return nil
 					}
+					defer analysisRows.Close()
 
-					_, err = exportDB.Exec(`
-						INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
-						                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-					`, newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, backgammonRate,
-						oppWinRate, oppGammonRate, oppBackgammonRate)
-					if err != nil {
-						slog.Warn("inserting move analysis", "err", err)
-						skipped++
-						continue
+					for analysisRows.Next() {
+						var analysisType, depth string
+						var equity, equityError, winRate, gammonRate, backgammonRate float64
+						var oppWinRate, oppGammonRate, oppBackgammonRate float64
+
+						err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &backgammonRate,
+							&oppWinRate, &oppGammonRate, &oppBackgammonRate)
+						if err != nil {
+							slog.Warn("scanning move analysis", "moveID", oldMoveID, "err", err)
+							skipped++
+							continue
+						}
+
+						_, err = exportDB.Exec(`
+							INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
+							                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+							VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+						`, newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, backgammonRate,
+							oppWinRate, oppGammonRate, oppBackgammonRate)
+						if err != nil {
+							slog.Warn("inserting move analysis", "err", err)
+							skipped++
+							continue
+						}
+						moveAnalysisCount++
 					}
-					moveAnalysisCount++
-				}
-				if err := analysisRows.Err(); err != nil {
+					return analysisRows.Err()
+				}(); err != nil {
 					return err
 				}
-				analysisRows.Close()
 			}
 		}
 
@@ -665,31 +671,33 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 			collectionCount++
 
 			// Export collection_position mappings
-			cpRows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
-			if err != nil {
-				slog.Warn("querying collection_position", "collectionID", collectionID, "err", err)
-				skipped++
-				continue
-			}
-			for cpRows.Next() {
-				var oldPosID int64
-				var cpSortOrder int
-				var addedAt string
-				if err := cpRows.Scan(&oldPosID, &cpSortOrder, &addedAt); err != nil {
-					slog.Warn("scanning collection_position", "collectionID", collectionID, "err", err)
+			if err := func() error {
+				cpRows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
+				if err != nil {
+					slog.Warn("querying collection_position", "collectionID", collectionID, "err", err)
 					skipped++
-					continue
+					return nil
 				}
-				if newPosID, ok := idMapping[oldPosID]; ok {
-					_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
-						newCollectionID, newPosID, cpSortOrder, addedAt)
-					collectionPosCount++
+				defer cpRows.Close()
+				for cpRows.Next() {
+					var oldPosID int64
+					var cpSortOrder int
+					var addedAt string
+					if err := cpRows.Scan(&oldPosID, &cpSortOrder, &addedAt); err != nil {
+						slog.Warn("scanning collection_position", "collectionID", collectionID, "err", err)
+						skipped++
+						continue
+					}
+					if newPosID, ok := idMapping[oldPosID]; ok {
+						_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+							newCollectionID, newPosID, cpSortOrder, addedAt)
+						collectionPosCount++
+					}
 				}
-			}
-			if err := cpRows.Err(); err != nil {
+				return cpRows.Err()
+			}(); err != nil {
 				return err
 			}
-			cpRows.Close()
 		}
 
 		slog.Info("exported collections", "collections", collectionCount, "positionMappings", collectionPosCount)
@@ -730,11 +738,14 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 
 		// Update tournament_id on exported matches that belong to exported tournaments
 		if opts.IncludeMatches && len(matchIDMapping) > 0 {
-			matchTournamentRows, mterr := d.db.Query(`SELECT id, tournament_id FROM match WHERE tournament_id IS NOT NULL`)
-			if mterr != nil {
-				slog.Warn("querying match/tournament links", "err", mterr)
-				skipped++
-			} else {
+			if err := func() error {
+				matchTournamentRows, mterr := d.db.Query(`SELECT id, tournament_id FROM match WHERE tournament_id IS NOT NULL`)
+				if mterr != nil {
+					slog.Warn("querying match/tournament links", "err", mterr)
+					skipped++
+					return nil
+				}
+				defer matchTournamentRows.Close()
 				for matchTournamentRows.Next() {
 					var oldMatchID int64
 					var oldTournamentID int64
@@ -749,10 +760,9 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 						_, _ = exportDB.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, newTournamentID, newMatchID)
 					}
 				}
-				if err := matchTournamentRows.Err(); err != nil {
-					return err
-				}
-				matchTournamentRows.Close()
+				return matchTournamentRows.Err()
+			}(); err != nil {
+				return err
 			}
 		}
 
@@ -808,35 +818,17 @@ func (d *Database) positionsByIDsLocked(ids []int64) ([]Position, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
-	// One statement, chunked: SQLite's default parameter limit is 32766, and a real
-	// selection runs to tens of thousands of positions.
-	const chunk = 900
 	byID := make(map[int64]Position, len(ids))
-	for start := 0; start < len(ids); start += chunk {
-		end := min(start+chunk, len(ids))
-		batch := ids[start:end]
-		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
-		args := make([]any, len(batch))
-		for i, id := range batch {
-			args[i] = id
-		}
-		rows, err := d.db.Query(`SELECT `+positionSelectCols+` FROM position WHERE id IN (`+placeholders+`)`, args...)
+	err := d.forEachInBatch(ids, `SELECT `+positionSelectCols+` FROM position WHERE id IN `, func(rows *sql.Rows) error {
+		position, err := scanPositionRow(rows)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		for rows.Next() {
-			position, err := scanPositionRow(rows)
-			if err != nil {
-				rows.Close()
-				return nil, err
-			}
-			byID[position.ID] = position
-		}
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return nil, err
-		}
-		rows.Close()
+		byID[position.ID] = position
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	out := make([]Position, 0, len(ids))
@@ -906,7 +898,8 @@ func (d *Database) commentsForPositions(ids []int64) (map[int64]string, error) {
 }
 
 // forEachInBatch runs prefix + an IN list over the identifiers, splitting them so the
-// statement stays under SQLite's parameter limit, and hands every row to scan.
+// statement stays under SQLite's parameter limit (32766 by default, and a real
+// selection runs to tens of thousands of positions), and hands every row to scan.
 func (d *Database) forEachInBatch(ids []int64, prefix string, scan func(*sql.Rows) error) error {
 	const chunk = 900
 	for start := 0; start < len(ids); start += chunk {
@@ -917,21 +910,9 @@ func (d *Database) forEachInBatch(ids []int64, prefix string, scan func(*sql.Row
 		for i, id := range batch {
 			args[i] = id
 		}
-		rows, err := d.db.Query(prefix+`(`+placeholders+`)`, args...)
-		if err != nil {
+		if err := forEachRow(d.db, prefix+`(`+placeholders+`)`, args, scan); err != nil {
 			return err
 		}
-		for rows.Next() {
-			if err := scan(rows); err != nil {
-				rows.Close()
-				return err
-			}
-		}
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return err
-		}
-		rows.Close()
 	}
 	return nil
 }

@@ -573,30 +573,30 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 //
 // The caller must hold d.mu.
 func (d *Database) repairPositionsWithoutScalars(ctx context.Context) error {
-	rows, err := d.db.QueryContext(ctx, `SELECT `+positionSelectCols+`
-		FROM position WHERE zobrist_hash IS NULL ORDER BY id`)
-	if err != nil {
-		return fmt.Errorf("listing positions without scalar columns: %w", err)
-	}
 	type defective struct {
 		pos   Position
 		state string
 	}
 	var todo []defective
-	for rows.Next() {
-		var state string
-		pos, err := scanPositionRowWithState(rows, &state)
+	if err := func() error {
+		rows, err := d.db.QueryContext(ctx, `SELECT `+positionSelectCols+`
+			FROM position WHERE zobrist_hash IS NULL ORDER BY id`)
 		if err != nil {
-			rows.Close()
-			return fmt.Errorf("scanning position without scalar columns: %w", err)
+			return fmt.Errorf("listing positions without scalar columns: %w", err)
 		}
-		todo = append(todo, defective{pos, state})
-	}
-	if err := rows.Err(); err != nil {
-		rows.Close()
+		defer rows.Close()
+		for rows.Next() {
+			var state string
+			pos, err := scanPositionRowWithState(rows, &state)
+			if err != nil {
+				return fmt.Errorf("scanning position without scalar columns: %w", err)
+			}
+			todo = append(todo, defective{pos, state})
+		}
+		return rows.Err()
+	}(); err != nil {
 		return err
 	}
-	rows.Close()
 	if len(todo) == 0 {
 		return nil
 	}

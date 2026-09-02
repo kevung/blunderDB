@@ -56,3 +56,24 @@ func withTx(ctx context.Context, db execer, fn func(execer) error) error {
 	}
 	return tx.Commit()
 }
+
+// queryInt64s runs a single-column query and returns every value, with the
+// cursor closed before it returns. Most stores read a list of ids and then
+// write on the same connection: the cursor has to be gone by then, and a
+// defer in the caller would keep it open across those writes.
+func queryInt64s(ctx context.Context, db execer, query string, args ...any) ([]int64, error) {
+	rows, err := db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []int64
+	for rows.Next() {
+		var v int64
+		if err := rows.Scan(&v); err != nil {
+			return nil, err
+		}
+		out = append(out, v)
+	}
+	return out, rows.Err()
+}

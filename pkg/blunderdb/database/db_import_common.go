@@ -248,21 +248,17 @@ func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name st
 
 		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|", gameNum, initScore1, initScore2, winner, pointsWon))
 
-		// Query all moves for this game
-		moveRows, err := db.Query(`
+		// Query all moves for this game. A query error skips the game (the
+		// hash degrades, as it always has); an iteration error gives up.
+		err := forEachRow(db, `
 			SELECT move_number, move_type, dice_1, dice_2, checker_move, cube_action 
-			FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
-		if err != nil {
-			continue
-		}
-
-		for moveRows.Next() {
+			FROM move WHERE game_id = ? ORDER BY move_number`, []any{gameID}, func(moveRows *sql.Rows) error {
 			var moveNum int32
 			var moveType string
 			var dice1, dice2 int32
 			var checkerMove, cubeAction sql.NullString
 			if err := moveRows.Scan(&moveNum, &moveType, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
-				continue
+				return nil
 			}
 
 			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveNum, moveType))
@@ -272,11 +268,11 @@ func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name st
 			if moveType == "cube" && cubeAction.Valid {
 				hashBuilder.WriteString(fmt.Sprintf("c%s|", cubeAction.String))
 			}
-		}
-		if err := moveRows.Err(); err != nil {
+			return nil
+		})
+		if err != nil {
 			return ""
 		}
-		moveRows.Close()
 	}
 	if err := gameRows.Err(); err != nil {
 		return ""

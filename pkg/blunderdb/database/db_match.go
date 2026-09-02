@@ -287,7 +287,7 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	defer tx.Rollback()
 
 	// Collect position IDs referenced by this match's moves before cascade delete
-	rows, err := tx.Query(`
+	positionIDs, err := queryInt64s(tx, `
 		SELECT DISTINCT m.position_id 
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
@@ -295,19 +295,6 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	`, matchID)
 	if err != nil {
 		return fmt.Errorf("error collecting position IDs: %w", err)
-	}
-	var positionIDs []int64
-	for rows.Next() {
-		var pid int64
-		if err := rows.Scan(&pid); err != nil {
-			rows.Close()
-			return fmt.Errorf("error scanning position ID: %w", err)
-		}
-		positionIDs = append(positionIDs, pid)
-	}
-	rows.Close()
-	if err := rows.Err(); err != nil {
-		return fmt.Errorf("error iterating position IDs: %w", err)
 	}
 
 	// Foreign key constraints will cascade delete to game, move, and move_analysis

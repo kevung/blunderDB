@@ -11,6 +11,7 @@ linters:
     - errorlint
     - nolintlint
     - rowserrcheck
+    - sqlclosecheck
 
   settings:
     errcheck:
@@ -52,7 +53,7 @@ linters:
       # db_migration.go is being rewritten on feat/migrations-registry; that
       # branch removes this rule once the new file lands. Until then, do not
       # touch the old one — every edit here is a merge conflict there.
-      - linters: [errorlint]
+      - linters: [errorlint, sqlclosecheck]
         path: "db_migration\\.go$"
       # Test files commonly skip error checks; suppress until task 12
       # (test utilities) introduces proper helpers.

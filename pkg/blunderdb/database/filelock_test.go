@@ -42,7 +42,8 @@ func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
 	}
 
 	// Reads still work on the read-only instance.
-	if _, err := d2.Conn().Query(`SELECT count(*) FROM position`); err != nil {
+	var n int
+	if err := d2.Conn().QueryRow(`SELECT count(*) FROM position`).Scan(&n); err != nil {
 		t.Errorf("read on the read-only instance should succeed: %v", err)
 	}
 	d2.Close()

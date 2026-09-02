@@ -127,12 +127,6 @@ func firstOf(s []string) string {
 // written, so a second run reports 0 and touches nothing — the count is the
 // answer to "was anything wrong?", not merely to "did it run?".
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string) (int, error) {
-	rows, err := s.db.QueryContext(ctx,
-		`SELECT id, data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
-		 FROM analysis ORDER BY id`)
-	if err != nil {
-		return 0, fmt.Errorf("sqlite: repair: read analyses: %w", err)
-	}
 	type row struct {
 		id                                     int64
 		data                                   []byte
@@ -140,17 +134,27 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
 	}
 	var all []row
-	for rows.Next() {
-		var r row
-		if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
-			rows.Close()
-			return 0, fmt.Errorf("sqlite: repair: scan: %w", err)
+	if err := func() error {
+		rows, err := s.db.QueryContext(ctx,
+			`SELECT id, data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
+			 FROM analysis ORDER BY id`)
+		if err != nil {
+			return fmt.Errorf("sqlite: repair: read analyses: %w", err)
 		}
-		all = append(all, r)
-	}
-	rows.Close()
-	if err := rows.Err(); err != nil {
-		return 0, fmt.Errorf("sqlite: repair: iterate: %w", err)
+		defer rows.Close()
+		for rows.Next() {
+			var r row
+			if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
+				return fmt.Errorf("sqlite: repair: scan: %w", err)
+			}
+			all = append(all, r)
+		}
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("sqlite: repair: iterate: %w", err)
+		}
+		return nil
+	}(); err != nil {
+		return 0, err
 	}
 
 	repaired := 0

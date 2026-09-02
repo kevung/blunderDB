@@ -143,29 +143,10 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
-	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
+	currentPositionsMap, err := positionIdentityIndex(d.db)
 	if err != nil {
 		return nil, err
 	}
-
-	for currentRows.Next() {
-		currentPosition, err := scanPositionRow(currentRows)
-		if err != nil {
-			continue
-		}
-		positionID := currentPosition.ID
-
-		currentPositionJSON, err := positionIdentityJSON(currentPosition)
-		if err != nil {
-			return nil, err
-		}
-		currentPositionsMap[currentPositionJSON] = positionID
-	}
-	if err := currentRows.Err(); err != nil {
-		return nil, err
-	}
-	currentRows.Close()
 
 	slog.Debug("built position index", "count", len(currentPositionsMap))
 
@@ -353,29 +334,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
-	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := tx.Query(`SELECT ` + positionSelectCols + ` FROM position`)
+	currentPositionsMap, err := positionIdentityIndex(tx)
 	if err != nil {
 		return nil, err
 	}
-
-	for currentRows.Next() {
-		currentPosition, err := scanPositionRow(currentRows)
-		if err != nil {
-			continue
-		}
-		positionID := currentPosition.ID
-
-		currentPositionJSON, err := positionIdentityJSON(currentPosition)
-		if err != nil {
-			return nil, err
-		}
-		currentPositionsMap[currentPositionJSON] = positionID
-	}
-	if err := currentRows.Err(); err != nil {
-		return nil, err
-	}
-	currentRows.Close()
 
 	slog.Debug("built position index for commit", "count", len(currentPositionsMap))
 
@@ -624,4 +586,28 @@ func heldByZobrist(positions storage.PositionStore, pos *Position) (int64, bool,
 		return 0, false, fmt.Errorf("checking whether the position is already held: %w", err)
 	}
 	return id, held, nil
+}
+
+// positionIdentityIndex maps every stored position's identity JSON to its id,
+// so an import checks each incoming position against the current database in
+// O(1) instead of a query per position. A row that fails to scan is skipped:
+// it cannot be matched, and the import must not fail on it.
+func positionIdentityIndex(q rowQuerier) (map[string]int64, error) {
+	index := make(map[string]int64)
+	err := forEachRow(q, `SELECT `+positionSelectCols+` FROM position`, nil, func(rows *sql.Rows) error {
+		position, err := scanPositionRow(rows)
+		if err != nil {
+			return nil
+		}
+		identity, err := positionIdentityJSON(position)
+		if err != nil {
+			return err
+		}
+		index[identity] = position.ID
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return index, nil
 }
