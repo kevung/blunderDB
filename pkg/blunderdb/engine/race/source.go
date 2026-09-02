@@ -107,6 +107,20 @@ func itoa64(n int64) string {
 	return string(b[i:])
 }
 
+// Invalidate drops the cached reader so the next Resolve re-probes the
+// candidates from scratch. Call it before deleting or replacing the
+// downloaded or external file: on Windows a file held open by the cache
+// cannot be removed, and its stale directory entry would otherwise be what
+// the next Resolve finds. The embedded database is never closed.
+func Invalidate() {
+	srcMu.Lock()
+	defer srcMu.Unlock()
+	if cachedDB != nil && cachedDB != EmbeddedTwoSided() {
+		cachedDB.Close()
+	}
+	cachedDB, cachedStamp = nil, ""
+}
+
 // Resolve returns the widest available two-sided database. It never returns
 // nil: the embedded TS-06-06 is the floor.
 func Resolve() *TwoSided {

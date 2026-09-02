@@ -119,6 +119,7 @@ func (a *App) CancelBearoffDownload() {
 // any external file keep working; nothing else is touched).
 func (a *App) DeleteBearoffDB() error {
 	p := race.DownloadedPath()
+	race.Invalidate() // release the cached handle first: Windows cannot remove an open file
 	if err := os.Remove(p); err != nil && !os.IsNotExist(err) {
 		return err
 	}

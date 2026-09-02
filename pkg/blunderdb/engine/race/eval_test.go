@@ -194,9 +194,14 @@ func TestResolve_WidestDomainWins(t *testing.T) {
 		t.Fatalf("downloaded TS-06-09 must win, got TS-06-%02d", got.Checkers())
 	}
 
-	// A NARROWER external file must lose to the embedded database.
+	// A NARROWER external file must lose to the embedded database. The cache
+	// still holds the TS-06-09 open: release it first, or Windows refuses the
+	// removal and the stale file wins the next probe.
 	SetExternalPath("")
-	os.Remove(filepath.Join(dir, DownloadedFileName))
+	Invalidate()
+	if err := os.Remove(filepath.Join(dir, DownloadedFileName)); err != nil {
+		t.Fatal(err)
+	}
 	narrow := filepath.Join(dir, "narrow.bd")
 	writeSyntheticTS(t, narrow, 3)
 	SetExternalPath(narrow)
