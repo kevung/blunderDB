@@ -52,6 +52,7 @@ const (
 	whyWrapper   = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"
 	whyEngineRun = "the CLI's `analyze` and the daemon's gammonnet.analyzeMissing fill gaps (ADR-0013); replaying stale analyses after an engine bump is the GUI's maintenance dialog"
 	whyServerEPC = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
+	whyMetadata  = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
 )
 
 // databaseParity is the allow-list. Keep it sorted by method name.
@@ -149,7 +150,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadEditPosition":               {Server: "/v1/filters.loadEditPosition", Why: whyGUIState},
 	"LoadExcludePosition":            {Server: "/v1/filters.loadExcludePosition", Why: whyGUIState},
 	"LoadFilters":                    {Server: "/v1/filters.list", Why: whyGUIState},
-	"LoadMetadata":                   {CLI: "info", Server: "/v1/metadata.load"},
+	"LoadMetadata":                   {CLI: "info", Why: whyMetadata},
 	"LoadPosition":                   {CLI: "search --position-ids", Server: "/v1/positions.load"},
 	"LoadPositionsByIDs":             {CLI: "search --position-ids", Server: "/v1/positions.loadByIds"},
 	"LoadPositionsByFilters":         {CLI: "search", Server: "/v1/search.find"},
@@ -178,7 +179,7 @@ var databaseParity = map[string]parityEntry{
 	"SaveFilter":                     {Server: "/v1/filters.save", Why: whyGUIState},
 	"SaveIndividualPosition":         {Server: "/v1/positions.save", Why: "the GUI's one backend call for a position brought in on its own (ADR-0002); the CLI's position importers set the sticky flag themselves (ADR-0001)"},
 	"SaveLastVisitedPosition":        {Server: "/v1/matches.setLastVisitedPosition", Why: whyGUIState},
-	"SaveMetadata":                   {CLI: "edit", Server: "/v1/metadata.save"},
+	"SaveMetadata":                   {CLI: "edit", Why: whyMetadata},
 	"SavePosition":                   {CLI: "import --type position", Server: "/v1/positions.save"},
 	"SaveSearchHistory":              {Server: "/v1/searchHistory.save", Why: whyGUIState},
 	"SaveSessionState":               {Server: "/v1/session.save", Why: whyGUIState},

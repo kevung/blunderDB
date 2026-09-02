@@ -571,3 +571,75 @@ func (d *Database) migrate_2_15_0_to_2_16_0(_ context.Context) error {
 
 	return nil
 }
+
+// migrate_2_16_0_to_2_17_0 moves the UI session state out of metadata and
+// into its own table, session_state(scope, key, value) (issue #156).
+//
+// Until 2.16.0 the session (last search, last position, open views) was six
+// metadata rows — `session_*` for the desktop's empty scope, `<scope>:session_*`
+// for a tenant of a multi-tenant SQLite daemon. metadata is database
+// infrastructure (schema version, issuance) and is global by design; keeping a
+// tenant's rows there meant the daemon's metadata.load handed every tenant
+// the session of every other one, so the route is gone and the rows move to a
+// table that carries the scope as a column, the way command_history,
+// search_history and filter_library already do.
+//
+// The move is a copy-then-delete inside one transaction, re-runnable: the
+// table is created IF NOT EXISTS and the copy is an INSERT OR REPLACE. The
+// desktop's rows keep the empty scope, so a database migrated on the desktop
+// reopens on the same search and the same views.
+func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
+	// The six keys as 2.16.0's sqlshared.SessionStore wrote them. Listed here
+	// rather than imported: a migration describes the past, and matching the
+	// exact keys (rather than a `session_%` pattern) leaves any other row of
+	// metadata alone.
+	sessionKeys := []string{
+		"session_last_search_command",
+		"session_last_search_position",
+		"session_last_position_index",
+		"session_last_position_ids",
+		"session_has_active_search",
+		"session_views",
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("migrate 2.17.0: begin: %w", err)
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(`CREATE TABLE IF NOT EXISTS session_state (
+		scope TEXT NOT NULL DEFAULT '',
+		key   TEXT NOT NULL,
+		value TEXT,
+		PRIMARY KEY (scope, key)
+	)`); err != nil {
+		return fmt.Errorf("migrate 2.17.0: create session_state: %w", err)
+	}
+
+	for _, key := range sessionKeys {
+		// Unprefixed: the desktop's (empty) scope.
+		if _, err := tx.Exec(`INSERT OR REPLACE INTO session_state (scope, key, value)
+			SELECT '', key, value FROM metadata WHERE key = ?`, key); err != nil {
+			return fmt.Errorf("migrate 2.17.0: move %s: %w", key, err)
+		}
+		// Prefixed "<scope>:<key>": the scope is everything before the suffix,
+		// whatever characters it holds.
+		suffix := ":" + key
+		if _, err := tx.Exec(`INSERT OR REPLACE INTO session_state (scope, key, value)
+			SELECT substr(key, 1, length(key) - ?), ?, value FROM metadata
+			WHERE length(key) > ? AND substr(key, -?) = ?`,
+			len(suffix), key, len(suffix), len(suffix), suffix); err != nil {
+			return fmt.Errorf("migrate 2.17.0: move scoped %s: %w", key, err)
+		}
+		if _, err := tx.Exec(`DELETE FROM metadata WHERE key = ? OR (length(key) > ? AND substr(key, -?) = ?)`,
+			key, len(suffix), len(suffix), suffix); err != nil {
+			return fmt.Errorf("migrate 2.17.0: delete %s from metadata: %w", key, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("migrate 2.17.0: commit: %w", err)
+	}
+	return nil
+}

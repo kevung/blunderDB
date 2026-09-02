@@ -8,9 +8,9 @@
 // Scope: it covers the core user data — positions, their analyses and comments,
 // matches (games + moves), tournaments (+ match links) and collections (+
 // membership). App-state families (anki decks/cards, filter library, search and
-// command history, session metadata) are intentionally NOT migrated yet: they
-// are lower-value for a data migration and their per-tenant scoping is
-// formalised by phase P4 (session-scope), still pending. See
+// command history, session state) are intentionally NOT migrated yet: they
+// are lower-value for a data migration. Their per-tenant scoping is in place
+// (each has a tenant-scoped table, session_state since schema 2.17.0). See
 // tasks/headless/10-sqlite-to-postgres-tool.md.
 package migrate
 

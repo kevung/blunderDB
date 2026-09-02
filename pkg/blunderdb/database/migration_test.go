@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -10,6 +11,8 @@ import (
 	"testing"
 
 	_ "modernc.org/sqlite"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // createOldDatabase creates a minimal database simulating a given schema version.
@@ -324,7 +327,7 @@ func allExpectedTables() []string {
 		"position", "analysis", "comment", "metadata",
 		"command_history",
 		"filter_library",
-		"search_history",
+		"search_history", "session_state",
 		"match", "game", "move", "move_analysis",
 		"collection", "collection_position",
 		"tournament",
@@ -2116,5 +2119,119 @@ func TestMigration_TablesAheadOfVersion(t *testing.T) {
 	// The 2.0.0 step ran too: the scalar columns are there.
 	if !columnExists(t, d.db, "position", "zobrist_hash") {
 		t.Error("position.zobrist_hash missing: the 1.9.0→2.0.0 step did not run")
+	}
+}
+
+// TestMigrate_2_16_0_to_2_17_0_SessionState builds a 2.16.0 database the way
+// 2.16.0 wrote it — the current schema minus session_state, the session as
+// six metadata rows for the desktop's empty scope and six "<scope>:"-prefixed
+// rows for a tenant of a multi-tenant SQLite daemon — and checks that opening
+// it moves both sessions into session_state, that the desktop reopens on the
+// same search and views, that the tenant's session still belongs to that
+// tenant only, and that metadata keeps nothing but its infrastructure rows.
+func TestMigrate_2_16_0_to_2_17_0_SessionState(t *testing.T) {
+	tmpDir := tempDir(t)
+	dbPath := filepath.Join(tmpDir, "test_v2160.db")
+
+	raw, err := sql.Open("sqlite", sqlite.DSN(dbPath))
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	if err := sqlite.Bootstrap(context.Background(), raw); err != nil {
+		t.Fatalf("bootstrap: %v", err)
+	}
+	for _, stmt := range []string{
+		`DROP TABLE session_state`,
+		`UPDATE metadata SET value = '2.16.0' WHERE key = 'database_version'`,
+		`INSERT INTO metadata (key, value) VALUES ('user', 'kevin'), ('description', 'ma base')`,
+		// The desktop's session, unprefixed.
+		`INSERT INTO metadata (key, value) VALUES
+			('session_last_search_command', 'decision_type checker'),
+			('session_last_search_position', 'xgid-desktop'),
+			('session_last_position_index', '4'),
+			('session_last_position_ids', '[1,2,3]'),
+			('session_has_active_search', 'true'),
+			('session_views', '{"tabs":["desktop"]}')`,
+		// A daemon tenant's session, prefixed by its scope.
+		`INSERT INTO metadata (key, value) VALUES
+			('7:session_last_search_command', 'cube'),
+			('7:session_last_search_position', 'xgid-seven'),
+			('7:session_last_position_index', '1'),
+			('7:session_last_position_ids', '[9]'),
+			('7:session_has_active_search', 'false'),
+			('7:session_views', '{"tabs":["seven"]}')`,
+	} {
+		if _, err := raw.Exec(stmt); err != nil {
+			t.Fatalf("prepare v2.16.0 database (%s): %v", stmt, err)
+		}
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.16.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !tableExists(d.db, "session_state") {
+		t.Fatal("session_state should exist after migration")
+	}
+
+	// The desktop reopens on its own session.
+	desktop, err := d.LoadSessionState()
+	if err != nil {
+		t.Fatalf("LoadSessionState: %v", err)
+	}
+	if desktop.LastSearchCommand != "decision_type checker" || desktop.LastSearchPosition != "xgid-desktop" ||
+		desktop.LastPositionIndex != 4 || len(desktop.LastPositionIDs) != 3 || !desktop.HasActiveSearch ||
+		desktop.ViewsJSON != `{"tabs":["desktop"]}` {
+		t.Errorf("desktop session after migration: %+v", *desktop)
+	}
+
+	// The tenant's session followed it into its scope, and nowhere else.
+	ctx := context.Background()
+	seven, err := d.store.Session().Load(ctx, "7")
+	if err != nil {
+		t.Fatalf("load scope 7: %v", err)
+	}
+	if seven.LastSearchCommand != "cube" || seven.LastSearchPosition != "xgid-seven" ||
+		seven.LastPositionIndex != 1 || len(seven.LastPositionIDs) != 1 || seven.HasActiveSearch ||
+		seven.ViewsJSON != `{"tabs":["seven"]}` {
+		t.Errorf("scope 7 session after migration: %+v", *seven)
+	}
+	if other, _ := d.store.Session().Load(ctx, "8"); other.LastSearchCommand != "" {
+		t.Errorf("scope 8 sees another scope's session: %+v", *other)
+	}
+
+	// metadata is infrastructure again: version, user-facing fields, no
+	// session row of any scope.
+	md, err := d.store.Metadata().Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Metadata.Load: %v", err)
+	}
+	for key := range md {
+		if strings.Contains(key, "session_") {
+			t.Errorf("metadata still holds %q after migration", key)
+		}
+	}
+	if md["user"] != "kevin" || md["description"] != "ma base" {
+		t.Errorf("metadata infrastructure rows disturbed: %v", md)
+	}
+
+	// Re-runnable: a second pass over the step finds nothing to move and
+	// changes nothing.
+	if err := d.migrate_2_16_0_to_2_17_0(ctx); err != nil {
+		t.Fatalf("second run of migrate_2_16_0_to_2_17_0: %v", err)
+	}
+	if again, _ := d.LoadSessionState(); again.ViewsJSON != desktop.ViewsJSON {
+		t.Errorf("second run altered the desktop session: %+v", *again)
 	}
 }

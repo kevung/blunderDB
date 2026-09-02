@@ -6,6 +6,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -203,6 +204,19 @@ func testSessionSaveLoad(t *testing.T, s storage.Storage) {
 		got.LastPositionIndex != want.LastPositionIndex || got.HasActiveSearch != want.HasActiveSearch ||
 		got.ViewsJSON != want.ViewsJSON || len(got.LastPositionIDs) != 3 {
 		t.Fatalf("Load round-trip:\n got %+v\nwant %+v", got, want)
+	}
+
+	// The session is per-tenant data and lives in its own table: nothing of
+	// it may surface through the global metadata table, which every tenant
+	// shares (schema 2.16.0, #156).
+	md, err := s.Metadata().Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Metadata.Load: %v", err)
+	}
+	for key := range md {
+		if strings.Contains(key, "session_") {
+			t.Fatalf("session key %q leaked into metadata", key)
+		}
 	}
 }
 

@@ -8,8 +8,15 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// SessionStore implements storage.SessionStore. Session state is persisted as
-// individual metadata key/value rows under the keys below.
+// SessionStore implements storage.SessionStore over the session_state table:
+// one row per key and per scope, confined to the scope by the per-scope
+// column both schemas carry (Dialect.ScopeColumn — `scope` on SQLite,
+// `tenant_id` on PostgreSQL, where Row-Level Security covers it too).
+//
+// Until schema 2.15.0 the six keys below were rows of the global metadata
+// table, prefixed "<scope>:" for a non-empty scope, and a tenant could read
+// every other tenant's session through metadata.load (issue #156). Session
+// state is per-tenant data; metadata is database infrastructure.
 type SessionStore struct{ DB Execer }
 
 var _ storage.SessionStore = (*SessionStore)(nil)
@@ -23,44 +30,9 @@ const (
 	sessionKeyViews          = "session_views"
 )
 
-var sessionKeys = []string{
-	sessionKeySearchCommand, sessionKeySearchPosition, sessionKeyPositionIndex,
-	sessionKeyPositionIDs, sessionKeyActiveSearch, sessionKeyViews,
-}
-
-// sessionScopedKey namespaces a session metadata key by scope so several
-// tenants can co-exist in one database. The empty scope (single-user GUI/CLI)
-// is left unprefixed, so existing databases keep working with no migration.
-func sessionScopedKey(scope, key string) string {
-	if scope == "" {
-		return key
-	}
-	return scope + ":" + key
-}
-
-// SessionKeys returns the scope's six session metadata keys. The PostgreSQL
-// tenant purge deletes exactly these rows (rather than a LIKE prefix pattern,
-// which a scope containing % or _ could over-match) so a decommissioned
-// tenant leaves no session crumbs behind; taking them from here keeps the
-// purge in lockstep with Save/Load/Clear.
-func SessionKeys(scope string) []string {
-	keys := make([]string, len(sessionKeys))
-	for i, k := range sessionKeys {
-		keys[i] = sessionScopedKey(scope, k)
-	}
-	return keys
-}
-
-// scopedSessionKeys returns the scope's six metadata keys as query arguments.
-func scopedSessionKeys(scope string) []any {
-	args := make([]any, len(sessionKeys))
-	for i, k := range SessionKeys(scope) {
-		args[i] = k
-	}
-	return args
-}
-
-// Save persists the UI session state across the six (scoped) metadata rows.
+// Save persists the UI session state across the six rows of the scope, in
+// one transaction. The ON CONFLICT form is common to PostgreSQL and SQLite
+// (≥ 3.24).
 func (s *SessionStore) Save(ctx context.Context, scope string, state storage.SessionState) error {
 	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
 	if err != nil {
@@ -78,9 +50,12 @@ func (s *SessionStore) Save(ctx context.Context, scope string, state storage.Ses
 		{sessionKeyActiveSearch, hasActiveSearch},
 		{sessionKeyViews, state.ViewsJSON},
 	}
+	col, arg := s.DB.ScopeColumn(), s.DB.ScopeArg(scope)
+	upsert := `INSERT INTO session_state (` + col + `, key, value) VALUES (?,?,?)
+		ON CONFLICT (` + col + `, key) DO UPDATE SET value = EXCLUDED.value`
 	err = s.DB.Transact(ctx, func(tx Execer) error {
 		for _, kv := range pairs {
-			if _, err := tx.Exec(ctx, upsertMetadataSQL, sessionScopedKey(scope, kv[0]), kv[1]); err != nil {
+			if _, err := tx.Exec(ctx, upsert, arg, kv[0], kv[1]); err != nil {
 				return err
 			}
 		}
@@ -96,14 +71,9 @@ func (s *SessionStore) Save(ctx context.Context, scope string, state storage.Ses
 // zero values, so a scope that never stored a session loads an empty
 // SessionState.
 func (s *SessionStore) Load(ctx context.Context, scope string) (*storage.SessionState, error) {
-	// Query the scope-namespaced keys and map each back to its base key.
-	baseByScoped := make(map[string]string, len(sessionKeys))
-	for _, k := range sessionKeys {
-		baseByScoped[sessionScopedKey(scope, k)] = k
-	}
 	rows, err := s.DB.Query(ctx,
-		`SELECT key, COALESCE(value,'') FROM metadata WHERE key IN (`+Placeholders(len(sessionKeys))+`)`,
-		scopedSessionKeys(scope)...)
+		`SELECT key, COALESCE(value,'') FROM session_state WHERE `+s.DB.ScopeColumn()+` = ?`,
+		s.DB.ScopeArg(scope))
 	if err != nil {
 		return nil, errf(s.DB, "load session", err)
 	}
@@ -115,7 +85,7 @@ func (s *SessionStore) Load(ctx context.Context, scope string) (*storage.Session
 		if err := rows.Scan(&key, &value); err != nil {
 			return nil, errf(s.DB, "load session", err)
 		}
-		switch baseByScoped[key] {
+		switch key {
 		case sessionKeySearchCommand:
 			state.LastSearchCommand = value
 		case sessionKeySearchPosition:
@@ -146,8 +116,7 @@ func (s *SessionStore) Load(ctx context.Context, scope string) (*storage.Session
 // Clear removes the persisted session state for the scope.
 func (s *SessionStore) Clear(ctx context.Context, scope string) error {
 	if _, err := s.DB.Exec(ctx,
-		`DELETE FROM metadata WHERE key IN (`+Placeholders(len(sessionKeys))+`)`,
-		scopedSessionKeys(scope)...); err != nil {
+		`DELETE FROM session_state WHERE `+s.DB.ScopeColumn()+` = ?`, s.DB.ScopeArg(scope)); err != nil {
 		return errf(s.DB, "clear session", err)
 	}
 	return nil

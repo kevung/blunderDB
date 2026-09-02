@@ -78,10 +78,19 @@ CREATE TABLE IF NOT EXISTS comment (
 -- Supports the comment-presence search filter's EXISTS subquery (see 006).
 CREATE INDEX IF NOT EXISTS idx_comment_position ON comment (tenant_id, position_id);
 
--- Database-level infrastructure: schema version, etc. Not tenant-scoped.
+-- Database-level infrastructure: schema version, issuance. Not tenant-scoped,
+-- and holding no per-tenant data (the session state moved out in 013).
 CREATE TABLE IF NOT EXISTS metadata (
     key    TEXT PRIMARY KEY,
     value  TEXT
+);
+
+-- UI session state, one row per key and per tenant (013, schema 2.17.0).
+CREATE TABLE IF NOT EXISTS session_state (
+    tenant_id  BIGINT NOT NULL,
+    key        TEXT   NOT NULL,
+    value      TEXT,
+    PRIMARY KEY (tenant_id, key)
 );
 
 CREATE TABLE IF NOT EXISTS command_history (

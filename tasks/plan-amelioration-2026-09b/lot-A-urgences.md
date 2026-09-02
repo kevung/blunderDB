@@ -56,15 +56,18 @@ toute l'instance en 503 (`handlers/health.go:40`). `metadata` est hors RLS
 (`rls_postgres.go:41`).
 
 **À faire.**
-- [ ] Retirer `metadata.load`, `metadata.save`, `metadata.setVersion` de `/v1`
+- [x] Retirer `metadata.load`, `metadata.save`, `metadata.setVersion` de `/v1`
       (les ajouter à la liste `serverOnly`/raisons de `parity_test.go` avec la
       raison « infrastructure, pas une donnée de tenant »).
-- [ ] Garder `metadata.version` (lecture) et `metadata.counts`.
-- [ ] Sortir la session de `metadata` : table `session(tenant_id, key, value)`
+- [x] Garder `metadata.version` (lecture) et `metadata.counts`.
+- [x] Sortir la session de `metadata` : table `session_state(tenant_id, key, value)`
       (SQLite : `scope`), couverte par RLS et par `tenant.purge`. Bump
-      `DatabaseVersion` 2.15.0 → 2.16.0, triple synchro schéma
-      ([[project_schema_triple_sync]]), migration qui déplace les clés `*:session_*`.
-- [ ] Test : `metadata.load` en 404 ; session A invisible à B (contrat storage
+      `DatabaseVersion` 2.16.0 → 2.17.0 (renumérotée : le bump 2.15.0 → 2.16.0
+      de cette fiche entrait en collision avec celui d'ADR-0026, mergé entre
+      temps sur `main` — `anki_deck.session_limit`), triple synchro schéma
+      ([[project_schema_triple_sync]]), migration qui déplace les clés `*:session_*`
+      (SQLite `migrate_2_16_0_to_2_17_0`, PostgreSQL `013_session_state.sql`).
+- [x] Test : `metadata.load` en 404 ; session A invisible à B (contrat storage
       + HTTP).
 
 **Recette.** `routes_smoke_test` à jour ; `TestMigrationSteps_ContinuousChain`

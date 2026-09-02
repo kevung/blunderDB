@@ -52,6 +52,17 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   `search_history.exclude_position`, the "Sauf" structure SQLite gained in
   2.8.0 and this backend never received. A catch-up, not a new schema
   version: `database_version` and `domain.DatabaseVersion` are left alone.
+- `012_anki_session_limit.sql` — `anki_deck.session_limit` column, how many
+  cards one review sitting serves per deck (ADR-0026 rule 2). Nullable with
+  no default: NULL is "no limit" and is what every pre-existing deck keeps.
+  Bumps `database_version` to 2.16.0.
+- `013_session_state.sql` — `session_state(tenant_id, key, value)`, the UI
+  session state that lived in `metadata` as `<scope>:session_*` rows until
+  2.16.0 and was readable by every tenant through `metadata.load` (#156).
+  Moves the rows of every integer-named tenant, drops the rest (named
+  tenants no longer exist, ADR-0005), and installs the `tenant_isolation`
+  policy on the new table when the database already enforces RLS. Bumps
+  `database_version` to 2.17.0.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in
@@ -71,4 +82,7 @@ Every domain table has `tenant_id BIGINT NOT NULL`. The application filters by
 optional Row-Level Security policies (see `../RLS.md`) are enabled.
 
 The `metadata` table is database-level infrastructure (it holds the schema
-version) and is **not** tenant-scoped.
+version and the issuance document) and is **not** tenant-scoped — which is
+why it must hold no per-tenant data: the daemon exposes it read-only
+(`metadata.version`), and the session state that used to sit in it moved to
+`session_state` in `013` (#156).
