@@ -184,6 +184,21 @@ export const libraryPositions = [positionA, positionB, positionC];
 export const libraryDbPath = '/tmp/e2e-library.db';
 
 /**
+ * Les deux bindings par lesquels la GUI lit une bibliothèque : la liste des
+ * ids (ListPositionIDs) et les positions d'une fenêtre (LoadPositionsByIDs,
+ * qui renvoie ici toute la liste quels que soient les ids demandés — le cache
+ * du frontend les range par id).
+ *
+ * @param {object[]} positions
+ */
+export function libraryMockAfter(positions) {
+    return {
+        ListPositionIDs: positions.map((p) => p.id),
+        LoadPositionsByIDs: positions
+    };
+}
+
+/**
  * Overrides pour installWailsMock qui font démarrer l'app sur une base
  * ouverte : le chemin mémorisé existe, la version du schéma concorde, aucune
  * session à restaurer → loadAllPositions affiche libraryPositions.
@@ -202,7 +217,7 @@ export function openLibraryMock(extra = {}) {
             GetDatabaseVersion: '2.15.0',
             IsReadOnly: false,
             LoadSessionState: null,
-            LoadAllPositions: libraryPositions,
+            ...libraryMockAfter(libraryPositions),
             GetAllMatches: [],
             GetAllTournaments: [],
             GetAllCollections: [],

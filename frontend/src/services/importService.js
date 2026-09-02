@@ -258,12 +258,12 @@ export async function importDatabaseByPath(importFilePath) {
 // after every reload an import performs, not before.
 export async function showImportedPosition(positionID) {
     if (positionID) {
-        let index = get(positionsStore).findIndex((pos) => pos.id === positionID);
+        let index = positionsStore.indexOf(positionID);
         if (index < 0) {
             // The position is not in the current view (search subset, match mode,
             // or a brand-new row): reload the full list so we can point at it.
             await reloadPositions();
-            index = get(positionsStore).findIndex((pos) => pos.id === positionID);
+            index = positionsStore.indexOf(positionID);
         }
         if (index >= 0) {
             currentPositionIndexStore.set(-1);
@@ -331,9 +331,8 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
             logger.log('Analysis and comment updated for position ID:', positionID);
             setStatusBarMessage(tMsg('status.positionMerged'));
 
-            const positions = get(positionsStore);
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positions.findIndex((pos) => pos.id === positionID));
+            currentPositionIndexStore.set(positionsStore.indexOf(positionID));
             commentTextStore.set(mergedComment);
         } catch (error) {
             logger.error('Error updating analysis and comment:', error);

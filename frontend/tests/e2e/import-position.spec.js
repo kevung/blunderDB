@@ -8,12 +8,12 @@
  * 3. Dialogue annulé : rien ne change.
  *
  * Le mock simule la mutation du backend : dès que l'écriture est appelée,
- * LoadAllPositions renvoie la bibliothèque agrandie.
+ * ListPositionIDs renvoie la bibliothèque agrandie.
  */
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock, overrideDbMethodThen, getWailsCalls } from './helpers/wailsMock.js';
-import { openLibraryMock, libraryPositions, pastedPosition, xgidSample, parsedPositionResult } from './helpers/fixtures.js';
+import { openLibraryMock, libraryMockAfter, libraryPositions, pastedPosition, xgidSample, parsedPositionResult } from './helpers/fixtures.js';
 
 const statusBar = (page) => page.getByTestId('status-bar');
 const statusMessage = (page) => page.getByTestId('status-bar-message');
@@ -30,7 +30,7 @@ test('coller un XGID enregistre la position et l’affiche dans la bibliothèque
     await expect(statusBar(page)).toContainText('3 / 3');
 
     const saved = { ...pastedPosition, id: 1004 };
-    await overrideDbMethodThen(page, 'SaveIndividualPosition', { id: 1004, existed: false }, { LoadAllPositions: [...libraryPositions, saved] });
+    await overrideDbMethodThen(page, 'SaveIndividualPosition', { id: 1004, existed: false }, libraryMockAfter([...libraryPositions, saved]));
 
     await page.keyboard.press('Control+v');
 
@@ -55,7 +55,7 @@ test('importer un fichier de position via le dialogue', async ({ page }) => {
     await expect(statusBar(page)).toContainText('3 / 3');
 
     const imported = { ...pastedPosition, id: 1005 };
-    await overrideDbMethodThen(page, 'ImportXGPPosition', 1005, { LoadAllPositions: [...libraryPositions, imported] });
+    await overrideDbMethodThen(page, 'ImportXGPPosition', 1005, libraryMockAfter([...libraryPositions, imported]));
 
     await page.keyboard.press('Control+i');
 

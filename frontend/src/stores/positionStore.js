@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { createPositionList } from './positionList.js';
 
 // emptyPosition() is the one canonical "nothing loaded yet" position: 26
 // empty points ({checkers, color: -1} — the shape Board.svelte and the rest
@@ -32,7 +33,16 @@ export function emptyPosition() {
 
 export const pastePositionTextStore = writable('');
 export const positionStore = writable(emptyPosition());
-export const positionsStore = writable([]); // Add positions store
+// The browsed list: ids plus a window cache (see positionList.js). Positions
+// are fetched through LoadPositionsByIDs; the binding is imported lazily so
+// this store stays free of the Wails module at import time (tests mock it
+// per file, and a cache miss is the only path that needs it).
+export const positionsStore = createPositionList({
+    loader: async (ids) => {
+        const { LoadPositionsByIDs } = await import('../../wailsjs/go/database/Database.js');
+        return (await LoadPositionsByIDs(ids)) || [];
+    }
+});
 export const positionBeforeFilterLibraryStore = writable(null); // Store position before opening filter library
 export const positionIndexBeforeFilterLibraryStore = writable(-1); // Store position index before opening filter library
 

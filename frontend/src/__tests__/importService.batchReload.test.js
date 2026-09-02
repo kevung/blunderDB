@@ -116,7 +116,7 @@ describe('importMultipleFiles — one reload per batch', () => {
         expect(loadAllPositions).toHaveBeenCalledTimes(1);
         // Visible outcome unchanged: last position shown, analysis tab, counters.
         expect(outcome).toEqual({ type: 'position', id: 5 });
-        expect(get(positionsStore)[get(currentPositionIndexStore)].id).toBe(5);
+        expect(positionsStore.idAt(get(currentPositionIndexStore))).toBe(5);
         expect(get(activeTabStore)).toBe('analysis');
         expect(get(fileImportResultsStore)).toEqual({ succeeded: 5, failed: 0, skipped: 0, errors: [] });
         expect(get(fileImportModeStore)).toBe('completed');

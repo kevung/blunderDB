@@ -7,7 +7,7 @@
  * Usage :
  *   import { installWailsMock, overrideDbMethod } from './helpers/wailsMock.js';
  *   await installWailsMock(page);                                    // defaults
- *   await installWailsMock(page, { database: { LoadAllPositions: [...] } }); // constantes par méthode
+ *   await installWailsMock(page, { database: { ListPositionIDs: [...] } }); // constantes par méthode
  *   await overrideDbMethod(page, 'ComputeEPCFromPosition', result);   // per-method override
  *
  * Stratégie : le script est sérialisé et injecté AVANT tout script de la page
@@ -155,7 +155,8 @@ export async function installWailsMock(page, overrides = {}) {
                             ClearCommandHistory: asyncVoid,
                             ComputeEPCFromPosition: asyncNull,
                             ComputeStats: asyncNull,
-                            LoadAllPositions: asyncArr,
+                            ListPositionIDs: asyncArr,
+                            LoadPositionsByIDs: asyncArr,
                             LoadAnalysis: asyncNull,
                             SaveSessionState: asyncVoid,
                             LoadSessionState: asyncNull,
@@ -225,7 +226,7 @@ export async function overrideDbMethod(page, methodName, returnValue) {
  * Fait répondre `methodName` par `returnValue`, puis, dès son premier appel,
  * remplace d'autres méthodes Database par des constantes — le mock simule ainsi
  * un backend dont l'état change après une écriture (une position enregistrée
- * apparaît ensuite dans LoadAllPositions, par exemple).
+ * apparaît ensuite dans ListPositionIDs, par exemple).
  *
  * @param {import('@playwright/test').Page} page
  * @param {string} methodName

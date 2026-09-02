@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import {
-    LoadAllPositions as LoadAllPositionsDB,
+    ListPositionIDs,
     DeletePosition,
     DeleteAnalysis,
     UpdatePosition,
@@ -276,7 +276,10 @@ export async function loadAllPositions() {
         return;
     }
     try {
-        const positions = await LoadAllPositionsDB();
+        // Ids only: the positions are fetched by window as the user browses
+        // (positionList.js). A library reload may follow an edit, so the
+        // window cache is dropped with the list.
+        const ids = (await ListPositionIDs()) || [];
 
         if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch((e) => {
@@ -295,10 +298,10 @@ export async function loadAllPositions() {
         forgetContextBeforeEPC();
         activeCollectionStore.set(null);
 
-        positionsStore.set(Array.isArray(positions) ? positions : []);
-        if (positions && positions.length > 0) {
+        positionsStore.setIds(ids, { reset: true });
+        if (ids.length > 0) {
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positions.length - 1);
+            currentPositionIndexStore.set(ids.length - 1);
             activeTabStore.set('matches');
 
             hasActiveSearch = false;
@@ -749,7 +752,7 @@ export async function deletePosition() {
     if (!(await confirmAction(get(t)('status.confirmDeletePosition'), { confirmLabel: get(t)('common.delete') }))) return;
 
     try {
-        const positionID = positions[get(currentPositionIndexStore)].id;
+        const positionID = positionsStore.idAt(get(currentPositionIndexStore));
         await DeletePosition(positionID);
         logger.log('Position and associated analysis deleted with ID:', positionID);
 
@@ -787,7 +790,11 @@ export async function updatePosition() {
 
     try {
         const currentIndex = get(currentPositionIndexStore);
-        const originalPosition = positions[currentIndex];
+        const originalPosition = await positionsStore.getPosition(currentIndex);
+        if (!originalPosition) {
+            setStatusBarMessage(tMsg('status.noPositionsToUpdate'));
+            return;
+        }
 
         analysis.xgid = '';
         analysis.analysisType = '';
@@ -905,7 +912,7 @@ const TAB_TOGGLES = Object.freeze({
     analysis: { tab: 'analysis' },
     comments: {
         tab: 'comments',
-        guard: () => (get(positionsStore)[get(currentPositionIndexStore)] ? null : 'status.noCurrentPositionComment')
+        guard: () => (positionsStore.idAt(get(currentPositionIndexStore)) != null ? null : 'status.noCurrentPositionComment')
     },
     metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
     anki: { tab: 'anki' },

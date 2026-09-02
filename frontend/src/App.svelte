@@ -85,7 +85,7 @@
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
-    let positions = [];
+    let positionCount = 0;
     let saveSessionTimeout = null;
     let tabInitialized = false;
     let previousTab = '';
@@ -116,15 +116,16 @@
         });
     });
 
-    // Keep `positions` array in sync with positionsStore.
-    // Plain .subscribe() is intentional: `positions` is never read in the
+    // Keep `positionCount` in sync with positionsStore (an id list: the
+    // positions themselves are fetched by window through getPosition).
+    // Plain .subscribe() is intentional: `positionCount` is never read in the
     // template directly, so $state reactivity is not needed here. The
     // returned unsubscribe is captured and released in onDestroy below —
     // App.svelte is mounted once for the app's lifetime, but leaving it
     // unbound left the store holding a callback with no way to stop it.
     const unsubscribePositions = positionsStore.subscribe((value) => {
-        positions = Array.isArray(value) ? value : [];
-        if (positions.length === 0) {
+        positionCount = value?.length || 0;
+        if (positionCount === 0) {
             positionStore.set(emptyPosition());
             analysisStore.set(emptyAnalysis());
         }
@@ -148,12 +149,20 @@
         const value = $currentPositionIndexStore;
         let cancelled = false;
         if (get(statusBarModeStore) === 'MATCH') return;
-        if (positions.length > 0 && value >= 0 && value < positions.length) {
-            showPosition(positions[value]).then(() => {
-                if (cancelled) return;
-                if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
-                saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
-            });
+        if (positionCount > 0 && value >= 0 && value < positionCount) {
+            // getPosition loads the window around `value` on a cache miss and
+            // prefetches ahead; a stale callback (index moved on) is dropped.
+            positionsStore
+                .getPosition(value)
+                .then((position) => {
+                    if (cancelled || !position) return;
+                    return showPosition(position).then(() => {
+                        if (cancelled) return;
+                        if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
+                        saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
+                    });
+                })
+                .catch((e) => logger.error('Error loading position:', e));
         }
         return () => {
             cancelled = true;
@@ -207,7 +216,7 @@
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
         const boardArea = mainArea?.querySelector('.scrollable-content');
         if (!boardArea || !boardArea.contains(event.target)) return;
-        if (positions && positions.length > 0) {
+        if (positionCount > 0) {
             event.preventDefault();
             if (event.deltaY < 0) previousPosition();
             else if (event.deltaY > 0) nextPosition();

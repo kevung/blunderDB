@@ -1,6 +1,6 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
-import { SaveSessionState, LoadSessionState, LoadAllPositions } from '../../wailsjs/go/database/Database.js';
+import { SaveSessionState, LoadSessionState, ListPositionIDs } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -15,11 +15,10 @@ export async function saveSessionState() {
     if (!get(databasePathStore)) return;
 
     try {
-        const positions = get(positionsStore);
         const currentPositionIndex = get(currentPositionIndexStore);
         const searchState = getSearchState();
 
-        const positionIds = positions.map((pos) => pos.id);
+        const positionIds = get(positionsStore).ids;
         const sessionState = {
             lastSearchCommand: searchState.lastSearchCommand,
             lastSearchPosition: searchState.lastSearchPosition ? JSON.stringify(searchState.lastSearchPosition) : '',
@@ -43,7 +42,7 @@ export async function restoreSessionState() {
 
         // Try restoring view tabs first
         if (sessionState && sessionState.viewsJSON) {
-            const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, LoadAllPositions);
+            const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, ListPositionIDs);
             if (viewsRestored) {
                 setSearchState({
                     lastSearchCommand: sessionState.lastSearchCommand || '',
@@ -63,25 +62,23 @@ export async function restoreSessionState() {
                 hasActiveSearch: true
             });
 
-            const allPositions = await LoadAllPositions();
-            const positionIdSet = new Set(sessionState.lastPositionIds);
-            const restoredPositions = allPositions.filter((pos) => positionIdSet.has(pos.id));
+            // Only the ids travel: the saved list is kept in its order, minus
+            // the positions deleted since, and the windows load on demand.
+            const stored = new Set((await ListPositionIDs()) || []);
+            const orderedIds = sessionState.lastPositionIds.filter((id) => stored.has(id));
 
-            const positionMap = new Map(restoredPositions.map((pos) => [pos.id, pos]));
-            const orderedPositions = sessionState.lastPositionIds.map((id) => positionMap.get(id)).filter((pos) => pos !== undefined);
-
-            if (orderedPositions.length > 0) {
-                positionsStore.set(orderedPositions);
+            if (orderedIds.length > 0) {
+                positionsStore.setIds(orderedIds, { reset: true });
 
                 let indexToRestore = sessionState.lastPositionIndex || 0;
                 if (indexToRestore < 0) indexToRestore = 0;
-                if (indexToRestore >= orderedPositions.length) indexToRestore = orderedPositions.length - 1;
+                if (indexToRestore >= orderedIds.length) indexToRestore = orderedIds.length - 1;
 
                 currentPositionIndexStore.set(-1);
                 currentPositionIndexStore.set(indexToRestore);
 
-                setStatusBarMessage(tMsg('status.sessionRestored', { count: orderedPositions.length, index: indexToRestore + 1 }));
-                logger.log(`Session restored with ${orderedPositions.length} positions at index ${indexToRestore}`);
+                setStatusBarMessage(tMsg('status.sessionRestored', { count: orderedIds.length, index: indexToRestore + 1 }));
+                logger.log(`Session restored with ${orderedIds.length} positions at index ${indexToRestore}`);
                 return;
             }
         }

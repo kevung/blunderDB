@@ -30,7 +30,7 @@ function createDefaultView(id) {
     return {
         id,
         name: `#${id}`,
-        positions: [],
+        ids: [],
         positionIndex: 0,
         position: emptyPosition(),
         analysis: createDefaultAnalysis(),
@@ -55,7 +55,7 @@ function createViewStore() {
                 if (v.id === currentId) {
                     return {
                         ...v,
-                        positions: get(positionsStore),
+                        ids: get(positionsStore).ids,
                         positionIndex: get(currentPositionIndexStore),
                         position: JSON.parse(JSON.stringify(get(positionStore))),
                         analysis: JSON.parse(JSON.stringify(get(analysisStore))),
@@ -72,8 +72,13 @@ function createViewStore() {
     }
 
     function restoreViewState(view) {
-        positionsStore.set(view.positions || []);
-        positionStore.set(view.position);
+        // The position cache is shared by every view (keyed by id), so a
+        // switch keeps whatever windows were loaded; only the id list moves.
+        positionsStore.setIds(view.ids || []);
+        // A view restored from disk carries no board: show the position from
+        // the cache when it is there, otherwise the index effect fetches it.
+        const cached = view.position ? null : positionsStore.peek(view.positionIndex || 0);
+        positionStore.set(view.position ?? (cached ? JSON.parse(JSON.stringify(cached)) : emptyPosition()));
         analysisStore.set(view.analysis);
         selectedMoveStore.set(view.selectedMove ?? null);
         // EPC and EDIT are transient modes driven by the active tab: always
@@ -142,7 +147,7 @@ function createViewStore() {
             views: vs.map((v) => ({
                 id: v.id,
                 name: v.name,
-                positionIds: (v.positions || []).map((p) => p.id).filter((id) => id != null),
+                positionIds: (v.ids || []).filter((id) => id != null),
                 positionIndex: v.positionIndex || 0,
                 selectedMove: v.selectedMove,
                 activeTab: v.activeTab || 'analysis',
@@ -153,26 +158,28 @@ function createViewStore() {
         });
     }
 
-    // Restore views from serialized data + a function to load positions by IDs
-    async function deserialize(json, loadAllPositionsFn) {
+    // Restore views from serialized data + a function listing the ids of the
+    // stored positions (ListPositionIDs): a saved id whose position has since
+    // been deleted is dropped, the rest keep their order and load on demand.
+    async function deserialize(json, listPositionIdsFn) {
         try {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
 
-            // Load all positions once for ID lookup
-            const allPositions = await loadAllPositionsFn();
-            const posMap = new Map(allPositions.map((p) => [p.id, p]));
+            const stored = new Set((await listPositionIdsFn()) || []);
 
             nextViewId = data.nextViewId || data.views.length + 1;
 
             const restoredViews = data.views.map((sv) => {
-                const positions = (sv.positionIds || []).map((id) => posMap.get(id)).filter(Boolean);
+                const ids = (sv.positionIds || []).filter((id) => stored.has(id));
                 return {
                     id: sv.id,
                     name: sv.name,
-                    positions,
-                    positionIndex: Math.min(sv.positionIndex || 0, Math.max(positions.length - 1, 0)),
-                    position: positions[sv.positionIndex] || emptyPosition(),
+                    ids,
+                    positionIndex: Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0)),
+                    // No board yet: restoreViewState takes it from the cache or
+                    // leaves it to the index effect (getPosition).
+                    position: null,
                     analysis: createDefaultAnalysis(),
                     selectedMove: sv.selectedMove ?? null,
                     activeTab: sv.activeTab || 'analysis',
