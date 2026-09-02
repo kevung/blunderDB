@@ -258,7 +258,7 @@ func columnExists(t *testing.T, db *sql.DB, table, column string) bool {
 // TestMigrate_2_7_0_to_2_8_0 verifies the exclude_position column is added to
 // search_history and filter_library and that the "Sauf" structure round-trips.
 func TestMigrate_2_7_0_to_2_8_0(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v270.db")
 	createOldDatabase(t, dbPath, "2.7.0")
 
@@ -266,6 +266,7 @@ func TestMigrate_2_7_0_to_2_8_0(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("Failed to open v2.7.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -332,7 +333,7 @@ func allExpectedTables() []string {
 
 // TestMigrationFromV100 tests migration from a v1.0.0 database (only base tables)
 func TestMigrationFromV100(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v100.db")
 	createOldDatabase(t, dbPath, "1.0.0")
 
@@ -341,6 +342,7 @@ func TestMigrationFromV100(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.0.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify it was migrated to the latest version
 	version, err := d.CheckDatabaseVersion()
@@ -361,7 +363,7 @@ func TestMigrationFromV100(t *testing.T) {
 
 // TestMigrationFromV110 tests migration from v1.1.0 (has command_history)
 func TestMigrationFromV110(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v110.db")
 	createOldDatabase(t, dbPath, "1.1.0")
 
@@ -370,6 +372,7 @@ func TestMigrationFromV110(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.1.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -388,7 +391,7 @@ func TestMigrationFromV110(t *testing.T) {
 
 // TestMigrationFromV120 tests migration from v1.2.0 (has filter_library)
 func TestMigrationFromV120(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v120.db")
 	createOldDatabase(t, dbPath, "1.2.0")
 
@@ -397,6 +400,7 @@ func TestMigrationFromV120(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.2.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -415,7 +419,7 @@ func TestMigrationFromV120(t *testing.T) {
 
 // TestMigrationFromV130 tests migration from v1.3.0 (has search_history)
 func TestMigrationFromV130(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v130.db")
 	createOldDatabase(t, dbPath, "1.3.0")
 
@@ -424,6 +428,7 @@ func TestMigrationFromV130(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.3.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -442,7 +447,7 @@ func TestMigrationFromV130(t *testing.T) {
 
 // TestMigrationFromV140 tests migration from v1.4.0 (has match tables)
 func TestMigrationFromV140(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v140.db")
 	createOldDatabase(t, dbPath, "1.4.0")
 
@@ -451,6 +456,7 @@ func TestMigrationFromV140(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.4.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -469,7 +475,7 @@ func TestMigrationFromV140(t *testing.T) {
 
 // TestMigrationFromV150 tests migration from v1.5.0 (has collection tables)
 func TestMigrationFromV150(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v150.db")
 	createOldDatabase(t, dbPath, "1.5.0")
 
@@ -478,6 +484,7 @@ func TestMigrationFromV150(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.5.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -496,7 +503,7 @@ func TestMigrationFromV150(t *testing.T) {
 
 // TestCurrentVersionNoMigration tests that an old database opens and migrates to current version
 func TestCurrentVersionNoMigration(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v170.db")
 	createOldDatabase(t, dbPath, "1.7.0")
 
@@ -505,6 +512,7 @@ func TestCurrentVersionNoMigration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.7.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -517,7 +525,7 @@ func TestCurrentVersionNoMigration(t *testing.T) {
 
 // TestMigrationFromV160 tests migration from v1.6.0 (has tournament table)
 func TestMigrationFromV160(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v160.db")
 	createOldDatabase(t, dbPath, "1.6.0")
 
@@ -526,6 +534,7 @@ func TestMigrationFromV160(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open v1.6.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	version, err := d.CheckDatabaseVersion()
 	if err != nil {
@@ -544,7 +553,7 @@ func TestMigrationFromV160(t *testing.T) {
 
 // TestMigrationPreservesData tests that existing data survives migration
 func TestMigrationPreservesData(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_data_preserve.db")
 
 	// Build two distinct normalized positions for insertion.
@@ -602,6 +611,7 @@ func TestMigrationPreservesData(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify data survived
 	var count int
@@ -638,7 +648,7 @@ func TestMigrationChainVersionProgression(t *testing.T) {
 
 	for _, startVersion := range versions {
 		t.Run(fmt.Sprintf("from_%s", startVersion), func(t *testing.T) {
-			tmpDir := t.TempDir()
+			tmpDir := tempDir(t)
 			dbPath := filepath.Join(tmpDir, "test.db")
 			createOldDatabase(t, dbPath, startVersion)
 
@@ -647,6 +657,7 @@ func TestMigrationChainVersionProgression(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to open %s database: %v", startVersion, err)
 			}
+			closeOnCleanup(t, d)
 
 			// After migration, version should always be the latest
 			version, err := d.CheckDatabaseVersion()
@@ -663,13 +674,14 @@ func TestMigrationChainVersionProgression(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to reopen migrated database (from %s): %v", startVersion, err)
 			}
+			closeOnCleanup(t, d2)
 		})
 	}
 }
 
 // TestSetupThenOpen tests that a database created by SetupDatabase can be opened
 func TestSetupThenOpen(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_setup.db")
 
 	d := NewDatabase()
@@ -677,6 +689,7 @@ func TestSetupThenOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to setup database: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Insert a test position so the DB has some data
 	_, err = d.db.Exec(`INSERT INTO position (state) VALUES ('{"test":"data"}')`)
@@ -690,6 +703,7 @@ func TestSetupThenOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open database created by SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, d2)
 
 	version, err := d2.CheckDatabaseVersion()
 	if err != nil {
@@ -717,7 +731,7 @@ func TestSetupThenOpen(t *testing.T) {
 // are missing the filter_library table (skipped during a past migration path).
 // OpenDatabase must repair such databases instead of failing.
 func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_filter_library.db")
 
 	// Create a v1.7.0 database WITHOUT filter_library (simulates the real bug)
@@ -759,6 +773,7 @@ func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenDatabase failed on database missing filter_library: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify filter_library was created
 	if !tableExists(d.db, "filter_library") {
@@ -778,7 +793,7 @@ func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
 // TestOpenDatabaseMissingCanonicalHash tests that databases migrated to v1.7.0
 // without the canonical_hash column on match table get repaired.
 func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_canonical_hash.db")
 
 	// Create a v1.7.0 database without canonical_hash column
@@ -805,6 +820,7 @@ func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenDatabase failed on database missing canonical_hash: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify canonical_hash was added
 	err = d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
@@ -819,7 +835,7 @@ func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
 // TestOpenDatabaseMissingMultipleTables tests repair of a database missing
 // multiple tables (e.g. filter_library AND search_history).
 func TestOpenDatabaseMissingMultipleTables(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_multiple.db")
 
 	// Create a minimal v1.7.0 database missing filter_library, search_history, and collection tables
@@ -851,6 +867,7 @@ func TestOpenDatabaseMissingMultipleTables(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenDatabase failed on database missing multiple tables: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Verify all missing tables were created
 	for _, table := range []string{"filter_library", "search_history", "collection", "collection_position"} {
@@ -1015,7 +1032,7 @@ func createV190Database(t *testing.T, path string) {
 //   - stored column values match what populatePositionColumns recomputes
 //   - the v2.0.0 indexes exist
 func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190.db")
 	createV190Database(t, dbPath)
 
@@ -1023,6 +1040,7 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase failed: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Version must be current (auto-migrated through all steps).
 	ver, _ := d.CheckDatabaseVersion()
@@ -1093,7 +1111,7 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 // TestMigrate_1_9_0_Duplicates verifies that two positions with the same
 // Zobrist hash are merged during migration and FK references are remapped.
 func TestMigrate_1_9_0_Duplicates(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190_dups.db")
 
 	db, err := sql.Open("sqlite", dbPath)
@@ -1173,6 +1191,7 @@ func TestMigrate_1_9_0_Duplicates(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// Only one position should remain
 	var posCount int
@@ -1196,7 +1215,7 @@ func TestMigrate_1_9_0_Duplicates(t *testing.T) {
 // TestMigrate_Idempotent verifies that running migration twice (opening a
 // fully migrated 2.0.0 DB a second time) is a no-op.
 func TestMigrate_Idempotent(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190_idempotent.db")
 	createV190Database(t, dbPath)
 
@@ -1205,6 +1224,7 @@ func TestMigrate_Idempotent(t *testing.T) {
 	if err := d1.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("first open: %v", err)
 	}
+	closeOnCleanup(t, d1)
 	var posCount1 int
 	if err := d1.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount1); err != nil {
 		t.Fatal(err)
@@ -1215,6 +1235,7 @@ func TestMigrate_Idempotent(t *testing.T) {
 	if err := d2.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("second open (idempotent): %v", err)
 	}
+	closeOnCleanup(t, d2)
 
 	ver, _ := d2.CheckDatabaseVersion()
 	if ver != DatabaseVersion {
@@ -1234,7 +1255,7 @@ func TestMigrate_Idempotent(t *testing.T) {
 // migration correctly backfills best_move_equity_error for positions where
 // PlayedMoves was missing from the analysis JSON blob.
 func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v230_repair.db")
 
 	rawDB, err := sql.Open("sqlite", dbPath)
@@ -1355,6 +1376,7 @@ func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	ver, _ := d.CheckDatabaseVersion()
 	if ver != DatabaseVersion {
@@ -1377,7 +1399,7 @@ func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
 //   - leaves is_forced=0 for positions with multiple legal moves
 //   - leaves is_forced=0 for cube positions
 func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v240_is_forced.db")
 
 	rawDB, err := sql.Open("sqlite", dbPath)
@@ -1517,6 +1539,7 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	ver, _ := d.CheckDatabaseVersion()
 	if ver != DatabaseVersion {
@@ -1559,7 +1582,7 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 //   - leaves is_close_cube=0 for clearly-not-close cube decisions
 //   - leaves is_close_cube=0 for checker positions
 func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v250_is_close_cube.db")
 
 	rawDB, err := sql.Open("sqlite", dbPath)
@@ -1699,6 +1722,7 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	ver, _ := d.CheckDatabaseVersion()
 	if ver != DatabaseVersion {
@@ -1739,7 +1763,7 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 // action is a take/pass response get 1, doubling decisions and checker positions
 // stay 0.
 func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v290_is_cube_response.db")
 
 	rawDB, err := sql.Open("sqlite", dbPath)
@@ -1834,6 +1858,7 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	ver, _ := d.CheckDatabaseVersion()
 	if ver != DatabaseVersion {
@@ -1875,7 +1900,7 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 // signal such a database carries: a position reachable from no move never came
 // from a match, so it must be the user's own.
 func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2120.db")
 	createOldDatabase(t, dbPath, "2.12.0")
 
@@ -1919,6 +1944,7 @@ func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("open v2.12.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	version, err := d.CheckDatabaseVersion()
@@ -1953,7 +1979,7 @@ func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
 // source-file mark, so every existing position starts unflagged and only gains
 // the mark when its match is imported again (docs/adr/0006).
 func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2130.db")
 	createOldDatabase(t, dbPath, "2.13.0")
 
@@ -1975,6 +2001,7 @@ func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("open v2.13.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	version, err := d.CheckDatabaseVersion()
@@ -1998,7 +2025,7 @@ func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
 }
 
 func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2140.db")
 	createOldDatabase(t, dbPath, "2.14.0")
 
@@ -2029,6 +2056,7 @@ func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("open v2.14.0 database: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	version, err := d.CheckDatabaseVersion()

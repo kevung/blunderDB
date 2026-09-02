@@ -50,7 +50,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	}
 	t.Logf("Fixture: %d files, %.1f MB input", len(files), float64(totalInputBytes)/(1024*1024))
 
-	tmpDir := t.TempDir()
+	tmpDir := tempDir(t)
 
 	// ─────────────────────────────────────────────────────────────────────
 	// Phase 1: Import into v2.3.0 (current schema) and measure time
@@ -65,6 +65,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err := db230.SetupDatabase(dbPath230); err != nil {
 		t.Fatalf("setup v2.3.0: %v", err)
 	}
+	closeOnCleanup(t, db230)
 	importCount := 0
 	for _, f := range files {
 		ext := strings.ToLower(filepath.Ext(f))
@@ -426,6 +427,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err := db230obj.OpenDatabase(dbPath230); err != nil {
 		t.Fatalf("open v2.3.0 DB: %v", err)
 	}
+	closeOnCleanup(t, db230obj)
 
 	type searchCase struct {
 		name   string
@@ -627,6 +629,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	if err := db220obj.OpenDatabase(dbPath220); err != nil {
 		t.Fatalf("open v2.2.0 DB: %v", err)
 	}
+	closeOnCleanup(t, db220obj)
 
 	for _, sc := range cases {
 		start := time.Now()
@@ -873,6 +876,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		if err := dbTmp.SetupDatabase(dbPathTmp); err != nil {
 			t.Fatal(err)
 		}
+		closeOnCleanup(t, dbTmp)
 
 		start := time.Now()
 		for _, f := range xgFiles {

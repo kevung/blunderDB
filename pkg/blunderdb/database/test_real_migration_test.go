@@ -9,6 +9,7 @@ func TestMigrationOnRealDB(t *testing.T) {
 	if err := d.OpenDatabase("c.db"); err != nil {
 		t.Skip("c.db not available or migration failed: " + err.Error())
 	}
+	closeOnCleanup(t, d)
 
 	// Check how many positions now have non-zero best_move_equity_error
 	var total, nonzero int

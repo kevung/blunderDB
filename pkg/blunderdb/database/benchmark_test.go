@@ -145,6 +145,7 @@ func BenchmarkImport_TournoisCold(b *testing.B) {
 		if err := db.SetupDatabase(":memory:"); err != nil {
 			b.Fatal(err)
 		}
+		closeOnCleanup(b, db)
 		// Same corpus setupBenchDB just loaded: duplicates and unreadable
 		// files were reported there, and a rejected file is part of the
 		// import cost being measured, not a reason to stop measuring.
@@ -445,6 +446,7 @@ func BenchmarkImport_SingleXG(b *testing.B) {
 		if err := db.SetupDatabase(":memory:"); err != nil {
 			b.Fatal(err)
 		}
+		closeOnCleanup(b, db)
 		if _, err := db.ImportXGMatch(fixture); err != nil {
 			b.Fatal(err)
 		}
@@ -466,6 +468,7 @@ func BenchmarkImport_SingleSGF(b *testing.B) {
 		if err := db.SetupDatabase(":memory:"); err != nil {
 			b.Fatal(err)
 		}
+		closeOnCleanup(b, db)
 		if _, err := db.ImportGnuBGMatch(fixture); err != nil {
 			b.Fatal(err)
 		}
@@ -483,6 +486,7 @@ func BenchmarkSearch_SmallDB(b *testing.B) {
 	if err := db.SetupDatabase(":memory:"); err != nil {
 		b.Fatal(err)
 	}
+	closeOnCleanup(b, db)
 	for _, f := range fixtures {
 		if _, err := os.Stat(f); os.IsNotExist(err) {
 			continue

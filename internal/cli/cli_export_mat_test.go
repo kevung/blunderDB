@@ -35,7 +35,7 @@ func TestCLI_ExportMAT_Batch(t *testing.T) {
 		t.Fatalf("import bgf: %v", err)
 	}
 
-	outDir := filepath.Join(t.TempDir(), "out")
+	outDir := filepath.Join(tempDir(t), "out")
 	if err := cli.Run([]string{"export", "--db", dbPath, "--type", "mat", "--dir", outDir}); err != nil {
 		t.Fatalf("export mat batch: %v", err)
 	}
@@ -56,7 +56,7 @@ func TestCLI_ExportMAT_Single(t *testing.T) {
 	}
 	id := matches[0].ID
 
-	out := filepath.Join(t.TempDir(), "game.mat")
+	out := filepath.Join(tempDir(t), "game.mat")
 	if err := cli.Run([]string{"export", "--db", dbPath, "--type", "mat", "--match-ids", strconv.FormatInt(id, 10), "--file", out}); err != nil {
 		t.Fatalf("export mat single: %v", err)
 	}
@@ -79,7 +79,7 @@ func TestCLI_ExportMAT_FileWithMultipleErrors(t *testing.T) {
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("TachiAI_V_player_Nov_2__2025__16_55.bgf")}); err != nil {
 		t.Fatalf("import bgf: %v", err)
 	}
-	out := filepath.Join(t.TempDir(), "game.mat")
+	out := filepath.Join(tempDir(t), "game.mat")
 	// No --match-ids = all matches (2) → --file must error.
 	if err := cli.Run([]string{"export", "--db", dbPath, "--type", "mat", "--file", out}); err == nil {
 		t.Fatal("expected error exporting multiple matches to a single --file")

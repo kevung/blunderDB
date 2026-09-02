@@ -14,6 +14,7 @@ func TestSchemaV200_PositionColumns(t *testing.T) {
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	wantPositionCols := []string{
@@ -64,6 +65,7 @@ func TestSchemaV200_Indexes(t *testing.T) {
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	wantIndexes := []string{
@@ -111,6 +113,7 @@ func TestSchemaV200_SavePositionColumns(t *testing.T) {
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	pos := &Position{
@@ -146,6 +149,7 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
 	}
+	closeOnCleanup(t, d)
 	defer d.db.Close()
 
 	var version string
@@ -165,11 +169,12 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 // carrying the analysis, comment and collection membership across — without a
 // schema version bump.
 func TestOpen_RepairsPositionsWithoutScalars(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "damaged.db")
+	path := filepath.Join(tempDir(t), "damaged.db")
 	d := NewDatabase()
 	if err := d.SetupDatabase(path); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
+	closeOnCleanup(t, d)
 
 	// A healthy row, saved the ordinary way.
 	healthy := InitializePosition()

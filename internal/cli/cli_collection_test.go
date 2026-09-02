@@ -193,7 +193,7 @@ func TestCLI_CollectionCreateRenameDelete(t *testing.T) {
 func TestCLI_CollectionExport(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	id, ids := seedCollection(t, cli, "Openings", 3)
-	outPath := filepath.Join(t.TempDir(), "openings.db")
+	outPath := filepath.Join(tempDir(t), "openings.db")
 
 	captureStdout(t, func() {
 		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", "1", "--out", outPath}); err != nil {
