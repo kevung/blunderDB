@@ -194,7 +194,7 @@ en/de/el/es/fi/it/ja/ru affichent ces paragraphes en français.
       `sphinx-build -b gettext` dans `doc/build/gettext`, chemin relatif).
 - [ ] Règle de process dans `CONTRIBUTING.md` (voir H.2) et dans le template de
       PR : « un `.rst` modifié = ses `.po` dans le même commit ».
-- [ ] Job `pages` : déployer sur tag **et** sur `main` seulement si
+- [x] Job `pages` : déployer sur tag **et** sur `main` seulement si
       `docs-i18n-check` est vert (job `needs:` + `--strict`).
 
 **Recette.** `doc-i18n-check.sh` → `0 untranslated + 0 fuzzy` ; les 8 sites

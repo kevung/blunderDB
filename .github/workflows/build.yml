@@ -904,11 +904,13 @@ jobs:
   # Are the eight translations complete against the French source? Runs
   # scripts/doc-i18n-check.sh (regenerates the .pot, merges each catalogue in a
   # temp dir, counts untranslated + fuzzy). Same gate as `docs`: documentation
-  # changes, tags and manual runs. On a PR/push a gap is a ::warning::
-  # annotation — CLAUDE.md says translations are refreshed at release time —
-  # on a version tag it fails, so a release cannot ship docs falling back to
-  # French. It marks the run red but blocks nothing else: the release assets
-  # come from `build`, which does not depend on it.
+  # changes, tags and manual runs. On a pull request or a manual run a gap is
+  # a ::warning:: annotation; on a push (main or a version tag) it is strict
+  # and fails: a release cannot ship docs falling back to French, and the
+  # `pages` job below deploys the site from main only when this job is green
+  # (issue #161: eight published sites showed French paragraphs). It blocks
+  # nothing else: the release assets come from `build`, which does not depend
+  # on it.
   docs-i18n-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -938,7 +940,7 @@ jobs:
         shell: bash
 
       - name: Check translation coverage
-        run: scripts/doc-i18n-check.sh ${{ startsWith(github.ref, 'refs/tags/') && '--strict' || '' }}
+        run: scripts/doc-i18n-check.sh ${{ github.event_name == 'push' && '--strict' || '' }}
         shell: bash
 
   # Builds the docs in all 9 languages; on a version tag it also builds the
@@ -1051,16 +1053,24 @@ jobs:
   # pollutes the published site and races the real push deploys. When `docs`
   # is skipped (a push that touched no documentation) this job is skipped with
   # it: the site is a pure function of doc/**, so there is nothing new to
-  # publish.
+  # publish. A push on main also waits for `docs-i18n-check` (strict on a
+  # push) and deploys only if it is green: a paragraph left untranslated must
+  # not reach the eight translated sites (issue #161). A tag is not gated
+  # here — its `docs-i18n-check` is strict too, and a release tag whose
+  # translations lag still republishes the site with its release notes.
   pages:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: docs
+    needs: [docs, docs-i18n-check]
     # !cancelled() is required, not decorative: a skipped ancestor propagates
     # through the whole chain, and docs-changes is skipped on every tag. On the
     # 0.35.0 tag `docs` ran and succeeded while `pages` was skipped anyway; the
     # site was only republished because the main push carried the same commit.
-    if: ${{ !cancelled() && github.event_name == 'push' && needs.docs.result == 'success' }}
+    if: >-
+      !cancelled() && github.event_name == 'push' && needs.docs.result == 'success' && (
+        startsWith(github.ref, 'refs/tags/') ||
+        needs.docs-i18n-check.result == 'success'
+      )
     # peaceiris/actions-gh-pages pushes the built site to the gh-pages branch
     # using github_token below — needs contents:write.
     permissions:
