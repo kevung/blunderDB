@@ -289,11 +289,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 		out = out[:maxCandidates]
 	}
 
-	legal := domain.LegalMoves(pos)
-	opponent := domain.White
-	if pos.PlayerOnRoll == domain.White {
-		opponent = domain.Black
-	}
+	notations := notationIndex(domain.LegalMoves(pos), pos.PlayerOnRoll)
 
 	// out comes back best-first (Searcher.Plays), so out[0].Equity is the
 	// reference every other candidate's loss is measured against — same
@@ -310,7 +306,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 
 	moves := make([]domain.CheckerMove, 0, len(out))
 	for i, c := range out {
-		notation := notationForCandidate(&c, legal, opponent)
+		notation := notationForCandidate(&c, notations)
 		equity := scale.FromSearch(c.Equity)
 
 		var equityError *float64
@@ -342,14 +338,30 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 	return moves, nil
 }
 
-// notationForCandidate finds the domain.LegalPlay whose resulting board
-// matches c.Play.Result and returns its Notation — Position is directly
-// comparable (fixed-size arrays and scalars only), the same technique
-// integration_gate_test.go uses to judge the search against domain.LegalMoves.
-// An unmatched candidate (should not happen: moves_diff_test.go holds the two
-// generators to the same set) renders as "" rather than panicking — a
-// cold-path display gap, not a crash.
-func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) string {
+// notationIndex maps each legal play's resulting board, in the engine's own
+// representation, to that play's blunderDB notation. Position is directly
+// comparable (fixed-size arrays and scalars only) and therefore a map key —
+// the same property integration_gate_test.go relies on to judge the search
+// against domain.LegalMoves.
+//
+// Built once per position. It used to be built implicitly, and quadratically:
+// notationForCandidate rescanned the whole legal list for every candidate,
+// converting each of its plays through FromDomain every time, so a position
+// with thirty plays paid nine hundred conversions where thirty are enough.
+//
+// mover is the player on roll in pos: a Candidate's Play.Result already has
+// the turn switched to the opponent (Play's own doc comment), so the domain
+// boards are given that same turn before conversion — otherwise nothing
+// matches and every notation comes back empty.
+//
+// First writer wins, so a duplicate board keeps the notation the linear scan
+// would have returned.
+func notationIndex(legal []domain.LegalPlay, mover int) map[Position]string {
+	opponent := domain.White
+	if mover == domain.White {
+		opponent = domain.Black
+	}
+	index := make(map[Position]string, len(legal))
 	for _, play := range legal {
 		res := play.Result
 		res.PlayerOnRoll = opponent
@@ -357,11 +369,19 @@ func notationForCandidate(c *Candidate, legal []domain.LegalPlay, opponent int) 
 		if err != nil {
 			continue
 		}
-		if gresult == c.Play.Result {
-			return play.Notation
+		if _, seen := index[gresult]; !seen {
+			index[gresult] = play.Notation
 		}
 	}
-	return ""
+	return index
+}
+
+// notationForCandidate reads c's notation out of that index. An unmatched
+// candidate (should not happen: moves_diff_test.go holds the two generators
+// to the same set) renders as "" rather than panicking — a cold-path display
+// gap, not a crash.
+func notationForCandidate(c *Candidate, index map[Position]string) string {
+	return index[c.Play.Result]
 }
 
 // evaluateCube runs the pre-roll distribution (Searcher.Probs) through the

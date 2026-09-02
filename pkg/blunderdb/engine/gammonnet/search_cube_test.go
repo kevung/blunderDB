@@ -67,8 +67,8 @@ func TestTheCubeMakesTheTrailerPlayForTheGammon(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("cubeless search: ok=%v err=%v", ok, err)
 	}
-	legal := domain.LegalMoves(&pos)
-	if got := notationForCandidate(&best, legal, domain.White); !samePlay(got, "24/18 13/9") {
+	notations := notationIndex(domain.LegalMoves(&pos), pos.PlayerOnRoll)
+	if got := notationForCandidate(&best, notations); !samePlay(got, "24/18 13/9") {
 		t.Errorf("cubeless 2-ply at 4-away/2-away: best move %q, want 24/18 13/9", got)
 	}
 }
