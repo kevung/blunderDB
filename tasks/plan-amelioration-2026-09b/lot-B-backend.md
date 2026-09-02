@@ -12,13 +12,13 @@ B.10 à B.19 = **étape 2 (consolider)**, perf et dette.
 
 ---
 
-## B.1 — Version majeure comparée en chaîne à l'import de base [S] — bug latent
+## B.1 — Version majeure comparée en chaîne à l'import de base [S] — bug latent (#169)
 
 `database/db_import_db.go:132` : `if importMajor > currentMajor` compare
 `"10" > "9"` → faux. `compareVersions` existe (`db_migration.go:232`).
 - [ ] Appeler `compareVersions` ; test avec `10.0.0` vs `2.15.0`.
 
-## B.2 — Crawford codé en dur à `false` dans la conversion MWC→EMG GnuBG [M] — bug, échelle d'équité
+## B.2 — Crawford codé en dur à `false` dans la conversion MWC→EMG GnuBG [M] — bug, échelle d'équité (#170)
 
 `ingest/gnubgmap.go:401` : `convertGnuBGCubeMWCToEMG` appelle `GnuBGGetME(…, fCrawford=false)`.
 Toutes les décisions de videau de la partie de Crawford importées d'un `.sgf`
@@ -30,7 +30,7 @@ sont converties avec la mauvaise référence. Touche l'invariant ADR-0019.
       positions : documenter dans la note de release ; `verify` peut les
       compter (positions `crawford` avec `cube_error` non nul de source GnuBG).
 
-## B.3 — `has_jacoby`/`has_beaver` jamais posés par les importeurs, mais dans le hash Zobrist [M] — bug, dédup
+## B.3 — `has_jacoby`/`has_beaver` jamais posés par les importeurs, mais dans le hash Zobrist [M] — bug, dédup (#171)
 
 `ingest/xgmap.go:60`, `gnubgmap.go:97`, `bgfmap.go:199,264` ne renseignent
 pas ces champs ; seul `domain/xgid.go:138,141` le fait. `engine/zobrist.go:162-166`
@@ -49,7 +49,7 @@ XGID (Jacoby=1) donne deux lignes. Invariant n°1 cassé sur ce cas.
 
 Dépendance : coordonner avec A.2 et B.7 (un seul bump 2.16.0 pour les trois).
 
-## B.4 — Une révision Anki écrit la carte et le journal hors transaction [S] — bug
+## B.4 — Une révision Anki écrit la carte et le journal hors transaction [S] — bug (#172)
 
 `storage/sqlite/anki_sqlite.go:449-471` (et PG) : `UPDATE anki_card` puis
 `INSERT anki_review_log` séparés. `withTx`/`inTx` existent.
@@ -58,7 +58,7 @@ Dépendance : coordonner avec A.2 et B.7 (un seul bump 2.16.0 pour les trois).
 - [ ] Extraire la logique FSRS dupliquée (`anki_sqlite.go:424-443` et PG) en
       `domain.ScheduleNext(card, params, rating, now)`, testée une fois.
 
-## B.5 — `analysis(position_id)` sans UNIQUE, `Save` hors transaction [M] — bug
+## B.5 — `analysis(position_id)` sans UNIQUE, `Save` hors transaction [M] — bug (#173)
 
 `schema_sqlite.go:57-73`, `analyses_sqlite.go:39-75` : `SELECT` puis
 `INSERT`/`UPDATE` ; deux `Save` concurrents insèrent deux lignes, `Load` en
@@ -76,7 +76,7 @@ prend une au hasard.
 
 Même bump que A.2/B.3.
 
-## B.6 — Erreurs avalées qui faussent ou vident un résultat [S] — bug
+## B.6 — Erreurs avalées qui faussent ou vident un résultat [S] — bug (#174)
 
 - `sqlshared/stats.go:355,362` : `_ = s.DB.QueryRow(…).Scan(&snowieSumErr)` ;
   7 boucles `Compute`/`MatchDetail` font `if err := rows.Scan(…); err != nil { return }`
@@ -93,7 +93,7 @@ Même bump que A.2/B.3.
       erreur dans le lot ; agréger `failed`/`refused` dans le retour (voir C.4).
 - [ ] Tests : stats avec une ligne corrompue → erreur, pas un PR.
 
-## B.7 — Import : robustesse et messages [M] — robustesse
+## B.7 — Import : robustesse et messages [M] — robustesse (#175)
 
 - `parser/parser.go:68-72` : 4 langues d'analyse XG reconnues (FR/EN/JA/DE),
   échec muet (`Analysis` vide, `err == nil`) pour ES/IT/etc. alors que le
@@ -116,7 +116,7 @@ Même bump que A.2/B.3.
 - [ ] Erreur de domaine « cette position existe déjà (id N) » avec proposition
       d'y aller.
 
-## B.8 — CLI : codes de retour, `ExitOnError`, sortie JSON [S/M] — DX
+## B.8 — CLI : codes de retour, `ExitOnError`, sortie JSON [S/M] — DX (#176)
 
 - 17 `FlagSet` en `flag.ExitOnError` → `os.Exit(2)` non documenté, chemins
   d'erreur intestables.
@@ -136,7 +136,7 @@ Même bump que A.2/B.3.
 - [ ] Complétion shell `blunderdb completion bash|zsh|fish` générée depuis
       `handlers()` ; installée par nfpm/PKGBUILD/Homebrew.
 
-## B.9 — Migrations : branche morte, comparaison de texte, étapes conditionnelles [S] — dette
+## B.9 — Migrations : branche morte, comparaison de texte, étapes conditionnelles [S] — dette (#177)
 
 - `db_migration.go:188-197` : `Scan` sur `ErrNoRows` renvoie l'erreur brute, le
   message « required table X does not exist » est inatteignable.
@@ -152,7 +152,7 @@ Même bump que A.2/B.3.
 
 ---
 
-## B.10 — La recherche streame en apparence, matérialise en réalité [M] — perf
+## B.10 — La recherche streame en apparence, matérialise en réalité [M] — perf (#178)
 
 `sqlshared/search.go:26-39` : `Find` appelle `find` qui renvoie un
 `[]domain.Position` complet puis re-yield ; `ListOpts` (`storage.go:103-108`)
@@ -169,7 +169,7 @@ retenues = 4 000 aller-retours.
 
 Préalable de D.8 (pagination front) et de I.x (catégorisation).
 
-## B.11 — Chemins d'import et de réparation qui chargent tout en mémoire [M] — perf
+## B.11 — Chemins d'import et de réparation qui chargent tout en mémoire [M] — perf (#179)
 
 - `sqlite/analyses_sqlite.go:170-205` (et PG `:172-191`) : `RepairDenormalisedColumns`
   accumule `data` de **toutes** les analyses, contre son propre commentaire.
@@ -186,7 +186,7 @@ Préalable de D.8 (pagination front) et de I.x (catégorisation).
 - [ ] Bench mémoire (`-benchmem`, `runtime.ReadMemStats`) sur une base de
       50 k positions générée.
 
-## B.12 — Compression des blobs d'analyse [M] — perf, taille de base
+## B.12 — Compression des blobs d'analyse [M] — perf, taille de base (#180)
 
 `engine/analysiscodec.go:27` : zlib niveau 9 par fragment, recompression à
 chaque fusion pendant l'import, pas de dictionnaire.
@@ -199,7 +199,7 @@ chaque fusion pendant l'import, pas de dictionnaire.
       (bump schéma, même vague que B.3/B.5 si le calendrier le permet) :
       supprime le décodage complet de `positionIDsWithStaleGammonNet` (C.7).
 
-## B.13 — Contexte et annulation dans le wrapper `Database` [L, progressif] — DX
+## B.13 — Contexte et annulation dans le wrapper `Database` [L, progressif] — DX (#181)
 
 135 méthodes exportées, 14 avec `ctx`, 104 `context.Background()` ; une
 recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
@@ -210,7 +210,7 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
 - [ ] `db.go:189,263` : vérifier `d.db.Close()`.
 - [ ] Le reste famille par famille, sans date.
 
-## B.14 — Duplication résiduelle entre backends [M] — dette
+## B.14 — Duplication résiduelle entre backends [M] — dette (#182)
 
 - `anki_sqlite.go` (615 l.) vs `anki_postgres.go` (659 l.) : 30 méthodes
   identiques au dialecte près ; `sqlshared` couvre déjà search/stats/comments/
@@ -222,7 +222,7 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
 - [ ] Les tests par backend redondants (`comments_*_test.go`,
       `collections_*_test.go`) tombent avec.
 
-## B.15 — Découpage des fonctions et fichiers hors gabarit [M] — dette
+## B.15 — Découpage des fonctions et fichiers hors gabarit [M] — dette (#183)
 
 `SearchStore.find` 638 l. (`search.go:41-679`, 6 blocs de taux copiés
 `~540-620`), `StatsStore.Compute` 433 l. (`stats.go:283-715`, 12 requêtes),
@@ -237,7 +237,7 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
 - [ ] Tests unitaires directs de `buildWhere` (entrées → SQL + args) : c'est
       ce qui fait remonter `sqlshared` de 1 % (E.2).
 
-## B.16 — Observabilité du backend [S] — dette
+## B.16 — Observabilité du backend [S] — dette (#184)
 
 0 `slog.Error` (92 `Warn`, 19 `Info`, 6 `Debug`) ; la GUI logue à `Warn`
 (`logging.go:9-11`) donc « database upgraded », « import analysis: toAdd/… »
@@ -246,14 +246,14 @@ sont muets ; `config.go:6,312,319` utilise `log` standard.
 - [ ] `Info` par défaut en GUI ; `config.go` sur `slog`.
 - [ ] Journal fichier avec rotation (G.13) reçoit tout.
 
-## B.17 — Schéma : compteurs dénormalisés et clés étrangères manquantes [S] — dette
+## B.17 — Schéma : compteurs dénormalisés et clés étrangères manquantes [S] — dette (#185)
 
 `match.game_count`, `game.move_count` sans garde ; `anki_review_log.deck_id`/
 `position_id` sans FK ; `index_parity_test.go:41` ne compare que les noms.
 - [ ] `verify` recalcule les compteurs et signale l'écart ; FK ajoutées dans la
       vague 2.16.0 ; parité d'index sur les colonnes (normalisées).
 
-## B.18 — Grammaire de recherche côté Go [L] — DX, parité
+## B.18 — Grammaire de recherche côté Go [L] — DX, parité (#186)
 
 Aucun `ParseSearchCommand` dans `pkg/` : la grammaire vit dans
 `commandProcessor.js` et `searchFilterService.js` (divergentes, D.3).
@@ -271,7 +271,7 @@ tri n'existent pas en CLI ni sur `/v1`.
 
 Dépendance : D.3 (parseur unique côté JS) est l'étape 1 ; B.18 l'étape 2.
 
-## B.19 — Dépendances et build [S] — gouvernance
+## B.19 — Dépendances et build [S] — gouvernance (#187)
 
 - `testcontainers-go` dépendance directe pour un test → ~50 modules
   indirects dans `go.sum` et la surface `govulncheck` (`cmd/serve` n'en

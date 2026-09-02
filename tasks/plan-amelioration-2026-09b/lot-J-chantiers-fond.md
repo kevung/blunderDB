@@ -9,7 +9,7 @@ J.5 à J.7 selon la demande ; J.8 et J.9 opportunistes ; J.10 écarté.
 
 ---
 
-## J.1 — Classification automatique du type de jeu, thèmes d'erreur, erreurs récurrentes
+## J.1 — Classification automatique du type de jeu, thèmes d'erreur, erreurs récurrentes (#291)
 
 La question à laquelle blunderDB ne sait pas répondre et que tous ses
 utilisateurs se posent : « montre-moi mes erreurs en holding game ». #60 a
@@ -35,7 +35,7 @@ raison qu'un bundle de filtres sauvegardés n'y suffit pas ; un classifieur, si.
 - Risque principal : une taxonomie contestée est pire que pas de taxonomie ;
   mitigé par « dérivée, non éditable, règles publiées ».
 
-## J.2 — Rollouts tronqués
+## J.2 — Rollouts tronqués (#292)
 
 La seule façon de départager deux coups à 0,005 et la principale raison de
 retourner dans XG. 288/1296 parties tronquées à N coups puis évaluées à
@@ -51,7 +51,7 @@ d'arrêt, paramètres publiés de gnubg/XG).
 - Préalable de crédibilité : I.14.
 - Ticket successeur de #119 (A.14).
 
-## J.3 — Similarité : « positions comme celle-ci »
+## J.3 — Similarité : « positions comme celle-ci » (#293)
 
 Personne ne rencontre deux fois la même position ; c'est ce que l'utilisateur
 croit demander quand il cherche par structure. Métrique : distance sur le
@@ -63,7 +63,7 @@ linéaire SIMD suffit sous 100 k positions, sinon LSH/HNSW pur Go (prompt P7).
   joueur juge si « proche » selon la métrique = proche selon lui.
 - Bouton sur la position courante, jeton `like<id>`, route.
 
-## J.4 — Mode quiz avec PR d'entraînement
+## J.4 — Mode quiz avec PR d'entraînement (#294)
 
 Anki mémorise ; un quiz **teste**. N positions tirées d'un filtre, chronomètre
 optionnel, le coup se **joue sur le plateau** (ou l'action de videau se
@@ -76,7 +76,7 @@ ne relie aux erreurs du joueur.
 - Prompt P10 : pratiques pédagogiques et FSRS à note dérivée d'une mesure
   (I.20/I.19 en profitent).
 
-## J.5 — Interface web sur `serve`, puis mobile en consultation
+## J.5 — Interface web sur `serve`, puis mobile en consultation (#295)
 
 135 routes et aucun client hors bureau. Un front web **limité** (consulter,
 chercher, réviser Anki ; pas d'édition) donne tablette et mobile sans
@@ -84,7 +84,7 @@ réécrire l'application. Prérequis : I.22 (rendu du plateau extrait du
 contexte Wails), G.8 (contrat d'API). Risque : un second front à maintenir →
 périmètre verrouillé par ADR.
 
-## J.6 — Mode club / coach sur le serveur
+## J.6 — Mode club / coach sur le serveur (#296)
 
 `serve` est étanche par tenant ; un coach veut l'inverse contrôlé : partager
 une bibliothèque en lecture, recevoir les matchs des élèves, voir leurs stats.
@@ -93,7 +93,7 @@ heurte le glossaire : à griller (skill `grilling`) avant tout code ; ADR-0005
 reste (l'auth au proxy) ; les parcours pédagogiques (I.21) et l'index de bases
 (I.25) couvrent déjà une partie du besoin sans serveur.
 
-## J.7 — Moteur : réseau distillé, cache persistant
+## J.7 — Moteur : réseau distillé, cache persistant (#297)
 
 - Réseau distillé 60-100 k MAC (priorité 1 du rapport P4 : ×5-9, le seul gain
   qui « survit à la recherche ») — **amont**, nouvelle Configuration, jauge de
@@ -104,19 +104,19 @@ reste (l'auth au proxy) ; les parcours pédagogiques (I.21) et l'index de bases
   contrôle de régression bit-exact.
 - NEON arm64 (#151) après C.2 et une mesure du coût réel sur M1.
 
-## J.8 — Expliquer un blunder en une phrase
+## J.8 — Expliquer un blunder en une phrase (#298)
 
 « Vous perdez 62 mMWC : le coup joué laisse trois blots dans la zone alors que
 le meilleur coup fait votre point 5. » Génération depuis les différences
 mesurables, sans LLM ; ne parler que quand une règle est confiante. J.1b en
 est la moitié.
 
-## J.9 — Assistant optionnel via Ollama
+## J.9 — Assistant optionnel via Ollama (#299)
 
 Option 1 de #38 : strictement opt-in, jamais embarqué, non déterministe, après
 I.27 (la grammaire d'intentions couvre 80 % du besoin à 0 Mo).
 
-## J.10 — Jouer contre gammonNet — écarté
+## J.10 — Jouer contre gammonNet — écarté (#300)
 
 Changement de nature du produit (moteur de jeu), surface énorme (règles,
 saisie, videau, historique). J.4 apporte la saisie d'un coup ; si un jour la

@@ -14,7 +14,7 @@ E.1 à E.5 = **étape 1** ; E.6 à E.12 = **étape 2**.
 
 ---
 
-## E.1 — Le job `test-os` bloque enfin [S] — fiabilité
+## E.1 — Le job `test-os` bloque enfin [S] — fiabilité (#217)
 
 `build.yml:196` : `continue-on-error: true` (« à retirer après le premier run
 vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151.
@@ -22,7 +22,7 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
 - [ ] `GOOS=windows go vet ./...` dans le job `lint` (pour `filelock_windows.go`,
       `diskspace_windows.go`).
 
-## E.2 — La couverture dit faux et n'a pas de seuil [S] — fiabilité
+## E.2 — La couverture dit faux et n'a pas de seuil [S] — fiabilité (#218)
 
 - `test-postgres` (`build.yml:167-171`) n'a pas de `-coverprofile` →
   `storage/postgres` à 0 % dans le merge ; `sqlshared` à 1,4 % parce que
@@ -40,7 +40,7 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
 - [ ] Publier le top 10 des paquets lents dans le step summary (aujourd'hui :
       `database` 54,6 s, `cli` 27,9 s, `gammonnet` 19 s = 88 % du temps).
 
-## E.3 — Paralléliser les tests Go [M] — vitesse CI ×3
+## E.3 — Paralléliser les tests Go [M] — vitesse CI ×3 (#219)
 
 0 `t.Parallel()` sur 862 tests ; `database` 54,6 s en série, 419 s sous
 `-race` (chemin critique) ; sharding par première lettre déséquilibré
@@ -58,7 +58,7 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
       `parallel_probe_test.go`) → canaux / horloge injectable (motif
       `middleware.RateLimiter` avec `now func()`).
 
-## E.4 — Tests qui passent pour de mauvaises raisons [S] — fiabilité
+## E.4 — Tests qui passent pour de mauvaises raisons [S] — fiabilité (#220)
 
 - 142 `t.Skip`, dont ~14 « fixture absente ⇒ vert » (`test.sgf`, `test.xg`,
   `test.txt`, `test.mat`, gold, corpus).
@@ -74,7 +74,7 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
       `code=invalid` + message nommant `X-Tenant-ID`) ; test de câblage
       `cmd/serve` ; test `migrate` sans Docker.
 
-## E.5 — Formatage Go, hooks et `make check` [S] — DX
+## E.5 — Formatage Go, hooks et `make check` [S] — DX (#221)
 
 8 fichiers `gofmt` sales ; `formatters:` de `.golangci.yml` sans formateur ;
 pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
@@ -90,7 +90,7 @@ pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
 
 ---
 
-## E.6 — Linters de complexité non régressifs [S] — dette
+## E.6 — Linters de complexité non régressifs [S] — dette (#222)
 
 5 fonctions > 300 lignes (`find` 638, `Compute` 427, `runSearch` 427,
 `migrate_1_9_0_to_2_0_0` 320, `CommitImportDatabase` 303), 20 > 120 ;
@@ -101,7 +101,7 @@ pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
       (surfaces réseau + crypto), le refus global reste justifié
       (`.golangci.yml:14-22`).
 
-## E.7 — Supply chain : attestations, SBOM, signatures [S] — sécurité
+## E.7 — Supply chain : attestations, SBOM, signatures [S] — sécurité (#223)
 
 0 SBOM, 0 provenance ; image GHCR poussée sans attestation
 (`build.yml:285-295`) ; `.sha256` sans signature détachée ; tag non signé
@@ -115,7 +115,7 @@ seulement sur tag (`build.yml:289`).
 - [ ] `docker run --rm -d` + `curl /readyz` après le build ; construire
       amd64+arm64 sans push sur `main`.
 
-## E.8 — Hygiène des jobs front [S] — vitesse CI
+## E.8 — Hygiène des jobs front [S] — vitesse CI (#224)
 
 `frontend-test` lance vitest deux fois (`build.yml:311-322`) ; `npm ci` à
 froid dans 3 jobs ; Playwright `workers` non fixé, retries sans signal flaky.
@@ -123,7 +123,7 @@ froid dans 3 jobs ; Playwright `workers` non fixé, retries sans signal flaky.
       ou cache `node_modules` clé `package-lock.json`.
 - [ ] Voir D.13 pour Playwright.
 
-## E.9 — Suivi de performance dans le temps [M] — DX
+## E.9 — Suivi de performance dans le temps [M] — DX (#225)
 
 Job `benchmark` 115 s par push, artefact que personne ne compare ; 0
 `benchstat` ; `tasks/bench-*.txt` datent d'avril ; 11 benchmarks gammonNet
@@ -134,7 +134,7 @@ mais aucun sur `Probs`/`Decide`/lot (C.7).
       commentaire de PR ; le job passe en `workflow_dispatch` + nightly.
 - [ ] Baseline régénérée à chaque release (skill `release-blunderdb`).
 
-## E.10 — Dépôt : poids du clone, `.dockerignore`, fixtures [S] — DX
+## E.10 — Dépôt : poids du clone, `.dockerignore`, fixtures [S] — DX (#226)
 
 Clone à 730 Mio (historique `gh-pages` : `.dvi` 113 Mo, `.doctrees` 88 Mo) ;
 `.dockerignore` `*.db` non récursif → `testdata/tournois/live-main.db`
@@ -145,7 +145,7 @@ Clone à 730 Mio (historique `gh-pages` : `.dvi` 113 Mo, `.doctrees` 88 Mo) ;
 - [ ] `.dockerignore` : `**/*.db`, `testdata/tournois/`, `.venv/`.
 - [ ] Nettoyer la racine du checkout (E.3 supprime la cause).
 
-## E.11 — Modèles d'issue et automatisations GitHub [S] — communauté/DX
+## E.11 — Modèles d'issue et automatisations GitHub [S] — communauté/DX (#227)
 
 Pas d'`ISSUE_TEMPLATE` (le template de PR est excellent) ; Dependabot ne
 couvre que les version updates ; Discussions activées et vides.
@@ -155,7 +155,7 @@ couvre que les version updates ; Discussions activées et vides.
 - [ ] Action « stale » douce (90 jours, label seulement, jamais de fermeture
       automatique).
 
-## E.12 — Nightly [S] — fiabilité
+## E.12 — Nightly [S] — fiabilité (#228)
 
 Un seul `nightly.yml` regroupe ce qui ne doit pas tourner à chaque push :
 gold de recherche (`BLUNDERDB_GOLD=1`), `-race -short` sur `gammonnet`,

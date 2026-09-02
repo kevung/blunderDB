@@ -16,7 +16,7 @@ H.1 à H.6 = **étape 1** ; H.7 à H.14 = **étape 2**.
 
 ---
 
-## H.1 — Page d'installation et notes de release [S] — adoption
+## H.1 — Page d'installation et notes de release [S] — adoption (#243)
 
 `telecharge_install.rst` : 0 mention de Flatpak, de GHCR, de `.sha256` ; notes
 de release : 31 assets sans guide de choix, « 22 ADRs indexed » faux.
@@ -26,7 +26,7 @@ de release : 31 assets sans guide de choix, « 22 ADRs indexed » faux.
       release (`build.yml`, job release) ; chiffre des ADR calculé, pas écrit.
 - [ ] `.po` dans le même commit.
 
-## H.2 — `CONTRIBUTING.md` et ce qui va avec [S] — adoption
+## H.2 — `CONTRIBUTING.md` et ce qui va avec [S] — adoption (#244)
 
 Le README renvoie les contributeurs vers `CLAUDE.md`, écrit pour un agent ;
 pas de `CODE_OF_CONDUCT.md` (Discord public) ; Discord visible seulement dans
@@ -40,7 +40,7 @@ position database software » et 3 topics.
 - [ ] Description et topics GitHub (`gnubg`, `extreme-gammon`, `wails`,
       `svelte`, `go`, `spaced-repetition`, `backgammon-analysis`).
 
-## H.3 — Homebrew tap, Flatpak, metainfo [S puis M] — adoption
+## H.3 — Homebrew tap, Flatpak, metainfo [S puis M] — adoption (#245)
 
 Tap `kevung/homebrew-tap` inexistant (procédure écrite, 30 min) ; manifeste
 Flatpak commité non constructible (`0.27.1`, sha `000…`) ; `metainfo.xml`
@@ -58,7 +58,7 @@ soumis.
       from-source offline : prompt P16) — deux tickets humains, suivis au
       BACKLOG.
 
-## H.4 — Tutoriels de bout en bout et FAQ [M] — adoption
+## H.4 — Tutoriels de bout en bout et FAQ [M] — adoption (#246)
 
 `guide_utilisateur.rst` est un catalogue de 23 gestes isolés ; aucun parcours ;
 FAQ (15 questions) : 0 gammonNet/Anki/filigrane/Docker, `faq.rst:181` sans
@@ -78,7 +78,7 @@ l'évaluateur, #101 fermée sans changement ; « calculateur EPC »
       (importer → blunders → paquet Anki) sur la base `demo` régénérée (A.8).
 - [ ] Toctree : guide avant manuel ; intro d'`index.rst` cite les 12 sections.
 
-## H.5 — Captures d'écran générées [M] — découvrabilité
+## H.5 — Captures d'écran générées [M] — découvrabilité (#247)
 
 0 `figure::` dans `manuel.rst` (1 436 l.) et `guide_utilisateur.rst` ; 11 PNG
 de janvier 2025 (SmartScreen) ; `img/smartscreen_fr.png` orpheline. Le harnais
@@ -89,7 +89,7 @@ existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
 - [ ] Injectées dans `manuel.rst`, `guide_utilisateur.rst`, `metainfo.xml`,
       README ; supprimer l'orpheline.
 
-## H.6 — Terminologie périmée dans l'interface et l'aide [S] — qualité
+## H.6 — Terminologie périmée dans l'interface et l'aide [S] — qualité (#248)
 
 `config.bearoffIntro` (« panneau EPC ») ×9 ; `config.gammonnetIntro`
 (« (ADR-0011) ») ×9 ; `help/fr.js` « Bearoff » ×7 vs « Eval » ×1 ; filigrane :
@@ -101,7 +101,7 @@ existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
 
 ---
 
-## H.7 — Une seule source pour l'aide intégrée [L] — dette structurelle
+## H.7 — Une seule source pour l'aide intégrée [L] — dette structurelle (#249)
 
 `frontend/src/i18n/help/*.js` : 11 620 lignes de HTML à la main × 9,
 dupliquant `manuel.rst`/`raccourcis.rst`/`cmd_mode.rst` ; aucun mécanisme de
@@ -115,7 +115,7 @@ synchronisation ; effet mesuré en H.6. Ces fichiers sont aussi injectés via
       sections aux `.rst`.
 - [ ] `helpVocabulary.sync.test.js` étendu aux 4 onglets × 9.
 
-## H.8 — Doc développeur [S/M] — onboarding contributeur
+## H.8 — Doc développeur [S/M] — onboarding contributeur (#250)
 
 `CLAUDE.md` : `cmd/` sans `calibrace`, « `tasks/FOLLOWUPS.md` liste les
 suivis » faux, `engine/gammonnet` absent du tour (C.12) ; `docs/adr/README.md`
@@ -134,7 +134,7 @@ renvoie à `doc/archive` périmé et `:5-13` donne `wails build` sans
       points ; `build.py` corrigé.
 - [ ] Doc comments des 5 paquets.
 
-## H.9 — Glossaire et historique lisibles [S/M] — qualité
+## H.9 — Glossaire et historique lisibles [S/M] — qualité (#251)
 
 Pas de glossaire utilisateur (CONTEXT.md est développeur) ; historique en
 `csv-table` (ligne 0.35.0 = 2 100 caractères, un msgid par version : chaque
@@ -147,7 +147,7 @@ correction invalide 8 traductions).
       une fois, avec régénération des `.po` (les anciens msgstr sont
       réutilisables par `msgmerge` seulement partiellement ; accepter le coût).
 
-## H.10 — Site : négociation de langue et page d'accueil [S/M] — adoption
+## H.10 — Site : négociation de langue et page d'accueil [S/M] — adoption (#252)
 
 `gh-pages/index.html` = `meta refresh` vers `en/` ; racine = sommaire Sphinx ;
 pas de page produit.
@@ -155,7 +155,7 @@ pas de page produit.
 - [ ] Page d'accueil statique (capture, trois phrases, boutons par OS, lien
       doc/Discord/Releases), générée depuis un gabarit dans `doc/`.
 
-## H.11 — Roadmap publique et Discussions [S] — communauté
+## H.11 — Roadmap publique et Discussions [S] — communauté (#253)
 
 `tasks/BACKLOG.md` fait office de roadmap (technique, FR, non lié) ; 0
 milestone, 0 Project ; Discussions vides.
@@ -163,7 +163,7 @@ milestone, 0 Project ; Discussions vides.
       9 langues ; milestones GitHub par étape ; Discussions : catégorie
       « Annonces » alimentée par la CI à chaque release (ou désactiver).
 
-## H.12 — Onboarding dans l'application [M] — adoption
+## H.12 — Onboarding dans l'application [M] — adoption (#254)
 
 Visites guidées : 4 zones sur 9 (0 pour Eval, Anki, Stats, Collections,
 diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
@@ -173,7 +173,7 @@ diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
 - [ ] Panneau de bienvenue quand aucune base récente : *Visite guidée*,
       *Base d'exemple*, *Importer mes matchs*, *Ouvrir une base* (lié à I.28).
 
-## H.13 — Traductions : outillage [S] — qualité
+## H.13 — Traductions : outillage [S] — qualité (#255)
 
 `msgfmt` sur le répertoire entier échoue (en-têtes dupliqués
 `annexe_db_scheme`/`annexe_filtres`) ; drapeau `python-format` faux positif
@@ -181,7 +181,7 @@ diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
 - [ ] Documenter la boucle par fichier dans `doc/README.txt` ; `no-python-format`
       à l'extraction ou reformulation des 2-4 entrées par langue.
 
-## H.14 — Binaire Linux arm64 [M] — adoption
+## H.14 — Binaire Linux arm64 [M] — adoption (#256)
 
 31 assets, tous x86_64 sauf l'image Docker et le `.app` universel.
 - [ ] Job `build` sur `ubuntu-24.04-arm` (webkit2gtk-4.1), `.deb`/`.rpm`/tarball

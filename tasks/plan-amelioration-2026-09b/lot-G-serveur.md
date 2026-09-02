@@ -14,7 +14,7 @@ G.1 à G.7 = **étape 1** ; G.8 à G.14 = **étape 2**.
 
 ---
 
-## G.1 — Un exemple complet de déploiement derrière un proxy authentifiant [S] — sécurité, produit
+## G.1 — Un exemple complet de déploiement derrière un proxy authentifiant [S] — sécurité, produit (#229)
 
 `mode_headless.rst:61` dit « (nginx, Caddy…) » ; aucun `docker-compose*`,
 aucun snippet. ADR-0005 fait du proxy toute la frontière de sécurité et
@@ -28,7 +28,7 @@ personne ne montre comment le configurer.
       (H.4) ; test CI qui monte le compose et fait un aller-retour (E.12
       nightly).
 
-## G.2 — `serve` ignore les arguments positionnels [S] — fiabilité
+## G.2 — `serve` ignore les arguments positionnels [S] — fiabilité (#230)
 
 `internal/server/serve.go:56` : `fs.Parse(args)` s'arrête au premier
 non-drapeau, `NArg()` jamais vérifié. `docker run image serve --addr :9090`
@@ -41,7 +41,7 @@ un mot.
       burst 100) plutôt qu'opt-in (`options.go:68-70`) ; cap dur sur le nombre
       de seaux (`ratelimit.go:48`) avec éviction LRU.
 
-## G.3 — Migrations PostgreSQL : verrou et version [S] — fiabilité
+## G.3 — Migrations PostgreSQL : verrou et version [S] — fiabilité (#231)
 
 `migrate_postgres.go:26-90` sans `pg_advisory_lock` : deux répliques (ou le
 démon + `blunderdb migrate`) se marchent dessus. `schema_postgres.go:25` écrit
@@ -53,7 +53,7 @@ interruption laisse une base au schéma 2.15 déclarant 2.11 et `/readyz` en 503
 - [ ] Commentaire `rls_postgres.go:15-20` (« BeforeAcquire ») corrigé
       (`PrepareConn`).
 
-## G.4 — Plafonds et validation d'entrée [S] — fiabilité
+## G.4 — Plafonds et validation d'entrée [S] — fiabilité (#232)
 
 `handlers_positions.go:170-183` : `Limit` sans plafond, `IDs` non borné (32
 Mio de corps ≈ 4 M d'ids dans `ANY($2)`) ; `decodeJSON` accepte tout
@@ -66,7 +66,7 @@ borne (`logging.go:34`) ; CORS sans `Vary: Origin`.
 - [ ] Tenant tronqué à 64 caractères dans les logs (A.1 le rend numérique de
       toute façon) ; `Vary: Origin`, liste d'origines.
 
-## G.5 — Routes ops séparées des routes tenant [M] — sécurité
+## G.5 — Routes ops séparées des routes tenant [M] — sécurité (#233)
 
 `/v1/maintenance.vacuum` (`handlers_maintenance.go:23`) est une opération
 globale sur le fichier SQLite partagé, accessible à tout tenant ;
@@ -77,7 +77,7 @@ auto-déclenchable ; `metadata.*` (A.2) est du même ordre.
       `--ops-addr` optionnel sur un listener séparé (comme `/metrics`).
 - [ ] `parity_test.go` : catégorie `ops` avec raison.
 
-## G.6 — Timeouts et arrêt gracieux [M] — fiabilité
+## G.6 — Timeouts et arrêt gracieux [M] — fiabilité (#234)
 
 `server.go:70-77` : seuls `ReadHeaderTimeout` et `IdleTimeout` (justifié :
 NDJSON long) ; un client lent en écriture occupe un handler indéfiniment ;
@@ -92,7 +92,7 @@ téléversé alimente le nom temporaire (`:227-233`).
 - [ ] Compteur global d'octets en vol pour le spool ; extension par allowlist
       (`.xg`, `.xgp`, `.sgf`, `.mat`, `.bgf`, `.txt`, `.db`, `.dbx`).
 
-## G.7 — Tests PostgreSQL : continuité et isolation [M] — fiabilité
+## G.7 — Tests PostgreSQL : continuité et isolation [M] — fiabilité (#235)
 
 `postgres_test.go` part d'une base fraîche (001 contient tout, 002-011 sont
 des no-op) : aucune chaîne réelle testée alors que SQLite a
@@ -109,7 +109,7 @@ familles / 16 ; 0 test HTTP à deux tenants ; FK sans `tenant_id`
 
 ---
 
-## G.8 — Contrat d'API documenté et généré [M] — DX, produit
+## G.8 — Contrat d'API documenté et généré [M] — DX, produit (#236)
 
 113/135 routes non documentées ; 0 OpenAPI ; le contrat consommé par gammonGo
 n'existe que dans le Go. Les types `Req`/`Resp` sont déjà nommés.
@@ -123,7 +123,7 @@ n'existe que dans le Go. Les types `Req`/`Resp` sont déjà nommés.
       Zobrist) ; `Idempotency-Key` sur `collections.create`,
       `tournaments.create`, `anki.reviewCard`.
 
-## G.9 — Pagination et compression sur les listes [M] — perf
+## G.9 — Pagination et compression sur les listes [M] — perf (#237)
 
 `search.find`, `comments.listAll`, `collections.positions`,
 `tournaments.list` streament tout ; aucune compression des flux NDJSON.
@@ -131,7 +131,7 @@ n'existe que dans le Go. Les types `Req`/`Resp` sont déjà nommés.
       dépend de B.10.
 - [ ] gzip conditionnel (`Accept-Encoding`) sur les réponses NDJSON.
 
-## G.10 — Observabilité : corrélation et métriques métier [S] — DX
+## G.10 — Observabilité : corrélation et métriques métier [S] — DX (#238)
 
 Pas de `X-Request-Id` ; pas de `traceparent` ; pas de métrique d'import en
 vol, de sweep gammonNet, de taille de base, de pool ; pprof non exposé (bon).
@@ -139,7 +139,7 @@ vol, de sweep gammonNet, de taille de base, de pool ; pprof non exposé (bon).
       réponse, propagé dans le contexte ; `traceparent` relayé dans les logs.
 - [ ] Gauges métier ; `--pprof-addr` optionnel sur un listener séparé.
 
-## G.11 — Loadtest et sweep gammonNet [M] — perf
+## G.11 — Loadtest et sweep gammonNet [M] — perf (#239)
 
 Loadtest solide (3 scénarios, p50/p95/p99, `tasks/headless/perf-baseline.md`)
 mais tenants numériques seulement, jamais `--rls`, pas de CI. RLS = 2 RTT par
@@ -153,7 +153,7 @@ tenant.
       job en vol par tenant (`ErrConflict`).
 - [ ] Loadtest court dans le nightly (E.12).
 
-## G.12 — `migrate` SQLite → PostgreSQL [S puis L] — DX
+## G.12 — `migrate` SQLite → PostgreSQL [S puis L] — DX (#240)
 
 `--batch-size` est un drapeau mort (`migrate/cli.go:50`) ; transaction unique
 sans reprise ; sonde « destination non vide » ne regarde que les positions
@@ -170,7 +170,7 @@ sans reprise ; sonde « destination non vide » ne regarde que les positions
       → refuser tout `X-Tenant-ID` non vide, ou l'écrire en gras dans le
       chapitre headless. Choix : refuser.
 
-## G.13 — GUI Go : configuration, journal, arguments [S] — fiabilité, produit
+## G.13 — GUI Go : configuration, journal, arguments [S] — fiabilité, produit (#241)
 
 - `config.go:15` : le fichier s'appelle `config.yaml` et contient du JSON ;
   `:381` écriture non atomique à chaque geste ; `:333` + `main.go:96-99` :
@@ -203,7 +203,7 @@ sans reprise ; sonde « destination non vide » ne regarde que les positions
       comme le serveur), traduites côté front ; « annulé par l'utilisateur »
       distinct d'un échec.
 
-## G.14 — Parité dans les deux sens [S test / M fonctions] — produit
+## G.14 — Parité dans les deux sens [S test / M fonctions] — produit (#242)
 
 `parity_test.go` (excellent) est unidirectionnel : 21/135 routes hors table.
 Six capacités n'existent que sur le serveur, sans décision écrite :

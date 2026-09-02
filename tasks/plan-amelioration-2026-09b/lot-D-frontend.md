@@ -16,7 +16,7 @@ D.1 à D.6 = **étape 1** (bugs, a11y bloquante) ; D.7 à D.15 = **étape 2**
 
 ---
 
-## D.1 — Six bugs d'ergonomie à quelques lignes chacun [S] — bug/UX
+## D.1 — Six bugs d'ergonomie à quelques lignes chacun [S] — bug/UX (#201)
 
 - `SearchPanel.svelte:616-626` : `stopPropagation` sur toutes les touches
   quand un champ a le focus → Escape ne remonte jamais au handler global.
@@ -40,7 +40,7 @@ D.1 à D.6 = **étape 1** (bugs, a11y bloquante) ; D.7 à D.15 = **étape 2**
 - [ ] Une spec Playwright par bug (les 10 specs existantes sont saines :
       0 `waitForTimeout`).
 
-## D.2 — Huit raccourcis « Afficher/cacher » qui ne cachent jamais [S] — bug/doc
+## D.2 — Huit raccourcis « Afficher/cacher » qui ne cachent jamais [S] — bug/doc (#202)
 
 `positionService.js:930-954` : `toggleTab` fait `activeTabStore.set`, sans
 bascule ; `raccourcis.rst:131-139` promet « Afficher/cacher » pour Ctrl-L,
@@ -52,7 +52,7 @@ Ctrl-P, Ctrl-K, Ctrl-B, Ctrl-Y, Ctrl-D, Ctrl-M, Ctrl-F.
 - [ ] Deux `100` (historique) → une constante ; commentaire `tabHandler.js:20`
       (onglet `log` inexistant).
 
-## D.3 — Parseur de recherche unique côté JS [M] — bug
+## D.3 — Parseur de recherche unique côté JS [M] — bug (#203)
 
 Aller = `commandProcessor.parseFilters` (`:199-346`), retour (rejeu depuis
 l'historique ou la bibliothèque) = `searchFilterService.parseSearchCommand`
@@ -69,7 +69,7 @@ d'historique → les 6-5 reviennent. `xD` et `id` n'ont pas de case à cocher
       commande seulement »).
 - [ ] `commandVocabulary.sync.test.js` dans les deux sens.
 
-## D.4 — Tab est confisqué globalement [M] — a11y bloquante
+## D.4 — Tab est confisqué globalement [M] — a11y bloquante (#204)
 
 `keyboardService.js:294-296` : `Tab` sans Ctrl → `preventDefault` +
 `activeTabStore.set('search')`, hors modales. La navigation clavier standard
@@ -83,7 +83,7 @@ il neutralise le focus.
 - [ ] `StatusBar.svelte:159` : `aria-live` restreint à `.info-message`.
 - [ ] `ContextMenu.svelte:60` `aria-label="Actions"` → i18n (seul texte en dur).
 
-## D.5 — Les 35 warnings du compilateur deviennent un plafond [S puis M] — a11y
+## D.5 — Les 35 warnings du compilateur deviennent un plafond [S puis M] — a11y (#205)
 
 Le job `frontend-lint` (`build.yml:440-444`) ne lance que ESLint et prettier ;
 `npm run build` sort 35 warnings et termine en 0. Répartition des 26 a11y :
@@ -104,7 +104,7 @@ dialog sans `tabindex` (`SearchPanel:981`, à migrer sur `Modal.svelte`), 2
 - [ ] `svelte/require-each-key` → `error` (57/59 déjà keyés) ;
       `infinite-reactive-loop` → `error`.
 
-## D.6 — Un état « planté » du panneau Eval [S] — bug
+## D.6 — Un état « planté » du panneau Eval [S] — bug (#206)
 
 `EPCPanel.svelte:149,156,158,206` : `evalSettled` n'est remis à `true` que
 dans `applyEvalResult` ; si `EvaluatePositionImmediate` rejette ou si
@@ -119,7 +119,7 @@ bloqué sur « en attente ». C'est le résidu de la dette ADR-0017.
 
 ---
 
-## D.7 — Charger uniquement la locale active [M] — perf, ×3 sur le bundle
+## D.7 — Charger uniquement la locale active [M] — perf, ×3 sur le bundle (#207)
 
 `i18n/index.js:20-28` et `i18n/help/index.js:4-12` importent statiquement les
 9 langues : 511 273 o de JSON + 628 546 o d'aide HTML = 65 % du chunk
@@ -132,7 +132,7 @@ principal. `driver.js` (104 kB) est aussi dans le chunk principal
 - [ ] `manualChunks` dans `vite.config.js` ; le warning > 1000 kB disparaît.
 - [ ] Mesure avant/après dans la PR (objectif : chunk principal < 600 kB brut).
 
-## D.8 — Pagination et virtualisation [M] — perf
+## D.8 — Pagination et virtualisation [M] — perf (#208)
 
 - `MatchPanel.svelte:775` : `indexOf` dans `{#each}` → O(n²), 250 000
   comparaisons par rendu sur un match de 500 coups.
@@ -150,7 +150,7 @@ principal. `driver.js` (104 kB) est aussi dans le chunk principal
       `MatchListOpts` câblé ; collections paginées ; transcript par partie
       (`<details>`) ou virtualisé. (M, après B.10.)
 
-## D.9 — Tokens de couleur, puis thème sombre [M puis M] — design system
+## D.9 — Tokens de couleur, puis thème sombre [M puis M] — design system (#209)
 
 `style.css` n'a que `--ui-scale` et 6 `--font-size-*` ; 108 couleurs hex
 distinctes, top 10 = 342 occurrences ; trois bleus primaires concurrents
@@ -170,7 +170,7 @@ monospace ; 34 corps de règles CSS dupliqués ; 0 token d'espacement/rayon.
       dans Configuration ; le plateau two.js lit ses couleurs des tokens
       (I.30).
 
-## D.10 — Découpage des modules-dieux [M] — dette
+## D.10 — Découpage des modules-dieux [M] — dette (#210)
 
 `positionService.js` 1 004 l., 33 exports, 6 responsabilités ;
 `importService.js` 1 003 l., 4 flux ; `clipboardService.js:441-495` embarque
@@ -192,7 +192,7 @@ un rasteriseur canvas ; 8 composants > 700 l. (`SearchPanel` 1 481,
       `StatusBar:28` en `$derived` ; `AnalysisPanel:34` (mute `analysisStore`
       dans un `$effect`) en `$derived`.
 
-## D.11 — `generateXGID` avec perte [S] — bug de partage
+## D.11 — `generateXGID` avec perte [S] — bug de partage (#211)
 
 `positionService.js:97-109` : longueur de match = plus grand score away,
 Crawford déduit de `score === 1`, Jacoby/cube max émis à 0. Un XGID copié
@@ -204,7 +204,7 @@ depuis blunderDB peut décrire une autre position que celle affichée.
 - [ ] Idéalement : encodeur XGID **en Go** exposé au front (le Go a déjà
       `DecodeXGID`), un seul encodeur pour GUI/CLI/serveur.
 
-## D.12 — Formats de date et de nombre liés à la langue [S/M] — i18n
+## D.12 — Formats de date et de nombre liés à la langue [S/M] — i18n (#213)
 
 `CommentPanel.svelte:177` code `'fr-FR'` en dur ; `SearchPanel:568` locale du
 navigateur ; `MatchInfoBar:83` / `metadataStatus.js:34-35` `'sv-SE'` ;
@@ -216,7 +216,7 @@ navigateur ; `MatchInfoBar:83` / `metadataStatus.js:34-35` `'sv-SE'` ;
 - [ ] Chaînes `config.bearoffIntro` (« panneau EPC ») et
       `config.gammonnetIntro` (« (ADR-0011) ») corrigées en 9 langues (H.6).
 
-## D.13 — Tests frontend [M] — fiabilité
+## D.13 — Tests frontend [M] — fiabilité (#214)
 
 `databaseService.js` 7,4 % et 0 fichier de test ; `positionService` 31 %,
 `importService` 40,9 %, `clipboardService` 40,2 %, `keyboardService` 42,9 % ;
@@ -234,7 +234,7 @@ fichier de test ; 52/94 fichiers mockent `wailsjs` localement sans mock partagé
 - [ ] `svelte-check` : `checkJs: true` est activé sans vérificateur → script
       `check` + job CI.
 
-## D.14 — Petites ergonomies [S chacune] — UX
+## D.14 — Petites ergonomies [S chacune] — UX (#215)
 
 - Pas de `MinWidth`/`MinHeight` (`internal/gui/run.go:22-31`) → 900 × 600.
 - Trois graphies de raccourcis (`Ctrl+Tab` / `Ctrl-C` / `CTRL-N`) → une.
@@ -246,7 +246,7 @@ fichier de test ; 52/94 fichiers mockent `wailsjs` localement sans mock partagé
   « nouvelle vue », « ajouter au paquet Anki ».
 - Corbeille des positions (I.29) plutôt que 12 `confirmAction` irréversibles.
 
-## D.15 — Dépendances et outillage front [S] — dette
+## D.15 — Dépendances et outillage front [S] — dette (#216)
 
 `vite` 7 → 8, `@sveltejs/vite-plugin-svelte` 6 → 7, `jest-dom` 6 → 7,
 `prettier-plugin-svelte` 3 → 4, `jsdom` 29 → 30, `driver.js` 1.4 → 1.8 ;
