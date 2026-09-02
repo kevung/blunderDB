@@ -151,6 +151,9 @@ export default {
                         e tornare alla lista dei mazzi.
                     </p>
                     <p>
+                        <strong>Ritenzione:</strong> La ritenzione desiderata è la tua scelta sul compromesso carico/qualità. Le impostazioni mostrano accanto la ritenzione <em>misurata</em> sui tuoi ripassi: un'informazione, mai un pilotaggio. Cambiare l'obiettivo non è retroattivo: ogni carta adotta il nuovo ritmo al ripasso successivo.
+                    </p>
+                    <p>
                         <strong>Mostrare la risposta:</strong> La carta pone una domanda; rifletti, poi premi <strong>Spazio</strong> (o fai clic sull'area mascherata) per rivelare l'analisi registrata della posizione. Compare sotto i pulsanti di valutazione, che restano a portata. Non è necessario rivelarla per valutare, e si rimaschera alla carta successiva, non quando cambi semplicemente scheda.
                     </p>
                     <p>

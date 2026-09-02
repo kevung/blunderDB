@@ -183,15 +183,17 @@ func TestAnkiReviewMissingCard(t *testing.T) {
 	}
 }
 
-// TestAnkiOptimizeParams covers the retention tuner plumbing (ANK-E2/B10):
-// unknown deck → ErrNotFound; a deck with no review-state history leaves the
-// request_retention unchanged (not enough signal).
-func TestAnkiOptimizeParams(t *testing.T) {
+// TestAnkiRetention covers the retention MEASUREMENT (ADR-0026 rule 5):
+// unknown deck → ErrNotFound; a deck whose only review was logged from the New
+// state contributes no review-state sample, so there is nothing to report; and
+// the call never writes — the deck's target retention is what the user set,
+// whatever the measurement says.
+func TestAnkiRetention(t *testing.T) {
 	ctx := context.Background()
 	s := openMem(t)
 
-	if _, err := s.Anki().OptimizeParams(ctx, "", 999, false); !errors.Is(err, storage.ErrNotFound) {
-		t.Errorf("OptimizeParams unknown deck: got %v, want ErrNotFound", err)
+	if _, err := s.Anki().Retention(ctx, "", 999); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Retention unknown deck: got %v, want ErrNotFound", err)
 	}
 
 	deckID, _ := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
@@ -199,8 +201,6 @@ func TestAnkiOptimizeParams(t *testing.T) {
 	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{pos}); err != nil {
 		t.Fatalf("SyncWithPositions: %v", err)
 	}
-	// Reviewing the only card logs it from the New state, so it is not a
-	// review-state (state=2) sample: the tuner sees no signal.
 	next, _ := s.Anki().NextCard(ctx, "", deckID)
 	if next != nil {
 		if _, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 3); err != nil {
@@ -208,18 +208,47 @@ func TestAnkiOptimizeParams(t *testing.T) {
 		}
 	}
 
-	res, err := s.Anki().OptimizeParams(ctx, "", deckID, true)
+	before, err := s.Anki().Retention(ctx, "", deckID)
 	if err != nil {
-		t.Fatalf("OptimizeParams: %v", err)
+		t.Fatalf("Retention: %v", err)
 	}
-	if res.SampleSize != 0 {
-		t.Errorf("expected 0 review-state samples, got %d", res.SampleSize)
+	if before.SampleSize != 0 {
+		t.Errorf("expected 0 review-state samples, got %d", before.SampleSize)
 	}
-	if res.Applied {
-		t.Errorf("nothing to optimize → should not apply")
+	if before.TargetRetention <= 0 {
+		t.Errorf("target retention should be the deck's own: %+v", before)
 	}
-	if res.SuggestedRetention != res.CurrentRetention {
-		t.Errorf("retention should be unchanged: %+v", res)
+
+	// Reading it again returns the same target: measuring must not move it.
+	after, err := s.Anki().Retention(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("Retention (second read): %v", err)
+	}
+	if after.TargetRetention != before.TargetRetention {
+		t.Errorf("measuring changed the target: %v then %v", before.TargetRetention, after.TargetRetention)
+	}
+}
+
+// TestAnkiNewDeckMaximumInterval pins ADR-0026 rule 7: a deck created now starts
+// at one year, not at the schema's legacy 36500 days.
+func TestAnkiNewDeckMaximumInterval(t *testing.T) {
+	ctx := context.Background()
+	s := openMem(t)
+
+	deckID, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	for deck, err := range s.Anki().ListDecks(ctx, "") {
+		if err != nil {
+			t.Fatalf("ListDecks: %v", err)
+		}
+		if deck.ID != deckID {
+			continue
+		}
+		if deck.MaximumInterval != float64(domain.AnkiDefaultMaximumInterval) {
+			t.Errorf("new deck maximum interval: got %v, want %v", deck.MaximumInterval, domain.AnkiDefaultMaximumInterval)
+		}
 	}
 }
 

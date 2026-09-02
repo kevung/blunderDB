@@ -104,6 +104,7 @@ var databaseParity = map[string]parityEntry{
 	"GetAnkiDeckPositions":           {Server: "/v1/anki.deckPositions", Why: "the positions of a deck are the positions of its collection or search, which `collection show` and `search` list"},
 	"GetAnkiDeckStats":               {CLI: "anki stats", Server: "/v1/anki.deckStats"},
 	"GetAnkiForecast":                {CLI: "anki forecast", Server: "/v1/anki.forecast"},
+	"GetAnkiDeckRetention":           {CLI: "anki retention", Server: "/v1/anki.retention"},
 	"GetCollectionByID":              {CLI: "collection show", Server: "/v1/collections.get"},
 	"GetCollectionPositions":         {CLI: "collection show", Server: "/v1/collections.positions"},
 	"GetCommentsByPosition":          {Server: "/v1/comments.byPosition", Why: "the CLI prints a position's comment with `search --format json`; per-entry history is a GUI panel"},

@@ -153,6 +153,9 @@ export default {
                         et revenir à la liste des paquets.
                     </p>
                     <p>
+                        <strong>Rétention :</strong> La rétention cible est votre choix sur le compromis charge/qualité. Les Paramètres affichent en regard la rétention <em>mesurée</em> sur vos révisions — une information, jamais un pilotage. Changer la cible n'est pas rétroactif : chaque carte adopte le nouveau rythme à sa prochaine révision.
+                    </p>
+                    <p>
                         <strong>Afficher la réponse :</strong> La carte pose une question ; réfléchissez, puis appuyez sur <strong>Espace</strong> (ou cliquez sur la zone masquée) pour dévoiler l'analyse enregistrée de la position. Elle s'affiche sous les boutons de notation, qui restent à portée. Rien ne vous oblige à la dévoiler pour noter, et elle se remasque à la carte suivante — pas si vous changez simplement d'onglet.
                     </p>
                     <p>

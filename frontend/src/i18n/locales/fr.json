@@ -493,6 +493,9 @@
         "confirmDelete": "Supprimer le tournoi « {name} » ?"
     },
     "anki": {
+        "retentionMeasured": "Rétention mesurée : {measured} % sur {sample} révisions",
+        "retentionNotEnough": "Rétention mesurée : pas assez de révisions ({sample} sur {needed})",
+        "retentionNotRetroactive": "S'applique au fil des révisions ; les échéances déjà fixées ne bougent pas.",
         "clickToReveal": "Cliquer ou Espace pour révéler la réponse",
         "noAnalysis": "Aucune analyse enregistrée pour cette position",
         "again": "À revoir",

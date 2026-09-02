@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // runAnki handles the anki command: the read-only and maintenance side of the
@@ -39,10 +41,11 @@ func (cli *CLI) runAnki(args []string) error {
 // map, like handlers(), so the parity test can walk it.
 func (cli *CLI) ankiHandlers() map[string]func([]string) error {
 	return map[string]func([]string) error{
-		"decks":    cli.runAnkiDecks,
-		"stats":    cli.runAnkiStats,
-		"forecast": cli.runAnkiForecast,
-		"sync":     cli.runAnkiSync,
+		"decks":     cli.runAnkiDecks,
+		"stats":     cli.runAnkiStats,
+		"forecast":  cli.runAnkiForecast,
+		"sync":      cli.runAnkiSync,
+		"retention": cli.runAnkiRetention,
 	}
 }
 
@@ -57,12 +60,14 @@ func (cli *CLI) printAnkiUsage() {
 	fmt.Println("  stats     Review statistics of one deck (new, learning, review, due)")
 	fmt.Println("  forecast  Cards coming due per day over the next N days")
 	fmt.Println("  sync      Resynchronise a deck with its collection or stored search")
+	fmt.Println("  retention Measured retention of one deck against its target")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb anki decks --db database.db")
 	fmt.Println("  blunderdb anki stats --db database.db --deck 2 --format json")
 	fmt.Println("  blunderdb anki forecast --db database.db --deck 2 --days 14")
 	fmt.Println("  blunderdb anki sync --db database.db --deck 2")
+	fmt.Println("  blunderdb anki retention --db database.db --deck 2")
 	fmt.Println()
 	fmt.Println("Use 'blunderdb anki <sub-command> --help' for the options of a sub-command.")
 }
@@ -331,4 +336,56 @@ func ankiSearchStoredIDs(sourceCommand string) ([]int64, bool) {
 		return nil, false
 	}
 	return stored.IDs, true
+}
+
+// runAnkiRetention reports the retention a deck's review log measures, read
+// against the target its owner chose.
+//
+// It reports and never writes (ADR-0026 rule 5). Under
+// domain.AnkiRetentionMinSample review-state reviews the measurement is named
+// as unavailable rather than printed: a pass rate over three reviews reads as
+// fact while being noise.
+func (cli *CLI) runAnkiRetention(args []string) error {
+	fs, dbPath := ankiFlagSet("retention", "Measured retention of one deck against its target.",
+		"blunderdb anki retention --db database.db --deck 2",
+		"blunderdb anki retention --db database.db --deck 2 --format json")
+	deckID := fs.Int64("deck", 0, "Deck ID (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *deckID == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --deck")
+	}
+	deck, err := cli.ankiDeck(*deckID)
+	if err != nil {
+		return err
+	}
+	ret, err := cli.db.GetAnkiDeckRetention(*deckID)
+	if err != nil {
+		return fmt.Errorf("failed to measure deck retention: %w", err)
+	}
+
+	switch strings.ToLower(*format) {
+	case "json":
+		return printJSON(struct {
+			Deck      *AnkiDeck             `json:"deck"`
+			Retention *domain.AnkiRetention `json:"retention"`
+		}{deck, ret})
+	case "text":
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintf(w, "Deck %d:\t%s\n", deck.ID, deck.Name)
+		fmt.Fprintf(w, "  Target retention:\t%.0f%%\n", ret.TargetRetention*100)
+		if ret.SampleSize < domain.AnkiRetentionMinSample {
+			fmt.Fprintf(w, "  Measured retention:\tnot enough reviews (%d of %d needed)\n",
+				ret.SampleSize, domain.AnkiRetentionMinSample)
+		} else {
+			fmt.Fprintf(w, "  Measured retention:\t%.0f%% over %d reviews\n",
+				ret.ObservedRetention*100, ret.SampleSize)
+		}
+		return w.Flush()
+	default:
+		return fmt.Errorf("unknown format: %s (use text or json)", *format)
+	}
 }

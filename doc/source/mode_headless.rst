@@ -159,9 +159,17 @@ notation et résultat FSRS — pour les statistiques de rétention et un
 historique fidèle), ``anki.forecast`` (projection du nombre de cartes dues sur
 les prochains jours, cartes en retard comprises), ``anki.suspendCard`` /
 ``anki.buryCard`` / ``anki.removeCard`` (retirer une carte de la file de
-révision temporairement ou définitivement) et ``anki.optimizeParams`` (ajuste
-le taux de rétention visé d'un paquet vers le taux de réussite observé sur ses
-révisions).
+révision temporairement ou définitivement) et ``anki.retention`` (taux de
+réussite mesuré sur les révisions d'un paquet, lu en regard de la cible que son
+propriétaire a fixée).
+
+.. note::
+
+   ``anki.retention`` remplace ``anki.optimizeParams``, qui ajustait la cible
+   vers le taux observé et pouvait l'écrire. La cible de rétention est un
+   **choix** sur le compromis charge/qualité, le taux mesuré en est le
+   **résultat**, et asservir l'un à l'autre est le mécanisme que les auteurs de
+   FSRS écartent. La méthode mesure désormais, sans jamais écrire.
 
 La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne de
 statistiques par joueur (matchs, victoires/défaites, décisions comptées, PR

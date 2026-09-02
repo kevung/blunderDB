@@ -53,10 +53,14 @@ func scanAnkiDeck(sc interface{ Scan(...any) error }) (domain.AnkiDeck, error) {
 
 // CreateDeck stores a new spaced-repetition deck and returns its id.
 func (s *ankiStore) CreateDeck(ctx context.Context, scope string, name, description, sourceType string, sourceID int64, sourceCommand string) (int64, error) {
+	// maximum_interval is written explicitly rather than left to the column
+	// default: the default a NEW deck gets is a product decision (ADR-0026
+	// rule 7), and the DDL's 36500 stays what it is so existing decks keep
+	// theirs.
 	res, err := s.db.ExecContext(ctx,
-		`INSERT INTO anki_deck (name, description, source_type, source_id, source_command)
-		 VALUES (?,?,?,?,?)`,
-		name, description, sourceType, sourceID, sourceCommand)
+		`INSERT INTO anki_deck (name, description, source_type, source_id, source_command, maximum_interval)
+		 VALUES (?,?,?,?,?,?)`,
+		name, description, sourceType, sourceID, sourceCommand, float64(domain.AnkiDefaultMaximumInterval))
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create anki deck: %w", err)
 	}
@@ -590,41 +594,31 @@ func (s *ankiStore) ReviewLog(ctx context.Context, scope string, deckID int64, l
 	}
 }
 
-// OptimizeParams suggests (and optionally applies) a tuned request_retention for
-// a deck, derived from the pass rate on its review-state reviews (ANK-E2/B10).
-// The Go FSRS port has no weight trainer, so this is a request-retention nudge,
-// not a full weight re-fit. (scope is unused: single-tenant Desktop store.)
-func (s *ankiStore) OptimizeParams(ctx context.Context, scope string, deckID int64, apply bool) (*domain.AnkiOptimizeResult, error) {
-	var current float64
+// Retention measures a deck's pass rate on review-state cards against its
+// target retention. Read-only by contract (ADR-0026 rule 5): it used to also
+// suggest a new target and write it back, which is the feedback loop FSRS's
+// authors reject.
+func (s *ankiStore) Retention(ctx context.Context, scope string, deckID int64) (*domain.AnkiRetention, error) {
+	var target float64
 	err := s.db.QueryRowContext(ctx,
-		`SELECT request_retention FROM anki_deck WHERE id = ?`, deckID).Scan(&current)
+		`SELECT request_retention FROM anki_deck WHERE id = ?`, deckID).Scan(&target)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, storage.ErrNotFound)
+		return nil, fmt.Errorf("sqlite: anki deck %d retention: %w", deckID, storage.ErrNotFound)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
+		return nil, fmt.Errorf("sqlite: anki deck %d retention: %w", deckID, err)
 	}
 
 	var total, passed int
 	if err := s.db.QueryRowContext(ctx,
 		`SELECT COUNT(*), COALESCE(SUM(CASE WHEN rating >= 2 THEN 1 ELSE 0 END), 0)
 		 FROM anki_review_log WHERE deck_id = ? AND state = 2`, deckID).Scan(&total, &passed); err != nil {
-		return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
+		return nil, fmt.Errorf("sqlite: anki deck %d retention: %w", deckID, err)
 	}
 
-	res := &domain.AnkiOptimizeResult{SampleSize: total, CurrentRetention: current}
+	res := &domain.AnkiRetention{SampleSize: total, TargetRetention: target}
 	if total > 0 {
 		res.ObservedRetention = float64(passed) / float64(total)
-	}
-	res.SuggestedRetention = domain.SuggestRetention(current, res.ObservedRetention, total)
-
-	if apply && res.SuggestedRetention != current {
-		if _, err := s.db.ExecContext(ctx,
-			`UPDATE anki_deck SET request_retention = ?, updated_at = datetime('now') WHERE id = ?`,
-			res.SuggestedRetention, deckID); err != nil {
-			return nil, fmt.Errorf("sqlite: optimize anki deck %d: %w", deckID, err)
-		}
-		res.Applied = true
 	}
 	return res, nil
 }

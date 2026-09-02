@@ -53,9 +53,12 @@ type forecastReq struct {
 	Days   int   `json:"days"`
 }
 
-type optimizeReq struct {
+// retentionReq carries no `apply`: the route reads (ADR-0026 rule 5). The old
+// anki.optimizeParams, which wrote a tuned target back, is gone rather than
+// deprecated — left in place, the verb invites someone to rebuild the
+// write-back.
+type retentionReq struct {
 	DeckID int64 `json:"deckId"`
-	Apply  bool  `json:"apply"`
 }
 
 type cardIDReq struct {
@@ -122,8 +125,8 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.removeCard", rpcVoid(func(ctx context.Context, scope string, req cardIDReq) error {
 			return as().RemoveCard(ctx, scope, req.CardID)
 		})},
-		{http.MethodPost, "/v1/anki.optimizeParams", rpc(func(ctx context.Context, scope string, req optimizeReq) (*domain.AnkiOptimizeResult, error) {
-			return as().OptimizeParams(ctx, scope, req.DeckID, req.Apply)
+		{http.MethodPost, "/v1/anki.retention", rpc(func(ctx context.Context, scope string, req retentionReq) (*domain.AnkiRetention, error) {
+			return as().Retention(ctx, scope, req.DeckID)
 		})},
 	}
 }

@@ -151,6 +151,9 @@ export default {
                         y volver a la lista de mazos.
                     </p>
                     <p>
+                        <strong>Retención:</strong> La retención objetivo es su elección sobre el compromiso carga/calidad. Los ajustes muestran al lado la retención <em>medida</em> en sus repasos: información, nunca un control. Cambiar el objetivo no es retroactivo: cada tarjeta adopta el nuevo ritmo en su próximo repaso.
+                    </p>
+                    <p>
                         <strong>Mostrar la respuesta:</strong> La tarjeta plantea una pregunta; piénselo y pulse <strong>Espacio</strong> (o haga clic en la zona oculta) para revelar el análisis registrado de la posición. Aparece debajo de los botones de valoración, que siguen al alcance. No es necesario revelarla para valorar, y vuelve a ocultarse en la siguiente tarjeta, no al cambiar de pestaña.
                     </p>
                     <p>

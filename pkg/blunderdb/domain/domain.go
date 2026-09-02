@@ -113,41 +113,39 @@ type AnkiForecastDay struct {
 	Due int    `json:"due"` // cards due on that day
 }
 
-// AnkiOptimizeResult reports a deck-parameter tuning suggestion derived from the
-// review log. The Go FSRS port ships only the scheduler (no weight trainer), so
-// this is a pragmatic request-retention adjustment rather than a full re-fit of
-// the 19 model weights: it compares the measured pass rate on review-state cards
-// to the deck's target and nudges request_retention to close the gap.
-type AnkiOptimizeResult struct {
-	SampleSize         int     `json:"sampleSize"`         // review-state reviews considered
-	ObservedRetention  float64 `json:"observedRetention"`  // measured pass rate (rating >= Hard)
-	CurrentRetention   float64 `json:"currentRetention"`   // the deck's request_retention before tuning
-	SuggestedRetention float64 `json:"suggestedRetention"` // recommended request_retention
-	Applied            bool    `json:"applied"`            // whether the suggestion was written back
+// AnkiRetention is what a deck's review log says about retention: the pass rate
+// actually measured, read against the target the user chose.
+//
+// It is an observation and never a control (ADR-0026 rule 5). Desired retention
+// is a CHOICE on the work/knowledge trade-off; observed retention is its
+// OUTCOME, and the documented way to close a gap between them is to re-fit the
+// model weights — which the embedded scheduler cannot do, since go-fsrs ships
+// no weight trainer. Steering the target to chase the outcome is the one
+// mechanism FSRS's authors reject, and this type used to do exactly that: it
+// suggested a retention and, on request, wrote it back. The suggestion and the
+// write-back are gone; the measurement stays, under a name that says so.
+type AnkiRetention struct {
+	SampleSize        int     `json:"sampleSize"`        // review-state reviews considered
+	ObservedRetention float64 `json:"observedRetention"` // measured pass rate (rating >= Hard)
+	TargetRetention   float64 `json:"targetRetention"`   // the deck's request_retention
 }
 
-// AnkiOptimizeMinSample is the smallest review-state sample for which a tuning
-// suggestion is trusted; below it OptimizeParams returns the current value.
-const AnkiOptimizeMinSample = 20
+// AnkiRetentionMinSample is the smallest review-state sample worth reporting a
+// measured retention for. Below it, a pass rate over three reviews would read
+// as fact while being noise, so callers name the absence instead of printing a
+// number.
+const AnkiRetentionMinSample = 20
 
-// SuggestRetention nudges a deck's request_retention toward closing the gap
-// between the observed pass rate and the current target, clamped to a sane band.
-// Below AnkiOptimizeMinSample reviews it returns current unchanged (not enough
-// signal). When the user under-retains (observed < target) it raises retention
-// (shorter intervals, more reviews); when they over-retain it lowers it.
-func SuggestRetention(current, observed float64, sample int) float64 {
-	if sample < AnkiOptimizeMinSample {
-		return current
-	}
-	s := current + (current - observed)
-	if s < 0.80 {
-		s = 0.80
-	}
-	if s > 0.97 {
-		s = 0.97
-	}
-	return s
-}
+// AnkiDefaultMaximumInterval is the maximum interval, in days, a newly created
+// deck starts with (ADR-0026 rule 7).
+//
+// One year, not Anki's 36500 days: that value is meant for vocabulary one never
+// wants to see again, whereas a position the scheduler defers by eleven years
+// has not been learned — it has left the deck without anyone deciding so, and a
+// player's own game changes faster than that. The schema keeps 36500 as its
+// column default so existing decks are untouched; this is the value a new deck
+// is written with.
+const AnkiDefaultMaximumInterval = 365
 
 // AnkiDeckStats holds review statistics
 type AnkiDeckStats struct {

@@ -493,6 +493,9 @@
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
     },
     "anki": {
+        "retentionMeasured": "Mitattu muistiinjäänti: {measured} % / {sample} kertausta",
+        "retentionNotEnough": "Mitattu muistiinjäänti: kertauksia ei ole vielä tarpeeksi ({sample}/{needed})",
+        "retentionNotRetroactive": "Vaikuttaa kertausten myötä; jo asetetut eräpäivät eivät muutu.",
         "clickToReveal": "Napsauta tai paina välilyöntiä paljastaaksesi vastauksen",
         "noAnalysis": "Tälle asemalle ei ole tallennettua analyysiä",
         "again": "Uudelleen",

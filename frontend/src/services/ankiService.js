@@ -18,6 +18,7 @@ import {
     SyncAnkiDeck,
     SyncAnkiDeckWithPositions,
     GetAnkiDeckStats,
+    GetAnkiDeckRetention,
     GetAnkiDeckPositions,
     GetNextAnkiCard,
     GetRandomAnkiCard,
@@ -351,4 +352,18 @@ async function advance(next) {
         ankiReviewCardStore.set(null);
     }
     return next ?? null;
+}
+
+/**
+ * What a deck's review log measures, against the target its owner chose.
+ *
+ * A reading, never a control (ADR-0026 rule 5): nothing here writes the target
+ * back. Below RETENTION_MIN_SAMPLE review-state reviews the measurement is not
+ * reported at all — a pass rate over three reviews reads as a fact while being
+ * noise — so callers show the absence rather than a number.
+ */
+export const RETENTION_MIN_SAMPLE = 20;
+
+export async function deckRetention(deckId) {
+    return await GetAnkiDeckRetention(deckId);
 }

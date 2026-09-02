@@ -493,6 +493,9 @@
         "confirmDelete": "Delete tournament \"{name}\"?"
     },
     "anki": {
+        "retentionMeasured": "Measured retention: {measured}% over {sample} reviews",
+        "retentionNotEnough": "Measured retention: not enough reviews yet ({sample} of {needed})",
+        "retentionNotRetroactive": "Applies as reviews happen; due dates already set do not move.",
         "clickToReveal": "Click or press Space to reveal the answer",
         "noAnalysis": "No analysis recorded for this position",
         "again": "Again",
