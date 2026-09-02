@@ -328,6 +328,14 @@ un match, le coup effectivement joué est mis en évidence dans la liste des
 alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
+Les coups sont écrits comme on les lit sur le plateau, ici comme dans le
+panneau Eval : le pion le moins avancé bouge d'abord, et **un pion qui
+enchaîne plusieurs dés ne s'écrit qu'une fois** — un 64 joué avec le même
+pion se lit ``24/14``, et ``24/14*`` s'il frappe en arrivant. Le détail de
+l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une
+frappe *en cours de route* conserve son point de passage, ``24/18* 18/14``,
+sans quoi la frappe en 18 disparaîtrait de la notation.
+
 .. _panneau_commentaires:
 
 Panneau Commentaires
