@@ -30,4 +30,11 @@ type PositionStore interface {
 
 	// List streams stored positions.
 	List(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
+
+	// LoadMany returns the positions with the given ids, in the order they
+	// were asked for, in one round trip per batch rather than one per id. An
+	// id that names no position is left out, not reported: callers hand over
+	// lists gathered earlier (a search result, a saved selection), and a
+	// position deleted in between is not a reason to fail the rest.
+	LoadMany(ctx context.Context, scope string, ids []int64) ([]*domain.Position, error)
 }

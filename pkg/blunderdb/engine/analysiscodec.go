@@ -11,6 +11,9 @@ import (
 	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"runtime"
+	"sync"
+	"sync/atomic"
 )
 
 // This file holds the pure analysis-encoding helpers shared by the Database
@@ -84,15 +87,76 @@ func DecodeAnalysisFromStorage(data []byte) (domain.PositionAnalysis, error) {
 	return a, err
 }
 
+// DecodeAnalysesConcurrently decodes a batch of stored analyses in parallel.
+//
+// Decoding is decompression followed by a JSON unmarshal — pure computation,
+// independent from one position to the next, and the largest cost of reading
+// a library once the queries are batched (38% of an export's time when it was
+// measured). Spreading a batch across the machine's cores is the whole point.
+//
+// A payload that cannot be decoded is reported in failed under its position
+// id and absent from decoded, so a caller can tell "no analysis" from "an
+// analysis nobody can read" and decide which of the two it tolerates.
+func DecodeAnalysesConcurrently(raw map[int64][]byte) (decoded map[int64]*domain.PositionAnalysis, failed map[int64]error) {
+	decoded = make(map[int64]*domain.PositionAnalysis, len(raw))
+	failed = make(map[int64]error)
+	if len(raw) == 0 {
+		return decoded, failed
+	}
+
+	type job struct {
+		id   int64
+		data []byte
+	}
+	jobs := make([]job, 0, len(raw))
+	for id, data := range raw {
+		jobs = append(jobs, job{id: id, data: data})
+	}
+
+	results := make([]*domain.PositionAnalysis, len(jobs))
+	errs := make([]error, len(jobs))
+	workers := min(runtime.NumCPU(), len(jobs))
+	var wg sync.WaitGroup
+	var next atomic.Int64
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				i := int(next.Add(1)) - 1
+				if i >= len(jobs) {
+					return
+				}
+				a, err := DecodeAnalysisFromStorage(jobs[i].data)
+				if err != nil {
+					errs[i] = err
+					continue
+				}
+				results[i] = &a
+			}
+		}()
+	}
+	wg.Wait()
+
+	for i, j := range jobs {
+		if errs[i] != nil {
+			failed[j.id] = errs[i]
+			continue
+		}
+		decoded[j.id] = results[i]
+	}
+	return decoded, failed
+}
+
 // AnalysisColumns holds the derived scalar columns computed from a
 // PositionAnalysis. Win/gammon/backgammon rates follow the on-roll convention:
 // "player1" is always the player on roll, "player2" the opponent.
 type AnalysisColumns struct {
-	BestCubeAction      string
-	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
-	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
-	IsForced            int64 // 1 if checker position with exactly 1 legal move, else 0
-	IsCloseCube         int64 // 1 if cube decision meets gnuBG isCloseCubedecision
+	BestCubeAction        string
+	CubeError             int64 // equity loss × 1000 (millipoints); 0 if no played action
+	BestMoveEquityError   int64 // equity loss × 1000 (millipoints); 0 if no played move
+	IsForced              int64 // 1 if checker position with exactly 1 legal move, else 0
+	IsCloseCube           int64 // 1 if cube decision meets gnuBG isCloseCubedecision
 	Player1WinRate        int64
 	Player1GammonRate     int64
 	Player1BackgammonRate int64

@@ -224,6 +224,38 @@ func (s *positionStore) Delete(ctx context.Context, scope string, id int64) erro
 }
 
 // List streams stored positions ordered by id.
+// LoadMany — see storage.PositionStore.
+func (s *positionStore) LoadMany(ctx context.Context, scope string, ids []int64) ([]*domain.Position, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT `+positionSelectCols+` FROM position WHERE id = ANY($1) AND tenant_id = $2`,
+		ids, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: load positions: %w", err)
+	}
+	defer rows.Close()
+	byID := make(map[int64]*domain.Position, len(ids))
+	for rows.Next() {
+		p, err := scanPosition(rows)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: load positions: %w", err)
+		}
+		byID[p.ID] = &p
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: load positions: %w", err)
+	}
+	out := make([]*domain.Position, 0, len(byID))
+	for _, id := range ids {
+		if p, ok := byID[id]; ok {
+			out = append(out, p)
+		}
+	}
+	return out, nil
+}
+
 func (s *positionStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
 		query := `SELECT ` + positionSelectCols + ` FROM position WHERE tenant_id = $1 ORDER BY id`

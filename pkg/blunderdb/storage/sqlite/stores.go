@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"strings"
 )
 
 // execer is satisfied by both *sql.DB (autocommit) and *sql.Tx
@@ -76,4 +77,36 @@ func queryInt64s(ctx context.Context, db execer, query string, args ...any) ([]i
 		out = append(out, v)
 	}
 	return out, rows.Err()
+}
+
+// forEachIn runs `prefix (?,?,…) suffix` over ids in chunks that stay under
+// SQLite's parameter limit (32766 by default — a real selection runs to tens
+// of thousands of positions) and hands every row to scan. The chunk size
+// leaves room for the arguments a caller's prefix may carry.
+func forEachIn(ctx context.Context, db execer, ids []int64, prefix, suffix string, scan func(*sql.Rows) error) error {
+	const chunk = 900
+	for start := 0; start < len(ids); start += chunk {
+		batch := ids[start:min(start+chunk, len(ids))]
+		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
+		args := make([]any, len(batch))
+		for i, id := range batch {
+			args[i] = id
+		}
+		if err := func() error {
+			rows, err := db.QueryContext(ctx, prefix+`(`+placeholders+`)`+suffix, args...)
+			if err != nil {
+				return err
+			}
+			defer rows.Close()
+			for rows.Next() {
+				if err := scan(rows); err != nil {
+					return err
+				}
+			}
+			return rows.Err()
+		}(); err != nil {
+			return err
+		}
+	}
+	return nil
 }

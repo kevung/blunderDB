@@ -133,6 +133,24 @@ func (s *commentStore) ByPosition(ctx context.Context, scope string, positionID 
 		positionID, tenantID(scope))
 }
 
+// ByPositions — see storage.CommentStore.
+func (s *commentStore) ByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.CommentEntry, error) {
+	out := make(map[int64][]*domain.CommentEntry)
+	if len(positionIDs) == 0 {
+		return out, nil
+	}
+	for e, err := range s.commentSeq(ctx, "comments by positions",
+		`SELECT `+commentSelectExpr+` FROM comment
+		 WHERE position_id = ANY($1) AND tenant_id = $2 AND text != '' ORDER BY id ASC`,
+		positionIDs, tenantID(scope)) {
+		if err != nil {
+			return nil, err
+		}
+		out[e.PositionID] = append(out[e.PositionID], e)
+	}
+	return out, nil
+}
+
 // ListAll streams every non-empty comment entry, most recent first.
 func (s *commentStore) ListAll(ctx context.Context, scope string) iter.Seq2[*domain.CommentEntry, error] {
 	return s.commentSeq(ctx, "list comments",

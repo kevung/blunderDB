@@ -222,6 +222,29 @@ func (s *positionStore) List(ctx context.Context, scope string, opts storage.Lis
 	}
 }
 
+// LoadMany — see storage.PositionStore.
+func (s *positionStore) LoadMany(ctx context.Context, scope string, ids []int64) ([]*domain.Position, error) {
+	byID := make(map[int64]*domain.Position, len(ids))
+	err := forEachIn(ctx, s.db, ids, `SELECT `+positionCols+` FROM position WHERE id IN `, ``, func(rows *sql.Rows) error {
+		p, err := scanPosition(rows)
+		if err != nil {
+			return err
+		}
+		byID[p.ID] = &p
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: load positions: %w", err)
+	}
+	out := make([]*domain.Position, 0, len(byID))
+	for _, id := range ids {
+		if p, ok := byID[id]; ok {
+			out = append(out, p)
+		}
+	}
+	return out, nil
+}
+
 func boolToInt(b bool) int {
 	if b {
 		return 1

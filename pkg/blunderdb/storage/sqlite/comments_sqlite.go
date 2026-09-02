@@ -6,6 +6,7 @@ import (
 	"iter"
 	"strings"
 
+	"database/sql"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -122,6 +123,25 @@ func (s *commentStore) ByPosition(ctx context.Context, scope string, positionID 
 	return s.commentSeq(ctx, "comments by position",
 		`SELECT `+commentSelectCols+` FROM comment
 		 WHERE position_id = ? AND text != '' ORDER BY id DESC`, positionID)
+}
+
+// ByPositions — see storage.CommentStore.
+func (s *commentStore) ByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.CommentEntry, error) {
+	out := make(map[int64][]*domain.CommentEntry)
+	err := forEachIn(ctx, s.db, positionIDs,
+		`SELECT `+commentSelectCols+` FROM comment WHERE position_id IN `, ` AND text != '' ORDER BY id ASC`,
+		func(rows *sql.Rows) error {
+			e, err := scanCommentEntry(rows)
+			if err != nil {
+				return err
+			}
+			out[e.PositionID] = append(out[e.PositionID], &e)
+			return nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: comments by positions: %w", err)
+	}
+	return out, nil
 }
 
 // ListAll streams every non-empty comment entry, most recent first.
