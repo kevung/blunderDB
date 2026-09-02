@@ -69,6 +69,7 @@
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
+    import { resizable } from './utils/resizeHandle.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
     // Components
@@ -196,40 +197,16 @@
 
     // ── UI event handlers ──────────────────────────────────────────
 
-    function onResizeHandleMouseDown(e) {
-        e.preventDefault();
-        // Side panel: drag horizontally to resize its width (it sits to the
-        // right of the board, so dragging left grows it). Bottom panel: drag
-        // vertically to resize its height (dragging up grows it).
-        const side = isSidePanel;
-        document.body.style.cursor = side ? 'ew-resize' : 'ns-resize';
-        document.body.style.userSelect = 'none';
-        const start = side ? e.clientX : e.clientY;
-        const startSize = side ? panelWidth : panelHeight;
-        let moved = false;
-        function onMouseMove(e) {
-            moved = true;
-            if (side) {
-                panelWidth = Math.min(Math.max(150, startSize + (start - e.clientX)), window.innerWidth - 200);
-            } else {
-                panelHeight = Math.min(Math.max(80, startSize + (start - e.clientY)), window.innerHeight - 160);
-            }
-            window.dispatchEvent(new Event('resize'));
-        }
-        function onMouseUp() {
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-            // Persist only the dimension the drag actually applies to, and only
-            // when the drag moved the handle at all (a plain click is a no-op).
-            if (moved) {
-                if (side) savePanelWidth(panelWidth);
-                else savePanelHeight(panelHeight);
-            }
-        }
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
+    // Resize-handle drag (utils/resizeHandle.js). The action reads the mode
+    // and the start size at mousedown and hands them back so a layout flip
+    // mid-drag cannot cross axes.
+    function setPanelSize(size, side) {
+        if (side) panelWidth = size;
+        else panelHeight = size;
+    }
+    function savePanelSize(size, side) {
+        if (side) savePanelWidth(size);
+        else savePanelHeight(size);
     }
 
     function handleWheel(event) {
@@ -431,8 +408,7 @@
             <Board />
         </div>
 
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="resize-handle" class:side={isSidePanel} onmousedown={onResizeHandleMouseDown}></div>
+        <div class="resize-handle" class:side={isSidePanel} use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : panelHeight, onResize: setPanelSize, onCommit: savePanelSize }}></div>
 
         <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${panelHeight}px;`}>
             <TabbedPanel
