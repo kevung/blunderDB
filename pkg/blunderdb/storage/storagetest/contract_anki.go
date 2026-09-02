@@ -69,6 +69,79 @@ func testAnkiReviewUpdatesScheduling(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testAnkiReviewLogAgreesWithCard pins what a review writes: the log entry
+// and the card come out of one scheduling and one transaction, so the log's
+// state is the one the card was in before, its interval is the one the card
+// now carries, and its timestamp is the card's last review.
+func testAnkiReviewLogAgreesWithCard(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	deckID, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{posID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	next, err := s.Anki().NextCard(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	cardID := next.Card.ID
+
+	// Good on a new card keeps it in learning and due within minutes, so it
+	// is served again; Again then records a second entry against it.
+	for _, rating := range []int{3, 1} {
+		if _, err := s.Anki().ReviewCard(ctx, "", cardID, rating); err != nil {
+			t.Fatalf("ReviewCard %d: %v", rating, err)
+		}
+	}
+
+	var logs []*domain.AnkiReviewLog
+	for l, err := range s.Anki().ReviewLog(ctx, "", deckID, 0) {
+		if err != nil {
+			t.Fatalf("ReviewLog: %v", err)
+		}
+		logs = append(logs, l)
+	}
+	if len(logs) != 2 {
+		t.Fatalf("ReviewLog count: got %d, want 2", len(logs))
+	}
+	latest, first := logs[0], logs[1]
+	if first.State != 0 {
+		t.Errorf("first entry state: got %d, want 0 (new, the state before the review)", first.State)
+	}
+	if latest.State != 1 {
+		t.Errorf("second entry state: got %d, want 1 (learning, the state before the review)", latest.State)
+	}
+
+	card, err := s.Anki().RandomCard(ctx, "", deckID, 0)
+	if err != nil {
+		t.Fatalf("RandomCard: %v", err)
+	}
+	if card.Card.ID != cardID {
+		t.Fatalf("RandomCard: got card %d, want %d", card.Card.ID, cardID)
+	}
+	if card.Card.Reps != 2 || card.Card.State != 1 {
+		t.Errorf("card after two reviews: reps=%d state=%d, want 2/1", card.Card.Reps, card.Card.State)
+	}
+	if latest.ScheduledDays != card.Card.ScheduledDays {
+		t.Errorf("latest log interval %d != card interval %d", latest.ScheduledDays, card.Card.ScheduledDays)
+	}
+	if latest.Stability != card.Card.Stability || latest.Difficulty != card.Card.Difficulty {
+		t.Errorf("latest log memory (%v, %v) != card memory (%v, %v)",
+			latest.Stability, latest.Difficulty, card.Card.Stability, card.Card.Difficulty)
+	}
+	if latest.ReviewedAt == "" || latest.ReviewedAt != card.Card.LastReview {
+		t.Errorf("latest log reviewed at %q != card last review %q", latest.ReviewedAt, card.Card.LastReview)
+	}
+}
+
 // testAnkiRandomCardIgnoresSchedule pins the cram contract: RandomCard serves
 // any card of the deck regardless of schedule or availability, honours the
 // exclusion while another card remains, falls back to the lone card of a

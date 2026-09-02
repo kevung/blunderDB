@@ -10,8 +10,7 @@ import (
 	"strings"
 	"time"
 
-	fsrs "github.com/open-spaced-repetition/go-fsrs/v3"
-
+	"github.com/kevung/blunderdb/pkg/blunderdb/anki"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -22,7 +21,7 @@ var _ storage.AnkiStore = (*ankiStore)(nil)
 
 // ankiTimeLayout is the textual datetime format used for all anki_card
 // timestamp columns.
-const ankiTimeLayout = "2006-01-02 15:04:05"
+const ankiTimeLayout = anki.TimeLayout
 
 func ankiNow() string { return time.Now().UTC().Format(ankiTimeLayout) }
 
@@ -414,82 +413,72 @@ func (s *ankiStore) RandomCard(ctx context.Context, scope string, deckID, exclud
 // ReviewCard records a review rating against a card, advances its FSRS
 // scheduling state, and returns the next card still due in the same deck (nil
 // when none remain).
+//
+// The card update and the review-log append are one transaction: a log entry
+// without its card advance (or the reverse) would make the log lie about the
+// schedule it is supposed to explain. Looking up the next card happens after
+// the commit — failing to load it must not undo a grade that was given.
 func (s *ankiStore) ReviewCard(ctx context.Context, scope string, cardID int64, rating int) (*domain.AnkiReviewCard, error) {
-	row := s.db.QueryRowContext(ctx, `SELECT `+ankiCardCols+` FROM anki_card WHERE id = ?`, cardID)
-	card, err := scanAnkiCard(row)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, storage.ErrNotFound)
-	}
+	var deckID int64
+	err := withTx(ctx, s.db, func(db execer) error {
+		card, err := scanAnkiCard(db.QueryRowContext(ctx, `SELECT `+ankiCardCols+` FROM anki_card WHERE id = ?`, cardID))
+		if errors.Is(err, sql.ErrNoRows) {
+			return storage.ErrNotFound
+		}
+		if err != nil {
+			return err
+		}
+		deckID = card.DeckID
+
+		var (
+			params     anki.Params
+			enableFuzz int
+		)
+		err = db.QueryRowContext(ctx,
+			`SELECT request_retention, maximum_interval, enable_fuzz FROM anki_deck WHERE id = ?`,
+			card.DeckID).Scan(&params.RequestRetention, &params.MaximumInterval, &enableFuzz)
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("deck: %w", storage.ErrNotFound)
+		}
+		if err != nil {
+			return err
+		}
+		params.EnableFuzz = enableFuzz != 0
+
+		next, log, err := anki.ScheduleNext(card, params, rating, time.Now())
+		if errors.Is(err, anki.ErrInvalidRating) {
+			return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+		}
+		if err != nil {
+			return err
+		}
+
+		if _, err := db.ExecContext(ctx,
+			`UPDATE anki_card SET due = ?, stability = ?, difficulty = ?,
+			 elapsed_days = ?, scheduled_days = ?, reps = ?, lapses = ?, state = ?, last_review = ?
+			 WHERE id = ?`,
+			next.Due, next.Stability, next.Difficulty,
+			next.ElapsedDays, next.ScheduledDays, next.Reps, next.Lapses, next.State,
+			next.LastReview, cardID); err != nil {
+			return err
+		}
+		if _, err := db.ExecContext(ctx,
+			`INSERT INTO anki_review_log
+			 (card_id, deck_id, position_id, rating, state,
+			  stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			log.CardID, log.DeckID, log.PositionID, log.Rating, log.State,
+			log.Stability, log.Difficulty, log.ElapsedDays, log.ScheduledDays,
+			log.ReviewedAt); err != nil {
+			return fmt.Errorf("log: %w", err)
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, err)
 	}
 
-	var (
-		deckID           int64
-		requestRetention float64
-		maximumInterval  float64
-		enableFuzz       int
-	)
-	err = s.db.QueryRowContext(ctx,
-		`SELECT id, request_retention, maximum_interval, enable_fuzz FROM anki_deck WHERE id = ?`,
-		card.DeckID).Scan(&deckID, &requestRetention, &maximumInterval, &enableFuzz)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("sqlite: review anki card %d: deck: %w", cardID, storage.ErrNotFound)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, err)
-	}
-
-	now := time.Now().UTC()
-	fsrsCard := fsrs.Card{
-		Stability:     card.Stability,
-		Difficulty:    card.Difficulty,
-		ElapsedDays:   uint64(card.ElapsedDays),
-		ScheduledDays: uint64(card.ScheduledDays),
-		Reps:          uint64(card.Reps),
-		Lapses:        uint64(card.Lapses),
-		State:         fsrs.State(card.State),
-	}
-	if t, err := time.Parse(ankiTimeLayout, card.Due); err == nil {
-		fsrsCard.Due = t
-	}
-	if t, err := time.Parse(ankiTimeLayout, card.LastReview); err == nil {
-		fsrsCard.LastReview = t
-	}
-
-	params := fsrs.DefaultParam()
-	params.RequestRetention = requestRetention
-	params.MaximumInterval = maximumInterval
-	params.EnableFuzz = enableFuzz != 0
-	info := fsrs.NewFSRS(params).Next(fsrsCard, now, fsrs.Rating(rating))
-	next := info.Card
-
-	if _, err := s.db.ExecContext(ctx,
-		`UPDATE anki_card SET due = ?, stability = ?, difficulty = ?,
-		 elapsed_days = ?, scheduled_days = ?, reps = ?, lapses = ?, state = ?, last_review = ?
-		 WHERE id = ?`,
-		next.Due.UTC().Format(ankiTimeLayout), next.Stability, next.Difficulty,
-		next.ElapsedDays, next.ScheduledDays, next.Reps, next.Lapses, int(next.State),
-		now.Format(ankiTimeLayout), cardID); err != nil {
-		return nil, fmt.Errorf("sqlite: review anki card %d: %w", cardID, err)
-	}
-
-	// Append the review to the immutable log. The recorded state is the one the
-	// card was in *before* this review (info.ReviewLog.State); stability and
-	// difficulty are the post-review values.
-	if _, err := s.db.ExecContext(ctx,
-		`INSERT INTO anki_review_log
-		 (card_id, deck_id, position_id, rating, state,
-		  stability, difficulty, elapsed_days, scheduled_days, reviewed_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		cardID, card.DeckID, card.PositionID, rating, int(info.ReviewLog.State),
-		next.Stability, next.Difficulty,
-		int(info.ReviewLog.ElapsedDays), int(next.ScheduledDays),
-		now.Format(ankiTimeLayout)); err != nil {
-		return nil, fmt.Errorf("sqlite: review anki card %d: log: %w", cardID, err)
-	}
-
-	nextCard, err := s.nextDueCard(ctx, card.DeckID)
+	nextCard, err := s.nextDueCard(ctx, deckID)
 	if errors.Is(err, storage.ErrNotFound) {
 		return nil, nil
 	}

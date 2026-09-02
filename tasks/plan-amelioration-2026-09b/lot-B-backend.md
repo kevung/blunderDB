@@ -53,10 +53,14 @@ Dépendance : coordonner avec A.2 et B.7 (un seul bump 2.16.0 pour les trois).
 
 `storage/sqlite/anki_sqlite.go:449-471` (et PG) : `UPDATE anki_card` puis
 `INSERT anki_review_log` séparés. `withTx`/`inTx` existent.
-- [ ] Une transaction ; `due`/`last_review` illisibles (`:435-440`) remontent
-      une erreur au lieu d'un zéro-time silencieux.
-- [ ] Extraire la logique FSRS dupliquée (`anki_sqlite.go:424-443` et PG) en
-      `domain.ScheduleNext(card, params, rating, now)`, testée une fois.
+- [x] Une transaction ; `due`/`last_review` illisibles (`:435-440`) remontent
+      une erreur au lieu d'un zéro-time silencieux (`anki.ErrUnreadableTimestamp`).
+- [x] Extraire la logique FSRS dupliquée (`anki_sqlite.go:424-443` et PG) en
+      `anki.ScheduleNext(card, params, rating, now)`, testée une fois.
+      Dans `pkg/blunderdb/anki` et non `domain` : `domain` reste sans
+      dépendance (CLAUDE.md) et l'ordonnanceur tire go-fsrs. Au passage, une
+      note hors 1..4 est refusée (`storage.ErrInvalid`) : go-fsrs indexait
+      ses poids avec, `rating=0` sur `/v1/anki.reviewCard` paniquait.
 
 ## B.5 — `analysis(position_id)` sans UNIQUE, `Save` hors transaction [M] — bug (#173)
 
