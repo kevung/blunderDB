@@ -220,6 +220,14 @@ type Evaluator struct {
 	batchAct    []float32 // the input layer, transposed and stripped of its zero columns
 	batchWeight []float32 // the first layer's weights, compacted to those columns
 	nz          []int32   // the surviving feature indices, ascending
+
+	// noSkipZeros éteint la compaction des colonnes nulles pour CET
+	// évaluateur. Il n'existe que pour la mesure — sa valeur zéro est la
+	// compaction allumée, et rien dans l'application ne le pose. Il est par
+	// évaluateur et non global parce que c'est tout l'objet du poste 4 :
+	// personne n'avait jamais séparé le grand réseau du petit, et un
+	// interrupteur global ne le permet pas davantage.
+	noSkipZeros bool
 }
 
 // NewEvaluator returns an evaluator over net. It allocates once; evaluating

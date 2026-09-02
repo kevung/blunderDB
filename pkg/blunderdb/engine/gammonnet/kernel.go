@@ -160,7 +160,7 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	// taken only on a layer that has one. A single-layer network (its first
 	// layer is its output layer) keeps every column.
 	// kernel_identity_test.go proves both halves rather than assuming them.
-	skipZeros := last > 0
+	skipZeros := last > 0 && !e.noSkipZeros
 
 	// Transpose to feature-major, and strip the dead columns in the same pass.
 	// The 196-feature thermometer is ~80 % zeros — ~38 survive in union over a
