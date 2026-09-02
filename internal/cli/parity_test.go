@@ -76,6 +76,7 @@ var databaseParity = map[string]parityEntry{
 	"ComputeStats":                   {CLI: "list --type stats", Server: "/v1/stats.compute"},
 	"Conn":                           {Why: whyRawHandle},
 	"CopyPositionToCollection":       {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
+	"CountOrphans":                   {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
 	"CountPositionsWithoutAnalysis":  {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"CreateAnkiDeck":                 {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":               {CLI: "collection create", Server: "/v1/collections.create"},

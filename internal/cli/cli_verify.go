@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 // runVerify handles the verify command
@@ -75,6 +77,15 @@ func (cli *CLI) runVerify(args []string) error {
 	}
 	fmt.Println()
 
+	// Referential integrity: child rows whose parent is gone. The schema
+	// cascades every one of these deletes, so a healthy database has none;
+	// databases written before issue #157 was fixed may carry some.
+	orphans, err := cli.db.CountOrphans()
+	if err != nil {
+		return fmt.Errorf("failed to count orphaned rows: %w", err)
+	}
+	printOrphans(orphans)
+
 	// If match ID specified, verify that match
 	if *matchID != 0 {
 		err := cli.verifyMatch(*matchID, *matFile)
@@ -85,6 +96,27 @@ func (cli *CLI) runVerify(args []string) error {
 
 	fmt.Println("Verification complete!")
 	return nil
+}
+
+// printOrphans reports the referential-integrity check. Orphans are a
+// finding, not a failure: the command still exits 0 so a routine verify of a
+// database that has carried them for years keeps working, but the WARNING
+// line makes them impossible to miss.
+func printOrphans(o database.OrphanCounts) {
+	if o.Total() == 0 {
+		fmt.Println("Orphaned rows: none")
+		fmt.Println()
+		return
+	}
+	fmt.Println("Orphaned rows (child rows whose parent row is gone):")
+	fmt.Printf("  Games without match: %d\n", o.GamesWithoutMatch)
+	fmt.Printf("  Moves without game: %d\n", o.MovesWithoutGame)
+	fmt.Printf("  Move analyses without move: %d\n", o.MoveAnalysesWithoutMove)
+	fmt.Printf("  Analyses without position: %d\n", o.AnalysesWithoutPosition)
+	fmt.Printf("WARNING: %d orphaned row(s) found. They were left behind by deletions made while\n", o.Total())
+	fmt.Println("foreign keys were not enforced on every connection (issue #157); the rows are")
+	fmt.Println("unreachable from any match and only take up space.")
+	fmt.Println()
 }
 
 // verifyMatch verifies a match against a MAT file

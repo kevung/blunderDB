@@ -87,11 +87,11 @@ reposent sur `ON DELETE CASCADE` : supprimer un match peut laisser
 `sql.Open("sqlite", DSN(dsn))`.
 
 **À faire.**
-- [ ] `sql.Open("sqlite", sqlite.DSN(path))` aux deux sites.
-- [ ] Test fichier : ouvrir 3 connexions concurrentes (`db.SetMaxOpenConns(3)`,
+- [x] `sql.Open("sqlite", sqlite.DSN(path))` aux deux sites.
+- [x] Test fichier : ouvrir 3 connexions concurrentes (`db.SetMaxOpenConns(3)`,
       3 goroutines bloquées dans une transaction), lire `PRAGMA foreign_keys`
       et `PRAGMA busy_timeout` sur chacune.
-- [ ] `blunderdb verify` : compter les orphelins `game`/`move` sans parent et
+- [x] `blunderdb verify` : compter les orphelins `game`/`move` sans parent et
       les signaler (les bases existantes peuvent en porter).
 
 **Recette.** Test rouge avant, vert après ; `verify` sur une base de prod

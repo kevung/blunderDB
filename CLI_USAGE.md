@@ -946,6 +946,8 @@ Verify database integrity and optionally compare match data against source files
 
 When run without `--match`, displays database statistics. When a match ID is specified, verifies the match data. When a MAT file is also provided, cross-references the database positions with the source file.
 
+Every run also checks referential integrity: it counts orphaned rows — games without a match, moves without a game, move analyses without a move, analyses without a position — and prints a `WARNING` line with the total when any exist. A healthy database reports `Orphaned rows: none`. Orphans can be left behind in databases written by versions that did not enforce foreign keys on every connection (issue #157); they are unreachable from any match and only take up space. The command still exits 0 when it finds some.
+
 **Examples:**
 ```bash
 # Verify database overview
@@ -968,6 +970,8 @@ Database Statistics:
   Matches: 12
   Games: 156
   Moves: 3421
+
+Orphaned rows: none
 
 Verifying match 1...
   Match: Alice vs Bob

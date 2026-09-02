@@ -1202,6 +1202,23 @@ msgstr ""
 "``--match`` オプションなしの場合、コマンドはデータベースの一般統計を表示します。\\ ``--match`` "
 "を使用すると、マッチのデータを確認し、元のソースファイルと比較できます。"
 
+#: ../../source/cli.rst:734
+msgid ""
+"Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
+"les lignes orphelines — parties sans match, coups sans partie, analyses "
+"de coup sans coup, analyses sans position — et affiche une ligne "
+"``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned "
+"rows: none``. Des orphelins peuvent subsister dans une base écrite par "
+"une version qui n'appliquait pas les clés étrangères sur toutes les "
+"connexions ; ils ne sont rattachés à aucun match et n'occupent que de la "
+"place. La commande se termine tout de même avec le code de sortie 0."
+msgstr ""
+"各実行では参照整合性も確認します。孤立した行 — マッチのないゲーム、ゲームのない手、手のない手の分析、ポジションのない分析 — "
+"を数え、存在すれば合計を示す\\ ``WARNING``\\ 行を表示します。健全なデータベースは\\ ``Orphaned rows: "
+"none``\\ "
+"と答えます。すべての接続で外部キーを強制していなかったバージョンが書き込んだデータベースには孤立行が残っていることがあります。どのマッチにも属さず、場所を取るだけです。コマンドはそれでも終了コード "
+"0 で終了します。"
+
 #: ../../source/cli.rst:749
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — データベースを最適化する"

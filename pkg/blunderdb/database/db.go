@@ -178,13 +178,6 @@ func (d *Database) Close() error {
 	return err
 }
 
-// applyPragmas applies the exact same PRAGMA set as the standalone SQLite
-// Storage backend (D9). WAL journal mode is skipped for in-memory databases
-// (":memory:") because WAL requires a real filesystem.
-func (d *Database) applyPragmas(path string) error {
-	return sqlite.ApplyPragmas(d.db, path)
-}
-
 func (d *Database) SetupDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
@@ -219,8 +212,14 @@ func (d *Database) SetupDatabase(path string) (err error) {
 		}
 	}()
 
-	// Open the database using string path
-	d.db, err = sql.Open("sqlite", path)
+	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
+	// so the driver replays them on EVERY pooled connection. A PRAGMA run
+	// after sql.Open configures only the one connection it lands on; with a
+	// ten-connection pool the other nine ran with foreign_keys=OFF, so a
+	// DeleteMatch served by one of them skipped ON DELETE CASCADE and left
+	// game/move/move_analysis orphans (issue #157; blunderdb verify counts
+	// them).
+	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
 	if err != nil {
 		return err
 	}
@@ -231,11 +230,6 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// with no schema -> "no such table". ConfigurePool pins ":memory:" to a
 	// single connection; file-backed DBs are allowed to grow.
 	sqlite.ConfigurePool(d.db, path)
-
-	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
-	if err = d.applyPragmas(path); err != nil {
-		return err
-	}
 
 	// Erase any content in the database
 	_, err = d.db.Exec(`
@@ -293,8 +287,14 @@ func (d *Database) OpenDatabase(path string) (err error) {
 		}
 	}()
 
-	// Open the database using string path
-	d.db, err = sql.Open("sqlite", path)
+	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
+	// so the driver replays them on EVERY pooled connection. A PRAGMA run
+	// after sql.Open configures only the one connection it lands on; with a
+	// ten-connection pool the other nine ran with foreign_keys=OFF, so a
+	// DeleteMatch served by one of them skipped ON DELETE CASCADE and left
+	// game/move/move_analysis orphans (issue #157; blunderdb verify counts
+	// them).
+	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
 	if err != nil {
 		return err
 	}
@@ -307,27 +307,20 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	sqlite.ConfigurePool(d.db, path)
 
 	// Read-only fallback: pin to a single connection so PRAGMA query_only (a
-	// per-connection setting) reliably blocks writes on every query, then apply
-	// pragmas and forbid writes. The migration chain and ANALYZE both write, so
-	// they are skipped — the writer instance that holds the lock owns them; it
-	// opened with the same app version, so the schema is already current.
+	// per-connection setting) reliably blocks writes on every query, then
+	// forbid writes. The migration chain and ANALYZE both write, so they are
+	// skipped — the writer instance that holds the lock owns them; it opened
+	// with the same app version, so the schema is already current. The DSN
+	// PRAGMAs (WAL included) run when the connection opens: the file is
+	// writable here — only the single-writer lock is taken, by the other
+	// instance, which has already put the file in WAL mode.
 	if d.readOnly {
 		d.db.SetMaxOpenConns(1)
-		if err = d.applyPragmas(path); err != nil {
-			// WAL/pragma setup can fail read-only; don't turn a browse-only open
-			// into a hard failure (ADR-0004 ladder). Log and continue.
-			slog.Warn("read-only pragma setup partially failed", "err", err)
-		}
 		if _, err = d.db.Exec(`PRAGMA query_only = ON`); err != nil {
 			return fmt.Errorf("cannot open database read-only: %w", err)
 		}
 		d.rebuildStore()
 		return nil
-	}
-
-	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
-	if err = d.applyPragmas(path); err != nil {
-		return err
 	}
 
 	migCtx, migDone := d.beginCancellableImport()
