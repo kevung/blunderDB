@@ -1232,9 +1232,10 @@ re-run). Progress and the final tally are emitted as NDJSON to stdout.
 | `--on-conflict <policy>` | `""` | `""` aborts if the tenant already has data; `skip` merges (positions dedup by Zobrist) |
 
 Not migrated (yet): app-state families — anki decks/cards, the filter library,
-search/command history, and session metadata. Their per-tenant scoping is
-formalised by the session-scope phase; data migration of the core position
-library and match history is the priority.
+search/command history, and the session state. Their per-tenant scoping is in
+place (each has its own tenant-scoped table, `session_state` since schema
+2.16.0); data migration of the core position library and match history is the
+priority.
 
 ## See Also
 

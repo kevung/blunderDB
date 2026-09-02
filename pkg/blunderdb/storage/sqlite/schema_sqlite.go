@@ -105,6 +105,16 @@ var schemaStatements = []string{
 		timestamp INTEGER,
 		scope TEXT NOT NULL DEFAULT ''
 	)`,
+	// UI session state (last search, last position, open views), one row per
+	// key and per scope. It lived in metadata as '<scope>:session_*' rows
+	// until 2.16.0; metadata is database infrastructure (schema version,
+	// issuance) and holds no per-tenant data since 2.17.0 (issue #156).
+	`CREATE TABLE IF NOT EXISTS session_state (
+		scope TEXT NOT NULL DEFAULT '',
+		key   TEXT NOT NULL,
+		value TEXT,
+		PRIMARY KEY (scope, key)
+	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		player1_name TEXT,

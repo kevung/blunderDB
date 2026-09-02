@@ -18,7 +18,7 @@ import (
 // GUC so the connection cannot leak a tenant to the next borrower. A connection
 // acquired without a tenant in context is left with the GUC unset, which the
 // fail-closed policies treat as "no rows" — safe for the non-tenant operations
-// (metadata/version) that touch only the unprotected metadata table.
+// (the schema version) that touch only the unprotected metadata table.
 func configureRLSPool(cfg *pgxpool.Config) {
 	cfg.PrepareConn = func(ctx context.Context, conn *pgx.Conn) (bool, error) {
 		if tenant, ok := storage.TenantFromContext(ctx); ok {
@@ -38,13 +38,16 @@ func configureRLSPool(cfg *pgxpool.Config) {
 	}
 }
 
-// rlsTables are the tenant-scoped domain tables that carry a tenant_id column.
-// The global `metadata` table is intentionally excluded (it holds the schema
-// version and is not tenant-scoped).
+// rlsTables are the tenant-scoped tables that carry a tenant_id column —
+// every table but the two pieces of database infrastructure, `metadata`
+// (schema version, issuance) and `schema_migrations`, which hold no
+// per-tenant data. session_state joined the list with schema 2.17.0, when the
+// session left metadata (#156). purgeOrder (purge_postgres.go) must stay a
+// permutation of this list.
 var rlsTables = []string{
 	"position", "analysis", "comment", "match", "game", "move",
 	"move_analysis", "tournament", "collection", "collection_position",
-	"filter_library", "command_history", "search_history",
+	"filter_library", "command_history", "search_history", "session_state",
 	"anki_deck", "anki_card", "anki_review_log",
 }
 

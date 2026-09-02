@@ -96,6 +96,7 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO filter_library (tenant_id, name, command) VALUES ($1, 'f', 'cmd')`, tenantID)
 	exec(`INSERT INTO command_history (tenant_id, command) VALUES ($1, 'cmd')`, tenantID)
 	exec(`INSERT INTO search_history (tenant_id, command, position, timestamp) VALUES ($1, 'cmd', 'pos', 0)`, tenantID)
+	exec(`INSERT INTO session_state (tenant_id, key, value) VALUES ($1, 'seed', 'v')`, tenantID)
 
 	tournamentID := scalar(`INSERT INTO tournament (tenant_id, name) VALUES ($1, 't') RETURNING id`, tenantID)
 	matchID := scalar(`INSERT INTO match (tenant_id, player1_name, tournament_id) VALUES ($1, 'p1', $2) RETURNING id`, tenantID, tournamentID)
@@ -122,13 +123,12 @@ func purgeCountRows(t *testing.T, pool *pgxpool.Pool, table string, tenantID int
 	return n
 }
 
-// TestPurgeTenant seeds one row per rlsTables-covered table plus a scoped
-// session (metadata rows, P4/session_postgres.go) for two tenants, purges
+// TestPurgeTenant seeds one row per rlsTables-covered table plus a session
+// (six session_state rows since schema 2.17.0, #156) for two tenants, purges
 // tenant A, and asserts every one of tenant A's rows — domain tables and
-// session metadata alike — is gone, while tenant B's rows of the same tables
-// and the global schema-version metadata row are untouched. It also purges
-// tenant A a second time (idempotency: no error, zero rows affected either
-// time).
+// session alike — is gone, while tenant B's rows of the same tables and the
+// global schema-version metadata row are untouched. It also purges tenant A
+// a second time (idempotency: no error, zero rows affected either time).
 func TestPurgeTenant(t *testing.T) {
 	ctx := context.Background()
 	dsn := purgeTestDB(t)
@@ -144,6 +144,18 @@ func TestPurgeTenant(t *testing.T) {
 	purgeSeedRows(t, s.pool, tenantA)
 	purgeSeedRows(t, s.pool, tenantB)
 
+	for _, tbl := range rlsTables {
+		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
+			t.Fatalf("seed sanity: %s tenant A: got %d rows, want 1", tbl, got)
+		}
+		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != 1 {
+			t.Fatalf("seed sanity: %s tenant B: got %d rows, want 1", tbl, got)
+		}
+	}
+
+	// The session is written through the store — six session_state rows per
+	// tenant on top of the seed row — so tenant B's counts are snapshotted
+	// rather than assumed.
 	sessionA := storage.SessionState{LastSearchCommand: "search-A", LastSearchPosition: "pos-A"}
 	sessionB := storage.SessionState{LastSearchCommand: "search-B", LastSearchPosition: "pos-B"}
 	if err := s.Session().Save(ctx, scopeA, sessionA); err != nil {
@@ -152,14 +164,12 @@ func TestPurgeTenant(t *testing.T) {
 	if err := s.Session().Save(ctx, scopeB, sessionB); err != nil {
 		t.Fatalf("seed session B: %v", err)
 	}
-
+	wantB := make(map[string]int, len(rlsTables))
 	for _, tbl := range rlsTables {
-		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
-			t.Fatalf("seed sanity: %s tenant A: got %d rows, want 1", tbl, got)
-		}
-		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != 1 {
-			t.Fatalf("seed sanity: %s tenant B: got %d rows, want 1", tbl, got)
-		}
+		wantB[tbl] = purgeCountRows(t, s.pool, tbl, tenantB)
+	}
+	if got := purgeCountRows(t, s.pool, "session_state", tenantA); got != 7 {
+		t.Fatalf("seed sanity: session_state tenant A: got %d rows, want 7 (seed + six session keys)", got)
 	}
 
 	if err := s.PurgeTenant(ctx, scopeA); err != nil {
@@ -170,8 +180,8 @@ func TestPurgeTenant(t *testing.T) {
 		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 0 {
 			t.Errorf("after purge: %s tenant A: got %d rows, want 0", tbl, got)
 		}
-		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != 1 {
-			t.Errorf("after purge: %s tenant B: got %d rows, want 1 (untouched)", tbl, got)
+		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != wantB[tbl] {
+			t.Errorf("after purge: %s tenant B: got %d rows, want %d (untouched)", tbl, got, wantB[tbl])
 		}
 	}
 
@@ -180,7 +190,7 @@ func TestPurgeTenant(t *testing.T) {
 		t.Fatalf("load session A after purge: %v", err)
 	}
 	if loadedA.LastSearchCommand != "" || loadedA.LastSearchPosition != "" {
-		t.Errorf("after purge: session A = %+v, want zero value (metadata rows purged)", *loadedA)
+		t.Errorf("after purge: session A = %+v, want zero value (session_state rows purged)", *loadedA)
 	}
 	loadedB, err := s.Session().Load(ctx, scopeB)
 	if err != nil {

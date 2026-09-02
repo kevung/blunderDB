@@ -59,7 +59,7 @@ var wantTables = []string{
 	"collection", "collection_position",
 	"command_history", "comment", "filter_library", "game", "match",
 	"metadata", "move", "move_analysis", "position", "schema_migrations",
-	"search_history", "tournament",
+	"search_history", "session_state", "tournament",
 }
 
 // wantIndexes is the full set of named idx_* indexes, sorted.
@@ -219,4 +219,108 @@ func queryNames(t *testing.T, conn *pgx.Conn, sql string) []string {
 		t.Fatalf("rows: %v", err)
 	}
 	return out
+}
+
+// TestMigrate_013_SessionOutOfMetadata rebuilds what a 2.16.0 database held —
+// no session_state table, the session as '<scope>:session_*' rows of the
+// global metadata table (bare 'session_*' for the empty scope) — on a
+// database that already enforces RLS, and checks that 013 moves every
+// integer-named tenant's rows into session_state under its tenant_id, keeps
+// the empty scope on tenant 0, drops the rows of a named tenant the daemon no
+// longer accepts (ADR-0005), leaves metadata with no session row, installs
+// the tenant_isolation policy on the new table, and is idempotent (#156).
+func TestMigrate_013_SessionOutOfMetadata(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+
+	s, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer s.Close()
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	defer conn.Close(ctx)
+	for _, stmt := range []string{
+		`DELETE FROM schema_migrations WHERE version = '013_session_state'`,
+		`DROP TABLE session_state`,
+		`UPDATE metadata SET value = '2.16.0' WHERE key = 'database_version'`,
+		`INSERT INTO metadata (key, value) VALUES
+			('session_last_search_command', 'desktop'),
+			('session_views', '{"tabs":["zero"]}'),
+			('7:session_last_search_command', 'cube'),
+			('7:session_last_position_ids', '[9]'),
+			('7:session_views', '{"tabs":["seven"]}'),
+			('alice:session_views', '{"tabs":["alice"]}')`,
+	} {
+		if _, err := conn.Exec(ctx, stmt); err != nil {
+			t.Fatalf("rebuild 2.16.0 shape (%s): %v", stmt, err)
+		}
+	}
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
+	if v, _ := s.Version(ctx); v != domain.DatabaseVersion {
+		t.Errorf("Version after 013: got %q, want %q", v, domain.DatabaseVersion)
+	}
+
+	seven, err := s.Session().Load(ctx, "7")
+	if err != nil {
+		t.Fatalf("load scope 7: %v", err)
+	}
+	if seven.LastSearchCommand != "cube" || seven.ViewsJSON != `{"tabs":["seven"]}` || len(seven.LastPositionIDs) != 1 {
+		t.Errorf("scope 7 after 013: %+v", *seven)
+	}
+	zero, err := s.Session().Load(ctx, "")
+	if err != nil {
+		t.Fatalf("load empty scope: %v", err)
+	}
+	if zero.LastSearchCommand != "desktop" || zero.ViewsJSON != `{"tabs":["zero"]}` {
+		t.Errorf("empty scope after 013: %+v", *zero)
+	}
+	if other, _ := s.Session().Load(ctx, "8"); other.LastSearchCommand != "" || other.ViewsJSON != "" {
+		t.Errorf("scope 8 sees another scope's session: %+v", *other)
+	}
+
+	var leftovers int
+	if err := conn.QueryRow(ctx,
+		`SELECT count(*) FROM metadata WHERE key LIKE '%session\_%'`).Scan(&leftovers); err != nil {
+		t.Fatalf("count metadata leftovers: %v", err)
+	}
+	if leftovers != 0 {
+		t.Errorf("metadata still holds %d session row(s) after 013", leftovers)
+	}
+	var strays int
+	if err := conn.QueryRow(ctx,
+		`SELECT count(*) FROM session_state WHERE value LIKE '%alice%'`).Scan(&strays); err != nil {
+		t.Fatalf("count strays: %v", err)
+	}
+	if strays != 0 {
+		t.Errorf("a named tenant's session survived 013 in session_state (%d row(s))", strays)
+	}
+
+	var rls bool
+	var policies int
+	if err := conn.QueryRow(ctx,
+		`SELECT c.relrowsecurity, (SELECT count(*) FROM pg_policies WHERE tablename = 'session_state')
+		 FROM pg_class c WHERE c.relname = 'session_state'`).Scan(&rls, &policies); err != nil {
+		t.Fatalf("inspect RLS on session_state: %v", err)
+	}
+	if !rls || policies != 1 {
+		t.Errorf("session_state after 013 on an RLS database: rowsecurity=%v policies=%d, want true/1", rls, policies)
+	}
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("second Migrate: %v", err)
+	}
+	if again, _ := s.Session().Load(ctx, "7"); again.LastSearchCommand != "cube" {
+		t.Errorf("second Migrate altered scope 7: %+v", *again)
+	}
 }

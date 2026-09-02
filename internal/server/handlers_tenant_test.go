@@ -180,3 +180,14 @@ func TestTenantIsolationNamed(t *testing.T) {
 		}
 	}
 }
+
+// TestSessionIsolationPostgres is the PostgreSQL half of issue #156's recipe:
+// the session state lives in session_state, keyed by tenant_id like every
+// other domain table, so tenant 2 loads nothing of tenant 1's session and a
+// clear by one tenant leaves the other's alone. Until schema 2.16.0 it was
+// six rows of the global metadata table, readable whole through
+// metadata.load by any tenant.
+func TestSessionIsolationPostgres(t *testing.T) {
+	ts := newPostgresTestServer(t)
+	assertSessionIsolated(t, ts)
+}
