@@ -70,9 +70,6 @@ var (
 // reconstructed position rather than part of it (ADR-0001).
 const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
 
-// positionSelectColsP is positionSelectCols with "p." table prefix for JOINs.
-const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver, p.individually_imported, p.flagged`
-
 // scanPositionRow scans a sql.Row / sql.Rows into a Position using the column
 // order from positionSelectCols. NULLs are treated as zero (safe for v2+).
 func scanPositionRow(scanner interface {
