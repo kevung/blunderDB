@@ -731,6 +731,15 @@ Sans l'option ``--match``, la commande affiche les statistiques générales de l
 base. Avec ``--match``, elle vérifie les données du match et peut les comparer
 avec le fichier source original.
 
+Chaque exécution contrôle aussi l'intégrité référentielle : elle compte les
+lignes orphelines — parties sans match, coups sans partie, analyses de coup
+sans coup, analyses sans position — et affiche une ligne ``WARNING`` avec le
+total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des orphelins
+peuvent subsister dans une base écrite par une version qui n'appliquait pas les
+clés étrangères sur toutes les connexions ; ils ne sont rattachés à aucun match
+et n'occupent que de la place. La commande se termine tout de même avec le code
+de sortie 0.
+
 **Exemples:**
 
 .. code-block:: bash

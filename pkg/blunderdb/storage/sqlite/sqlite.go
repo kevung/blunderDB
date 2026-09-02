@@ -15,6 +15,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/url"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -75,8 +76,11 @@ func New(db *sql.DB) *Storage {
 }
 
 // perConnPragmas are the connection-scoped PRAGMAs every SQLite connection
-// must carry. They are set per connection (via the DSN, or via ApplyPragmas on
-// a borrowed handle) because a PRAGMA only affects the connection it runs on.
+// must carry. A PRAGMA only affects the connection it runs on, so they are
+// encoded into the DSN (see DSN) and replayed by the driver on every
+// connection the pool opens; there is deliberately no "apply to an open
+// handle" helper any more — the one that existed configured a single pooled
+// connection and left the others with foreign_keys=OFF (issue #157).
 // busy_timeout makes a contending writer wait up to 10 s for the write lock
 // rather than failing immediately with SQLITE_BUSY — essential now that the
 // global Database mutex no longer serializes writers (P5). 10 s (not gnubg's
@@ -98,7 +102,21 @@ var perConnPragmas = [][2]string{
 // The modernc driver runs these on every connection it opens, so the whole
 // pool is configured identically — unlike a one-shot post-Open PRAGMA, which
 // only configures a single connection. WAL is omitted for ":memory:" (it
-// needs a real filesystem).
+// needs a real filesystem). Every sql.Open("sqlite", …) in blunderDB goes
+// through here: the desktop/CLI Database wrapper as well as Open above.
+//
+// The driver splits its DSN at the first '?' and hands the left part to
+// SQLite verbatim — no percent-decoding — so a plain path (spaces, accents,
+// Windows drive letters and backslashes) is passed through untouched. Three
+// shapes are told apart:
+//
+//   - ":memory:" or a path without '?': the path is used as is.
+//   - a "file:" URI supplied by the caller (it may already carry a query such
+//     as mode=ro): the PRAGMAs are appended to its query.
+//   - a bare path containing '?': the driver would truncate it at the '?'
+//     and open a different file, so it is rewritten as a percent-encoded
+//     "file:" URI (SQLITE_OPEN_URI is set by the driver). Windows forbids
+//     '?' in file names, so this only ever happens on Unix.
 func DSN(path string) string {
 	q := url.Values{}
 	for _, p := range perConnPragmas {
@@ -107,33 +125,37 @@ func DSN(path string) string {
 	if path != ":memory:" {
 		q.Add("_pragma", "journal_mode(WAL)")
 	}
-	sep := "?"
-	if strings.Contains(path, "?") {
-		sep = "&"
+	base, sep := path, "?"
+	switch {
+	case strings.HasPrefix(path, "file:"):
+		if strings.Contains(path, "?") {
+			sep = "&"
+		}
+	case strings.Contains(path, "?"):
+		base = fileURI(path)
 	}
-	return path + sep + q.Encode()
+	return base + sep + q.Encode()
 }
 
-// ApplyPragmas applies the performance and safety PRAGMAs to an already-open
-// handle. WAL is skipped for in-memory databases (it needs a real filesystem).
-// It is exported so the Database wrapper applies the exact same set (D9) to the
-// handle it owns. Prefer opening via a DSN built with DSN() when possible, so
-// every pooled connection is configured (this helper only touches whichever
-// connection the driver hands it).
-func ApplyPragmas(db *sql.DB, dsn string) error {
-	if dsn != ":memory:" {
-		var mode string
-		if err := db.QueryRow(`PRAGMA journal_mode = WAL`).Scan(&mode); err != nil {
-			return fmt.Errorf("sqlite: PRAGMA journal_mode=WAL: %w", err)
-		}
+// fileURI turns a bare filesystem path into a SQLite "file:" URI, escaping
+// every path segment so that '?', '#', '%' and non-ASCII bytes survive the
+// driver's DSN split and SQLite's own URI decoding. An absolute path becomes
+// "file:///…" (a Windows drive letter is given the leading slash SQLite
+// expects); a relative one "file:rel/ative.db", which SQLite resolves against
+// the working directory exactly like the bare path would be.
+func fileURI(path string) string {
+	segs := strings.Split(filepath.ToSlash(path), "/")
+	for i, s := range segs {
+		segs[i] = url.PathEscape(s)
 	}
-	for _, p := range perConnPragmas {
-		stmt := fmt.Sprintf(`PRAGMA %s = %s`, p[0], p[1])
-		if _, err := db.Exec(stmt); err != nil {
-			return fmt.Errorf("sqlite: %s: %w", stmt, err)
+	enc := strings.Join(segs, "/")
+	if filepath.IsAbs(path) {
+		if !strings.HasPrefix(enc, "/") {
+			enc = "/" + enc
 		}
+		return "file://" + enc
 	}
-	return nil
+	return "file:" + enc
 }
 
 // ConfigurePool sizes the *sql.DB connection pool for the given DSN.
