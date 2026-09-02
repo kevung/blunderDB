@@ -175,7 +175,7 @@ func mapGnuBGCheckerMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posP
 	if moveRec.CubeAnalysis != nil {
 		cubeAnalysis := *moveRec.CubeAnalysis
 		if matchLength > 0 {
-			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength)
+			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength, game.CrawfordGame)
 		}
 		if a := buildGnuBGCubeForChecker(&cubeAnalysis); a != nil {
 			analyses = append(analyses, a)
@@ -231,7 +231,7 @@ func mapGnuBGCubeMove(moveNumber int32, moveRec *gnubgparser.MoveRecord, posPtr 
 	if moveRec.CubeAnalysis != nil {
 		cubeAnalysis := *moveRec.CubeAnalysis
 		if matchLength > 0 {
-			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength)
+			convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], player, posPtr.CubeValue, matchLength, game.CrawfordGame)
 		}
 		if a := buildGnuBGCubeAnalysis(&cubeAnalysis, cubeAction); a != nil {
 			analyses = append(analyses, a)

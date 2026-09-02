@@ -23,12 +23,20 @@ B.10 à B.19 = **étape 2 (consolider)**, perf et dette.
 `ingest/gnubgmap.go:401` : `convertGnuBGCubeMWCToEMG` appelle `GnuBGGetME(…, fCrawford=false)`.
 Toutes les décisions de videau de la partie de Crawford importées d'un `.sgf`
 sont converties avec la mauvaise référence. Touche l'invariant ADR-0019.
-- [ ] Propager le drapeau Crawford du `gnubgparser.Game`.
-- [ ] Test de parité XG↔GnuBG sur le même match (harnais `TestLuckAgreesAcrossFormats`),
-      partie de Crawford incluse (fixture à produire depuis `testdata/`).
-- [ ] Les bases déjà importées portent des équités fausses sur ces
-      positions : documenter dans la note de release ; `verify` peut les
-      compter (positions `crawford` avec `cube_error` non nul de source GnuBG).
+- [x] Propager le drapeau Crawford du `gnubgparser.Game` (`Game.CrawfordGame`,
+      posé par `RU[Crawford:CrawfordGame]` en SGF).
+- [x] Test de parité XG↔GnuBG sur le même match (harnais `TestLuckAgreesAcrossFormats`),
+      partie de Crawford incluse : `charlot1-charlot2` est un match en 7 points
+      dont la 4e partie (6-2) est la partie de Crawford dans les deux formats
+      (`ingest/gnubg_crawford_test.go`).
+- [x] Les bases déjà importées ne portent **aucune** équité fausse, constat
+      réfuté par le code et pinné par deux tests : (1) `GnuBGGetME` prend la
+      branche post-Crawford dès qu'un joueur est à 1-away, ce que le score
+      d'une partie de Crawford dit toujours de lui-même — `fCrawford` vrai ou
+      faux y donne le même MWC pour toute longueur de match, tout trait, tout
+      videau ; (2) gnuBG n'écrit aucune analyse de videau dans la partie de
+      Crawford (videau mort), donc la conversion n'y est jamais appelée. Pas
+      de note de release ni de compteur `verify` : il n'y a rien à compter.
 
 ## B.3 — `has_jacoby`/`has_beaver` jamais posés par les importeurs, mais dans le hash Zobrist [M] — bug, dédup (#171)
 

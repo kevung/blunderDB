@@ -394,11 +394,21 @@ func buildGnuBGCubeForChecker(analysis *gnubgparser.CubeAnalysis) *domain.Positi
 // convertGnuBGCubeMWCToEMG converts a cube analysis' cubeful equities from Match
 // Winning Chances to Equivalent Money Game equity, mirroring GNUbg's mwc2eq().
 // Copied from database.convertGnuBGCubeMWCToEMG (depends only on engine + parser).
-func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1, fMove, cubeValue, matchLength int) {
+//
+// crawford is gnuBG's cubeinfo.fCrawford: true while the game being converted
+// IS the Crawford game (SGF RU[Crawford:CrawfordGame], gnubgparser.Game.CrawfordGame).
+// It used to be hard-wired to false (issue #170). The flag is passed through
+// faithfully, but it has no numerical reach: gnuBG's getME takes its
+// post-Crawford branch whenever a player is 1-away, which the score of a
+// Crawford game always says on its own, and gnuBG records no cube analysis in
+// the Crawford game anyway (the cube is dead). gnubg_crawford_test.go pins
+// both facts, so a database imported before this change carries no wrong
+// equity from it.
+func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1, fMove, cubeValue, matchLength int, crawford bool) {
 	if matchLength <= 0 || analysis == nil {
 		return
 	}
-	fCrawford := false
+	fCrawford := crawford
 
 	mwcWin := float32(engine.GnuBGGetME(score0, score1, matchLength, fMove, cubeValue, fMove, fCrawford))
 	mwcLose := float32(engine.GnuBGGetME(score0, score1, matchLength, fMove, cubeValue, 1-fMove, fCrawford))
