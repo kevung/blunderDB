@@ -222,6 +222,27 @@ export async function overrideDbMethod(page, methodName, returnValue) {
 }
 
 /**
+ * Fait répondre une méthode Database selon son premier argument : `table`
+ * associe à `String(arg)` la valeur JSON-sérialisable à renvoyer, `fallback`
+ * couvre les autres appels. C'est ce qui donne à chaque position sa propre
+ * analyse (LoadAnalysis(id)) là où une constante les ferait toutes se
+ * ressembler.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} methodName
+ * @param {Record<string, unknown>} table
+ * @param {unknown} [fallback]
+ */
+export async function overrideDbMethodByArg(page, methodName, table, fallback = null) {
+    await page.evaluate(
+        ({ method, table, fallback }) => {
+            window.go.database.Database[method] = (arg) => Promise.resolve(Object.hasOwn(table, String(arg)) ? table[String(arg)] : fallback);
+        },
+        { method: methodName, table, fallback }
+    );
+}
+
+/**
  * Fait répondre `methodName` par `returnValue`, puis, dès son premier appel,
  * remplace d'autres méthodes Database par des constantes — le mock simule ainsi
  * un backend dont l'état change après une écriture (une position enregistrée
