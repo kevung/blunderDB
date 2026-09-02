@@ -1,11 +1,22 @@
 package database
 
 import (
+	"context"
 	"fmt"
+	"iter"
 	"log/slog"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Collection represents a collection of positions
+// The collection family is an adapter over storage.CollectionStore: the SQL
+// lives once, in storage/sqlite, under the contract suite both backends pass
+// (storagetest, Collection/*). Every method takes d.mu the way it always did
+// and passes the desktop's implicit tenant ("") as scope.
+
+// Collection represents a collection of positions. It mirrors
+// storage.Collection field for field: Wails binds it under the database
+// namespace, so it keeps its own name here and is converted at the edge.
 type Collection struct {
 	ID            int64  `json:"id"`
 	Name          string `json:"name"`
@@ -26,36 +37,39 @@ type CollectionPosition struct {
 	Position     Position `json:"position"`
 }
 
+// collectionStore returns the collection family of the open database, or the
+// error every wrapper method reports when no database is open. The caller
+// holds d.mu.
+func (d *Database) collectionStore() (storage.CollectionStore, error) {
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Collections(), nil
+}
+
+// collectCollections drains a collection stream into the slice the callers
+// expect (nil when the stream is empty, as the row scan it replaces produced).
+func collectCollections(seq iter.Seq2[*storage.Collection, error]) ([]Collection, error) {
+	var collections []Collection
+	for c, err := range seq {
+		if err != nil {
+			return nil, err
+		}
+		collections = append(collections, Collection(*c))
+	}
+	return collections, nil
+}
+
 // CreateCollection creates a new collection
 func (d *Database) CreateCollection(name string, description string) (int64, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return 0, fmt.Errorf("no database is currently open")
-	}
-
-	// Get the max sort_order
-	var maxOrder int
-	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection`).Scan(&maxOrder)
-	if err != nil {
-		maxOrder = -1
-	}
-
-	result, err := d.db.Exec(`
-		INSERT INTO collection (name, description, sort_order, created_at, updated_at)
-		VALUES (?, ?, ?, datetime('now'), datetime('now'))
-	`, name, description, maxOrder+1)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return 0, err
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return id, nil
+	return cs.Create(context.Background(), "", name, description)
 }
 
 // GetAllCollections returns all collections with their position counts
@@ -63,44 +77,11 @@ func (d *Database) GetAllCollections() ([]Collection, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
-
-	rows, err := d.db.Query(`
-		SELECT 
-			c.id,
-			c.name,
-			COALESCE(c.description, ''),
-			c.sort_order,
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), ''),
-			COUNT(cp.id) as position_count
-		FROM collection c
-		LEFT JOIN collection_position cp ON c.id = cp.collection_id
-		GROUP BY c.id
-		ORDER BY c.sort_order ASC
-	`)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var collections []Collection
-	for rows.Next() {
-		var c Collection
-		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt, &c.PositionCount)
-		if err != nil {
-			slog.Warn("scanning collection", "err", err)
-			continue
-		}
-		collections = append(collections, c)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return collections, nil
+	return collectCollections(cs.List(context.Background(), ""))
 }
 
 // UpdateCollection updates a collection's name and description
@@ -108,19 +89,11 @@ func (d *Database) UpdateCollection(id int64, name string, description string) e
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	_, err := d.db.Exec(`
-		UPDATE collection SET name = ?, description = ?, updated_at = datetime('now')
-		WHERE id = ?
-	`, name, description, id)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	return nil
+	return cs.Update(context.Background(), "", id, name, description)
 }
 
 // DeleteCollection deletes a collection and all its position associations
@@ -128,16 +101,11 @@ func (d *Database) DeleteCollection(id int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	_, err := d.db.Exec(`DELETE FROM collection WHERE id = ?`, id)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	return nil
+	return cs.Delete(context.Background(), "", id)
 }
 
 // ReorderCollections updates the sort order of all collections
@@ -145,24 +113,11 @@ func (d *Database) ReorderCollections(collectionIDs []int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	for i, id := range collectionIDs {
-		_, err := tx.Exec(`UPDATE collection SET sort_order = ? WHERE id = ?`, i, id)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	return tx.Commit()
+	return cs.Reorder(context.Background(), "", collectionIDs)
 }
 
 // AddPositionToCollection adds a position to a collection
@@ -170,38 +125,11 @@ func (d *Database) AddPositionToCollection(collectionID int64, positionID int64)
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Get the max sort_order for this collection
-	var maxOrder int
-	err = tx.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
-	if err != nil {
-		maxOrder = -1
-	}
-
-	_, err = tx.Exec(`
-		INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
-		VALUES (?, ?, ?, datetime('now'))
-	`, collectionID, positionID, maxOrder+1)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	// Update collection's updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return cs.AddPosition(context.Background(), "", collectionID, positionID)
 }
 
 // AddPositionsToCollection adds multiple positions to a collection
@@ -209,41 +137,11 @@ func (d *Database) AddPositionsToCollection(collectionID int64, positionIDs []in
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	// Get the max sort_order for this collection
-	var maxOrder int
-	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
-	if err != nil {
-		maxOrder = -1
-	}
-
-	tx, err := d.db.Begin()
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	for i, positionID := range positionIDs {
-		_, err = tx.Exec(`
-			INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
-			VALUES (?, ?, ?, datetime('now'))
-		`, collectionID, positionID, maxOrder+1+i)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	// Update collection's updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit()
+	return cs.AddPositions(context.Background(), "", collectionID, positionIDs)
 }
 
 // RemovePositionFromCollection removes a position from a collection
@@ -251,31 +149,11 @@ func (d *Database) RemovePositionFromCollection(collectionID int64, positionID i
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	_, err = tx.Exec(`
-		DELETE FROM collection_position 
-		WHERE collection_id = ? AND position_id = ?
-	`, collectionID, positionID)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	// Update collection's updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return cs.RemovePosition(context.Background(), "", collectionID, positionID)
 }
 
 // RemovePositionsFromCollection removes multiple positions from a collection
@@ -283,34 +161,11 @@ func (d *Database) RemovePositionsFromCollection(collectionID int64, positionIDs
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	for _, positionID := range positionIDs {
-		_, err = tx.Exec(`
-			DELETE FROM collection_position 
-			WHERE collection_id = ? AND position_id = ?
-		`, collectionID, positionID)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	// Update collection's updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit()
+	return cs.RemovePositions(context.Background(), "", collectionID, positionIDs)
 }
 
 // GetPositionIndexMap returns a map of position ID to its 1-based index in the database
@@ -318,32 +173,11 @@ func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
-
-	rows, err := d.db.Query(`SELECT id FROM position ORDER BY id ASC`)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	result := make(map[int64]int)
-	index := 1
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			slog.Warn("scanning position id", "err", err)
-			continue
-		}
-		result[id] = index
-		index++
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return cs.PositionIndexMap(context.Background(), "")
 }
 
 // GetCollectionPositions returns all positions in a collection
@@ -351,35 +185,17 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
-
-	rows, err := d.db.Query(`
-		SELECT `+positionSelectColsP+`
-		FROM position p
-		INNER JOIN collection_position cp ON p.id = cp.position_id
-		WHERE cp.collection_id = ?
-		ORDER BY cp.sort_order ASC
-	`, collectionID)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
 	var positions []Position
-	for rows.Next() {
-		position, err := scanPositionRow(rows)
+	for p, err := range cs.Positions(context.Background(), "", collectionID) {
 		if err != nil {
-			slog.Warn("scanning collection position", "collectionID", collectionID, "err", err)
-			continue
+			return nil, err
 		}
-		positions = append(positions, position)
+		positions = append(positions, *p)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return positions, nil
 }
 
@@ -388,34 +204,11 @@ func (d *Database) ReorderCollectionPositions(collectionID int64, positionIDs []
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	for i, positionID := range positionIDs {
-		_, err := tx.Exec(`
-			UPDATE collection_position SET sort_order = ?
-			WHERE collection_id = ? AND position_id = ?
-		`, i, collectionID, positionID)
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	// Update collection's updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit()
+	return cs.ReorderPositions(context.Background(), "", collectionID, positionIDs)
 }
 
 // MovePositionBetweenCollections moves a position from one collection to another
@@ -423,55 +216,23 @@ func (d *Database) MovePositionBetweenCollections(fromCollectionID int64, toColl
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
-	}
-
-	tx, err := d.db.Begin()
+	cs, err := d.collectionStore()
 	if err != nil {
 		return err
 	}
-
-	// Remove from source collection
-	_, err = tx.Exec(`
-		DELETE FROM collection_position 
-		WHERE collection_id = ? AND position_id = ?
-	`, fromCollectionID, positionID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	// Get max sort_order in destination collection
-	var maxOrder int
-	err = tx.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, toCollectionID).Scan(&maxOrder)
-	if err != nil {
-		maxOrder = -1
-	}
-
-	// Add to destination collection
-	_, err = tx.Exec(`
-		INSERT INTO collection_position (collection_id, position_id, sort_order, added_at)
-		VALUES (?, ?, ?, datetime('now'))
-	`, toCollectionID, positionID, maxOrder+1)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	// Update both collections' updated_at
-	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id IN (?, ?)`, fromCollectionID, toCollectionID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit()
+	return cs.MovePosition(context.Background(), "", fromCollectionID, toCollectionID, positionID)
 }
 
 // CopyPositionToCollection copies a position to a collection (position can be in multiple collections)
 func (d *Database) CopyPositionToCollection(toCollectionID int64, positionID int64) error {
-	return d.AddPositionToCollection(toCollectionID, positionID)
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return err
+	}
+	return cs.CopyPosition(context.Background(), "", toCollectionID, positionID)
 }
 
 // GetCollectionByID returns a collection by its ID
@@ -479,30 +240,16 @@ func (d *Database) GetCollectionByID(id int64) (*Collection, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
-
-	var c Collection
-	err := d.db.QueryRow(`
-		SELECT 
-			c.id,
-			c.name,
-			COALESCE(c.description, ''),
-			c.sort_order,
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), ''),
-			COUNT(cp.id) as position_count
-		FROM collection c
-		LEFT JOIN collection_position cp ON c.id = cp.collection_id
-		WHERE c.id = ?
-		GROUP BY c.id
-	`, id).Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt, &c.PositionCount)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-
-	return &c, nil
+	c, err := cs.Get(context.Background(), "", id)
+	if err != nil {
+		return nil, err
+	}
+	collection := Collection(*c)
+	return &collection, nil
 }
 
 // GetPositionCollections returns all collections that contain a specific position
@@ -510,43 +257,11 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
-
-	rows, err := d.db.Query(`
-		SELECT 
-			c.id,
-			c.name,
-			COALESCE(c.description, ''),
-			c.sort_order,
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
-			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), '')
-		FROM collection c
-		INNER JOIN collection_position cp ON c.id = cp.collection_id
-		WHERE cp.position_id = ?
-		ORDER BY c.sort_order ASC
-	`, positionID)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var collections []Collection
-	for rows.Next() {
-		var c Collection
-		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt)
-		if err != nil {
-			slog.Warn("scanning collection for position", "positionID", positionID, "err", err)
-			continue
-		}
-		collections = append(collections, c)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return collections, nil
+	return collectCollections(cs.CollectionsOf(context.Background(), "", positionID))
 }
 
 // ExportCollections exports specific collections to a database file. watermark
@@ -557,26 +272,44 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.db == nil {
-		return fmt.Errorf("no database is currently open")
+	cs, err := d.collectionStore()
+	if err != nil {
+		return err
 	}
+	ctx := context.Background()
 
-	// Collect all unique position IDs from selected collections
-	positionIDsMap := make(map[int64]bool)
-	for _, collectionID := range collectionIDs {
-		ids, err := queryInt64s(d.db, `SELECT position_id FROM collection_position WHERE collection_id = ?`, collectionID)
-		if err != nil {
-			return err
-		}
-		for _, posID := range ids {
-			positionIDsMap[posID] = true
-		}
+	// Read each collection and its membership up front — the rows as the
+	// export must reproduce them (rank, added_at) and the positions they link,
+	// deduplicated across collections in the order the selection lists them.
+	// Each stream is drained before the next query runs: the store may sit on
+	// a single pooled connection.
+	type exportedCollection struct {
+		row     *storage.Collection
+		members []storage.CollectionPosition
 	}
-
-	// Convert map to slice
+	exported := make([]exportedCollection, 0, len(collectionIDs))
+	var positions []Position
 	var positionIDs []int64
-	for id := range positionIDsMap {
-		positionIDs = append(positionIDs, id)
+	seen := make(map[int64]bool)
+	for _, collectionID := range collectionIDs {
+		row, err := cs.Get(ctx, "", collectionID)
+		if err != nil {
+			slog.Warn("reading collection for export", "collectionID", collectionID, "err", err)
+			continue
+		}
+		var members []storage.CollectionPosition
+		for m, err := range cs.Members(ctx, "", collectionID) {
+			if err != nil {
+				return fmt.Errorf("cannot read the positions of collection %d to export: %w", collectionID, err)
+			}
+			members = append(members, *m)
+			if !seen[m.PositionID] {
+				seen[m.PositionID] = true
+				positions = append(positions, m.Position)
+				positionIDs = append(positionIDs, m.PositionID)
+			}
+		}
+		exported = append(exported, exportedCollection{row: row, members: members})
 	}
 
 	exportDB, err := newExportDB(exportPath)
@@ -589,13 +322,9 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		return err
 	}
 
-	// Read every position and (if requested) its analysis/comment in one batched
+	// Read (if requested) every position's analysis/comment in one batched
 	// statement each, instead of the N+1 per-position SELECTs this used to run —
 	// the same helpers ExportDatabase uses (db_export.go).
-	positions, err := d.positionsByIDsLocked(positionIDs)
-	if err != nil {
-		return fmt.Errorf("cannot read the positions to export: %w", err)
-	}
 	var analysisByPosition map[int64][]byte
 	if includeAnalysis {
 		if analysisByPosition, err = d.analysisForPositions(positionIDs); err != nil {
@@ -664,21 +393,11 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	}
 
 	// Export collections and their position mappings
-	for _, collectionID := range collectionIDs {
-		var name, description string
-		var sortOrder int
-		var createdAt, updatedAt string
-		cErr := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
-			Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
-		if cErr != nil {
-			slog.Warn("reading collection for export", "collectionID", collectionID, "err", cErr)
-			continue
-		}
-
+	for _, c := range exported {
 		result, insErr := tx.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-			name, description, sortOrder, createdAt, updatedAt)
+			c.row.Name, c.row.Description, c.row.SortOrder, c.row.CreatedAt, c.row.UpdatedAt)
 		if insErr != nil {
-			slog.Warn("inserting collection into export database", "collectionID", collectionID, "err", insErr)
+			slog.Warn("inserting collection into export database", "collectionID", c.row.ID, "err", insErr)
 			continue
 		}
 		newCollectionID, idErr := result.LastInsertId()
@@ -687,32 +406,15 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 			return err
 		}
 
-		// Export collection_position mappings
-		if err = func() error {
-			rows, qErr := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
-			if qErr != nil {
-				slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", qErr)
-				return nil
+		for _, m := range c.members {
+			newPosID, ok := oldToNewID[m.PositionID]
+			if !ok {
+				continue
 			}
-			defer rows.Close()
-			for rows.Next() {
-				var oldPosID int64
-				var cpSortOrder int
-				var addedAt string
-				if sErr := rows.Scan(&oldPosID, &cpSortOrder, &addedAt); sErr != nil {
-					slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", sErr)
-					continue
-				}
-				if newPosID, ok := oldToNewID[oldPosID]; ok {
-					if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
-						newCollectionID, newPosID, cpSortOrder, addedAt); insErr != nil {
-						slog.Warn("inserting collection_position into export database", "collectionID", collectionID, "err", insErr)
-					}
-				}
+			if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+				newCollectionID, newPosID, m.SortOrder, m.AddedAt); insErr != nil {
+				slog.Warn("inserting collection_position into export database", "collectionID", c.row.ID, "err", insErr)
 			}
-			return rows.Err()
-		}(); err != nil {
-			return err
 		}
 	}
 
@@ -732,33 +434,10 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 func (d *Database) CollectionCoverage(positionIDs []int64) (map[int64]int, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	if d.db == nil {
-		return nil, fmt.Errorf("no database is currently open")
-	}
 
-	selected := make(map[int64]bool, len(positionIDs))
-	for _, id := range positionIDs {
-		selected[id] = true
-	}
-
-	rows, err := d.db.Query(`SELECT collection_id, position_id FROM collection_position`)
+	cs, err := d.collectionStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	coverage := make(map[int64]int)
-	for rows.Next() {
-		var collectionID, positionID int64
-		if err := rows.Scan(&collectionID, &positionID); err != nil {
-			return nil, err
-		}
-		if _, ok := coverage[collectionID]; !ok {
-			coverage[collectionID] = 0
-		}
-		if selected[positionID] {
-			coverage[collectionID]++
-		}
-	}
-	return coverage, rows.Err()
+	return cs.Coverage(context.Background(), "", positionIDs)
 }

@@ -344,6 +344,93 @@ func (s *collectionStore) Positions(ctx context.Context, scope string, collectio
 	}
 }
 
+// leadingScanner forwards Scan to sc with lead prepended to the
+// destinations, so a row that carries extra columns ahead of a position can
+// still be read by scanPosition.
+type leadingScanner struct {
+	sc   scanner
+	lead []any
+}
+
+func (l leadingScanner) Scan(dest ...any) error {
+	return l.sc.Scan(append(append(make([]any, 0, len(l.lead)+len(dest)), l.lead...), dest...)...)
+}
+
+// Members streams a collection's membership rows in collection order, each
+// with the position it links.
+func (s *collectionStore) Members(ctx context.Context, scope string, collectionID int64) iter.Seq2[*storage.CollectionPosition, error] {
+	return func(yield func(*storage.CollectionPosition, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT cp.id, cp.collection_id, cp.position_id, COALESCE(cp.sort_order,0), cp.added_at,
+			 `+collectionPositionCols+`
+			 FROM collection_position cp
+			 INNER JOIN position p ON p.id = cp.position_id
+			 WHERE cp.collection_id = $1 AND cp.tenant_id = $2
+			 ORDER BY cp.sort_order ASC`,
+			collectionID, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list collection members: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var m storage.CollectionPosition
+			var addedAt *time.Time
+			p, err := scanPosition(leadingScanner{rows, []any{&m.ID, &m.CollectionID, &m.PositionID, &m.SortOrder, &addedAt}})
+			if err != nil {
+				yield(nil, fmt.Errorf("postgres: list collection members: %w", err))
+				return
+			}
+			if addedAt != nil {
+				m.AddedAt = tsTime(*addedAt)
+			}
+			m.Position = p
+			if !yield(&m, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list collection members: %w", err))
+		}
+	}
+}
+
+// Coverage counts, for every collection of the tenant, its members among
+// positionIDs. The membership rows are walked once and counted here, the
+// same way the SQLite backend does, so both stay free of an IN-list bound.
+func (s *collectionStore) Coverage(ctx context.Context, scope string, positionIDs []int64) (map[int64]int, error) {
+	selected := make(map[int64]bool, len(positionIDs))
+	for _, id := range positionIDs {
+		selected[id] = true
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT c.id, cp.position_id FROM collection c
+		 LEFT JOIN collection_position cp ON cp.collection_id = c.id
+		 WHERE c.tenant_id = $1`, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: collection coverage: %w", err)
+	}
+	defer rows.Close()
+	coverage := make(map[int64]int)
+	for rows.Next() {
+		var collectionID int64
+		var positionID *int64
+		if err := rows.Scan(&collectionID, &positionID); err != nil {
+			return nil, fmt.Errorf("postgres: collection coverage: %w", err)
+		}
+		if _, ok := coverage[collectionID]; !ok {
+			coverage[collectionID] = 0
+		}
+		if positionID != nil && selected[*positionID] {
+			coverage[collectionID]++
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: collection coverage: %w", err)
+	}
+	return coverage, nil
+}
+
 // CollectionsOf streams the collections a position belongs to, in sort order.
 func (s *collectionStore) CollectionsOf(ctx context.Context, scope string, positionID int64) iter.Seq2[*storage.Collection, error] {
 	return func(yield func(*storage.Collection, error) bool) {

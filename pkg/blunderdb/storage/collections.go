@@ -48,6 +48,20 @@ type CollectionStore interface {
 	// Positions streams the positions of a collection in order.
 	Positions(ctx context.Context, scope string, collectionID int64) iter.Seq2[*domain.Position, error]
 
+	// Members streams a collection's membership rows in collection order,
+	// each carrying the position it links. Positions is the same walk
+	// projected onto the positions; Members is for a caller that needs the
+	// membership itself — its rank and the moment it was added — such as an
+	// export that must reproduce a collection exactly.
+	Members(ctx context.Context, scope string, collectionID int64) iter.Seq2[*CollectionPosition, error]
+
+	// Coverage reports, for every collection, how many of its positions are
+	// among positionIDs. Every collection is a key: one with no member in the
+	// selection — an empty collection included — maps to 0. The export
+	// screen uses it to say that a collection will arrive truncated before
+	// anything is written.
+	Coverage(ctx context.Context, scope string, positionIDs []int64) (map[int64]int, error)
+
 	// CollectionsOf streams the collections a position belongs to.
 	CollectionsOf(ctx context.Context, scope string, positionID int64) iter.Seq2[*Collection, error]
 
