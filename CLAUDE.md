@@ -256,6 +256,13 @@ Violating one of these is a bug even if all tests pass:
   where it belongs, in `Decide`'s no-double payoffs. See ADR-0022; and the
   file is a port, so any change here lands in gammonNet's `gn_cube.c` and its
   spec §2 first, then in `testdata/cube_gold.bin`.
+- **A shared optimisation is decided upstream, in gammonNet** (its ADR-0003). The criterion
+  is measurable, not a matter of taste: *an optimisation is conceptual if its gain survives a
+  change of language*. Conceptual ones — the shape of the algorithm — are written in
+  gammonNet first, with their measurement, and this port follows. Implementation ones stay
+  here without remorse: the AVX2 kernel is ours and has no business upstream. Measured on
+  2026-09-02, five of this port's six non-network wins turned out to be language artefacts
+  worth 0.007 % to 0.5 % in C — which is why the criterion is measured and not guessed.
 - **The network kernel never fuses and never reassociates**: the batched evaluator
   vectorises over POSITIONS, one per SIMD lane, each lane accumulating over `j` in
   ascending order in float32, with multiply and add kept as two operations. No FMA
