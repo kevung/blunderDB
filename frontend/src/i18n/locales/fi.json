@@ -878,6 +878,7 @@
         "sessionRestoredViews": "Istunto palautettu näkymineen",
         "matchAlreadyImported": "Tämä ottelu on jo tuotu",
         "positionAlreadyExists": "Tämä positio on jo olemassa",
+        "positionAlreadyExistsWithId": "Tämä positio on jo olemassa (nro {id}); päivitys hylättiin",
         "updateOnlyEdit": "Päivitys on mahdollista vain muokkaustilassa",
         "failedRenderBoard": "Lautakuvan piirtäminen epäonnistui",
         "errorImportingBgblitzMatch": "Virhe tuotaessa BGBlitz-ottelua: {error}",

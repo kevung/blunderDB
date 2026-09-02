@@ -1,5 +1,5 @@
 {
-  "_comment": "Shared parse contract corpus. Asserted by BOTH the Go parser (pkg/blunderdb/parser, parse_contract_test.go) AND the GUI parsePosition (frontend/src/__tests__/parseContract.test.js). Generated from the CURRENT frontend parsePosition (the spec). Conventions: position is the domain.Position JSON shape (snake_case); analysis.doublingCubeAnalysis is the camelCase object or null; analysis.checkerAnalysis is the bare moves array.",
+  "_comment": "Shared parse contract corpus. Since issue #175 a comma is no longer rewritten into a dot over the whole text: numbers accept both separators, and comments and the version line keep their commas (see xg_cube_en_comment and xg_cube_fr_toogood_redouble). Asserted by BOTH the Go parser (pkg/blunderdb/parser, parse_contract_test.go) AND the GUI parsePosition (frontend/src/__tests__/parseContract.test.js). Generated from the CURRENT frontend parsePosition (the spec). Conventions: position is the domain.Position JSON shape (snake_case); analysis.doublingCubeAnalysis is the camelCase object or null; analysis.checkerAnalysis is the bare moves array.",
   "cases": [
     {
       "name": "bare_xgid",
@@ -445,7 +445,7 @@
         "analysis": {
           "analysisType": "DoublingCube",
           "xgid": "-BaB--C---a-cD-Aabbe-A-A-A:1:-1:-1:00:2:0:0:9:10",
-          "analysisEngineVersion": "eXtreme Gammon Version: 2.10. TEM: Kazaross XG2",
+          "analysisEngineVersion": "eXtreme Gammon Version: 2.10, TEM: Kazaross XG2",
           "comment": "",
           "doublingCubeAnalysis": {
             "analysisEngine": "XG",
@@ -1428,7 +1428,7 @@
           "analysisType": "DoublingCube",
           "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10",
           "analysisEngineVersion": "eXtreme Gammon Version: 2.19",
-          "comment": "This is a note about the position. with 1.234 as a number.",
+          "comment": "This is a note about the position, with 1,234 as a number.",
           "doublingCubeAnalysis": {
             "analysisEngine": "XG",
             "analysisDepth": "Rollout",

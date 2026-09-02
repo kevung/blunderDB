@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
@@ -14,6 +15,22 @@ import (
 	"github.com/kevung/gnubgparser"
 	"github.com/kevung/xgparser/xgparser"
 )
+
+// openExistingSQLite opens a database file that is only being read from —
+// an import source, a file being inspected. sql.Open on a path that does not
+// exist creates an empty SQLite file there, so a typo in an import path used
+// to leave a 0-byte .db on the user's disk and then fail on the missing
+// metadata table; the path is checked first, and a directory is refused too.
+func openExistingSQLite(path string) (*sql.DB, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("database file not found: %w", err)
+	}
+	if info.IsDir() {
+		return nil, fmt.Errorf("database file not found: %s is a directory", path)
+	}
+	return sql.Open("sqlite", path)
+}
 
 // writeImportedMatch persists a mapped MatchGraph through the storage backend,
 // shared by the format-specific Import* methods that delegate to the ingest

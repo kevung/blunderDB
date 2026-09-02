@@ -95,26 +95,12 @@ func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.Mov
 
 // createPositionFromGnuBG converts a gnubgparser.Position to a domain.Position.
 func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.Game, matchLength int) (*domain.Position, error) {
-	awayScore1 := matchLength - game.Score[0]
-	awayScore2 := matchLength - game.Score[1]
-	if matchLength == 0 {
-		awayScore1 = -1
-		awayScore2 = -1
-	}
-
-	cubeValue := 0
-	if gnubgPos.CubeValue > 0 {
-		for v := gnubgPos.CubeValue; v > 1; v >>= 1 {
-			cubeValue++
-		}
-	}
-
 	pos := &domain.Position{
 		PlayerOnRoll: gnubgPos.OnRoll,
 		DecisionType: domain.CheckerAction,
-		Score:        [2]int{awayScore1, awayScore2},
+		Score:        domain.AwayScores(matchLength, game.Score[0], game.Score[1]),
 		Cube: domain.Cube{
-			Value: cubeValue,
+			Value: domain.CubeExponent(gnubgPos.CubeValue),
 			Owner: gnubgPos.CubeOwner,
 		},
 		Dice: [2]int{0, 0},
@@ -148,17 +134,9 @@ func createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.G
 		}
 	}
 
-	player1Total := 0
-	player2Total := 0
-	for i := 0; i < 26; i++ {
-		if pos.Board.Points[i].Color == 0 {
-			player1Total += pos.Board.Points[i].Checkers
-		} else if pos.Board.Points[i].Color == 1 {
-			player2Total += pos.Board.Points[i].Checkers
-		}
+	if err := pos.Board.RecomputeBearoff(); err != nil {
+		return nil, err
 	}
-	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
-
 	return pos, nil
 }
 

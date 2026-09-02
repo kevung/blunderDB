@@ -878,6 +878,7 @@
         "sessionRestoredViews": "Sesión restaurada con vistas",
         "matchAlreadyImported": "Esta partida ya ha sido importada",
         "positionAlreadyExists": "Esta posición ya existe",
+        "positionAlreadyExistsWithId": "Esta posición ya existe (n.º {id}); la actualización se ha rechazado",
         "updateOnlyEdit": "Actualizar solo es posible en modo de edición",
         "failedRenderBoard": "No se pudo renderizar la imagen del tablero",
         "errorImportingBgblitzMatch": "Error al importar la partida BGBlitz: {error}",

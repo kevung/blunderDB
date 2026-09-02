@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"path/filepath"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -66,7 +67,10 @@ func MapXG(path string) (*MatchGraph, error) {
 				PointsWon:    game.PointsWon,
 				MoveCount:    len(game.Moves),
 			},
-			Moves: mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawMarks),
+		}
+		gg.Moves, err = mapGameMoves(gameIdx, &game, match.Metadata.MatchLength, rawCubeInfo, rawMarks)
+		if err != nil {
+			return nil, fmt.Errorf("ingest: %s: %w", filepath.Base(path), err)
 		}
 		graph.Games = append(graph.Games, gg)
 	}
@@ -238,7 +242,7 @@ func luckOrNothing(luck map[flagKey]int32) map[flagKey]int32 {
 // associating raw cube records with moves, carrying a skipped "No Double"
 // comment forward to the next checker move, and flattening each XG move into
 // the one or two MoveGraphs it produces.
-func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) []MoveGraph {
+func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeInfo map[string]*rawCubeAction, marks rawMoveMarks) ([]MoveGraph, error) {
 	var out []MoveGraph
 
 	cubeIdx := 0
@@ -280,7 +284,10 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 			}
 		}
 
-		mgs := mapMove(int32(moveIdx), &move, game, matchLength, rawCube)
+		mgs, err := mapMove(int32(moveIdx), &move, game, matchLength, rawCube)
+		if err != nil {
+			return nil, fmt.Errorf("game %d, move %d: %w", gameIdx+1, moveIdx+1, err)
+		}
 		// A flagged decision marks every position it yields. For a checker move
 		// that is one position; for a Double/Take it is two — the double and the
 		// take/pass — because XG records one decision where blunderDB stores two
@@ -304,21 +311,21 @@ func mapGameMoves(gameIdx int, game *xgparser.Game, matchLength int32, rawCubeIn
 		out = append(out, mgs...)
 	}
 
-	return out
+	return out, nil
 }
 
 // mapMove maps a single XG move into MoveGraphs, mirroring
 // database.importMoveWithCacheAndRawCube. A checker move yields one MoveGraph; a
 // Double/Take or Double/Pass yields two; a skipped/irrelevant cube decision
 // yields none.
-func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) []MoveGraph {
+func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	switch {
 	case move.MoveType == "checker" && move.CheckerMove != nil:
 		return mapCheckerMove(moveNumber, move, game, matchLength, rawCube)
 	case move.MoveType == "cube" && move.CubeMove != nil:
 		return mapCubeMove(moveNumber, move, game, matchLength, rawCube)
 	default:
-		return nil
+		return nil, nil
 	}
 }
 
@@ -326,11 +333,11 @@ func mapMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLe
 // checker analysis with the preceding cube decision (attached to the checker
 // position so it can be inspected) exactly as the legacy two saveAnalysis calls
 // would merge.
-func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) []MoveGraph {
+func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cm := move.CheckerMove
 	pos, err := createPositionFromXG(cm.Position, game, matchLength, cm.ActivePlayer)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	pos.PlayerOnRoll = convertXGPlayerToBlunderDB(cm.ActivePlayer)
 	pos.DecisionType = domain.CheckerAction
@@ -366,13 +373,13 @@ func mapCheckerMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, 
 	if move.Comment != "" {
 		mg.Comments = []string{move.Comment}
 	}
-	return []MoveGraph{mg}
+	return []MoveGraph{mg}, nil
 }
 
 // mapCubeMove builds the MoveGraph(s) for a cube decision: an explicit
 // Double/Take (two positions), a Double/Pass (doubling + pass positions), a
 // single cube action, or a counted "No Double" decision.
-func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) []MoveGraph {
+func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	isExplicitCubeAction := false
@@ -395,13 +402,13 @@ func mapCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, mat
 // mapNoDoubleMove handles an implicit "No Double" decision that XG still counts
 // as a cube decision (only when the player actually holds the cube and analysis
 // is available).
-func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) []MoveGraph {
+func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	hasRawAnalysis := rawCube != nil && rawCube.Doubled != nil
 	hasTextAnalysis := cube.Analysis != nil
 	if !hasRawAnalysis && !hasTextAnalysis {
-		return nil
+		return nil, nil
 	}
 
 	// Only count when the active player can actually double.
@@ -410,20 +417,20 @@ func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game,
 			(rawCube.ActiveP > 0 && rawCube.CubeB > 0) ||
 			(rawCube.ActiveP < 0 && rawCube.CubeB < 0)
 		if !canDouble {
-			return nil
+			return nil, nil
 		}
 	} else {
 		c := cube.Position.Cube
 		ap := cube.ActivePlayer
 		canDouble := c == 0 || (ap > 0 && c > 0) || (ap < 0 && c < 0)
 		if !canDouble {
-			return nil
+			return nil, nil
 		}
 	}
 
 	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	pos.PlayerOnRoll = convertXGPlayerToBlunderDB(cube.ActivePlayer)
 	pos.DecisionType = domain.CubeAction
@@ -446,17 +453,17 @@ func mapNoDoubleMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game,
 		},
 		Position: pos,
 		Analyses: frag(analysis),
-	}}
+	}}, nil
 }
 
 // mapDoubleTakeMove handles a Double that was Taken: a doubling-decision
 // position and the opponent's take-decision position.
-func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) []MoveGraph {
+func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	pos1, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	pos1.PlayerOnRoll = convertXGPlayerToBlunderDB(cube.ActivePlayer)
 	pos1.DecisionType = domain.CubeAction
@@ -498,17 +505,17 @@ func mapDoubleTakeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 		mg2.Comments = []string{move.Comment}
 	}
 
-	return []MoveGraph{mg1, mg2}
+	return []MoveGraph{mg1, mg2}, nil
 }
 
 // mapSingleCubeMove handles a single explicit cube action (e.g. Double/Pass).
 // For a Double/Pass it also emits the passer's take/pass decision position.
-func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) []MoveGraph {
+func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, rawCube *rawCubeAction) ([]MoveGraph, error) {
 	cube := move.CubeMove
 
 	pos, err := createPositionFromXG(cube.Position, game, matchLength, cube.ActivePlayer)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	pos.PlayerOnRoll = convertXGPlayerToBlunderDB(cube.ActivePlayer)
 	pos.DecisionType = domain.CubeAction
@@ -560,7 +567,7 @@ func mapSingleCubeMove(moveNumber int32, move *xgparser.Move, game *xgparser.Gam
 		})
 	}
 
-	return out
+	return out, nil
 }
 
 // frag wraps a single (possibly nil) analysis fragment as the Analyses slice.

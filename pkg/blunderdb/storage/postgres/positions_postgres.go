@@ -182,6 +182,14 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact,
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		p.ID, tenantID(scope))
+	if isUniqueViolation(err) {
+		// The edit turned this position into one that is already stored:
+		// the UNIQUE index on (tenant_id, zobrist_hash) refused it. Say which one.
+		if id, found, lookupErr := s.Exists(ctx, scope, cols.ZobristHash); lookupErr == nil && found && id != p.ID {
+			return fmt.Errorf("postgres: update position: %w", &storage.DuplicatePositionError{ExistingID: id})
+		}
+		return fmt.Errorf("postgres: update position: %w: %w", storage.ErrConflict, err)
+	}
 	if err != nil {
 		return fmt.Errorf("postgres: update position: %w", err)
 	}

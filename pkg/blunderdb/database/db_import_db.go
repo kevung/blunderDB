@@ -106,7 +106,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	}
 
 	// Open the import database
-	importDB, err := sql.Open("sqlite", importPath)
+	importDB, err := openExistingSQLite(importPath)
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +297,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	}()
 
 	// Open the import database
-	importDB, err := sql.Open("sqlite", importPath)
+	importDB, err := openExistingSQLite(importPath)
 	if err != nil {
 		return nil, err
 	}

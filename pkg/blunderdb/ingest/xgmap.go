@@ -61,13 +61,6 @@ func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLen
 	activePlayerBlunderDB := convertXGPlayerToBlunderDB(activePlayer)
 	opponentPlayerBlunderDB := 1 - activePlayerBlunderDB
 
-	awayScore1 := int(matchLength) - int(game.InitialScore[0])
-	awayScore2 := int(matchLength) - int(game.InitialScore[1])
-	if matchLength == 0 {
-		awayScore1 = -1
-		awayScore2 = -1
-	}
-
 	// Map XG cube position (relative to active player) to blunderDB absolute.
 	cubeOwner := -1
 	if xgPos.CubePos == 1 {
@@ -76,20 +69,12 @@ func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLen
 		cubeOwner = opponentPlayerBlunderDB
 	}
 
-	// Convert cube value from XG (1,2,4,8…) to blunderDB exponent (0,1,2,3…).
-	cubeValue := 0
-	if xgPos.Cube > 0 {
-		for v := int(xgPos.Cube); v > 1; v >>= 1 {
-			cubeValue++
-		}
-	}
-
 	pos := &domain.Position{
 		PlayerOnRoll: 0,
 		DecisionType: domain.CheckerAction,
-		Score:        [2]int{awayScore1, awayScore2},
+		Score:        domain.AwayScores(int(matchLength), int(game.InitialScore[0]), int(game.InitialScore[1])),
 		Cube: domain.Cube{
-			Value: cubeValue,
+			Value: domain.CubeExponent(int(xgPos.Cube)),
 			Owner: cubeOwner,
 		},
 		Dice: [2]int{0, 0},
@@ -129,18 +114,12 @@ func createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLen
 		}
 	}
 
-	// Calculate bearoff (checkers borne off) from on-board totals.
-	player1Total := 0
-	player2Total := 0
-	for i := 0; i < 26; i++ {
-		if pos.Board.Points[i].Color == 0 {
-			player1Total += pos.Board.Points[i].Checkers
-		} else if pos.Board.Points[i].Color == 1 {
-			player2Total += pos.Board.Points[i].Checkers
-		}
+	// Borne-off checkers are what is missing from the board; a colour with
+	// more than 15 on the board is a corrupt file, refused here rather than
+	// stored with a negative bearoff.
+	if err := pos.Board.RecomputeBearoff(); err != nil {
+		return nil, err
 	}
-	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
-
 	return pos, nil
 }
 

@@ -22,3 +22,10 @@ func referenced(err error) error {
 	}
 	return err
 }
+
+// isUniqueViolation reports whether err is SQLite refusing a row for a UNIQUE
+// index — the Zobrist index on position, for what this package uses it for.
+func isUniqueViolation(err error) bool {
+	var se *sqlite3.Error
+	return errors.As(err, &se) && se.Code() == sqlite3lib.SQLITE_CONSTRAINT_UNIQUE
+}

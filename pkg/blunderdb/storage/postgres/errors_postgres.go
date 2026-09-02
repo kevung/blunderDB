@@ -9,8 +9,19 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// pgForeignKeyViolation is SQLSTATE 23503 (Class 23 — integrity constraint).
-const pgForeignKeyViolation = "23503"
+// pgForeignKeyViolation is SQLSTATE 23503 (Class 23 — integrity constraint);
+// pgUniqueViolation is 23505, the same class.
+const (
+	pgForeignKeyViolation = "23503"
+	pgUniqueViolation     = "23505"
+)
+
+// isUniqueViolation reports whether err is PostgreSQL refusing a row for a
+// UNIQUE index — the (tenant_id, zobrist_hash) index on position here.
+func isUniqueViolation(err error) bool {
+	var pe *pgconn.PgError
+	return errors.As(err, &pe) && pe.Code == pgUniqueViolation
+}
 
 // referenced maps a FOREIGN KEY violation onto storage.ErrNotFound — the row
 // the caller pointed at does not exist, the same thing Get reports for a bad

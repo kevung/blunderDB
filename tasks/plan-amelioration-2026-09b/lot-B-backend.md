@@ -113,16 +113,33 @@ Même bump que A.2/B.3.
   inexistant crée un `.db` vide sur le disque de l'utilisateur.
 - `positions_sqlite.go:152-171` : éditer une position vers un hash existant
   remonte `UNIQUE constraint failed` brut.
-- [ ] Diagnostic « bloc d'analyse non reconnu (langue ?) » remonté à la GUI
-      (toast) et à la CLI ; ajouter ES/IT/RU/EL/FI aux marqueurs si XG les
-      exporte (à vérifier sur échantillons — voir prompt P9).
-- [ ] Refuser l'import avec un message nommant le jeu et le coup si un joueur
-      a ≠ 15 pions ; helper `domain.AwayScores`, `domain.CubeExponent`,
-      `(*Board).RecomputeBearoff()` partagés par les trois importeurs.
-- [ ] Normaliser la virgule seulement dans les champs numériques.
-- [ ] `os.Stat` avant `sql.Open` (ou DSN `mode=ro`).
-- [ ] Erreur de domaine « cette position existe déjà (id N) » avec proposition
-      d'y aller.
+- [x] Diagnostic `parser.ErrUnrecognisedAnalysis` (« analysis block not
+      recognised — XG language not supported? ») dès qu'un bloc d'analyse est
+      visible (liste de coups indentée, `(G:…%)`) sans qu'aucun marqueur ne
+      l'ait lu, ou que les coups sont lus mais aucune chance de gain ; remonté
+      à la GUI par le toast d'erreur existant (le collage sur le plateau
+      retombe sur la ligne XGID seule) et au serveur/`call` en 4xx. La CLI
+      n'a pas de chemin d'import de texte XG (`import --type position` lit du
+      JSON) : rien à remonter. XG n'existe qu'en EN/DE/FR/ES/JA/EL/RU (P9) ;
+      ES/EL/RU **non ajoutés** faute d'échantillon vérifié, comportement
+      documenté par `TestUnsupportedXGLanguageIsReportedNotSwallowed`.
+- [x] `domain.AwayScores`, `domain.CubeExponent`, `(*Board).RecomputeBearoff()`
+      partagés par les trois `createPositionFrom*` ; un joueur à plus de 15
+      pions est refusé (`domain.TooManyCheckersError`), et l'erreur remonte
+      jusqu'à `MapXG`/`MapGnuBG`/`MapBGF` en nommant le fichier, la partie et
+      le coup (les mappers XG avalaient l'erreur en supprimant le coup).
+- [x] Virgule acceptée comme séparateur décimal dans les captures numériques
+      (`pf` lit les deux) ; le texte n'est plus réécrit, commentaires et
+      ligne de version gardent leurs virgules (corpus mis à jour).
+- [x] `os.Stat` avant `sql.Open` (`openExistingSQLite`) dans
+      `AnalyzeImportDatabase`, `CommitImportDatabase`, `InspectIssuance` et
+      `ingest.DBImporter` (`sqlite.Open` y créait même une base fraîche).
+- [x] `storage.DuplicatePositionError{ExistingID}` (« this position already
+      exists (id N) », `errors.Is(…, ErrConflict)`) retournée par `Update`
+      des deux backends sur violation UNIQUE du hash, test de contrat commun ;
+      la GUI affiche `status.positionAlreadyExistsWithId` (9 locales) et
+      n'efface plus l'analyse avant que la mise à jour soit acceptée. La
+      « proposition d'y aller » (navigation) reste à faire.
 
 ## B.8 — CLI : codes de retour, `ExitOnError`, sortie JSON [S/M] — DX (#176)
 

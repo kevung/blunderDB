@@ -878,6 +878,7 @@
         "sessionRestoredViews": "Η συνεδρία αποκαταστάθηκε με προβολές",
         "matchAlreadyImported": "Αυτός ο αγώνας έχει ήδη εισαχθεί",
         "positionAlreadyExists": "Αυτή η θέση υπάρχει ήδη",
+        "positionAlreadyExistsWithId": "Αυτή η θέση υπάρχει ήδη (αρ. {id})· η ενημέρωση απορρίφθηκε",
         "updateOnlyEdit": "Η ενημέρωση είναι δυνατή μόνο στη λειτουργία επεξεργασίας",
         "failedRenderBoard": "Αποτυχία απόδοσης της εικόνας του ταμπλό",
         "errorImportingBgblitzMatch": "Σφάλμα κατά την εισαγωγή αγώνα BGBlitz: {error}",

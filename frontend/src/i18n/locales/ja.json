@@ -878,6 +878,7 @@
         "sessionRestoredViews": "ビューとともにセッションを復元しました",
         "matchAlreadyImported": "このマッチはすでにインポートされています",
         "positionAlreadyExists": "このポジションはすでに存在します",
+        "positionAlreadyExistsWithId": "このポジションはすでに存在します（No. {id}）。更新は拒否されました",
         "updateOnlyEdit": "更新は編集モードでのみ可能です",
         "failedRenderBoard": "ボード画像のレンダリングに失敗しました",
         "errorImportingBgblitzMatch": "BGBlitzマッチのインポート中にエラーが発生しました：{error}",
