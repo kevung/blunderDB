@@ -22,6 +22,15 @@ type CommentStore interface {
 	// DeleteForPosition removes every comment entry of a position.
 	DeleteForPosition(ctx context.Context, scope string, positionID int64) error
 
+	// Upsert writes text as the position's primary comment — its oldest
+	// non-empty entry — rewriting that entry in place when there is one and
+	// appending a new entry otherwise. It returns the id of the entry
+	// written. This is the single-comment view the desktop's tag commands
+	// and importers edit: they read the primary entry back as the last item
+	// of ByPosition, so an Upsert never duplicates the other entries of the
+	// wall. It is NOT the inverse of Text, which joins every entry.
+	Upsert(ctx context.Context, scope string, positionID int64, text string) (int64, error)
+
 	// Text returns the concatenated comment text of a position (empty if none).
 	Text(ctx context.Context, scope string, positionID int64) (string, error)
 

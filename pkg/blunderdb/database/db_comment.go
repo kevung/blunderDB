@@ -1,19 +1,51 @@
 package database
 
 import (
-	"database/sql"
-	"errors"
+	"context"
+	"fmt"
+	"iter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-func (d *Database) DeleteComment(positionID int64) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+// The comment family is an adapter over storage.CommentStore: the SQL lives
+// once, in storage/sqlite, under the contract suite both backends pass
+// (storagetest, Comment/*). Every method takes d.mu the way it always did
+// and passes the desktop's implicit tenant ("") as scope.
 
-	_, err := d.db.Exec(`DELETE FROM comment WHERE position_id = ?`, positionID)
+// commentStore returns the comment family of the open database, or the
+// error every wrapper method reports when no database is open. The caller
+// holds d.mu.
+func (d *Database) commentStore() (storage.CommentStore, error) {
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Comments(), nil
+}
+
+// collectComments drains a comment stream into the slice the callers expect
+// (nil when the stream is empty, as the row scan it replaces produced).
+func collectComments(seq iter.Seq2[*CommentEntry, error]) ([]CommentEntry, error) {
+	var entries []CommentEntry
+	for e, err := range seq {
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, *e)
+	}
+	return entries, nil
+}
+
+// DeleteComment removes every comment entry of a position.
+func (d *Database) DeleteComment(positionID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	cs, err := d.commentStore()
 	if err != nil {
 		return err
 	}
-	return nil
+	return cs.DeleteForPosition(context.Background(), "", positionID)
 }
 
 // AddComment inserts a new comment entry for a position (allows multiple per position)
@@ -21,11 +53,12 @@ func (d *Database) AddComment(positionID int64, text string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	_, err := d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
+	cs, err := d.commentStore()
 	if err != nil {
 		return err
 	}
-	return nil
+	_, err = cs.Add(context.Background(), "", positionID, text)
+	return err
 }
 
 // UpdateCommentEntry updates a specific comment by its ID
@@ -33,18 +66,11 @@ func (d *Database) UpdateCommentEntry(commentID int64, text string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	if d.commentTableHasTimestamps() {
-		_, err := d.db.Exec(`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, text, commentID)
-		if err != nil {
-			return err
-		}
-	} else {
-		_, err := d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, commentID)
-		if err != nil {
-			return err
-		}
+	cs, err := d.commentStore()
+	if err != nil {
+		return err
 	}
-	return nil
+	return cs.Update(context.Background(), "", commentID, text)
 }
 
 // DeleteCommentEntry deletes a specific comment by its ID
@@ -52,67 +78,50 @@ func (d *Database) DeleteCommentEntry(commentID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	_, err := d.db.Exec(`DELETE FROM comment WHERE id = ?`, commentID)
+	cs, err := d.commentStore()
 	if err != nil {
 		return err
 	}
-	return nil
+	return cs.Delete(context.Background(), "", commentID)
 }
 
-// SaveComment saves a comment for a given position ID
+// SaveComment writes text as the position's primary comment: it rewrites the
+// oldest entry when the position already has one and inserts a new entry
+// otherwise. LoadComment reads that same entry back, so the pair the tag
+// commands and the importers run (load, edit, save) touches one entry of the
+// wall and never duplicates the others.
 func (d *Database) SaveComment(positionID int64, text string) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
 
-	// Check if a comment already exists for the given position ID
-	var existingID int64
-	err := d.db.QueryRow(`SELECT id FROM comment WHERE position_id = ?`, positionID).Scan(&existingID)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	cs, err := d.commentStore()
+	if err != nil {
 		return err
 	}
-
-	if existingID > 0 {
-		// Update the existing comment
-		_, err = d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, existingID)
-		if err != nil {
-			return err
-		}
-	} else {
-		// Insert a new comment
-		_, err = d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	_, err = cs.Upsert(context.Background(), "", positionID, text)
+	return err
 }
 
-// LoadComment loads a comment for a given position ID
+// LoadComment returns the text of the position's primary comment — the entry
+// SaveComment rewrites — or "" when the position has none.
 func (d *Database) LoadComment(positionID int64) (string, error) {
-	d.mu.RLock()         // Lock the mutex
-	defer d.mu.RUnlock() // Unlock the mutex when the function returns
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
-	var text string
-	err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, positionID).Scan(&text)
+	cs, err := d.commentStore()
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", nil // No comment found
-		}
 		return "", err
 	}
-	return text, nil
-}
-
-// commentTableHasTimestamps checks whether the comment table has created_at/modified_at columns.
-func (d *Database) commentTableHasTimestamps() bool {
-	var dummy string
-	err := d.db.QueryRow(`SELECT COALESCE(created_at, '') FROM comment LIMIT 1`).Scan(&dummy)
-	// If the column doesn't exist, the error message contains "no such column"
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return false
+	// ByPosition streams most recent first: the last entry is the oldest one,
+	// the primary comment Upsert edits.
+	var text string
+	for e, err := range cs.ByPosition(context.Background(), "", positionID) {
+		if err != nil {
+			return "", err
+		}
+		text = e.Text
 	}
-	return true
+	return text, nil
 }
 
 // GetCommentsByPosition returns all non-empty comments for a given position, ordered by comment ID descending
@@ -120,34 +129,11 @@ func (d *Database) GetCommentsByPosition(positionID int64) ([]CommentEntry, erro
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var rows *sql.Rows
-	var err error
-	hasTS := d.commentTableHasTimestamps()
-	if hasTS {
-		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE position_id = ? AND text != '' ORDER BY id DESC`, positionID)
-	} else {
-		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE position_id = ? AND text != '' ORDER BY id DESC`, positionID)
-	}
+	cs, err := d.commentStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var entries []CommentEntry
-	for rows.Next() {
-		var e CommentEntry
-		if hasTS {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
-				return nil, err
-			}
-		} else {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
-				return nil, err
-			}
-		}
-		entries = append(entries, e)
-	}
-	return entries, rows.Err()
+	return collectComments(cs.ByPosition(context.Background(), "", positionID))
 }
 
 // GetAllComments returns all non-empty comments, ordered by comment ID descending (most recent first)
@@ -155,34 +141,11 @@ func (d *Database) GetAllComments() ([]CommentEntry, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var rows *sql.Rows
-	var err error
-	hasTS := d.commentTableHasTimestamps()
-	if hasTS {
-		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE text != '' ORDER BY id DESC`)
-	} else {
-		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE text != '' ORDER BY id DESC`)
-	}
+	cs, err := d.commentStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var entries []CommentEntry
-	for rows.Next() {
-		var e CommentEntry
-		if hasTS {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
-				return nil, err
-			}
-		} else {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
-				return nil, err
-			}
-		}
-		entries = append(entries, e)
-	}
-	return entries, rows.Err()
+	return collectComments(cs.ListAll(context.Background(), ""))
 }
 
 // SearchComments searches for comments containing the given query string (case-insensitive)
@@ -190,32 +153,9 @@ func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var rows *sql.Rows
-	var err error
-	hasTS := d.commentTableHasTimestamps()
-	if hasTS {
-		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE text != '' AND text LIKE '%' || ? || '%' ORDER BY id DESC`, query)
-	} else {
-		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE text != '' AND text LIKE '%' || ? || '%' ORDER BY id DESC`, query)
-	}
+	cs, err := d.commentStore()
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-
-	var entries []CommentEntry
-	for rows.Next() {
-		var e CommentEntry
-		if hasTS {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
-				return nil, err
-			}
-		} else {
-			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
-				return nil, err
-			}
-		}
-		entries = append(entries, e)
-	}
-	return entries, rows.Err()
+	return collectComments(cs.Search(context.Background(), "", query))
 }

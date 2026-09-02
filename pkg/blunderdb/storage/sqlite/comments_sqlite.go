@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"iter"
 	"strings"
@@ -65,6 +66,37 @@ func (s *commentStore) DeleteForPosition(ctx context.Context, scope string, posi
 		return fmt.Errorf("sqlite: delete comments of position %d: %w", positionID, err)
 	}
 	return nil
+}
+
+// Upsert rewrites the position's oldest non-empty entry, or appends one when
+// the position has no visible comment yet, and returns the id written.
+func (s *commentStore) Upsert(ctx context.Context, scope string, positionID int64, text string) (int64, error) {
+	var id int64
+	err := withTx(ctx, s.db, func(tx execer) error {
+		var oldest sql.NullInt64
+		if err := tx.QueryRowContext(ctx,
+			`SELECT MIN(id) FROM comment WHERE position_id = ? AND text != ''`,
+			positionID).Scan(&oldest); err != nil {
+			return err
+		}
+		if oldest.Valid {
+			id = oldest.Int64
+			_, err := tx.ExecContext(ctx,
+				`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, text, id)
+			return err
+		}
+		res, err := tx.ExecContext(ctx,
+			`INSERT INTO comment (position_id, text) VALUES (?,?)`, positionID, text)
+		if err != nil {
+			return err
+		}
+		id, err = res.LastInsertId()
+		return err
+	})
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: upsert comment of position %d: %w", positionID, referenced(err))
+	}
+	return id, nil
 }
 
 // Text returns the non-empty comment entries of a position joined with blank

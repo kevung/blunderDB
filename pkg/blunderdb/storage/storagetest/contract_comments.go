@@ -5,6 +5,7 @@ package storagetest
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -152,6 +153,107 @@ func testCommentCRUD(t *testing.T, s storage.Storage) {
 	}
 	if text, _ := comments.Text(ctx, "", posB); text != "other position" {
 		t.Errorf("posB Text after clearing posA: got %q", text)
+	}
+}
+
+// testCommentUpsert pins the single-comment view Upsert edits: with no
+// visible entry it appends one, otherwise it rewrites the oldest non-empty
+// entry in place (same id, modified_at stamped) and leaves the rest of the
+// wall alone. That entry is the last item of ByPosition, which is how the
+// desktop reads it back before editing. An empty entry is not a comment, so
+// a position that only has blank entries gets a new one; a position that
+// does not exist is ErrNotFound, like Add.
+func testCommentUpsert(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	comments := s.Comments()
+
+	save := func(n int) int64 {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	pos := save(1)
+
+	// No entry yet: Upsert appends one.
+	primary, err := comments.Upsert(ctx, "", pos, "first")
+	if err != nil {
+		t.Fatalf("Upsert on an empty wall: %v", err)
+	}
+	if primary == 0 {
+		t.Fatal("Upsert returned id 0")
+	}
+	if got := commentIDs(drainComments(t, "ByPosition", comments.ByPosition(ctx, "", pos))); len(got) != 1 || got[0] != primary {
+		t.Errorf("wall after first Upsert: got %v, want [%d]", got, primary)
+	}
+	if text, _ := comments.Text(ctx, "", pos); text != "first" {
+		t.Errorf("Text after first Upsert: got %q, want %q", text, "first")
+	}
+
+	// A visible entry exists: rewritten in place.
+	again, err := comments.Upsert(ctx, "", pos, "first, rewritten")
+	if err != nil {
+		t.Fatalf("Upsert again: %v", err)
+	}
+	if again != primary {
+		t.Errorf("Upsert on an existing entry: got id %d, want %d (rewrite, not append)", again, primary)
+	}
+	wall := drainComments(t, "ByPosition after rewrite", comments.ByPosition(ctx, "", pos))
+	if len(wall) != 1 || wall[0].Text != "first, rewritten" {
+		t.Errorf("wall after rewrite: got %+v, want one entry reading %q", wall, "first, rewritten")
+	} else if wall[0].ModifiedAt == "" {
+		t.Error("ModifiedAt after Upsert rewrite is empty")
+	}
+
+	// Several entries: only the oldest non-empty one is rewritten; the
+	// primary is the last item of ByPosition.
+	second, err := comments.Add(ctx, "", pos, "second")
+	if err != nil {
+		t.Fatalf("Add second: %v", err)
+	}
+	if id, err := comments.Upsert(ctx, "", pos, "primary"); err != nil || id != primary {
+		t.Errorf("Upsert with two entries: got id %d, err %v; want %d", id, err, primary)
+	}
+	wall = drainComments(t, "ByPosition with two entries", comments.ByPosition(ctx, "", pos))
+	if len(wall) != 2 || wall[0].ID != second || wall[0].Text != "second" ||
+		wall[1].ID != primary || wall[1].Text != "primary" {
+		t.Errorf("wall after Upsert with two entries: got %+v, want [%d %q] then [%d %q]",
+			wall, second, "second", primary, "primary")
+	}
+
+	// Once the primary is deleted the next oldest entry takes its place.
+	if err := comments.Delete(ctx, "", primary); err != nil {
+		t.Fatalf("Delete primary: %v", err)
+	}
+	if id, err := comments.Upsert(ctx, "", pos, "promoted"); err != nil || id != second {
+		t.Errorf("Upsert after deleting the primary: got id %d, err %v; want %d", id, err, second)
+	}
+	if text, _ := comments.Text(ctx, "", pos); text != "promoted" {
+		t.Errorf("Text after promotion: got %q, want %q", text, "promoted")
+	}
+
+	// An empty entry is not a comment: it is neither rewritten nor read back.
+	other := save(2)
+	blank, err := comments.Add(ctx, "", other, "")
+	if err != nil {
+		t.Fatalf("Add blank: %v", err)
+	}
+	fresh, err := comments.Upsert(ctx, "", other, "note")
+	if err != nil {
+		t.Fatalf("Upsert over a blank entry: %v", err)
+	}
+	if fresh == blank {
+		t.Errorf("Upsert rewrote the blank entry %d; want a new entry", blank)
+	}
+	if got := commentIDs(drainComments(t, "ByPosition other", comments.ByPosition(ctx, "", other))); len(got) != 1 || got[0] != fresh {
+		t.Errorf("wall of the other position: got %v, want [%d]", got, fresh)
+	}
+
+	// Like Add, an unknown position is the caller's mistake, not a 500.
+	if _, err := comments.Upsert(ctx, "", 987654321, "orphan"); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Upsert on an unknown position: got %v, want ErrNotFound", err)
 	}
 }
 

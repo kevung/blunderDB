@@ -74,6 +74,35 @@ func (s *commentStore) DeleteForPosition(ctx context.Context, scope string, posi
 	return nil
 }
 
+// Upsert rewrites the position's oldest non-empty entry, or appends one when
+// the position has no visible comment yet, and returns the id written.
+func (s *commentStore) Upsert(ctx context.Context, scope string, positionID int64, text string) (int64, error) {
+	tenant := tenantID(scope)
+	var id int64
+	err := withTx(ctx, s.db, func(tx execer) error {
+		var oldest *int64
+		if err := tx.QueryRow(ctx,
+			`SELECT MIN(id) FROM comment WHERE position_id = $1 AND tenant_id = $2 AND text != ''`,
+			positionID, tenant).Scan(&oldest); err != nil {
+			return err
+		}
+		if oldest != nil {
+			id = *oldest
+			_, err := tx.Exec(ctx,
+				`UPDATE comment SET text = $1, modified_at = now() WHERE id = $2 AND tenant_id = $3`,
+				text, id, tenant)
+			return err
+		}
+		return tx.QueryRow(ctx,
+			`INSERT INTO comment (tenant_id, position_id, text) VALUES ($1,$2,$3) RETURNING id`,
+			tenant, positionID, text).Scan(&id)
+	})
+	if err != nil {
+		return 0, fmt.Errorf("postgres: upsert comment of position %d: %w", positionID, referenced(err))
+	}
+	return id, nil
+}
+
 // Text returns the non-empty comment entries of a position joined with blank
 // lines, or "" when the position has no comment.
 func (s *commentStore) Text(ctx context.Context, scope string, positionID int64) (string, error) {
