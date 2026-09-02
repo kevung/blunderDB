@@ -14,7 +14,7 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.2.1**), including `vendor/backgammon-ai-engine` (fetched by its
+  (currently **v1.3.0**), including `vendor/backgammon-ai-engine` (fetched by its
   `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
@@ -42,6 +42,7 @@ two moving targets.
        $GN/src/gn_search.c $GN/src/gn_infer_reference.c $GN/src/gn_encoding.c \
        $GN/src/gn_rules_reference.c $GN/src/gn_met.c $GN/src/gn_cube.c \
        $GN/src/gn_bearoff.c $GN/src/gn_evalcache.c $GN/src/gn_choose.c \
+       $GN/src/gn_int8_model.c $GN/src/gn_gemm_int8.c \
        $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm
 
    ./gold $M/testdata/search_corpus.bin \
@@ -98,17 +99,50 @@ the table, not a drift between the two implementations.
 Crawford dead-value fix; `use_cube` itself predates it upstream). Measured margin: see the gate's
 own log line — it is reported per subtest.
 
+**Regenerated on 2026-09-03 against gammonNet v1.3.0**, the release that makes the candidate
+ordering stable (chantier T88 upstream) — which is the whole point, because the gate's tie
+allowance was justified by `qsort`'s instability and that justification has now gone. Two facts
+were established before the pin moved, and they are why moving it is safe:
+
+- the **money-cubeless** gold is **bit-identical** between v1.2.1 and v1.3.0, and the v1.2.1
+  rebuild reproduced the committed file byte for byte — so this harness is deterministic and the
+  comparison below is a real one, not a build difference;
+- the **match-and-cube** gold moves on **41 candidate equities out of 123 decisions**, by at most
+  **2.220e-16** (one to two ulp of a double), and **no chosen move changes anywhere**. Bisected to
+  gammonNet `23c5a64`, the T85 cube-batch commit — whose own measurement note claims a bit-for-bit
+  result. It is bit-for-bit in exact arithmetic; what differs is gcc's `-ffp-contract=fast`
+  fusing `y0 + (y1-y0)*t` into an FMA in one form and not the other. Reported upstream
+  (`tasks/gammonnet-adr0003/poste-3-zone-egalite-gold.md`). At 2e-16 against a 1e-6 tolerance it
+  is ten orders of magnitude below anything this gate can see.
+
+Note the two extra translation units in the command above: v1.3.0's `gn_infer_reference.c`
+references `gn_int8_model_evaluate`, so `gn_int8_model.c` and `gn_gemm_int8.c` must be linked in
+even though this harness never loads a quantised model.
+
 ## What the gate asserts, and what it deliberately does not
 
 - The **same number of candidates**, the **same chosen move**, and equities agreeing to
   **1e-6**. Measured on v1.0.1: **max|Δ| = 7.153e-07** over the 85 decisions, and the chosen
   move matched in every one.
-- **Two plays whose equities agree to within 1e-6 are treated as interchangeable.** The
-  reference orders candidates with `qsort`, which is not stable and whose implementation has
-  changed across libc versions: on an exact tie the play it returns depends on the C library
-  that produced the file. A gate must not encode that. As of v1.0.1 this allowance is never
-  used — the count of such ties is reported by the test, and a number that starts growing is
-  itself a signal.
+- **Two plays whose equities agree to within 1e-6 are treated as interchangeable — and the
+  allowance must stay UNUSED.** It covered two causes, and only one is left.
+
+  Its first justification is gone: the reference ordered candidates with `qsort`, which is not
+  stable, so on an exact tie the play it returned depended on the C library that produced the
+  file. Since **v1.3.0** gammonNet sorts stably, and it adopted **this port's own rule** — at
+  equal equity, generation order is preserved — so the two engines now agree on ties by
+  construction. (Upstream's own census adds that the divergence was never everywhere: glibc's
+  `qsort` is stable in practice and Emscripten's is not, so the file was in fact never wrong,
+  only unwarranted.)
+
+  What is left is arithmetic: two plays whose true equities are closer than twice the
+  port-versus-reference gap can swap rank without either being wrong. That is why the clause is
+  narrowed rather than deleted.
+
+  **The narrowing**: `replayGold` now FAILS if the allowance is used at all. It never has been —
+  0 ties over the 85 money decisions and the 123 match-and-cube ones, measured against v1.3.0 —
+  and the README already called a growing count a signal. It is now a failing test rather than a
+  log line, so re-opening the zone is a deliberate act that has to name the two plays and say why.
 
 ## The margin, and why it is worth watching
 

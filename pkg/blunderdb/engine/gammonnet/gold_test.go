@@ -35,10 +35,27 @@ const (
 	// TOLERANCE, so demanding that both engines pick the same one would be
 	// demanding more than the tolerance states.
 	//
-	// That is not a convenience. The reference orders its candidates with
-	// qsort, which is not stable and whose implementation has changed across
-	// libc versions: on an exact tie, the play it returns depends on the C
-	// library that produced this file. A gold file must not encode that.
+	// LA MOITIÉ DE SA JUSTIFICATION A DISPARU, et le resserrement ci-dessous
+	// est ce qu'il en reste. La clause tolérait DEUX causes de désaccord :
+	//
+	//  1. Le départage des ex æquo. La référence ordonnait ses candidats avec
+	//     qsort, qui n'est pas stable : sur une égalité parfaite, le coup rendu
+	//     dépendait de la libc qui a produit le fichier. **Cette cause n'existe
+	//     plus** : gammonNet trie stablement depuis v1.3.0 (chantier T88), et
+	//     il l'a fait EN REPRENANT LA RÈGLE DE CE PORTAGE — à équité égale,
+	//     l'ordre de génération est conservé. Les deux implémentations sont donc
+	//     d'accord sur les ex æquo, et ce fichier est produit par le tri stable.
+	//  2. Le bruit arithmétique. Deux coups dont les vraies équités sont
+	//     séparées de moins du double de l'écart port/référence peuvent
+	//     s'échanger de rang sans que personne ait tort. **Cette cause reste**,
+	//     et c'est pourquoi la clause n'est pas supprimée.
+	//
+	// Le resserrement : l'allocation doit rester INEMPLOYÉE. Elle ne l'a jamais
+	// été (0 sur les 85 décisions argent et les 123 décisions match+videau,
+	// mesuré contre v1.3.0), et un compte qui se met à monter était déjà décrit
+	// comme un signal par le README du fichier d'or — replayGold en fait
+	// maintenant un échec plutôt qu'une ligne de journal. Réemployer
+	// l'allocation redevient ainsi un acte délibéré.
 	goldTolerance = 1e-6
 )
 
@@ -181,4 +198,13 @@ func replayGold(t *testing.T, cases []goldCase, gold []goldEntry) {
 	}
 	t.Logf("%d decisions replayed against the C reference — max|Δ equity| = %.3e, %d ties within tolerance",
 		len(cases), worst, ties)
+	if ties > 0 {
+		t.Errorf("%d chosen moves differed and were excused as ties within %g. "+
+			"Depuis gammonNet v1.3.0 les deux moteurs départagent les ex æquo de la même façon "+
+			"(à équité égale, l'ordre de génération est conservé), donc un désaccord de coup ne peut "+
+			"plus venir que du bruit arithmétique entre deux coups presque équivalents. "+
+			"Si c'est bien le cas ici, dire lequel et pourquoi, et relever ce seuil délibérément ; "+
+			"sinon, c'est un défaut d'ordre, et une tolérance numérique ne le verrait pas (leçon T88).",
+			ties, goldTolerance)
+	}
 }

@@ -54,6 +54,32 @@ const lanes = 8
 // d'échelle. kernel_avx2_amd64_test.go refuse un `.s` qui mentionne BP.
 const tile = 6
 
+// Assertions de compilation — les deux hypothèses que ce générateur fait, dites
+// au compilateur plutôt qu'au lecteur (ADR-0003, reprise de `gn_tile.h`).
+//
+// Une constante négative de type uint arrête la compilation sur
+// « constant -N overflows uint ». Un commentaire disant « lanes doit être une
+// puissance de deux » n'est pas un garde-fou ; une compilation qui s'arrête en
+// est un.
+//
+//  1. lanes est une puissance de deux ET ne dépasse pas 8, parce qu'elle sert
+//     d'ÉCHELLE dans `Mem{Base: actp, Index: jb, Scale: lanes}` et qu'une
+//     échelle d'adressage x86 ne peut valoir que 1, 2, 4 ou 8.
+//  2. tile est strictement positive : la boucle tuilée compare `remaining` à
+//     `tile` et soustrait `tile` à chaque tour ; une tuile nulle ou négative
+//     est une boucle qui ne finit pas.
+//
+// Ce que ces assertions ne disent PAS, et qui n'a plus besoin d'être dit :
+// rien ici n'exige que `outDim` soit un multiple de `tile`. Le compteur
+// décroissant + la queue une-sortie-à-la-fois traitent n'importe quel reste.
+// C'est ce qui a remplacé `outDim & ^(tile-1)`, l'arrondi qui n'en était pas
+// un et qui lisait hors matrice à tuile 6 (#133).
+const (
+	_ uint = 0 - (lanes & (lanes - 1))
+	_ uint = 8 - lanes
+	_ uint = tile - 1
+)
+
 func main() {
 	ConstraintExpr("amd64,!purego")
 

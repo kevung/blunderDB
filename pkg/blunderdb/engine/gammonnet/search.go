@@ -186,6 +186,16 @@ type Searcher struct {
 	batchFilled  uint64
 	batchSlotted uint64
 
+	// cubeValuations est le dénominateur COMPTÉ du poste videau : le nombre
+	// de distributions réellement valuées par le modèle de videau, incrémenté
+	// là où nodeValue appelle Value — donc jamais sur un nœud terminal, et
+	// jamais sous UseCube éteint. gammonNet a ajouté le même compteur
+	// (gn_search_cube_valuations) en découvrant que sa mesure d'entrée
+	// supposait « un nœud évalué porte une valuation », ce qui est faux dans
+	// les deux sens. Une mesure en ns par valuation qui divise par un nombre
+	// supposé mesure la supposition.
+	cubeValuations uint64
+
 	// workers are independent searchers the root farms its roll loop out to.
 	// Each owns its scratch, its generator and its cache; nothing is shared but
 	// the read-only networks.
@@ -585,6 +595,7 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 	if !s.cfg.UseCube {
 		return valueFromProbs(probs, state)
 	}
+	s.cubeValuations++
 	v, ok := Value(probs, owner, state, s.cfg.CubeX)
 	if !ok {
 		return 0
@@ -920,10 +931,22 @@ func (s *Searcher) BatchFill() (filled, slotted uint64) {
 	return filled, slotted
 }
 
+// CubeValuations reports how many distributions the cube model actually
+// valued — the counted denominator of the cube post, workers counted in for
+// the same reason Counters counts them.
+func (s *Searcher) CubeValuations() uint64 {
+	n := s.cubeValuations
+	for _, w := range s.workers {
+		n += w.CubeValuations()
+	}
+	return n
+}
+
 // ResetCounters zeroes them, workers included.
 func (s *Searcher) ResetCounters() {
 	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
 	s.batchFilled, s.batchSlotted = 0, 0
+	s.cubeValuations = 0
 	for _, w := range s.workers {
 		w.ResetCounters()
 	}
