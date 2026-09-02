@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -591,6 +591,23 @@ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
 #: ../../source/raccourcis.rst:232
+msgid "Panneau Eval"
+msgstr "Eval パネル"
+
+#: ../../source/raccourcis.rst:234
+msgid ""
+"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
+"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
+"qu'un coup a été sélectionné d'un clic."
+msgstr ""
+"*Eval*\\ パネルの手のリスト（:ref:`panneau_epc` "
+"を参照）は分析パネルのリストと同じように移動できます。これらのショートカットは、クリックで手を選択した時点から有効になります。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup."
+msgstr "手の選択を解除する。"
+
+#: ../../source/raccourcis.rst:251
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -626,9 +643,17 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:269
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE, Clic"
+msgstr "SPACE、クリック"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher la réponse (l'analyse enregistrée de la position)."
+msgstr "答えを表示する（ポジションに記録された分析）。"
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
@@ -672,7 +697,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:287
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -702,7 +727,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:283
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -726,7 +751,7 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
@@ -760,4 +785,3 @@ msgstr ""
 #~ "Désélectionner le filtre. Si aucun "
 #~ "filtre sélectionné, fermer le panneau."
 #~ msgstr "フィルターの選択を解除する。フィルターが選択されていない場合はパネルを閉じる。"
-

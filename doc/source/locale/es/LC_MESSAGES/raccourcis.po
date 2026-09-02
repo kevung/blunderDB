@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -611,6 +611,24 @@ msgstr ""
 " panel."
 
 #: ../../source/raccourcis.rst:232
+msgid "Panneau Eval"
+msgstr "Panel Eval"
+
+#: ../../source/raccourcis.rst:234
+msgid ""
+"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
+"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
+"qu'un coup a été sélectionné d'un clic."
+msgstr ""
+"La lista de jugadas del panel *Eval* (véase :ref:`panneau_epc`) se "
+"recorre como la del panel de análisis. Estos atajos actúan en cuanto se "
+"ha seleccionado una jugada con un clic."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup."
+msgstr "Deseleccionar la jugada."
+
+#: ../../source/raccourcis.rst:251
 msgid "Panneau des matchs"
 msgstr "Panel de partidas"
 
@@ -646,9 +664,17 @@ msgstr "Eliminar la partida seleccionada."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:269
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE, Clic"
+msgstr "ESPACIO, Clic"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher la réponse (l'analyse enregistrée de la position)."
+msgstr "Mostrar la respuesta (el análisis registrado de la posición)."
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
@@ -696,7 +722,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:287
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -728,7 +754,7 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:283
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -756,7 +782,7 @@ msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
@@ -797,4 +823,3 @@ msgstr ""
 #~ "Deseleccionar el filtro. Si no hay "
 #~ "ningún filtro seleccionado, cerrar el "
 #~ "panel."
-

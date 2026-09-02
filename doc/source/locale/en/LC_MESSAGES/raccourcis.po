@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 00:28+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -605,6 +605,24 @@ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 msgstr "Deselect move. If no move selected, close the panel."
 
 #: ../../source/raccourcis.rst:232
+msgid "Panneau Eval"
+msgstr "Eval Panel"
+
+#: ../../source/raccourcis.rst:234
+msgid ""
+"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
+"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
+"qu'un coup a été sélectionné d'un clic."
+msgstr ""
+"The move list of the *Eval* panel (see :ref:`panneau_epc`) is browsed "
+"like that of the analysis panel. These shortcuts act as soon as a move "
+"has been selected with a click."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup."
+msgstr "Deselect move."
+
+#: ../../source/raccourcis.rst:251
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -640,9 +658,17 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:269
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE, Clic"
+msgstr "SPACE, Click"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher la réponse (l'analyse enregistrée de la position)."
+msgstr "Show the answer (the recorded analysis of the position)."
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
@@ -688,7 +714,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:287
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -720,7 +746,7 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:283
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -748,7 +774,7 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
@@ -942,4 +968,3 @@ msgstr ""
 #~ "Désélectionner le filtre. Si aucun "
 #~ "filtre sélectionné, fermer le panneau."
 #~ msgstr "Deselect filter. If no filter selected, close the panel."
-

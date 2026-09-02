@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 09:44+0200\n"
+"POT-Creation-Date: 2026-09-03 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fi <LL@li.org>\n"
@@ -288,9 +288,9 @@ msgstr "Luo uusi tietokantatiedosto valinnaisilla metatiedoilla."
 
 #: ../../source/cli.rst:82 ../../source/cli.rst:107 ../../source/cli.rst:160
 #: ../../source/cli.rst:236 ../../source/cli.rst:260 ../../source/cli.rst:442
-#: ../../source/cli.rst:578 ../../source/cli.rst:618 ../../source/cli.rst:657
-#: ../../source/cli.rst:681 ../../source/cli.rst:711 ../../source/cli.rst:747
-#: ../../source/cli.rst:779
+#: ../../source/cli.rst:578 ../../source/cli.rst:618 ../../source/cli.rst:670
+#: ../../source/cli.rst:694 ../../source/cli.rst:724 ../../source/cli.rst:760
+#: ../../source/cli.rst:792
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -318,7 +318,7 @@ msgstr ""
 "``.db``-pääte lisätään automaattisesti, jos se puuttuu. Ylähakemistot "
 "luodaan tarvittaessa."
 
-#: ../../source/cli.rst:92 ../../source/cli.rst:635 ../../source/cli.rst:759
+#: ../../source/cli.rst:92 ../../source/cli.rst:645 ../../source/cli.rst:772
 msgid "**Exemple:**"
 msgstr "**Esimerkki:**"
 
@@ -504,8 +504,8 @@ msgstr ""
 
 #: ../../source/cli.rst:186 ../../source/cli.rst:324 ../../source/cli.rst:405
 #: ../../source/cli.rst:449 ../../source/cli.rst:497 ../../source/cli.rst:550
-#: ../../source/cli.rst:593 ../../source/cli.rst:662 ../../source/cli.rst:691
-#: ../../source/cli.rst:721 ../../source/cli.rst:786
+#: ../../source/cli.rst:593 ../../source/cli.rst:675 ../../source/cli.rst:704
+#: ../../source/cli.rst:734 ../../source/cli.rst:799
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -634,8 +634,8 @@ msgid "**Options principales:**"
 msgstr "**Pääasialliset valitsimet:**"
 
 #: ../../source/cli.rst:284 ../../source/cli.rst:444 ../../source/cli.rst:620
-#: ../../source/cli.rst:659 ../../source/cli.rst:683 ../../source/cli.rst:713
-#: ../../source/cli.rst:749 ../../source/cli.rst:781
+#: ../../source/cli.rst:672 ../../source/cli.rst:696 ../../source/cli.rst:726
+#: ../../source/cli.rst:762 ../../source/cli.rst:794
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Tietokanta (pakollinen)."
 
@@ -868,7 +868,7 @@ msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr ""
 "``--top-blunders`` — Lueteltavien pahimpien virheiden määrä (oletus: 10)."
 
-#: ../../source/cli.rst:383 ../../source/cli.rst:580 ../../source/cli.rst:660
+#: ../../source/cli.rst:383 ../../source/cli.rst:580 ../../source/cli.rst:673
 msgid ""
 "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
@@ -1142,7 +1142,34 @@ msgstr ""
 "``--candidates`` — Siirtopäätöstä kohden säilytettävien ehdokassiirtojen "
 "määrä (oletus: 10)."
 
-#: ../../source/cli.rst:626
+#: ../../source/cli.rst:625
+msgid ""
+"``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre "
+"de cœurs de la machine)."
+msgstr ""
+"``--jobs`` — Rinnakkain analysoitavien asemien määrä (oletus: koneen "
+"ydinten määrä)."
+
+#: ../../source/cli.rst:628
+msgid ""
+"**Le parallélisme (``--jobs``).** Les positions d'un lot sont indépendantes "
+"— aucune recherche n'informe la suivante — donc elles sont réparties sur ``--"
+"jobs`` fils d'exécution, chacun avec son propre évaluateur. Les analyses "
+"écrites sont **identiques quelle que soit la valeur de** ``--jobs`` ; seul "
+"le temps de calcul change. ``--jobs 1`` laisse la machine libre pour autre "
+"chose. L'annulation n'est pas affectée : Ctrl-C arrête le lot avant toute "
+"nouvelle position, et tout ce qui était déjà calculé est écrit."
+msgstr ""
+"**Rinnakkaisuus (``--jobs``).** Erän asemat ovat toisistaan "
+"riippumattomia — mikään haku ei vaikuta seuraavaan — joten ne jaetaan "
+"``--jobs`` säikeelle, joista jokaisella on oma evaluaattorinsa. "
+"Kirjoitetut analyysit ovat **identtiset riippumatta siitä, mikä arvo on "
+"annettu valitsimelle** ``--jobs``; vain laskenta-aika muuttuu. ``--jobs "
+"1`` jättää koneen vapaaksi muuhun käyttöön. Keskeytys ei muutu: Ctrl-C "
+"pysäyttää erän ennen jokaista uutta asemaa, ja kaikki jo laskettu "
+"kirjoitetaan."
+
+#: ../../source/cli.rst:636
 msgid ""
 "**La règle du trou (ADR-0013).** Une position portant déjà une analyse — XG, "
 "GNUbg, BGBlitz, ou un précédent passage de gammonNet — n'est jamais touchée, "
@@ -1162,47 +1189,47 @@ msgstr ""
 "lokia ei tarvita, koska « asemat ilman analyysiä » lasketaan uudelleen "
 "jokaisella käynnistyksellä."
 
-#: ../../source/cli.rst:649
+#: ../../source/cli.rst:662
 msgid "info — Métadonnées de la base"
 msgstr "info — Tietokannan metatiedot"
 
-#: ../../source/cli.rst:651
+#: ../../source/cli.rst:664
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Näytä tietokannan metatiedot ja tilastot."
 
-#: ../../source/cli.rst:673
+#: ../../source/cli.rst:686
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Muokkaa metatietoja"
 
-#: ../../source/cli.rst:675
+#: ../../source/cli.rst:688
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Muokkaa tietokannan käyttäjänimeä tai kuvausta."
 
-#: ../../source/cli.rst:684
+#: ../../source/cli.rst:697
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Uusi käyttäjänimi."
 
-#: ../../source/cli.rst:685
+#: ../../source/cli.rst:698
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Uusi kuvaus."
 
-#: ../../source/cli.rst:686
+#: ../../source/cli.rst:699
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Tyhjennä käyttäjänimi."
 
-#: ../../source/cli.rst:687
+#: ../../source/cli.rst:700
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Tyhjennä kuvaus."
 
-#: ../../source/cli.rst:689
+#: ../../source/cli.rst:702
 msgid "Au moins une option de modification est requise."
 msgstr "Vähintään yksi muokkausvalitsin vaaditaan."
 
-#: ../../source/cli.rst:702
+#: ../../source/cli.rst:715
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Tarkista eheys"
 
-#: ../../source/cli.rst:704
+#: ../../source/cli.rst:717
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un "
 "match avec son fichier source."
@@ -1210,16 +1237,16 @@ msgstr ""
 "Tarkista tietokannan eheys ja valinnaisesti vertaa ottelua sen "
 "lähdetiedostoon."
 
-#: ../../source/cli.rst:714
+#: ../../source/cli.rst:727
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — Tarkistettavan ottelun tunnus."
 
-#: ../../source/cli.rst:715
+#: ../../source/cli.rst:728
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr ""
 "``--mat`` — Verrattava MAT-tiedosto (käytetään yhdessä ``--match``:n kanssa)."
 
-#: ../../source/cli.rst:717
+#: ../../source/cli.rst:730
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales de "
 "la base. Avec ``--match``, elle vérifie les données du match et peut les "
@@ -1229,11 +1256,11 @@ msgstr ""
 "``--match``-valitsimen kanssa se tarkistaa ottelun tiedot ja voi verrata "
 "niitä alkuperäiseen lähdetiedostoon."
 
-#: ../../source/cli.rst:735
+#: ../../source/cli.rst:748
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Tietokannan tiivistäminen"
 
-#: ../../source/cli.rst:737
+#: ../../source/cli.rst:750
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime des "
@@ -1247,7 +1274,7 @@ msgstr ""
 "käynnistää tiivistys — se ei tapahdu koskaan automaattisesti tietokantaa "
 "avattaessa, koska sen kustannus on suuressa tietokannassa arvaamaton."
 
-#: ../../source/cli.rst:751
+#: ../../source/cli.rst:764
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la taille "
 "affichée avant compactage soit honnête, vérifie qu'il reste sur le disque "
@@ -1266,57 +1293,57 @@ msgstr ""
 "tilastot. Jos levytila ei riitä, komento kieltäytyy käynnistymästä selkeällä "
 "viestillä sen sijaan, että riskeeraisi keskeytyneen tiivistyksen."
 
-#: ../../source/cli.rst:771
+#: ../../source/cli.rst:784
 msgid "delete — Supprimer des données"
 msgstr "delete — Poista tietoja"
 
-#: ../../source/cli.rst:773
+#: ../../source/cli.rst:786
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, analyses)."
 msgstr ""
 "Poista ottelu ja kaikki siihen liittyvät tiedot (pelit, siirrot, analyysit)."
 
-#: ../../source/cli.rst:782
+#: ../../source/cli.rst:795
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Poistotyyppi: ``match`` (pakollinen)."
 
-#: ../../source/cli.rst:783
+#: ../../source/cli.rst:796
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Poistettavan kohteen tunnus (pakollinen)."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:797
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Poista pyytämättä vahvistusta."
 
-#: ../../source/cli.rst:797
+#: ../../source/cli.rst:810
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:800
+#: ../../source/cli.rst:813
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:814
+#: ../../source/cli.rst:827
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:822
+#: ../../source/cli.rst:835
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:833
+#: ../../source/cli.rst:846
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:835
+#: ../../source/cli.rst:848
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:836
+#: ../../source/cli.rst:849
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:838
+#: ../../source/cli.rst:851
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "
