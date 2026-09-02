@@ -305,11 +305,11 @@ injoignable fait échouer la *liveness* et redémarre en boucle un processus
 sain ; `/readyz` (`:34`) existe pour ça.
 
 **À faire.**
-- [ ] `Live` renvoie 200 sans toucher au stockage.
-- [ ] `Dockerfile.serve` : `HEALTHCHECK CMD ["/usr/local/bin/blunderdb","healthcheck"]`
+- [x] `Live` renvoie 200 sans toucher au stockage.
+- [x] `Dockerfile.serve` : `HEALTHCHECK CMD ["/usr/local/bin/blunderdb","healthcheck"]`
       via une sous-commande qui fait un GET local sur `/readyz` (l'image est
       distroless, pas de curl).
-- [ ] Doc `mode_headless.rst` : liveness vs readiness en deux phrases.
+- [x] Doc `mode_headless.rst` : liveness vs readiness en deux phrases.
 
 ---
 

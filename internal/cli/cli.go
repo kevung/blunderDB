@@ -71,25 +71,26 @@ func (cli *CLI) Run(args []string) error {
 // silently opened the GUI instead.
 func (cli *CLI) handlers() map[string]func([]string) error {
 	return map[string]func([]string) error{
-		"create":     cli.runCreate,
-		"import":     cli.runImport,
-		"export":     cli.runExport,
-		"identity":   cli.runIdentity,
-		"open":       cli.runOpen,
-		"list":       cli.runList,
-		"delete":     cli.runDelete,
-		"match":      cli.runMatch,
-		"verify":     cli.runVerify,
-		"info":       cli.runInfo,
-		"edit":       cli.runEdit,
-		"epc":        cli.runEpc,
-		"search":     cli.runSearch,
-		"vacuum":     cli.runVacuum,
-		"analyze":    cli.runAnalyze,
-		"collection": cli.runCollection,
-		"anki":       cli.runAnki,
-		"help":       func([]string) error { cli.printUsage(); return nil },
-		"version":    func([]string) error { cli.printVersion(); return nil },
+		"create":      cli.runCreate,
+		"import":      cli.runImport,
+		"export":      cli.runExport,
+		"identity":    cli.runIdentity,
+		"open":        cli.runOpen,
+		"list":        cli.runList,
+		"delete":      cli.runDelete,
+		"match":       cli.runMatch,
+		"verify":      cli.runVerify,
+		"info":        cli.runInfo,
+		"edit":        cli.runEdit,
+		"epc":         cli.runEpc,
+		"search":      cli.runSearch,
+		"vacuum":      cli.runVacuum,
+		"analyze":     cli.runAnalyze,
+		"collection":  cli.runCollection,
+		"anki":        cli.runAnki,
+		"healthcheck": cli.runHealthcheck,
+		"help":        func([]string) error { cli.printUsage(); return nil },
+		"version":     func([]string) error { cli.printVersion(); return nil },
 	}
 }
 
@@ -132,6 +133,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  serve     Run the HTTP + JSON daemon (SQLite or multi-tenant PostgreSQL)")
 	fmt.Println("  call      Invoke a daemon handler in-process (scripting/tests)")
 	fmt.Println("  migrate   Copy a SQLite database into PostgreSQL under a tenant")
+	fmt.Println("  healthcheck  Probe a running daemon's /readyz; exit 0 when it is ready")
 	fmt.Println()
 	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
 }

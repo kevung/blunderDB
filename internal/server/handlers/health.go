@@ -13,19 +13,25 @@ import (
 
 // Health serves the liveness, readiness, and metrics endpoints. These are the
 // only routes reachable without an X-Tenant-ID header.
+//
+// Liveness and readiness answer two different questions and must not be
+// conflated: /healthz says "this process is up and serving HTTP", /readyz
+// says "this process can currently do useful work". An orchestrator restarts
+// a container whose liveness fails and merely stops routing traffic to one
+// whose readiness fails — so a probe that reaches the database belongs in
+// readiness only. Live once queried the storage; a database that was briefly
+// unreachable then restarted a perfectly healthy daemon in a loop (#166).
 type Health struct {
 	Storage         storage.Storage
 	Metrics         *metrics.Registry
 	ExpectedVersion string
 }
 
-// Live answers GET /healthz: 200 when the storage backend answers a trivial
-// query (Version performs a SELECT), 503 otherwise.
-func (h *Health) Live(w http.ResponseWriter, r *http.Request) {
-	if _, err := h.Storage.Version(r.Context()); err != nil {
-		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"status": "down"})
-		return
-	}
+// Live answers GET /healthz: always 200. Reaching this handler is the proof
+// that the process is alive and its HTTP server is accepting requests; it
+// deliberately touches neither the storage nor anything else that can fail
+// for reasons a restart would not cure.
+func (h *Health) Live(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 

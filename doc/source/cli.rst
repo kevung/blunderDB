@@ -65,6 +65,7 @@ Commandes disponibles
    "verify", "Vérifie l'intégrité de la base."
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
    "delete", "Supprime des données."
+   "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
    "help", "Affiche l'aide."
    "version", "Affiche la version."
 
@@ -805,6 +806,47 @@ Supprime un match et toutes les données associées (parties, coups, analyses).
 
    # Supprimer sans confirmation (pour scripts)
    ./blunderdb delete --db base.db --type match --id 1 --confirm
+
+healthcheck — Sonder un démon
+-----------------------------
+
+Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il est
+disponible : une requête ``GET /readyz``, code de retour ``0`` si le démon
+répond 200 (stockage joignable, schéma à la version attendue), ``1`` sinon —
+stockage injoignable, schéma périmé, ou rien n'écoute à l'adresse. Aucun
+fichier de base n'est ouvert.
+
+.. code-block:: bash
+
+   ./blunderdb healthcheck [--addr hôte:port] [--timeout 2s]
+
+**Options:**
+
+* ``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``,
+  sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte
+  générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage.
+* ``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par défaut).
+
+C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une image
+*distroless*, sans ``curl``) ; le binaire ``serve`` construit depuis
+``cmd/serve`` la comprend aussi. Elle vaut tout autant dans un script ou une
+unité systemd.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb serve --db base.db --addr 127.0.0.1:8080 &
+   ./blunderdb healthcheck --addr 127.0.0.1:8080 && echo "démon disponible"
+
+   # ready
+
+En cas d'échec la raison est affichée, ce que ``docker inspect`` reproduit
+pour un conteneur ``unhealthy`` :
+
+.. code-block:: text
+
+   Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
 
 Exemples de flux de travail
 -----------------------------

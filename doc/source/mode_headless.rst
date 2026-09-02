@@ -124,8 +124,29 @@ Points d'accès
 Le service expose des points d'accès d'exploitation, toujours présents :
 
 * ``GET /healthz`` — vivacité (le processus tourne) ;
-* ``GET /readyz`` — disponibilité (le stockage répond) ;
+* ``GET /readyz`` — disponibilité (le stockage répond et son schéma est à la
+  version attendue) ;
 * ``GET /metrics`` — métriques Prometheus (si ``--metrics`` est actif).
+
+Vivacité et disponibilité répondent à deux questions différentes. ``/healthz``
+répond toujours 200 dès que le processus sert des requêtes, sans jamais
+interroger le stockage : un orchestrateur redémarre le conteneur dont la
+vivacité échoue, et une base momentanément injoignable ne doit pas relancer en
+boucle un démon sain. ``/readyz`` répond 503 (avec ``status`` à ``down`` ou
+``version_mismatch``) tant que la base ne répond pas ou que son schéma n'est
+pas celui du binaire : le trafic est simplement détourné jusqu'à ce qu'elle
+revienne.
+
+La sous-commande ``blunderdb healthcheck`` (présente aussi dans le binaire
+``serve`` de l'image conteneur) effectue une requête ``GET /readyz`` sur le
+démon local et rend ``0`` s'il est disponible, ``1`` sinon ; l'adresse est
+celle de ``--addr`` ou de ``BLUNDERDB_ADDR``, par défaut ``:8080``. C'est le
+``HEALTHCHECK`` de l'image Docker, et elle vaut tout autant dans un script ou
+une unité systemd :
+
+.. code-block:: bash
+
+   blunderdb healthcheck --addr 127.0.0.1:8080 && echo "démon disponible"
 
 La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exemple
 ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent les
@@ -244,7 +265,12 @@ image *distroless*.
 
 L'image écoute sur le port 8080 et se configure par variables d'environnement
 (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_RLS``).
+``BLUNDERDB_RLS``). Elle déclare un ``HEALTHCHECK`` qui lance toutes les
+30 secondes ``blunderdb healthcheck`` (une requête sur ``/readyz`` — l'image
+*distroless* n'a ni ``curl`` ni shell) : ``docker ps`` affiche l'état
+``healthy`` ou ``unhealthy`` du conteneur, et Compose ou un orchestrateur
+peuvent attendre que le démon soit disponible avant de démarrer ce qui en
+dépend.
 
 .. _headless_docker_image:
 
