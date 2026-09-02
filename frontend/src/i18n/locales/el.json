@@ -669,6 +669,7 @@
     },
     "eval": {
         "pending": "Η αξιολόγηση θα εμφανιστεί εδώ.",
+        "panelLabel": "Πίνακας Eval",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet αναλύει: {done}/{total}",
         "batchCancel": "Ακύρωση",

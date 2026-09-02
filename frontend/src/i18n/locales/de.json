@@ -669,6 +669,7 @@
     },
     "eval": {
         "pending": "Die Auswertung erscheint hier.",
+        "panelLabel": "Eval-Panel",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysiert: {done}/{total}",
         "batchCancel": "Abbrechen",

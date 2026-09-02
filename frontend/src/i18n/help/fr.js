@@ -485,6 +485,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Panneau Eval</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Raccourci</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Sélectionner/désélectionner un coup (afficher/masquer les flèches)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Sélectionner le coup précédent (quand un coup est sélectionné)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Sélectionner le coup suivant (quand un coup est sélectionné)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Désélectionner le coup.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Panneau Historique des recherches</h3>
                     <table>
                         <thead>

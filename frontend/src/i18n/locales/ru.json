@@ -669,6 +669,7 @@
     },
     "eval": {
         "pending": "Оценка появится здесь.",
+        "panelLabel": "Панель расчёта",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",
         "batchCancel": "Отмена",

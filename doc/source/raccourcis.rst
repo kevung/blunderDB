@@ -226,6 +226,25 @@ Panneau d'analyse
    "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
    "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
+.. _raccourcis_eval_panel:
+
+Panneau Eval
+------------
+
+La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se parcourt
+comme celle du panneau d'analyse. Ces raccourcis agissent dès qu'un coup a été
+sélectionné d'un clic.
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+   "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+   "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+   "Esc", "Désélectionner le coup."
+
 .. _raccourcis_match_panel:
 
 Panneau des matchs

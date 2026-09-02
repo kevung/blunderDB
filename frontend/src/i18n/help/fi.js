@@ -482,6 +482,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Eval-paneeli</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pikanäppäin</th>
+                                <th>Kuvaus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Valitse/poista valinta siirrosta (näytä/piilota nuolet)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Valitse edellinen siirto (kun siirto on valittuna)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Valitse seuraava siirto (kun siirto on valittuna)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Poista siirron valinta.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Hakuhistoria-paneeli</h3>
                     <table>
                         <thead>

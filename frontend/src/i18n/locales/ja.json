@@ -669,6 +669,7 @@
     },
     "eval": {
         "pending": "評価はここに表示されます。",
+        "panelLabel": "評価パネル",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet 解析中: {done}/{total}",
         "batchCancel": "キャンセル",

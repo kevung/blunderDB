@@ -484,6 +484,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Eval-Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tastenkürzel</th>
+                                <th>Beschreibung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Einen Zug auswählen/abwählen (Pfeile ein-/ausblenden)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Vorherigen Zug auswählen (wenn ein Zug ausgewählt ist)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Nächsten Zug auswählen (wenn ein Zug ausgewählt ist)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Zug abwählen.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Search History-Panel</h3>
                     <table>
                         <thead>
