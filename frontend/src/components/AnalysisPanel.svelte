@@ -5,13 +5,10 @@
     import { isLetter, isBareLetter } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { normalizeCubeAction } from '../utils/cubeAction.js';
+    import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
-    import { moverFactsToSides } from '../utils/positionFacts.js';
-    import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
-    import CandidateMovesTable from './CandidateMovesTable.svelte';
-    import CubeVerdictTable from './CubeVerdictTable.svelte';
-    import PositionFactsTable from './PositionFactsTable.svelte';
+    import { cubeTurnability } from '../utils/cubeDecision.js';
+    import AnalysisView from './AnalysisView.svelte';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -26,31 +23,6 @@
     // inform, nothing advises.
     let turnability = $derived(cubeTurnability($positionStore));
     let matchCtx = $derived($matchContextStore);
-
-    // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
-    // the stored record instead of a live evaluation. cubelessNoDoubleEquity
-    // is the single cubeless figure this table shows (see
-    // CubeVerdictTable's own doc comment on why the pair it used to render
-    // collapsed to one column).
-    //
-    // DoublingCubeAnalysis's win/gammon/backgammon chances are stored as
-    // percentages [0,100] (the scale every importer and RoundToHundredthPercent
-    // use), but moverFactsToSides/PositionFactsTable's shared contract is
-    // fractions [0,1] — divide here, at this caller's boundary, rather than
-    // touch the stored scale.
-    function cubeFacts(cubeAnalysis) {
-        const frac = (x) => (x == null ? null : x / 100);
-        return moverFactsToSides(
-            {
-                win: frac(cubeAnalysis.playerWinChances),
-                gammon: frac(cubeAnalysis.playerGammonChances),
-                backgammon: frac(cubeAnalysis.playerBackgammonChances),
-                cubeless: cubeAnalysis.cubelessNoDoubleEquity
-            },
-            { win: frac(cubeAnalysis.opponentWinChances), gammon: frac(cubeAnalysis.opponentGammonChances), backgammon: frac(cubeAnalysis.opponentBackgammonChances) },
-            onRoll
-        );
-    }
 
     let activeTab = $state('checker'); // 'checker' or 'cube'
 
@@ -224,82 +196,11 @@
         }
     }
 
-    // Normalize a move string for comparison by sorting individual moves
-    // "5/2 5/4" and "5/4 5/2" are the same move but in different order
-    function normalizeMoveString(move) {
-        if (!move) return '';
-        // Split by spaces and sort the individual moves
-        return move.split(' ').sort().join(' ');
-    }
-
-    function isPlayedMove(move) {
-        if (!move.move) return false;
-
-        const normalizedMoveStr = normalizeMoveString(move.move);
-
-        // In MATCH mode, only highlight the current match's specific move
-        if (matchCtx.isMatchMode) {
-            // Use the single playedMove field which contains the current match's move
-            if (analysisData.playedMove) {
-                return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
-            }
-            return false;
-        }
-
-        // In normal mode (browsing positions), highlight all played moves
-        // Check the playedMoves array first
-        if (analysisData.playedMoves && analysisData.playedMoves.length > 0) {
-            for (const playedMove of analysisData.playedMoves) {
-                if (normalizeMoveString(playedMove) === normalizedMoveStr) {
-                    return true;
-                }
-            }
-        }
-
-        // Fallback to old single playedMove field for backward compatibility
-        if (analysisData.playedMove) {
-            return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
-        }
-
-        return false;
-    }
-
-    function isPlayedCubeAction(action) {
-        const actionParts = normalizeCubeAction(action);
-
-        // In MATCH mode, only highlight the current match's specific cube action
-        if (matchCtx.isMatchMode) {
-            if (analysisData.playedCubeAction) {
-                const playedParts = normalizeCubeAction(analysisData.playedCubeAction);
-                return actionParts.every((a) => playedParts.includes(a));
-            }
-            return false;
-        }
-
-        // In normal mode, highlight all played cube actions
-        // Collect all canonical played parts from all played actions
-        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, not reactive state
-        const allPlayedParts = new Set();
-
-        if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
-            for (const playedAction of analysisData.playedCubeActions) {
-                for (const part of normalizeCubeAction(playedAction)) {
-                    allPlayedParts.add(part);
-                }
-            }
-        }
-
-        // Fallback to old single playedCubeAction field for backward compatibility
-        if (allPlayedParts.size === 0 && analysisData.playedCubeAction) {
-            for (const part of normalizeCubeAction(analysisData.playedCubeAction)) {
-                allPlayedParts.add(part);
-            }
-        }
-
-        if (allPlayedParts.size === 0) return false;
-
-        return actionParts.every((a) => allPlayedParts.has(a));
-    }
+    // The played-move / played-cube-action rules live in utils/playedMarks.js
+    // so the Anki review can highlight them too (ADR-0025 rule 6). MATCH mode
+    // is the only caller that restricts them to the current match's own play.
+    let isPlayedMove = $derived(playedMovePredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
+    let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysisData, { matchMode: matchCtx.isMatchMode }));
 
     async function switchTab(tab) {
         activeTab = tab;
@@ -420,26 +321,6 @@
             (analysisData.doublingCubeAnalysis.bestCubeAction || analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined)
     );
 
-    // Build the list of cube analyses to display (may have multiple from different engines)
-    // Sort so XG analysis appears first, then GNUbg, then others
-    let cubeAnalysesList = $derived.by(() => {
-        if (!analysisData) return [];
-        let list = [];
-        if (analysisData.allCubeAnalyses && analysisData.allCubeAnalyses.length > 0) {
-            list = [...analysisData.allCubeAnalyses];
-        } else if (analysisData.doublingCubeAnalysis) {
-            list = [analysisData.doublingCubeAnalysis];
-        }
-        // Sort by engine priority: XG first, GNUbg second, others last
-        const enginePriority = (engine) => {
-            const e = (engine || '').toLowerCase();
-            if (e === 'xg') return 0;
-            if (e === 'gnubg') return 1;
-            return 2;
-        };
-        list.sort((a, b) => enginePriority(a.analysisEngine) - enginePriority(b.analysisEngine));
-        return list;
-    });
     // Check if current position is the first position of a game (no cube decision possible)
     // First position can be move_number 0 or 1
     let isFirstPositionOfGame = $derived(
@@ -450,24 +331,30 @@
     // Only show tabs in MATCH mode where checker and cube are separate positions
     // BUT not on the first position of a game (cube decision not possible)
     let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);
+
+    // Which of the two blocks the shared view renders. With tabs, the tab
+    // decides; without them, the record's own type does — the panel answers
+    // this, not AnalysisView, because only the panel knows about MATCH mode.
+    let viewKind = $derived(showTabs ? activeTab : analysisData.analysisType === 'DoublingCube' ? 'cube' : 'checker');
 </script>
 
 <section class="analysis-panel" role="region" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
-        {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
-            {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
-                {@const facts = cubeFacts(cubeAnalysis)}
-                {@const decision = cubeDecision({ cubeAnalysis, turnability, stored: true })}
-                <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
-                    <PositionFactsTable bottom={facts.bottom} top={facts.top} />
-                    <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysisData.analysisEngineVersion} />
-                </div>
-            {/each}
-        {/if}
-
-        {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
-            <CandidateMovesTable moves={sortedMoves} {sortColumn} {sortDirection} selectedMove={$selectedMoveStore} {isPlayedMove} onSort={handleSort} onRowClick={handleMoveRowClick} />
-        {/if}
+        <AnalysisView
+            analysis={analysisData}
+            kind={viewKind}
+            {turnability}
+            {cubeValue}
+            {onRoll}
+            moves={sortedMoves}
+            {sortColumn}
+            {sortDirection}
+            selectedMove={$selectedMoveStore}
+            {isPlayedMove}
+            {isPlayedCubeAction}
+            onSort={handleSort}
+            onRowClick={handleMoveRowClick}
+        />
     </div>
 </section>
 
@@ -491,32 +378,5 @@
         font-size: var(--font-size-base); /* Reduce font size */
         color: black; /* Set text color */
         cursor: default; /* Make analysis content interactive in MATCH mode (toggle on click) */
-    }
-
-    /* Facts, decision and the depth/engine footer, side by side, each next to
-       the last. `justify-content: space-between` used to live here and pushed
-       the facts against the left edge and the decision against the right one,
-       manufacturing a band of white down the middle of the panel — the same
-       defect ADR-0020 rule 8 removed from the Eval panel's badge strip, and
-       what ADR-0021 states as a rule: blocks are laid out at a constant gap
-       and the leftover width is left over, never spread between them. The
-       query container from .analysis-panel still lets them stack on a narrow
-       panel. */
-    .tables-container {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 8px 20px;
-    }
-
-    .multi-engine-cube {
-        margin-bottom: 6px;
-    }
-
-    @container (max-width: 600px) {
-        .tables-container {
-            flex-direction: column;
-            gap: 6px;
-        }
     }
 </style>

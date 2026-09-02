@@ -493,6 +493,8 @@
         "confirmDelete": "Eliminare il torneo \"{name}\"?"
     },
     "anki": {
+        "clickToReveal": "Clic o barra spaziatrice per rivelare la risposta",
+        "noAnalysis": "Nessuna analisi registrata per questa posizione",
         "again": "Di nuovo",
         "backToDeckList": "Torna all'elenco dei mazzi",
         "colActions": "Azioni",

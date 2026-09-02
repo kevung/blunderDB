@@ -273,6 +273,7 @@ Panneau Anki (répétition espacée)
    :widths: 7, 20
    :align: center
 
+   "ESPACE, Clic", "Afficher la réponse (l'analyse enregistrée de la position)."
    "1", "Évaluer : À revoir (échec, revoir bientôt)."
    "2", "Évaluer : Difficile."
    "3", "Évaluer : Bien."

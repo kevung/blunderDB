@@ -151,6 +151,9 @@ export default {
                         y volver a la lista de mazos.
                     </p>
                     <p>
+                        <strong>Mostrar la respuesta:</strong> La tarjeta plantea una pregunta; piénselo y pulse <strong>Espacio</strong> (o haga clic en la zona oculta) para revelar el análisis registrado de la posición. Aparece debajo de los botones de valoración, que siguen al alcance. No es necesario revelarla para valorar, y vuelve a ocultarse en la siguiente tarjeta, no al cambiar de pestaña.
+                    </p>
+                    <p>
                         <strong>Detener/Reanudar:</strong> Puedes detener una sesión de repaso en cualquier momento pulsando <strong>Esc</strong>. El botón cambia a <em>Reanudar</em> mostrando tu progreso. Haz clic en él para
                         continuar donde lo dejaste.
                     </p>
@@ -648,6 +651,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>ESPACIO</td>
+                                <td>Mostrar la respuesta (el análisis registrado de la posición)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Calificar: Otra vez (repaso fallido, mostrar de nuevo pronto)</td>

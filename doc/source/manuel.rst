@@ -1230,6 +1230,21 @@ la position correspondante sur le plateau. Évaluez votre rappel avec les touche
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+**Afficher la réponse :** La carte pose une question — quel coup jouer, ou quelle
+action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou cliquez sur la zone
+masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle
+que l'onglet Analyse la présente. Elle apparaît sous les boutons d'évaluation,
+qui restent à leur place et à portée. Cliquer sur un coup de la liste le montre
+sur le plateau.
+
+Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr de
+vous, les touches *1* à *4* restent actives. La réponse se remasque à la carte
+suivante, mais pas si vous changez simplement d'onglet — allez consulter le
+panneau Éval ou le commentaire de la position, elle vous attendra au retour.
+
+Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
+masquée.
+
 **Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, lance une
 session d'entraînement libre : des positions aléatoires du paquet vous sont
 présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais

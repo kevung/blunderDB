@@ -150,6 +150,9 @@ export default {
                         ja palataksesi pakkalistaan.
                     </p>
                     <p>
+                        <strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen; mieti se ensin ja paina sitten <strong>välilyöntiä</strong> (tai napsauta peitettyä aluetta) paljastaaksesi aseman tallennetun analyysin. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät ulottuvilla. Vastausta ei tarvitse paljastaa arvioidakseen, ja se peittyy taas seuraavan kortin kohdalla — ei kuitenkaan pelkästä välilehden vaihdosta.
+                    </p>
+                    <p>
                         <strong>Pysäytä/jatka:</strong> Voit pysäyttää kertausistunnon milloin tahansa painamalla <strong>Esc</strong>. Painike muuttuu muotoon <em>Jatka</em> ja näyttää edistymisesi. Napsauta sitä
                         jatkaaksesi siitä, mihin jäit.
                     </p>
@@ -647,6 +650,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>VÄLILYÖNTI</td>
+                                <td>Näytä vastaus (aseman tallennettu analyysi)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Arvio: Uudelleen (kertaus epäonnistui, näytä pian uudelleen)</td>

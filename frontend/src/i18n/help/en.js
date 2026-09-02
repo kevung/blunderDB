@@ -152,6 +152,9 @@ export default {
                         and return to the deck list.
                     </p>
                     <p>
+                        <strong>Showing the answer:</strong> The card asks a question; think it through, then press <strong>Space</strong> (or click the masked area) to reveal the position's stored analysis. It appears below the grading buttons, which stay within reach. You are never required to reveal it in order to grade, and it re-hides on the next card — not when you simply switch tabs.
+                    </p>
+                    <p>
                         <strong>Stop/Resume:</strong> You can stop a review session at any time by pressing <strong>Esc</strong>. The button changes to <em>Resume</em> showing your progress. Click it to
                         continue where you left off.
                     </p>
@@ -649,6 +652,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>SPACE</td>
+                                <td>Show the answer (the position's stored analysis)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Rate: Again (review failed, show again soon)</td>

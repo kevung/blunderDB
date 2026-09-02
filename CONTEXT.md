@@ -192,6 +192,16 @@ gesture, unlike the individually-imported property.
 **Anki deck**:
 A set of Positions turned into spaced-repetition cards.
 
+**Review card**:
+One Position of an Anki deck, presented as a question. The question is the Position on the
+board; the Answer is its stored Analysis. A card asks one question and receives one grade —
+there is no notion of a partly answered card.
+
+**Answer** (of a Review card):
+The stored Analysis of the card's Position — never a live evaluation. A card whose Position
+carries no Analysis has no Answer, which is a state the panel names rather than hides: an
+absent answer is not a hidden one.
+
 **Tag**:
 A `#word` inside a Position's Comment. There is no tag table — tags are a convention
 inside comment text, searchable only as substrings.

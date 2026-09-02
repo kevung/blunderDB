@@ -153,6 +153,9 @@ export default {
                         et revenir à la liste des paquets.
                     </p>
                     <p>
+                        <strong>Afficher la réponse :</strong> La carte pose une question ; réfléchissez, puis appuyez sur <strong>Espace</strong> (ou cliquez sur la zone masquée) pour dévoiler l'analyse enregistrée de la position. Elle s'affiche sous les boutons de notation, qui restent à portée. Rien ne vous oblige à la dévoiler pour noter, et elle se remasque à la carte suivante — pas si vous changez simplement d'onglet.
+                    </p>
+                    <p>
                         <strong>Arrêter/Reprendre :</strong> Vous pouvez arrêter une session de révision à tout moment en appuyant sur <strong>Échap</strong>. Le bouton devient <em>Reprendre</em> et affiche votre progression. Cliquez dessus pour
                         continuer là où vous vous êtes arrêté.
                     </p>
@@ -650,6 +653,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>ESPACE</td>
+                                <td>Afficher la réponse (l'analyse enregistrée de la position)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Noter : À revoir (révision ratée, à réafficher bientôt)</td>

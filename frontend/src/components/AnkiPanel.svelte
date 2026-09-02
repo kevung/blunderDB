@@ -1,7 +1,22 @@
 <script>
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onMount } from 'svelte';
-    import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore';
+    import {
+        ankiDecksStore,
+        selectedAnkiDeckStore,
+        ankiReviewCardStore,
+        ankiDeckStatsStore,
+        ankiViewModeStore,
+        ankiReviewActionStore,
+        ankiPausedSessionStore,
+        ankiAnswerShownStore,
+        showAnkiAnswer,
+        hideAnkiAnswer
+    } from '../stores/ankiStore';
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
+    import { positionStore } from '../stores/positionStore';
+    import { cubeTurnability } from '../utils/cubeDecision.js';
+    import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { statusBarTextStore, activeTabStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { collectionsStore } from '../stores/collectionStore';
@@ -13,6 +28,7 @@
     import { t, tMsg } from '../i18n';
     import { UpdateAnkiDeck } from '../../wailsjs/go/database/Database.js';
     import PanelTable from './panels/PanelTable.svelte';
+    import AnalysisView from './AnalysisView.svelte';
 
     // Read-only mirrors of stores — declared as $derived so Svelte tracks
     // dependencies via $store reads (the project rule, see CLAUDE.md).
@@ -26,6 +42,42 @@
     let positionIds = $derived($positionsStore?.ids || []);
     let lastSearch = $derived($lastSearchStore);
     let pausedSession = $derived($ankiPausedSessionStore);
+    let answerShown = $derived($ankiAnswerShownStore);
+
+    // ── The answer of the card under review (ADR-0025) ──────────────────
+    // The stored analysis of the card's position, loaded by showCard through
+    // showPosition — never a live evaluation (rule 1).
+    let analysis = $derived($analysisStore);
+    // Which block the answer is: outside MATCH mode the record's own type
+    // decides, exactly as the Analysis tab decides it there.
+    let answerKind = $derived(analysis?.analysisType === 'DoublingCube' ? 'cube' : 'checker');
+    let answerMoves = $derived(analysis?.checkerAnalysis?.moves ?? []);
+    // Whether this card has an answer at all. A position can be in a deck
+    // without a stored analysis (typed by hand, imported bare): that is an
+    // ABSENT answer, not a hidden one, so it is named rather than masked
+    // (rule 3's rejected alternative) — a mask revealing nothing would be a
+    // lie the interface tells.
+    let hasAnswer = $derived(answerKind === 'cube' ? cubeAnalysesCount(analysis) > 0 : answerMoves.length > 0);
+    let turnability = $derived(cubeTurnability($positionStore));
+    let cubeValue = $derived($positionStore?.cube?.value ?? 0);
+    let onRoll = $derived($positionStore?.player_on_roll ?? 0);
+
+    // A review is never in MATCH mode, so every play recorded on this position
+    // is highlighted — including the blunder that put the card in the deck.
+    let isPlayedMove = $derived(playedMovePredicate(analysis));
+    let isPlayedCubeAction = $derived(playedCubeActionPredicate(analysis));
+
+    // Clicking a candidate move puts it on the board — the moment of learning,
+    // and the same gesture as the Analysis tab. Toggles off on a second click.
+    function handleMoveRowClick(move) {
+        selectedMoveStore.set($selectedMoveStore === move.move ? null : move.move);
+    }
+
+    function cubeAnalysesCount(a) {
+        if (!a) return 0;
+        if (a.allCubeAnalyses && a.allCubeAnalyses.length > 0) return a.allCubeAnalyses.length;
+        return a.doublingCubeAnalysis ? 1 : 0;
+    }
 
     // Heroicons outlines, drawn by the `icon` snippet below.
     const ICON = {
@@ -256,6 +308,12 @@
             ankiPausedSessionStore.set({ deckId: selectedDeck.id, sessionCount: reviewSessionCount });
         }
         cramMode = false;
+        // Leaving the review is a change of question (ADR-0025 rule 5). The
+        // move selection must go with it: left set, selectedMoveStore freezes
+        // j/k position browsing app-wide — the regression AnalysisPanel's
+        // onDestroy already had to fix once.
+        hideAnkiAnswer();
+        selectedMoveStore.set(null);
         ankiViewModeStore.set('list');
         if (selectedDeck) {
             anki.refreshDeckStats(selectedDeck.id).catch(() => {});
@@ -286,24 +344,50 @@
             {/if}
         </div>
 
+        <!-- The grading strip stays put and the answer scrolls under it
+             (ADR-0025): a checker analysis can run twenty rows, and in a side
+             column it would push the buttons out of reach on every card. -->
         <div class="review-body">
-            <div class="review-position-id">{$t('anki.positionNumber', { id: reviewCard.position.id })}</div>
-            {#if cramMode}
-                <div class="review-buttons">
-                    <button class="btn-rating" onclick={() => submitReview(1)} title={$t('anki.next') + ' (1-4)'}>
-                        <span class="rating-label">{$t('anki.next')}</span>
-                    </button>
-                </div>
-            {:else}
-                <div class="review-buttons">
-                    {#each [['anki.again', 1], ['anki.hard', 2], ['anki.good', 3], ['anki.easy', 4]] as [key, rating] (rating)}
-                        <button class="btn-rating" onclick={() => submitReview(rating)} title={$t(key) + ` (${rating})`}>
-                            <span class="rating-label">{$t(key)}</span>
-                            <span class="rating-key">{rating}</span>
+            <div class="review-strip">
+                <div class="review-position-id">{$t('anki.positionNumber', { id: reviewCard.position.id })}</div>
+                {#if cramMode}
+                    <div class="review-buttons">
+                        <button class="btn-rating" onclick={() => submitReview(1)} title={$t('anki.next') + ' (1-4)'}>
+                            <span class="rating-label">{$t('anki.next')}</span>
                         </button>
-                    {/each}
-                </div>
-            {/if}
+                    </div>
+                {:else}
+                    <div class="review-buttons">
+                        {#each [['anki.again', 1], ['anki.hard', 2], ['anki.good', 3], ['anki.easy', 4]] as [key, rating] (rating)}
+                            <button class="btn-rating" onclick={() => submitReview(rating)} title={$t(key) + ` (${rating})`}>
+                                <span class="rating-label">{$t(key)}</span>
+                                <span class="rating-key">{rating}</span>
+                            </button>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
+
+            <div class="review-answer">
+                {#if !hasAnswer}
+                    <div class="answer-absent">{$t('anki.noAnalysis')}</div>
+                {:else if answerShown}
+                    <AnalysisView
+                        {analysis}
+                        kind={answerKind}
+                        {turnability}
+                        {cubeValue}
+                        {onRoll}
+                        moves={answerMoves}
+                        selectedMove={$selectedMoveStore}
+                        {isPlayedMove}
+                        {isPlayedCubeAction}
+                        onRowClick={handleMoveRowClick}
+                    />
+                {:else}
+                    <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
+                {/if}
+            </div>
         </div>
     {:else if viewMode === 'settings' && selectedDeck}
         <!-- Settings Mode -->
@@ -687,9 +771,21 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
         padding: 12px;
+        gap: 8px;
+        min-height: 0;
+        /* Query container so the revealed answer lays itself out on the panel's
+           own width — bottom band or side column — exactly as it does in the
+           Analysis tab. */
+        container-type: inline-size;
+    }
+
+    /* The grading strip: fixed, above the answer, never scrolled away. */
+    .review-strip {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 8px;
     }
 
@@ -703,6 +799,47 @@
         gap: 6px;
         width: 100%;
         max-width: 320px;
+    }
+
+    /* The answer, below the strip: the only part that scrolls, on both axes.
+       A candidate table is wider than a side column, and clipping it would
+       hide the very columns being revealed — wide content scrolls inside its
+       own box, it is never cut off. Content sits at the TOP: centred in a tall
+       side column, the answer floated half a panel away from the buttons that
+       grade it. */
+    .review-answer {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 10px;
+    }
+
+    /* One opaque stand-in for the whole answer (ADR-0025 rule 3), not the Eval
+       panel's in-place mask: a checker table's rows ARE the moves, ordered by
+       equity, so masking in place would leave the answer on the first line. */
+    .answer-masked {
+        width: 100%;
+        max-width: 320px;
+        padding: 14px 0;
+        border: 1px dashed #ccc;
+        border-radius: 3px;
+        background: #f7f7f7;
+        color: #999;
+        letter-spacing: 3px;
+        cursor: pointer;
+    }
+    .answer-masked:hover {
+        background: #eee;
+        color: #666;
+    }
+
+    .answer-absent {
+        font-size: var(--font-size-small);
+        color: #888;
     }
 
     .btn-rating {

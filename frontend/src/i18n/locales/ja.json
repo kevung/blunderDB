@@ -493,6 +493,8 @@
         "confirmDelete": "トーナメント「{name}」を削除しますか?"
     },
     "anki": {
+        "clickToReveal": "クリックまたはスペースキーで解答を表示",
+        "noAnalysis": "この局面に保存された解析はありません",
         "again": "もう一度",
         "backToDeckList": "デッキ一覧に戻る",
         "colActions": "操作",

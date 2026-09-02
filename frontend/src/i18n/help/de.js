@@ -152,6 +152,9 @@ export default {
                         und zur Deck-Liste zurückzukehren.
                     </p>
                     <p>
+                        <strong>Antwort anzeigen:</strong> Die Karte stellt eine Frage; überlegen Sie, und drücken Sie dann die <strong>Leertaste</strong> (oder klicken Sie auf den verdeckten Bereich), um die gespeicherte Analyse der Stellung aufzudecken. Sie erscheint unter den Bewertungstasten, die in Reichweite bleiben. Zum Bewerten müssen Sie sie nicht aufdecken; bei der nächsten Karte wird sie wieder verdeckt — nicht jedoch, wenn Sie nur den Reiter wechseln.
+                    </p>
+                    <p>
                         <strong>Stoppen/Fortsetzen:</strong> Sie können eine Wiederholungssitzung jederzeit durch Drücken von <strong>Esc</strong> stoppen. Die Schaltfläche wechselt zu <em>Resume</em> und zeigt Ihren Fortschritt an. Darauf klicken, um
                         dort weiterzumachen, wo Sie aufgehört haben.
                     </p>
@@ -649,6 +652,10 @@ export default {
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>LEERTASTE</td>
+                                <td>Antwort anzeigen (die gespeicherte Analyse der Stellung)</td>
+                            </tr>
                             <tr>
                                 <td>1</td>
                                 <td>Bewertung: Again (Wiederholung fehlgeschlagen, bald erneut anzeigen)</td>

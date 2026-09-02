@@ -1,7 +1,7 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
-import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js';
+import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../stores/ankiStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { viewStore } from '../stores/viewStore.js';
@@ -151,6 +151,15 @@ export function handleKeyDown(event) {
         } else if (event.code === 'Digit4' || event.code === 'Numpad4') {
             event.preventDefault();
             ankiReviewActionStore.set(4);
+        } else if (event.code === 'Space') {
+            // Show the answer (ADR-0025 rule 3). Space is free in this branch —
+            // it opens the command line everywhere else, and this guard returns
+            // before that. It deliberately gets no second meaning once the
+            // answer is shown, unlike real Anki where Space then grades "Good":
+            // a double tap would enter a grade the user never meant, and a
+            // false grade durably pollutes the schedule.
+            event.preventDefault();
+            showAnkiAnswer();
         } else if (event.code === 'Escape') {
             event.preventDefault();
             ankiReviewActionStore.set('back');

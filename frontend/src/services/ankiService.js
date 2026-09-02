@@ -26,10 +26,12 @@ import {
     GetAllCollections,
     LoadPositionsByFilters
 } from '../../wailsjs/go/database/Database.js';
-import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
+import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
-import { positionsStore, positionStore } from '../stores/positionStore.js';
+import { positionsStore } from '../stores/positionStore.js';
+import { selectedMoveStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
+import { showPosition } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
 import { logger } from '../utils/logger.js';
@@ -279,11 +281,34 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
     if (updated && get(selectedAnkiDeckStore)?.id === deckId) selectedAnkiDeckStore.set(updated);
 }
 
-/** Put a card's position on the board and point the status bar at it. */
-export function showCard(card) {
-    positionStore.set(JSON.parse(JSON.stringify(card.position)));
+/**
+ * Put a card's position on the board and point the status bar at it.
+ *
+ * Goes through showPosition rather than setting positionStore directly: it is
+ * the one function that knows what "display a position" means, and the only
+ * one that loads the position's analysis and comment. Setting the store by
+ * hand left analysisStore holding whatever position was browsed last, so the
+ * Analysis tab — one Ctrl+L away, the review key guard lets Ctrl combos
+ * through — showed another position's numbers during a review, and the
+ * revealed answer of ADR-0025 rule 1 would have inherited that lie.
+ */
+export async function showCard(card) {
+    await showPosition(card.position);
     const idx = positionsStore.indexOf(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
+}
+
+/**
+ * A new question: hide its answer and drop the move picked on the previous one
+ * (ADR-0025 rule 5). Deliberately NOT inside showCard — the panel re-shows the
+ * current card every time the Anki tab regains focus, and going to look at the
+ * Eval panel is not a new question.
+ *
+ * Left set, selectedMoveStore freezes j/k position browsing app-wide.
+ */
+function newQuestion() {
+    hideAnkiAnswer();
+    selectedMoveStore.set(null);
 }
 
 /**
@@ -297,7 +322,8 @@ export async function startSession(deck, { cram = false } = {}) {
     const card = cram ? await GetRandomAnkiCard(deck.id, 0) : await GetNextAnkiCard(deck.id);
     if (!card) return null;
     ankiReviewCardStore.set(card);
-    showCard(card);
+    newQuestion();
+    await showCard(card);
     return card;
 }
 
@@ -307,19 +333,20 @@ export async function startSession(deck, { cram = false } = {}) {
  */
 export async function reviewCard(card, rating) {
     const next = await ReviewAnkiCard(card.card.id, rating);
-    return advance(next);
+    return await advance(next);
 }
 
 /** Draw the next random card of a cram session, never the one just shown. */
 export async function nextCramCard(deck, card) {
     const next = await GetRandomAnkiCard(deck.id, card.position.id);
-    return advance(next);
+    return await advance(next);
 }
 
-function advance(next) {
+async function advance(next) {
     if (next) {
         ankiReviewCardStore.set(next);
-        showCard(next);
+        newQuestion();
+        await showCard(next);
     } else {
         ankiReviewCardStore.set(null);
     }

@@ -16,7 +16,7 @@ import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
-import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
+import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -38,6 +38,9 @@ function resetAnkiStores() {
     ankiReviewCardStore.set(null);
     ankiDeckStatsStore.set(null);
     ankiViewModeStore.set('list');
+    // Opening another database ends whatever review was in progress, so the
+    // next card starts from a hidden answer (ADR-0025 rule 5).
+    hideAnkiAnswer();
 }
 
 function resetAnalysisAndCommentStores() {
