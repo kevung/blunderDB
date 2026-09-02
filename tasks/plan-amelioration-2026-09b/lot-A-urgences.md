@@ -109,17 +109,18 @@ secret scanning, push protection et Dependabot security updates désactivés ;
 mouvant alors que `SECURITY.md` dit « pinned by commit SHA ».
 
 **À faire.**
-- [ ] Réglages dépôt : `default_workflow_permissions: read` ; secret scanning +
+- [x] Réglages dépôt : `default_workflow_permissions: read` ; secret scanning +
       push protection + Dependabot security updates ; `allowed_actions:
       selected` (actions/*, github/*, + les 12 tierces déjà pinnées) ;
       `sha_pinning_required: true`.
-- [ ] `aur.yml` : `permissions: contents: read` en tête.
-- [ ] Ruleset sur `main` : status checks requis `test (*)`, `lint`,
-      `govulncheck`, `frontend-lint`, `frontend-test` ; historique linéaire ;
-      pas de force-push.
-- [ ] Pinner par SHA les 52 `uses:` (Dependabot `github-actions` maintient
+- [x] `aur.yml` : `permissions: contents: read` en tête.
+- [x] Ruleset sur `main` : pas de force-push, pas de suppression — et rien
+      d'autre. Pas de status checks requis ni de PR obligatoire : le flux de ce
+      dépôt fusionne localement et pousse `main` directement, une telle règle
+      refuserait chaque push (raison consignée dans `SECURITY.md`).
+- [x] Pinner par SHA les 52 `uses:` (Dependabot `github-actions` maintient
       ensuite), ou corriger la phrase de `SECURITY.md`. Choix : pinner.
-- [ ] `build.yml:513-514` : le job `build` n'a plus `contents: write` ; un job
+- [x] `build.yml:513-514` : le job `build` n'a plus `contents: write` ; un job
       `release` tag-only télécharge les artefacts et publie (le commentaire du
       fichier décrit déjà ce remède).
 
