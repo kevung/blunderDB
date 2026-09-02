@@ -45,6 +45,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
 - `delete` - Delete data from the database
+- `healthcheck` - Probe a running `serve` daemon's `/readyz`; exit 0 when it is ready
 - `help` - Show help message
 - `version` - Show version information
 
@@ -1012,6 +1013,44 @@ Compacting database...
   Before: 128.4 MiB
   After:  41.2 MiB
   Reclaimed: 87.2 MiB
+```
+
+## Healthcheck Command
+
+Ask a running `serve` daemon (see the headless chapter of the docs) whether it
+is ready: one `GET /readyz`, exit code `0` when the daemon answers 200 (storage
+reachable, schema version as expected), `1` otherwise — storage down, stale
+schema, or nothing listening at the address. No database file is opened.
+
+```bash
+./blunderDB healthcheck [--addr host:port] [--timeout 2s]
+```
+
+**Options:**
+- `--addr` - Address the daemon listens on (default: `BLUNDERDB_ADDR`, else `:8080`). A listen address without a host (`:8080`) or with a wildcard host (`0.0.0.0`, `[::]`) is probed on the loopback interface.
+- `--timeout` - Give up after this long (default: `2s`)
+
+This is what the container image's `HEALTHCHECK` runs — the image is distroless
+and ships no `curl` — and the `serve` binary built from `cmd/serve` understands
+the same word (`/usr/local/bin/blunderdb healthcheck`). It works just as well
+from a shell or a systemd unit.
+
+**Example:**
+```bash
+./blunderDB serve --db database.db --addr 127.0.0.1:8080 &
+./blunderDB healthcheck --addr 127.0.0.1:8080 && echo "daemon ready"
+```
+
+**Example output:**
+```
+ready
+```
+
+On failure the reason is printed, so `docker inspect` shows why the container
+is unhealthy:
+
+```
+Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
 ```
 
 ## Common Workflows
