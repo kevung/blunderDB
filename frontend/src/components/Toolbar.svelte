@@ -1,33 +1,31 @@
 <script>
-    let {
-        onNewDatabase,
-        onOpenDatabase,
-        onImportDatabase,
-        onExportDatabase,
-        onExit,
-        onImportPosition,
-        onImportFolder,
-        onCopyPosition,
-        onPastePosition,
-        onSavePosition,
-        onUpdatePosition,
-        onDeletePosition,
-        onFirstPosition,
-        onPreviousPosition,
-        onNextPosition,
-        onLastPosition,
-        onGoToPosition,
-        onTogglePipcount,
-        onRandomPosition,
-        onCopyBoardImage,
-        onToggleHelp,
-        onToggleConfig,
-        onToggleTour,
-        onLoadAllPositions
-    } = $props();
+    // The toolbar buttons are the same singleton service actions the keyboard
+    // shortcuts and the command line run; import them here rather than have
+    // App.svelte re-export two dozen callbacks as props.
+    import { newDatabase, openDatabase, exitApp } from '../services/databaseService.js';
+    import { importDatabase, importPosition, importFolder, pastePosition } from '../services/importService.js';
+    import { exportDatabase } from '../services/exportService.js';
+    import { copyPosition, copyBoardImage } from '../services/clipboardService.js';
+    import {
+        saveCurrentPosition,
+        updatePosition,
+        deletePosition,
+        firstPosition,
+        previousPosition,
+        nextPosition,
+        lastPosition,
+        gotoPosition,
+        togglePipcount,
+        loadRandomPosition,
+        reloadAllPositions
+    } from '../services/positionService.js';
+    import { toggleHelpModal } from '../services/keyboardService.js';
+
+    const toggleConfig = () => toggleModal(MODAL.CONFIG);
+    const toggleTour = () => toggleModal(MODAL.TOUR);
 
     import { t } from '../i18n';
-    import { activeTabStore } from '../stores/uiStore';
+    import { activeTabStore, MODAL, toggleModal } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
     let databasePath = $derived($databasePathStore);
     let isSearchTab = $derived($activeTabStore === 'search');
@@ -38,7 +36,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onNewDatabase(e);
+            newDatabase(e);
         }}
         aria-label={$t('toolbar.newDatabase')}
         title="{$t('toolbar.newDatabase')} (Ctrl-N)"
@@ -55,7 +53,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onOpenDatabase(e);
+            openDatabase(e);
         }}
         aria-label={$t('toolbar.openDatabase')}
         title="{$t('toolbar.openDatabase')} (Ctrl-O)"
@@ -72,7 +70,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onImportDatabase(e);
+            importDatabase(e);
         }}
         aria-label={$t('toolbar.importDatabase')}
         title="{$t('toolbar.importDatabase')} (Ctrl-Shift-I)"
@@ -90,7 +88,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onExportDatabase(e);
+            exportDatabase(e);
         }}
         aria-label={$t('toolbar.exportDatabase')}
         title="{$t('toolbar.exportDatabase')} (Ctrl-Shift-S)"
@@ -108,7 +106,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onExit(e);
+            exitApp(e);
         }}
         aria-label={$t('toolbar.exit')}
         title="{$t('toolbar.exit')} blunderDB (Ctrl-Q)"
@@ -127,7 +125,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onImportPosition(e);
+            importPosition(e);
         }}
         aria-label={$t('toolbar.importPosition')}
         title="{$t('toolbar.importPositionTip')} (Ctrl-I)"
@@ -145,7 +143,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onImportFolder(e);
+            importFolder(e);
         }}
         aria-label={$t('toolbar.importFolder')}
         title="{$t('toolbar.importFolder')} (Ctrl-Shift-F)"
@@ -163,7 +161,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onCopyPosition(e);
+            copyPosition(e);
         }}
         aria-label={$t('toolbar.copyPosition')}
         title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} (Ctrl-C)` : `${$t('toolbar.copyPositionTip')} (Ctrl-C)`}
@@ -181,7 +179,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onPastePosition(e);
+            pastePosition(e);
         }}
         aria-label={$t('toolbar.pastePosition')}
         title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} (Ctrl-V)` : `${$t('toolbar.pastePosition')} (Ctrl-V)`}
@@ -199,7 +197,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onSavePosition(e);
+            saveCurrentPosition(e);
         }}
         aria-label={$t('toolbar.savePosition')}
         title="{$t('toolbar.savePosition')} (Ctrl-S)"
@@ -213,7 +211,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onUpdatePosition(e);
+            updatePosition(e);
         }}
         aria-label={$t('toolbar.updatePosition')}
         title="{$t('toolbar.updatePosition')} (Ctrl-U)"
@@ -231,7 +229,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onDeletePosition(e);
+            deletePosition(e);
         }}
         aria-label={$t('toolbar.deletePosition')}
         title="{$t('toolbar.deletePosition')} (Del)"
@@ -251,7 +249,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onLoadAllPositions(e);
+            reloadAllPositions(e);
         }}
         aria-label={$t('toolbar.loadAllPositions')}
         title="{$t('toolbar.loadAllPositions')} (Ctrl-R)"
@@ -265,7 +263,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onFirstPosition(e);
+            firstPosition(e);
         }}
         aria-label={$t('toolbar.firstPosition')}
         title="{$t('toolbar.firstPosition')} (PageUp, h)"
@@ -279,7 +277,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onPreviousPosition(e);
+            previousPosition(e);
         }}
         aria-label={$t('toolbar.previousPosition')}
         title="{$t('toolbar.previousPosition')} (Left, k)"
@@ -293,7 +291,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onNextPosition(e);
+            nextPosition(e);
         }}
         aria-label={$t('toolbar.nextPosition')}
         title="{$t('toolbar.nextPosition')} (Right, j)"
@@ -307,7 +305,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onLastPosition(e);
+            lastPosition(e);
         }}
         aria-label={$t('toolbar.lastPosition')}
         title="{$t('toolbar.lastPosition')} (PageDown, l)"
@@ -321,7 +319,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onGoToPosition(e);
+            gotoPosition(e);
         }}
         aria-label={$t('toolbar.goToPosition')}
         title={$t('toolbar.goToPosition')}
@@ -341,7 +339,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onTogglePipcount(e);
+            togglePipcount(e);
         }}
         aria-label={$t('toolbar.togglePipcount')}
         title="{$t('toolbar.togglePipcount')} (p)"
@@ -355,7 +353,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onRandomPosition(e);
+            loadRandomPosition(e);
         }}
         aria-label={$t('toolbar.randomPosition')}
         title="{$t('toolbar.randomPosition')} (r)"
@@ -373,7 +371,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onCopyBoardImage(e);
+            copyBoardImage(e);
         }}
         aria-label={$t('toolbar.copyBoardImage')}
         title="{$t('toolbar.copyBoardImageTip')} (Ctrl-X), {$t('toolbar.copyBoardImageWithAnalysis')} (Ctrl-X Ctrl-X)"
@@ -393,7 +391,7 @@
     <button
         onclick={(e) => {
             e.stopPropagation();
-            onToggleConfig(e);
+            toggleConfig(e);
         }}
         aria-label={$t('toolbar.settings')}
         title={$t('toolbar.settings')}
@@ -412,7 +410,7 @@
         data-tour="tour"
         onclick={(e) => {
             e.stopPropagation();
-            onToggleTour(e);
+            toggleTour(e);
         }}
         aria-label={$t('toolbar.tour')}
         title={$t('toolbar.tour')}
@@ -430,7 +428,7 @@
         data-tour="help"
         onclick={(e) => {
             e.stopPropagation();
-            onToggleHelp(e);
+            toggleHelpModal(e);
         }}
         aria-label={$t('toolbar.help')}
         title="{$t('toolbar.help')} (?)"

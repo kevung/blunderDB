@@ -5,7 +5,7 @@
     import { fade } from 'svelte/transition';
 
     // Wails runtime
-    import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
+    import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists } from '../wailsjs/go/gui/App.js';
     import { initLanguage, t } from './i18n';
@@ -27,46 +27,18 @@
     // Stores
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
-    import { analysisStore } from './stores/analysisStore.js';
-    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
-    import {
-        showImportProgressModalStore,
-        importModalModeStore,
-        importAnalysisStore,
-        importResultStore,
-        showFileImportModalStore,
-        fileImportModeStore,
-        fileImportTotalFilesStore,
-        fileImportCurrentIndexStore,
-        fileImportCurrentFileStore,
-        fileImportResultsStore
-    } from './stores/importModalStore.js';
-    import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from './stores/exportModalStore.js';
+    import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
 
     // Services
-    import {
-        newDatabase,
-        openDatabase,
-        openDatabaseByPath,
-        loadDemoDatabase,
-        exitApp,
-        closeWarningModal,
-        warningMessageStore,
-        protectedCopyPathStore,
-        protectedCopyErrorStore,
-        unlockProtectedCopy,
-        cancelProtectedCopy
-    } from './services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp } from './services/databaseService.js';
     import {
         showPosition,
         loadAllPositions,
         reloadAllPositions,
         loadPositionsByFilters,
-        firstPosition,
         previousPosition,
         nextPosition,
-        lastPosition,
-        gotoPosition,
         saveCurrentPosition,
         updatePosition,
         deletePosition,
@@ -84,27 +56,15 @@
         exitEPCMode,
         updateEPC,
         handleOpenCollection,
-        addSearchToFilterLibrary,
-        togglePipcount,
-        loadRandomPosition
+        addSearchToFilterLibrary
     } from './services/positionService.js';
-    import {
-        importDatabase,
-        importPosition,
-        importFolder,
-        handleImportCommit,
-        handleImportCancel,
-        handleImportClose,
-        handleFileImportCancel,
-        handleFileImportClose,
-        pastePosition,
-        handleFileDrop
-    } from './services/importService.js';
-    import { exportDatabase, handleExportCommit, handleExportCancel } from './services/exportService.js';
-    import { copyPosition, copyBoardImage } from './services/clipboardService.js';
+    import { importDatabase, importPosition, handleFileDrop } from './services/importService.js';
+    import { exportDatabase } from './services/exportService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
+    import { resizable } from './utils/resizeHandle.js';
+    import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
     // Components
@@ -114,28 +74,10 @@
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
+    import ModalHost from './components/ModalHost.svelte';
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
-    import HelpModal from './components/HelpModal.svelte';
-    import ConfigModal from './components/ConfigModal.svelte';
-    import TourCatalogModal from './components/TourCatalogModal.svelte';
     import { maybeRunFirstRunTour } from './services/tourService.js';
-    import GoToPositionModal from './components/GoToPositionModal.svelte';
-    import MetModal from './components/MetModal.svelte';
-    import DataTableModal from './components/DataTableModal.svelte';
-    import { takePoint2LastTable } from './stores/takePoint2LastTable';
-    import { takePoint2LiveTable } from './stores/takePoint2LiveTable';
-    import { takePoint4LastTable } from './stores/takePoint4LastTable';
-    import { takePoint4LiveTable } from './stores/takePoint4LiveTable';
-    import { gammonValue1Table } from './stores/gammonValue1Table';
-    import { gammonValue2Table } from './stores/gammonValue2Table';
-    import { gammonValue4Table } from './stores/gammonValue4Table';
-    import WarningModal from './components/WarningModal.svelte';
-    import { confirmModalStore, resolveConfirm } from './services/confirmService.js';
-    import ProtectedCopyModal from './components/ProtectedCopyModal.svelte';
-    import ImportProgressModal from './components/ImportProgressModal.svelte';
-    import FileImportProgressModal from './components/FileImportProgressModal.svelte';
-    import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
 
     // Component state
     let mainArea;
@@ -143,7 +85,6 @@
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
-    let dragCounter = 0;
     let positions = [];
     let saveSessionTimeout = null;
     let tabInitialized = false;
@@ -185,42 +126,7 @@
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set(emptyPosition());
-            analysisStore.set({
-                positionId: null,
-                xgid: '',
-                player1: '',
-                player2: '',
-                analysisType: '',
-                analysisEngineVersion: '',
-                checkerAnalysis: { moves: [] },
-                doublingCubeAnalysis: {
-                    analysisDepth: '',
-                    playerWinChances: 0,
-                    playerGammonChances: 0,
-                    playerBackgammonChances: 0,
-                    opponentWinChances: 0,
-                    opponentGammonChances: 0,
-                    opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0,
-                    cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0,
-                    cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0,
-                    cubefulDoublePassError: 0,
-                    bestCubeAction: '',
-                    wrongPassPercentage: 0,
-                    wrongTakePercentage: 0
-                },
-                allCubeAnalyses: [],
-                playedMove: '',
-                playedCubeAction: '',
-                playedMoves: [],
-                playedCubeActions: [],
-                creationDate: '',
-                lastModifiedDate: ''
-            });
+            analysisStore.set(emptyAnalysis());
         }
     });
 
@@ -285,40 +191,16 @@
 
     // ── UI event handlers ──────────────────────────────────────────
 
-    function onResizeHandleMouseDown(e) {
-        e.preventDefault();
-        // Side panel: drag horizontally to resize its width (it sits to the
-        // right of the board, so dragging left grows it). Bottom panel: drag
-        // vertically to resize its height (dragging up grows it).
-        const side = isSidePanel;
-        document.body.style.cursor = side ? 'ew-resize' : 'ns-resize';
-        document.body.style.userSelect = 'none';
-        const start = side ? e.clientX : e.clientY;
-        const startSize = side ? panelWidth : panelHeight;
-        let moved = false;
-        function onMouseMove(e) {
-            moved = true;
-            if (side) {
-                panelWidth = Math.min(Math.max(150, startSize + (start - e.clientX)), window.innerWidth - 200);
-            } else {
-                panelHeight = Math.min(Math.max(80, startSize + (start - e.clientY)), window.innerHeight - 160);
-            }
-            window.dispatchEvent(new Event('resize'));
-        }
-        function onMouseUp() {
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-            // Persist only the dimension the drag actually applies to, and only
-            // when the drag moved the handle at all (a plain click is a no-op).
-            if (moved) {
-                if (side) savePanelWidth(panelWidth);
-                else savePanelHeight(panelHeight);
-            }
-        }
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
+    // Resize-handle drag (utils/resizeHandle.js). The action reads the mode
+    // and the start size at mousedown and hands them back so a layout flip
+    // mid-drag cannot cross axes.
+    function setPanelSize(size, side) {
+        if (side) panelWidth = size;
+        else panelHeight = size;
+    }
+    function savePanelSize(size, side) {
+        if (side) savePanelWidth(size);
+        else savePanelHeight(size);
     }
 
     function handleWheel(event) {
@@ -339,25 +221,6 @@
         } catch (err) {
             logger.error('Error getting window dimensions:', err);
         }
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-        if (!showDropOverlay) {
-            dragCounter++;
-            showDropOverlay = true;
-        }
-    }
-    function handleDragLeave(_e) {
-        dragCounter--;
-        if (dragCounter <= 0) {
-            dragCounter = 0;
-            showDropOverlay = false;
-        }
-    }
-    function handleDragEnd(_e) {
-        dragCounter = 0;
-        showDropOverlay = false;
     }
 
     // ── Lifecycle ──────────────────────────────────────────────────
@@ -391,10 +254,6 @@
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
-        OnFileDrop((x, y, paths) => handleFileDrop(x, y, paths), false);
-        window.addEventListener('dragover', handleDragOver);
-        window.addEventListener('dragleave', handleDragLeave);
-        window.addEventListener('drop', handleDragEnd);
 
         // Apply the persisted UI language before anything renders; fall back to
         // English if the config read fails.
@@ -457,15 +316,11 @@
         window.removeEventListener('keydown', handleKeyDown);
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
-        window.removeEventListener('dragover', handleDragOver);
-        window.removeEventListener('dragleave', handleDragLeave);
-        window.removeEventListener('drop', handleDragEnd);
-        OnFileDropOff();
         unsubscribePositions();
     });
 </script>
 
-<main class="main-container" bind:this={mainArea}>
+<main class="main-container" bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
@@ -480,33 +335,7 @@
         </div>
     {/if}
 
-    <Toolbar
-        onclick={() => {}}
-        onNewDatabase={newDatabase}
-        onOpenDatabase={openDatabase}
-        onImportDatabase={importDatabase}
-        onExportDatabase={exportDatabase}
-        onExit={exitApp}
-        onImportPosition={importPosition}
-        onImportFolder={importFolder}
-        onCopyPosition={copyPosition}
-        onPastePosition={pastePosition}
-        onSavePosition={saveCurrentPosition}
-        onUpdatePosition={updatePosition}
-        onDeletePosition={deletePosition}
-        onFirstPosition={firstPosition}
-        onPreviousPosition={previousPosition}
-        onNextPosition={nextPosition}
-        onLastPosition={lastPosition}
-        onGoToPosition={gotoPosition}
-        onTogglePipcount={togglePipcount}
-        onRandomPosition={loadRandomPosition}
-        onCopyBoardImage={copyBoardImage}
-        onToggleHelp={toggleHelpModal}
-        onToggleConfig={() => toggleModal(MODAL.CONFIG)}
-        onToggleTour={() => toggleModal(MODAL.TOUR)}
-        onLoadAllPositions={reloadAllPositions}
-    />
+    <Toolbar />
 
     <ViewTabs />
 
@@ -520,8 +349,7 @@
             <Board />
         </div>
 
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="resize-handle" class:side={isSidePanel} onmousedown={onResizeHandleMouseDown}></div>
+        <div class="resize-handle" class:side={isSidePanel} use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : panelHeight, onResize: setPanelSize, onCommit: savePanelSize }}></div>
 
         <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${panelHeight}px;`}>
             <TabbedPanel
@@ -534,89 +362,7 @@
         </div>
     </div>
 
-    <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
-
-    <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} tables={[{ data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LAST} onClose={() => closeModal()} tables={[{ data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_1} onClose={() => closeModal()} tables={[{ data: gammonValue1Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} tables={[{ data: gammonValue2Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
-
-    <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
-    <WarningModal
-        message={$confirmModalStore?.message || ''}
-        visible={$confirmModalStore !== null}
-        mode="confirm"
-        confirmLabel={$confirmModalStore?.confirmLabel || ''}
-        cancelLabel={$confirmModalStore?.cancelLabel || ''}
-        onClose={() => resolveConfirm(false)}
-        onConfirm={() => resolveConfirm(true)}
-    />
-
-    <ProtectedCopyModal
-        visible={$activeModal === MODAL.PROTECTED_COPY}
-        fileName={$protectedCopyPathStore}
-        error={$protectedCopyErrorStore}
-        onSubmit={unlockProtectedCopy}
-        onCancel={cancelProtectedCopy}
-    />
-
-    <DataTableModal
-        visible={$activeModal === MODAL.TAKE_POINT_2}
-        onClose={() => closeModal()}
-        tables={[
-            { title: 'Long Races', data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 },
-            { title: 'Last Roll', data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }
-        ]}
-    />
-    <DataTableModal
-        visible={$activeModal === MODAL.TAKE_POINT_4}
-        onClose={() => closeModal()}
-        tables={[
-            { title: 'Long Races', data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 },
-            { title: 'Last Roll', data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }
-        ]}
-    />
-
-    <ImportProgressModal
-        visible={$showImportProgressModalStore}
-        mode={$importModalModeStore}
-        analysis={$importAnalysisStore}
-        result={$importResultStore}
-        onCancel={handleImportCancel}
-        onCommit={handleImportCommit}
-        onClose={handleImportClose}
-    />
-
-    <FileImportProgressModal
-        visible={$showFileImportModalStore}
-        mode={$fileImportModeStore}
-        totalFiles={$fileImportTotalFilesStore}
-        currentIndex={$fileImportCurrentIndexStore}
-        currentFile={$fileImportCurrentFileStore}
-        results={$fileImportResultsStore}
-        onCancel={handleFileImportCancel}
-        onClose={handleFileImportClose}
-    />
-
-    <ExportDatabaseModal
-        visible={$activeModal === MODAL.EXPORT_DATABASE}
-        mode={$exportModalModeStore}
-        positionCount={$exportPositionCountStore}
-        matches={$exportMatchesStore}
-        bind:metadata={$exportMetadataStore}
-        bind:exportOptions={$exportOptionsStore}
-        onCancel={handleExportCancel}
-        onExport={handleExportCommit}
-    />
-
-    <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
-    <ConfigModal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
-
-    <TourCatalogModal visible={$activeModal === MODAL.TOUR} onClose={() => closeModal()} />
+    <ModalHost />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>
