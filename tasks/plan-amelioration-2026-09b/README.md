@@ -1,5 +1,8 @@
 # Plan d'amélioration blunderDB — second audit du 2026-09-02
 
+> **Exécution en cours.** L'état exact — ce qui est fusionné, ce qui attend dans une
+> branche, ce qui est bloqué sur une action humaine — est dans [ETAT.md](ETAT.md).
+
 État de départ : `main` @ 7ebdcb86, 0.35.0 publiée le matin même, le plan
 [`plan-amelioration-2026-09`](../plan-amelioration-2026-09/README.md)
 exécuté en entier (lots 0 à 3). Quatre issues ouvertes (#151, #127, #119, #102).
