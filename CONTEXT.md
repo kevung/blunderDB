@@ -127,6 +127,27 @@ one, the *decision* built on it. Only *exact* is barred from answering outside t
 Referential: its equities are money whatever the Away score, so at a match score it keeps the
 win probability and yields the verdict to *evaluated*.
 
+**Bearoff database**:
+A table of race answers over a *domain* — two-sided (one entry per pair of home boards, the
+cube verdict's source) or one-sided (one entry per home board, the EPC's source). Where the
+table came from — shipped, downloaded, generated on this machine, or supplied by the user — is
+its *origin*, and the origin changes nothing about the Regime: a lookup in a generated table is
+still *exact*. What can differ is whether the table is **verified**.
+_Avoid_: bearoff file, .bd (the file is one carrier of a database, not the concept)
+
+**Domain** (of a bearoff database):
+The largest position a database answers — for a two-sided table, checkers per side within the
+home board; for a one-sided table, the farthest point a checker may stand on. A position inside
+the domain gets the table's answer; outside, the other Regimes take over. Widening the domain
+never changes an answer inside it.
+
+**Verified** (bearoff database):
+Identical, byte for byte, to what gnubg's own generator produces for the same domain, attested
+by a fingerprint blunderDB knows for that domain. A generated database whose fingerprint is
+unknown is *unverified*: its answers are believed exact, and the panel says so. Verification is
+a property of the table, never of the answer — *exact* stays *exact* either way.
+_Avoid_: validated, certified, authentic
+
 **Position fact**:
 A quantity that belongs to the board itself and to no choice a player might make: pip count,
 EPC, wastage, mean rolls and their dispersion, the pre-roll probability vector (win, gammon and
