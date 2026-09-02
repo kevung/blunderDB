@@ -445,6 +445,21 @@ reuse the English wording you wrote into `locale/en/LC_MESSAGES/index.po`. Check
 `gh release view <prevTag>` for tone/formatting, but the **language is always
 English** even if older notes were French.
 
+**Keep the CI's "Installation" block.** The `release` job of `build.yml` opens
+the notes with a block between `<!-- installation -->` and
+`<!-- /installation -->` (which asset to pick per system, `.sha256`, the ADR
+count computed from the checkout). Never retype it and never drop it: read the
+current body, keep the block, and put your notes **below** it. If the block is
+missing (you are editing before CI finished), leave the top of the file empty —
+the job prepends the block itself and keeps whatever notes it finds.
+
+```bash
+gh release view <version> --json body -q .body \
+  | sed -n '/<!-- installation -->/,/<!-- \/installation -->/p' > /tmp/relnotes.md
+echo >> /tmp/relnotes.md
+cat /tmp/changelog-notes.md >> /tmp/relnotes.md      # the changelog-style notes above
+```
+
 Publish:
 
 ```bash

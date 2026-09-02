@@ -20,11 +20,11 @@ H.1 à H.6 = **étape 1** ; H.7 à H.14 = **étape 2**.
 
 `telecharge_install.rst` : 0 mention de Flatpak, de GHCR, de `.sha256` ; notes
 de release : 31 assets sans guide de choix, « 22 ADRs indexed » faux.
-- [ ] Tableau par OS/canal (le README l'a déjà) + Flatpak + GHCR + vérification
-      `sha256sum -c` + (E.7) signature minisign.
-- [ ] Bloc « Installation » de 8 lignes injecté par la CI en tête de chaque
+- [x] Tableau par OS/canal (le README l'a déjà) + Flatpak + GHCR + vérification
+      `sha256sum -c` ; (E.7) signature minisign reste avec E.7.
+- [x] Bloc « Installation » de 8 lignes injecté par la CI en tête de chaque
       release (`build.yml`, job release) ; chiffre des ADR calculé, pas écrit.
-- [ ] `.po` dans le même commit.
+- [x] `.po` dans le même commit.
 
 ## H.2 — `CONTRIBUTING.md` et ce qui va avec [S] — adoption (#244)
 

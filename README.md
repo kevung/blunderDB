@@ -51,13 +51,15 @@ Every asset on the [Releases page](https://github.com/kevung/blunderDB/releases)
 | Debian, Ubuntu, Mint | `sudo apt install ./blunderdb_x.y.z_amd64.deb` |
 | Fedora, openSUSE | `sudo dnf install ./blunderdb-x.y.z.x86_64.rpm` |
 | Arch Linux | `yay -S blunderdb-bin` (AUR, updated on each release) |
-| Other Linux | Raw binary — `webkit2gtk-4.1` build for current distributions, `webkit2gtk-4.0` build for Ubuntu 22.04-era systems |
+| Any Linux with Flatpak | `flatpak install ./blunderDB-x.y.z.flatpak` (bundle attached to each release; not on Flathub yet) |
+| Other Linux | `.tar.gz` or raw binary — `webkit2gtk-4.1` build for current distributions, `webkit2gtk-4.0` build for Ubuntu 22.04-era systems |
 | macOS | Universal `.app` (unsigned — see the security appendix in the docs) |
 | Windows | `.exe` (unsigned — see the security appendix in the docs) |
+| Server (`serve` mode) | `docker pull ghcr.io/kevung/blunderdb-serve:x.y.z` (amd64 and arm64; also builds from `Dockerfile.serve`) |
 
 winget and Homebrew are not published yet: each release ships the rendered manifests (`blunderDB-winget-manifests-x.y.z.zip`, `blunderdb-x.y.z.rb`) — see `packaging/winget/` and `packaging/homebrew/` for the submission steps.
 
-The headless daemon also builds as a container image from `Dockerfile.serve`.
+The full guide, per system and in nine languages: [Download and install](https://kevung.github.io/blunderDB/en/telecharge_install.html).
 
 ### Build from source
 
