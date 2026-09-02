@@ -220,11 +220,12 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(paintedPlayed[0]).toBe('24/23 13/10');
     });
 
-    test('the best move has no error figure on either surface — a dash, never +0.000', () => {
+    test('the best move, whose error is absent by construction, reads +0.000 on both surfaces', () => {
         const { container } = render(CandidateMovesTable, { props: { moves: checkerAnalysis.checkerAnalysis.moves, sortColumn: '' } });
         const firstRow = [...container.querySelectorAll('tbody tr')[0].querySelectorAll('td')].map((td) => td.textContent.trim());
-        expect(firstRow.slice(0, 3)).toEqual(['8/5 6/5', '+0.201', '—']);
-        expect(paint(checkerAnalysis).map((p) => p.text)).toContain('—');
+        expect(firstRow.slice(0, 3)).toEqual(['8/5 6/5', '+0.201', '+0.000']);
+        expect(paint(checkerAnalysis).map((p) => p.text)).toContain('+0.000');
+        expect(paint(checkerAnalysis).map((p) => p.text)).not.toContain('—');
     });
 
     test('the strip is sized by what it paints', () => {

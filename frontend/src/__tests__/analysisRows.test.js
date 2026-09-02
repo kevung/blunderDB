@@ -220,11 +220,14 @@ describe('checkerRows', () => {
         expect(block.rows[1].move).toBe(moves[1]);
     });
 
-    test('the best move of a stored record carries no error at all: a dash, not +0.000', () => {
+    test('the best move of a stored record carries no error at all: a zero by construction, +0.000', () => {
         const block = checkerRows(moves, { t });
-        expect(block.rows[0].cells[1]).toBe(DASH);
+        expect(block.rows[0].cells[1]).toBe('+0.000');
         expect(block.rows[0].cells[0]).toBe('+0.123');
-        expect(checkerRows([{ move: '8/5 6/5' }], { t }).rows[0].cells).toEqual([DASH, DASH, DASH, DASH, DASH, DASH, DASH, DASH, '', '']);
+    });
+
+    test('every other absent value is a dash — never measured, never a zero', () => {
+        expect(checkerRows([{ move: '8/5 6/5' }], { t }).rows[0].cells).toEqual([DASH, '+0.000', DASH, DASH, DASH, DASH, DASH, DASH, '', '']);
     });
 
     test('a zero equity or error is a measured +0.000', () => {

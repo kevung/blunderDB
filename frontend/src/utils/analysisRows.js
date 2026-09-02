@@ -179,9 +179,11 @@ function chanceCells(vector) {
  * checkerRows lays out a ranked candidate list. Sorting, truncation and
  * selection stay with the caller; the rows come back in the order given.
  *
- * An absent value is a dash: the best move of a stored record carries no
- * error at all (domain.CheckerMove.EquityError is nil there, by design), and
- * a dash says "nothing to lose here" where +0.000 would claim a measurement.
+ * An absent value is a dash — the project's mark for a value never measured,
+ * never for a zero. The one exception is the error column: the best move of a
+ * stored record carries no error at all (domain.CheckerMove.EquityError is nil
+ * there, by construction — it IS the reference), so its absence is a zero by
+ * definition and is written +0.000, as it always was.
  *
  * @returns {{ columns: string[], header: string[], baseline: object|null, rows: {key, move, label, cells: string[], highlight: boolean}[] }}
  */
@@ -203,7 +205,7 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
             key: move.index ?? move.move,
             move,
             label: move.move ?? '',
-            cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError) ?? DASH, ...chanceCells(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
+            cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError ?? 0), ...chanceCells(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
             highlight: isPlayedMove(move)
         }))
     };
