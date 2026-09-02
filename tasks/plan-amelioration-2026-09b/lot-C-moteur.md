@@ -18,7 +18,7 @@ architecture) ; C.13 = amont.
 
 ---
 
-## C.1 — Trous de test qui laissent passer une valuation jamais exécutée [S] — correction
+## C.1 — Trous de test qui laissent passer une valuation jamais exécutée [S] — correction (#188)
 
 - `position.go:246` `terminalValue` : **0 %** de couverture ; `valueSweep`
   (`search.go:561`) ne prend jamais la branche `isOver()`. Aucune position où
@@ -38,7 +38,7 @@ architecture) ; C.13 = amont.
       `FuzzDecide` (probs × états de match arbitraires : NaN, `count < 2`,
       divisions dégénérées de `segment`) ajoutés à `fuzz.yml`.
 
-## C.2 — Le parallélisme est un invariant que rien ne garde entre deux tags [S] — fiabilité
+## C.2 — Le parallélisme est un invariant que rien ne garde entre deux tags [S] — fiabilité (#189)
 
 `build.yml:58-63` : le shard `gammonnet` tourne sans `-race`, le shard `rest`
 l'exclut ; `TestParallelSearchIsBitIdentical` est sauté en `-short`
@@ -52,7 +52,7 @@ macOS (arm64, repli pur Go) est en `continue-on-error` et `-short`.
       sans `-race`, plus `kernel_identity_test` sur macos (arm64).
 - [ ] Retirer `continue-on-error` de `test-os` (E.1) — préalable de #151.
 
-## C.3 — Incohérences money/match visibles à l'utilisateur [S] — correction
+## C.3 — Incohérences money/match visibles à l'utilisateur [S] — correction (#190)
 
 - `internal/gui/gammonnet_eval.go:298` : `evaluateRaceRegime` construit
   `DefaultConfig(ply)` (`UseMatch=false`, `UseCube=false`) puis `:338` `Decide`
@@ -73,7 +73,7 @@ macOS (arm64, repli pur Go) est en `continue-on-error` et `-short`.
   verdict.
 - [ ] Les six points ; test `gammonnet_eval_test.go` du régime évalué au score.
 
-## C.4 — Le lot d'analyse retente à l'infini ce qu'il ne peut pas évaluer [S] — correction
+## C.4 — Le lot d'analyse retente à l'infini ce qu'il ne peut pas évaluer [S] — correction (#191)
 
 `db_gammonnet_batch.go:279-295` : le commentaire promet « nil, nil = rien à
 écrire (danse, état de videau hors MET) » mais `EvaluatePositionWith` renvoie
@@ -95,7 +95,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
       `/v1/gammonnet.sweepStale`. Documenté dans `manuel.rst`.
 - [ ] `NOT IN (sous-requête)` → `NOT EXISTS` (`:34,48`).
 
-## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction
+## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction (#192)
 
 - `search.go:588` valorise chaque feuille avec `s.cfg.CubeX` fixé à la racine
   (`domaineval.go:159`, `DefaultEfficiency(owner)`) alors que `owner` est
@@ -111,7 +111,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
       0,0738) à 3-ply et avec la MET de XG ; écrire le résultat dans l'en-tête
       du test — l'explication a été réfutée deux fois, une mesure ferme le point.
 
-## C.6 — Deux règles de verdict pour la même question [M] — cohérence
+## C.6 — Deux règles de verdict pour la même question [M] — cohérence (#193)
 
 `race/money.go:53-79` (`MoneyFromEntry`, 3 voies, jamais `TooGood`) vs
 `gammonnet/cube.go:646-658` (`Verdict`, 4 voies, exporté « pour être partagé »,
@@ -126,7 +126,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
 
 ---
 
-## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf
+## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf (#194)
 
 `cube.go:509-526` bissecte 60 fois une fonction **linéaire par morceaux et
 monotone** dont les 3-4 segments sont connus (`levelLive`, `:471-497`) :
@@ -141,7 +141,7 @@ lot » du BACKLOG est la seconde marche.
 - [ ] Benchmarks manquants **avant** : `BenchmarkProbs2Ply`,
       `BenchmarkCubeDecisionAtScore`, `BenchmarkBuildLevels`, débit du lot.
 
-## C.8 — La décision de videau du panneau n'utilise qu'une fraction des cœurs [M] — perf
+## C.8 — La décision de videau du panneau n'utilise qu'une fraction des cœurs [M] — perf (#195)
 
 `search_probs.go:127-155` : les 21 lancers de la racine sont sériels, chacun
 déclenche `deepenLevel` avec un candidat → 21 barrières de 21 tâches là où
@@ -153,7 +153,7 @@ dont `probsAt` a besoin.
 - [ ] Supprimer le paramètre `parallel` constant de `positionEquity`.
 - [ ] Bit-identité vérifiée par le test de C.2 étendu à `Probs`.
 
-## C.9 — Le panneau construit trois pools par frappe [M] — latence, mémoire
+## C.9 — Le panneau construit trois pools par frappe [M] — latence, mémoire (#196)
 
 `gammonnet_eval.go:160,228,306` : `EvaluatePosition` (`WithWorkers`),
 `preRollFacts` (second `Searcher`, refait un `Probs`), `evaluateRaceRegime`
@@ -172,7 +172,7 @@ frappe, caches froids ×3. Les chiffres « +36 % » et « 376 µs » des comment
       interactive est en vol.
 - [ ] Commentaires de coût mis à jour (0-ply ~1 ms, 2-ply NumCPU 72 ms).
 
-## C.10 — Allocations et conversions résiduelles [S] — propreté
+## C.10 — Allocations et conversions résiduelles [S] — propreté (#197)
 
 - `swapMatchState` : 1 472 allocations par décision au score (`search.go:453-459`)
   → `[MaxPly+2]MatchState` pré-calculé (l'état ne dépend que de la parité).
@@ -184,7 +184,7 @@ frappe, caches froids ×3. Les chiffres « +36 % » et « 376 µs » des comment
   → exporter `race.CubeStateFor`.
 - [ ] Les trois, bench avant/après.
 
-## C.11 — Surface exportée morte [S] — lisibilité
+## C.11 — Surface exportée morte [S] — lisibilité (#198)
 
 `Equity`, `TakePoint`, `Verdict`, `MoneyEquity`, `InvertProbs`, `Counters`,
 `BatchFill`, `ResetCounters`, `KernelName`, `KernelError`,
@@ -197,7 +197,7 @@ paquet, chacun avec une justification pour un appelant qui n'existe pas.
       `epc.go:61 PipCounts` à 0 % : ce sont les fonctions qui écrivent les
       colonnes scalaires (le bug `CommitImportDatabase` d'hier) → tests.
 
-## C.12 — Documentation du moteur [S] — navigation
+## C.12 — Documentation du moteur [S] — navigation (#199)
 
 - `CLAUDE.md:167-170` ne cite ni `engine/gammonnet` (5 000 l.) ni `met.go` ;
   `:189` `cmd/` sans `calibrace`.
@@ -211,7 +211,7 @@ paquet, chacun avec une justification pour un appelant qui n'existe pas.
 
 ---
 
-## C.13 — Amont gammonNet (décisions, pas des fiches ici)
+## C.13 — Amont gammonNet (décisions, pas des fiches ici) (#200)
 
 À porter dans le dépôt gammonNet avec leur jauge de force ; blunderDB suit.
 1. Forme close de `levelSolve` (C.7).

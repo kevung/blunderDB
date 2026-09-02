@@ -13,7 +13,7 @@ sortie, dépendances. Une fiche = une branche = une PR.
 
 ---
 
-## A.1 — Un `X-Tenant-ID` non numérique tombe sur le tenant 0 [S] — sécurité, critique
+## A.1 — Un `X-Tenant-ID` non numérique tombe sur le tenant 0 [S] — sécurité, critique (#155)
 
 **Constat.** `pkg/blunderdb/storage/tenant_context.go:24` et
 `storage/postgres/positions_postgres.go:31` : `n, _ := strconv.ParseInt(scope, 10, 64)`,
@@ -45,7 +45,7 @@ vert ; `test-postgres` vert.
 
 ---
 
-## A.2 — La table `metadata` est globale et exposée en écriture à tous les tenants [S/M] — sécurité, critique
+## A.2 — La table `metadata` est globale et exposée en écriture à tous les tenants [S/M] — sécurité, critique (#156)
 
 **Constat.** `internal/server/handlers_metadata.go:31-36` expose
 `metadata.load/save/setVersion` ; `storage/sqlshared/metadata.go:41,49,70`
@@ -74,7 +74,7 @@ vert ; PG : test de continuité (voir G.7) ou au minimum `TestMigratePostgres`.
 
 ---
 
-## A.3 — Les PRAGMAs SQLite ne s'appliquent qu'à une connexion sur dix [S] — bug, corruption silencieuse
+## A.3 — Les PRAGMAs SQLite ne s'appliquent qu'à une connexion sur dix [S] — bug, corruption silencieuse (#157)
 
 **Constat.** `pkg/blunderdb/database/db.go:223` et `:297` : `sql.Open("sqlite", path)`
 avec un chemin nu, puis `ConfigurePool` porte le pool à 10 connexions, puis
@@ -99,7 +99,7 @@ personnelle rapporte le nombre d'orphelins.
 
 ---
 
-## A.4 — Durcir le dépôt GitHub et les workflows [S] — sécurité, supply chain
+## A.4 — Durcir le dépôt GitHub et les workflows [S] — sécurité, supply chain (#158)
 
 **Constat.** `default_workflow_permissions: write` au niveau dépôt ;
 `.github/workflows/aur.yml` sans bloc `permissions:` (token write-all avec les
@@ -128,7 +128,7 @@ mouvant alors que `SECURITY.md` dit « pinned by commit SHA ».
 
 ---
 
-## A.5 — Les corpus de seeds fuzz ne tournent plus dans le job `test` [S] — fiabilité
+## A.5 — Les corpus de seeds fuzz ne tournent plus dans le job `test` [S] — fiabilité (#159)
 
 **Constat.** `build.yml:49-52` : les shards `database-*` filtrent par
 `-run '^Test[A-I]'` / `'^Test[^A-I]'` ; `-run` filtre aussi `Fuzz*`. Vérifié :
@@ -148,7 +148,7 @@ plus, contrairement à ce que `fuzz.yml:5-8` affirme.
 
 ---
 
-## A.6 — Trois trous du serveur HTTP [S] — sécurité
+## A.6 — Trois trous du serveur HTTP [S] — sécurité (#160)
 
 **Constat.**
 - Six sites renvoient `err.Error()` brut au client (DSN, chemins, SQL) :
@@ -178,7 +178,7 @@ correctif).
 
 ---
 
-## A.7 — 96 chaînes en français sur les huit sites traduits publiés [S] — qualité
+## A.7 — 96 chaînes en français sur les huit sites traduits publiés [S] — qualité (#161)
 
 **Constat.** `scripts/doc-i18n-check.sh` sur `main` : 12 chaînes non traduites
 × 8 langues (cli 2, manuel 5, raccourcis 5), venues des 4 commits doc
@@ -199,7 +199,7 @@ n'affichent plus de français.
 
 ---
 
-## A.8 — La base de démonstration embarque des noms de personnes réelles [S] — risque
+## A.8 — La base de démonstration embarque des noms de personnes réelles [S] — risque (#162)
 
 **Constat.** `internal/gui/demo.db.gz` (425 ko, dans chaque binaire distribué,
 `.exe`, `.app`, `.deb`, `.rpm`, AUR, Flatpak, image Docker) : `player1_name`/
@@ -225,7 +225,7 @@ plus vides en démo.
 
 ---
 
-## A.9 — Aucune notice tierce dans les artefacts distribués [S] — risque
+## A.9 — Aucune notice tierce dans les artefacts distribués [S] — risque (#163)
 
 **Constat.** Pas de `THIRD_PARTY.md`/`NOTICE` racine. Le binaire embarque deux
 bases produites par GNU Backgammon (`engine/gnubg_os6.bd`, `engine/race/gnubg_ts0.bd`)
@@ -251,7 +251,7 @@ il s'agit de créditer, pas de relicencier.
 
 ---
 
-## A.10 — Le binaire Linux s'appelle `blunderDB`, la doc dit `blunderdb` [S] — adoption
+## A.10 — Le binaire Linux s'appelle `blunderDB`, la doc dit `blunderdb` [S] — adoption (#164)
 
 **Constat.** `build/linux/nfpm.yaml:30` et `packaging/aur/PKGBUILD.in:22`
 installent `/usr/bin/blunderDB` ; le tarball contient `blunderDB`
@@ -268,7 +268,7 @@ et winget ne sont pas touchés.
 
 ---
 
-## A.11 — Trois correctifs cryptographiques à une ligne [S] — sécurité
+## A.11 — Trois correctifs cryptographiques à une ligne [S] — sécurité (#165)
 
 **Constat.**
 - `issuance/container.go:55-77` + `crypto.go:52` : `gcm.Seal(nil, nonce, plaintext, nil)` —
@@ -297,7 +297,7 @@ refusé en < 1 s.
 
 ---
 
-## A.12 — `/healthz` interroge la base [S] — fiabilité
+## A.12 — `/healthz` interroge la base [S] — fiabilité (#166)
 
 **Constat.** `internal/server/handlers/health.go:24` : `Live` appelle
 `Storage.Version` (un `SELECT`). Sous Kubernetes, une base momentanément
@@ -313,7 +313,7 @@ sain ; `/readyz` (`:34`) existe pour ça.
 
 ---
 
-## A.13 — Le filtre d'erreur de coup rend un résultat différent d'un lancement à l'autre [S] — bug
+## A.13 — Le filtre d'erreur de coup rend un résultat différent d'un lancement à l'autre [S] — bug (#167)
 
 **Constat.** `storage/sqlshared/search_helpers.go:63-93` construit la liste des
 coups joués depuis une `map` puis `:148-163` `break` au premier ; une position
@@ -330,7 +330,7 @@ lancement à l'autre.
 
 ---
 
-## A.14 — Hygiène des tickets et du BACKLOG [S] — process
+## A.14 — Hygiène des tickets et du BACKLOG [S] — process (#168)
 
 **Constat.** #119 (parapluie gammonNet) est livré et ouvert ; 3 des 4 issues
 ouvertes n'ont aucun label ; `tasks/BACKLOG.md` porte cinq items périmés :

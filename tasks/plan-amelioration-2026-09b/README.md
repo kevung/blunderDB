@@ -12,6 +12,8 @@ déjà faits, et en ont trouvé d'autres que personne n'avait vus. Les chiffres
 cités dans les fiches ont été mesurés ce jour ; ils sont à re-vérifier avant
 d'être cités ailleurs.
 
+Chaque fiche a son issue GitHub (#155 à #300, numéro dans le titre de la fiche), rangée dans le jalon de son étape.
+
 Format : `[effort S/M/L]` — S ≤ ½ journée, M ≤ 2-3 jours, L = chantier. Une
 fiche = une branche = une PR, dans un worktree (`CLAUDE.md`, « Development
 Workflow »). Toute fiche visible par l'utilisateur embarque sa doc française
