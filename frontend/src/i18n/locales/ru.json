@@ -387,6 +387,7 @@
         "mwcLoss": "Потеря MWC",
         "noAnalysedPositions": "Для этого матча не найдено проанализированных позиций.",
         "noMatchesImported": "Матчи ещё не импортированы",
+        "selectMatchHint": "Выберите матч, чтобы показать запись партии",
         "noMovesRecorded": "Ходы не записаны",
         "overallPr": "Общий PR",
         "performanceRating": "Рейтинг эффективности",

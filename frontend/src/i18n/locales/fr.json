@@ -387,6 +387,7 @@
         "mwcLoss": "Perte MWC",
         "noAnalysedPositions": "Aucune position analysée trouvée pour ce match.",
         "noMatchesImported": "Aucun match importé pour le moment",
+        "selectMatchHint": "Sélectionner un match pour afficher sa transcription",
         "noMovesRecorded": "Aucun coup enregistré",
         "overallPr": "PR global",
         "performanceRating": "Indice de performance",

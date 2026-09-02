@@ -292,6 +292,24 @@ export namespace database {
 	        this.NumDecisions = source["NumDecisions"];
 	    }
 	}
+	export class OrphanCounts {
+	    games_without_match: number;
+	    moves_without_game: number;
+	    move_analyses_without_move: number;
+	    analyses_without_position: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new OrphanCounts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.games_without_match = source["games_without_match"];
+	        this.moves_without_game = source["moves_without_game"];
+	        this.move_analyses_without_move = source["move_analyses_without_move"];
+	        this.analyses_without_position = source["analyses_without_position"];
+	    }
+	}
 	export class PlayerFrequency {
 	    Name: string;
 	    Count: number;
@@ -685,6 +703,22 @@ export namespace domain {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.day = source["day"];
 	        this.due = source["due"];
+	    }
+	}
+	export class AnkiRetention {
+	    sampleSize: number;
+	    observedRetention: number;
+	    targetRetention: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiRetention(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.sampleSize = source["sampleSize"];
+	        this.observedRetention = source["observedRetention"];
+	        this.targetRetention = source["targetRetention"];
 	    }
 	}
 	export class Cube {

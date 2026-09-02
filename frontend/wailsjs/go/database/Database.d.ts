@@ -47,6 +47,8 @@ export function Conn():Promise<sql.DB>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
+export function CountOrphans():Promise<database.OrphanCounts>;
+
 export function CountPositionsWithoutAnalysis():Promise<number>;
 
 export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,arg5:string):Promise<number>;
@@ -98,6 +100,8 @@ export function GetAllPlayerNames():Promise<Array<database.PlayerFrequency>>;
 export function GetAllTournaments():Promise<Array<domain.Tournament>>;
 
 export function GetAnkiDeckPositions(arg1:number):Promise<Array<domain.Position>>;
+
+export function GetAnkiDeckRetention(arg1:number):Promise<domain.AnkiRetention>;
 
 export function GetAnkiDeckStats(arg1:number):Promise<domain.AnkiDeckStats>;
 

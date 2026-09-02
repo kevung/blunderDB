@@ -32,13 +32,17 @@ D.1 à D.6 = **étape 1** (bugs, a11y bloquante) ; D.7 à D.15 = **étape 2**
   largeur de la liste, la ligne bouge sous le curseur avant le second clic.
 - `modeMachine.js:387` → `loadAllPositions()` → `positionService.js:302-303`
   repositionne sur la dernière position : la position quittée est perdue.
-- [ ] Laisser passer `Escape` et `Tab` ; `await exitEditMode()` ; constantes
+- [x] Laisser passer `Escape` (Tab reste au champ jusqu'à D.4 : le dispatcher
+      le confisque encore avec `preventDefault`) ; `await exitEditMode()` — et,
+      le chemin réel passant par App.svelte sans mode EDIT, `exitEditMode`
+      restaure le damier depuis le cache de façon synchrone ; constantes
       alignées + test de synchro `panelDefaults.sync.test.js` (motif
       `fontScale.sync.test.js`) ; `$effect` sur `visible` → `resize` ; largeur
-      du volet réservée (ou ouverture au `dblclick` seul) ; résoudre l'index de
-      la position quittée avant de repositionner.
-- [ ] Une spec Playwright par bug (les 10 specs existantes sont saines :
-      0 `waitForTimeout`).
+      du volet réservée (invite `match.selectMatchHint` en 9 langues) ;
+      `loadAllPositions({ focusId })` se pose sur la position quittée.
+- [x] Une spec Playwright par bug sauf les constantes (5 specs, 0
+      `waitForTimeout`). Préalable : `frontend/wailsjs` régénéré
+      (`GetAnkiDeckRetention` manquait, aucune spec ne montait l'app).
 
 ## D.2 — Huit raccourcis « Afficher/cacher » qui ne cachent jamais [S] — bug/doc (#202)
 

@@ -101,7 +101,8 @@ const NO_MATCH = { isMatchMode: false, matchID: null, movePositions: [], current
 function setLibrary() {
     const lib = [makePosition(1), makePosition(2), makePosition(3)];
     positionsStore.set(lib);
-    positionStore.set(lib[1]);
+    // A clone, as showPosition() puts one on the board: the cache keeps the record.
+    positionStore.set(structuredClone(lib[1]));
     currentPositionIndexStore.set(1);
     statusBarModeStore.set(MODE.NORMAL);
     return lib;
@@ -111,7 +112,8 @@ function setLibrary() {
 function setMatch(currentIndex = 1) {
     const ctx = makeMatchContext(currentIndex);
     matchContextStore.set(ctx);
-    positionStore.set(ctx.movePositions[currentIndex].position);
+    // A clone, as showPosition() puts one on the board: the match keeps its record.
+    positionStore.set(structuredClone(ctx.movePositions[currentIndex].position));
     statusBarModeStore.set(MODE.MATCH);
     return ctx;
 }
@@ -404,7 +406,7 @@ describe('EDIT → EPC : l’automate quitte la recherche avant d’entrer dans 
         await enterEditMode();
         expect(get(positionStore).board.bearoff).toEqual([15, 15]);
 
-        enterEPCMode();
+        await enterEPCMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.EPC);
         const { beforeEPC, beforeEdit } = modeState().savedContext;
@@ -412,10 +414,59 @@ describe('EDIT → EPC : l’automate quitte la recherche avant d’entrer dans 
         expect(beforeEPC.mode).toBe(MODE.MATCH);
         expect(beforeEPC.matchContext.matchID).toBe(7);
         expect(beforeEPC.position.id, 'la position de la partie, pas le damier vierge').toBe(102);
+        expect(beforeEPC.position.board.bearoff, 'le damier de la partie, pas celui de la requête').toEqual([3, 3]);
 
         await exitEPCMode();
         expect(get(statusBarModeStore)).toBe(MODE.MATCH);
         expect(get(positionStore).id).toBe(102);
+        expect(get(positionStore).board.bearoff).toEqual([3, 3]);
+    });
+
+    // #201 : App.svelte enchaîne exitEditMode() SANS await puis enterEPCMode()
+    // quand l'onglet passe de « recherche » à « Eval ». Le damier vierge de la
+    // recherche est un clone sous l'id de la position de bibliothèque ; le
+    // redessin déclenché par l'index est asynchrone. La photo prise par
+    // enterEPCMode était donc toujours le damier vierge, et la sortie d'Eval
+    // le remettait à l'écran.
+    test('depuis la bibliothèque, enchaînement d’App.svelte : la position revient sur le damier avant la photo', async () => {
+        const lib = setLibrary();
+        await enterEditMode();
+        expect(get(positionStore).id).toBe(2);
+        expect(get(positionStore).board.bearoff, 'le damier de la requête').toEqual([15, 15]);
+
+        exitEditMode(); // sans await, comme App.svelte
+        expect(get(positionStore).board.bearoff, 'restaurée depuis le cache, de façon synchrone').toEqual([3, 3]);
+        expect(get(positionStore)).not.toBe(lib[1]);
+
+        await enterEPCMode();
+        const { beforeEPC } = modeState().savedContext;
+        expect(beforeEPC.mode).toBe(MODE.NORMAL);
+        expect(beforeEPC.position.id).toBe(2);
+        expect(beforeEPC.position.board.bearoff).toEqual([3, 3]);
+        expect(beforeEPC.positionIndex).toBe(1);
+
+        await exitEPCMode();
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(get(positionStore).id).toBe(2);
+        expect(get(positionStore).board.bearoff, 'jamais le damier vierge au retour').toEqual([3, 3]);
+    });
+
+    test('depuis la bibliothèque, appel direct : enterEPCMode attend la sortie de la recherche', async () => {
+        setLibrary();
+        await enterEditMode();
+
+        await enterEPCMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.EPC);
+        const { beforeEPC, beforeEdit } = modeState().savedContext;
+        expect(beforeEdit).toBeNull();
+        expect(beforeEPC.mode).toBe(MODE.NORMAL);
+        expect(beforeEPC.position.board.bearoff).toEqual([3, 3]);
+        expect(beforeEPC.ids).toEqual([1, 2, 3]);
+
+        await exitEPCMode();
+        expect(get(positionsStore).ids).toEqual([1, 2, 3]);
+        expect(get(positionStore).board.bearoff).toEqual([3, 3]);
     });
 });
 
@@ -486,6 +537,26 @@ describe('toggleMatchMode', () => {
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(matchContextStore).isMatchMode).toBe(false);
         expect(ListPositionIDs).toHaveBeenCalledTimes(1);
+    });
+
+    test('MATCH → NORMAL : reste sur la position quittée quand la bibliothèque la contient (#201)', async () => {
+        setMatch(1); // le coup étudié est la position 102
+        ListPositionIDs.mockResolvedValueOnce([1, 102, 3]);
+
+        await toggleMatchMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(get(positionsStore).ids).toEqual([1, 102, 3]);
+        expect(get(currentPositionIndexStore), 'l’index de la position quittée, pas la dernière').toBe(1);
+    });
+
+    test('MATCH → NORMAL : sur la dernière position quand la position quittée n’est pas dans la liste', async () => {
+        setMatch(1);
+        ListPositionIDs.mockResolvedValueOnce([1, 2, 3]);
+
+        await toggleMatchMode();
+
+        expect(get(currentPositionIndexStore)).toBe(2);
     });
 
     test('NORMAL → MATCH : reprend la dernière partie visitée à son dernier coup', async () => {

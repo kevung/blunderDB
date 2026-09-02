@@ -387,6 +387,7 @@
         "mwcLoss": "MWC-tappio",
         "noAnalysedPositions": "Tälle ottelulle ei löytynyt analysoituja asemia.",
         "noMatchesImported": "Yhtään ottelua ei ole vielä tuotu",
+        "selectMatchHint": "Valitse ottelu nähdäksesi sen pelipöytäkirjan",
         "noMovesRecorded": "Ei tallennettuja siirtoja",
         "overallPr": "Kokonais-PR",
         "performanceRating": "Suoritusarvio (PR)",

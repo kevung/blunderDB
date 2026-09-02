@@ -117,6 +117,17 @@
 
     // Visible in match mode, or whenever a studied position resolves to a match.
     let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match);
+
+    // The bar takes its 22 px above the board, and Board.svelte measures its
+    // container on 'resize' only: inserted or removed without one, the board
+    // stayed that much too tall (or too short) for a whole match review
+    // (#201). Same recipe as App.svelte's panel-position effect: the rAF
+    // defers the synthetic resize until the flex layout has reflowed, and a
+    // resize that changes no window size is a no-op for windowAspectStore.
+    $effect(() => {
+        visible; // tracked dep
+        requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    });
 </script>
 
 {#if visible}

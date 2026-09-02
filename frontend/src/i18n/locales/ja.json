@@ -387,6 +387,7 @@
         "mwcLoss": "MWC 損失",
         "noAnalysedPositions": "このマッチには解析済みのポジションが見つかりません。",
         "noMatchesImported": "まだマッチがインポートされていません",
+        "selectMatchHint": "マッチを選択すると棋譜が表示されます",
         "noMovesRecorded": "ムーブが記録されていません",
         "overallPr": "総合 PR",
         "performanceRating": "パフォーマンスレーティング",
