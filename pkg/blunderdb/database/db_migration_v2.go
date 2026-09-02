@@ -428,7 +428,7 @@ func (d *Database) migrate_2_3_0_to_2_4_0(ctx context.Context) error {
 // checking that CheckerAnalysis.Moves has exactly one entry.
 func (d *Database) migrate_2_4_0_to_2_5_0(ctx context.Context) error {
 	// Add the column (idempotent: no-op if it already exists after a partial run).
-	if err := d.addColumn(`ALTER TABLE analysis ADD COLUMN is_forced INTEGER NOT NULL DEFAULT 0`, "is_forced"); err != nil {
+	if err := d.addColumn("analysis", "is_forced INTEGER NOT NULL DEFAULT 0"); err != nil {
 		return fmt.Errorf("migrate 2.5.0 add column: %w", err)
 	}
 

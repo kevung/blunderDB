@@ -117,7 +117,12 @@ var schemaStatements = []string{
 		import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 		file_path TEXT,
 		game_count INTEGER DEFAULT 0,
-		match_hash TEXT
+		match_hash TEXT,
+		tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL,
+		last_visited_position INTEGER DEFAULT -1,
+		canonical_hash TEXT,
+		comment TEXT DEFAULT '',
+		tournament_sort_order INTEGER DEFAULT 0
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
 	`CREATE TABLE IF NOT EXISTS game (
@@ -187,14 +192,9 @@ var schemaStatements = []string{
 		location TEXT,
 		sort_order INTEGER DEFAULT 0,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		comment TEXT DEFAULT ''
 	)`,
-	`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`,
-	`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`,
-	`ALTER TABLE match ADD COLUMN canonical_hash TEXT`,
-	`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`,
-	`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`,
-	`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`,
 	`CREATE TABLE IF NOT EXISTS anki_deck (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
@@ -304,10 +304,11 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_filter_library_scope_name ON filter_library(scope, name)`,
 }
 
-// Bootstrap creates the full v2.7.0 schema on a fresh database and records the
-// schema version. It is run by Open for an empty database and by the Database
-// wrapper's SetupDatabase. It assumes an empty database: the ALTER TABLE
-// statements would fail on a database that already has those columns.
+// Bootstrap creates the full schema at domain.DatabaseVersion on a fresh
+// database and records the schema version. It is run by Open for an empty
+// database and by the Database wrapper's SetupDatabase. Every statement is
+// CREATE ... IF NOT EXISTS, so running it on a database that already has the
+// schema changes nothing but the version stamp.
 func Bootstrap(ctx context.Context, db *sql.DB) error {
 	for _, stmt := range schemaStatements {
 		if _, err := db.ExecContext(ctx, stmt); err != nil {
@@ -356,7 +357,8 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 // (idx_position_zobrist before the 2.1.0 dedup, idx_match_canonical before
 // the empty hashes are normalised — the caller does that and calls again).
 // A database in that state must still open; it worked before the index
-// existed.
+// existed. What was logged and left out is what CheckSchema reports, so
+// `blunderdb verify` shows it where a log line would go unread.
 func EnsureSchema(ctx context.Context, db *sql.DB) error {
 	ref, err := referenceSchema(ctx)
 	if err != nil {
@@ -387,6 +389,88 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	return nil
+}
+
+// SchemaDrift is what a database lacks against the reference schema
+// (schemaStatements): the tables, columns and indexes it should have and does
+// not. Only absences are listed — the schema only grows, so an element the
+// reference does not name (an index a past version built, a column a user
+// added) is not drift. Elements are named as the reference names them:
+// tables and indexes by name, columns as table.column.
+type SchemaDrift struct {
+	MissingTables  []string `json:"missing_tables"`
+	MissingColumns []string `json:"missing_columns"`
+	MissingIndexes []string `json:"missing_indexes"`
+}
+
+// Count is the number of missing elements of every kind.
+func (d SchemaDrift) Count() int {
+	return len(d.MissingTables) + len(d.MissingColumns) + len(d.MissingIndexes)
+}
+
+// CheckSchema diffs db against the reference schema and reports what it
+// lacks. It reads only. It is EnsureSchema's audit: EnsureSchema adds what
+// it can and logs what it cannot (a UNIQUE index over rows that violate it,
+// say), and this is how `blunderdb verify` surfaces those leftovers — a
+// column or index missing here is one that some query will fail to name.
+func CheckSchema(ctx context.Context, db *sql.DB) (SchemaDrift, error) {
+	var drift SchemaDrift
+	ref, err := referenceSchema(ctx)
+	if err != nil {
+		return drift, err
+	}
+	tables, err := objectNames(ctx, db, "table")
+	if err != nil {
+		return drift, err
+	}
+	for _, t := range ref.tables {
+		if !tables[t.name] {
+			drift.MissingTables = append(drift.MissingTables, t.name)
+			continue
+		}
+		have, err := columnNames(ctx, db, t.name)
+		if err != nil {
+			return drift, err
+		}
+		for _, c := range t.columns {
+			if !have[c.name] {
+				drift.MissingColumns = append(drift.MissingColumns, t.name+"."+c.name)
+			}
+		}
+	}
+	indexes, err := objectNames(ctx, db, "index")
+	if err != nil {
+		return drift, err
+	}
+	for _, name := range ref.indexNames {
+		if !indexes[name] {
+			drift.MissingIndexes = append(drift.MissingIndexes, name)
+		}
+	}
+	return drift, nil
+}
+
+// objectNames returns the set of names sqlite_master holds of that type
+// ("table", "index"), the automatic ones (sqlite_autoindex_*, sqlite_stat*)
+// included — they never collide with a reference name.
+func objectNames(ctx context.Context, db *sql.DB, typ string) (map[string]bool, error) {
+	rows, err := db.QueryContext(ctx, `SELECT name FROM sqlite_master WHERE type = ?`, typ)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: list %ss: %w", typ, err)
+	}
+	defer rows.Close()
+	out := make(map[string]bool)
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("sqlite: list %ss: %w", typ, err)
+		}
+		out[name] = true
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: list %ss: %w", typ, err)
+	}
+	return out, nil
 }
 
 // addColumn adds c to table. SQLite refuses to add a column whose default is
@@ -422,8 +506,9 @@ type referenceColumn struct {
 }
 
 type reference struct {
-	tables  []referenceTable
-	indexes []string
+	tables     []referenceTable
+	indexes    []string // the CREATE INDEX statements, in schema order
+	indexNames []string // the names those statements declare, in schema order
 }
 
 // referenceSchema builds the current schema in memory and reads it back.
@@ -453,6 +538,9 @@ func referenceSchema(ctx context.Context) (*reference, error) {
 			strings.HasPrefix(stmt, "CREATE UNIQUE INDEX IF NOT EXISTS "),
 			strings.HasPrefix(stmt, "CREATE        INDEX IF NOT EXISTS "):
 			ref.indexes = append(ref.indexes, stmt)
+			// CREATE [UNIQUE] INDEX IF NOT EXISTS <name> ON ...
+			afterExists := stmt[strings.Index(stmt, " EXISTS ")+len(" EXISTS "):]
+			ref.indexNames = append(ref.indexNames, strings.Fields(afterExists)[0])
 		}
 	}
 	for i := range ref.tables {

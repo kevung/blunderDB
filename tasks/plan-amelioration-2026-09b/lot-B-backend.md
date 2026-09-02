@@ -148,7 +148,7 @@ Même bump que A.2/B.3.
   dans les `CREATE TABLE`.
 - `schema_sqlite.go:379-388` : `EnsureSchema` dégrade en `Warn` → `verify`
   refait le diff contre la DDL de référence et le signale.
-- [ ] Les cinq points, avec un test de migration par point.
+- [x] Les cinq points, avec un test de migration par point.
 
 ---
 

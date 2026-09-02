@@ -3,10 +3,13 @@ package database
 // Migration steps 1.0.0 → 2.0.0. See db_migration.go for the registry that
 // runs them and the rules a step follows (no version stamp, re-runnable).
 //
-// The 1.0.0 → 1.6.0 steps each create tables, and only run when the table
-// they create is absent: a database that already holds it returns
-// errStepNotApplicable and the chain stops there, as it always has. The
-// tables are also (re)created by ensureAllTablesExist after the chain.
+// The 1.0.0 → 1.6.0 steps each create tables, with CREATE TABLE IF NOT
+// EXISTS, so a database that already holds one goes through the step
+// unchanged and the chain carries on to the version it records. (They used
+// to stop the chain on a table already present, which left such a file
+// stamped 1.x for good — every later step, the 2.0.0 backfill included,
+// was then skipped.) The tables are also (re)created by ensureAllTablesExist
+// after the chain.
 
 import (
 	"context"
@@ -19,9 +22,6 @@ import (
 
 // migrate_1_0_0_to_1_1_0 adds the command_history table.
 func (d *Database) migrate_1_0_0_to_1_1_0(_ context.Context) error {
-	if !d.tableAbsent("command_history") {
-		return errStepNotApplicable
-	}
 	_, err := d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS command_history (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,9 +34,6 @@ func (d *Database) migrate_1_0_0_to_1_1_0(_ context.Context) error {
 
 // migrate_1_1_0_to_1_2_0 adds the filter_library table.
 func (d *Database) migrate_1_1_0_to_1_2_0(_ context.Context) error {
-	if !d.tableAbsent("filter_library") {
-		return errStepNotApplicable
-	}
 	_, err := d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS filter_library (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,9 +47,6 @@ func (d *Database) migrate_1_1_0_to_1_2_0(_ context.Context) error {
 
 // migrate_1_2_0_to_1_3_0 adds the search_history table.
 func (d *Database) migrate_1_2_0_to_1_3_0(_ context.Context) error {
-	if !d.tableAbsent("search_history") {
-		return errStepNotApplicable
-	}
 	_, err := d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS search_history (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,9 +61,6 @@ func (d *Database) migrate_1_2_0_to_1_3_0(_ context.Context) error {
 // migrate_1_3_0_to_1_4_0 adds the match, game, move and move_analysis tables
 // and the match_hash index used for duplicate detection.
 func (d *Database) migrate_1_3_0_to_1_4_0(_ context.Context) error {
-	if !d.tableAbsent("match") {
-		return errStepNotApplicable
-	}
 	for _, stmt := range []string{
 		`CREATE TABLE IF NOT EXISTS match (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -143,9 +134,6 @@ func (d *Database) migrate_1_4_0_to_1_5_0(_ context.Context) error {
 		return err
 	}
 
-	if !d.tableAbsent("collection") {
-		return errStepNotApplicable
-	}
 	for _, stmt := range []string{
 		`CREATE TABLE IF NOT EXISTS collection (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,13 +168,10 @@ func (d *Database) migrate_1_4_0_to_1_5_0(_ context.Context) error {
 // from a fallback hash of their stored data — the original files are gone.
 // A match table that already names the column is left alone.
 func (d *Database) addMatchHashColumn() error {
-	var colInfo string
-	err := d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
-	if err != nil || strings.Contains(colInfo, "match_hash") {
-		return nil
+	if has, err := d.columnExists("match", "match_hash"); err != nil || has {
+		return err
 	}
-
-	if _, err := d.db.Exec(`ALTER TABLE match ADD COLUMN match_hash TEXT`); err != nil {
+	if err := d.addColumn("match", "match_hash TEXT"); err != nil {
 		return err
 	}
 	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`); err != nil {
@@ -219,9 +204,6 @@ func (d *Database) addMatchHashColumn() error {
 
 // migrate_1_5_0_to_1_6_0 adds the tournament table and match.tournament_id.
 func (d *Database) migrate_1_5_0_to_1_6_0(_ context.Context) error {
-	if !d.tableAbsent("tournament") {
-		return errStepNotApplicable
-	}
 	if _, err := d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS tournament (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -235,37 +217,40 @@ func (d *Database) migrate_1_5_0_to_1_6_0(_ context.Context) error {
 	`); err != nil {
 		return err
 	}
-	// Add tournament_id column to match table
-	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
-	return nil
+	return d.addColumn("match", "tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL")
 }
 
 // migrate_1_6_0_to_1_7_0 adds match.last_visited_position.
 func (d *Database) migrate_1_6_0_to_1_7_0(_ context.Context) error {
-	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
-	return nil
+	return d.addColumn("match", "last_visited_position INTEGER DEFAULT -1")
 }
 
 // migrate_1_7_0_to_1_8_0 adds comment.created_at and backfills it.
 func (d *Database) migrate_1_7_0_to_1_8_0(_ context.Context) error {
-	_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
-	// Backfill existing rows that have NULL created_at
-	_, _ = d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
-	return nil
+	// SQLite accepts a non-constant default on an added column only while
+	// the table is empty; a database that already holds comments gets the
+	// column without it (as sqlite.EnsureSchema would add it), and the rows
+	// present are stamped below.
+	if err := d.addColumn("comment", "created_at DATETIME DEFAULT CURRENT_TIMESTAMP"); err != nil {
+		if err := d.addColumn("comment", "created_at DATETIME"); err != nil {
+			return err
+		}
+	}
+	_, err := d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
+	return err
 }
 
 // migrate_1_8_0_to_1_9_0 adds comment.modified_at.
 func (d *Database) migrate_1_8_0_to_1_9_0(_ context.Context) error {
-	_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
-	return nil
+	return d.addColumn("comment", "modified_at DATETIME")
 }
 
 // migrate_1_9_0_to_2_0_0 performs the in-place backfill migration from the
 // pre-2.0.0 schema (position.state only) to the v2.0.0 schema with scalar
 // columns.  It runs inside a single transaction:
 //
-//  1. ALTER TABLE to add all new nullable columns (idempotent — duplicate-column
-//     errors are silently ignored).
+//  1. ALTER TABLE to add all new nullable columns (idempotent — a column
+//     already present is skipped).
 //  2. Backfill position rows in batches of 1000.
 //  3. Backfill analysis rows in batches of 1000.
 //  4. Deduplicate positions (same Zobrist hash) by re-pointing FK references
@@ -275,56 +260,61 @@ func (d *Database) migrate_1_8_0_to_1_9_0(_ context.Context) error {
 //
 // The chain stamps "2.0.0" once the step returns. If the process is
 // interrupted before that, the version string remains "1.9.0" and the
-// migration is retried on the next open; the ALTER TABLE statements are
-// idempotent so repeated runs are safe.
+// migration is retried on the next open; addColumn skips the columns already
+// there, so repeated runs are safe.
 //
 // The caller must hold d.mu.
 func (d *Database) migrate_1_9_0_to_2_0_0(ctx context.Context) error {
-	// 1. ALTER TABLE — add new nullable columns (swallow "duplicate column")
+	// 1. ALTER TABLE — add the new nullable columns (those already there are
+	//    skipped)
 	// -----------------------------------------------------------------
 	newPositionCols := []string{
-		`ALTER TABLE position ADD COLUMN zobrist_hash    INTEGER`,
-		`ALTER TABLE position ADD COLUMN decision_type  INTEGER`,
-		`ALTER TABLE position ADD COLUMN player_on_roll INTEGER`,
-		`ALTER TABLE position ADD COLUMN dice_1         INTEGER`,
-		`ALTER TABLE position ADD COLUMN dice_2         INTEGER`,
-		`ALTER TABLE position ADD COLUMN cube_value     INTEGER`,
-		`ALTER TABLE position ADD COLUMN cube_owner     INTEGER`,
-		`ALTER TABLE position ADD COLUMN score_1        INTEGER`,
-		`ALTER TABLE position ADD COLUMN score_2        INTEGER`,
-		`ALTER TABLE position ADD COLUMN match_length   INTEGER`,
-		`ALTER TABLE position ADD COLUMN has_jacoby     INTEGER`,
-		`ALTER TABLE position ADD COLUMN has_beaver     INTEGER`,
-		`ALTER TABLE position ADD COLUMN pip_1          INTEGER`,
-		`ALTER TABLE position ADD COLUMN pip_2          INTEGER`,
-		`ALTER TABLE position ADD COLUMN pip_diff       INTEGER`,
-		`ALTER TABLE position ADD COLUMN off_1          INTEGER`,
-		`ALTER TABLE position ADD COLUMN off_2          INTEGER`,
-		`ALTER TABLE position ADD COLUMN back_checkers_1 INTEGER`,
-		`ALTER TABLE position ADD COLUMN back_checkers_2 INTEGER`,
-		`ALTER TABLE position ADD COLUMN no_contact     INTEGER`,
-		`ALTER TABLE position ADD COLUMN occupancy_1    INTEGER`,
-		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
-		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
-		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+		"zobrist_hash INTEGER",
+		"decision_type INTEGER",
+		"player_on_roll INTEGER",
+		"dice_1 INTEGER",
+		"dice_2 INTEGER",
+		"cube_value INTEGER",
+		"cube_owner INTEGER",
+		"score_1 INTEGER",
+		"score_2 INTEGER",
+		"match_length INTEGER",
+		"has_jacoby INTEGER",
+		"has_beaver INTEGER",
+		"pip_1 INTEGER",
+		"pip_2 INTEGER",
+		"pip_diff INTEGER",
+		"off_1 INTEGER",
+		"off_2 INTEGER",
+		"back_checkers_1 INTEGER",
+		"back_checkers_2 INTEGER",
+		"no_contact INTEGER",
+		"occupancy_1 INTEGER",
+		"occupancy_2 INTEGER",
+		"point_mask_1 INTEGER",
+		"point_mask_2 INTEGER",
 	}
-	for _, stmt := range newPositionCols {
-		_, _ = d.db.Exec(stmt) // duplicate column → silently ignored
+	for _, def := range newPositionCols {
+		if err := d.addColumn("position", def); err != nil {
+			return err
+		}
 	}
 
 	newAnalysisCols := []string{
-		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
-		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
-		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
-		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
-		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+		"best_cube_action TEXT",
+		"cube_error REAL",
+		"best_move_equity_error REAL",
+		"player1_win_rate REAL",
+		"player1_gammon_rate REAL",
+		"player1_backgammon_rate REAL",
+		"player2_win_rate REAL",
+		"player2_gammon_rate REAL",
+		"player2_backgammon_rate REAL",
 	}
-	for _, stmt := range newAnalysisCols {
-		_, _ = d.db.Exec(stmt)
+	for _, def := range newAnalysisCols {
+		if err := d.addColumn("analysis", def); err != nil {
+			return err
+		}
 	}
 
 	// -----------------------------------------------------------------

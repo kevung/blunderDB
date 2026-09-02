@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // runVerify handles the verify command
@@ -86,6 +88,15 @@ func (cli *CLI) runVerify(args []string) error {
 	}
 	printOrphans(orphans)
 
+	// Schema drift: what opening the database could not add against the
+	// reference DDL (EnsureSchema warns and goes on rather than refuse the
+	// file). A query naming one of these elements fails until it is there.
+	drift, err := cli.db.CheckSchema()
+	if err != nil {
+		return fmt.Errorf("failed to check the schema: %w", err)
+	}
+	printSchemaDrift(drift)
+
 	// If match ID specified, verify that match
 	if *matchID != 0 {
 		err := cli.verifyMatch(*matchID, *matFile)
@@ -116,6 +127,31 @@ func printOrphans(o database.OrphanCounts) {
 	fmt.Printf("WARNING: %d orphaned row(s) found. They were left behind by deletions made while\n", o.Total())
 	fmt.Println("foreign keys were not enforced on every connection (issue #157); the rows are")
 	fmt.Println("unreachable from any match and only take up space.")
+	fmt.Println()
+}
+
+// printSchemaDrift reports the schema check. Like orphans, drift is a
+// finding, not a failure — the command exits 0 — but the WARNING line names
+// every element so the gap is not mistaken for a healthy database.
+func printSchemaDrift(d sqlite.SchemaDrift) {
+	if d.Count() == 0 {
+		fmt.Println("Schema: matches the reference DDL")
+		fmt.Println()
+		return
+	}
+	fmt.Println("Schema drift (what the database lacks against the reference DDL):")
+	if len(d.MissingTables) > 0 {
+		fmt.Printf("  Missing tables: %s\n", strings.Join(d.MissingTables, ", "))
+	}
+	if len(d.MissingColumns) > 0 {
+		fmt.Printf("  Missing columns: %s\n", strings.Join(d.MissingColumns, ", "))
+	}
+	if len(d.MissingIndexes) > 0 {
+		fmt.Printf("  Missing indexes: %s\n", strings.Join(d.MissingIndexes, ", "))
+	}
+	fmt.Printf("WARNING: %d schema element(s) missing. Opening the database adds them when it can\n", d.Count())
+	fmt.Println("and logs why it could not (a UNIQUE index over duplicate rows, typically); a query")
+	fmt.Println("that names one of them fails until the cause is fixed.")
 	fmt.Println()
 }
 

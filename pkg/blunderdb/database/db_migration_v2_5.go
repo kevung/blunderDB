@@ -25,7 +25,7 @@ import (
 //
 // Take/Pass positions always get is_close_cube = 1 (cube was already offered).
 func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
-	if err := d.addColumn(`ALTER TABLE analysis ADD COLUMN is_close_cube INTEGER NOT NULL DEFAULT 0`, "is_close_cube"); err != nil {
+	if err := d.addColumn("analysis", "is_close_cube INTEGER NOT NULL DEFAULT 0"); err != nil {
 		return fmt.Errorf("migrate 2.6.0 add column: %w", err)
 	}
 
@@ -320,7 +320,7 @@ func (d *Database) migrate_2_8_0_to_2_9_0(_ context.Context) error {
 // as opposed to a doubling decision (Double / No Double / Redouble). This lets the
 // search filter distinguish "double/no-double" from "take/pass" cube decisions.
 func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
-	if err := d.addColumn(`ALTER TABLE position ADD COLUMN is_cube_response INTEGER NOT NULL DEFAULT 0`, "is_cube_response"); err != nil {
+	if err := d.addColumn("position", "is_cube_response INTEGER NOT NULL DEFAULT 0"); err != nil {
 		return fmt.Errorf("migrate 2.10.0 add column: %w", err)
 	}
 

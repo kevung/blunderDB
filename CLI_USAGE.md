@@ -948,6 +948,8 @@ When run without `--match`, displays database statistics. When a match ID is spe
 
 Every run also checks referential integrity: it counts orphaned rows — games without a match, moves without a game, move analyses without a move, analyses without a position — and prints a `WARNING` line with the total when any exist. A healthy database reports `Orphaned rows: none`. Orphans can be left behind in databases written by versions that did not enforce foreign keys on every connection (issue #157); they are unreachable from any match and only take up space. The command still exits 0 when it finds some.
 
+Every run also compares the schema against the reference DDL and lists the tables, columns and indexes the database lacks. Opening a database adds what is missing when it can and only logs what it cannot — typically a `UNIQUE` index that duplicate rows keep it from rebuilding — so this is where that gap becomes visible; a query naming one of those elements fails until the cause is fixed. A healthy database reports `Schema: matches the reference DDL`. Like orphans, drift is a finding, not a failure: the command still exits 0.
+
 **Examples:**
 ```bash
 # Verify database overview
@@ -972,6 +974,8 @@ Database Statistics:
   Moves: 3421
 
 Orphaned rows: none
+
+Schema: matches the reference DDL
 
 Verifying match 1...
   Match: Alice vs Bob

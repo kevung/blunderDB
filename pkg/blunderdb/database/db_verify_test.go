@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"path/filepath"
+	"reflect"
 	"testing"
 )
 
@@ -54,5 +56,52 @@ func TestCountOrphans(t *testing.T) {
 	}
 	if got.Total() != 4 {
 		t.Errorf("Total = %d, want 4", got.Total())
+	}
+}
+
+// TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd (issue #177): EnsureSchema
+// degrades to a warning when an index cannot be built; the drift it leaves
+// is what CheckSchema reports after the open. Two matches sharing a
+// canonical hash keep idx_match_canonical (UNIQUE) from being rebuilt.
+func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "drift.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(path); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	drift, err := d.CheckSchema()
+	if err != nil {
+		t.Fatalf("CheckSchema on a fresh database: %v", err)
+	}
+	if drift.Count() != 0 {
+		t.Fatalf("fresh database reports drift: %+v", drift)
+	}
+	for _, stmt := range []string{
+		`DROP INDEX idx_match_canonical`,
+		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
+		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
+	} {
+		if _, err := d.Conn().Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	d.Close()
+
+	// Reopening runs EnsureSchema, which cannot rebuild the index and says so
+	// in the log only; the database opens all the same.
+	d = NewDatabase()
+	if err := d.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+	defer d.Close()
+	drift, err = d.CheckSchema()
+	if err != nil {
+		t.Fatalf("CheckSchema: %v", err)
+	}
+	if want := []string{"idx_match_canonical"}; !reflect.DeepEqual(drift.MissingIndexes, want) {
+		t.Errorf("MissingIndexes = %v, want %v", drift.MissingIndexes, want)
+	}
+	if len(drift.MissingTables)+len(drift.MissingColumns) != 0 {
+		t.Errorf("unexpected drift beyond the index: %+v", drift)
 	}
 }

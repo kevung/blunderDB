@@ -2082,3 +2082,39 @@ func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
 		t.Errorf("migration must not invent luck: got luck_mp=%d, want NULL", luck.Int64)
 	}
 }
+
+// TestMigration_TablesAheadOfVersion (issue #177): a database whose file
+// carries tables its recorded version does not yet know — one that an
+// earlier build's ensureAllTablesExist filled in without stamping, or a
+// hand-repaired one — must still be walked to DatabaseVersion. The 1.x
+// steps used to stop the chain on finding their table already there, which
+// left such a file at 1.0.0 for good and skipped every later step.
+func TestMigration_TablesAheadOfVersion(t *testing.T) {
+	dbPath := filepath.Join(tempDir(t), "ahead.db")
+	// Every 1.6.0 table, stamped 1.0.0.
+	createOldDatabase(t, dbPath, "1.6.0")
+	stampVersion(t, dbPath, "1.0.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+	closeOnCleanup(t, d)
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after open = %s, want %s (chain stopped on a table already present)", version, DatabaseVersion)
+	}
+	for _, table := range allExpectedTables() {
+		if !tableExists(d.db, table) {
+			t.Errorf("table %s missing after migration", table)
+		}
+	}
+	// The 2.0.0 step ran too: the scalar columns are there.
+	if !columnExists(t, d.db, "position", "zobrist_hash") {
+		t.Error("position.zobrist_hash missing: the 1.9.0→2.0.0 step did not run")
+	}
+}

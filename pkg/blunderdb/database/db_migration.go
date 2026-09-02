@@ -24,7 +24,12 @@ package database
 // database_version: the loop stamps `to` after the step returns nil and logs
 // the upgrade, so an interrupted step leaves the file at `from` and is
 // retried on the next open. Every step is therefore written to be
-// re-runnable (CREATE ... IF NOT EXISTS, tolerated duplicate columns).
+// re-runnable (CREATE ... IF NOT EXISTS, addColumn for columns) and
+// unconditional: a step never decides from the file's contents whether it
+// applies — the recorded version alone says so. The 1.x steps once stopped
+// the chain when the table they create was already there, leaving the file
+// stamped with a version it had outgrown; a database that carries a table
+// ahead of its version is simply one whose step has nothing left to do.
 
 import (
 	"context"
@@ -73,13 +78,6 @@ var migrationSteps = []migrationStep{
 	{"2.13.0", "2.14.0", (*Database).migrate_2_13_0_to_2_14_0},
 	{"2.14.0", "2.15.0", (*Database).migrate_2_14_0_to_2_15_0},
 }
-
-// errStepNotApplicable is returned by the 1.0.0 → 1.6.0 steps when the table
-// they would create is already there. The historical chain then left
-// database_version untouched and went no further (ensureAllTablesExist still
-// runs), and the loop keeps that behaviour rather than stamping a version
-// whose step did not run.
-var errStepNotApplicable = errors.New("migration step not applicable")
 
 // findMigrationStep returns the registered step that starts from the given
 // schema version.
@@ -137,11 +135,7 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 			}
 			return fmt.Errorf("no migration step from database version %s", dbVersion)
 		}
-		err := step.run(d, ctx)
-		if errors.Is(err, errStepNotApplicable) {
-			break
-		}
-		if err != nil {
+		if err := step.run(d, ctx); err != nil {
 			return fmt.Errorf("migration %s→%s failed: %w", step.from, step.to, err)
 		}
 		if _, err := d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, step.to); err != nil {
@@ -165,36 +159,10 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		return fmt.Errorf("repairing positions without scalar columns: %w", err)
 	}
 
-	// Build required tables list based on the FINAL dbVersion (after all migrations)
-	requiredTables := []string{"position", "analysis", "comment", "metadata"}
-	if versionAtLeast(dbVersion, "1.1.0") {
-		requiredTables = append(requiredTables, "command_history")
-	}
-	if versionAtLeast(dbVersion, "1.2.0") {
-		requiredTables = append(requiredTables, "filter_library")
-	}
-	if versionAtLeast(dbVersion, "1.3.0") {
-		requiredTables = append(requiredTables, "search_history")
-	}
-	if versionAtLeast(dbVersion, "1.4.0") {
-		requiredTables = append(requiredTables, "match", "game", "move", "move_analysis")
-	}
-	if versionAtLeast(dbVersion, "1.5.0") {
-		requiredTables = append(requiredTables, "collection", "collection_position")
-	}
-	if versionAtLeast(dbVersion, "1.6.0") {
-		requiredTables = append(requiredTables, "tournament")
-	}
-
-	for _, table := range requiredTables {
-		var tableName string
-		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
-		if err != nil {
-			return err
-		}
-		if tableName != table {
-			return fmt.Errorf("required table %s does not exist", table)
-		}
+	// The chain has ended at DatabaseVersion (or beyond it): every table the
+	// application reads must be there now, whatever the file started as.
+	if err := d.requireTables(requiredTables); err != nil {
+		return err
 	}
 
 	// Check if the required metadata keys exist
@@ -253,29 +221,69 @@ func compareVersions(a, b string) (int, error) {
 	return 0, nil
 }
 
-// versionAtLeast reports whether v is min or newer. An unparseable v counts
-// as older than anything (runMigrationChain rejects such a version before
-// it gets here).
-func versionAtLeast(v, min string) bool {
-	c, err := compareVersions(v, min)
-	return err == nil && c >= 0
+// requiredTables are the tables the application reads on any database it
+// opens, which the chain plus ensureAllTablesExist must have produced. It is
+// a post-condition check: a name missing here is a bug in the migrations,
+// reported by name rather than as a bare "no rows" from the lookup.
+var requiredTables = []string{
+	"position", "analysis", "comment", "metadata",
+	"command_history", "filter_library", "search_history",
+	"match", "game", "move", "move_analysis",
+	"collection", "collection_position",
+	"tournament",
 }
 
-// tableAbsent reports whether no table of that name exists — precisely,
-// whether the sqlite_master lookup returned sql.ErrNoRows, which is the test
-// the 1.x steps have always made (any other lookup error counts as present).
-func (d *Database) tableAbsent(name string) bool {
-	var found string
-	err := d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, name).Scan(&found)
-	return errors.Is(err, sql.ErrNoRows)
+// requireTables returns an error naming the first of names that is not a
+// table of the open database.
+func (d *Database) requireTables(names []string) error {
+	for _, table := range names {
+		var found string
+		err := d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&found)
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return fmt.Errorf("required table %s does not exist", table)
+		case err != nil:
+			return fmt.Errorf("looking up required table %s: %w", table, err)
+		}
+	}
+	return nil
 }
 
-// addColumn runs an ALTER TABLE ... ADD COLUMN statement and tolerates the
-// column already being there, which is what a re-run after an interrupted
-// step looks like. col is the column name SQLite names in that error.
-func (d *Database) addColumn(stmt, col string) error {
-	if _, err := d.db.Exec(stmt); err != nil && err.Error() != `duplicate column name: `+col {
+// columnExists reports whether table has a column of that name, read from
+// pragma_table_info — the same source EnsureSchema reads — rather than from
+// the CREATE TABLE text or the driver's error message. Column names are
+// case-insensitive in SQLite and are matched so here. A table that does not
+// exist has no columns.
+func (d *Database) columnExists(table, column string) (bool, error) {
+	var n int
+	if err := d.db.QueryRow(
+		`SELECT COUNT(*) FROM pragma_table_info(?) WHERE name = ? COLLATE NOCASE`, table, column).Scan(&n); err != nil {
+		return false, fmt.Errorf("columns of %s: %w", table, err)
+	}
+	return n > 0, nil
+}
+
+// addColumn adds a column to table unless it is already there, which is what
+// a re-run after an interrupted step looks like. definition is the column as
+// an ALTER TABLE ... ADD COLUMN clause names it: `name TYPE [constraints]`.
+// Presence is decided by columnExists, not by matching the error text — the
+// driver prefixes and suffixes SQLite's message ("SQL logic error: duplicate
+// column name: x (1)"), so the old comparison against the bare message never
+// matched and a re-run of any step that adds a column failed.
+func (d *Database) addColumn(table, definition string) error {
+	fields := strings.Fields(definition)
+	if len(fields) == 0 {
+		return fmt.Errorf("addColumn %s: empty column definition", table)
+	}
+	exists, err := d.columnExists(table, fields[0])
+	if err != nil {
 		return err
+	}
+	if exists {
+		return nil
+	}
+	if _, err := d.db.Exec(`ALTER TABLE ` + table + ` ADD COLUMN ` + definition); err != nil {
+		return fmt.Errorf("adding column %s.%s: %w", table, fields[0], err)
 	}
 	return nil
 }

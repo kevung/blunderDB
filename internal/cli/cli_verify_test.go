@@ -61,3 +61,44 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 		}
 	}
 }
+
+// TestCLI_Verify_ReportsSchemaDrift (issue #177): what the open could not add
+// against the reference DDL is printed, not only logged. A UNIQUE index that
+// duplicate rows keep EnsureSchema from rebuilding is the reproducible case.
+func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+
+	clean := captureStdout(t, func() {
+		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
+			t.Fatalf("verify (clean): %v", err)
+		}
+	})
+	if !strings.Contains(clean, "Schema: matches the reference DDL") {
+		t.Errorf("clean database should report no schema drift:\n%s", clean)
+	}
+
+	for _, s := range []string{
+		`DROP INDEX idx_match_canonical`,
+		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
+		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
+	} {
+		if _, err := cli.db.Conn().Exec(s); err != nil {
+			t.Fatalf("%s: %v", s, err)
+		}
+	}
+
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
+			t.Fatalf("verify (drift): %v", err)
+		}
+	})
+	for _, want := range []string{
+		"Missing indexes: idx_match_canonical",
+		"WARNING: 1 schema element(s) missing",
+		"Verification complete!",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("verify output lacks %q:\n%s", want, out)
+		}
+	}
+}
