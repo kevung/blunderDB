@@ -220,12 +220,47 @@ L'image écoute sur le port 8080 et se configure par variables d'environnement
 (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_RLS``).
 
+.. _headless_docker_image:
+
+Image publiée
+~~~~~~~~~~~~~
+
+Il n'est pas nécessaire de construire l'image soi-même : chaque version
+publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous le
+nom ``ghcr.io/kevung/blunderdb-serve``. Deux étiquettes sont disponibles :
+le numéro de version (par exemple ``0.34.0``), figé à jamais, et ``latest``,
+qui suit la dernière version publiée. L'image est fournie pour ``linux/amd64``
+et ``linux/arm64`` ; Docker choisit l'architecture de l'hôte.
+
+.. code-block:: bash
+
+   # Récupérer l'image d'une version donnée (recommandé en production)
+   docker pull ghcr.io/kevung/blunderdb-serve:0.34.0
+
+   # Lancer le démon avec un backend PostgreSQL
+   docker run --rm -p 127.0.0.1:8080:8080 \
+       -e BLUNDERDB_DSN="postgres://user:pass@hôte:5432/blunderdb?sslmode=disable" \
+       ghcr.io/kevung/blunderdb-serve:0.34.0
+
+   # Ou avec une base SQLite persistée dans un volume
+   docker run --rm -p 127.0.0.1:8080:8080 -v blunderdb-data:/data \
+       -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
+       ghcr.io/kevung/blunderdb-serve:0.34.0
+
+L'image porte les étiquettes OCI usuelles (``org.opencontainers.image.source``,
+``.version``, ``.revision``, ``.licenses``) : ``docker inspect`` dit de quel
+commit et de quelle version elle provient. Elle est construite par l'intégration
+continue à partir du ``Dockerfile.serve`` du dépôt, exactement comme ci-dessus ;
+construire localement ou tirer l'image publiée donne le même binaire.
+
 .. warning::
 
    Comme le démon lui-même, le conteneur n'effectue **aucune
-   authentification** : il doit être placé derrière un reverse-proxy chargé de
-   l'authentification et ne jamais être exposé directement sur l'Internet
-   public.
+   authentification** (ADR-0005) : il fait confiance à l'en-tête
+   ``X-Tenant-ID`` tel qu'il le reçoit. Il doit être placé derrière un
+   reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-même,
+   et ne jamais être exposé directement sur l'Internet public. Les exemples
+   ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison.
 
 .. _headless_postgres:
 

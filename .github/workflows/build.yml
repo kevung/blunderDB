@@ -141,6 +141,67 @@ jobs:
         run: docker build -f Dockerfile.hostile -t blunderdb-hostile .
         shell: bash
 
+  # Container image of the headless daemon (Dockerfile.serve, see
+  # doc/source/mode_headless.rst). Every PR/push builds it for linux/amd64 as
+  # a compile check; a version tag builds linux/amd64 + linux/arm64 and pushes
+  # ghcr.io/kevung/blunderdb-serve:<tag> and :latest. No QEMU: the Dockerfile
+  # cross-compiles from the build platform, so both architectures come out of
+  # one native `go build` each. GITHUB_TOKEN publishes the package — packages:
+  # write is scoped to this job only.
+  docker-serve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/kevung/blunderdb-serve
+      IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') && 'true' || 'false' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Log in to GHCR (release tags only)
+        if: env.IS_TAG == 'true'
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tags: the version tag itself (0.34.0) and `latest`, on tag pushes only.
+      # Labels: metadata-action fills the OCI annotations from the repository —
+      # org.opencontainers.image.source / .version / .revision / .licenses (MIT,
+      # read from the repo licence) / .created / .title / .description.
+      - name: Image tags and OCI labels
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest,enable=${{ env.IS_TAG == 'true' }}
+            type=sha,enable=${{ env.IS_TAG != 'true' }}
+          labels: |
+            org.opencontainers.image.title=blunderDB serve
+            org.opencontainers.image.description=Headless blunderDB engine (HTTP + JSON daemon). No authentication — run behind an authenticating reverse proxy.
+            org.opencontainers.image.licenses=MIT
+
+      - name: Build (and push on a release tag)
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: Dockerfile.serve
+          platforms: ${{ env.IS_TAG == 'true' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+          push: ${{ env.IS_TAG == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   frontend-test:
     runs-on: ubuntu-latest
     timeout-minutes: 15

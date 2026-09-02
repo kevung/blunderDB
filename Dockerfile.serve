@@ -9,7 +9,18 @@
 # authenticating reverse-proxy (e.g. gammonGo) and never expose it publicly.
 
 # --- build stage ---------------------------------------------------------
-FROM golang:1.25-alpine AS build
+# Pinned to the *build* platform: the compiler always runs natively and Go
+# cross-compiles for TARGETOS/TARGETARCH (set by BuildKit per requested
+# platform), so a `docker buildx build --platform linux/amd64,linux/arm64`
+# never emulates a Go toolchain under QEMU. BuildKit predefines BUILDPLATFORM;
+# the deprecated legacy builder (`docker build` without buildx) does not and
+# would fail on an empty --platform, hence the linux/amd64 fallback — a
+# Dockerfile ARG default replaces the predefined value, which is why the
+# fallback goes through ${VAR:-default} rather than a plain default. Under
+# the legacy builder TARGETOS/TARGETARCH stay empty, which Go reads as the
+# host platform.
+ARG BUILDPLATFORM=${BUILDPLATFORM:-linux/amd64}
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS build
 WORKDIR /src
 
 # Cache module downloads.
@@ -18,11 +29,21 @@ RUN go mod download
 
 # Build the headless serve binary.
 COPY . .
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/blunderdb ./cmd/serve
+ARG TARGETOS
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go build -trimpath -ldflags="-s -w" -o /out/blunderdb ./cmd/serve
+
+# /data is the conventional mount point for a SQLite backend
+# (BLUNDERDB_BACKEND=sqlite BLUNDERDB_DSN=/data/blunderdb.db). Created here,
+# owned by distroless's nonroot uid/gid (65532), so a fresh named volume
+# mounted there inherits writable ownership instead of root's.
+RUN mkdir -p /out/data && chown 65532:65532 /out/data
 
 # --- runtime stage -------------------------------------------------------
 FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=build /out/blunderdb /usr/local/bin/blunderdb
+COPY --from=build --chown=65532:65532 /out/data /data
 
 # Defaults; override via env (BLUNDERDB_BACKEND/DSN/ADDR/RLS) in compose.
 ENV BLUNDERDB_BACKEND=postgres \
