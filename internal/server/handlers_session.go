@@ -12,8 +12,9 @@ type sessionSaveReq struct {
 }
 
 type searchHistorySaveReq struct {
-	Command  string `json:"command"`
-	Position string `json:"position"`
+	Command         string `json:"command"`
+	Position        string `json:"position"`
+	ExcludePosition string `json:"excludePosition"`
 }
 
 type searchHistoryDeleteReq struct {
@@ -44,7 +45,7 @@ func (s *Server) sessionRoutes() []route {
 		})},
 
 		{http.MethodPost, "/v1/searchHistory.save", rpcVoid(func(ctx context.Context, scope string, req searchHistorySaveReq) error {
-			return sh().Save(ctx, scope, req.Command, req.Position)
+			return sh().Save(ctx, scope, req.Command, req.Position, req.ExcludePosition)
 		})},
 		{http.MethodPost, "/v1/searchHistory.list", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterSearchHis {
 			return sh().List(ctx, scope)

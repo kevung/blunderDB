@@ -124,3 +124,37 @@ func (s *filterStore) LoadEditPosition(ctx context.Context, scope string, filter
 	}
 	return *editPosition, nil
 }
+
+// SaveExcludePosition stores the "Sauf" exclusion structure of a named filter,
+// or reports ErrNotFound when no filter carries that name.
+func (s *filterStore) SaveExcludePosition(ctx context.Context, scope string, filterName, excludePosition string) error {
+	tag, err := s.db.Exec(ctx,
+		`UPDATE filter_library SET exclude_position = $1 WHERE name = $2 AND tenant_id = $3`,
+		excludePosition, filterName, tenantID(scope))
+	if err != nil {
+		return fmt.Errorf("postgres: save exclude position for %q: %w", filterName, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: save exclude position for %q: %w", filterName, storage.ErrNotFound)
+	}
+	return nil
+}
+
+// LoadExcludePosition returns the stored exclusion structure of a named
+// filter, or "" when the filter is unknown or carries none.
+func (s *filterStore) LoadExcludePosition(ctx context.Context, scope string, filterName string) (string, error) {
+	var excludePosition *string
+	err := s.db.QueryRow(ctx,
+		`SELECT exclude_position FROM filter_library WHERE name = $1 AND tenant_id = $2`,
+		filterName, tenantID(scope)).Scan(&excludePosition)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("postgres: load exclude position for %q: %w", filterName, err)
+	}
+	if excludePosition == nil {
+		return "", nil
+	}
+	return *excludePosition, nil
+}

@@ -13,7 +13,7 @@ type Filter struct {
 }
 
 // FilterStore persists the saved-filter library and the per-filter "edit
-// position" scratch state.
+// position" and "exclude position" scratch state.
 type FilterStore interface {
 	Save(ctx context.Context, scope string, name, command string) (int64, error)
 	Update(ctx context.Context, scope string, id int64, name, command string) error
@@ -25,4 +25,12 @@ type FilterStore interface {
 
 	// LoadEditPosition returns the stored edit position for a named filter.
 	LoadEditPosition(ctx context.Context, scope string, filterName string) (string, error)
+
+	// SaveExcludePosition stores the "Sauf" (exclusion) structure of a named
+	// filter — the checkers the search must NOT find — or reports ErrNotFound.
+	SaveExcludePosition(ctx context.Context, scope string, filterName, excludePosition string) error
+
+	// LoadExcludePosition returns the stored exclusion structure of a named
+	// filter, or "" when the filter is unknown or carries none.
+	LoadExcludePosition(ctx context.Context, scope string, filterName string) (string, error)
 }

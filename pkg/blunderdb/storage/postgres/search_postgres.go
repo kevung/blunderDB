@@ -655,11 +655,11 @@ const searchHistoryLimit = 100
 
 // Save appends an executed search to the tenant's history and trims it to the
 // most recent searchHistoryLimit entries.
-func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position string) error {
+func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position, excludePosition string) error {
 	tenant := tenantID(scope)
 	if _, err := s.db.Exec(ctx,
-		`INSERT INTO search_history (tenant_id, command, position, timestamp) VALUES ($1, $2, $3, $4)`,
-		tenant, command, position, time.Now().UnixMilli()); err != nil {
+		`INSERT INTO search_history (tenant_id, command, position, exclude_position, timestamp) VALUES ($1, $2, $3, $4, $5)`,
+		tenant, command, position, excludePosition, time.Now().UnixMilli()); err != nil {
 		return fmt.Errorf("postgres: save search history: %w", err)
 	}
 	if _, err := s.db.Exec(ctx,
@@ -675,7 +675,7 @@ func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, po
 func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*storage.SearchHistory, error] {
 	return func(yield func(*storage.SearchHistory, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(timestamp,0)
+			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(exclude_position,''), COALESCE(timestamp,0)
 			 FROM search_history WHERE tenant_id = $1 ORDER BY timestamp DESC, id DESC LIMIT $2`,
 			tenantID(scope), searchHistoryLimit)
 		if err != nil {
@@ -685,7 +685,7 @@ func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*
 		defer rows.Close()
 		for rows.Next() {
 			var e storage.SearchHistory
-			if err := rows.Scan(&e.ID, &e.Command, &e.Position, &e.Timestamp); err != nil {
+			if err := rows.Scan(&e.ID, &e.Command, &e.Position, &e.ExcludePosition, &e.Timestamp); err != nil {
 				yield(nil, fmt.Errorf("postgres: list search history: %w", err))
 				return
 			}

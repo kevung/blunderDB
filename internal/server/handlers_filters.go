@@ -23,6 +23,11 @@ type editPositionSaveReq struct {
 	EditPosition string `json:"editPosition"`
 }
 
+type excludePositionSaveReq struct {
+	FilterName      string `json:"filterName"`
+	ExcludePosition string `json:"excludePosition"`
+}
+
 type filterNameReq struct {
 	FilterName string `json:"filterName"`
 }
@@ -49,6 +54,13 @@ func (s *Server) filterRoutes() []route {
 		{http.MethodPost, "/v1/filters.loadEditPosition", rpc(func(ctx context.Context, scope string, req filterNameReq) (textResp, error) {
 			ep, err := fs().LoadEditPosition(ctx, scope, req.FilterName)
 			return textResp{Text: ep}, err
+		})},
+		{http.MethodPost, "/v1/filters.saveExcludePosition", rpcVoid(func(ctx context.Context, scope string, req excludePositionSaveReq) error {
+			return fs().SaveExcludePosition(ctx, scope, req.FilterName, req.ExcludePosition)
+		})},
+		{http.MethodPost, "/v1/filters.loadExcludePosition", rpc(func(ctx context.Context, scope string, req filterNameReq) (textResp, error) {
+			xp, err := fs().LoadExcludePosition(ctx, scope, req.FilterName)
+			return textResp{Text: xp}, err
 		})},
 	}
 }

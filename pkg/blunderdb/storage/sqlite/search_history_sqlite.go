@@ -18,10 +18,10 @@ const searchHistoryLimit = 100
 
 // Save appends an executed search to the history and trims it to the most
 // recent searchHistoryLimit entries.
-func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position string) error {
+func (s *searchHistoryStore) Save(ctx context.Context, scope string, command, position, excludePosition string) error {
 	if _, err := s.db.ExecContext(ctx,
-		`INSERT INTO search_history (command, position, timestamp, scope) VALUES (?,?,?,?)`,
-		command, position, time.Now().UnixMilli(), scope); err != nil {
+		`INSERT INTO search_history (command, position, exclude_position, timestamp, scope) VALUES (?,?,?,?,?)`,
+		command, position, excludePosition, time.Now().UnixMilli(), scope); err != nil {
 		return fmt.Errorf("sqlite: save search history: %w", err)
 	}
 	if _, err := s.db.ExecContext(ctx,
@@ -39,7 +39,7 @@ func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*
 		// id DESC breaks ties when several entries share a millisecond
 		// timestamp, keeping the most-recent-first order deterministic.
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(timestamp,0)
+			`SELECT id, COALESCE(command,''), COALESCE(position,''), COALESCE(exclude_position,''), COALESCE(timestamp,0)
 			 FROM search_history WHERE scope = ? ORDER BY timestamp DESC, id DESC LIMIT ?`, scope, searchHistoryLimit)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list search history: %w", err))
@@ -48,7 +48,7 @@ func (s *searchHistoryStore) List(ctx context.Context, scope string) iter.Seq2[*
 		defer rows.Close()
 		for rows.Next() {
 			var e storage.SearchHistory
-			if err := rows.Scan(&e.ID, &e.Command, &e.Position, &e.Timestamp); err != nil {
+			if err := rows.Scan(&e.ID, &e.Command, &e.Position, &e.ExcludePosition, &e.Timestamp); err != nil {
 				yield(nil, fmt.Errorf("sqlite: list search history: %w", err))
 				return
 			}
