@@ -10,8 +10,10 @@ son commit ; un item **ouvert** est rangé par domaine. Les gros chantiers
 méritent chacun leur propre décision (et éventuellement leur ADR) avant
 lancement — ne pas les commencer « en passant ». Le plan courant qui
 priorise ces items est `tasks/plan-amelioration-2026-09b/README.md` (second
-audit du 2026-09-02) ; sa fiche A.14 liste les items de ce fichier à basculer
-dans l'historique.
+audit du 2026-09-02) ; le renvoi `→ fiche X.N (#NNN)` sur un item ouvert
+désigne la fiche du plan (et son issue GitHub) qui le porte. Un item sans renvoi
+n'est priorisé par aucune fiche. La bascule dans l'historique des items que le
+plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Backend
 
@@ -27,18 +29,22 @@ dans l'historique.
   MET ».** Ce qui marcherait est de valuer le videau *par lot* sur les candidats,
   exactement comme le noyau groupé a fait pour le réseau (#133). Le poste vaut
   ~3,9 % du profil au score avant le noyau, donc bien davantage maintenant.
+  Précédé par la **forme close de `levelSolve`** → fiche C.7 (#194), dont le
+  lot est la seconde marche.
 - **gammonNet — `swapMatchState` alloue un `*MatchState` par nœud**, soit ~1 400
   allocations par décision au score, tout ce qui reste du compteur après #150
   (7 432 → 82 hors ce poste). Coût CPU négligeable, déchet évitable. Laissé de
-  côté pour ne pas entrer en collision avec #148.
+  côté pour ne pas entrer en collision avec #148. → fiche C.10 (#197).
 - **`internal/gui/gammonnet_eval.go` lance jusqu'à trois recherches complètes par
   position** : `EvaluatePosition`, puis `preRollFacts` qui construit un second
   `Searcher` et refait un `Probs` quand les dés sont posés (+36 % mesuré,
   ADR-0017), puis `evaluateRaceRegime` qui en construit un troisième. Chantier
-  d'interface, pas de moteur ; mérite sa fiche.
+  d'interface, pas de moteur. → fiche C.9 (#196).
 - **`positionIDsWithStaleGammonNet` décode le JSON compressé de toutes les
   analyses** pour trouver le moteur, qui est dans le blob et non dans une colonne
   (`db_gammonnet_batch.go:148-167`). Préambule coûteux d'`AnalyzeStaleGammonNet`.
+  → fiches B.12 (#180, le moteur sort du blob) et C.4 (#191, le lot ne retente
+  plus à l'infini).
 - **`statsCountedExpr` et les libellés de videau dégénérés** (#116 lot 0) :
   une décision de videau est comptée comme action *active* dès que
   `move.cube_action` n'est ni `''`, ni `No Double`, ni `NoDouble`. Une valeur
@@ -48,39 +54,28 @@ dans l'historique.
   Aucune occurrence connue dans les corpus. Correctif si ça mord un jour :
   tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
 - **`SwapPlayers`/`DeleteCascade` partagés** entre backends via closures SQL
-  dialectales (~90 lignes dupliquées à l'octet près).
-- **Découpage `db_session.go`** (603 lignes, 5 responsabilités) — les
-  migrations mortes ont été supprimées (fiche 07), la précondition est levée.
+  dialectales (~90 lignes dupliquées à l'octet près). → fiche B.14 (#182).
 - **Dictionnaire zlib partagé** pour `analysis.data` (−25 à −40 % de la plus
   grosse table ; nouveau format de blob versionné, fuzz à étendre) ; au
   passage, fusionner les fragments d'analyse en mémoire avant compression
   (aujourd'hui recompression niveau 9 par fragment) et réutiliser des
-  prepared statements sur le chemin d'import.
+  prepared statements sur le chemin d'import. → fiche B.12 (#180).
 - **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique
-  pour toute la copie SQLite→PG) — attendre un besoin terrain.
+  pour toute la copie SQLite→PG) — attendre un besoin terrain. → fiche G.12
+  (#240).
 - **Colonne `creation_date` promue dans `analysis`** + index (pushdown SQL du
   filtre de date) : exige bump `DatabaseVersion` + triple synchro schéma +
   migration. La fiche 05 a réglé le N+1 ; ceci est l'étape structurelle.
-- **Troisième copie des helpers de recherche** : `database/db_search.go` et `db_filter_match.go` réécrivent les fonctions pures de `storage/searchfilter` ; les faire importer le paquet (aucun cycle). Effort S.
-- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de `storage/sqlite` et `storage/postgres` doublonnent les cas de contrat ajoutés le 2026-09-02. Effort S.
-- **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter.
-- **`cli_import.go` enregistre une position texte via `SavePosition`** et non `SaveIndividualPosition` : la provenance `individually_imported` (ADR-0001) n'est pas posée depuis la CLI. Effort S.
-- **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S.
+- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de `storage/sqlite` et `storage/postgres` doublonnent les cas de contrat ajoutés le 2026-09-02. Effort S. → fiche B.14 (#182).
+- **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter. → fiche B.9 (#177).
+- **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S. → fiche H.13 (#255).
 
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
-- **`use_cube` à la recherche** (ADR-0016, point 4) : le port de `search.go`
-  honore `use_match` ; la branche `use_cube` de `value_from_probs` reste à
-  porter. Le résidu attendu de la gate d'intégration (2 cas rouges sur 669,
-  `integration_gate_test.go`) est documenté dans le test et lui est
-  attribué.
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne
   Équité (ADR-0016, points 5-6) : différés pour ne pas entrer en collision
-  avec l'ADR-0017, désormais fusionné — plus rien ne bloque.
-- **Une évaluation refusée est un état nommé, pas une cellule vide**
-  (ADR-0017, Consequences) : aujourd'hui l'erreur est avalée.
-- **Assertion Playwright « le panneau Eval ne défile pas »** (ADR-0017/0018) :
-  la règle est énoncée, aucun test ne la garde.
+  avec l'ADR-0017, fusionné le 2026-08-31 — **plus rien ne bloque**, le nom
+  ment sur trois régimes (`money.go:36`). → fiche C.3 (#190).
 - **Refuser de démarrer sans drapeau explicite « derrière un proxy »**
   (ADR-0005, option différée) : friction pour tout déploiement légitime pour
   attraper une erreur que la doc, `--help` et le Dockerfile signalent déjà.
@@ -91,22 +86,23 @@ dans l'historique.
 - **Parseur de recherche unique** : `commandProcessor.parseFilters` et
   `searchFilterService.parseSearchCommand` divergent déjà ; converger vers
   une grammaire unique testée (les deux suites existantes servent de filet
-  croisé).
+  croisé). → fiche D.3 (#203).
 - **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour
   le panneau visible, état incohérent atteignable (onglet surligné, panneau
-  vide) ; supprimer `tabHandler.js`.
-- **`MatchDetailPane.svelte` + `InlineAutocomplete.svelte`** : découpage de
-  MatchPanel et dédup de l'autocomplétion inline avec TournamentPanel.
+  vide) ; supprimer `tabHandler.js`. → fiche D.10 (#210).
+- **`MatchDetailPane.svelte`** : découpage de MatchPanel (1 386 lignes) ; la
+  dédup de l'autocomplétion inline est faite (`EntityAutocomplete`, voir
+  Historique). → fiche D.10 (#210).
 - **Virtualisation des listes** (matchs, transcript ~300-500 coups,
   collections) et **LIMIT/pagination** de la recherche (aujourd'hui tout le
   jeu de résultats traverse l'IPC Wails en un message) ; `ListOpts` existe
-  déjà dans le contrat storage, passé vide.
-- **`generateXGID` est avec perte** (`positionService.js`) : longueur de match = plus grand score away, Crawford déduit, Jacoby/cube max émis à 0 ; le corpus `testdata/xgid_corpus.json` fige ce comportement. Encoder depuis `match_length` et le drapeau Crawford réel. Effort S.
-- **`AnalysisPanel.svelte` garde sa copie des prédicats « coup joué »** ; `utils/analysisRows.js` exporte `playedMovePredicate`/`playedCubePredicate`. Effort S.
-- **Escape avalé dans le panneau Recherche** tant qu'un champ a le focus (`SearchPanel.handleKeyDown` stoppe tout) ; **double-clic instable sur une ligne du panneau Match** (le premier clic ouvre le volet transcript qui décale la mise en page) ; **sortie du mode match** : `loadAllPositions` repart sur la dernière position, pas celle quittée. Trois points d'ergonomie relevés par les specs e2e. Effort S chacun.
-- **`enterEPCMode` peut photographier le plateau EDIT vide** quand App enchaîne `exitEditMode` puis `enterEPCMode` avec un index sauvegardé inchangé (0→0, pas de redessin). Préexistant, documenté dans `modeMachine.js`. Effort S.
-- **Plateau et `MatchInfoBar`** : le plateau ne se réajuste pas quand la barre de match apparaît (la capture d'écran force un `resize`) ; `panelLayoutStore.js` dit `DEFAULT_PANEL_HEIGHT = 380 « mirrors config.go »` alors que `config.go` dit 250. Effort S.
-- **`PickList.svelte` partagé** Export/Picker (~110 lignes de CSS dupliquées) et **dialogue de sauvegarde de `SearchPanel`** à migrer sur `Modal.svelte`. Effort S.
+  déjà dans le contrat storage, passé vide. → fiches D.8 (#208) et B.10 (#178).
+- **`generateXGID` est avec perte** (`positionService.js`) : longueur de match = plus grand score away, Crawford déduit, Jacoby/cube max émis à 0 ; le corpus `testdata/xgid_corpus.json` fige ce comportement. Encoder depuis `match_length` et le drapeau Crawford réel. Effort S. → fiche D.11 (#211).
+- **`AnalysisPanel.svelte` garde sa copie des prédicats « coup joué »** ; `utils/analysisRows.js` exporte `playedMovePredicate`/`playedCubePredicate`. Effort S. → fiche D.10 (#210).
+- **Escape avalé dans le panneau Recherche** tant qu'un champ a le focus (`SearchPanel.handleKeyDown` stoppe tout) ; **double-clic instable sur une ligne du panneau Match** (le premier clic ouvre le volet transcript qui décale la mise en page) ; **sortie du mode match** : `loadAllPositions` repart sur la dernière position, pas celle quittée. Trois points d'ergonomie relevés par les specs e2e. Effort S chacun. → fiche D.1 (#201).
+- **`enterEPCMode` peut photographier le plateau EDIT vide** quand App enchaîne `exitEditMode` puis `enterEPCMode` avec un index sauvegardé inchangé (0→0, pas de redessin). Préexistant, documenté dans `modeMachine.js`. Effort S. → fiche D.1 (#201).
+- **Plateau et `MatchInfoBar`** : le plateau ne se réajuste pas quand la barre de match apparaît (la capture d'écran force un `resize`) ; `panelLayoutStore.js` dit `DEFAULT_PANEL_HEIGHT = 380 « mirrors config.go »` alors que `config.go` dit 250. Effort S. → fiche D.1 (#201).
+- **`PickList.svelte` partagé** Export/Picker (~110 lignes de CSS dupliquées) et **dialogue de sauvegarde de `SearchPanel`** à migrer sur `Modal.svelte`. Effort S. → fiche D.9 (#209).
 - **ADR-0004** cite encore `NotoSansJP-Regular.ttf` (5,7 Mo) : la police est un sous-ensemble WOFF2 de 178 Ko depuis le 2026-09-02 (constat historique, une note suffit).
 
 ## Ouvert — Tests / CI
@@ -119,13 +115,41 @@ dans l'historique.
 
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
-  10 (ADR-0017/0018/0021).
-- **Soumissions humaines** : PR winget (`microsoft/winget-pkgs`, manifestes attachés à chaque release) et tap Homebrew `kevung/homebrew-tap` (cask attaché à chaque release) — voir `packaging/winget/README.md`, `packaging/homebrew/README.md`.
-- **Job `test-os`** : retirer `continue-on-error: true` après le premier run vert sur windows/macos.
-- **Skill `release-blunderdb`** : mentionner les nouveaux assets de release (manifestes winget, cask Homebrew, bundle Flatpak, image GHCR).
+  10 (ADR-0017/0018/0021). → fiche H.7 (#249).
+- **Soumissions humaines** : PR winget (`microsoft/winget-pkgs`, manifestes attachés à chaque release) et tap Homebrew `kevung/homebrew-tap` (cask attaché à chaque release) — voir `packaging/winget/README.md`, `packaging/homebrew/README.md`. → fiche H.3 (#245).
+- **Job `test-os`** : retirer `continue-on-error: true` après le premier run vert sur windows/macos. → fiche E.1 (#217).
+- **Skill `release-blunderdb`** : mentionner les nouveaux assets de release (manifestes winget, cask Homebrew, bundle Flatpak, image GHCR). → fiches H.3 (#245) et H.5 (#247), et README du plan §6.
 
 ## Historique — items faits
 
+- **2026-09-02 — `use_cube` à la recherche** (ADR-0016, point 4) : fait le
+  2026-09-02 (3657ea1a, ADR-0023) : chaque feuille de la recherche est valuée
+  par le modèle de videau à l'état de videau de la position ; gammonNet v1.2.1
+  épinglé par `EngineVersion`.
+- **2026-08-31 — Une évaluation refusée est un état nommé, pas une cellule vide**
+  (ADR-0017, Consequences ; ADR-0019 règle 4) : fait le 2026-08-31 (a4b0592c) :
+  `EvaluatePosition` renvoie `Refused bool` comme une donnée
+  (`internal/gui/gammonnet_eval.go:71-78`) et le panneau nomme l'état
+  (`cubeDecision.js`).
+- **2026-08-31 — Assertion Playwright « le panneau Eval ne défile pas »**
+  (ADR-0017/0018) : fait le 2026-08-31 (a4b0592c) :
+  `frontend/tests/e2e/eval-panel-no-scroll.spec.js` mesure
+  `scrollHeight − clientHeight` du panneau dans chaque régime.
+- **2026-07-26 — Provenance `individually_imported` depuis la CLI** (ADR-0001) :
+  fait autrement, dès le 2026-07-26 (132d3562) : `cli_import.go:211` pose
+  `IndividuallyImported = true` sur la position et `PositionStore.Save` fait un
+  OR collant du drapeau (`storage/sqlite/positions_sqlite.go:68-75`) ; un
+  `SaveIndividualPosition` distinct n'a plus d'objet.
+- **2026-06-13 — Troisième copie des helpers de recherche** : fait le 2026-06-13
+  (a9a872bc) : `db_filter_match.go` supprimé, `database/db_search.go` fait 59
+  lignes et délègue à `storage` ; l'item avait été écrit après coup.
+- **2026-09-02 — Découpage `db_session.go`** (603 lignes, 5 responsabilités) :
+  fait le 2026-09-02 (cf984285) : la famille sessions délègue à
+  `storage/sqlite`, le fichier fait 254 lignes.
+- **2026-09-02 — Dédup de l'autocomplétion inline** Match/Tournament : fait le
+  2026-09-02 (b3bdd99f) : `components/EntityAutocomplete.svelte` partagé par
+  `MatchPanel` et `TournamentPanel`, test `EntityAutocomplete.test.js`. Le
+  découpage `MatchDetailPane` reste ouvert (fiche D.10, #210).
 - **2026-09-02 — Réponse masquée d'une carte Anki, validée sur une vraie base**
   (ADR-0025). Base bâtie à la CLI depuis `testdata/` (349 positions et analyses
   XG d'un match), paquet créé et synchronisé, puis l'application réelle pilotée
