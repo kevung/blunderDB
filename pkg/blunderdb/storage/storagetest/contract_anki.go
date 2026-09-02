@@ -172,3 +172,61 @@ func testAnkiRandomCardIgnoresSchedule(t *testing.T, s storage.Storage) {
 		t.Errorf("RandomCard single-card fallback: got position %d, want %d", card.Card.PositionID, id1)
 	}
 }
+
+// testAnkiDrawOrderInterleavesTies pins ADR-0026 rule 9: cards tied on due date
+// are drawn at random, while the priority that IS meaningful — state first,
+// then an older due date — is untouched.
+//
+// The tie is not a corner case, it is the normal state of a fresh deck: every
+// new card is synced with the same due timestamp, so ordering by due date
+// separates none of them and the engine falls back on insertion order, which is
+// the order of the match the positions came from. A session then walked the
+// moves of one game in sequence.
+func testAnkiDrawOrderInterleavesTies(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	deckID, err := s.Anki().CreateDeck(ctx, "", "order", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+
+	// Eight positions, hence eight new cards sharing one due timestamp.
+	ids := make([]int64, 0, 8)
+	for i := 0; i < 8; i++ {
+		p := checkerPos()
+		p.Board.Points[i+1] = domain.Point{Checkers: 1, Color: domain.White}
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+		ids = append(ids, id)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, ids); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+
+	// NextCard reads without consuming, so repeated draws expose the order.
+	// With ties broken at random the first card varies; with insertion order it
+	// would be the same row every time. Eight candidates make a false failure
+	// (8/8 identical draws by chance) about 1 in 8^29.
+	seen := map[int64]bool{}
+	for i := 0; i < 30; i++ {
+		card, err := s.Anki().NextCard(ctx, "", deckID)
+		if err != nil {
+			t.Fatalf("NextCard draw %d: %v", i, err)
+		}
+		seen[card.Card.PositionID] = true
+	}
+	if len(seen) < 2 {
+		t.Errorf("NextCard served the same card on all 30 draws (%v): ties are not interleaved", seen)
+	}
+
+	// The priority that is NOT random stays covered where it already was: a card
+	// graded away from "due" stops being served at all (see
+	// testAnkiReviewUpdatesScheduling). It cannot be re-checked here by grading
+	// one card Again, because a learning step pushes its due date minutes into
+	// the future — it leaves the queue rather than moving to the head of it.
+	if _, err := s.Anki().NextCard(ctx, "", deckID); err != nil {
+		t.Fatalf("NextCard still serves the deck: %v", err)
+	}
+}

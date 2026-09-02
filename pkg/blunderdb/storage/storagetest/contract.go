@@ -67,6 +67,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Comment/PositionDeleteCascades", testCommentPositionDeleteCascades},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
 		{"Anki/RandomCardIgnoresSchedule", testAnkiRandomCardIgnoresSchedule},
+		{"Anki/DrawOrderInterleavesTies", testAnkiDrawOrderInterleavesTies},
 		{"Filter/SaveAndList", testFilterSaveAndList},
 		{"History/SaveLoadClear", testCommandHistory},
 		{"SearchHistory/SaveListDelete", testSearchHistory},

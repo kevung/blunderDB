@@ -304,14 +304,29 @@ func scanAnkiCard(sc interface{ Scan(...any) error }) (domain.AnkiCard, error) {
 const ankiAvailableSQL = `suspended = 0 AND (buried_until IS NULL OR buried_until <= ?)`
 
 // nextDueCardSQL orders due cards so learning/relearning come first, then
-// review, then new; ties break on the due date.
+// review, then new; an older due date comes before a newer one.
+//
+// The last term is RANDOM(), and it is deliberate — not a tie-break left
+// unwritten (ADR-0026 rule 9). Every new card of a freshly synced deck carries
+// the SAME due timestamp, so `due ASC` separates none of them and the engine
+// falls back on insertion order: the order of the match the positions came
+// from. A session then served consecutive moves of one game, which are
+// correlated, in the sequence they were played — blocking, where the learning
+// literature wants interleaving. Randomising the ties is the fix, and it is the
+// behaviour, not an option: no display-order setting is exposed anywhere.
+//
+// This is why the randomness is spelled out here. An ORDER BY that merely
+// forgets to be total looks identical and is a defect (see the rolling-stats
+// windows, whose non-total order makes backends disagree at ties); only this
+// comment tells the two apart.
 const nextDueCardSQL = `SELECT ` + ankiCardCols + ` FROM anki_card
 	WHERE deck_id = ? AND due <= ? AND ` + ankiAvailableSQL + `
 	ORDER BY
 		CASE WHEN state = 1 OR state = 3 THEN 0
 		     WHEN state = 2 THEN 1
 		     ELSE 2 END,
-		due ASC
+		due ASC,
+		RANDOM()
 	LIMIT 1`
 
 // nextDueCard returns the highest-priority card due in a deck, or ErrNotFound.
