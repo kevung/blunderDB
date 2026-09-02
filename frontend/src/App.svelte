@@ -5,7 +5,7 @@
     import { fade } from 'svelte/transition';
 
     // Wails runtime
-    import { WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
+    import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
     import { PathExists } from '../wailsjs/go/gui/App.js';
     import { initLanguage, t } from './i18n';
@@ -70,6 +70,7 @@
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
+    import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
     // Components
@@ -90,7 +91,6 @@
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
-    let dragCounter = 0;
     let positions = [];
     let saveSessionTimeout = null;
     let tabInitialized = false;
@@ -229,25 +229,6 @@
         }
     }
 
-    function handleDragOver(e) {
-        e.preventDefault();
-        if (!showDropOverlay) {
-            dragCounter++;
-            showDropOverlay = true;
-        }
-    }
-    function handleDragLeave(_e) {
-        dragCounter--;
-        if (dragCounter <= 0) {
-            dragCounter = 0;
-            showDropOverlay = false;
-        }
-    }
-    function handleDragEnd(_e) {
-        dragCounter = 0;
-        showDropOverlay = false;
-    }
-
     // ── Lifecycle ──────────────────────────────────────────────────
 
     onMount(async () => {
@@ -279,10 +260,6 @@
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
-        OnFileDrop((x, y, paths) => handleFileDrop(x, y, paths), false);
-        window.addEventListener('dragover', handleDragOver);
-        window.addEventListener('dragleave', handleDragLeave);
-        window.addEventListener('drop', handleDragEnd);
 
         // Apply the persisted UI language before anything renders; fall back to
         // English if the config read fails.
@@ -345,15 +322,11 @@
         window.removeEventListener('keydown', handleKeyDown);
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
-        window.removeEventListener('dragover', handleDragOver);
-        window.removeEventListener('dragleave', handleDragLeave);
-        window.removeEventListener('drop', handleDragEnd);
-        OnFileDropOff();
         unsubscribePositions();
     });
 </script>
 
-<main class="main-container" bind:this={mainArea}>
+<main class="main-container" bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
