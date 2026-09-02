@@ -5,18 +5,30 @@ name: Publish to AUR
 # and an AUR account whose SSH key is registered. Without the secret the job
 # runs but no-ops (see the "guard" step), so it never fails a release.
 #
-# TRIGGER: the *tag push*, not `release: published`. The release is created by
-# build.yml using the default GITHUB_TOKEN, and events raised by that token never
-# cascade into another workflow — so a `release: published` trigger silently never
-# fires. Pushing the tag is a human event, so it does. This job therefore starts
-# alongside the matrix build and simply waits for the 4.1 tarball to appear.
+# TRIGGER: `workflow_run` on the completion of "Wails build", not `release:
+# published`. The release is created by build.yml using the default
+# GITHUB_TOKEN, and events raised by that token never cascade into another
+# workflow — so a `release: published` trigger silently never fires.
+# `workflow_run` is raised by GitHub itself when the run finishes, whatever
+# token the run used, and it executes in the context of the default branch
+# with full access to the repository secrets — so the AUR key is usable.
+#
+# It fires for every completed "Wails build" (pull requests, merges on main,
+# tags): the job-level `if` drops everything but tag pushes, and the version
+# step insists on an X.Y.Z tag (data-asset tags such as bearoff-data-1 must
+# never reach the AUR). It does NOT require the run to have succeeded: the
+# tarball is uploaded by the `build` job, and a failure elsewhere in the run
+# (docs, a lint) is no reason to withhold a package whose asset exists — the
+# download step fails loudly if it does not.
+#
+# Until 0.34.0 this workflow started on the tag push itself and polled the
+# release for up to 30 minutes on a runner, waiting for the matrix to finish.
+# Note: workflow_run only fires for a workflow file on the default branch.
 
 on:
-  push:
-    tags:
-      # Version tags only (e.g. 0.31.0). Data-asset tags such as
-      # bearoff-data-1 must NOT be published to AUR.
-      - "[0-9]*.[0-9]*.[0-9]*"
+  workflow_run:
+    workflows: ["Wails build"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       version:
@@ -26,9 +38,20 @@ on:
 jobs:
   aur:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # head_branch carries the tag name for a tag push; `main` is a merge.
+    if: >-
+      github.event_name == 'workflow_dispatch' || (
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch != 'main'
+      )
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # On workflow_run the default checkout is the default branch; take
+          # the tagged commit so packaging/aur/PKGBUILD.in matches the release.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Guard on AUR secret
         id: guard
@@ -45,37 +68,47 @@ jobs:
       - name: Determine version
         id: v
         if: steps.guard.outputs.enabled == 'true'
+        env:
+          DISPATCH_VERSION: ${{ github.event.inputs.version }}
+          RUN_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+            version="$DISPATCH_VERSION"
           else
-            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            version="$RUN_BRANCH"
           fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "'$version' is not a version tag — skipping AUR publish."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
 
       - name: Download the webkit2gtk-4.1 tarball and compute checksum
         id: dl
-        if: steps.guard.outputs.enabled == 'true'
+        if: steps.v.outputs.enabled == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.v.outputs.version }}
         run: |
           set -euo pipefail
           asset="blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz"
-          # This job starts on the tag push, i.e. at the same moment as the
-          # matrix build that produces the asset — so the wait must cover the
-          # whole build (~15 min, plus the macOS universal job). 60 × 30 s = 30 min.
-          for i in $(seq 1 60); do
+          # The build run is complete, so the asset is either there or never
+          # will be; the short retry only absorbs the release API's eventual
+          # consistency right after the upload.
+          for i in $(seq 1 6); do
             if gh release download "$VERSION" -R "$GITHUB_REPOSITORY" -p "$asset" -D dl --clobber 2>/dev/null; then
               break
             fi
-            echo "asset $asset not ready yet (attempt $i); waiting..."
-            sleep 30
+            echo "asset $asset not visible yet (attempt $i); waiting..."
+            sleep 10
           done
-          test -f "dl/$asset"
+          test -f "dl/$asset" || { echo "::error::$asset is not on release $VERSION — did the build job fail?"; exit 1; }
           echo "sha=$(sha256sum "dl/$asset" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Render PKGBUILD
-        if: steps.guard.outputs.enabled == 'true'
+        if: steps.v.outputs.enabled == 'true'
         env:
           VERSION: ${{ steps.v.outputs.version }}
           SHA: ${{ steps.dl.outputs.sha }}
@@ -86,7 +119,7 @@ jobs:
           cat PKGBUILD
 
       - name: Publish to the AUR
-        if: steps.guard.outputs.enabled == 'true'
+        if: steps.v.outputs.enabled == 'true'
         uses: KSXGitHub/github-actions-deploy-aur@9dfe151cf48f26a957bbd0379c120e79cb990e13 # v2.7.2
         with:
           pkgname: blunderdb-bin
