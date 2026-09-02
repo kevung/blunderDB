@@ -5,7 +5,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
-    import { drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
+    import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
     import { attachBoardInteractions } from '../utils/boardInteractions.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
@@ -177,6 +177,7 @@
         boardCfg.dice.fill = colors.dice;
         boardCfg.dice.dot = colors.diceDot;
         boardCfg.cube.fill = colors.cube;
+        invalidateStaticLayer(); // triangles, bar and frame carry the palette
         if (two && canvas) scheduleRedraw();
     });
 
@@ -208,6 +209,7 @@
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
+        invalidateStaticLayer(); // every coordinate depends on the size
         // The measurement above must stay synchronous (it reads the live
         // container box), but the actual repaint is coalesced: a burst of
         // 'resize' events (window drag, panel toggle) must repaint at most
@@ -258,6 +260,7 @@
 
     function setBoardOrientation(orientation) {
         boardCfg.orientation = orientation;
+        invalidateStaticLayer(); // labels and bearoff side move
         scheduleRedraw();
     }
 
@@ -473,22 +476,50 @@
         return moves;
     }
 
+    // ── Static / dynamic layers ────────────────────────────────────────────
+    // A redraw used to two.clear() the whole scene and recreate ~120 SVG
+    // nodes, half of which never change from one position to the next: the
+    // 24 triangles, the 24 point labels, the bar and the outline. They now
+    // live in their own two.js groups, rebuilt only when what they depend on
+    // changes — the drawing size (resize), the orientation (Ctrl-arrows), the
+    // palette (boardColorsStore) or the side the labels are numbered from
+    // (player 2's perspective) — while scheduleRedraw() only empties and
+    // refills the dynamic group (checkers, cube, dice, scores, arrows).
+    // Board.redraw.test.js counts two.clear() as "static layer rebuilt" and
+    // two.update() as "painted".
+    let staticLayer = null; // triangles, labels, bar — null = must be rebuilt
+    let dynamicLayer = null; // emptied and refilled on every redraw
+    let staticFlip = null; // the label side staticLayer was built for
+
+    function invalidateStaticLayer() {
+        staticLayer = null;
+    }
+
+    function rebuildStaticLayers(geom, flip) {
+        two.clear();
+        staticLayer = two.makeGroup();
+        dynamicLayer = two.makeGroup();
+        const frameLayer = two.makeGroup(); // above the checkers so the outline keeps its linewidth
+        drawStaticScene(layerOf(two, staticLayer), geom, boardCfg, flip);
+        drawFrame(layerOf(two, frameLayer), geom, boardCfg);
+        staticFlip = flip;
+    }
+
     export function drawBoard() {
         if (!two) return; // Safety check
 
-        two.clear();
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
+        const flip = isPlayer2Perspective(position);
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
-        drawStaticScene(two, geom, boardCfg, isPlayer2Perspective(position));
-        cubePosition = drawDynamicScene(two, geom, boardCfg, position, {
+        if (!staticLayer || staticFlip !== flip) rebuildStaticLayers(geom, flip);
+        dynamicLayer.remove(dynamicLayer.children);
+        cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
             offeredCube: isOfferedCube(position),
             showPipcount,
             moves: selectedMoveArrows()
         });
-        // Outline on top so its linewidth is not eaten by the checkers.
-        drawFrame(two, geom, boardCfg);
 
         two.update();
     }

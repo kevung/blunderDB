@@ -30,7 +30,7 @@ vi.mock('two.js', () => {
             return this;
         }
         makeGroup() {
-            return { add: () => {} };
+            return { children: [], add: () => {}, remove: () => {} };
         }
         makeText() {
             return makeFakeShape();

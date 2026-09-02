@@ -15,9 +15,34 @@
 // depends only on the geometry, the palette and the label flip, while
 // drawDynamicScene() — checkers, cube, bearoff, pip counts, dice, scores and
 // move arrows — depends on the position. drawFrame() sits on top of both so
-// the outline keeps a consistent linewidth over the checkers.
+// the outline keeps a consistent linewidth over the checkers. layerOf()
+// routes each into its own two.js group.
 
 import { computePipCount } from './boardGeometry.js';
+
+/**
+ * A drawing surface that puts every shape it creates into `group`. two.js's
+ * factories add to the scene root and Group.add() reparents, so the shape
+ * ends up in the group only. This is how Board.svelte keeps a static layer
+ * (rebuilt on resize, orientation or palette change) and a dynamic layer
+ * (emptied on every redraw) apart while both use the same drawing functions.
+ */
+export function layerOf(two, group) {
+    const into =
+        (factory) =>
+        (...args) => {
+            const shape = factory.apply(two, args);
+            group.add(shape);
+            return shape;
+        };
+    return {
+        makePath: into(two.makePath),
+        makeText: into(two.makeText),
+        makeCircle: into(two.makeCircle),
+        makeRectangle: into(two.makeRectangle),
+        makeLine: into(two.makeLine)
+    };
+}
 
 // Sentinel colour stored on an exclude-structure point that must hold no checker.
 export const EXCLUDE_EMPTY = 2;
