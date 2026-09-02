@@ -54,9 +54,31 @@ type Summary struct {
 	MatchID           int64 `json:"matchId,omitempty"`
 }
 
-// ExportOptions tunes an export.
+// ExportOptions says how an export is made. Format picks the exporter; the
+// rest is read by the SQLite export (ExportSQLite) — JSONExporter streams the
+// whole position library and ignores it.
 type ExportOptions struct {
 	Format Format
+
+	// Selection says what leaves; the zero value selects nothing. WholeTenant
+	// is the everything-on preset.
+	Selection Selection
+
+	// Analysis, Comments and PlayedMoves govern what travels with a position;
+	// PlayedMoves matters only with Analysis. FilterLibrary and AnkiDecks add
+	// those families whole.
+	Analysis      bool
+	Comments      bool
+	PlayedMoves   bool
+	FilterLibrary bool
+	AnkiDecks     bool
+
+	// Metadata is copied by allow-list (issuance.Carried). Watermark is the
+	// sealed document to write verbatim (see SealWatermark), "" for none.
+	// Password wraps the finished file in an encrypted container.
+	Metadata  map[string]string
+	Watermark string
+	Password  string
 }
 
 // Importer reads a Source and writes its contents through Storage, emitting

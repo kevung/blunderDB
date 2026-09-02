@@ -58,7 +58,7 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := (SQLiteExporter{S: src}).Export(ctx, "", out, ExportOptions{Format: FormatSQLite}); err != nil {
+	if err := (SQLiteExporter{S: src}).Export(ctx, "", out, WholeTenant(FormatSQLite)); err != nil {
 		out.Close()
 		t.Fatalf("export: %v", err)
 	}
@@ -160,7 +160,7 @@ func TestSQLiteExportEmptyTenant(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := (SQLiteExporter{S: src}).Export(ctx, "", out, ExportOptions{Format: FormatSQLite}); err != nil {
+	if err := (SQLiteExporter{S: src}).Export(ctx, "", out, WholeTenant(FormatSQLite)); err != nil {
 		out.Close()
 		t.Fatalf("export: %v", err)
 	}

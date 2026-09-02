@@ -1,8 +1,11 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // Collection represents a collection of positions
@@ -549,10 +552,11 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 	return collections, nil
 }
 
-// ExportCollections exports specific collections to a database file. watermark
-// and watermarkNote mirror ExportDatabase's Watermark/WatermarkNote: an empty
-// watermark means the export carries none. See db_export_position.go for the
-// schema and position-writing code shared with the other two export paths.
+// ExportCollections exports specific collections, and the positions they
+// hold, to a database file. watermark and watermarkNote mirror
+// ExportDatabase's Watermark/WatermarkNote: an empty watermark means the
+// export carries none. The work is ingest.ExportSQLite, the same exporter
+// ExportDatabase and ExportTournaments run.
 func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool, watermark string, watermarkNote string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -561,165 +565,23 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		return fmt.Errorf("no database is currently open")
 	}
 
-	// Collect all unique position IDs from selected collections
-	positionIDsMap := make(map[int64]bool)
-	for _, collectionID := range collectionIDs {
-		ids, err := queryInt64s(d.db, `SELECT position_id FROM collection_position WHERE collection_id = ?`, collectionID)
-		if err != nil {
-			return err
-		}
-		for _, posID := range ids {
-			positionIDsMap[posID] = true
-		}
-	}
-
-	// Convert map to slice
-	var positionIDs []int64
-	for id := range positionIDsMap {
-		positionIDs = append(positionIDs, id)
-	}
-
-	exportDB, err := newExportDB(exportPath)
+	watermarkDocument, err := sealWatermark(watermark, watermarkNote)
 	if err != nil {
-		return err
-	}
-	defer exportDB.Close()
-
-	if err := writeExportMetadata(exportDB, metadata, watermark, watermarkNote); err != nil {
-		return err
+		return fmt.Errorf("cannot sign the watermark: %w", err)
 	}
 
-	// Read every position and (if requested) its analysis/comment in one batched
-	// statement each, instead of the N+1 per-position SELECTs this used to run —
-	// the same helpers ExportDatabase uses (db_export.go).
-	positions, err := d.positionsByIDsLocked(positionIDs)
-	if err != nil {
-		return fmt.Errorf("cannot read the positions to export: %w", err)
-	}
-	var analysisByPosition map[int64][]byte
-	if includeAnalysis {
-		if analysisByPosition, err = d.analysisForPositions(positionIDs); err != nil {
-			return fmt.Errorf("cannot read analyses to export: %w", err)
-		}
-	}
-	var commentByPosition map[int64]string
-	if includeComments {
-		if commentByPosition, err = d.commentsForPositions(positionIDs); err != nil {
-			return fmt.Errorf("cannot read comments to export: %w", err)
-		}
-	}
-
-	tx, err := exportDB.Begin()
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
-
-	insertPosition, err := tx.Prepare(exportPositionInsertSQL)
-	if err != nil {
-		return fmt.Errorf("cannot prepare the position insert: %w", err)
-	}
-	defer insertPosition.Close()
-	lookupPosition, err := tx.Prepare(exportPositionLookupSQL)
-	if err != nil {
-		return fmt.Errorf("cannot prepare the position lookup: %w", err)
-	}
-	defer lookupPosition.Close()
-
-	// Export positions and create ID mapping
-	oldToNewID := make(map[int64]int64, len(positions))
-	for _, pos := range positions {
-		posID := pos.ID
-		newID, insErr := insertExportPosition(insertPosition, lookupPosition, pos)
-		if insErr != nil {
-			slog.Warn("inserting position into collection export database", "positionID", posID, "err", insErr)
-			continue
-		}
-		oldToNewID[posID] = newID
-
-		if includeAnalysis {
-			if data, ok := analysisByPosition[posID]; ok {
-				// Decompress for export compatibility (the export's analysis.data holds
-				// plain JSON, like ExportDatabase's).
-				jsonData, decErr := decompressAnalysisData(data)
-				if decErr != nil {
-					slog.Warn("decompressing analysis for collection export", "positionID", posID, "err", decErr)
-				} else if _, insErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData)); insErr != nil {
-					slog.Warn("inserting analysis into collection export database", "positionID", posID, "err", insErr)
-				}
-			}
-		}
-
-		if includeComments {
-			if text := commentByPosition[posID]; text != "" {
-				if _, insErr := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newID, text); insErr != nil {
-					slog.Warn("inserting comment into collection export database", "positionID", posID, "err", insErr)
-				}
-			}
-		}
-	}
-
-	// Export collections and their position mappings
-	for _, collectionID := range collectionIDs {
-		var name, description string
-		var sortOrder int
-		var createdAt, updatedAt string
-		cErr := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
-			Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
-		if cErr != nil {
-			slog.Warn("reading collection for export", "collectionID", collectionID, "err", cErr)
-			continue
-		}
-
-		result, insErr := tx.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-			name, description, sortOrder, createdAt, updatedAt)
-		if insErr != nil {
-			slog.Warn("inserting collection into export database", "collectionID", collectionID, "err", insErr)
-			continue
-		}
-		newCollectionID, idErr := result.LastInsertId()
-		if idErr != nil {
-			err = fmt.Errorf("failed to get last insert ID: %w", idErr)
-			return err
-		}
-
-		// Export collection_position mappings
-		if err = func() error {
-			rows, qErr := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
-			if qErr != nil {
-				slog.Warn("querying collection_position for export", "collectionID", collectionID, "err", qErr)
-				return nil
-			}
-			defer rows.Close()
-			for rows.Next() {
-				var oldPosID int64
-				var cpSortOrder int
-				var addedAt string
-				if sErr := rows.Scan(&oldPosID, &cpSortOrder, &addedAt); sErr != nil {
-					slog.Warn("scanning collection_position for export", "collectionID", collectionID, "err", sErr)
-					continue
-				}
-				if newPosID, ok := oldToNewID[oldPosID]; ok {
-					if _, insErr := tx.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
-						newCollectionID, newPosID, cpSortOrder, addedAt); insErr != nil {
-						slog.Warn("inserting collection_position into export database", "collectionID", collectionID, "err", insErr)
-					}
-				}
-			}
-			return rows.Err()
-		}(); err != nil {
-			return err
-		}
-	}
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-	return nil
+	_, err = ingest.ExportSQLite(context.Background(), d.store, "", exportPath, ingest.ExportOptions{
+		Format: ingest.FormatSQLite,
+		Selection: ingest.Selection{
+			CollectionIDs:       collectionIDs,
+			CollectionPositions: true,
+		},
+		Analysis:  includeAnalysis,
+		Comments:  includeComments,
+		Metadata:  metadata,
+		Watermark: watermarkDocument,
+	})
+	return err
 }
 
 // CollectionCoverage reports, for every collection, how many of its positions are part of

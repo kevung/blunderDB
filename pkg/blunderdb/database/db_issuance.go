@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
@@ -93,18 +95,14 @@ func IssuerIdentity() (*issuance.Identity, error) {
 // sealWatermark builds the document an export writes, or "" when the export carries no
 // watermark. It is the only place an identity is ever created.
 func sealWatermark(origin, note string) (string, error) {
-	if origin == "" {
+	if strings.TrimSpace(origin) == "" {
 		return "", nil
 	}
 	identity, err := IssuerIdentity()
 	if err != nil {
 		return "", err
 	}
-	env, err := issuance.Seal(identity, issuance.Watermark{Origin: origin, Note: note})
-	if err != nil {
-		return "", err
-	}
-	return issuance.EncodeEnvelope(env)
+	return ingest.SealWatermark(identity, origin, note)
 }
 
 // IsProtectedCopy reports whether a path is a password-protected copy rather than an ordinary
