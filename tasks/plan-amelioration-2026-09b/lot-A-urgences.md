@@ -343,16 +343,19 @@ défile pas » (`tests/e2e/eval-panel-no-scroll.spec.js`), dédup autocomplétio
 inline (`EntityAutocomplete`). `docs/adr/README.md` s'arrête à 0024 (0025 mergé).
 
 **À faire.**
-- [ ] Fermer #119 avec un commentaire renvoyant aux ADR 0011-0024 et au
+- [x] Fermer #119 avec un commentaire renvoyant aux ADR 0011-0024 et au
       README ; ouvrir deux successeurs étroits : « rollouts tronqués » (J.2) et
       « comparaison XG vs gammonNet sur sa base » (I.14).
-- [ ] Labels : créer `import`, `search`, `stats`, `anki`, `eval`, `serve`,
+- [x] Labels : créer `import`, `search`, `stats`, `anki`, `eval`, `serve`,
       `i18n`, `packaging`, `docs` ; labelliser #151, #127, #102 ; marquer 3
-      `good first issue` (coquilles FAQ H.9, symlink A.10, ADR-0025 index).
-- [ ] `tasks/BACKLOG.md` : déplacer les sept items dans *Historique* avec commit
+      `good first issue` (coquilles FAQ H.4 → #304, symlink A.10 #164 ; l'index
+      ADR-0025 est fait ici même, pas de ticket).
+- [x] `tasks/BACKLOG.md` : déplacer les sept items dans *Historique* avec commit
       et date ; corriger la ligne `race.Money` (« plus rien ne bloque »).
-- [ ] `docs/adr/README.md` : ligne 0025.
-- [ ] Rouvrir #114 (OGXM) et #61 (Heroes) reformulées, pointant I.4 et I.5.
+- [x] `docs/adr/README.md` : ligne 0025 (et 0026, mergée entre-temps).
+- [x] Rouvrir #114 (OGXM) et #61 (Heroes) reformulées, pointant I.4 et I.5
+      — fait par commentaire + label `duplicate`, tickets laissés fermés (un
+      seul ticket par sujet : #260 et #261).
 
 ---
 
