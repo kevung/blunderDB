@@ -35,6 +35,11 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 - **Colonne `creation_date` promue dans `analysis`** + index (pushdown SQL du
   filtre de date) : exige bump `DatabaseVersion` + triple synchro schéma +
   migration. La fiche 05 a réglé le N+1 ; ceci est l'étape structurelle.
+- **Troisième copie des helpers de recherche** : `database/db_search.go` et `db_filter_match.go` réécrivent les fonctions pures de `storage/searchfilter` ; les faire importer le paquet (aucun cycle). Effort S.
+- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de `storage/sqlite` et `storage/postgres` doublonnent les cas de contrat ajoutés le 2026-09-02. Effort S.
+- **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter.
+- **`cli_import.go` enregistre une position texte via `SavePosition`** et non `SaveIndividualPosition` : la provenance `individually_imported` (ADR-0001) n'est pas posée depuis la CLI. Effort S.
+- **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S.
 
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
@@ -61,9 +66,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   `searchFilterService.parseSearchCommand` divergent déjà ; converger vers
   une grammaire unique testée (les deux suites existantes servent de filet
   croisé).
-- **Composant `<Modal>` unique** (overlay + rôles + focus trap + Escape) :
-  13 copies du CSS d'overlay, 2 conventions de z-index, 7 gestionnaires
-  d'Escape dupliqués.
 - **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour
   le panneau visible, état incohérent atteignable (onglet surligné, panneau
   vide) ; supprimer `tabHandler.js`.
@@ -73,6 +75,13 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   collections) et **LIMIT/pagination** de la recherche (aujourd'hui tout le
   jeu de résultats traverse l'IPC Wails en un message) ; `ListOpts` existe
   déjà dans le contrat storage, passé vide.
+- **`generateXGID` est avec perte** (`positionService.js`) : longueur de match = plus grand score away, Crawford déduit, Jacoby/cube max émis à 0 ; le corpus `testdata/xgid_corpus.json` fige ce comportement. Encoder depuis `match_length` et le drapeau Crawford réel. Effort S.
+- **`AnalysisPanel.svelte` garde sa copie des prédicats « coup joué »** ; `utils/analysisRows.js` exporte `playedMovePredicate`/`playedCubePredicate`. Effort S.
+- **Escape avalé dans le panneau Recherche** tant qu'un champ a le focus (`SearchPanel.handleKeyDown` stoppe tout) ; **double-clic instable sur une ligne du panneau Match** (le premier clic ouvre le volet transcript qui décale la mise en page) ; **sortie du mode match** : `loadAllPositions` repart sur la dernière position, pas celle quittée. Trois points d'ergonomie relevés par les specs e2e. Effort S chacun.
+- **`enterEPCMode` peut photographier le plateau EDIT vide** quand App enchaîne `exitEditMode` puis `enterEPCMode` avec un index sauvegardé inchangé (0→0, pas de redessin). Préexistant, documenté dans `modeMachine.js`. Effort S.
+- **Plateau et `MatchInfoBar`** : le plateau ne se réajuste pas quand la barre de match apparaît (la capture d'écran force un `resize`) ; `panelLayoutStore.js` dit `DEFAULT_PANEL_HEIGHT = 380 « mirrors config.go »` alors que `config.go` dit 250. Effort S.
+- **`PickList.svelte` partagé** Export/Picker (~110 lignes de CSS dupliquées) et **dialogue de sauvegarde de `SearchPanel`** à migrer sur `Modal.svelte`. Effort S.
+- **ADR-0004** cite encore `NotoSansJP-Regular.ttf` (5,7 Mo) : la police est un sous-ensemble WOFF2 de 178 Ko depuis le 2026-09-02 (constat historique, une note suffit).
 
 ## Ouvert — Tests / CI
 
@@ -80,28 +89,21 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   phase 06) : parcourir chaque filtre de la fenêtre de recherche. Priorité
   basse ; couvert indirectement par `searchFilterService.test.js` (unitaires
   + round-trip).
-- **Contrat storage : familles restantes** (Anki complet, Collections,
-  Tournaments, Comments, Metadata, Session) — remonter les tests par famille
-  en supprimant les doublons par backend ; `storagetest/contract.go` à
-  découper (2 486 lignes).
-- **Matrice OS du job `test`** (windows/macos) — s'attendre à de vrais
-  échecs (chemins, accents dans testdata) ; à faire quand la suite est
-  stabilisée.
 ## Ouvert — Produit / docs
 
-- **Capture d'écran du README** : `doc/source/_static/screenshot.png` date du
-  2026-04-20, montre un onglet Log retiré depuis et précède le panneau Stats.
-  La fiche 10 a retiré la référence plutôt que de livrer une image
-  trompeuse. Refaire la capture sur 0.34+ (`make dev`, base peuplée, fenêtre
-  principale) et restaurer l'image ; **captures du manuel** (0 illustration
-  hors annexes Windows) et **vidéo de démo** (issue #102) — dépendent d'une
-  session graphique et d'un choix éditorial (localisation des captures).
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
   10 (ADR-0017/0018/0021).
+- **Soumissions humaines** : PR winget (`microsoft/winget-pkgs`, manifestes attachés à chaque release) et tap Homebrew `kevung/homebrew-tap` (cask attaché à chaque release) — voir `packaging/winget/README.md`, `packaging/homebrew/README.md`.
+- **Job `test-os`** : retirer `continue-on-error: true` après le premier run vert sur windows/macos.
+- **Skill `release-blunderdb`** : mentionner les nouveaux assets de release (manifestes winget, cask Homebrew, bundle Flatpak, image GHCR).
 
 ## Historique — items faits
 
+- **2026-09-02 — Composant `<Modal>` unique** : fait le 2026-09-02 (2dc51a36) : `components/Modal.svelte`, 13 modales migrées, 0 warning a11y.
+- **2026-09-02 — Contrat storage : familles restantes** : fait le 2026-09-02 : cas Comment/*, Collection/*, Anki/RandomCard, batch (LoadByIDs, ByPositions…) ; le wrapper `database/` délègue désormais toutes ses familles à `storage`.
+- **2026-09-02 — Matrice OS du job `test`** : fait le 2026-09-02 (70ab6f2e, 1c6fa7b5) : job `test-os` windows/macos en -short ; fuites de handles SQLite dans les tests corrigées, garde `/proc/self/fd` sous Linux.
+- **2026-09-02 — Capture d'écran du README** : fait le 2026-09-02 (e46b896d) : capture Playwright de l'interface réelle sur mock Wails, `SCREENSHOT=1 npx playwright test screenshot`.
 - **2026-09-02 — `runMigrationChain` en table** : fait le 2026-09-02 (0503c994) : registre `migrationSteps`, fichiers `db_migration_v*.go`, test de continuité.
 - **2026-09-02 — Fusion des 13 helpers purs dupliqués** : fait le 2026-09-02 (b0054ab3) : paquet `storage/searchfilter`.
 - **2026-09-02 — `utils/rangeFilters.js` / `filterModel.js`** : fait le 2026-09-02 (dd1aa7b1) : `services/filterModel.js`, SearchPanel 2 226 → 1 485 lignes.
