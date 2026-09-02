@@ -238,8 +238,10 @@ Le cœur du plan. Tout ce qui suit est bit-identique par construction, et le tes
       indépendants ; les approfondir en parallèle (chacun déclenchant sa propre file de
       lancers) plutôt qu'un après l'autre. Chaque worker garde son `Searcher`/cache.
 - [ ] `TestParallelSearchIsBitIdentical` vert pour `WithWorkers` ∈ {1, 2, NumCPU, 64}.
-- [ ] **Cible mesurée** : ≥ ×6 sur 8 cœurs physiques pour la décision 2-ply canonique
-      (aujourd'hui ×4 sur 16 threads).
+- [ ] **Cible mesurée** : **×5,5 sur 8 cœurs physiques** (`GOMAXPROCS=8`), p75/p95 et non
+      des moyennes. Révisée à la baisse par P3 : le plafond structurel est ×5 à ×6,5, le
+      SMT n'apporte presque rien sur du calcul vectoriel, et le ×4 « sur 16 threads »
+      d'aujourd'hui est donc déjà proche de ce que le déséquilibre statique permet.
 
 ### F5 — Consigner [S] — #149
 
@@ -271,6 +273,16 @@ rouvrir le backlog des frais hors réseau, avec un profil, pas avant.
 ---
 
 ## 5. Annexe — prompts de deep search pour Claude web
+
+> **Les quatre ont été exécutés le 2026-09-02 et leurs rapports sont versés sous
+> `docs/recherche/` (index et synthèse dans son README).** Ce qu'ils ont changé :
+> P1 confirme qu'avo ne génère pas d'arm64 et que le déterminisme repose sur la spec Go,
+> pas sur la chance ; P2 recommande une tuile 6-8 sorties × 8 positions et une couche 1 en
+> input-major creux, et mesure que l'absence de FMA est **gratuite sur Zen 3/4** ; P3
+> abaisse la cible de F4 de ×6 à **×5,5 sur 8 cœurs physiques** et donne la règle de
+> décision du cache partagé ; P4 écarte les tables de transposition sur les nœuds, qui
+> entrent en conflit avec l'inférence par lots. Les questions restent ci-dessous telles
+> qu'elles ont été posées.
 
 Chaque prompt est autonome. Les réponses alimentent F1 (P1, P2) et F4 (P3) ; P4 ne sert
 qu'à gammonNet amont (D6) et peut attendre.
