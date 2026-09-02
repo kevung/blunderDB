@@ -70,34 +70,40 @@ func TestReady_NoExpectedVersionAcceptsAny(t *testing.T) {
 	}
 }
 
-func TestReadyAndLive_StorageDown(t *testing.T) {
+func TestReady_StorageDown(t *testing.T) {
 	down := versionOnly{err: errors.New("connection refused")}
-	for name, fn := range map[string]http.HandlerFunc{
-		"live":  (&Health{Storage: down}).Live,
-		"ready": (&Health{Storage: down, ExpectedVersion: "2.15.0"}).Ready,
-	} {
-		t.Run(name, func(t *testing.T) {
-			code, body := get(t, fn, "/")
-			if code != http.StatusServiceUnavailable {
-				t.Fatalf("status = %d, want 503", code)
-			}
-			if body["status"] != "down" {
-				t.Errorf("status field = %q, want down", body["status"])
-			}
-			// The backend's error text must not leak into the probe answer.
-			for k, v := range body {
-				if v == "connection refused" {
-					t.Errorf("field %q leaks the storage error", k)
-				}
-			}
-		})
+	h := &Health{Storage: down, ExpectedVersion: "2.15.0"}
+	code, body := get(t, h.Ready, "/readyz")
+	if code != http.StatusServiceUnavailable {
+		t.Fatalf("status = %d, want 503", code)
+	}
+	if body["status"] != "down" {
+		t.Errorf("status field = %q, want down", body["status"])
+	}
+	// The backend's error text must not leak into the probe answer.
+	for k, v := range body {
+		if v == "connection refused" {
+			t.Errorf("field %q leaks the storage error", k)
+		}
 	}
 }
 
-func TestLive_OK(t *testing.T) {
-	h := &Health{Storage: versionOnly{version: "1.0.0"}}
-	code, body := get(t, h.Live, "/healthz")
-	if code != http.StatusOK || body["status"] != "ok" {
-		t.Fatalf("got %d %v, want 200 status=ok", code, body)
+// TestLive_NeverTouchesStorage pins the liveness contract (#166): /healthz
+// answers 200 whatever the storage is doing — a nil Storage would panic on
+// the first call, an erroring one used to turn the answer into a 503 and
+// restart a healthy daemon in a loop. Readiness is where the database is
+// probed.
+func TestLive_NeverTouchesStorage(t *testing.T) {
+	for name, h := range map[string]*Health{
+		"nil storage":  {},
+		"storage down": {Storage: versionOnly{err: errors.New("connection refused")}},
+		"storage up":   {Storage: versionOnly{version: "1.0.0"}},
+	} {
+		t.Run(name, func(t *testing.T) {
+			code, body := get(t, h.Live, "/healthz")
+			if code != http.StatusOK || body["status"] != "ok" {
+				t.Fatalf("got %d %v, want 200 status=ok", code, body)
+			}
+		})
 	}
 }

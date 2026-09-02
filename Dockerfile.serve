@@ -50,4 +50,10 @@ ENV BLUNDERDB_BACKEND=postgres \
     BLUNDERDB_ADDR=:8080
 EXPOSE 8080
 
+# Readiness probe: the binary's own `healthcheck` subcommand does one GET on
+# /readyz (storage reachable, schema current) at BLUNDERDB_ADDR — distroless
+# ships no curl or wget. Exec form on purpose: there is no shell either.
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+    CMD ["/usr/local/bin/blunderdb", "healthcheck"]
+
 ENTRYPOINT ["/usr/local/bin/blunderdb"]
