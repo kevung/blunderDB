@@ -1224,12 +1224,7 @@ msgid ""
 " cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
 "la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
-msgstr ""
-"Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki "
-"asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen "
-"ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, "
-"vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa "
-"ja voittomahdollisuudet ovat vähintään 60%."
+msgstr "Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja voitto on todennäköinen vähintään 60 % osuudella."
 
 #: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
