@@ -68,7 +68,10 @@ func TestConcurrentWrites(t *testing.T) {
 	s := openTempDB(t)
 	ctx := context.Background()
 
-	const goroutines, perG = 100, 100
+	// 1 000 writes from 25 writers exercise the same contention as 10 000
+	// from 100 (busy_timeout, retry on SQLITE_BUSY) at a tenth of the cost —
+	// the 100x100 version took 85 s under the race detector.
+	const goroutines, perG = 25, 40
 	var wg sync.WaitGroup
 	errs := make(chan error, goroutines*perG)
 	for g := 0; g < goroutines; g++ {

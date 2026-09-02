@@ -78,7 +78,10 @@ func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	// A ply far past MaxPly must clamp — the label must say what actually
 	// ran (DefaultConfig's own clamp), never the requested value: #125's
 	// non-negotiable rule.
-	result, err := evaluateGammonNet(pos, 99, 0, 0)
+	// pruneK=1, candidates=1: the label rule is about the clamp, not the
+	// search — a full 2-ply on a race position costs five minutes under the
+	// race detector and proves nothing more.
+	result, err := evaluateGammonNet(pos, 99, 1, 1)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}

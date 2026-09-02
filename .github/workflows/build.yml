@@ -31,9 +31,38 @@ permissions:
   contents: read
 
 jobs:
+  # The Go suite is sharded so the wall clock is bounded by the slowest shard
+  # (about 6 minutes on a 4-vCPU runner) instead of their sum (20 minutes
+  # measured on 2026-09-02). Shards select packages by path, so a new package
+  # lands in `rest` without editing this file; `database` is one package
+  # carrying ten minutes of race-instrumented tests, so it is split by test
+  # name instead. engine/gammonnet runs without the race detector and with
+  # `-covermode=set`: atomic counters cost it five times its run time.
   test:
+    name: test (${{ matrix.shard }})
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: database-a
+            run: go test -timeout 1200s -race -count=1 -run '^Test[A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/
+          - shard: database-b
+            run: go test -timeout 1200s -race -count=1 -run '^Test[^A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/
+          - shard: app
+            run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic . ./internal/... ./cmd/...
+          - shard: rest
+            run: |
+              go vet ./...
+              go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
+                $(go list ./pkg/... ./tests/... | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$')
+          # -short on pushes and pull requests (~30 s: the 2-ply searches behind
+          # testing.Short() are skipped), the full suite on version tags.
+          - shard: gammonnet
+            run: go test -timeout 1500s -count=1 $GAMMONNET_FLAGS -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/engine/gammonnet/
+    env:
+      GAMMONNET_FLAGS: ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,40 +78,52 @@ jobs:
         run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
         shell: bash
 
-      - name: Go vet
-        run: go vet ./...
+      - name: Run Go tests (${{ matrix.shard }})
+        run: ${{ matrix.run }}
         shell: bash
 
-      # The engine/gammonnet package runs 2-ply searches in its tests: ~50 s
-      # natively, but the race detector's 10-20x slowdown pushed it past the
-      # 20-minute timeout on every push (main was red from 2026-08-29 to
-      # 2026-09-02). It runs on its own, without -race, with the same
-      # coverage flags; every other package keeps the race detector.
-      - name: Run Go tests (race)
-        run: |
-          go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
-            $(go list ./... | grep -v '/pkg/blunderdb/engine/gammonnet$')
+      - name: Upload coverage shard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-coverage-${{ matrix.shard }}
+          path: coverage.out
+          if-no-files-found: ignore
+
+  # Merges the per-shard profiles into the single go-coverage artifact the
+  # summary reads; visibility only, no threshold.
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: test
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
         shell: bash
 
-      # -short on pushes and pull requests (~30 s: the 2-ply searches behind
-      # testing.Short() are skipped), the full suite on version tags. The full
-      # run took 8 min 41 on one runner and blew a 15-minute ceiling on the
-      # next: shared runners vary too much to gate every push on it.
-      - name: Run Go tests (engine/gammonnet, no race)
-        run: go test -timeout 1500s -count=1 ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }} -coverprofile=coverage-gammonnet.out -covermode=atomic ./pkg/blunderdb/engine/gammonnet/
-        shell: bash
+      - name: Download coverage shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: go-coverage-*
+          path: shards
 
       - name: Merge coverage profiles
-        if: always()
         run: |
-          if [ -f coverage-gammonnet.out ]; then
-            tail -n +2 coverage-gammonnet.out >> coverage.out
-          fi
-        shell: bash
-
-      - name: Coverage summary
-        if: always()
-        run: |
+          first=1
+          for f in shards/*/coverage.out; do
+            [ -f "$f" ] || continue
+            if [ $first = 1 ]; then cat "$f" > coverage.out; first=0; else tail -n +2 "$f" >> coverage.out; fi
+          done
           if [ -f coverage.out ]; then
             echo '### Go coverage' >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
@@ -92,7 +133,6 @@ jobs:
         shell: bash
 
       - name: Upload coverage artifact
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: go-coverage
